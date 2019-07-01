@@ -33,8 +33,6 @@ import pylab
 import random
 import nest.topology as topo
 
-pylab.ion()
-
 nest.ResetKernel()
 
 # generate list of 12 (x,y) pairs
@@ -45,9 +43,7 @@ l1 = topo.CreateLayer({'extent': [2., 1.5],
                        'positions': pos,
                        'elements': 'iaf_psc_alpha'})
 
-nest.PrintNetwork()
-nest.PrintNetwork(2)
-nest.PrintNetwork(2, l1)
+nest.PrintNodes()
 
 topo.PlotLayer(l1, nodesize=50)
 
@@ -59,5 +55,7 @@ pylab.axes().set_yticks((-0.5, 0, 0.5))
 pylab.grid(True)
 pylab.xlabel('4 Columns, Extent: 1.5')
 pylab.ylabel('2 Rows, Extent: 1.0')
+
+pylab.show()
 
 # pylab.savefig('grid_iaf_irr.png')

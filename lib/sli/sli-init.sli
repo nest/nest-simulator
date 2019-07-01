@@ -2186,7 +2186,7 @@ SeeAlso: welcome
     {% $HOME/.slirc is not present
       (HOME) getenv pop % get home directory (we alrady know that $HOME is set)
       (/.nestrc) join /outfile Set
-      statusdict /prgdocdir get (/examples/nestrc.sli) join /infile Set  
+      statusdict /prgdocdir get (/extras/nestrc.sli) join /infile Set  
       
       infile outfile CopyFile 
       {

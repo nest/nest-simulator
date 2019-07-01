@@ -33,7 +33,7 @@ class TestDists(unittest.TestCase):
     label = 'weight'
     # defauly synapse dictionary
     model = 'static_synapse'
-    syn_dict = {'model': model}
+    syn_dict = {'synapse_model': model}
     # sizes of populations
     Ndist1 = 40
     Ndist2 = 40

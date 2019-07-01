@@ -93,13 +93,13 @@ M_ERROR setverbosity
 %
 % Check if configuration of simulation kernel is appropriate
 %
-0 << 
+<< 
  /tics_per_ms min_exponent neg dexp 
  /resolution 0 dexp                   % 1 ms default 
->> SetStatus
+>> SetKernelStatus
 
 
-0 /ms_per_tic get frexp
+GetKernelStatus /ms_per_tic get frexp
 
 exch
 {0.5 eq} assert_or_die                  % base 2 tic size?
@@ -138,7 +138,7 @@ params begin userdict begin
 
 
  ResetKernel
- 0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
+ << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
  [
   /iaf_psc_alpha_ps 
@@ -147,7 +147,7 @@ params begin userdict begin
  ]
  {Create dup params SetStatus} Map /neurons Set
 
- neurons {/Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
+ neurons {0 get /Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
 
 
  T Simulate

@@ -43,11 +43,10 @@ skip_if_not_threaded
 [1 2 4]
 {
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /sg /spike_generator << /spike_times [1.0 1.0] >> Create def
   /gens [ total_vps ] 
@@ -58,9 +57,9 @@ skip_if_not_threaded
   /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  [sg] gens Connect
+  gens { sg exch Connect } forall
   [ gens pnet ] { Connect } ScanThread
-  pnet [sd] Connect
+  pnet { sd Connect } forall
   
   20. Simulate
 

@@ -57,7 +57,8 @@ M_ERROR setverbosity
 
 /simtime 200.0 def
 
-0 << /resolution resolution >> SetStatus
+ResetKernel
+<< /resolution resolution >> SetKernelStatus
   
 /spike_detector sd_params Create /sd Set
 /spike_generator sg_params Create /sg Set

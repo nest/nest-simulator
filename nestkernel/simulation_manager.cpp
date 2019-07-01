@@ -35,7 +35,6 @@
 #include "connection_manager_impl.h"
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -140,7 +139,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   if ( tics_per_ms_updated or res_updated )
   {
-    if ( kernel().node_manager.size() > 1 ) // root always exists
+    if ( kernel().node_manager.size() > 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -253,7 +252,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   bool wfr;
   if ( updateValue< bool >( d, names::use_wfr, wfr ) )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -406,7 +405,7 @@ nest::SimulationManager::prepare()
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
-  // Check for synchronicity of global rngs over processes.
+  // Check for synchrony of global rngs over processes.
   // We need to do this ahead of any simulation in case random numbers
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
@@ -714,7 +713,7 @@ nest::SimulationManager::update_()
   delay old_to_step;
   exit_on_user_signal_ = false;
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
 #pragma omp parallel
   {
@@ -728,14 +727,15 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        and ( ( clock_.get_steps() + from_step_ ) % kernel().sp_manager.get_structural_plasticity_update_interval()
-              == 0 ) )
+        and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
+                kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 ) )
       {
-        for ( std::vector< Node* >::const_iterator i = kernel().node_manager.get_nodes_on_thread( tid ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
+        for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+              i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          ( *i )->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+          Node* node = i->get_node();
+          node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
         }
 #pragma omp barrier
 #pragma omp single
@@ -743,11 +743,12 @@ nest::SimulationManager::update_()
           kernel().sp_manager.update_structural_plasticity();
         }
         // Remove 10% of the vacant elements
-        for ( std::vector< Node* >::const_iterator i = kernel().node_manager.get_nodes_on_thread( tid ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( tid ).end();
+        for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+              i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          ( *i )->decay_synaptic_elements_vacant();
+          Node* node = i->get_node();
+          node->decay_synaptic_elements_vacant();
         }
 
         // after structural plasticity has created and deleted
@@ -875,23 +876,23 @@ nest::SimulationManager::update_()
       } // of if(wfr_is_used)
       // end of preliminary update
 
-      const std::vector< Node* >& thread_local_nodes = kernel().node_manager.get_nodes_on_thread( tid );
-      for ( std::vector< Node* >::const_iterator node = thread_local_nodes.begin(); node != thread_local_nodes.end();
-            ++node )
+      const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
+      for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
       {
         // We update in a parallel region. Therefore, we need to catch
         // exceptions here and then handle them after the parallel region.
         try
         {
-          if ( not( *node )->is_frozen() )
+          Node* node = n->get_node();
+          if ( not( node )->is_frozen() )
           {
-            ( *node )->update( clock_, from_step_, to_step_ );
+            ( node )->update( clock_, from_step_, to_step_ );
           }
         }
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
+          exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
         }
       }
 
@@ -943,18 +944,19 @@ nest::SimulationManager::update_()
     } while ( to_do_ > 0 and not exit_on_user_signal_ and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements
-    for ( std::vector< Node* >::const_iterator i = kernel().node_manager.get_nodes_on_thread( tid ).begin();
-          i != kernel().node_manager.get_nodes_on_thread( tid ).end();
+    for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+          i != kernel().node_manager.get_local_nodes( tid ).end();
           ++i )
     {
-      ( *i )->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+      Node* node = i->get_node();
+      node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
   } // of omp parallel
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( tid ).valid() )
+    if ( exceptions_raised.at( tid ).get() )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;
@@ -973,7 +975,7 @@ nest::SimulationManager::reset_network()
 
   kernel().event_delivery_manager.clear_pending_spikes();
 
-  kernel().node_manager.reset_nodes_state();
+  kernel().node_manager.reinit_nodes();
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
   LOG( M_WARNING,

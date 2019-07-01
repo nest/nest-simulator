@@ -49,15 +49,14 @@ skip_if_without_gsl
 {
   0.1 /h Set
   
-  0 << 
-        /total_num_virtual_procs total_vps 
-        /resolution h
-        /use_wfr true
-        /wfr_tol 0.0001
-        /wfr_interpolation_order 3
-        /wfr_max_iterations 10
-        /wfr_comm_interval 1.0
-    >> SetStatus
+  << /total_num_virtual_procs total_vps 
+     /resolution h
+     /use_wfr true
+     /wfr_tol 0.0001
+     /wfr_interpolation_order 3
+     /wfr_max_iterations 10
+     /wfr_comm_interval 1.0
+  >> SetKernelStatus
       
   /lin_rate_ipn << /mu 0.0 /sigma 0.0 /rate 20.0 >> Create /lin_neuron1 Set
   /siegert_neuron << /rate 20.0 >> Create /siegert_neuron1 Set
@@ -73,14 +72,14 @@ skip_if_without_gsl
   mm siegert_neuron1 Connect
   mm siegert_neuron2 Connect
   
-  [lin_neuron1] [lin_neuron2]
+  lin_neuron1 lin_neuron2
   << /rule /one_to_one >> 
-  << /model /rate_connection_instantaneous /weight 5.0 >> 
+  << /synapse_model /rate_connection_instantaneous /weight 5.0 >>
   Connect
   
-  [siegert_neuron1] [siegert_neuron2]
+  siegert_neuron1 siegert_neuron2
   << /rule /one_to_one >> 
-  << /model /diffusion_connection /diffusion_factor 2.0 /drift_factor 4.0 >> 
+  << /synapse_model /diffusion_connection /diffusion_factor 2.0 /drift_factor 4.0 >>
   Connect
   
   11 Simulate

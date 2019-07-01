@@ -67,7 +67,7 @@ class ThreadTestCase(unittest.TestCase):
         conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
-        targets = list(nest.GetStatus(conn, "target"))
+        targets = list(conn.get("target"))
         targets.sort()
 
         self.assertEqual(targets, list(post))

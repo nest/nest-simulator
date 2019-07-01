@@ -46,10 +46,9 @@
 % This test should only run if we have GSL
 skip_if_without_gsl
 
-0
 << 
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 /tolerance   	2e-3 def %mV
 /simulation_t	1500 def %ms
@@ -86,14 +85,14 @@ sg << /spike_times [spike_time] >> SetStatus
  	singlesynapse_neuron << /tau_syn_ex tau_syn_ex_var >> SetStatus
  	singlesynapse_neuron << /tau_syn_in tau_syn_in_var >> SetStatus
 
- 	[sg] [singlesynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var >> Connect
- 	
+
+ 	sg singlesynapse_neuron /one_to_one << /synapse_model /static_synapse /delay delay_var /weight weight_var >> Connect
  	/voltmeter Create /vm_for_single_synapse_neuron Set
  	vm_for_single_synapse_neuron << /time_in_steps true /interval 0.1 >> SetStatus
-	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  
+	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  	vm_for_single_synapse_neuron
- 	
+  
 } MapThread /vms_for_single_synapse_neuron Set
 
 % Create one voltmeter for the multi synapse neuron
@@ -106,8 +105,7 @@ multisynapse_neuron << /tau_syn tau_syn_ex /E_rev E_rev >> SetStatus
 multisynapse_neuron << /V_peak V_peak >> SetStatus
 multisynapse_neuron << /a a >> SetStatus
 multisynapse_neuron << /b b >> SetStatus
-
-multisynapse_neuron ShowStatus
+%multisynapse_neuron GetStatus ShowStatus
 
 % create and array [1 .. n] 
 delays length 1 arraystore Range /synapses_indices exch def
@@ -117,29 +115,25 @@ delays length 1 arraystore Range /synapses_indices exch def
 	/synapses_indice_var exch def
 	abs /weight_var exch def
 	/delay_var exch def
-	
-	[sg] [multisynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
-	
+	sg multisynapse_neuron /one_to_one << /synapse_model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
 } ScanThread
 
-vm multisynapse_neuron 1. 8. /static_synapse Connect
+vm multisynapse_neuron  1. 8. /static_synapse Connect
 
 simulation_t ms Simulate
 
 % Get the currents of the multisynapse neuron
-/d vm GetStatus /events get def
-d /V_m get cva /currents Set
+/d vm /events get def
 
+d /V_m get cva /currents Set
 % Take the array of delays, remove the first element and append at the end (total simulation time - spiketime).
 % The new array will be used to determine the ranges of comparison between the single neurons and the multisynapse neurons.
-
 delays reverse arrayload pop pop
 delays length 1 sub
 arraystore reverse 
 simulation_t spike_time sub 1 dt div sub
 append
 /delays_shifted exch def
-
 
 % Go over every dt in the ranges (0 -> delays_shifted[1], ... , delays_shifted[n] -> delays_shifted[n+1])
 % For each one of them, compare the multisynapse_current[t] with singlesynapse_current[n][t].
@@ -152,7 +146,7 @@ append
 	/voltmeter_var exch def
 
 	% Get the currents of the single synapse model
-	voltmeter_var GetStatus /events get /V_m get cva
+	voltmeter_var /events get /V_m get cva
 	
 	% black voodoo magic - compare values at the same position in multisynapse currents and according single synapse currents
 	current_pos 1 delay_var spike_time add dt div 
@@ -188,7 +182,7 @@ append
   
   mm nrn Connect
   
-  /len 1 GetStatus /recordables get length def
+  /len nrn /recordables get length def
   len 3 eq
   end
 }
@@ -209,13 +203,13 @@ assert_or_die
   /nrn /aeif_cond_alpha_multisynapse <<  
     /E_rev E_rev1 /tau_syn tau_syn1
       >> Create def
-  /len1 1 GetStatus /recordables get length def
+  /len1 nrn /recordables get length def
   
-  1 << /E_rev E_rev2 /tau_syn tau_syn2 >> SetStatus
-  /len2 1 GetStatus /recordables get length def
+  nrn << /E_rev E_rev2 /tau_syn tau_syn2 >> SetStatus
+  /len2 nrn /recordables get length def
   
-  1 << /E_rev E_rev3 /tau_syn tau_syn3 >> SetStatus
-  /len3 1 GetStatus /recordables get length def
+  nrn << /E_rev E_rev3 /tau_syn tau_syn3 >> SetStatus
+  /len3 nrn /recordables get length def
   
   len1 5 eq len2 4 eq and len3 6 eq and
   end
@@ -261,7 +255,7 @@ assert_or_die
     end
   } def
 
-  0 << /resolution dt >> SetStatus
+  << /resolution dt >> SetKernelStatus
 
   % Create a spike generator that generates a single spike
   /spike_generator Create /sg Set
@@ -281,8 +275,8 @@ assert_or_die
     /W exch def
     /delay exch def
     % Connect spike generator to each port
-    [sg] [nrn] /one_to_one <<
-      /model /static_synapse
+    sg nrn /one_to_one <<
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>

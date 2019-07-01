@@ -47,8 +47,8 @@ and fixed.
 
 ResetKernel
 
-0 d                    SetStatus
-0 << /resolution h >>  SetStatus
+d SetKernelStatus
+<< /resolution h >> SetKernelStatus
 
 /spike_detector Create /sp Set   
  

@@ -34,74 +34,76 @@ import nest
 import nest.topology as topo
 import pylab
 
-pylab.ion()
-
 
 nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
 
-# create two test layers
+# create four test layers
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
-a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': ['pyr', 'in']})
-b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': ['pyr', 'in']})
+a_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
+                          'elements': 'pyr'})
+a_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
+                         'elements': 'in'})
 
-topo.ConnectLayers(a, b, {'connection_type': 'divergent',
-                          'sources': {'model': 'pyr'},
-                          'targets': {'model': 'pyr'},
-                          'mask': {'circular': {'radius': 0.5}},
-                          'kernel': 0.5,
-                          'weights': 1.0,
-                          'delays': 1.0})
-topo.ConnectLayers(a, b, {'connection_type': 'divergent',
-                          'sources': {'model': 'pyr'},
-                          'targets': {'model': 'in'},
-                          'mask': {'circular': {'radius': 1.0}},
-                          'kernel': 0.2,
-                          'weights': 1.0,
-                          'delays': 1.0})
+b_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
+                          'elements': 'pyr'})
+b_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
+                         'elements': 'in'})
+
+
+topo.ConnectLayers(a_pyr, b_pyr, {'connection_type': 'divergent',
+                                  'mask': {'circular': {'radius': 0.5}},
+                                  'kernel': 0.5,
+                                  'weights': 1.0,
+                                  'delays': 1.0})
+topo.ConnectLayers(a_pyr, b_in, {'connection_type': 'divergent',
+                                 'mask': {'circular': {'radius': 1.0}},
+                                 'kernel': 0.2,
+                                 'weights': 1.0,
+                                 'delays': 1.0})
 
 pylab.clf()
 
 # plot targets of neurons in different grid locations
-for ctr in [[15, 15]]:
-    # obtain node id for center: pick first node of composite
-    ctr_id = topo.GetElement(a, ctr)
 
-    # get all projection targets of center neuron
-    tgts = [ci[1] for ci in nest.GetConnections(ctr_id)]
+# obtain node id for center: pick first node of composite
+ctr_index = 30 * 15 + 15
+ctr_id = a_pyr[ctr_index:ctr_index + 1]
 
-    # get positions of targets
-    tpyr = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in tgts
-                                   if
-                                   nest.GetStatus([n], 'model')[0] == 'pyr'])))
-    tin = pylab.array(tuple(zip(*[topo.GetPosition([n])[0] for n in tgts
-                                  if
-                                  nest.GetStatus([n], 'model')[0] == 'in'])))
+# get all projection targets of center neuron
+conn = nest.GetConnections(ctr_id)
+tgts = conn.get('target')
 
-    # scatter-plot
-    pylab.scatter(tpyr[0] - 0.02, tpyr[1] - 0.02, 20, 'b', zorder=10)
-    pylab.scatter(tin[0] + 0.02, tin[1] + 0.02, 20, 'r', zorder=10)
+tpyr = topo.GetTargetPositions(ctr_id, b_pyr)[0]
+tin = topo.GetTargetPositions(ctr_id, b_in)[0]
 
-    # mark locations with background grey circle
-    pylab.plot(tpyr[0], tpyr[1], 'o', markerfacecolor=(0.7, 0.7, 0.7),
-               markersize=10, markeredgewidth=0, zorder=1, label='_nolegend_')
-    pylab.plot(tin[0], tin[1], 'o', markerfacecolor=(0.7, 0.7, 0.7),
-               markersize=10, markeredgewidth=0, zorder=1, label='_nolegend_')
+tpyr_x = pylab.array([x for x, y in tpyr])
+tpyr_y = pylab.array([y for x, y in tpyr])
+tin_x = pylab.array([x for x, y in tin])
+tin_y = pylab.array([y for x, y in tin])
 
-    # mark sender position with transparent red circle
-    ctrpos = topo.GetPosition(ctr_id)[0]
-    pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.15, zorder=99,
-                                       fc='r', alpha=0.4, ec='none'))
+# scatter-plot
+pylab.scatter(tpyr_x - 0.02, tpyr_y - 0.02, 20, 'b', zorder=10)
+pylab.scatter(tin_x + 0.02, tin_y + 0.02, 20, 'r', zorder=10)
 
-    # mark mask positions with open red/blue circles
-    pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.5, zorder=2,
-                                       fc='none', ec='b', lw=3))
-    pylab.gca().add_patch(pylab.Circle(ctrpos, radius=1.0, zorder=2,
-                                       fc='none', ec='r', lw=3))
+# mark locations with background grey circle
+pylab.plot(tpyr_x, tpyr_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
+           markersize=10, markeredgewidth=0, zorder=1, label='_nolegend_')
+pylab.plot(tin_x, tin_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
+           markersize=10, markeredgewidth=0, zorder=1, label='_nolegend_')
+
+# mark sender position with transparent red circle
+ctrpos = topo.GetPosition(ctr_id)
+pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.15, zorder=99,
+                                   fc='r', alpha=0.4, ec='none'))
+
+# mark mask positions with open red/blue circles
+pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.5, zorder=2,
+                                   fc='none', ec='b', lw=3))
+pylab.gca().add_patch(pylab.Circle(ctrpos, radius=1.0, zorder=2,
+                                   fc='none', ec='r', lw=3))
 
 # mark layer edge
 pylab.gca().add_patch(pylab.Rectangle((-1.5, -1.5), 3.0, 3.0, zorder=1,
@@ -113,3 +115,4 @@ pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
 pylab.grid(True)
 pylab.axis([-1.6, 1.6, -1.6, 1.6])
 pylab.axes().set_aspect('equal', 'box')
+pylab.show()

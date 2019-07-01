@@ -81,7 +81,7 @@ M_ERROR setverbosity
 
 ResetKernel
 
-0 << /resolution h >> SetStatus
+<< /resolution h >> SetKernelStatus
 
 
 /spike_detector Create /sd Set  

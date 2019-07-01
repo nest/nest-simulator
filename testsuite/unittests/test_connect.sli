@@ -44,139 +44,150 @@ M_ERROR setverbosity
 (unittest) run
 /unittest using
 
-(Running Connect tests with argument type ') 1 type cvs join (') join =
+(Running Connect tests with legal arguments) =
 
-(  Testing variant "integer integer") =
+(  Testing variant "GIDCollection GIDCollection") =
 ResetKernel
-/iaf_psc_alpha 2 Create ;
-1 2 Connect
-<< /source [1] >> GetConnections 0 get
-/target get 2 eq assert_or_die
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-(  Testing variant "integer integer double double") =
+(  Testing variant "GIDCollection GIDCollection double double") =
 ResetKernel
-/iaf_psc_alpha 2 Create ;
-1 2 2.0 3.0 Connect
-<< /source [1] >> GetConnections 0 get dup dup
-/target get 2 eq assert_or_die
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b 2.0 3.0 Connect
+<< /source a >> GetConnections dup
+First dup dup
+/target get 4 eq assert_or_die
 /weight get 2.0 eq assert_or_die
 /delay get 3.0 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-% We can run the tests for TokenArray, IntVectorDatum and
-% GIDCollectionDatum in a loop using arrayload
+(  Testing variant "GIDCollection GIDCollection double double literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b 2.0 3.0 /static_synapse Connect
+<< /source a >> GetConnections dup
+First dup dup dup
+/target get 4 eq assert_or_die
+/weight get 2.0 eq assert_or_die
+/delay get 3.0 eq assert_or_die
+/synapse_model get /static_synapse eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-[ [[1 2 3]             [4 5 6]            ]
-  [[1 2 3] cv_iv       [4 5 6] cv_iv      ]
-  [1 3 cvgidcollection 4 6 cvgidcollection]] {
-  /addresses Set
+(  Testing variant "GIDCollection GIDCollection literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b /one_to_one Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (Running Connect tests with argument type ') addresses 0 get type cvs join (') join =
+(  Testing variant "GIDCollection GIDCollection dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << /rule /one_to_one >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection empty_dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array literal") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; /one_to_one Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection literal literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b /one_to_one /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << /rule /one_to_one >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection dict literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << /rule /one_to_one >> /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array empty_dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection empty_dict literal") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << >> /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array literal literal") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; /one_to_one /stdp_synapse Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection literal dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b /one_to_one << /synapse_model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "array array dict literal") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << /rule /one_to_one >> /stdp_synapse Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array empty_dict literal") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << >> /stdp_synapse Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array literal dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; /one_to_one << /model /stdp_synapse >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array literal empty_dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; /one_to_one << >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array dict dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << /rule /one_to_one >> << /model /stdp_synapse >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array empty_dict dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << >> << /model /stdp_synapse >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array dict empty_dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << /rule /one_to_one >> << >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "array array empty_dict empty_dict") =
-  ResetKernel
-  /iaf_psc_alpha 6 Create ;
-  addresses arrayload ; << >> << >> Connect
-  << /source [1 2 3] >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection literal empty_dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b /one_to_one << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-} forall
+(  Testing variant "GIDCollection GIDCollection dict dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << /rule /one_to_one >> << /synapse_model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection empty_dict dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << >> << /synapse_model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection dict empty_dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << /rule /one_to_one >> << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection empty_dict empty_dict") =
+ResetKernel
+/a /iaf_psc_alpha 3 Create def
+/b /iaf_psc_alpha 3 Create def
+a b << >> << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
 
 (Running Connect tests with illegal combinations) =
 ResetKernel
@@ -196,7 +207,7 @@ modeldict
     {  % if there is no error, check that a connection has been made
       {
         n_connections 1 add 
-        0 GetStatus /num_connections get 
+        GetKernelStatus /num_connections get 
         eq
       } assert_or_die
       /n_connections n_connections 1 add def
@@ -207,4 +218,3 @@ modeldict
   } forall
 
 } forall
-

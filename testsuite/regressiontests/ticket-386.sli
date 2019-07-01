@@ -48,7 +48,7 @@ M_ERROR setverbosity
 /run_test
 {
   ResetKernel
-  0 << /resolution resolution >> SetStatus
+  << /resolution resolution >> SetKernelStatus
   /model Set
   model GetDefaults dup
   /recordables known

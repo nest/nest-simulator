@@ -45,11 +45,11 @@
 
     ResetKernel
 
-    0 <<
-	/local_num_threads 1
+    <<
+	/local_num_threads 1 
 	/resolution h
-    >> SetStatus
-
+    >> SetKernelStatus
+    
     % check, if double spikes are correctly interpreted as up transition
     % and single spikes are interpreted as down transition
 

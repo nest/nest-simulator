@@ -39,7 +39,7 @@ class CreateTestCase(unittest.TestCase):
 
         for model in nest.Models(mtype='nodes'):
             node = nest.Create(model)
-            self.assertGreater(node[0], 0)
+            self.assertGreater(node.get('global_id'), 0)
 
     def test_ModelCreateN(self):
         """Model Creation with N"""
@@ -89,11 +89,11 @@ class CreateTestCase(unittest.TestCase):
         self.assertEqual(vm, 10.0)
 
         n = nest.Create('new_neuron', 10)
-        vm = nest.GetStatus([n[0]])[0]['V_m']
+        vm = nest.GetStatus(n[0])[0]['V_m']
         self.assertEqual(vm, 10.0)
 
         nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect([n[0]], [n[1]], syn_spec='new_synapse')
+        nest.Connect(n[0], n[1], syn_spec='new_synapse')
         w = nest.GetDefaults('new_synapse')['weight']
         self.assertEqual(w, 10.0)
 

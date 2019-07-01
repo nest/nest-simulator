@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_time.h"
@@ -771,9 +768,9 @@ ConductanceEvent::get_conductance() const
  * Event for transmitting arbitrary data.
  * This event type may be used for transmitting arbitrary
  * data between events, e.g., images or their FFTs.
- * A lockptr to the data is transmitted.  The date type
+ * A shared_ptr to the data is transmitted.  The date type
  * is given as a template parameter.
- * @note: Data is passed via a lockptr.
+ * @note: Data is passed via a shared_ptr.
  *        The receiver should copy the data at once, otherwise
  *        it may be modified by the sender.
  *        I hope this scheme is thread-safe, as long as the
@@ -785,11 +782,11 @@ ConductanceEvent::get_conductance() const
 template < typename D >
 class DataEvent : public Event
 {
-  lockPTR< D > data_;
+  std::shared_ptr< D > data_;
 
 public:
   void set_pointer( D& data );
-  lockPTR< D > get_pointer() const;
+  std::shared_ptr< D > get_pointer() const;
 };
 
 template < typename D >
@@ -800,7 +797,7 @@ DataEvent< D >::set_pointer( D& data )
 }
 
 template < typename D >
-inline lockPTR< D >
+inline std::shared_ptr< D >
 DataEvent< D >::get_pointer() const
 {
   return data_;

@@ -106,10 +106,10 @@ class TestSymmetricPairwiseBernoulli(TestParams):
         hf.nest.Connect(pop, pop, conn_params)
 
         conn_dict = collections.defaultdict(int)
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            conn_dict[key] += 1
-            self.assertTrue(conn_dict[key] <= 2)
+        conn = hf.nest.GetConnections()
+        for s_t_key in zip(conn.source(), conn.target()):
+            conn_dict[s_t_key] += 1
+            self.assertTrue(conn_dict[s_t_key] <= 2)
 
     def testMakeSymmetric(self):
         conn_params = self.conn_dict.copy()
@@ -129,13 +129,12 @@ class TestSymmetricPairwiseBernoulli(TestParams):
         hf.nest.Connect(pop, pop, conn_params)
 
         conns = set()
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            conns.add(key)
+        conn = hf.nest.GetConnections()
+        for s_t_key in zip(conn.source(), conn.target()):
+            conns.add(s_t_key)
 
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            self.assertTrue(key[::-1] in conns)
+        for s_t_key in zip(conn.source(), conn.target()):
+            self.assertTrue(s_t_key[::-1] in conns)
 
 
 def suite():

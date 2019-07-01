@@ -45,7 +45,8 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : logging_manager()
+  : fingerprint_( 0 )
+  , logging_manager()
   , mpi_manager()
   , vp_manager()
   , rng_manager()
@@ -87,6 +88,8 @@ nest::KernelManager::initialize()
     m->initialize();
   }
 
+  fingerprint_ = std::clock();
+
   initialized_ = true;
 }
 
@@ -127,7 +130,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_num_threads( thread num_threads )
+nest::KernelManager::change_number_of_threads( thread new_num_threads )
 {
   // JME: TODO check all managers for a dependency on the number of
   // threads and implement change_num_threads() for the ones that have
@@ -145,10 +148,9 @@ nest::KernelManager::change_num_threads( thread num_threads )
   // JME: this should go to where KernelManager::change_num_threads()
   // is called in VPManager. apeyser/nestio did not have this line. It
   // was added in master in 18acd78aa1c00
-  vp_manager.set_num_threads( num_threads );
+  vp_manager.set_num_threads( new_num_threads );
 
   rng_manager.initialize();
-  // independent of threads, but node_manager needs it reset
   modelrange_manager.initialize();
   model_manager.initialize();
   connection_manager.initialize();
@@ -158,7 +160,7 @@ nest::KernelManager::change_num_threads( thread num_threads )
 
   for ( auto& manager : managers )
   {
-    manager->change_num_threads( num_threads );
+    manager->change_num_threads( new_num_threads );
   }
 }
 

@@ -34,7 +34,6 @@ import pylab
 import nest
 import nest.topology as topo
 
-pylab.ion()
 
 nest.ResetKernel()
 
@@ -60,9 +59,9 @@ pylab.clf()
 fig = pylab.gcf()
 
 # plot targets of two source neurons into same figure, with mask
-for src_pos in [[15, 15], [0, 0]]:
+for src_index in [30 * 15 + 15, 0]:
     # obtain node id for center
-    src = topo.GetElement(a, src_pos)
+    src = a[src_index:src_index + 1]
     topo.PlotTargets(src, b, mask=conndict['mask'], fig=fig)
 
 # beautify
@@ -72,5 +71,7 @@ pylab.grid(True)
 pylab.axis([-2.0, 2.0, -2.0, 2.0])
 pylab.axes().set_aspect('equal', 'box')
 pylab.title('Connection targets')
+
+pylab.show()
 
 # pylab.savefig('connex_ew.pdf')

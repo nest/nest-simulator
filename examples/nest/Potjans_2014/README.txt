@@ -35,9 +35,6 @@ Files:
         - sim_params.sli
         Script containing simulation and recording parameters
 
-        - user_params.sli
-        Script containing parameters related to the user system
-
 	- microcircuit.sli
 	Simulation script
 
@@ -48,9 +45,7 @@ Files:
 	Python script for basic analysis
 
 The bash script is designed for a cluster with a queuing system that uses qsub.
-It takes all parameters from user_params.sli and sim_params.sli and can be left
-unchanged. The actual simulation script 'microcircuit.sli' does not need to be
-changed either.
+The actual simulation script 'microcircuit.sli' does not need to be changed.
 
 
 Instructions:
@@ -60,20 +55,21 @@ Instructions:
 2. Compile NEST: https://www.nest-simulator.org/installation
    Use the --with-mpi flag to configure with MPI support
 
-3. In user_params.sli adjust output_dir, mpi_path, and nest_path to your system
-
-4. In sim_params.sli adjust the following parameters:
+3. In sim_params.sli adjust the following parameters:
 
    - 'run_mode': test or production
-   - the number of compute nodes 'n_compute_nodes'
-   - the number of processes per compute node 'n_mpi_procs_per_node'
-   - the number of threads per mpi process 'n_threads_per_mpi_proc'
-   - queuing system parameters 'walltime' and 'memory'
-   - simulation time 't_sim'
+   - 'n_compute_nodes': the number of compute nodes
+   - 'n_mpi_procs_per_node': the number of processes per compute node
+   - 'n_threads_per_mpi_proc': the number of threads per mpi process
+   - 'walltime_limit': a run rime time limit for the queuing system
+   - 'memory_limit' a memory limit for the queuing system
+   - 't_sim': the simulation time  
+   - 'nest_path': the base directory of the NEST installation
+   - 'output_dir': a directory for the result data
 
    and choose recordables: cortical spikes, thalamic spikes, voltages
 
-5. In network_params.sli:
+4. In network_params.sli:
 
    - Choose the network 'area', which scales the numbers of neurons
    - When down-scaling: Choose whether full-scale in-degrees should be used.
@@ -83,10 +79,10 @@ Instructions:
      'dc_amplitude'
    - Set any thalamic inputs parameters
 
-6. Run the simulation by typing ./run_microcircuit.sh in your terminal
+5. Run the simulation by typing ./run_microcircuit.sh in your terminal
    (microcircuit.sli and the parameter files need to be in the same folder)
 
-7. Output files and basic analysis:
+6. Output files and basic analysis:
    
    - Spikes are written to .gdf files containing GIDs of the recorded neurons
      and corresponding spike times in ms. The GIDs are unordered.

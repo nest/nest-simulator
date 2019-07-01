@@ -1,0 +1,57 @@
+/*
+ *  test_localonly.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+Name: testsuite::test_localonly - Test that LocalOnly returns GIDCollection with
+only local elements.
+
+Synopsis: nest_indirect test_localonly.sli -> -
+
+Description:
+Test that LocalOnly returns a GIDCollection with only GIDs of nodes in the
+current MPI process.
+*/
+
+(unittest) run
+/unittest using
+
+[1 2 4 8] % Including check where NumProcesses > size of GIDCollection.
+{
+  ResetKernel
+
+  /iaf_psc_alpha 4 Create LocalOnly cva
+  % Check if all returned GIDs are local nodes.
+  dup true exch {GetStatus /local get and} Fold 
+  2 arraystore
+}
+{
+  % Check that results are rank invariant.
+  /results Set
+  /ref results First First First def
+  true results Rest
+  {
+    dup true exch {1 get and} Fold
+    exch [] exch {First join} Fold Sort ref eq and
+    and
+  } Fold
+}
+distributed_collect_assert_or_die

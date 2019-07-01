@@ -299,7 +299,7 @@ by the following command:
 
 ::
 
-   0 << /dict_miss_is_error false >> SetStatus
+   << /dict_miss_is_error false >> SetKernelStatus
 
 Then, NEST is very tolerant with respect to the property that you are
 trying to change: If it does not know the property, or if the property

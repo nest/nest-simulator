@@ -88,20 +88,6 @@ public:
   void register_growth_curve( const std::string& name );
 
   /**
-   * Disconnect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   * Identifies if the network is Structural Plasticity enabled or not and then
-   * performs a single disconnect between the two nodes.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   */
-  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
-
-  /**
    * Disconnect two collections of nodes.  The connection is
    * established on the thread/process that owns the target node.
    *
@@ -110,7 +96,7 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
+  void disconnect( GIDCollectionPTR, GIDCollectionPTR, DictionaryDatum&, DictionaryDatum& );
 
   /**
    * Disconnect two nodes.
@@ -140,7 +126,7 @@ public:
 
   bool is_structural_plasticity_enabled() const;
 
-  long get_structural_plasticity_update_interval() const;
+  double get_structural_plasticity_update_interval() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -196,7 +182,7 @@ private:
    * Time interval for structural plasticity update (creation/deletion of
    * synapses).
    */
-  long structural_plasticity_update_interval_;
+  double structural_plasticity_update_interval_;
 
   /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
@@ -239,7 +225,7 @@ SPManager::is_structural_plasticity_enabled() const
   return structural_plasticity_enabled_;
 }
 
-inline long
+inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;

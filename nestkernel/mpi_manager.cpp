@@ -35,7 +35,6 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
-#include "nodelist.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -703,42 +702,6 @@ nest::MPIManager::synchronize()
   MPI_Barrier( comm );
 }
 
-void
-nest::MPIManager::test_link( int sender, int receiver )
-{
-  assert( sender < get_num_processes() and receiver < get_num_processes() );
-
-  if ( get_num_processes() > 1 )
-  {
-    long dummy = 1;
-    MPI_Status status;
-
-    if ( get_rank() == sender )
-    {
-      MPI_Ssend( &dummy, 1, MPI_LONG, receiver, 0, comm );
-    }
-    else if ( get_rank() == receiver )
-    {
-      MPI_Recv( &dummy, 1, MPI_LONG, sender, 0, comm, &status );
-    }
-  }
-}
-
-void
-nest::MPIManager::test_links()
-{
-  for ( int i = 0; i < get_num_processes(); ++i )
-  {
-    for ( int j = 0; j < get_num_processes(); ++j )
-    {
-      if ( i != j )
-      {
-        test_link( i, j );
-      }
-    }
-  }
-}
-
 // grng_synchrony: called at the beginning of each simulate
 bool
 nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
@@ -954,67 +917,6 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   // finish time measurement here
   foo.stop();
   return foo.elapsed() / samples;
-}
-
-
-void
-nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
-{
-  // Confirm that we're having a MPI process
-  if ( get_num_processes() > 1 )
-  {
-    // Move local dictionary values to temporary storage vectors.
-    std::vector< long > targets = getValue< std::vector< long > >( dict, names::targets );
-
-    std::vector< double > weights = getValue< std::vector< double > >( dict, names::weights );
-
-    std::vector< double > delays = getValue< std::vector< double > >( dict, names::delays );
-
-    std::vector< long > receptors = getValue< std::vector< long > >( dict, names::receptors );
-
-    // Calculate size of communication buffers (number of connections).
-    std::vector< int > num_connections( get_num_processes() );
-    num_connections[ get_rank() ] = targets.size();
-    communicate( num_connections );
-
-    // Set up displacements vector.
-    std::vector< int > displacements( get_num_processes(), 0 );
-
-    for ( size_t i = 1; i < num_connections.size(); ++i )
-    {
-      displacements.at( i ) = displacements.at( i - 1 ) + num_connections.at( i - 1 );
-    }
-
-    // Calculate sum of global connections.
-    int num_connections_sum = std::accumulate( num_connections.begin(), num_connections.end(), 0 );
-
-    if ( num_connections_sum != 0 )
-    {
-      // Create global buffers.
-      std::vector< long > targets_result( num_connections_sum, 0 );
-
-      std::vector< long > receptors_result( num_connections_sum, 0 );
-
-      std::vector< double > weights_result( num_connections_sum, 0 );
-
-      std::vector< double > delays_result( num_connections_sum, 0 );
-
-      // Start communication.
-      communicate_Allgatherv< long >( targets, targets_result, displacements, num_connections );
-
-      communicate_Allgatherv< long >( receptors, receptors_result, displacements, num_connections );
-
-      communicate_Allgatherv< double >( weights, weights_result, displacements, num_connections );
-
-      communicate_Allgatherv< double >( delays, delays_result, displacements, num_connections );
-
-      // Save global values in input dictionary.
-      ( *dict )[ names::targets ] = targets_result;
-      ( *dict )[ names::receptors ] = receptors_result;
-      ( *dict )[ names::weights ] = weights_result;
-      ( *dict )[ names::delays ] = delays_result;
-    }
-  }
 }
 
 #else /* #ifdef HAVE_MPI */

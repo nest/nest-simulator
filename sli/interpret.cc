@@ -75,6 +75,7 @@ const int SLIInterpreter::M_ALL = 0;
 const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
+const int SLIInterpreter::M_PROGRESS = 15;
 const int SLIInterpreter::M_DEPRECATED = 18;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
@@ -85,6 +86,7 @@ const char* const SLIInterpreter::M_ALL_NAME = "";
 const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
+const char* const SLIInterpreter::M_PROGRESS_NAME = "Progress";
 const char* const SLIInterpreter::M_DEPRECATED_NAME = "Deprecated";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
@@ -111,7 +113,6 @@ SLIType SLIInterpreter::XIstreamtype;
 SLIType SLIInterpreter::Ostreamtype;
 SLIType SLIInterpreter::IntVectortype;
 SLIType SLIInterpreter::DoubleVectortype;
-SLIType SLIInterpreter::Iteratortype;
 
 // SLIType SLIInterpreter::IOstreamtype;
 
@@ -135,7 +136,6 @@ const IloopFunction SLIInterpreter::iloopfunction;
 const IrepeatFunction SLIInterpreter::irepeatfunction;
 const IforFunction SLIInterpreter::iforfunction;
 const IforallarrayFunction SLIInterpreter::iforallarrayfunction;
-const IforalliterFunction SLIInterpreter::iforalliterfunction;
 const IforallindexedarrayFunction SLIInterpreter::iforallindexedarrayfunction;
 const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
@@ -143,8 +143,6 @@ const IforallstringFunction SLIInterpreter::iforallstringfunction;
 void
 SLIInterpreter::inittypes( void )
 {
-  Iteratortype.settypename( "iteratortype" );
-  Iteratortype.setdefaultaction( datatypefunction );
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
   Doubletype.settypename( "doubletype" );
@@ -218,7 +216,6 @@ SLIInterpreter::initbuiltins( void )
   createcommand( irepeat_name, &SLIInterpreter::irepeatfunction );
   createcommand( ifor_name, &SLIInterpreter::iforfunction );
   createcommand( iforallarray_name, &SLIInterpreter::iforallarrayfunction );
-  createcommand( iforalliter_name, &SLIInterpreter::iforalliterfunction );
   createcommand( iforallindexedstring_name, &SLIInterpreter::iforallindexedstringfunction );
   createcommand( iforallindexedarray_name, &SLIInterpreter::iforallindexedarrayfunction );
   createcommand( iforallstring_name, &SLIInterpreter::iforallstringfunction );
@@ -390,7 +387,6 @@ SLIInterpreter::SLIInterpreter( void )
   , irepeat_name( "::repeat" )
   , ifor_name( "::for" )
   , iforallarray_name( "::forall_a" )
-  , iforalliter_name( "::forall_iter" )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
@@ -828,6 +824,10 @@ SLIInterpreter::message( int level, const char from[], const char text[], const 
       else if ( level >= M_DEPRECATED )
       {
         message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
+      }
+      else if ( level >= M_PROGRESS )
+      {
+        message( std::cout, M_PROGRESS_NAME, from, text, errorname );
       }
       else if ( level >= M_INFO )
       {

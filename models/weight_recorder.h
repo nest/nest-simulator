@@ -31,9 +31,9 @@
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "kernel_manager.h"
 #include "nest_types.h"
 #include "recording_device.h"
-#include "kernel_manager.h"
 
 namespace nest
 {
@@ -85,6 +85,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -112,13 +118,13 @@ private:
 
   struct Parameters_
   {
-    std::vector< long > senders_;
-    std::vector< long > targets_;
+    GIDCollectionDatum senders_;
+    GIDCollectionDatum targets_;
 
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   Parameters_ P_;

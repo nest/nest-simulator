@@ -129,8 +129,8 @@ nest.SetStatus(volts, {"label": "voltmeter", "interval": 1.})
 # direction for the `voltmeter` reflects the signal flow in the simulation
 # kernel, because it observes the neuron instead of receiving events from it.
 
-nest.Connect(dc_gen, [neurons[0]])
-nest.Connect(volts, [neurons[1]])
+nest.Connect(dc_gen, neurons[0])
+nest.Connect(volts, neurons[1])
 
 ###############################################################################
 # Seventh, the first neuron (``neurons[0]``) is connected to the second
@@ -140,7 +140,7 @@ nest.Connect(volts, [neurons[1]])
 # connection routine via the ``syn_spec`` parameter.
 
 nest.CopyModel("tsodyks_synapse", "syn", syn_param)
-nest.Connect([neurons[0]], [neurons[1]], syn_spec="syn")
+nest.Connect(neurons[0], neurons[1], syn_spec="syn")
 
 ###############################################################################
 # Finally, we simulate the configuration using the command `Simulate`,

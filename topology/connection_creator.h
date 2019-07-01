@@ -32,10 +32,8 @@
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
-#include "topology_parameter.h"
 #include "vose.h"
 
 namespace nest
@@ -106,7 +104,7 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target );
+  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
 private:
   /**
@@ -144,16 +142,16 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target );
+  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target );
+  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   void connect_( index s, Node* target, thread target_thread, double w, double d, index syn );
 
@@ -163,36 +161,43 @@ private:
    * TODO: remove when all four connection variants are refactored
    */
   template < int D >
-  void get_parameters_( const Position< D >& pos, librandom::RngPtr rng, double& weight, double& delay );
+  void get_parameters_( librandom::RngPtr rng,
+    const Position< D >& source_pos,
+    const Position< D >& target_pos,
+    const Position< D >& displacement,
+    double& weight,
+    double& delay );
 
   ConnectionType type_;
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  Selector source_filter_;
-  Selector target_filter_;
   index number_of_connections_;
-  lockPTR< AbstractMask > mask_;
-  lockPTR< TopologyParameter > kernel_;
+  std::shared_ptr< AbstractMask > mask_;
+  std::shared_ptr< Parameter > kernel_;
   index synapse_model_;
-  lockPTR< TopologyParameter > weight_;
-  lockPTR< TopologyParameter > delay_;
+  std::shared_ptr< Parameter > weight_;
+  std::shared_ptr< Parameter > delay_;
 
   //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;
 };
 
+// TODO481 : do we need this function at all? Why not call kernel's connect
+// directly?
 inline void
 ConnectionCreator::connect_( index s, Node* target, thread target_thread, double w, double d, index syn )
 {
+  // TODO481 Why do we need to check for locality her?
   // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
+  if ( kernel().node_manager.is_local_node( target ) )
   {
+    // TODO481 Why do we need to check for thread locality here?
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
     {
-      // TODO implement in terms of nest-api
+      // TODO481 implement in terms of nest-api
       kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_, d, w );
     }
   }

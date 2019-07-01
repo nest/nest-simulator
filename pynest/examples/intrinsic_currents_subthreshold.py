@@ -177,7 +177,8 @@ Vax.set_xlabel('Time [ms]')
 # the first time point after t=0. All subsequent points are then
 # automatically shifted by the delay.
 
-delay = nest.GetStatus(nest.GetConnections(dc, nrn))[0]['delay']
+conns = nest.GetConnections(dc, nrn)
+delay = conns.get('delay')[0]
 dt = nest.GetKernelStatus('resolution')
 
 t_dc, I_dc = [0], [0]
@@ -203,6 +204,7 @@ def texify_name(name):
 ###############################################################################
 # Next, we add a right vertical axis and plot the currents with respect to
 # that axis.
+
 
 Iax = Vax.twinx()
 Iax.plot(t_dc, I_dc, 'k-', lw=2, label=texify_name('I_DC'))

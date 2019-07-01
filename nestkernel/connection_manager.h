@@ -53,7 +53,6 @@ namespace nest
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
-class Subnet;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
@@ -85,15 +84,15 @@ public:
   void register_conn_builder( const std::string& name );
 
   ConnBuilder* get_conn_builder( const std::string& name,
-    const GIDCollection& sources,
-    const GIDCollection& targets,
+    GIDCollectionPTR sources,
+    GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
    */
-  void connect( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
+  void connect( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -138,32 +137,14 @@ public:
 
   void disconnect( const thread tid, const synindex syn_id, const index sgid, const index tgid );
 
-  void subnet_connect( Subnet&, Subnet&, int, index syn );
 
   /**
-   * Connect, using a dictionary with arrays.
-   * The connection rule is based on the details of the dictionary entries
-   * source and target.
-   * If source and target are both either a GID or a list of GIDs with equal
-   * size, then source and target are connected one-to-one.
-   * If source is a gid and target is a list of GIDs then the sources is
-   * connected to all targets.
-   * If source is a list of GIDs and target is a GID, then all sources are
-   * connected to the target.
-   * At this stage, the task of connect is to separate the dictionary into one
-   * for each thread and then to forward the connect call to the connectors who
-   * can then deal with the details of the connection.
+   * Check whether a connection between the given source and target
+   * nodes has to be established on the given thread with id tid.
    *
-   * @note This method is used only by DataConnect.
+   * \returns true if the connection should be made, false otherwise.
    */
-  bool data_connect_connectome( const ArrayDatum& connectome );
-
-  /**
-   * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   * AKA DataConnect
-   */
-  void data_connect_single( const index source_id, DictionaryDatum d, const index syn );
+  bool connection_required( Node*& source, Node*& target, thread tid );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_gid,
@@ -197,8 +178,8 @@ public:
   ArrayDatum get_connections( const DictionaryDatum& params ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
-    TokenArray const* source,
-    TokenArray const* target,
+    GIDCollectionPTR source,
+    GIDCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
 
@@ -400,7 +381,7 @@ private:
    * GIDs of devices.
    */
   void split_to_neuron_device_vectors_( const thread tid,
-    TokenArray const* gid_token_array,
+    GIDCollectionPTR gidcoll,
     std::vector< index >& neuron_gids,
     std::vector< index >& device_gids ) const;
 

@@ -81,9 +81,9 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() );
-    target_from_devices_[ tid ].resize( kernel().node_manager.get_num_local_devices() );
-    sending_devices_gids_[ tid ].resize( kernel().node_manager.get_num_local_devices() );
+    target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
+    target_from_devices_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
+    sending_devices_gids_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
   } // end omp parallel
 }
 
@@ -160,10 +160,10 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
         it != sending_devices_gids_[ tid ].end();
         ++it )
   {
-    const Node* source = kernel().node_manager.get_node( *it, tid );
-    const index source_gid = source->get_gid();
+    const index source_gid = *it;
     if ( source_gid > 0 and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
     {
+      const Node* source = kernel().node_manager.get_node_or_proxy( source_gid, tid );
       const index ldid = source->get_local_device_id();
 
       if ( target_from_devices_[ tid ][ ldid ].size() > 0 )

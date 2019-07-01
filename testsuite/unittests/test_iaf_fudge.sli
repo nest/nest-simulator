@@ -73,10 +73,10 @@ cout (V_max_unit=) <- V_max <- pop
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 /iaf_psc_alpha Create /neuron Set
 neuron << /tau_m tau_m /tau_syn_ex tau_syn /tau_syn_in tau_syn /C_m C_m >> SetStatus

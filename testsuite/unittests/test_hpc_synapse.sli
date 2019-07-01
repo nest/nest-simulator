@@ -94,7 +94,7 @@ M_ERROR setverbosity
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
 
   % we connect via a parrot neuron, so we can test plastic synapses, too 
   /sg /spike_generator << /spike_times [ 5.0 ] >> Create def
@@ -126,18 +126,17 @@ hpcwithpartner
 /test_two_step_build  % expects syntype
 {
   /syn Set
-  
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
-  [5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -159,14 +158,14 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [4 5 6] { /V_m get } Map
@@ -187,14 +186,14 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [3 4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -212,13 +211,13 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4 5 6] { /tgid Set [pn] [tgid] /one_to_one << /model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
   3 << /frozen true >> SetStatus
 
   10. Simulate

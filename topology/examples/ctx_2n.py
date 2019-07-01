@@ -36,45 +36,42 @@ documentation.
 import nest
 import nest.topology as topo
 import pylab
-import random
 
-pylab.ion()
 
 nest.ResetKernel()
 
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
-ctx = topo.CreateLayer({'columns': 4, 'rows': 3,
-                        'extent': [2.0, 1.5],
-                        'elements': ['pyr', 'in']})
 
-nest.PrintNetwork()
-
-nest.PrintNetwork(2)
-
-nest.PrintNetwork(2, ctx)
-
-# ctx_leaves is a work-around until NEST 3.0 is released
-ctx_leaves = nest.hl_api.GetLeaves(ctx)[0]
+ctx_pyr = topo.CreateLayer({'columns': 4, 'rows': 3,
+                            'extent': [2.0, 1.5],
+                            'elements': 'pyr'})
+ctx_in = topo.CreateLayer({'columns': 4, 'rows': 3,
+                           'extent': [2.0, 1.5],
+                           'elements': 'in'})
+nest.PrintNodes()
 
 # extract position information
-ppyr = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
-                if nest.GetStatus([n], 'model')[0] == 'pyr'])))
-pin = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
-                if nest.GetStatus([n], 'model')[0] == 'in'])))
+ppyr = topo.GetPosition(ctx_pyr)
+pin = topo.GetPosition(ctx_in)
+
+ppyr_x = pylab.array([x for x, y in ppyr])
+ppyr_y = pylab.array([y for x, y in ppyr])
+
+pin_x = pylab.array([x for x, y in pin])
+pin_y = pylab.array([y for x, y in pin])
+
 # plot
 pylab.clf()
-pylab.plot(ppyr[0] - 0.05, ppyr[1] - 0.05, 'bo', markersize=20,
+pylab.plot(pin_x - 0.05, ppyr_y - 0.05, 'bo', markersize=20,
            label='Pyramidal', zorder=2)
-pylab.plot(pin[0] + 0.05, pin[1] + 0.05, 'ro', markersize=20,
+pylab.plot(pin_x + 0.05, pin_y + 0.05, 'ro', markersize=20,
            label='Interneuron', zorder=2)
-pylab.plot(ppyr[0], ppyr[1], 'o', markerfacecolor=(0.7, 0.7, 0.7),
+pylab.plot(pin_x, ppyr_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
            markersize=60, markeredgewidth=0, zorder=1, label='_nolegend_')
 
 # beautify
-pylab.axis([-1.0, 1.0, -0.75, 0.75])
+pylab.axis([-1.0, 1.0, -1.0, 1.0])
 pylab.axes().set_aspect('equal', 'box')
 pylab.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
 pylab.axes().set_yticks((-0.5, 0, 0.5))
@@ -82,5 +79,7 @@ pylab.grid(True)
 pylab.xlabel('4 Columns, Extent: 1.5')
 pylab.ylabel('3 Rows, Extent: 1.0')
 pylab.legend(numpoints=1)
+
+pylab.show()
 
 # pylab.savefig('ctx_2n.png')

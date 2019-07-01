@@ -43,7 +43,7 @@ M_ERROR setverbosity
 {  
   /tref Set
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   << /I_e 1000. /t_ref tref >> Create /n Set
   /spike_detector Create /d Set
   n d Connect

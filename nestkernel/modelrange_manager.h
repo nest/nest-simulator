@@ -88,13 +88,16 @@ public:
    */
   const modelrange& get_contiguous_gid_range( index gid ) const;
 
+  std::vector< modelrange >::const_iterator begin() const;
+
+  std::vector< modelrange >::const_iterator end() const;
 
 private:
   std::vector< modelrange > modelranges_;
   index first_gid_;
   index last_gid_;
 };
-}
+
 
 inline bool
 nest::ModelRangeManager::is_in_range( index gid ) const
@@ -102,5 +105,18 @@ nest::ModelRangeManager::is_in_range( index gid ) const
   return ( ( gid <= last_gid_ ) and ( gid >= first_gid_ ) );
 }
 
+inline std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::begin() const
+{
+  return modelranges_.begin();
+}
+
+inline std::vector< modelrange >::const_iterator
+nest::ModelRangeManager::end() const
+{
+  return modelranges_.end();
+}
+
+} // namespace nest end
 
 #endif

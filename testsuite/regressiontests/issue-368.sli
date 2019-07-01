@@ -59,7 +59,7 @@ M_ERROR setverbosity
   model ==
 
   ResetKernel
-  0 << /tics_per_ms 1024. /resolution 0.25 >> SetStatus
+  << /tics_per_ms 1024. /resolution 0.25 >> SetKernelStatus
 
   % simpler to do it always than to protect by if-else
   /iaf_psc_exp_ps << /tau_syn_ex 2.0 /tau_syn_in 2.0 >> SetDefaults
@@ -76,18 +76,18 @@ M_ERROR setverbosity
   /n4 model Create def
 
   % single connection, double weight  
-  [ sg ] [ n1 ] /one_to_one << /weight w1 2 mul >> Connect
+  sg n1 /one_to_one << /weight w1 2 mul >> Connect
 
   % two connections, single weight
-  [ sg ] [ n2 ] /one_to_one << /weight w1       >> Connect
-  [ sg ] [ n2 ] /one_to_one << /weight w1       >> Connect
+  sg n2 /one_to_one << /weight w1       >> Connect
+  sg n2 /one_to_one << /weight w1       >> Connect
 
   % single connection, combined weight
-  [ sg ] [ n3 ] /one_to_one << /weight w1 w2 add >> Connect
+  sg n3 /one_to_one << /weight w1 w2 add >> Connect
   
   % two connections, different weigths
-  [ sg ] [ n4 ] /one_to_one << /weight w1        >> Connect
-  [ sg ] [ n4 ] /one_to_one << /weight w2        >> Connect
+  sg n4 /one_to_one << /weight w1        >> Connect
+  sg n4 /one_to_one << /weight w2        >> Connect
 
   4 Simulate
   n1 /V_m get n2 /V_m get sub 
@@ -120,7 +120,7 @@ M_ERROR setverbosity
   model ==
 
   ResetKernel
-  0 << /tics_per_ms 1024. /resolution 0.25 >> SetStatus
+  << /tics_per_ms 1024. /resolution 0.25 >> SetKernelStatus
 
   model << /tau_syn_ex 5.0 /tau_syn_in 1.0 >> SetDefaults
 
@@ -134,14 +134,14 @@ M_ERROR setverbosity
   /n3 model Create def
 
   % excitatory connection only  
-  [ sg ] [ n1 ] /one_to_one << /weight w1     >> Connect
+  sg n1 /one_to_one << /weight w1     >> Connect
 
   % inhibitory connection only
-  [ sg ] [ n2 ] /one_to_one << /weight w1 neg >> Connect
+  sg n2 /one_to_one << /weight w1 neg >> Connect
   
   % excitatory and inhbitory connection
-  [ sg ] [ n3 ] /one_to_one << /weight w1     >> Connect
-  [ sg ] [ n3 ] /one_to_one << /weight w1 neg >> Connect
+  sg n3 /one_to_one << /weight w1     >> Connect
+  sg n3 /one_to_one << /weight w1 neg >> Connect
 
   % assume that neurons are initialized at equilibrium
   /V0 n1 /V_m get def  

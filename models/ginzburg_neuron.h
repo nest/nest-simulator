@@ -152,8 +152,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   bool operator()( librandom::RngPtr rng, double h );
 };

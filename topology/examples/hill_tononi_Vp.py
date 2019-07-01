@@ -379,15 +379,12 @@ layerProps = {'rows': Params['N'],
 layerProps.update({'elements': 'RetinaNode'})
 retina = topo.CreateLayer(layerProps)
 
-# retina_leaves is a work-around until NEST 3.0 is released
-retina_leaves = nest.hl_api.GetLeaves(retina)[0]
-
 # ! Now set phases of retinal oscillators; we use a list comprehension instead
 # ! of a loop.
 [nest.SetStatus([n], {"phase": phaseInit(topo.GetPosition([n])[0],
                                          Params["lambda_dg"],
                                          Params["phi_dg"])})
- for n in retina_leaves]
+ for n in retina]  # TODO481 : Change this when GIDCollection gets a Set method
 
 # ! Thalamus
 # ! --------
@@ -403,6 +400,7 @@ retina_leaves = nest.hl_api.GetLeaves(retina)[0]
 
 # ! Now we can create the layer, with one relay cell and one
 # ! interneuron per location:
+# TODO481 : Set up one layer for each element
 layerProps.update({'elements': ['TpRelay', 'TpInter']})
 Tp = topo.CreateLayer(layerProps)
 
@@ -433,6 +431,7 @@ Rp = topo.CreateLayer(layerProps)
  for layer in ('L23', 'L4', 'L56')]
 
 # ! Now we can create the populations, suffixes h and v indicate tuning
+# TODO481 : Set up one layer for each element
 layerProps.update({'elements': ['L23pyr', 2, 'L23in', 1,
                                 'L4pyr', 2, 'L4in', 1,
                                 'L56pyr', 2, 'L56in', 1]})
@@ -449,8 +448,8 @@ populations = (retina, Tp, Rp, Vp_h, Vp_v)
 # ! Inspection
 # ! ----------
 
-# ! We can now look at the network using `PrintNetwork`:
-nest.PrintNetwork()
+# ! We can now look at the network using `PrintNodes`:
+nest.PrintNodes()
 
 # ! We can also try to plot a single layer in a network. For
 # ! simplicity, we use Rp, which has only a single neuron per position.
@@ -831,7 +830,8 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
     population_leaves = nest.hl_api.GetLeaves(population)[0]
     tgts = [nd for nd in population_leaves
             if nest.GetStatus([nd], 'model')[0] == model]
-    nest.Connect(recorders[name][0], tgts)  # one recorder to all targets
+    # one recorder to all targetss
+    nest.Connect(recorders[name][0], nest.GIDCollection(tgts))
 
 # ! Example simulation
 # ! ====================
@@ -843,7 +843,7 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
 # ! plots.
 
 # ! show time during simulation
-nest.SetStatus([0], {'print_time': True})
+nest.SetKernelStatus({'print_time': True})
 
 # ! lower and upper limits for color scale, for each of the four
 # ! populations recorded.

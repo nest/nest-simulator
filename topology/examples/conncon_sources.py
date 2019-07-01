@@ -34,8 +34,6 @@ import nest
 import nest.topology as topo
 import pylab
 
-pylab.ion()
-
 
 nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
@@ -56,20 +54,24 @@ topo.ConnectLayers(a, b, {'connection_type': 'convergent',
 pylab.clf()
 
 # plot sources of neurons in different grid locations
-for tgt_pos in [[15, 15], [0, 0]]:
+for tgt_index in [30 * 15 + 15, 0]:
     # obtain node id for center
-    tgt = topo.GetElement(b, tgt_pos)
+    tgt = a[tgt_index:tgt_index + 1]
 
     # obtain list of outgoing connections for ctr
-    # int() required to cast numpy.int64
-    spos = tuple(zip(*[topo.GetPosition([int(conn[0])])[0] for conn in
-                       nest.GetConnections(target=tgt)]))
+    spos = topo.GetTargetPositions(tgt, b)[0]
+
+    spos_x = pylab.array([x for x, y in spos])
+    spos_y = pylab.array([y for x, y in spos])
+
+    print(spos_x)
+    print(spos_y)
 
     # scatter-plot
-    pylab.scatter(spos[0], spos[1], 20, zorder=10)
+    pylab.scatter(spos_x, spos_y, 20, zorder=10)
 
     # mark sender position with transparent red circle
-    ctrpos = pylab.array(topo.GetPosition(tgt)[0])
+    ctrpos = pylab.array(topo.GetPosition(tgt))
     pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.1, zorder=99,
                                        fc='r', alpha=0.4, ec='none'))
 
@@ -89,3 +91,4 @@ pylab.grid(True)
 pylab.axis([-2.0, 2.0, -2.0, 2.0])
 pylab.axes().set_aspect('equal', 'box')
 pylab.title('Connection sources')
+pylab.show()

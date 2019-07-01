@@ -137,7 +137,7 @@ public:
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );
@@ -187,10 +187,11 @@ private:
     double E_ahp;    //!< AHP potential
     bool ahp_bug;    //!< If true, discard AHP conductance value from previous
                      //!< spikes
-    Parameters_();   //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_(); //!< Set default parameter values
+
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // State variables class --------------------------------------------
@@ -208,7 +209,6 @@ private:
 public:
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -238,7 +238,7 @@ public:
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, e.g., check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
 private:
@@ -414,10 +414,10 @@ iaf_chxk_2008::get_status( DictionaryDatum& d ) const
 inline void
 iaf_chxk_2008::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

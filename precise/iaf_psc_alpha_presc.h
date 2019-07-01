@@ -148,7 +148,7 @@ public:
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -233,7 +233,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double tau_m_;
 
@@ -276,7 +275,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -305,7 +304,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -432,10 +431,10 @@ iaf_psc_alpha_presc::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_alpha_presc::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

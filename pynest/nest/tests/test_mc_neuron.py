@@ -122,10 +122,10 @@ class TestMCNeuron(unittest.TestCase):
                  'distal_inh']
         nest.Connect(self.mm, self.n)
         for i, l in enumerate(label[:3]):
-            nest.Connect([self.cgs[i]], self.n,
+            nest.Connect(self.cgs[i], self.n,
                          syn_spec={'receptor_type': syns[l]})
         for i, l in enumerate(label[3:]):
-            nest.Connect([self.sgs[i]], self.n,
+            nest.Connect(self.sgs[i], self.n,
                          syn_spec={'receptor_type': syns[l]})
 
     def testNeuron(self):

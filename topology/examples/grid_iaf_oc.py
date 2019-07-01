@@ -29,15 +29,12 @@ Hans Ekkehard Plesser, UMB
 '''
 
 import pylab
-import time
 import nest
 import nest.topology as topo
 
-pylab.ion()
-
 for ctr in [(0.0, 0.0), (-2.0, 2.0), (0.5, 1.0)]:
+    pylab.figure()
     nest.ResetKernel()
-    pylab.clf()
     l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
                            'extent': [2.0, 1.5],
                            'center': ctr,
@@ -54,4 +51,5 @@ for ctr in [(0.0, 0.0), (-2.0, 2.0), (0.5, 1.0)]:
     pylab.xlabel('4 Columns, Extent: 1.5, Center: %.1f' % ctr[0])
     pylab.ylabel('2 Rows, Extent: 1.0, Center: %.1f' % ctr[1])
 
-    pylab.draw()
+    pylab.show()
+    # pylab.savefig('grid_iaf_oc_{}_{}.png'.format(ctr[0], ctr[1]))

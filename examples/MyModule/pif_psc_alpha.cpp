@@ -38,7 +38,7 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "lockptrdatum.h"
+#include "sharedptrdatum.h"
 
 using namespace nest;
 
@@ -241,8 +241,9 @@ mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, c
     }
     else
     {
+      // count down refractory time
       --S_.refr_count;
-    } // count down refractory time
+    }
 
     // update synaptic currents
     S_.I_syn = V_.P21 * S_.dI_syn + V_.P22 * S_.I_syn;

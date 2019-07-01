@@ -29,6 +29,7 @@ import webbrowser
 
 from ..ll_api import *
 from .hl_api_helper import *
+import nest
 
 __all__ = [
     'authors',
@@ -213,14 +214,14 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
-        handles as returned by `GetConnections`.
+    nodes : GIDCollection or tuple
+        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
+        connection handles as returned by `GetConnections()`.
     params : str or dict or list
         Dictionary of parameters or ``list`` of dictionaries of parameters of
         same length as `nodes`. If `val` is given, this has to be the name of
-        a model property as a ``str``.
-    val : str, optional
+        a model property as a str.
+    val : int, list, optional
         If given, params has to be the name of a model property.
 
     Raises
@@ -236,16 +237,40 @@ def SetStatus(nodes, params, val=None):
     KEYWORDS:
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
+        try:
+            nodes = nest.GIDCollection(nodes)
+        except nest.kernel.NESTError:
+            raise TypeError("The first input (nodes) must be GIDCollection, "
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
     # which is an artifact of the API operating on lists, rather than
     # relying on language idioms, such as comprehensions
-    #
     if len(nodes) == 0:
         return
+
+    if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
+            nodes[0].get('local')):
+
+        contains_list = [is_iterable(vals) and not
+                         is_iterable(nest.GetStatus(nodes[0], key)[0])
+                         for key, vals in params.items()]
+
+        if any(contains_list):
+            temp_param = [{} for _ in range(len(nodes))]
+
+            for key, vals in params.items():
+                if not is_iterable(vals):
+                    for temp_dict in temp_param:
+                        temp_dict[key] = vals
+                else:
+                    for i, temp_dict in enumerate(temp_param):
+                        temp_dict[key] = vals[i]
+            params = temp_param
 
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):
@@ -253,20 +278,21 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    params = broadcast(params, len(nodes), (dict,), "params")
-    if len(nodes) != len(params):
+    if isinstance(params, (list, tuple)) and len(nodes) != len(params):
         raise TypeError(
-            "status dict must be a dict, or list of dicts of length 1 "
-            "or len(nodes)")
+            "status dict must be a dict, or a list of dicts of length "
+            "len(nodes)")
 
-    if is_sequence_of_connections(nodes):
-        pcd(nodes)
-    else:
+    if isinstance(nodes, nest.Connectome):
+        params = broadcast(params, len(nodes), (dict,), "params")
+
         sps(nodes)
+        sps(params)
 
-    sps(params)
-    sr('2 arraystore')
-    sr('Transpose { arrayload pop SetStatus } forall')
+        sr('2 arraystore')
+        sr('Transpose { arrayload pop SetStatus } forall')
+    else:
+        sli_func('SetStatus', nodes, params)
 
 
 @check_stack
@@ -279,12 +305,12 @@ def GetStatus(nodes, keys=None, output=''):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
-        handles as returned by `GetConnections`.
+    nodes : GIDCollection or tuple
+        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
+        connection handles as returned by `GetConnections()`.
     keys : str or list, optional
         ``string`` or a ``list`` of strings naming model properties.
-        `GetDefaults` then returns a single value or a ``list`` of values
+        `GetStatus` then returns a single value or a ``list`` of values
         belonging to the keys given.
     output : str, optional
         Whether the returned data should be in a selected format
@@ -315,29 +341,39 @@ def GetStatus(nodes, keys=None, output=''):
     KEYWORDS:
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or
+            isinstance(nodes, nest.Connectome)):
+        try:
+            nodes = nest.GIDCollection(nodes)
+        except nest.kernel.NESTError:
+            raise TypeError("The first input (nodes) must be GIDCollection, "
+                            "convertible to GIDCollection or a Connectome "
+                            "with connection handles ")
 
     if len(nodes) == 0:
         return nodes
 
     if keys is None:
-        cmd = '{ GetStatus } Map'
+        cmd = 'GetStatus'
     elif is_literal(keys):
-        cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
+        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
     else:
         raise TypeError("keys should be either a string or an iterable")
 
-    if is_sequence_of_connections(nodes):
-        pcd(nodes)
-    else:
-        sps(nodes)
+    sps(nodes)
 
     sr(cmd)
+
     result = spp()
+
+    if isinstance(result, dict):
+        # We have taken GetStatus on a layer object, or another GIDCollection
+        # with metadata, which returns a dictionary from C++, so we need to
+        # turn it into a tuple for consistency.
+        result = (result,)
 
     if output == 'json':
         result = to_json(result)

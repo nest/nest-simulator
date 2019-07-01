@@ -63,7 +63,7 @@ class PostTraceTester(object):
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr[0], "weight": 1.})
+                       {"weight_recorder": wr, "weight": 1.})
 
         # create spike_generators with these times
         pre_sg_ps = nest.Create("spike_generator",
@@ -93,7 +93,7 @@ class PostTraceTester(object):
         # not repeated postsynaptically.
         nest.Connect(
             pre_parrot_ps, post_parrot_ps,
-            syn_spec={'model': 'stdp_synapse_rec',
+            syn_spec={'synapse_model': 'stdp_synapse_rec',
                       'receptor_type': 1,
                       'delay': self.delay_})
 
@@ -105,14 +105,14 @@ class PostTraceTester(object):
         n_steps = int(np.ceil(self.sim_time_ / self.delay_))
         trace_nest = []
         trace_nest_t = []
-        t = nest.GetStatus([0], "time")[0]
+        t = nest.GetKernelStatus("time")
         trace_nest_t.append(t)
         post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
             nest.Simulate(self.delay_)
-            t = nest.GetStatus([0], "time")[0]
+            t = nest.GetKernelStatus("time")
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_)
                 < self.resolution_/2.)

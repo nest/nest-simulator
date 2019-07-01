@@ -82,8 +82,9 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   long vtgid;
   if ( updateValue< long >( d, names::vt, vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >(
-      kernel().node_manager.get_node( vtgid, kernel().vp_manager.get_thread_id() ) );
+    const thread tid = kernel().vp_manager.get_thread_id();
+    Node* vt = kernel().node_manager.get_node_or_proxy( vtgid, tid );
+    vt_ = dynamic_cast< volume_transmitter* >( vt );
     if ( vt_ == 0 )
     {
       throw BadProperty( "Dopamine source must be volume transmitter" );

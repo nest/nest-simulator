@@ -24,7 +24,7 @@ skip_if_without_music
 
 M_INFO setverbosity
 
-0 << /local_num_threads 2 /overwrite_files true >> SetStatus
+<< /local_num_threads 2 /overwrite_files true >> SetKernelStatus
 
 /spike_generator Create /sg Set
 sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus

@@ -92,9 +92,8 @@ class TestParams(unittest.TestCase):
         d0 = 0.275
         syn_params = {'delay': d0}
         self.setUpNetwork(self.conn_dict, syn_params)
-        connections = hf.nest.GetStatus(
-            hf.nest.GetConnections(self.pop1, self.pop2))
-        nest_delays = [connection['delay'] for connection in connections]
+        connections = hf.nest.GetConnections(self.pop1, self.pop2)
+        nest_delays = connections.get('delay')
         # all delays need to be equal
         self.assertTrue(hf.all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
@@ -106,30 +105,32 @@ class TestParams(unittest.TestCase):
         rtype = 2
         self.pop1 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)
-        syn_params = {'model': 'static_synapse', 'receptor_type': rtype}
+        syn_params = {'synapse_model': 'static_synapse',
+                      'receptor_type': rtype}
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        ports = [conn['receptor'] for conn in conns]
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        ports = conns.get('receptor')
         self.assertTrue(hf.all_equal(ports))
         self.assertTrue(ports[0] == rtype)
 
     def testSynapseSetting(self):
         hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
-        syn_params = {'model': 'test_syn'}
+        syn_params = {'synapse_model': 'test_syn'}
         self.setUpNetwork(self.conn_dict, syn_params)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        syns = [str(conn['synapse_model']) for conn in conns]
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        syns = conns.get('synapse_model')
         self.assertTrue(hf.all_equal(syns))
-        self.assertTrue(syns[0] == syn_params['model'])
+        self.assertTrue(syns[0] == syn_params['synapse_model'])
 
     # tested on each mpi process separatly
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
-        conns = hf.nest.GetStatus(hf.nest.GetConnections(self.pop1, self.pop2))
-        self.assertTrue(all(x['weight'] == self.w0 for x in conns))
-        self.assertTrue(all(x['delay'] == self.d0 for x in conns))
-        self.assertTrue(all(x['receptor'] == self.r0 for x in conns))
-        self.assertTrue(all(x['synapse_model'] == self.syn0 for x in conns))
+        conns = hf.nest.GetConnections(self.pop1, self.pop2)
+        self.assertTrue(all(x == self.w0 for x in conns.get('weight')))
+        self.assertTrue(all(x == self.d0 for x in conns.get('delay')))
+        self.assertTrue(all(x == self.r0 for x in conns.get('receptor')))
+        self.assertTrue(all(x == self.syn0 for
+                            x in conns.get('synapse_model')))
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
@@ -156,7 +157,7 @@ class TestParams(unittest.TestCase):
     def testHtSynapse(self):
         params = ['P', 'delta_P']
         values = [0.987, 0.362]
-        syn_params = {'model': 'ht_synapse'}
+        syn_params = {'synapse_model': 'ht_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testQuantalStpSynapse(self):
@@ -165,7 +166,7 @@ class TestParams(unittest.TestCase):
         # Connect will throw an error is a or n are set in syn_spec
         params = ['U', 'tau_fac', 'tau_rec', 'u']
         values = [0.679, 8.45, 746.2, 0.498]
-        syn_params = {'model': 'quantal_stp_synapse'}
+        syn_params = {'synapse_model': 'quantal_stp_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testStdpFacetshwSynapseHom(self):
@@ -173,37 +174,37 @@ class TestParams(unittest.TestCase):
                   'next_readout_time'
                   ]
         values = [0.162, 0.263, 20.46, 19.83, 0.1]
-        syn_params = {'model': 'stdp_facetshw_synapse_hom'}
+        syn_params = {'synapse_model': 'stdp_facetshw_synapse_hom'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testStdpPlSynapseHom(self):
         params = ['Kplus']
         values = [0.173]
-        syn_params = {'model': 'stdp_pl_synapse_hom'}
+        syn_params = {'synapse_model': 'stdp_pl_synapse_hom'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testStdpSynapseHom(self):
         params = ['Kplus']
         values = [0.382]
-        syn_params = {'model': 'stdp_synapse_hom'}
+        syn_params = {'synapse_model': 'stdp_synapse_hom'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
         values = [98.34, 0.945, 0.02, 0.945, 1.26, 19.73]
-        syn_params = {'model': 'stdp_synapse'}
+        syn_params = {'synapse_model': 'stdp_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testTsodyks2Synapse(self):
         params = ['U', 'tau_fac', 'tau_rec', 'u', 'x']
         values = [0.362, 0.152, 789.2, 0.683, 0.945]
-        syn_params = {'model': 'tsodyks2_synapse'}
+        syn_params = {'synapse_model': 'tsodyks2_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testTsodyksSynapse(self):
         params = ['U', 'tau_fac', 'tau_psc', 'tau_rec', 'x', 'y', 'u']
         values = [0.452, 0.263, 2.56, 801.34, 0.567, 0.376, 0.102]
-        syn_params = {'model': 'tsodyks_synapse'}
+        syn_params = {'synapse_model': 'tsodyks_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testStdpDopamineSynapse(self):
@@ -211,10 +212,11 @@ class TestParams(unittest.TestCase):
         # synapse type
         hf.nest.ResetKernel()
         vol = hf.nest.Create('volume_transmitter')
-        hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
+        hf.nest.SetDefaults('stdp_dopamine_synapse',
+                            {'vt': vol.get('global_id')})
         params = ['c', 'n']
         values = [0.153, 0.365]
-        syn_params = {'model': 'stdp_dopamine_synapse'}
+        syn_params = {'synapse_model': 'stdp_dopamine_synapse'}
         hf.check_synapse(params, values, syn_params, self)
 
     def testRPortAllSynapses(self):
@@ -229,16 +231,16 @@ class TestParams(unittest.TestCase):
         for i, syn in enumerate(syns):
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
-            syn_params['model'] = syn
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
+            syn_params['synapse_model'] = syn
             self.pop1 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N1, {
                                        'tau_syn': [0.2, 0.5]})
             self.pop2 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N2, {
                                        'tau_syn': [0.2, 0.5]})
             hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-            conns = hf.nest.GetStatus(
-                hf.nest.GetConnections(self.pop1, self.pop2))
-            conn_params = [conn['receptor'] for conn in conns]
+            conns = hf.nest.GetConnections(self.pop1, self.pop2)
+            conn_params = conns.get('receptor')
             self.assertTrue(hf.all_equal(conn_params))
             self.assertTrue(conn_params[0] == syn_params['receptor_type'])
             self.setUp()
@@ -258,8 +260,9 @@ class TestParams(unittest.TestCase):
         for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
-            syn_params['model'] = syn
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
+            syn_params['synapse_model'] = syn
             hf.check_synapse(
                 ['weight'], [syn_params['weight']], syn_params, self)
             self.setUp()
@@ -278,8 +281,9 @@ class TestParams(unittest.TestCase):
         for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = hf.nest.Create('volume_transmitter')
-                hf.nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
-            syn_params['model'] = syn
+                hf.nest.SetDefaults('stdp_dopamine_synapse',
+                                    {'vt': vol.get('global_id')})
+            syn_params['synapse_model'] = syn
             hf.check_synapse(
                 ['delay'], [syn_params['delay']], syn_params, self)
             self.setUp()

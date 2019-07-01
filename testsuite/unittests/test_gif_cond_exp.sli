@@ -61,12 +61,12 @@ skip_if_without_gsl
   /params Set 
 
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1 
       /resolution 0.1
       /grng_seed 1
       /rng_seeds [1]
-  >> SetStatus
+  >> SetKernelStatus
 
   /gif_cond_exp Create /neuron Set
   neuron params SetStatus
@@ -84,11 +84,11 @@ skip_if_without_gsl
 
   neuron sd Connect
 
-  sg neuron << /weight 1.0 >> Connect
+  sg neuron Connect
 
   150.0 Simulate
 
-  sd GetStatus /events get /times get
+  sd /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

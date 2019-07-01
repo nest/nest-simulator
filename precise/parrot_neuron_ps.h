@@ -91,7 +91,6 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  // uses off_grid events
   bool
   is_off_grid() const
   {

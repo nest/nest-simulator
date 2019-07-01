@@ -31,6 +31,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "gid_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -41,9 +42,7 @@
 namespace nest
 {
 
-class SiblingContainer;
 class Node;
-class Subnet;
 class Model;
 
 class NodeManager : public ManagerInterface
@@ -81,9 +80,11 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
+   * @returns GIDCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  index add_node( index m, long n = 1 );
+  GIDCollectionPTR add_node( index m, long n = 1 );
+
 
   /**
    * Restore nodes from an array of status dictionaries.
@@ -100,14 +101,6 @@ public:
   void restore_nodes( const ArrayDatum& );
 
   /**
-   * Reset state of nodes.
-   *
-   * Reset the state (but no other properties) of nodes. This is
-   * required for ResetNetwork, which affects states but not parameters.
-   */
-  void reset_nodes_state();
-
-  /**
    * Set the state (observable dynamic variables) of a node to model defaults.
    * @see Node::init_state()
    */
@@ -115,7 +108,6 @@ public:
 
   /**
    * Return total number of network nodes.
-   * The size also includes all Subnet objects.
    */
   index size() const;
 
@@ -129,17 +121,10 @@ public:
    */
   index get_num_local_devices() const;
 
-  Subnet* get_root() const; ///< return root subnet.
-  Subnet* get_cwn() const;  ///< current working node.
-
   /**
-   * Change current working node. The specified node must
-   * exist and be a subnet.
-   * @throws nest::IllegalOperation Target is no subnet.
+   * Print network information.
    */
-  void go_to( index );
-
-  void print( index, int );
+  void print( std::ostream& ) const;
 
   /**
    * Return true, if the given Node is on the local machine
@@ -152,25 +137,43 @@ public:
   bool is_local_gid( index gid ) const;
 
   /**
-   * Return pointer of the specified Node.
-   * @param i Index of the specified Node.
-   * @param thr global thread index of the Node.
+   * Return pointer to the specified Node. The function expects that
+   * the given gid and thread are valid. If they are not, an assertion
+   * will fail. In case the given Node does not exist on the fiven
+   * thread, a proxy is returned instead.
    *
-   * @throws nest::UnknownNode       Target does not exist in the network.
+   * @param gid index of the Node
+   * @param tid local thread index of the Node
    *
    * @ingroup net_access
    */
-  Node* get_node( index, thread thr = 0 );
+  Node* get_node_or_proxy( index gid, thread tid );
 
   /**
-   * Return the Subnet that contains the thread siblings.
+   * Return pointer of the specified Node.
+   * @param i Index of the specified Node.
+   */
+  Node* get_node_or_proxy( index );
+
+  /*
+   * Return pointer of Node on the thread we are on.
+   *
+   * If the node has proxies, it returns the node on the first thread (used by
+   * recorders).
+   *
+   * @params gid Index of the Node.
+   */
+  Node* get_mpi_local_node_or_device_head( index );
+
+  /**
+   * Return a vector that contains the thread siblings.
    * @param i Index of the specified Node.
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
    * @ingroup net_access
    */
-  const SiblingContainer* get_thread_siblings( index n ) const;
+  std::vector< Node* > get_thread_siblings( index n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -180,11 +183,6 @@ public:
   void ensure_valid_thread_local_ids();
 
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
-
-  /**
-   * Get list of nodes on given thread.
-   */
-  const std::vector< Node* >& get_nodes_on_thread( thread ) const;
 
   /**
    * Get list of nodes on given thread.
@@ -230,19 +228,10 @@ public:
   void check_wfr_use();
 
   /**
-   * Iterator pointing to beginning of process-local nodes.
+   * Return a reference to the thread-local nodes of thread t.
    */
-  SparseNodeArray::const_iterator local_nodes_begin() const;
+  const SparseNodeArray& get_local_nodes( thread ) const;
 
-  /**
-   * Iterator pointing to end of process-local nodes.
-   */
-  SparseNodeArray::const_iterator local_nodes_end() const;
-
-  /**
-   * Number of process-local nodes.
-   */
-  size_t local_nodes_size() const;
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
@@ -272,79 +261,75 @@ private:
   void prepare_node_( Node* );
 
   /**
-   * Returns the next local gid after curr_gid (in round robin fashion).
-   * In the case of GSD, there might be no valid gids, hence you should still
-   * check, if it returns a local gid.
+   * Add normal neurons.
+   *
+   * Each neuron is added to exactly one virtual process. On all other
+   * VPs, it is represented by a proxy.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  index next_local_gid_( index curr_gid ) const;
-
-private:
-  SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-  Subnet* root_;                //!< Root node.
-  Subnet* current_;             //!< Current working node (for insertion).
-
-  Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
+  void add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
   /**
-   * Data structure holding node pointers per thread.
+   * Add device nodes.
    *
-   * The outer dimension of indexes threads. Each per-thread vector
-   * contains all nodes on that thread, except subnets, since these
-   * are never updated.
+   * For device nodes, a clone of the node is added to every virtual process.
    *
-   * @note Frozen nodes are included, so that we do not need to regenerate
-   * these vectors when the frozen status on nodes is changed (which is
-   * essentially undetectable).
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  std::vector< std::vector< Node* > > nodes_vec_;
+  void add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+
+  /**
+   * Add MUSIC nodes.
+   *
+   * Nodes for MUSIC communication are added once per MPI process and are
+   * always placed on thread 0.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+
+
+private:
+  /**
+   * The network as sparse array of local nodes. One entry per thread,
+   * which contains only the thread-local nodes.
+  */
+  std::vector< SparseNodeArray > local_nodes_;
+
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method
   bool wfr_is_used_;                                  //!< there is at least one node that uses
                                                       //!< waveform relaxation
-  //! Network size when nodes_vec_ was last updated
-  index nodes_vec_network_size_;
+  //! Network size when wfr_nodes_vec_ was last updated
+  index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
   index num_local_devices_; //!< stores number of local devices
 
   bool have_nodes_changed_; //!< true if new nodes have been created
                             //!< since startup or last call to simulate
+
+  //! Store exceptions raised in thread-parallel sections for later handling
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index
 NodeManager::size() const
 {
-  return local_nodes_.get_max_gid() + 1;
-}
-
-inline Subnet*
-NodeManager::get_root() const
-{
-  return root_;
-}
-
-inline Subnet*
-NodeManager::get_cwn( void ) const
-{
-  return current_;
-}
-
-inline bool
-NodeManager::is_local_gid( index gid ) const
-{
-  return local_nodes_.get_node_by_gid( gid ) != 0;
+  return local_nodes_[ 0 ].get_max_gid();
 }
 
 inline Node*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
-  return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline const std::vector< Node* >&
-NodeManager::get_nodes_on_thread( thread t ) const
-{
-  return nodes_vec_.at( t );
+  return local_nodes_[ t ].get_node_by_index( thread_local_id );
 }
 
 inline const std::vector< Node* >&
@@ -359,22 +344,10 @@ NodeManager::wfr_is_used() const
   return wfr_is_used_;
 }
 
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_begin() const
+inline const SparseNodeArray&
+NodeManager::get_local_nodes( thread t ) const
 {
-  return local_nodes_.begin();
-}
-
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_end() const
-{
-  return local_nodes_.end();
-}
-
-inline size_t
-NodeManager::local_nodes_size() const
-{
-  return local_nodes_.size();
+  return local_nodes_[ t ];
 }
 
 inline bool

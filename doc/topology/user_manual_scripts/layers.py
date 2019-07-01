@@ -103,7 +103,7 @@ print("#{ end.log #}")
 
 print("#{ layer1p.log #}")
 #{ layer1p #}
-nest.PrintNetwork(depth=3)
+nest.PrintNodes()
 #{ end #}
 print("#{ end.log #}")
 
@@ -294,7 +294,7 @@ l = tp.CreateLayer({'rows': 1, 'columns': 2,
 #{ end #}
 
 print("#{ layer6 #}")
-nest.PrintNetwork(depth=3)
+nest.PrintNodes()
 print("#{ end #}")
 
 # --------------------------------------------------
@@ -309,7 +309,7 @@ l = tp.CreateLayer({'rows': 1, 'columns': 2,
 #{ end #}
 
 print("#{ layer7 #}")
-nest.PrintNetwork(depth=3)
+nest.PrintNodes()
 print("#{ end #}")
 
 # --------------------------------------------------

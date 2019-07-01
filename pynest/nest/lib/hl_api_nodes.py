@@ -25,19 +25,21 @@ Functions for node handling
 
 import warnings
 
+import nest
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
+from .hl_api_types import Parameter
 
 __all__ = [
     'Create',
-    'GetLID',
+    'PrintNodes',
 ]
 
 
 @check_stack
-def Create(model, n=1, params=None):
+def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
    Generates `n` new network objects of the supplied model type. If `n` is not
@@ -56,8 +58,8 @@ def Create(model, n=1, params=None):
 
     Returns
     -------
-    list:
-        Global IDs of created nodes
+    GIDCollection:
+        Object representing global IDs of created nodes
 
     Raises
     ------
@@ -70,7 +72,39 @@ def Create(model, n=1, params=None):
 
     model_deprecation_warning(model)
 
+    if positions is not None:
+        layer_specs = {'elements': model}
+        layer_specs['edge_wrap'] = positions.edge_wrap
+        if isinstance(positions, nest.spatial.free):
+            layer_specs['positions'] = positions.pos
+            if isinstance(positions.pos, Parameter):
+                layer_specs['n'] = n
+        else:
+            if n > 1:
+                raise kernel.NESTError(
+                    'Cannot specify number of nodes with grid positions')
+            layer_specs['rows'] = positions.rows
+            layer_specs['columns'] = positions.columns
+            if positions.center is not None:
+                layer_specs['center'] = positions.center
+            if positions.depth is not None:
+                layer_specs['depth'] = positions.depth
+        if positions.extent is not None:
+            layer_specs['extent'] = positions.extent
+        if params is None:
+            params = {}
+        layer = sli_func('CreateLayerParams', layer_specs, params)
+        layer.set_spatial()
+
+        return layer
+
+    params_contains_list = True
     if isinstance(params, dict):
+        params_contains_list = [is_iterable(v) or isinstance(v, Parameter)
+                                for k, v in params.items()]
+        params_contains_list = max(params_contains_list)
+
+    if not params_contains_list:
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
     else:
@@ -79,10 +113,9 @@ def Create(model, n=1, params=None):
     sps(n)
     sr(cmd)
 
-    last_gid = spp()
-    gids = tuple(range(last_gid - n + 1, last_gid + 1))
+    gids = spp()
 
-    if params is not None and not isinstance(params, dict):
+    if params is not None and params_contains_list:
         try:
             SetStatus(gids, params)
         except:
@@ -95,37 +128,8 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
-@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
-index into GIDCollection instead.')
-def GetLID(gid):
-    """Return the local id of a node with the global ID gid.
+def PrintNodes():
+    """Print the GID ranges and model names of the nodes in the network."""
 
-    .. deprecated:: 2.14
-    `GetLID` is deprecated and will be removed in NEST 3.0. Use
-    index into `GIDCollection` instead.
-
-    Parameters
-    ----------
-    gid : int
-        Global id of node
-
-    Returns
-    -------
-    int:
-        Local id of node
-
-    Raises
-    ------
-    NESTError
-        If `gid` contains more than one GID
-
-    KEYWORDS:
-    """
-
-    if len(gid) > 1:
-        raise kernel.NESTError("GetLID() expects exactly one GID.")
-
-    sps(gid[0])
-    sr("GetLID")
-
-    return spp()
+    sr("PrintNodesToStream")
+    print(spp())

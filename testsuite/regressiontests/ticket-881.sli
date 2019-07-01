@@ -37,7 +37,6 @@ Author: Hans Ekkehard Plesser
 (unittest) run
 /unittest using
 
-
 M_ERROR setverbosity
 
 /num_threads 4 def
@@ -49,7 +48,7 @@ M_ERROR setverbosity
 % Test 1: pairwise convergent
 {
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
   
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
@@ -61,7 +60,7 @@ M_ERROR setverbosity
 % Test 2: pairwise divergent
 {
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
   
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
@@ -73,7 +72,7 @@ M_ERROR setverbosity
 % Test 3: fixed fan-in
 {
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
   
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
@@ -85,7 +84,7 @@ M_ERROR setverbosity
 % Test 4: fixed fan-out
 {
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
   
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup

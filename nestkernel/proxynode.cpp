@@ -25,7 +25,6 @@
 // Includes from nestkernel:
 #include "connection.h"
 #include "kernel_manager.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -34,13 +33,10 @@
 namespace nest
 {
 
-proxynode::proxynode( index gid, index parent_gid, index model_id, index vp )
+proxynode::proxynode( index gid, index model_id, index vp )
   : Node()
 {
   set_gid_( gid );
-  Subnet* parent = dynamic_cast< Subnet* >( kernel().node_manager.get_node( parent_gid ) );
-  assert( parent );
-  set_parent_( parent );
   set_model_id( model_id );
   set_vp( vp );
   set_frozen_( true );
@@ -88,6 +84,14 @@ nest::SignalType
 proxynode::sends_signal() const
 {
   return kernel().model_manager.get_model( get_model_id() )->sends_signal();
+}
+
+void
+proxynode::get_status( DictionaryDatum& d ) const
+{
+  const Model* model = kernel().model_manager.get_model( model_id_ );
+  const Name element_type = model->get_prototype().get_element_type();
+  ( *d )[ names::element_type ] = LiteralDatum( element_type );
 }
 
 

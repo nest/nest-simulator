@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "numerics.h"
+#include "dict_util.h"
 
 // Includes from librandom:
 #include "exp_randomdev.h"
@@ -123,8 +124,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -143,7 +144,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -287,10 +288,10 @@ template < class TGainfunction >
 inline void
 binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -302,7 +303,7 @@ binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  gain_.set( d );
+  gain_.set( d, this );
 }
 
 template < typename TGainfunction >
@@ -342,9 +343,9 @@ binary_neuron< TGainfunction >::Parameters_::get( DictionaryDatum& d ) const
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
+binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::tau_m, tau_m_ );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -361,7 +362,7 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameter
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_& )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
 {
 }
 

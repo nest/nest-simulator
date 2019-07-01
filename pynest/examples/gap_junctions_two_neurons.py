@@ -59,7 +59,7 @@ vm = nest.Create('voltmeter', params={'interval': 0.1})
 # potential of one of the neurons and connect the neurons to the `voltmeter`.
 
 nest.SetStatus(neuron, {'I_e': 100.})
-nest.SetStatus([neuron[0]], {'V_m': -10.})
+nest.SetStatus(neuron[0], {'V_m': -10.})
 
 nest.Connect(vm, neuron, 'all_to_all')
 
@@ -71,7 +71,7 @@ nest.Connect(vm, neuron, 'all_to_all')
 
 nest.Connect(neuron, neuron,
              {'rule': 'all_to_all', 'autapses': False},
-             {'model': 'gap_junction', 'weight': 0.5})
+             {'synapse_model': 'gap_junction', 'weight': 0.5})
 
 ###############################################################################
 # Finally we start the simulation and plot the membrane potentials of both

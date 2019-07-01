@@ -62,7 +62,7 @@ M_ERROR setverbosity
 10000.0 /T Set
 
 
-0 << /resolution 0.1  >> SetStatus
+<< /resolution 0.1  >> SetKernelStatus
 
 
 /spike_detector Create /sp Set

@@ -41,10 +41,10 @@
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 2 
       /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 
 /sli_neuron_state

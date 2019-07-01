@@ -28,6 +28,12 @@ from . import ll_api                  # noqa
 from . import pynestkernel as kernel  # noqa
 from .hl_api import *                 # noqa
 
+from . import random                  # noqa
+from . import spatial                 # noqa
+from . import math                    # noqa
+from . import distributions           # noqa
+from . import logic                   # noqa
+
 
 def test():
     """Runs all PyNEST unit tests."""

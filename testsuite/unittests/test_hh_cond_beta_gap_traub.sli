@@ -60,15 +60,15 @@ skip_if_without_gsl
 
 ResetKernel
 
-0 << 
-      /local_num_threads 1 
-      /resolution h
-      /use_wfr true
-      /wfr_tol 0.0001
-      /wfr_interpolation_order 3
-      /wfr_max_iterations 10
-      /wfr_comm_interval 1.0
-    >> SetStatus
+<< 
+  /local_num_threads 1 
+  /resolution h
+  /use_wfr true
+  /wfr_tol 0.0001
+  /wfr_interpolation_order 3
+  /wfr_max_iterations 10
+  /wfr_comm_interval 1.0
+>> SetKernelStatus
     
 /hh_cond_beta_gap_traub Create /neuron1 Set
 /hh_cond_beta_gap_traub Create /neuron2 Set
@@ -81,9 +81,9 @@ neuron1
 /voltmeter Create /vm Set
 vm << /time_in_steps true /interval h >> SetStatus
 
-[neuron1] [neuron2] 
+neuron1 neuron2 
 << /rule /one_to_one /make_symmetric true >> 
-<< /model /gap_junction /weight 20.0 >>  Connect
+<< /synapse_model /gap_junction /weight 20.0 >>  Connect
 
 vm neuron2     1.0 h Connect
 

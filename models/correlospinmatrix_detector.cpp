@@ -27,6 +27,9 @@
 #include <functional>
 #include <numeric>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -107,13 +110,15 @@ nest::correlospinmatrix_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, const correlospinmatrix_detector& n )
+nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
+  const correlospinmatrix_detector& n,
+  Node* node )
 {
   bool reset = false;
   double t;
   long N;
 
-  if ( updateValue< long >( d, names::N_channels, N ) )
+  if ( updateValueParam< long >( d, names::N_channels, N, node ) )
   {
     if ( N < 1 )
     {
@@ -126,7 +131,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::delta_tau, t ) )
+  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
@@ -136,7 +141,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
+  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
@@ -146,7 +151,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
+  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
@@ -156,7 +161,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
+  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -179,7 +184,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
 }
 
 void
-nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool )
+nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* node )
 {
 }
 

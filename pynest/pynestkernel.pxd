@@ -66,9 +66,16 @@ cdef extern from "mask.h" namespace "nest":
     cppclass MaskDatum:
         MaskDatum(const MaskDatum&)
 
-cdef extern from "topology_parameter.h" namespace "nest":
+cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
+
+cdef extern from "gid_collection.h":
+    cppclass GIDCollectionDatum:
+        GIDCollectionDatum(const GIDCollectionDatum&)
+
+    cppclass GIDCollectionIteratorDatum:
+        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
@@ -78,6 +85,7 @@ cdef extern from "connection_id.h" namespace "nest":
 cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
+        ConnectionDatum(const ConnectionDatum&) except +
         long get_source_gid()
         long get_target_gid()
         long get_target_thread()

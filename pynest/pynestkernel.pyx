@@ -38,6 +38,8 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+import nest
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -51,6 +53,8 @@ cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
+cdef string SLI_TYPE_GIDCOLLECTION = b"gidcollectiontype"
+cdef string SLI_TYPE_GIDCOLLECTIONITERATOR = b"gidcollectioniteratortype"
 
 
 DEF CONN_ELMS = 5
@@ -442,27 +446,6 @@ cdef class NESTEngine(object):
 
         return ret
 
-    def push_connection_datums(self, conns):
-
-        cdef ConnectionDatum* cdt = NULL
-        cdef ArrayDatum* connectome = new ArrayDatum()
-
-        try:
-            connectome.reserve(len(conns))
-
-            for cnn in conns:
-                if isinstance(cnn, dict):
-                    cdt = new ConnectionDatum(ConnectionID(cnn[CONN_NAME_SRC], cnn[CONN_NAME_THREAD], cnn[CONN_NAME_SYN], cnn[CONN_NAME_PRT]))
-                else:
-                    cdt = new ConnectionDatum(ConnectionID(cnn[0], cnn[1], cnn[2], cnn[3], cnn[4]))
-
-                connectome.push_back(<Datum*> cdt)
-
-            self.pEngine.OStack.push(<Datum*> connectome)
-
-        except:
-            del connectome
-            raise
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 
@@ -511,6 +494,12 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
+            ret = <Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTIONITERATOR.decode():
+            ret = <Datum*> new GIDCollectionIteratorDatum(deref(<GIDCollectionIteratorDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_CONNECTION.decode():
+            ret = <Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
         else:
             raise NESTErrors.PyNESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
@@ -547,7 +536,14 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTErrors.PyNESTError("only vectors of integers or floats are supported")
+                raise NESTError.PyNESTError("only vectors of integers or floats are supported")
+
+        if ret is NULL:
+            try:
+                if isinstance( obj._datum, SLIDatum ) or isinstance( obj._datum[0], SLIDatum):
+                    ret = python_object_to_datum( obj._datum )
+            except:
+                pass
 
         if ret is not NULL:
             return ret
@@ -601,7 +597,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
+        ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())
@@ -610,17 +606,28 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DICTIONARY:
         ret = sli_dict_to_object(<DictionaryDatum*> dat)
     elif datum_type == SLI_TYPE_CONNECTION:
-        ret = sli_connection_to_object(<ConnectionDatum*> dat)
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
+        ret = nest.Connectome(datum)
     elif datum_type == SLI_TYPE_VECTOR_INT:
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
     elif datum_type == SLI_TYPE_MASK:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        ret = nest.Mask(datum)
     elif datum_type == SLI_TYPE_PARAMETER:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        ret = nest.Parameter(datum)
+    elif datum_type == SLI_TYPE_GIDCOLLECTION:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())
+        ret = nest.GIDCollection(datum)
+    elif datum_type == SLI_TYPE_GIDCOLLECTIONITERATOR:
         ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionIteratorDatum(deref(<GIDCollectionIteratorDatum*> dat)), SLI_TYPE_GIDCOLLECTIONITERATOR.decode())
     else:
         raise NESTErrors.PyNESTError("unknown SLI type: {0}".format(datum_type.decode()))
 
@@ -630,17 +637,28 @@ cdef inline object sli_datum_to_object(Datum* dat):
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
-
     cdef tmp = [None] * dat.size()
 
     cdef size_t i
     cdef Token* tok = dat.begin()
 
-    for i in range(len(tmp)):
-        tmp[i] = sli_datum_to_object(tok.datum())
-        inc(tok)
+    if not len(tmp):
+        return ()
 
-    return tuple(tmp)
+    if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
+        for i in range(len(tmp)):
+            datum = SLIDatum()
+            (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
+            tmp[i] = datum
+            # Increment
+            inc(tok)
+        return nest.Connectome(tmp)
+    else:
+        for i in range(len(tmp)):
+            tmp[i] = sli_datum_to_object(tok.datum())
+            inc(tok)
+
+        return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 
@@ -658,21 +676,6 @@ cdef inline object sli_dict_to_object(DictionaryDatum* dat):
         inc(dt)
 
     return tmp
-
-cdef inline object sli_connection_to_object(ConnectionDatum* dat):
-
-    cdef array.array arr
-    cdef long[CONN_ELMS] CONN_ARR
-
-    arr = array.clone(ARRAY_LONG, CONN_ELMS, False)
-    CONN_ARR[0] = dat.get_source_gid()
-    CONN_ARR[1] = dat.get_target_gid()
-    CONN_ARR[2] = dat.get_target_thread()
-    CONN_ARR[3] = dat.get_synapse_model_id()
-    CONN_ARR[4] = dat.get_port()
-    memcpy(arr.data.as_longs, &CONN_ARR, CONN_ELMS * sizeof(long))
-
-    return arr
 
 cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ = 0):
 

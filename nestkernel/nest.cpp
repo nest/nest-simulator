@@ -29,8 +29,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
-#include "nodelist.h"
-#include "subnet.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "sliexceptions.h"
@@ -86,29 +85,9 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
 }
 
 void
-print_network( index gid, index depth, std::ostream& )
+print_nodes_to_stream( std::ostream& ostr )
 {
-  kernel().node_manager.print( gid, depth - 1 );
-}
-
-librandom::RngPtr
-get_vp_rng_of_gid( index target )
-{
-  Node* target_node = kernel().node_manager.get_node( target );
-
-  if ( not kernel().node_manager.is_local_node( target_node ) )
-  {
-    throw LocalNodeExpected( target );
-  }
-
-  // Only nodes with proxies have a well-defined VP and thus thread.
-  // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
-  if ( not target_node->has_proxies() )
-  {
-    throw NodeWithProxiesExpected( target );
-  }
-
-  return kernel().rng_manager.get_rng( target_node->get_thread() );
+  kernel().node_manager.print( ostr );
 }
 
 librandom::RngPtr
@@ -130,6 +109,7 @@ set_kernel_status( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
   kernel().set_status( dict );
+  ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
 DictionaryDatum
@@ -137,10 +117,7 @@ get_kernel_status()
 {
   assert( kernel().is_initialized() );
 
-  Node* root = kernel().node_manager.get_root();
-  assert( root != 0 );
-
-  DictionaryDatum d = root->get_status_base();
+  DictionaryDatum d( new Dictionary );
   kernel().get_status( d );
 
   return d;
@@ -189,7 +166,7 @@ get_connection_status( const ConnectionDatum& conn )
     conn.get_port() );
 }
 
-index
+GIDCollectionPTR
 create( const Name& model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )
@@ -210,8 +187,8 @@ create( const Name& model_name, const index n_nodes )
 }
 
 void
-connect( const GIDCollection& sources,
-  const GIDCollection& targets,
+connect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
@@ -313,131 +290,100 @@ get_model_defaults( const Name& modelname )
 }
 
 void
-change_subnet( const index node_gid )
-{
-  if ( kernel().node_manager.get_node( node_gid )->is_subnet() )
-  {
-    kernel().node_manager.go_to( node_gid );
-  }
-  else
-  {
-    throw SubnetExpected();
-  }
-}
-
-index
-current_subnet()
-{
-  assert( kernel().node_manager.get_cwn() != 0 );
-  return kernel().node_manager.get_cwn()->get_gid();
-}
-
-ArrayDatum
-get_nodes( const index node_id, const DictionaryDatum& params, const bool include_remotes, const bool return_gids_only )
-{
-  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
-    throw SubnetExpected();
-  }
-
-  LocalNodeList localnodes( *subnet );
-  std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
-  }
-  else
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
-  }
-
-  ArrayDatum result;
-  result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
-    if ( return_gids_only )
-    {
-      result.push_back( new IntegerDatum( n->get_gid() ) );
-    }
-    else
-    {
-      DictionaryDatum* node_info = new DictionaryDatum( new Dictionary );
-      ( **node_info )[ names::global_id ] = n->get_gid();
-      ( **node_info )[ names::vp ] = n->get_vp();
-      ( **node_info )[ names::parent ] = n->get_parent_gid();
-      result.push_back( node_info );
-    }
-  }
-
-  return result;
-}
-
-ArrayDatum
-get_leaves( const index node_id, const DictionaryDatum& params, const bool include_remotes )
-{
-  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
-    throw SubnetExpected();
-  }
-
-  LocalLeafList localnodes( *subnet );
-  ArrayDatum result;
-
-  std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
-  }
-  else
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
-  }
-  result.reserve( globalnodes.size() );
-
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
-    result.push_back( new IntegerDatum( n->get_gid() ) );
-  }
-
-  return result;
-}
-
-ArrayDatum
-get_children( const index node_id, const DictionaryDatum& params, const bool include_remotes )
-{
-  Subnet* subnet = dynamic_cast< Subnet* >( kernel().node_manager.get_node( node_id ) );
-  if ( subnet == NULL )
-  {
-    throw SubnetExpected();
-  }
-
-  LocalChildList localnodes( *subnet );
-  ArrayDatum result;
-
-  std::vector< MPIManager::NodeAddressingData > globalnodes;
-  if ( params->empty() )
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, include_remotes );
-  }
-  else
-  {
-    kernel().mpi_manager.communicate( localnodes, globalnodes, params, include_remotes );
-  }
-  result.reserve( globalnodes.size() );
-  for ( std::vector< MPIManager::NodeAddressingData >::iterator n = globalnodes.begin(); n != globalnodes.end(); ++n )
-  {
-    result.push_back( new IntegerDatum( n->get_gid() ) );
-  }
-
-  return result;
-}
-
-void
 restore_nodes( const ArrayDatum& node_list )
 {
   kernel().node_manager.restore_nodes( node_list );
 }
 
+
+ParameterDatum
+multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+{
+  return param1->multiply_parameter( *param2 );
+}
+
+ParameterDatum
+divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+{
+  return param1->divide_parameter( *param2 );
+}
+
+ParameterDatum
+add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+{
+  return param1->add_parameter( *param2 );
+}
+
+ParameterDatum
+subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
+{
+  return param1->subtract_parameter( *param2 );
+}
+
+ParameterDatum
+compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d )
+{
+  return param1->compare_parameter( *param2, d );
+}
+
+ParameterDatum
+conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 )
+{
+  return param1->conditional_parameter( *param2, *param3 );
+}
+
+ParameterDatum
+exp_parameter( const ParameterDatum& param )
+{
+  return param->exp();
+}
+
+ParameterDatum
+sin_parameter( const ParameterDatum& param )
+{
+  return param->sin();
+}
+
+ParameterDatum
+cos_parameter( const ParameterDatum& param )
+{
+  return param->cos();
+}
+
+ParameterDatum
+pow_parameter( const ParameterDatum& param, const double exponent )
+{
+  return param->pow( exponent );
+}
+
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y )
+{
+  return param_x->dimension_parameter( *param_y );
+}
+
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z )
+{
+  return param_x->dimension_parameter( *param_y, *param_z );
+}
+
+ParameterDatum
+create_parameter( const DictionaryDatum& param_dict )
+{
+  param_dict->clear_access_flags();
+
+  ParameterDatum datum( NestModule::create_parameter( param_dict ) );
+
+  ALL_ENTRIES_ACCESSED( *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
+
+  return datum;
+}
+
+double
+get_value( const ParameterDatum& param )
+{
+  librandom::RngPtr rng = get_global_rng();
+  return param->value( rng, nullptr );
+}
 } // namespace nest

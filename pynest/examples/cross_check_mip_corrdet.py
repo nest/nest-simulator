@@ -72,6 +72,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
 
     return cross
 
+
 nest.ResetKernel()
 
 h = 0.1             # Computation step size in ms

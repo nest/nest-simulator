@@ -388,6 +388,7 @@ public:
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
     index lcid_offset = 0;
+
     while ( true )
     {
       ConnectionT& conn = C_[ lcid + lcid_offset ];

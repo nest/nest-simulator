@@ -48,7 +48,7 @@ M_ERROR setverbosity
 10000.0 /T Set
 
 
-0 << /resolution 0.1  >> SetStatus
+<< /resolution 0.1  >> SetKernelStatus
 
 
 /spike_detector Create /sp Set
@@ -68,5 +68,5 @@ sp [/events /times] get cva                     % spike train
   Min
 
 
-0 /ms_per_tic get 10.0 div lt  assert_or_die    % should converge to 0
+GetKernelStatus /ms_per_tic get 10.0 div lt  assert_or_die    % should converge to 0
 

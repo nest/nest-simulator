@@ -61,9 +61,10 @@ nest::RNGManager::finalize()
 void
 nest::RNGManager::set_status( const DictionaryDatum& d )
 {
-  // have those two for later asking, whether threads have changed:
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
+  // Any changes in number of threads will be handled by
+  // VPManager::set_status(),
+  // which will force re-initialization of RNGManager if necessary. This method
+  // will only be called *after* such a reset.
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -100,11 +101,6 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         rng_.push_back( getValue< librandom::RngDatum >( ( *ad )[ kernel().vp_manager.suggest_vp_for_gid( i ) ] ) );
       }
     }
-  }
-  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default RNGs" );
-    create_rngs_();
   }
 
   if ( d->known( "rng_seeds" ) )
@@ -156,11 +152,6 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // pre-seeded grng that can be used directly, no seeding required
     updateValue< librandom::RngDatum >( d, names::grng, grng_ );
   }
-  else if ( n_threads_updated and kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING, "RNGManager::set_status", "Equipping threads with new default GRNG" );
-    create_grng_();
-  }
 
   if ( d->known( "grng_seed" ) )
   {
@@ -206,7 +197,7 @@ void
 nest::RNGManager::create_rngs_()
 {
   // if old generators exist, remove them; since rng_ contains
-  // lockPTRs, we don't have to worry about deletion
+  // shared_ptrs, we don't have to worry about deletion
   if ( not rng_.empty() )
   {
     LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );

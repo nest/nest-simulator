@@ -40,7 +40,6 @@ from . import test_connect_symmetric_pairwise_bernoulli
 from . import test_create
 from . import test_csa
 from . import test_current_recording_generators
-from . import test_dataconnect
 from . import test_erfc_neuron
 from . import test_errors
 from . import test_events
@@ -50,7 +49,6 @@ from . import test_helper_functions
 from . import test_json
 from . import test_labeled_synapses
 from . import test_mc_neuron
-from . import test_networks
 from . import test_onetooneconnect
 from . import test_parrot_neuron_ps
 from . import test_parrot_neuron
@@ -94,7 +92,6 @@ def suite():
     suite.addTest(test_create.suite())
     suite.addTest(test_csa.suite())
     suite.addTest(test_current_recording_generators.suite())
-    suite.addTest(test_dataconnect.suite())
     suite.addTest(test_erfc_neuron.suite())
     suite.addTest(test_errors.suite())
     suite.addTest(test_events.suite())
@@ -104,7 +101,6 @@ def suite():
     suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())
     suite.addTest(test_mc_neuron.suite())
-    suite.addTest(test_networks.suite())
     suite.addTest(test_onetooneconnect.suite())
     suite.addTest(test_parrot_neuron_ps.suite())
     suite.addTest(test_parrot_neuron.suite())

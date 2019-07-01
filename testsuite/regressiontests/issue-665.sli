@@ -46,7 +46,7 @@ skip_if_not_threaded
   /connspec Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /pgl 
   << /elements /poisson_generator 
@@ -60,13 +60,13 @@ skip_if_not_threaded
   
   pgl nnl connspec ConnectLayers
   
-  /src pgl GetGlobalLeaves 1 Take def
-  /tgts nnl GetGlobalLeaves Sort def
-    
+  /src pgl [1] Take def
+  /tgts nnl def
+
   /conns << /source src >> GetConnections def
   /ctgts conns { cva 1 get } Map Sort def
     
-  tgts ctgts eq
+  tgts cva ctgts eq
 } 
 def
 
@@ -104,7 +104,7 @@ assert_or_die
   /connspec Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /nnl
   << /elements /iaf_psc_alpha 
@@ -118,13 +118,13 @@ assert_or_die
     
   nnl sdl connspec ConnectLayers
   
-  /tgt sdl GetGlobalLeaves 1 Take def
-  /srcs nnl GetGlobalLeaves Sort def
+  /tgt sdl [1] Take def
+  /srcs nnl def
     
   /conns << /target tgt >> GetConnections def
   /csrcs conns { cva 0 get } Map Sort def
   
-  srcs csrcs eq
+  srcs cva csrcs eq
 } 
 def
 

@@ -292,8 +292,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
+    // not recording anything
     return;
-  } // not recording anything
+  }
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -384,8 +385,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
 {
   if ( num_vars_ < 1 )
   {
+    // nothing to do
     return;
-  } // nothing to do
+  }
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.

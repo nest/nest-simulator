@@ -59,12 +59,12 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
   /params Set 
 
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1 
       /resolution 0.1
       /grng_seed 1
       /rng_seeds [1]
-  >> SetStatus
+  >> SetKernelStatus
 
   /gif_psc_exp_multisynapse Create /neuron Set
   neuron params SetStatus
@@ -87,12 +87,12 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
 
   neuron sd Connect
 
-  sg1 neuron << /weight 1.0 /receptor_type 1 >> Connect
-  sg2 neuron << /weight 1.0 /receptor_type 2 >> Connect
+  sg1 neuron << >> << /receptor_type 1 >> Connect
+  sg2 neuron << >> << /receptor_type 2 >> Connect
 
   150.0 Simulate
 
-  sd GetStatus /events get /times get
+  sd /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

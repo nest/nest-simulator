@@ -45,10 +45,10 @@
 
     ResetKernel
 
-    0 <<
-	/local_num_threads 1 
-	/resolution h
-    >> SetStatus
+    <<
+    	/local_num_threads 1 
+    	/resolution h
+    >> SetKernelStatus
 
     /model Set
 
@@ -87,10 +87,10 @@
     
     ResetKernel
 
-    0 << 
-	/local_num_threads 1 
-	/resolution h
-    >> SetStatus
+    << 
+    	/local_num_threads 1 
+    	/resolution h
+    >> SetKernelStatus
 
 
     /nrn1 model Create def
@@ -106,14 +106,14 @@
     100. Run
     
     % should have two events
-    sp GetStatus /events get /senders get length 2 eq
+    sp /events get /senders get length 2 eq
     assert_or_die
 
     % both events should be at same time point
-    sp GetStatus /events get /times get dup 0 get exch 0 get eq
+    sp /events get /times get dup 0 get exch 0 get eq
     assert_or_die
     
-    sp GetStatus /events get /senders get length 2 eq
+    sp /events get /senders get length 2 eq
     assert_or_die
 
     % set threshold so that neuron makes transition to 0
@@ -122,7 +122,7 @@
     100. Run
 
     % should have one more event now
-    sp GetStatus /events get /senders get length 3 eq
+    sp /events get /senders get length 3 eq
     assert_or_die
 
     Cleanup
@@ -159,7 +159,7 @@ forall
 {
   ResetKernel
   
-  0 << /keep_source_table false >> SetStatus
+  << /keep_source_table false >> SetKernelStatus
   
   /ginzburg /ginzburg_neuron Create def
   /mcculluch /mcculluch_pitts_neuron Create def

@@ -46,10 +46,10 @@
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 /taus       [2. 20. 60. 100.] def
 /delays     [7. 5. 2. 1. ] def % ms
@@ -60,7 +60,7 @@ ResetKernel
 /iaf_psc_exp_multisynapse Create /npost Set
 npost << /tau_syn taus >> SetStatus
 
-npost GetStatus /tau_syn get
+npost 0 get GetStatus /tau_syn get
 taus eq assert_or_die
 
 /voltmeter Create /vm Set
@@ -74,7 +74,7 @@ sg << /spike_times [spike_time] >> SetStatus
   /receptor Set
   /delay Set
   /weight Set
-  [sg] [npost] /one_to_one << /weight weight /delay delay /receptor_type receptor >> Connect
+  sg npost /one_to_one pstack << /weight weight /delay delay /receptor_type receptor >> Connect
 } ScanThread
 
 
@@ -167,7 +167,7 @@ exch assert_or_die
   
   mm nrn Connect
   
-  /len 1 GetStatus /recordables get length def
+  /len nrn /recordables get length def
   len 3 eq
   end
 }
@@ -183,13 +183,13 @@ assert_or_die
   /tau_syn3  [5.0  1.0  25.0 50.] def
   
   /nrn /iaf_psc_exp_multisynapse << /tau_syn tau_syn1 >> Create def
-  /len1 1 GetStatus /recordables get length def
+  /len1 nrn /recordables get length def
   
-  1 << /tau_syn tau_syn2 >> SetStatus
-  /len2 1 GetStatus /recordables get length def
+  nrn << /tau_syn tau_syn2 >> SetStatus
+  /len2 nrn /recordables get length def
   
-  1 << /tau_syn tau_syn3 >> SetStatus
-  /len3 1 GetStatus /recordables get length def
+  nrn << /tau_syn tau_syn3 >> SetStatus
+  /len3 nrn /recordables get length def
   
   len1 5 eq len2 4 eq and len3 6 eq and
   end
@@ -234,7 +234,7 @@ assert_or_die
     end
   } def
 
-  0 << /resolution dt >> SetStatus
+  << /resolution dt >> SetKernelStatus
 
   % Create a spike generator that generates a single spike
   /spike_generator Create /sg Set
@@ -252,8 +252,8 @@ assert_or_die
     /W exch def
     /delay exch def
     % Connect spike generator to each port
-    [sg] [nrn] /one_to_one <<
-      /model /static_synapse
+    sg nrn /one_to_one <<
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>

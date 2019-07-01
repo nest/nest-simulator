@@ -98,7 +98,7 @@ public:
 
   /**
    * Reserve memory for at least n additional Nodes.
-   * A number of memory managers work more efficently if they have
+   * A number of memory managers work more efficiently if they have
    * an idea about the number of Nodes to be allocated.
    * This function prepares the memory manager for the subsequent
    * allocation of n additional Nodes.
@@ -180,6 +180,11 @@ public:
    * Set the model id on the prototype.
    */
   virtual void set_model_id( int ) = 0;
+
+  /**
+   * Get the model id from the prototype.
+   */
+  virtual int get_model_id() = 0;
 
   /**
    * Issue deprecation warning on first call if model is deprecated.

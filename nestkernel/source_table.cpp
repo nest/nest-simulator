@@ -70,6 +70,7 @@ nest::SourceTable::finalize()
       clear( tid );
     }
   }
+
   sources_.clear();
   current_positions_.clear();
   saved_positions_.clear();

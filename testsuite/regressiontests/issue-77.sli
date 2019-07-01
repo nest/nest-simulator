@@ -141,7 +141,7 @@ M_ERROR setverbosity
                           % plastic synapses.
 
       /initial_weight 10.0 def
-      /syn_spec << /model /stdp_synapse
+      /syn_spec << /synapse_model /stdp_synapse
                    /weight
                      extra_params model known
                      {
@@ -172,7 +172,7 @@ M_ERROR setverbosity
                      } ifelse
                 >> def
 
-      [ parrot ] [ n ] /one_to_one syn_spec Connect
+      parrot n /one_to_one syn_spec Connect
       n sd Connect
             
       100 Simulate
@@ -180,7 +180,7 @@ M_ERROR setverbosity
       /neuron_spiked sd /n_events get 0 gt def
       /t_spike_set n /t_spike get 0 gt def
       /weight_changed
-        << /source [ parrot ] >> GetConnections 0 get /weight get  
+        << /source parrot >> GetConnections 0 get /weight get  
         initial_weight neq def 
 
       neuron_spiked t_spike_set weight_changed and and
@@ -188,7 +188,7 @@ M_ERROR setverbosity
        (FAILED: ) model cvs join == 
        (  events ) =only sd /n_events get =
        (  tspike ) =only n /t_spike get =
-       (  weight ) =only  << /source [ parrot ] >> GetConnections 0 get /weight get ==
+       (  weight ) =only  << /source parrot >> GetConnections 0 get /weight get ==
       } if      
     }
     { true }

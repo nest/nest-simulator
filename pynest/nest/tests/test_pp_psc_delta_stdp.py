@@ -45,7 +45,7 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         nrn_post2 = nest.Create('pp_psc_delta')
 
         nest.Connect(nrn_pre, nrn_post1 + nrn_post2,
-                     syn_spec={'model': 'stdp_synapse', 'weight': w_0})
+                     syn_spec={'synapse_model': 'stdp_synapse', 'weight': w_0})
         conn1 = nest.GetConnections(nrn_pre, nrn_post1)
         conn2 = nest.GetConnections(nrn_pre, nrn_post2)
 
@@ -65,14 +65,14 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         w1 = []
         w2 = []
         t.append(0.)
-        w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])
-        w2.append(nest.GetStatus(conn2, keys=['weight'])[0][0])
+        w1.append(conn1.get('weight'))
+        w2.append(conn2.get('weight'))
 
         for i in range(nsteps):
             nest.Simulate(Dt)
             t.append(i * Dt)
-            w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])
-            w2.append(nest.GetStatus(conn2, keys=['weight'])[0][0])
+            w1.append(conn1.get('weight'))
+            w2.append(conn1.get('weight'))
 
         archiver_length1 = nest.GetStatus(nrn_post1,
                                           keys=['archiver_length'])[0]

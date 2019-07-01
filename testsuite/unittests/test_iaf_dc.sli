@@ -76,10 +76,10 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_dc_aligned, testsuite::test_iaf_dc_a
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
-    >> SetStatus
+    >> SetKernelStatus
 
 /iaf_psc_alpha Create /neuron Set
 

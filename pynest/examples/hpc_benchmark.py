@@ -220,17 +220,17 @@ def build_network(logger):
                      'Randomzing membrane potentials.')
 
         seed = nest.GetKernelStatus(
-            'rng_seeds')[-1] + 1 + nest.GetStatus([0], 'vp')[0]
+            'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
         for node in get_local_nodes(E_neurons):
-            nest.SetStatus([node],
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
         for node in get_local_nodes(I_neurons):
-            nest.SetStatus([node],
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
@@ -290,9 +290,9 @@ def build_network(logger):
     # Connect Poisson generator to neuron
 
     nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
     nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
@@ -300,7 +300,7 @@ def build_network(logger):
     nest.Connect(E_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
                      'autapses': False, 'multapses': True},
-                 {'model': 'stdp_pl_synapse_hom_hpc'})
+                 {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> excitatory population.')
@@ -308,7 +308,7 @@ def build_network(logger):
     nest.Connect(I_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
                      'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                 {'synapse_model': 'syn_in'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
@@ -316,7 +316,7 @@ def build_network(logger):
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
                      'autapses': False, 'multapses': True},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
@@ -324,10 +324,15 @@ def build_network(logger):
     nest.Connect(I_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
                      'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                 {'synapse_model': 'syn_in'})
 
     if params['record_spikes']:
-        local_neurons = list(get_local_nodes(E_neurons))
+        if params['nvp'] != 1:
+            local_gids = [x.get('global_id')
+                          for x in get_local_nodes(E_neurons)]
+            local_neurons = nest.GIDCollection(local_gids)
+        else:
+            local_neurons = E_neurons
 
         if len(local_neurons) < brunel_params['Nrec']:
             nest.message(
@@ -435,7 +440,7 @@ def get_local_nodes(nodes):
 
     i = 0
     while i < len(nodes):
-        if nest.GetStatus([nodes[i]], 'local')[0]:
+        if nest.GetStatus(nodes[i], 'local')[0]:
             yield nodes[i]
             i += nvp
         else:

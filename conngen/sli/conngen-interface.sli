@@ -35,7 +35,7 @@
       cvgidcollection  % convert src to gidcollection
       exch             % stack: cg src trg
       << >>            % stack: cg src trg params
-      /Connect /syn_spec GetOption /model get % stack: cg src trg params synmodel
+      /Connect /syn_spec GetOption /synapse_model get % stack: cg src trg params synmodel
       CGConnect_cg_g_g_D_l
     } bind addtotrie
 
@@ -48,7 +48,7 @@
       exch             % stack: cg src params trg
       cvgidcollection  % convert trg to gidcollection
       exch             % stack: cg src trg params
-      /Connect /syn_spec GetOption /model get  % stack: cg src trg params synmodel
+      /Connect /syn_spec GetOption /synapse_model get  % stack: cg src trg params synmodel
       CGConnect_cg_g_g_D_l
     } bind addtotrie
 

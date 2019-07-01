@@ -44,18 +44,17 @@ skip_if_not_threaded
 [1 2 4]
 {
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /pg /noise_generator << /mean 1000. /std 500. /dt 1.0 >> Create def
   /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /iaf_psc_alpha Create } Table def
 
-  [pg] pnet Connect
-  pnet [sd] Connect
+  pnet { pg exch Connect } forall
+  pnet { sd Connect } forall
   
   40. Simulate
 

@@ -26,13 +26,13 @@
 #include <numeric>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -95,15 +95,20 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
   // get the data from the device
   RecordingDevice::get_status( d );
 
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
 }

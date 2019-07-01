@@ -139,12 +139,11 @@ def
   % number of neurons per population to record from
   /Nrec 50 def
 
- 0
   <<
     /resolution  dt
     /overwrite_files true
     /print_time true
-  >> SetStatus
+  >> SetKernelStatus
 
 
 /sli_neuron GetDefaults begin
@@ -238,17 +237,9 @@ end
       (Configuring neuron parameters.) =
 
       (Creating the network.) =  % show message
-
-      /sli_neuron [NE] LayoutNetwork /E_net Set
-      /sli_neuron [NI] LayoutNetwork /I_net Set
-
-      % some connecting functions need lists (arrays) over all
-      % neurons they should work on, so we need to extract these
-      % lists from the subnetworks
-
-      % obtain array with GIDs of all excitatory/inhibitory neurons
-      /E_neurons E_net GetGlobalNodes def
-      /I_neurons I_net GetGlobalNodes def
+      
+      /E_neurons /sli_neuron NE Create def
+      /I_neurons /sli_neuron NI Create def
 
       % list of all neurons
       /allNeurons E_neurons I_neurons join def
@@ -292,29 +283,29 @@ end
 
 
       % Connect Poisson generator to neurons
-      [expoisson] E_neurons /all_to_all /syn_ex Connect
+      expoisson E_neurons /all_to_all /syn_ex Connect
 
       % E -> E connections
       % the following is a single call to fixed_indegree connect
       E_neurons   % source population [we pick from this]
       E_neurons   % target neurons
       << /rule /fixed_indegree /indegree CE >> % number of source neurons to pick
-      << /model /syn_ex >>    % the synapse model
+      << /synapse_model /syn_ex >>    % the synapse model
       Connect
 
       
       
-      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
 
       % ... as above, just written more compact
 
-      [inpoisson] I_neurons /all_to_all /syn_ex Connect
+      inpoisson I_neurons /all_to_all /syn_ex Connect
 
-      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
 
-      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
@@ -322,8 +313,8 @@ end
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
-      I_neurons Nrec Take [insd] Connect
+      E_neurons Nrec Take exsd Connect  % pick the first 500 neurons
+      I_neurons Nrec Take insd Connect
 
       toc /BuildCPUTime Set
       (Building time     : ) =only BuildCPUTime =only ( s) =
@@ -342,7 +333,7 @@ end
   % write a little report
   (\nBrunel Network Simulation) =
   (Number of Neurons : ) =only N =
-  (Number of Synapses: ) =only 0 GetStatus /num_connections get =
+  (Number of Synapses: ) =only GetKernelStatus /num_connections get =
   (       Excitatory : ) =only n_ex_syn =
   (       Inhibitory : ) =only n_in_syn =
   (Excitatory rate   : ) =only exsd ComputeRate =only ( Hz) =

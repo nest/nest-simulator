@@ -40,13 +40,13 @@ nest::SparseNodeArray::SparseNodeArray()
   , local_max_gid_( 0 )
   , gid_idx_scale_( 1.0 )
 {
-  step_ctr_[ 0 ] = 0;
 }
 
 void
-nest::SparseNodeArray::reserve( size_t new_size )
+nest::SparseNodeArray::reserve_additional( size_t n_elements )
 {
-  nodes_.reserve( new_size );
+  size_t old_size = nodes_.size();
+  nodes_.reserve( old_size + n_elements );
 }
 
 void
@@ -54,11 +54,11 @@ nest::SparseNodeArray::add_local_node( Node& node )
 {
   const index gid = node.get_gid();
 
-  // first node registered must always be root node
-  assert( nodes_.size() > 0 or gid == 0 );
+  // protect against GID 0
+  assert( gid > 0 );
 
-  // local_min_gid_ can only be 0 if at most root has been stored
-  assert( local_min_gid_ > 0 or nodes_.size() < 2 );
+  // local_min_gid_ can only be 0 if no node has been stored
+  assert( local_min_gid_ > 0 or nodes_.empty() );
 
   // local_min_gid_ cannot be larger than local_max_gid_
   assert( local_min_gid_ <= local_max_gid_ );
@@ -66,8 +66,8 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // local_max_gid_ cannot be larger than max_gid_
   assert( local_max_gid_ <= max_gid_ );
 
-  // gid must exceed max_gid_, except if gid is root
-  assert( gid > max_gid_ or ( gid == 0 and max_gid_ == 0 ) );
+  // gid must exceed max_gid_
+  assert( gid > max_gid_ );
 
   // all is consistent, register node and update auxiliary variables
   nodes_.push_back( NodeEntry( node, gid ) );
@@ -81,41 +81,33 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // implies nodes_.size() > 1
   if ( local_max_gid_ > local_min_gid_ )
   {
-    gid_idx_scale_ = static_cast< double >( nodes_.size() - 2 ) // -1 for root
-      / ( local_max_gid_ - local_min_gid_ );
+    double size = static_cast< double >( nodes_.size() - 1 );
+    gid_idx_scale_ = size / ( local_max_gid_ - local_min_gid_ );
   }
   assert( gid_idx_scale_ > 0. );
   assert( gid_idx_scale_ <= 1. );
 }
 
 void
-nest::SparseNodeArray::add_remote_node( index gid )
+nest::SparseNodeArray::update_max_gid( index gid )
 {
-  assert( gid > max_gid_ ); // root is never remote
+  assert( gid > 0 ); // minimum GID is 1
+  assert( gid >= max_gid_ );
   max_gid_ = gid;
 }
 
 nest::Node*
 nest::SparseNodeArray::get_node_by_gid( index gid ) const
 {
-  // local_min_gid_ can only be 0 if at most root has been stored
-  assert( local_min_gid_ > 0 or nodes_.size() < 2 );
-
   // local_min_gid_ cannot be larger than local_max_gid_
   assert( local_min_gid_ <= local_max_gid_ );
 
   // local_max_gid_ cannot be larger than max_gid_
   assert( local_max_gid_ <= max_gid_ );
-  if ( gid > max_gid_ )
+
+  if ( gid < 1 or max_gid_ < gid )
   {
     throw UnknownNode();
-  }
-
-  // handle root node requests first
-  if ( gid == 0 )
-  {
-    assert( nodes_.at( 0 ).gid_ == 0 );
-    return nodes_[ 0 ].node_;
   }
 
   // handle gids below or above range
@@ -125,7 +117,7 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
   }
 
   // now estimate index
-  size_t idx = std::floor( 1 + gid_idx_scale_ * ( gid - local_min_gid_ ) );
+  size_t idx = std::floor( gid_idx_scale_ * ( gid - local_min_gid_ ) );
   assert( idx < nodes_.size() );
 
   // search left if necessary

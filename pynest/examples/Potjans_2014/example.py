@@ -25,10 +25,7 @@ pynest microcircuit example
 
 Example file to run the microcircuit.
 
-
-This example uses the function GetNodes, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 ###############################################################################

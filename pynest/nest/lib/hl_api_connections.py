@@ -29,18 +29,16 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
+from .hl_api_types import GIDCollection, Connectome, Mask, Parameter
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-from .hl_api_subnets import GetChildren
 
 __all__ = [
     'CGConnect',
     'CGParse',
     'CGSelectImplementation',
     'Connect',
-    'DataConnect',
     'Disconnect',
-    'DisconnectOneToOne',
     'GetConnections',
 ]
 
@@ -55,10 +53,10 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Parameters
     ----------
-    source : list, optional
+    source : GIDCOllection or list, optional
         Source GIDs, only connections from these
         pre-synaptic neurons are returned
-    target : list, optional
+    target : GIDCollection or list, optional
         Target GIDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
@@ -86,14 +84,24 @@ def GetConnections(source=None, target=None, synapse_model=None,
     params = {}
 
     if source is not None:
-        if not is_coercible_to_sli_array(source):
-            raise TypeError("source must be a list of GIDs")
-        params['source'] = source
+        if isinstance(source, GIDCollection):
+            params['source'] = source
+        else:
+            try:
+                params['source'] = GIDCollection(source)
+            except kernel.NESTError:
+                raise TypeError("source must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if target is not None:
-        if not is_coercible_to_sli_array(target):
-            raise TypeError("target must be a list of GIDs")
-        params['target'] = target
+        if isinstance(target, GIDCollection):
+            params['target'] = target
+        else:
+            try:
+                params['target'] = GIDCollection(target)
+            except kernel.NESTError:
+                raise TypeError("target must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -104,11 +112,199 @@ def GetConnections(source=None, target=None, synapse_model=None,
     sps(params)
     sr("GetConnections")
 
-    return spp()
+    conns = spp()
+
+    if isinstance(conns, tuple):
+        conns = Connectome(None)
+
+    return conns
+
+
+def _process_conn_spec(conn_spec):
+    if conn_spec is None:
+        # Get default conn_spec
+        sr('/Connect /conn_spec GetOption')
+        return spp()
+    elif isinstance(conn_spec, str):
+        processed_conn_spec = {'rule': conn_spec}
+        return processed_conn_spec
+    elif isinstance(conn_spec, dict):
+        return conn_spec
+    else:
+        raise TypeError("conn_spec must be a string or dict")
+
+
+def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
+    if syn_spec is None:
+        return syn_spec
+    rule = conn_spec['rule']
+    if isinstance(syn_spec, str):
+        sps(syn_spec)
+        sr("cvlit")
+        return spp()
+    elif isinstance(syn_spec, dict):
+        for key, value in syn_spec.items():
+            # if value is a list, it is converted to a numpy array
+            if isinstance(value, (list, tuple)):
+                value = numpy.asarray(value)
+
+            if isinstance(value, (numpy.ndarray, numpy.generic)):
+                if len(value.shape) == 1:
+                    if rule == 'one_to_one':
+                        if value.shape[0] != prelength:
+                            raise kernel.NESTError(
+                                "'" + key + "' has to be an array of "
+                                "dimension " + str(prelength) + ", a "
+                                "scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value
+                    else:
+                        raise kernel.NESTError(
+                            "'" + key + "' has the wrong type. "
+                            "One-dimensional parameter arrays can "
+                            "only be used in conjunction with rule "
+                            "'one_to_one'.")
+
+                elif len(value.shape) == 2:
+                    if rule == 'all_to_all':
+                        if value.shape[0] != postlength or \
+                                value.shape[1] != prelength:
+
+                            raise kernel.NESTError(
+                                "'" + key + "' has to be an array of "
+                                "dimension " + str(postlength) + "x" +
+                                str(prelength) +
+                                " (n_target x n_sources), " +
+                                "a scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value.flatten()
+                    elif rule == 'fixed_indegree':
+                        indegree = conn_spec['indegree']
+                        if value.shape[0] != postlength or \
+                                value.shape[1] != indegree:
+                            raise kernel.NESTError(
+                                "'" + key + "' has to be an array of "
+                                "dimension " + str(postlength) + "x" +
+                                str(indegree) +
+                                " (n_target x indegree), " +
+                                "a scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value.flatten()
+                    elif rule == 'fixed_outdegree':
+                        outdegree = conn_spec['outdegree']
+                        if value.shape[0] != prelength or \
+                                value.shape[1] != outdegree:
+                            raise kernel.NESTError(
+                                "'" + key + "' has to be an array of "
+                                "dimension " + str(prelength) + "x" +
+                                str(outdegree) +
+                                " (n_sources x outdegree), " +
+                                "a scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value.flatten()
+                    else:
+                        raise kernel.NESTError(
+                            "'" + key + "' has the wrong type. "
+                            "Two-dimensional parameter arrays can "
+                            "only be used in conjunction with rules "
+                            "'all_to_all', 'fixed_indegree' or "
+                            "'fixed_outdegree'.")
+        # sps(syn_spec)
+        return syn_spec
+    else:
+        raise TypeError("syn_spec must be a string or dict")
+
+
+def _process_spatial_projections(conn_spec, syn_spec):
+    allowed_conn_spec_keys = ['mask',
+                              'multapses', 'autapses', 'rule', 'indegree',
+                              'outdegree', 'p', 'use_on_source']
+    allowed_syn_spec_keys = ['weight', 'delay']
+    for key in conn_spec.keys():
+        if key not in allowed_conn_spec_keys:
+            raise ValueError(
+                "'{}' is not allowed in conn_spec when".format(key) +
+                " connecting with mask or kernel")
+
+    projections = {}
+    for key in ['mask']:
+        if key in conn_spec:
+            projections[key] = conn_spec[key]
+    if 'p' in conn_spec:
+        projections['kernel'] = conn_spec['p']
+    # TODO: change topology names of {mul,aut}apses to be consistent
+    if 'multapses' in conn_spec:
+        projections['allow_multapses'] = conn_spec['multapses']
+    if 'autapses' in conn_spec:
+        projections['allow_autapses'] = conn_spec['autapses']
+    if syn_spec is not None:
+        for key in syn_spec.keys():
+            if key not in allowed_syn_spec_keys:
+                raise ValueError(
+                    "'{}' is not allowed in syn_spec when ".format(key) +
+                    "connecting with mask or kernel".format(key))
+        # TODO: change topology names of weights, delays to be consistent
+        if 'weight' in syn_spec:
+            projections['weights'] = syn_spec['weight']
+        if 'delay' in syn_spec:
+            projections['delays'] = syn_spec['delay']
+
+    if conn_spec['rule'] == 'fixed_indegree':
+        if 'use_on_source' in conn_spec:
+            raise ValueError(
+                "'use_on_source' can only be set when using " +
+                "pairwise_bernoulli")
+        projections['connection_type'] = 'convergent'
+        projections['number_of_connections'] = conn_spec['indegree']
+
+    elif conn_spec['rule'] == 'fixed_outdegree':
+        if 'use_on_source' in conn_spec:
+            raise ValueError(
+                "'use_on_source' can only be set when using " +
+                "pairwise_bernoulli")
+        projections['connection_type'] = 'divergent'
+        projections['number_of_connections'] = conn_spec['outdegree']
+
+    elif conn_spec['rule'] == 'pairwise_bernoulli':
+        if ('use_on_source' in conn_spec and
+                conn_spec['use_on_source']):
+            projections['connection_type'] = 'convergent'
+        else:
+            projections['connection_type'] = 'divergent'
+    else:
+        raise kernel.NESTError("When using kernel or mask, the only possible "
+                               "connection rules are 'pairwise_bernoulli', "
+                               "'fixed_indegree', or 'fixed_outdegree'")
+    return projections
+
+
+def _connect_layers_needed(conn_spec):
+    if conn_spec is None:
+        return False
+    rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
+    return ('mask' in conn_spec or
+            ('p' in conn_spec and not rule_is_bernoulli) or
+            'use_on_source' in conn_spec)
+
+
+def _connect_spatial(pre, post, projections):
+    # Replace python classes with SLI datums
+    def fixdict(d):
+        d = d.copy()
+        for k, v in d.items():
+            if isinstance(v, dict):
+                d[k] = fixdict(v)
+            elif isinstance(v, Mask) or isinstance(v, Parameter):
+                d[k] = v._datum
+        return d
+
+    projections = fixdict(projections)
+    sli_func('ConnectLayers', pre, post, projections)
 
 
 @check_stack
-def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
+def Connect(pre, post, conn_spec=None, syn_spec=None,
+            return_connectome=False):
     """
     Connect pre nodes to post nodes.
 
@@ -118,16 +314,18 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     Parameters
     ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs
-    post : list
-        Postsynaptic nodes, as list of GIDs
+    pre : GIDCollection
+        Presynaptic nodes, as object representing the global IDs of the nodes
+    post : GIDCollection
+        Postsynaptic nodes, as object representing the global IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
         Specifies synapse model, see below
     model : str or dict, optional
         alias for syn_spec for backward compatibility
+    return_connectome: bool
+        Specifies whether or not we should return a connectome of pre and post
 
     Raises
     ------
@@ -234,7 +432,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     - 'stdp_synapse'
     - {'weight': 2.4, 'receptor_type': 1}
-    - {'model': 'stdp_synapse',
+    - {'synapse_model': 'stdp_synapse',
        'weight': 2.5,
        'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
        'alpha': {
@@ -243,210 +441,47 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
       }
     """
 
-    if model is not None:
-        deprecation_text = "".join([
-            "The argument 'model' is there for backward compatibility with ",
-            "the old Connect function and will be removed in NEST 3.0. ",
-            "Please change the name of the keyword argument from 'model' to ",
-            "'syn_spec'. For details, see the documentation ",
-            "at:\nhttps://www.nest-simulator.org/connection_management"
-        ])
-        show_deprecation_warning("BackwardCompatibilityConnect",
-                                 text=deprecation_text)
-
-    if model is not None and syn_spec is not None:
-        raise kernel.NESTError(
-            "'model' is an alias for 'syn_spec' and cannot "
-            "be used together with 'syn_spec'.")
+    if not isinstance(pre, GIDCollection):
+        raise TypeError("Not implemented, presynaptic nodes must be a "
+                        "GIDCollection")
+    if not isinstance(post, GIDCollection):
+        raise TypeError("Not implemented, postsynaptic nodes must be a "
+                        "GIDCollection")
 
     sps(pre)
     sps(post)
 
-    # default rule
-    rule = 'all_to_all'
+    # Converting conn_spec to dict, without putting it on the SLI stack.
+    processed_conn_spec = _process_conn_spec(conn_spec)
+    # If syn_spec is given, its contents are checked, and if needed converted
+    # to the right formats.
+    processed_syn_spec = _process_syn_spec(
+        syn_spec, processed_conn_spec, len(pre), len(post))
 
-    if conn_spec is not None:
-        sps(conn_spec)
-        if is_string(conn_spec):
-            rule = conn_spec
-            sr("cvlit")
-        elif isinstance(conn_spec, dict):
-            rule = conn_spec['rule']
-        else:
-            raise kernel.NESTError(
-                "conn_spec needs to be a string or dictionary.")
+    # In some cases we must connect with ConnectLayers instead.
+    if _connect_layers_needed(processed_conn_spec):
+        # Check that pre and post are layers
+        if pre.spatial is None:
+            raise TypeError(
+                "Presynaptic GIDCollection must have spatial information")
+        if post.spatial is None:
+            raise TypeError(
+                "Presynaptic GIDCollection must have spatial information")
+
+        # Create the projection dictionary
+        spatial_projections = _process_spatial_projections(
+            processed_conn_spec, processed_syn_spec)
+
+        # Connect using ConnectLayers
+        _connect_spatial(pre, post, spatial_projections)
     else:
-        sr('/Connect /conn_spec GetOption')
+        sps(processed_conn_spec)
+        if processed_syn_spec is not None:
+            sps(processed_syn_spec)
+        sr('Connect')
 
-    if model is not None:
-        syn_spec = model
-
-    if syn_spec is not None:
-        if is_string(syn_spec):
-            sps(syn_spec)
-            sr("cvlit")
-        elif isinstance(syn_spec, dict):
-            for key, value in syn_spec.items():
-
-                # if value is a list, it is converted to a numpy array
-                if isinstance(value, (list, tuple)):
-                    value = numpy.asarray(value)
-
-                if isinstance(value, (numpy.ndarray, numpy.generic)):
-
-                    if len(value.shape) == 1:
-                        if rule == 'one_to_one':
-                            if value.shape[0] != len(pre):
-                                raise kernel.NESTError(
-                                    "'" + key + "' has to be an array of "
-                                    "dimension " + str(len(pre)) + ", a "
-                                    "scalar or a dictionary.")
-                            else:
-                                syn_spec[key] = value
-                        else:
-                            raise kernel.NESTError(
-                                "'" + key + "' has the wrong type. "
-                                "One-dimensional parameter arrays can "
-                                "only be used in conjunction with rule "
-                                "'one_to_one'.")
-
-                    elif len(value.shape) == 2:
-                        if rule == 'all_to_all':
-                            if value.shape[0] != len(post) or \
-                                    value.shape[1] != len(pre):
-
-                                raise kernel.NESTError(
-                                    "'" + key + "' has to be an array of "
-                                    "dimension " + str(len(post)) + "x" +
-                                    str(len(pre)) +
-                                    " (n_target x n_sources), " +
-                                    "a scalar or a dictionary.")
-                            else:
-                                syn_spec[key] = value.flatten()
-                        elif rule == 'fixed_indegree':
-                            indegree = conn_spec['indegree']
-                            if value.shape[0] != len(post) or \
-                                    value.shape[1] != indegree:
-                                raise kernel.NESTError(
-                                    "'" + key + "' has to be an array of "
-                                    "dimension " + str(len(post)) + "x" +
-                                    str(indegree) +
-                                    " (n_target x indegree), " +
-                                    "a scalar or a dictionary.")
-                            else:
-                                syn_spec[key] = value.flatten()
-                        elif rule == 'fixed_outdegree':
-                            outdegree = conn_spec['outdegree']
-                            if value.shape[0] != len(pre) or \
-                                    value.shape[1] != outdegree:
-                                raise kernel.NESTError(
-                                    "'" + key + "' has to be an array of "
-                                    "dimension " + str(len(pre)) + "x" +
-                                    str(outdegree) +
-                                    " (n_sources x outdegree), " +
-                                    "a scalar or a dictionary.")
-                            else:
-                                syn_spec[key] = value.flatten()
-                        else:
-                            raise kernel.NESTError(
-                                "'" + key + "' has the wrong type. "
-                                "Two-dimensional parameter arrays can "
-                                "only be used in conjunction with rules "
-                                "'all_to_all', 'fixed_indegree' or "
-                                "'fixed_outdegree'.")
-            sps(syn_spec)
-        else:
-            raise kernel.NESTError(
-                "syn_spec needs to be a string or dictionary.")
-
-    sr('Connect')
-
-
-@check_stack
-@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
-Use Connect() with one_to_one rule instead.')
-def DataConnect(pre, params=None, model="static_synapse"):
-    """Connect neurons from lists of connection data.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, given as lists of GIDs or lists
-        of synapse status dictionaries. See below.
-    params : list, optional
-        See below
-    model : str, optional
-        Synapse model to use, see below
-
-    Raises
-    ------
-    TypeError
-
-    Usage Variants
-    --------------
-
-    Variant 1
-    ~~~~~~~~~
-
-    Connect each neuron in pre to the targets given in params,
-    using synapse type model.
-
-    - pre: [gid_1, ... gid_n]
-    - params: [ {param_1}, ..., {param_n} ]
-    - model= 'synapse_model'
-
-    The dictionaries param_1 to param_n must contain at least the
-    following keys:
-    - 'target'
-    - 'weight'
-    - 'delay'
-    Each key must resolve to a list or numpy.ndarray of values.
-
-    Depending on the synapse model, other parameters can be given
-    in the same format. All arrays in params must have the same
-    length as 'target'.
-
-    Variant 2
-    ~~~~~~~~~
-
-    Connect neurons according to a list of synapse status dictionaries,
-    as obtained from GetStatus.
-
-    pre = [ {synapse_state1}, ..., {synapse_state_n}]
-    params=None
-    model=None
-
-    During connection, status dictionary misses will not raise errors,
-    even if the kernel property 'dict_miss_is_error' is True.
-    """
-
-    if not is_coercible_to_sli_array(pre):
-        raise TypeError(
-            "pre must be a list of nodes or connection dictionaries")
-
-    if params is not None:
-
-        if not is_coercible_to_sli_array(params):
-            raise TypeError("params must be a list of dictionaries")
-
-        cmd = '({0}) DataConnect_i_D_s '.format(model)
-
-        for s, p in zip(pre, params):
-            sps(s)
-            sps(p)
-            sr(cmd)
-    else:
-        # Call the variant where all connections are given explicitly
-        # Disable dict checking, because most models can't re-use
-        # their own status dict
-
-        dict_miss = GetKernelStatus('dict_miss_is_error')
-        SetKernelStatus({'dict_miss_is_error': False})
-
-        sps(pre)
-        sr('DataConnect_a')
-
-        SetKernelStatus({'dict_miss_is_error': dict_miss})
+    if return_connectome:
+        return GetConnections(pre, post)
 
 
 @check_stack
@@ -563,30 +598,6 @@ def CGSelectImplementation(tag, library):
 
 
 @check_stack
-@deprecated('', 'DisconnectOneToOne is deprecated and will be removed in \
-NEST-3.0. Use Disconnect instead.')
-def DisconnectOneToOne(source, target, syn_spec):
-    """Disconnect a currently existing synapse.
-
-    Parameters
-    ----------
-    source : int
-        GID of presynaptic node
-    target : int
-        GID of postsynaptic node
-    syn_spec : str or dict
-        See Connect() for definition
-    """
-
-    sps(source)
-    sps(target)
-    if is_string(syn_spec):
-        syn_spec = {'model': syn_spec}
-    sps(syn_spec)
-    sr('Disconnect')
-
-
-@check_stack
 def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect pre neurons from post neurons.
 
@@ -596,9 +607,9 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     Parameters
     ----------
-    pre : list
+    pre : GIDCollection
         Presynaptic nodes, given as list of GIDs
-    post : list
+    post : GIDCollection
         Postsynaptic nodes, given as list of GIDs
     conn_spec : str or dict
         Disconnection rule, see below
@@ -643,19 +654,16 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     Notes
     -----
-    Disconnect does not iterate over subnets, it only disconnects explicitly
-    specified nodes.
+    Disconnect only disconnects explicitly specified nodes.
     """
 
     sps(pre)
-    sr('cvgidcollection')
     sps(post)
-    sr('cvgidcollection')
 
     if is_string(conn_spec):
         conn_spec = {'rule': conn_spec}
     if is_string(syn_spec):
-        syn_spec = {'model': syn_spec}
+        syn_spec = {'synapse_model': syn_spec}
 
     sps(conn_spec)
     sps(syn_spec)

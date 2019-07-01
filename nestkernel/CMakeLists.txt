@@ -24,8 +24,6 @@ set( nestkernel_sources
     clopath_archiving_node.h clopath_archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
     completed_checker.h completed_checker.cpp
-    sibling_container.h sibling_container.cpp
-    subnet.h subnet.cpp
     connection.h
     connection_label.h
     common_properties_hom_w.h
@@ -40,6 +38,7 @@ set( nestkernel_sources
     exceptions.h exceptions.cpp
     genericmodel.h genericmodel_impl.h
     gid_collection.h gid_collection.cpp
+    generic_factory.h
     histentry.h histentry.cpp
     model.h model.cpp
     model_manager.h model_manager_impl.h model_manager.cpp
@@ -51,9 +50,8 @@ set( nestkernel_sources
     nest_timeconverter.h nest_timeconverter.cpp
     modelrange.h modelrange.cpp
     modelrange_manager.h modelrange_manager.cpp
-    multirange.h multirange.cpp
     node.h node.cpp
-    nodelist.h nodelist.cpp
+    parameter.h parameter.cpp
     proxynode.h proxynode.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h
@@ -125,6 +123,8 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
+    ${PROJECT_SOURCE_DIR}/topology
+    ${PROJECT_SOURCE_DIR}/nestkernel
     )
 
 install( TARGETS nestkernel

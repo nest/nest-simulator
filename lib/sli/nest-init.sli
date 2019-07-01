@@ -61,13 +61,20 @@ def
 } if
 [/integertype] /GetStatus_i load addtotrie
 [/connectiontype] /GetStatus_C load addtotrie
+[/arraytype] /GetStatus_a load addtotrie
+def
+
+/GetStatus_a
+{
+  { GetStatus_C } Map
+}
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % These variants of get access network elements represented by
 % a gid like dictionaries. In particular, if a gid returns a dictionary,
-% get can be used to acces the contents of the nested objects.
+% get can be used to access the contents of the nested objects.
 % 071108, Diesmann
 %
 /get [/integertype /literaltype] {exch GetStatus exch get} def
@@ -78,6 +85,293 @@ def
 /get [/connectiontype /literaltype] {exch GetStatus exch get} def
 /get [/connectiontype /arraytype] {exch GetStatus exch get_d_a} def
 
+% The following version allows extraction of a GID from a GIDCollection
+/get [/gidcollectiontype /integertype] { get_g_i } def
+
+% This version gets all values from all nodes. The same as GetStatus, but
+% concatenates into a single dictionary.
+/get [/gidcollectiontype]
+{
+  GetStatus
+  /status_dict << >> def
+
+  size 1 neq
+  { % If not a single value GIDCollection. We have a list of dictionaries.
+
+    % The first thing we do is set the keys in the dictionary based on the
+    % first GID in the GIDCollection, and set the corresponding value in an
+    % array.
+    dup First {status_dict rollu 1 arraystore put_d} forall
+
+    status_dict keys /ks Set
+
+    % Then, we put the values for the rest of the GIDCollection in the right
+    % place in the dictionary.
+    /counter 1 def
+    Rest
+    {
+      dup
+      {
+        /v Set
+        /k Set
+        % Check if we have a composite GIDCollection by checking if k is part
+        % of dict keys.
+        ks k MemberQ
+        {
+          % If primitive, add value to dictionary array
+          status_dict k get [v] join /val_array Set
+        }
+        {
+          % If composite, set values for previous GIDs to None, and add value.
+          [counter] /None LayoutArray [v] join /val_array Set
+          ks [k] join /ks Set
+        } ifelse
+
+        % Add value array to status dictionary.
+        status_dict k val_array put_d
+      } forall
+
+      % If we have a composite gc and there have been values for previous GIDs
+      % that is not part of this particular dictionary, we must set a None
+      % value for this value.
+      keys /dict_keys Set
+      ks
+      {
+        /k Set
+        dict_keys k MemberQ not
+        {
+          status_dict k get [/None] join /val_array Set
+          status_dict k val_array put_d
+        } if
+      } forall
+
+      counter 1 add /counter Set
+    } forall
+
+    status_dict
+  }
+  {
+    0 get
+  } ifelse
+} def
+
+% Get parameter value of all GIDs in GIDCollection
+/get [/gidcollectiontype /literaltype]
+{
+  /value Set
+  /gidcoll Set
+
+  gidcoll size 1 eq
+  { % if size == 1
+    gidcoll GetStatus 0 get value get
+  }
+  { % if size > 1
+    gidcoll GetStatus { value get } Map
+  } ifelse
+} def
+
+% Get parameter values of GIDCollection from an array of parameters
+/get [/gidcollectiontype /arraytype]
+{
+  exch
+  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+  0 get_g_i GetStatus exch get_d_a
+} def
+
+% Get metadata values of GIDCollection
+/GetMetadata [/gidcollectiontype]
+  /GetMetadata_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Slicing of GIDCollections with Take
+% Since n Take means take first n elements, while [n] Take means return
+%      n-th element, we need to be a bit careful, handling the letter case
+%      here at the SLI level and mapping the former to the two-element case
+% Note that Take indexes from 1, with -1 the last element
+/Take [/gidcollectiontype /integertype]
+ {
+   << >> begin
+     /n Set
+     /c Set
+     n 0 geq
+     {
+       [ 1 n ]
+     }
+     {
+       n neg c size gt { c n /Take /RangeError raiseerror } if
+
+       c size dup n add 1 add exch
+       2 arraystore
+     }
+     ifelse
+     c
+     exch
+     Take
+   end
+}
+def
+
+/Take [/gidcollectiontype /arraytype]
+{
+  << >> begin
+  /slice Set
+  /coll Set
+  slice length 1 eq
+  {
+    slice 0 get dup 1 3 arraystore coll exch Take_g_a
+  }
+  {
+    % assume that we have two or three elements now
+    slice dup
+    length 2 eq { 1 append } if
+    coll exch
+    Take_g_a
+  }
+  ifelse
+  end
+
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/* BeginDocumentation
+   Name: LocalOnly - Get only local elements of a GIDCollection.
+
+   Synopsis:
+   gidcollection    LocalOnly --> local_gidcollection
+
+   Parameters:
+   gidcollection          - GIDCollection in which to find local elements
+   local_gidcollection    - GIDCollection with only local elements
+
+   Description:
+   This function gets only the local elements in a GIDCollection.
+   The resulting elements are returned in a new GIDCollection. If
+   there are no local elements, an empty GIDCollection is returned.
+
+   Author: Håkon Mørk
+   FirstVersion: November 2017
+*/
+/LocalOnly [/gidcollectiontype]
+{
+   << >> begin
+     /gc Set
+     Rank gc 0 get NumProcesses mod sub NumProcesses add NumProcesses mod 1 add
+     dup gc size leq
+     {
+       gc size NumProcesses 3 arraystore gc exch Take
+     }
+     {
+       pop
+       [] cvgidcollection
+     } ifelse
+   end
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Return array containing only those GIDs for which procedure returns true
+%
+% Note:
+% Returns array so that we can return an empty array if no node matches.
+/Select [/gidcollectiontype /proceduretype]
+{
+  /predicate Set
+  mark exch
+  {
+    dup
+    predicate not
+    {
+      pop
+    }
+    if
+  }
+  forall
+  counttomark
+  arraystore
+  exch pop
+  currentdict /predicate undef
+} bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Min and Max for GIDCollections
+%
+
+/Min trie
+[/gidcollectiontype] { 0 get } addtotrie
+[/anytype] /Min load addtotrie
+def
+
+/Max trie
+[/gidcollectiontype] { dup size 1 sub get } addtotrie
+[/anytype] /Max load addtotrie
+def
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Parameterization
+
+
+/mul [/parametertype /parametertype]
+  /mul_P_P load
+def
+
+/div [/parametertype /parametertype]
+  /div_P_P load
+def
+
+/add [/parametertype /parametertype]
+  /add_P_P load
+def
+
+/sub [/parametertype /parametertype]
+  /sub_P_P load
+def
+
+/compare [/parametertype /parametertype /dictionarytype]
+  /compare_P_P_D load
+def
+
+/conditional [/parametertype /parametertype /parametertype]
+  /conditional_P_P_P load
+def
+
+/exp [/parametertype]
+  /exp_P load
+def
+
+/sin [/parametertype]
+  /sin_P load
+def
+
+/cos [/parametertype]
+  /cos_P load
+def
+
+/pow [/parametertype /doubletype]
+  /pow_P_d load
+def
+
+/dimension2d [/parametertype /parametertype]
+  /dimension2d_P_P load
+def
+
+/dimension3d [/parametertype /parametertype /parametertype]
+  /dimension3d_P_P_P load
+def
+
+/CreateParameter trie
+[/dictionarytype] /CreateParameter_D load addtotrie
+[/doubletype] /CreateParameter_D load addtotrie
+def
+
+/GetValue [/parametertype]
+  /GetValue_P load
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -95,7 +389,7 @@ def
 
 
 % oosupport.sli already defines conversions for dict
-/cvdict [/connectiontype] 
+/cvdict [/connectiontype]
  /cvdict_C load
 def
 
@@ -135,6 +429,138 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% add conversion from GIDCollection
+/cva [/gidcollectiontype]
+  /cva_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/GIDCollectionQ trie
+  [/gidcollectiontype] true addtotrie
+  [/anytype] false addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% convert to list of gid-modelid pairs
+/cva_gid_mid trie def
+/cva_gid_mid [/gidcollectiontype]
+{
+ << >> begin
+  dup
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+
+  mark
+  {
+    iter :getgidmodelid_q
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% join for GIDCollections
+/join [/gidcollectiontype /gidcollectiontype]
+  /join_g_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% forall, forallindexed and Map for gid collections --- brutal implementations
+
+/forall [/gidcollectiontype /proceduretype]
+{
+  /func Set
+  dup
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+
+  % Delete local variables; we do not use a local dictionary
+  % here in case func should change variables.
+  currentdict /func undef
+  currentdict /iter undef
+  currentdict /enditer undef
+
+} bind def
+
+/forallindexed [/gidcollectiontype /proceduretype]
+{
+  /func Set
+  dup
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+
+  /:n 0 def
+  {
+    iter :getgid_q
+    :n
+    func
+    iter :next_q
+    /:n :n 1 add def
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+
+  % Delete local variables; we do not use a local dictionary
+  % here in case func should change variables.
+  currentdict /func undef
+  currentdict /iter undef
+  currentdict /enditer undef
+  currentdict /:n undef
+
+} bind def
+
+/Map [/gidcollectiontype /proceduretype]
+{
+  << >> begin
+  /func Set
+  dup
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+
+  mark
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+} bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GIDCollection membership
+
+/InCollection [/gidcollectiontype /integertype]
+  /MemberQ_g_i load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % typeinit.sli already defines size functions for other types
 /size [/gidcollectiontype]
   /size_g load
@@ -142,8 +568,52 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% GetStatus / SetStatus for GIDCollection
+
+/GetStatus [/gidcollectiontype]
+  /GetStatus_g load
+def
+
+/SetStatus [/gidcollectiontype /dictionarytype]
+{
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
+  exch { 1 pick SetStatus_id } forall
+  pop % dictionary
+}
+def
+
+/SetStatus [/gidcollectiontype /arraytype]
+{
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
+  << >> begin
+  /params Set
+  /gc Set
+
+  params length gc size neq
+  {
+    gc params /SetStatus /IncompatibleLengths raiseerror
+  }
+  if
+
+  gc :beginiterator_g /iter Set
+  gc :enditerator_g /enditer Set
+
+  params
+  {
+    iter :getgid_q exch
+    SetStatus_id
+    iter :next_q pop
+  }
+  forall
+
+  end
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /GetResolution {
-    0 GetStatus /resolution get
+    GetKernelStatus /resolution get
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,39 +718,30 @@ def
    Name: Connect - Establish a connection between two nodes or lists of nodes.
 
    Synopsis:
-   source target                        Connect
-   source target              syn_model Connect
-   source target weight delay           Connect
-   source target weight delay syn_model Connect
-   source target params                 Connect
-   source target params       syn_model Connect
-   
-   sources targets                      Connect
-   sources targets conn_rule            Connect
-   sources targets conn_spec            Connect
-   sources targets conn_rule syn_model  Connect
-   sources targets conn_spec syn_model  Connect
-   sources targets conn_rule syn_spec   Connect
-   sources targets conn_spec syn_spec   Connect
+   sources targets                        Connect
+   sources targets weight delay           Connect
+   sources targets weight delay syn_model Connect
+   sources targets conn_rule              Connect
+   sources targets conn_spec              Connect
+   sources targets conn_rule syn_model    Connect
+   sources targets conn_spec syn_model    Connect
+   sources targets conn_rule syn_spec     Connect
+   sources targets conn_spec syn_spec     Connect
 
    Parameters:
-   source     integer  - the GID of the source
-   target     integer  - the GID of the target
-   weight     double   - the weight of the connection
-   delay      double   - the delay of the connection
-   params     dict     - dictionary with synapse parameters
-
-   sources    array/intvector/gidcollection  - the GIDs of the sources
-   targets    array/intvector/gidcollection  - the GIDs of the targets
-   syn_model  literal  - the name of the synapse model, see synapsedict
-   syn_spec   dict     - dictionary with synapse model specification (see Options)
-   conn_rule  literal  - the name of the connection rule, see connruledict
-   conn_spec  dict     - dictionary with connectivity specification (see Options)
+   sources    gidcollection  - the GIDs of the sources
+   targets    gidcollection  - the GIDs of the targets
+   weight     double         - the weight of the connection
+   delay      double         - the delay of the connection
+   conn_rule  literal        - the name of the connection rule, see connruledict
+   conn_spec  dict           - dictionary with connectivity specification (see Options)
+   syn_model  literal        - the name of the synapse model, see synapsedict
+   syn_spec   dict           - dictionary with synapse model specification (see Options)
 
    Options:
    /conn_spec - dictionary with connectivity specification, must at least contain /rule
 
-                The following options may be given for all connection rules; 
+                The following options may be given for all connection rules;
                 not all rules support all options and many rules add rule-specific options.
 
                 autapses      bool  - allow self-connections (default: true)
@@ -298,22 +759,18 @@ def
    number of elements. Others may have additional parameters,
    e.g. connection probability /p for /pairwise_binomial.
 
-   The variants with two global ids as arguments implicitly connect
-   the two neurons using the all_to_all rule. If given, weight, delay,
-   syn_model, and params are used for the connection.
-
    The variants with only literal arguments /conn_rule or /syn_model
-   are shorthand for the corresponding calls with a connectivity or
+   are shorthand for the corresponding calls with connectivity or
    synapse specification dictionaries as explained in the Options
    section.  The literals are expanded to << /rule /conn_rule >> and
-   << /model /syn_model >>, respectively.
+   << /synapse_model /syn_model >>, respectively.
 
    Parameters for connectivity rules must have fixed values.
 
-   Parameters for synapses may be fixed single values and random deviate
+   Parameters for synapses may be fixed single values, arrays or random deviate
    specifications.
 
-   SeeAlso: synapsedict, connruledict, cvgidcollection
+   SeeAlso: synapsedict, connruledict, cvgidcollection, GetOptions
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 
@@ -324,7 +781,7 @@ def
 
 /Connect <<
   /conn_spec << /rule /all_to_all >>
-  /syn_spec << /model /static_synapse >>
+  /syn_spec << /synapse_model /static_synapse >>
 >> Options
 
 
@@ -350,175 +807,148 @@ def
 
 %%% Variants of Connect
 
-/Connect_i_i_l
-{
-  /ciil_model Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  /one_to_one
-  ciil_model
-  Connect
-} def
-
-/Connect_i_i_d_d_l
-{
-  /ciiddl_model Set
-  /ciiddl_delay Set
-  /ciiddl_weight Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  << /rule /one_to_one >>
-  << /model ciiddl_model /weight ciiddl_weight /delay ciiddl_delay >>
-  Connect
-} def
-
-/Connect_i_i_D_l
-{
-  /ciiDl_model Set
-  /ciiDl_syn_spec Set
-  dup cvgidcollection
-  exch
-  dup cvgidcollection
-  exch
-  << /rule /one_to_one >>
-  << /model ciiDl_model >> /ciiDl_syn_spec JoinTo
-  ciiDl_syn_spec
-  Connect
-} def
-
 /Connect trie
 
-  % Connect two nodes using default synapse model
-  [/integertype /integertype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_l
-  } bind addtotrie
-
-  % Connect two nodes using given synapse model
-  [/integertype /integertype /literaltype]
-      /Connect_i_i_l load addtotrie
-
-  % Connect two nodes using given weight and delay and default synapse model
-  [/integertype /integertype /doubletype /doubletype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_d_d_l
-  } bind addtotrie
-
-  % Connect two nodes using given weight, delay, and synapse model
-  [/integertype /integertype /doubletype /doubletype /literaltype]
-      /Connect_i_i_d_d_l load addtotrie
-
-  % Connect two nodes using given weight and delay and default synapse model
-  [/integertype /integertype /dictionarytype] {
-      /Connect /syn_spec GetOption /model get
-      Connect_i_i_D_l
-  } bind addtotrie
-
-  % Connect two nodes using given synapse parameters and synapse model
-  [/integertype /integertype /dictionarytype /literaltype]
-      /Connect_i_i_D_l load addtotrie
-
-
-  % We create the type trie for the list variants using a loop
+  % We create the type trie for the different variants using a loop
   [/arraytype /intvectortype /gidcollectiontype] {
       /gidlisttype Set
 
-      % Connect nodes from two lists of GIDs using default rule and
-      % default syn_model
+      % Variant: sources targets Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % synapse model
       [gidlisttype gidlisttype] {
-	  cvgidcollection exch % convert targets to gidcollection
-	  cvgidcollection exch % convert sources to gidcollection
-	  /Connect /conn_spec GetOption % use defaults
-	  /Connect /syn_spec GetOption  % use defaults
-	  Connect_g_g_D_D
+        cvgidcollection exch  % convert targets to gidcollection
+        cvgidcollection exch  % convert sources to gidcollection
+        /Connect /conn_spec GetOption  % use default conn_spec
+        /Connect /syn_spec GetOption   % use default syn_spec
+        Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
+      % Variant: sources targets weight delay Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % synapse model but with the given weight and delay
+      [gidlisttype gidlisttype /doubletype /doubletype] {
+        mark 3 1 roll         % put a mark before weight and delay
+        /weight 3 1 roll      % add a label for the weight
+        /delay 2 1 roll       % add a label for the delay
+        >>                    % create the syn_spec dictionary
+        /syn_spec :Connect_complete_dict    % fill in missing defaults
+        /Connect /conn_spec GetOption exch  % use default conn_spec
+        4 2 roll              % bring sources and targets to top
+        cvgidcollection exch  % convert targets to gidcollection
+        cvgidcollection exch  % convert sources to gidcollection
+        4 2 roll              % bring sources and targets to bottom
+        Connect_g_g_D_D
+      } bind addtotrie
+
+
+      % Variant: sources targets weight delay syn_model Connect
+      % Connect nodes from two sets of GIDs using the default rule and
+      % the given weight, delay and synapse model
+	    [gidlisttype gidlisttype /doubletype /doubletype /literaltype] {
+        mark 4 1 roll         % put a mark before weight and delay
+        /weight 4 1 roll      % add a label for the weight
+        /delay 3 1 roll       % add a label for the delay
+        /synapse_model 2 1 roll  % add a label for the synapse model
+        >>                    % create the syn_spec dictionary
+        /syn_spec :Connect_complete_dict    % fill in missing defaults
+        /Connect /conn_spec GetOption exch  % use default conn_spec
+        4 2 roll              % bring sources and targets to top
+        cvgidcollection exch  % convert targets to gidcollection
+        cvgidcollection exch  % convert sources to gidcollection
+        4 2 roll              % bring sources and targets to bottom
+        Connect_g_g_D_D
+      } bind addtotrie
+
+      % Variant: sources targets conn_rule Connect
+      % Connect nodes from two sets of GIDs using the given rule and
       % default synapse model
       [gidlisttype gidlisttype /literaltype] {
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  3 1 roll                % bring sources and targets to top
-	  cvgidcollection exch    % convert targets to gidcollection
-	  cvgidcollection exch    % convert sources to gidcollection
-	  3 2 roll                % bring sources and targets to bottom 
-	  /Connect /syn_spec GetOption % use defaults
-	  Connect_g_g_D_D
+    	  mark exch /rule exch >>  % create the conn_spec dictionary
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  3 1 roll                 % bring sources and targets to top
+    	  cvgidcollection exch     % convert targets to gidcollection
+    	  cvgidcollection exch     % convert sources to gidcollection
+    	  3 2 roll                 % bring sources and targets to bottom
+    	  /Connect /syn_spec GetOption  % use default syn_spec
+    	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule
-      % paramters and default synapse model
+      % Variant: sources targets conn_spec Connect
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % specification and default synapse model
       [gidlisttype gidlisttype /dictionarytype] {
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  3 1 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  3 2 roll                  % bring sources and targets to bottom 
-	  /Connect /syn_spec GetOption % use defaults
-	  Connect_g_g_D_D
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  3 1 roll              % bring sources and targets to top
+    	  cvgidcollection exch  % convert targets to gidcollection
+    	  cvgidcollection exch  % convert sources to gidcollection
+    	  3 2 roll              % bring sources and targets to bottom
+    	  /Connect /syn_spec GetOption  % use default syn_spec
+    	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
-      % given synapse model
+      % Variant: sources targets conn_rule syn_model Connect
+      % Connect nodes from two sets of GIDs using the given rule and
+      % synapse model
       [gidlisttype gidlisttype /literaltype /literaltype] {
-	  mark exch /model exch >> % create the syn_spec dictionary
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
-	  Connect_g_g_D_D
+    	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
+    	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+    	  exch                      % exchange syn_spec and conn_spec
+    	  mark exch /rule exch >>   % create the conn_spec dictionary
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  exch                      % exchange syn_spec and conn_spec
+    	  4 2 roll                  % bring sources and targets to top
+    	  cvgidcollection exch      % convert targets to gidcollection
+    	  cvgidcollection exch      % convert sources to gidcollection
+    	  4 2 roll                  % bring sources and targets to bottom
+    	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect nodes from two lists of GIDs using given rule and
-      % given syn_spec
+      % Variant: sources targets conn_spec syn_model Connect
+      % Connect nodes from two sets of GIDs using the given rule and
+      % synapse specification
       [gidlisttype gidlisttype /literaltype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  mark exch /rule exch >> % create the conn_spec dictionary
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
-	  Connect_g_g_D_D
+    	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+    	  exch                     % exchange syn_spec and conn_spec
+    	  mark exch /rule exch >>  % create the conn_spec dictionary
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  exch                     % exchange syn_spec and conn_spec
+    	  4 2 roll                 % bring sources and targets to top
+    	  cvgidcollection exch     % convert targets to gidcollection
+    	  cvgidcollection exch     % convert sources to gidcollection
+    	  4 2 roll                 % bring sources and targets to bottom
+    	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Connect two lists using the given rule parameters and synapse model
+      % Variant: sources targets conn_rule syn_spec Connect
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % specification and synapse model
       [gidlisttype gidlisttype /dictionarytype /literaltype] {
-	  mark exch /model exch >> % create the syn_spec dictionary
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
-	  Connect_g_g_D_D
+    	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
+    	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+    	  exch                      % exchange syn_spec and conn_spec
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  exch                      % exchange syn_spec and conn_spec
+    	  4 2 roll                  % bring sources and targets to top
+    	  cvgidcollection exch      % convert targets to gidcollection
+    	  cvgidcollection exch      % convert sources to gidcollection
+    	  4 2 roll                  % bring sources and targets to bottom
+    	  Connect_g_g_D_D
       } bind addtotrie
-      
-      % Connect two lists using the given rule parameters and synapse
-      % parameters
+
+      % Variant: sources targets conn_spec syn_spec Connect
+      % Connect nodes from two sets of GIDs using the given connectivity
+      % and synapse specifications
       [gidlisttype gidlisttype /dictionarytype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  /conn_spec :Connect_complete_dict % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
-	  4 2 roll                  % bring sources and targets to top
-	  cvgidcollection exch      % convert targets to gidcollection
-	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
-	  Connect_g_g_D_D
+    	  /syn_spec :Connect_complete_dict   % fill in missing defaults
+    	  exch                  % exchange syn_spec and conn_spec
+    	  /conn_spec :Connect_complete_dict  % fill in missing defaults
+    	  exch                  % exchange syn_spec and conn_spec
+    	  4 2 roll              % bring sources and targets to top
+    	  cvgidcollection exch  % convert targets to gidcollection
+    	  cvgidcollection exch  % convert sources to gidcollection
+    	  4 2 roll              % bring sources and targets to bottom
+    	  Connect_g_g_D_D
       } bind addtotrie
 
   } forall
@@ -533,14 +963,14 @@ def
    Name: GetConnections - Retrieve connections between nodes
 
    Synopsis:
-   << /source [sgid1 sgid2 ...] 
+   << /source [sgid1 sgid2 ...]
       /target [tgid1 tgid2 ...]
-      /synapse_model /smodel    
+      /synapse_model /smodel
       /synapse_label label      >> GetConnections -> [ conn1 conn2 ... ]
 
    Parameters:
    A dictionary that may contain the following fields (all are optional):
-   /source  - array with GIDs of presynaptic nodes whose connections are sought. 
+   /source  - array with GIDs of presynaptic nodes whose connections are sought.
               If not given, all neurons are searched as sources.
    /target  - array with GIDs of post-synaptic nodes whose connections are sought.
               If not given, all neurons are searched as targets.
@@ -550,16 +980,16 @@ def
                     If not given, connections of all synapse labels are returned.
 
    Description:
-   1. If called with an empty dictionary, GetConnections returns all connections of the 
+   1. If called with an empty dictionary, GetConnections returns all connections of the
       network, as a list of arrays (IntVectorDatum), one array per connection.
    2. Each array (connection object) has the following elements:
       [source-gid target-gid target-thread synapse-model-id port]
-   3. The optional dictionary elements /source and /target can be used to filter 
+   3. The optional dictionary elements /source and /target can be used to filter
       for specific pre- and post-synaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
    5. The optional parameter /synapse_label can be used to filter for a specific synapse label.
    6. In a parallel simulation, GetConnections only returns connections with *targets*
-      on the MPI process executing the function. 
+      on the MPI process executing the function.
 
    Remarks:
    1. See synapsedict for the synapse-model-id's for all synapse models.
@@ -569,37 +999,32 @@ def
       mainly important for NEST internally.
    4. In OpenMP mode, GetConnections works thread-parallel for better performance.
    5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetSynapseStatus, GetSynapseStatus, and DataConnect
+   6. Connection objects can be passed to SetSynapseStatus, and GetSynapseStatus
 
-   SeeAlso: DataConnect, SetSynapseStatus, GetSynapseStatus, synapsedict
+   SeeAlso: SetSynapseStatus, GetSynapseStatus, synapsedict
 */
-/GetConnections [/dictionarytype] 
-{ 
-  dup /pdict Set
+/GetConnections [/dictionarytype]
+{
+  /pdict Set
   [ /source /target ]
   {
     /key Set
-    pdict key known 
-    { 
-      pdict key get 
-      ArrayQ exch ; not  
-      {
-	key cvs ( argument must be list of GIDs) join M_ERROR message
-	/GetConnections /ArgumentError raiseerror
-      }
-      if
+    pdict key known
+    {
       pdict key get
-      TensorRank 1 eq not
+      GIDCollectionQ exch ; not
       {
-        key cvs ( list of GIDs must be of dimension 1) join M_ERROR message
-      	/GetConnections /ArgumentError raiseerror
+	      key cvs ( argument must be GIDCollection) join M_ERROR message
+	      /GetConnections /ArgumentError raiseerror
       }
       if
-    } if    
-  } forall
-  GetConnections_D 
-  Flatten 
-} def
+    }
+    if
+  }
+  forall
+  pdict GetConnections_D
+}
+def
 
 
 /** @BeginDocumentation
@@ -619,7 +1044,7 @@ def
    Status information is only available for connections with targets on
    the MPI process executing the command.
 
-   See also: GetConnections, SetSynapseStatus, DataConnect
+   See also: GetConnections, SetSynapseStatus
 */
 /GetSynapseStatus [/arraytype] /GetStatus_a load def
 
@@ -644,214 +1069,9 @@ def
    be changed for connections with targets on the MPI process executing
    SetSynapseStatus.
 
-   See also: GetConnections, GetSynapseStatus, DataConnect
-*/   
-/SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
-
-/** @BeginDocumentation
-     Name: DataConnect - Connect many neurons from data.
-
-     Synopsis: 
-     1.   source dict model  DataConnect_i_D_a -> -
-
-     source - GID of the source neuron
-     dict   - dictionary with connection parameters
-     model  - the synapse model as string or literal
-
-     2. [dict1 dict2 .... dict_n] DataConnect_a -> -
-     
-     The argument is a list with synapse status dictionaries as obtained from GetStatus.
-
-     Description:
-
-     Variant 1:
-     This variant is used if connectivity data is explicitly given and read from files.
-     Connects the source neuron to targets according to the data in dict, using the synapse 'model'.
-     Dict is a parameter dictionary that must contain at least the following fields:
-     /target
-     /weight
-     /delay
-     Other parameters depend on the synapse model. 
-     The values in the dictionaries are arrays of equal size, specifying the parameters for the
-     respective connection. The arrays should all be of type DoubleVectorDatum (numpy.array(dtype=float)). 
-     Note that for performance reasons, target GIDs must be given as doubles rather than integers!
-
-     The second variant of DataConnect can be used to re-instantiate a given connectivity matrix.
-     The argument is a list of dictionaries, each containing at least the keys
-     /source
-     /target
-     /weight
-     /delay
-     /synapse_model
-     
-     Example:
-     
-     % assume a connected network
-
-     << >> GetConnections /conns Set      % Get all connections
-     conns { GetStatus } Map  /syns  Set  % retrieve their synapse status
-
-     ResetKernel                          % clear everything
-     % rebuild neurons
-     syns DataConnect                     % restore the connecions
-
-     Author: Marc-Oliver Gewaltig
-     FirstVersion: August 2011
-     SeeAlso: DataConnect_i_D_s, DataConnect_a, Connect
-  */ 
-
-/DataConnect trie
-  [/integertype /dictionarytype /literaltype] /DataConnect_i_D_s load addtotrie
-  [/integertype /dictionarytype /stringtype] /DataConnect_i_D_s load addtotrie
-  [/arraytype] /DataConnect_a load addtotrie 
-def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/ResetNetwork
-<< /deprecation_warning true >>
-Options
-
-/ResetNetwork
-{
-  << >> begin
-  /ResetNetwork /deprecation_warning GetOption true eq
-  {
-    (SLI function ResetNetwork is deprecated and will be removed in NEST 3.0.) M_DEPRECATED message
-    /ResetNetwork << /deprecation_warning false >> SetOptions
-  } if
-  
-  ::ResetNetwork
-} bind def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/** @BeginDocumentation
-   Name: LayoutNetwork - Create a multidimensional network.
-
-   Synopsis:
-   model [d1 d2 ...] << >> LayoutNetwork
-   model [d1 d2 ...]       LayoutNetwork
-   /constructor [d1 d2 ...] LayoutNetwork
-
-   Parameters:
-   model      - model id of the nodes to be created
-   [d1 d2 ..] - array with dimensions
-   << >>      - optional status dictionary with initialization for
-                the nodes
-
-   Description:
-   LayoutNetwork generates an n-dimensial network with nodes of type model.
-   If a status dictionary is supplied, each created node is initialized with
-   the supplied status dictionary.
-
-   Examples:
-   iaf_psc_alpha [10 10] LayoutNetwork
-   Creates a two dimensional layer of 10 by 10 neurons of type iaf_psc_alpha.
-
-   Author: Marc-Oliver Gewaltig
-   FirstVersion: 20.6.02
-
-   SeeAlso: Create, LayoutArray
+   See also: GetConnections, GetSynapseStatus
 */
-
-/LayoutNetwork
-<< /deprecation_warning true >>
-Options
-
-/LayoutNetwork_l_a_dict
-{
-  << >> begin
-  /LayoutNetwork /deprecation_warning GetOption true eq
-  {
-    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
-    /LayoutNetwork << /deprecation_warning false >> SetOptions
-  } if
-             /val   Set
-  size       /n_dim Set
-   dup 0 get /n     Set
-             /dim   Set
-             /m Set
-
-  /cwn CurrentSubnet def
-  /subnet Create
-  dup /result Set % safe return value
-  ChangeSubnet
-  n_dim 1 eq
-  {
-    % we have reached the end of the recursion
-    % and may create the leaf elements
-    m n Create ;
-    1 1 n
-    {
-      1 arraystore val SetStatus
-    } for
-    cwn ChangeSubnet
-  }
-  {
-    % go down in recursion
-    m dim Rest val % parameters for LayoutNetwork
-    n
-    {
-       3 copy LayoutNetwork_l_a_dict % call function recursively
-       pop % forget about return value
-    } repeat
-    3 npop
-  } ifelse
-  % return root as result
-  result
-  cwn ChangeSubnet
-  end
-} bind def
-
-/LayoutNetwork_l_a
-{
-  << >> begin
-  /LayoutNetwork /deprecation_warning GetOption true eq
-  {
-    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
-    /LayoutNetwork << /deprecation_warning false >> SetOptions
-  } if
-  size       /n_dim Set
-   dup 0 get /n     Set
-             /dim   Set
-             /m Set
-
-  /cwn CurrentSubnet def
-  /subnet Create
-  dup /result Set
-  ChangeSubnet
-  n_dim 1 eq
-  {
-    % we have reached the end of the recursion
-    % and may create the leaf elements
-    m n Create ;
-
-    % go back to where we came from
-    cwn ChangeSubnet
-  }
-  {
-    % go down in recursion
-    m dim Rest % parameters for LayoutNetwork
-    n
-    {
-       2 copy LayoutNetwork_l_a % call function recursively
-       pop % forget about return value
-    } repeat
-    2 npop
-  } ifelse
-  % leave the root node as result
-  result
-  cwn ChangeSubnet
-  end
-} bind def
-
-/LayoutNetwork trie
-[/literaltype /arraytype /dictionarytype]
-   /LayoutNetwork_l_a_dict load addtotrie
-[/literaltype /arraytype ]
-   /LayoutNetwork_l_a load addtotrie
-def
+/SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1038,207 +1258,6 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /** @BeginDocumentation
-   Name: GetGlobalNodesInfo - Return GIDs, VPs and Parent GIDs of all nodes of 
-         a subnet that fulfill the conditions given in the dictionary, or of
-         all nodes if no dictionary given.
-   Synopsis:
-     gid [<<dict>>]  GetGlobalNodesInfo -> [<<...>> <<...>> ...]
-   Parameters:
-     gid      - id of a subnet
-     <<dict>> - Dictionary of selection properties
-   Returns:
-     [<<...>>...]  - Array with dicts containing /global_id, /vp, /parent
-   Description:
-   This function recursively traverses a subnet and returns the gid, vp
-   and parent gid of all child nodes in increasing order of gid. If a dictionary
-   is provided, only those nodes which fulfill the given criteria are
-   returned.
-
-   The returned Nodes include the intermediate subnets.
-
-   Author: Marc-Oliver Gewaltig, Abigail Morrison
-
-   SeeAlso: GetGlobalNodes, GetLocalNodes
-*/
-
-/GetGlobalNodesInfo trie
-[/integertype /dictionarytype] { false false GetNodes_i_D_b_b } bind addtotrie
-[/integertype] { << >> false false GetNodes_i_D_b_b } bind addtotrie
-def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/** @BeginDocumentation
-   Name: GetGlobalNodes - Return IDs of all nodes of a subnet that fulfill the
-         conditions given in the dictionary, or all nodes if no dictionary given.
-   Synopsis:
-     gid [<<dict>>]  GetGlobalNodes -> [gid1 ... gidn]
-   Parameters:
-     gid      - id of a subnet
-     <<dict>> - Dictionary of selection properties
-   Returns:
-     [gid..]  - Array with the global ids of all child nodes.
-   Description:
-   This function recursively traverses a subnet and returns the global
-   ids of all child nodes in increasing order of gid. If a dictionary
-   is provided, only those nodes which fulfill the given criteria are
-   returned.
-
-   The returned Nodes include the intermediate subnets. For a variant
-   of this command that excludes the subnets, see "GetGlobalLeaves".
-
-   Author: Marc-Oliver Gewaltig, Abigail Morrison
-
-   SeeAlso: GetGlobalNodesInfo, GetLocalNodes, GetGlobalLeaves, GetGlobalChildren
-*/
-
-/GetGlobalNodes trie
-[/integertype /dictionarytype] { false true GetNodes_i_D_b_b } bind addtotrie
-[/integertype] { << >> false true GetNodes_i_D_b_b } bind addtotrie
-def
-
-/** @BeginDocumentation
-   Name: GetLocalNodes - Return IDs of all local nodes of a subnet that fulfill the
-         conditions given in the dictionary, or all nodes if no dictionary given.
-   Synopsis:
-     gid [<<dict>>]  GetLocalNodes -> [gid1 ... gidn]
-   Parameters:
-     gid     - id of a subnet
-     <<dict>> - Dictionary of selection properties
-   Returns:	
-     [gid..] - Array with the global ids of all local child nodes.
-   Description:
-   This function is equivalent to GetGlobalNodes, but returns only those
-   nodes that are local to the MPI process executing the command.
-
-   Author: Hans Ekkehard Plesser, Abigail Morrison
-
-   SeeAlso: GetGlobalNodes, GetLocalLeaves, GetLocalChildren
-*/
-/GetLocalNodes trie
-[/integertype /dictionarytype] { true true GetNodes_i_D_b_b } bind addtotrie
-[/integertype] { << >> true true GetNodes_i_D_b_b } bind addtotrie
-def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/** @BeginDocumentation
-   Name: GetGlobalChildren - Return IDs of all immediate child nodes of a subnet
-         that fulfill the conditions given in the dictionary, or all nodes if no 
-	 dictionary given.
-   Synopsis:
-   gid [<<dict>>]  GetGlobalChildren -> [gid1 ... gidn]
-
-   Parameters:
-   gid     - id of a subnet
-   <<dict>> - Dictionary of selection properties	
-   Returns:
-   [gid..] - Array with the global ids of all child nodes.
-
-   Description:
-   This function returns the ids of all children of a subnet in increasing order  
-   of gid. If a dictionary is provided, only those nodes which fulfill the given 
-   criteria are returned.
-
-   Author: Marc-Oliver Gewaltig, Abigail Morrison
-
-   SeeAlso: GetLocalChildren, GetGlobalNodes, GetGlobalLeaves
-*/
-
-/GetGlobalChildren trie
-[/integertype /dictionarytype] { false GetChildren_i_D_b } bind addtotrie
-[/integertype] { << >> false GetChildren_i_D_b} bind addtotrie
-def
-
-/** @BeginDocumentation
-   Name: GetLocalChildren - Return IDs of all immediate local child nodes of a subnet 
-   	 that fulfill the conditions given in the dictionary, or all children if no 
-	 dictionary given.
-   Synopsis:
-   gid [<<dict>>]  GetLocalChildren -> [gid1 ... gidn]
-   Parameters:
-   gid     - id of a subnet
-   <<dict>> - Dictionary of selection properties
-   Returns:	
-   [gid..] - Array with the global ids of all local child nodes.
-
-   Description:
-   This function is equivalent to GetGlobalChildren, but returns only the ids of all 
-   children of a subnet belonging to the MPI process executing the command.
-
-   Author: Hans Ekkehard Plesser, Abigail Morrison
-
-   SeeAlso: GetGlobalChildren, GetLocalNodes, GetLocalLeaves
-*/
-
-/GetLocalChildren trie
-[/integertype /dictionarytype] { true GetChildren_i_D_b } bind addtotrie
-[/integertype] { << >> true GetChildren_i_D_b } bind addtotrie
-def
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/** @BeginDocumentation
-   Name: GetGlobalLeaves - Return IDs of all leaves of a subnet that fulfill the 
-   	 conditions given in the dictionary, or all leaves if no dictionary given.
-   Synopsis:
-   gid [<<dict>>]  GetGlobalLeaves -> [gid1 ... gidn]
-   Parameters:
-   gid     - id of a subnet
-   <<dict>> - Dictionary of selection properties	
-   Returns:
-   [gid..] - Array with the global ids of all leaf nodes.
-
-   Description:
-   This function recursively traverses a subnet and returns the global
-   ids of all leaf nodes in increasing order of gid.  If a dictionary is provided, 
-   only those nodes which fulfill the given criteria are returned.
-
-   The returned nodes DO NOT include the intermediate subnets. For a
-   variant of this command that also returns the subnets, see
-   "GetGlobalNodes".
-
-   Author: Ruediger Kupper, Abigail Morrison
-
-   FirstVersion: 12.3.2003
-
-   SeeAlso: GetLocalLeaves, GetGlobalNodes, GetGlobalChildren
-*/
-
-/GetGlobalLeaves trie
-[/integertype /dictionarytype] { false GetLeaves_i_D_b } bind addtotrie
-[/integertype] { << >> false GetLeaves_i_D_b } bind addtotrie
-def
-
-/** @BeginDocumentation
-   Name: GetLocalLeaves - Return IDs of all local leaves of a subnet that fulfill the 
-   	 conditions given in the dictionary, or all leaves if no dictionary given.
-   Synopsis:
-   gid [<<dict>>]  GetLocalLeaves -> [gid1 ... gidn]
-   Parameters:
-   gid     - id of a subnet
-   <<dict>> - Dictionary of selection properties
-   Returns:	
-   [gid..] - Array with the global ids of all local leaf nodes.
-
-   Description:
-   This function does the same as GetGlobalLeaves, but returns only the
-   nodes local to the MPI process executing the program.
-
-   Author: Hans Ekkehard Plesser, Abigail Morrison
-
-   SeeAlso: GetGlobalLeaves, GetLocalNodes, GetLocalChildren
-*/
-
-/GetLocalLeaves trie
-[/integertype /dictionarytype] { true GetLeaves_i_D_b } bind addtotrie
-[/integertype] { << >> true GetLeaves_i_D_b } bind addtotrie
-def
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/** @BeginDocumentation
    Name: ShowStatus - Show the status dictionary of a network node.
 
    Synopsis:
@@ -1258,72 +1277,18 @@ def
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 /** @BeginDocumentation
-Name: GetNetwork - Return a nested list with the IDs of nodes in a multi-dimensional subnet.
-Synpsis: ID n GetNetwork -> [ ]
-Description:
-
-GetNetwork takes the id of a subnet and an integer parameter
-n. GetNetwork then recursively calls GetChildren down to level n.
-The result is a nested list whicht contains the ids of all nodes.
-The first element of each list is the id of the subnet itself.
-
-Example:
-SLI ] /iaf_psc_alpha Create ;
-SLI ] /iaf_psc_alpha [2 2] LayoutNetwork ;
-SLI ] /iaf_psc_alpha Create ;
-SLI ] 0 3 GetNetwork ==
-[0 1 [2 [3 4 5] [6 7 8]] 9]
-
-Remarks:
-In parallel simulations, this function collects data across all processes
-and can thus take a lot of time and consume huge amounts of memory.
-
-SeeAlso: GetGlobalNodes, GetLocalNodes, GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren
-*/
-
-/GetNetwork
-<< /deprecation_warning true >>
-Options
-
-/GetNetwork_i_i {
-  << >> begin
-  /GetNetwork /deprecation_warning GetOption true eq
-  {
-    (SLI function GetNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
-    /GetNetwork << /deprecation_warning false >> SetOptions
-  } if
-  /depth Set
-  dup
-  GetStatus /model get % id model
-  /subnet eq depth 1 geq and {       % id
-    dup                % id id
-    [
-      exch           % id [ id
-      GetGlobalChildren { depth 1 sub GetNetwork_i_i } forall
-    ]
-    exch prepend
-  } if
-  end
-} def
-
-/GetNetwork trie
-[/integertype /integertype] /GetNetwork_i_i load addtotrie
-def
-
-  /** @BeginDocumentation
-     Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
-     Synopsis:
-     n m [bool] TimeCommunication -> time
-     Availability: NEST 2.0
-     Author: Abigail Morrison
-     FirstVersion: August 2009
-     Description:
-     The function allows a user to test how much time a call the Allgather costs
-     If boolean third argument is passed and true, time offgrid spike communication.
-     SeeAlso: TimeCommunicationOffgrid
-   */
+   Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
+   Synopsis:
+   n m [bool] TimeCommunication -> time
+   Availability: NEST 2.0
+   Author: Abigail Morrison
+   FirstVersion: August 2009
+   Description:
+   The function allows a user to test how much time a call the Allgather costs
+   If boolean third argument is passed and true, time offgrid spike communication.
+   SeeAlso: TimeCommunicationOffgrid
+ */
 /TimeCommunication trie
 [/integertype /integertype /booltype] /TimeCommunication_i_i_b load addtotrie
 [/integertype /integertype] { false TimeCommunication_i_i_b } bind addtotrie
@@ -1398,7 +1363,7 @@ Thus, RestoreNodes can be used to copy a range of neurons to different locations
 
 /** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.
-Description: 
+Description:
 */
 
 /SaveModels
@@ -1411,15 +1376,15 @@ Description:
     models exch
     arrayload ; exch
     put /models Set
- } forall 
+ } forall
 
  [
  models
  {
    dup type /literaltype eq
    { GetDefaults } { pop } ifelse
- } forall 
- ] 
+ } forall
+ ]
  end
 } def
 
@@ -1432,8 +1397,8 @@ Description:
 {
  << >> begin
   /models Set
-  0 GetStatus /dict_miss_is_error get /dict_err Set
-  0 << /dict_miss_is_error false >> SetStatus
+  GetKernelStatus /dict_miss_is_error get /dict_err Set
+  << /dict_miss_is_error false >> SetKernelStatus
   /old_verbosity verbosity def
   M_ERROR setverbosity
   /restoremodel
@@ -1457,7 +1422,7 @@ Description:
     restoremodel
   } forall
   old_verbosity setverbosity
-  0 << /dict_miss_is_error dict_err >> SetStatus
+  << /dict_miss_is_error dict_err >> SetKernelStatus
   end
 } def
 

@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
+import inspect
 """
 Low-level API of PyNEST Module
 """
@@ -67,14 +69,11 @@ except AttributeError:
                 # RTLD_NOW (OSX)
                 sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
-import inspect
-import functools
 from . import pynestkernel as kernel      # noqa
 
 __all__ = [
     'check_stack',
     'get_debug',
-    'pcd',
     'set_debug',
     'sli_func',
     'sli_pop',
@@ -91,7 +90,6 @@ engine = kernel.NESTEngine()
 
 sli_push = sps = engine.push
 sli_pop = spp = engine.pop
-pcd = engine.push_connection_datums
 
 
 def catching_sli_run(cmd):
@@ -130,6 +128,7 @@ def catching_sli_run(cmd):
 
         exceptionCls = getattr(kernel.NESTErrors, errorname)
         raise exceptionCls(commandname, message)
+
 
 sli_run = sr = catching_sli_run
 

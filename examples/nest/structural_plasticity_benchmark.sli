@@ -58,7 +58,7 @@
 
 % structural plasticity parameters
 
-/sp_update_interval 100 def % update interval of structural plasticity in simulation steps
+/sp_update_interval 1000. def % update interval of structural plasticity (ms)
 /sp_record_interval 1000 def  % recording of structural plasticity status (Ca, #Axons) (ms)
 
 % Growth curves for synaptic elements of excitatory neurons
@@ -147,6 +147,15 @@
             join
             (.dat) join
 
+            % log to the data_path if that is non-empty
+            GetKernelStatus /data_path get
+            empty not {
+                (/) join exch join
+            }
+            {
+                pop
+            } ifelse
+
             /f exch (w) ofsopen
 	    {
 		def
@@ -221,13 +230,13 @@
     ResetKernel
     M_ERROR setverbosity
 
-    0 <<
+    <<
         /resolution dt
         /total_num_virtual_procs nvp
         /overwrite_files overwrite_files
         /rng_seeds [0 nvp 1 sub] Range seed add
         /grng_seed seed nvp add
-      >> SetStatus
+      >> SetKernelStatus
 
     EnableStructuralPlasticity
 
@@ -240,12 +249,12 @@
         /structural_plasticity_update_interval sp_update_interval
         /structural_plasticity_synapses <<
                                             /synapse_ex <<
-                                                            /model /synapse_ex
+                                                            /synapse_model /synapse_ex
                                                             /post_synaptic_element /den_ex
                                                             /pre_synaptic_element /axon_ex
                                                         >>
                                             /synapse_in <<
-                                                            /model /synapse_in
+                                                            /synapse_model /synapse_in
                                                             /post_synaptic_element /den_in
                                                             /pre_synaptic_element /axon_in
                                                         >>
@@ -257,38 +266,34 @@
 % create neurons
 /create_nodes
 {
-    /min_gid_neurons_e 1 def
     /iaf_psc_alpha n_neurons_e <<
                                    /synaptic_elements <<
                                                           /den_ex growth_curve_e_e
                                                           /den_in growth_curve_e_i
                                                           /axon_ex growth_curve_e_e
                                                       >>
-                               >> Create /max_gid_neurons_e Set
-    /nodes_e min_gid_neurons_e max_gid_neurons_e cvgidcollection def
+                               >> Create /neurons_e Set
 
-    /min_gid_neurons_i max_gid_neurons_e 1 add def
     /iaf_psc_alpha n_neurons_i <<
                                    /synaptic_elements <<
                                                           /den_ex growth_curve_i_e
                                                           /den_in growth_curve_i_i
                                                           /axon_in growth_curve_i_i
                                                       >>
-                               >> Create /max_gid_neurons_i Set
-    /nodes_i min_gid_neurons_i max_gid_neurons_i cvgidcollection def
+                               >> Create /neurons_i Set
 } def
 
 % connects simulation and recording devices
 /connect_stim_and_recording
 {
-    /poisson_generator 1 << /rate bg_rate >> Create dup cvgidcollection /noise Set
-    noise nodes_e << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
-    noise nodes_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
+    /poisson_generator 1 << /rate bg_rate >> Create /noise Set
+    noise neurons_e << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
+    noise neurons_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
 
     record_spikes {
-        /spike_detector 1 << /record_to [/ascii /memory] >> Create dup cvgidcollection /spike_detector Set
-        nodes_e spike_detector Connect
-        nodes_i spike_detector Connect
+        /spike_detector << /record_to [/ascii /memory] >> Create /spike_detector Set
+        neurons_e spike_detector Connect
+        neurons_i spike_detector Connect
     } if
 } def
 
@@ -298,24 +303,14 @@
     /t Set
     % get Ca concentration for all local excitatory neurons
     /ca_e 0. def
-    0 GetLocalNodes {
-        /gid Set
-        gid min_gid_neurons_e gt gid max_gid_neurons_e lt and
-        {
-            ca_e gid GetStatus /Ca get add
-            /ca_e Set
-        } if
+    neurons_e LocalOnly {
+        /Ca get ca_e add /ca_e Set
     } forall
 
     % get Ca concentration for all local inhibitory neurons
     /ca_i 0. def
-    0 GetLocalNodes {
-        /gid Set
-        gid min_gid_neurons_i gt gid max_gid_neurons_i lt and
-        {
-            ca_i gid GetStatus /Ca get add
-            /ca_i Set
-        } if
+    neurons_i LocalOnly {
+        /Ca get ca_i add /ca_i Set
     } forall
 
     t cvs ( ) join ca_e cvs join ( # Ca concentration ex) join logger /log call
@@ -328,24 +323,14 @@
     /t Set
     % get synaptic elements from all local excitatory neurons
     /syn_e 0 def
-    0 GetLocalNodes {
-        /gid Set
-        gid min_gid_neurons_e gt gid max_gid_neurons_e lt and
-        {
-            gid GetStatus /synaptic_elements get /axon_ex get /z_connected get syn_e add
-            /syn_e Set
-        } if
+    neurons_e LocalOnly {
+        /synaptic_elements get /axon_ex get /z_connected get syn_e add /syn_e Set
     } forall
 
     % get synaptic elements from all local inhibitory neurons
     /syn_i 0 def
-    0 GetLocalNodes {
-        /gid Set
-        gid min_gid_neurons_i gt gid max_gid_neurons_i lt and
-        {
-            gid GetStatus /synaptic_elements get /axon_in get /z_connected get syn_i add
-            /syn_i Set
-        } if
+    neurons_i LocalOnly {
+        /synaptic_elements get /axon_in get /z_connected get syn_i add /syn_i Set
     } forall
 
     t cvs ( ) join syn_e cvs join ( # axon count ex) join logger /log call
@@ -356,7 +341,7 @@
 /record_local_number_of_spikes
 {
     /t Set
-    t cvs ( ) join 0 GetStatus /local_spike_counter get cvs join ( # local spike count) join logger /log call
+    t cvs ( ) join GetKernelStatus /local_spike_counter get cvs join ( # local spike count) join logger /log call
 } def
 
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,8 +375,7 @@ runtime cvs ( ) join presim_duration cvs join ( # presim_time) join logger /log 
     runtime record_local_number_of_axons
     runtime record_local_number_of_spikes
 
-    runtime sp_record_interval add simtime gt
-    {
+    runtime sp_record_interval add simtime gt {
         exit
     } if
 } loop

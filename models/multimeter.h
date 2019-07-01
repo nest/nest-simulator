@@ -32,7 +32,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "recording_device.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -144,6 +143,12 @@ public:
     return false;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -208,7 +213,7 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_& );
+    void set( const DictionaryDatum&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -252,22 +257,29 @@ private:
 inline void
 nest::Multimeter::get_status( DictionaryDatum& d ) const
 {
-  // get the data from the device
   RecordingDevice::get_status( d );
+  P_.get( d );
+
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
+  // we need to add analog data to the events dictionary
+  DictionaryDatum dd = getValue< DictionaryDatum >( d, names::events );
+  add_data_( dd );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
-
-  P_.get( d );
 }
 
 inline void
@@ -281,7 +293,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   }
 
   Parameters_ ptmp = P_;
-  ptmp.set( d, B_ );
+  ptmp.set( d, B_, this );
 
   RecordingDevice::set_status( d );
 
@@ -294,6 +306,6 @@ nest::Multimeter::sends_signal() const
   return ALL;
 }
 
-} // Namespace
+} // namespace
 
 #endif

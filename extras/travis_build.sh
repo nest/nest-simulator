@@ -227,7 +227,7 @@ fi  # End of Static code analysis.
 
 
 cd "$NEST_VPATH"
-cp ../examples/sli/nestrc.sli ~/.nestrc
+cp ../extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
 if [[ "$OSTYPE" == "darwin"* ]] ; then

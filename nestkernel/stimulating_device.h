@@ -212,7 +212,6 @@ template < typename EmittedEvent >
 inline void
 StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ names::element_type ] = LiteralDatum( names::stimulator );
   Device::get_status( d );
 }
 

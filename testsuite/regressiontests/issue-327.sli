@@ -40,7 +40,7 @@ M_ERROR setverbosity
 
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
 
   /sg
   /spike_generator 

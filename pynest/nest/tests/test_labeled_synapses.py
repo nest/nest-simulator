@@ -38,9 +38,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.ResetKernel()
         # set volume transmitter for stdp_dopamine_synapse_lbl
         vol = nest.Create('volume_transmitter', 3)
-        nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol[0]})
-        nest.SetDefaults('stdp_dopamine_synapse_lbl', {'vt': vol[1]})
-        nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
+        nest.SetDefaults('stdp_dopamine_synapse',
+                         {'vt': vol.get('global_id')[0]})
+        nest.SetDefaults('stdp_dopamine_synapse_lbl',
+                         {'vt': vol.get('global_id')[1]})
+        nest.SetDefaults('stdp_dopamine_synapse_hpc',
+                         {'vt': vol.get('global_id')[2]})
 
         self.rate_model_connections = [
             'rate_connection_instantaneous',
@@ -91,13 +94,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"model": syn, "synapse_label": 123})
+                         {"synapse_model": syn, "synapse_label": 123})
             c = nest.GetConnections(a, a)
             self.assertTrue(
-                all([
-                    status['synapse_label'] == 123
-                    for status in nest.GetStatus(c)
-                    ])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToSynapseSetStatus(self):
@@ -113,23 +113,17 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # set no label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"model": syn})
+                         {"synapse_model": syn})
             c = nest.GetConnections(a, a)
             # still unlabeled
             self.assertTrue(
-                all([
-                    status['synapse_label'] == -1
-                    for status in nest.GetStatus(c)
-                    ])
+                all([x == -1 for x in c.get('synapse_label')])
             )
 
             # set a label
-            nest.SetStatus(c, {'synapse_label': 123})
+            c.set({'synapse_label': 123})
             self.assertTrue(
-                all([
-                    status['synapse_label'] == 123
-                    for status in nest.GetStatus(c)
-                    ])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToSynapseSetDefaults(self):
@@ -146,13 +140,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # set a label during SetDefaults
             nest.SetDefaults(syn, {'synapse_label': 123})
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"model": syn})
+                         {"synapse_model": syn})
             c = nest.GetConnections(a, a)
             self.assertTrue(
-                all([
-                    status['synapse_label'] == 123
-                    for status in nest.GetStatus(c)
-                    ])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_GetLabeledSynapses(self):
@@ -173,16 +164,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             if syn in self.siegert_connections:
                 synapse_type = "diffusion_connection"
             nest.Connect(a, a, {"rule": "one_to_one"},
-                         {"model": synapse_type})
+                         {"synapse_model": synapse_type})
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"model": syn, "synapse_label": 123})
+                         {"synapse_model": syn, "synapse_label": 123})
             c = nest.GetConnections(a, a, synapse_label=123)
             self.assertTrue(
-                all([
-                    status['synapse_label'] == 123
-                    for status in nest.GetStatus(c)
-                    ])
+                all([x == 123 for x in c.get('synapse_label')])
             )
 
     def test_SetLabelToNotLabeledSynapse(self):
@@ -203,15 +191,16 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(a, a, {"rule": "one_to_one",
                                     "make_symmetric": symm},
-                             {"model": syn, "synapse_label": 123})
+                             {"synapse_model": syn, "synapse_label": 123})
 
             # plain connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"model": syn})
+                         {"synapse_model": syn})
             # try set on SetStatus
             c = nest.GetConnections(a, a)
+
             with self.assertRaises(nest.kernel.NESTError):
-                nest.SetStatus(c, {'synapse_label': 123})
+                c.set({'synapse_label': 123})
 
 
 def suite():

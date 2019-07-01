@@ -50,9 +50,9 @@ skip_if_not_threaded
 
 ResetKernel
 
-0 <<
+<<
   /local_num_threads 2
->> SetStatus
+>> SetKernelStatus
 
 /gid1 N 1 add def            % gid1 = N + 1
 /gid2 N 2 mul def            % gid2 = N * 2
@@ -69,7 +69,7 @@ ResetKernel
 % cv_dv converts sli-array type to double-vector type
 
 % synapses and connection dictionaries
-/syn_dict << /model /static_synapse /weight Warr /delay Darr >> def
+/syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /fixed_indegree /indegree K >> def
 
 net1 net2 conn_dict syn_dict Connect % connects source to target subnet
@@ -84,7 +84,7 @@ net2 % loop on all neurons of target subnet
         {
                 /n_loc n_loc 1 add def  % increases n_loc
                 % gets all connections to the target neuron
-                /conn << /target [neuron2] >> GetConnections def
+                /conn << /target [neuron2] cvgidcollection >> GetConnections def
 
                 /sdict_lst conn GetSynapseStatus def % gets info on synapses
 

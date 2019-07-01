@@ -80,6 +80,7 @@ def format_Warning(message, category, filename, lineno, line=None):
 
     return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
 
+
 warnings.formatwarning = format_Warning
 
 
@@ -173,6 +174,7 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
+
 
 uni_str = get_unistring_type()
 
@@ -563,8 +565,7 @@ def model_deprecation_warning(model):
         Name of model
     """
 
-    deprecated_models = {'subnet': 'GIDCollection',
-                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
+    deprecated_models = {'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
                          'iaf_psc_alpha_canon': 'iaf_psc_alpha_ps',
                          'iaf_psc_delta_canon': 'iaf_psc_delta_ps'}
 
@@ -588,12 +589,16 @@ def serializable(data):
     result : str, int, float, list, dict
 
     """
+    try:
+        # Numpy array and GIDCollection can be converted to list
+        result = data.tolist()
+        return result
+    except AttributeError:
+        # Not able to inherently convert to list
+        pass
 
     if isinstance(data, kernel.SLILiteral):
         result = data.name
-
-    elif isinstance(data, numpy.ndarray):
-        result = data.tolist()
 
     elif type(data) in [list, tuple]:
         result = [serializable(d) for d in data]
@@ -601,7 +606,6 @@ def serializable(data):
     elif isinstance(data, dict):
         result = dict([(key, serializable(value))
                        for key, value in data.items()])
-
     else:
         result = data
 

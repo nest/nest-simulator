@@ -56,7 +56,7 @@ Author: Barna Zajzon, 2017-03-10
   /refdata [5. 8. 11. 14.] def % offset data
 
   ResetKernel
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
 
   /n /iaf_psc_alpha Create def
 
@@ -91,7 +91,7 @@ assert_or_die
   /refdata [23. 26. 29.] def % offset data
 
   ResetKernel
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
 
   /n /iaf_psc_alpha Create def
 
@@ -162,7 +162,7 @@ fail_or_die
   /times_2 [5. 8. 11. 14. 26. 29. 32. 35.] def
 
   ResetKernel
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
 
   % create multimeter and node
   /mm /multimeter

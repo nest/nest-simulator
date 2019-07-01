@@ -92,7 +92,7 @@ Parameters:
 The following parameters can be set in the status dictionary.
 
 \verbatim embed:rst
-===========  ======  ============================================================
+===========  ====== ============================================================
 tau_ex       ms      Rise time of the excitatory synaptic alpha function
 tau_in       ms      Rise time of the inhibitory synaptic alpha function
 g_K          nS      Potassium peak conductance
@@ -111,7 +111,7 @@ Act_m        real    Activation variable m
 Act_h        real    Activation variable h
 Inact_n      real    Inactivation variable n
 I_e          pA      External input current
-===========  ======  ============================================================
+===========  ====== ============================================================
 \endverbatim
 
 References:
@@ -227,8 +227,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -241,7 +241,6 @@ public:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -271,7 +270,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -442,9 +441,9 @@ inline void
 hh_psc_alpha_gap::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

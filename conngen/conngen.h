@@ -43,18 +43,18 @@ namespace nest
 {
 
 void cg_connect( ConnectionGeneratorDatum& cg,
-  const GIDCollection& source_gids,
-  const GIDCollection& target_gids,
+  const GIDCollectionPTR source_gids,
+  const GIDCollectionPTR target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-void cg_set_masks( ConnectionGeneratorDatum& cg, const GIDCollection& sources, const GIDCollection& targets );
+void cg_set_masks( ConnectionGeneratorDatum& cg, const GIDCollectionPTR sources, const GIDCollectionPTR targets );
 
 void cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sources, RangeSet& targets );
 
-index cg_get_right_border( index left, size_t step, const GIDCollection& gids );
+index cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids );
 
-void cg_get_ranges( RangeSet& ranges, const GIDCollection& gids );
+void cg_get_ranges( RangeSet& ranges, const GIDCollectionPTR gids );
 }
 
 #endif /* CONNGEN_H */

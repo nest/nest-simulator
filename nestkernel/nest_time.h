@@ -628,7 +628,7 @@ inline Time operator*( const Time& t, long factor )
 {
   return factor * t;
 }
-} // Namespace
+} // namespace
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );
 

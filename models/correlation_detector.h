@@ -81,19 +81,25 @@ receptor_port = 1 will be used as spike source 2.
 Parameters:
 
 \verbatim embed:rst
-==================== ======== ====================================================
-Tstart               real     Time when to start counting events. This time should
-                              be set to at least start + tau_max in order to avoid
+==================== ========
+====================================================
+Tstart               real     Time when to start counting events. This time
+should
+                              be set to at least start + tau_max in order to
+avoid
                               edge effects of the correlation counts.
-Tstop                real     Time when to stop counting events. This time should
-                              be set to at most Tsim - tau_max, where Tsim is the
+Tstop                real     Time when to stop counting events. This time
+should
+                              be set to at most Tsim - tau_max, where Tsim is
+the
                               duration of simulation, in order to avoid edge
                               effects of the correlation counts.
 delta_tau            ms       Bin width. This has to be an odd multiple of
                               the resolution, to allow the symmetry between
                               positive and negative time-lags.
 tau_max              ms       One-sided width. In the lower triagnular part
-                              events with differences in [0, tau_max+delta_tau/2)
+                              events with differences in [0,
+tau_max+delta_tau/2)
                               are counted. On the diagonal and in the upper
                               triangular part events with differences in
                               (0, tau_max+delta_tau/2].
@@ -101,14 +107,16 @@ N_channels           integer  The number of pools. This defines the range of
                               receptor_type. Default is 1.
                               Setting N_channels clears count_covariance,
                               covariance and n_events.
-histogram            squared  read-only - raw, weighted, cross-correlation counts
+histogram            squared  read-only - raw, weighted, cross-correlation
+counts
                      synaptic Unit depends on model
                      weights
 histogram_correction list of  read-only - Correction factors for kahan summation
                      integers algoritm
 n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
-==================== ======== ====================================================
+==================== ========
+====================================================
 \endverbatim
 
 Remarks:
@@ -133,7 +141,8 @@ of State_, but are initialized by init_buffers_().
 
 Example:
 
-See Auto- and crosscorrelation functions for spike trains[cross_check_mip_corrdet.py]
+See Auto- and crosscorrelation functions for spike
+trains[cross_check_mip_corrdet.py]
 in pynest/examples.
 
      SLI
@@ -180,6 +189,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -188,7 +203,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& ); //!< @todo implement if-else in term of function
+  void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
 
@@ -236,7 +251,6 @@ private:
 
   struct Parameters_
   {
-
     Time delta_tau_; //!< width of correlation histogram bins
     Time tau_max_;   //!< maximum time difference of events to detect
     Time Tstart_;    //!< start of recording
@@ -252,7 +266,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlation_detector& );
+    bool set( const DictionaryDatum&, const correlation_detector&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -289,7 +303,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool );
+    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -318,17 +332,15 @@ nest::correlation_detector::get_status( DictionaryDatum& d ) const
   device_.get_status( d );
   P_.get( d );
   S_.get( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 }
 
 inline void
 nest::correlation_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
-  const bool reset_required = ptmp.set( d, *this );
+  const bool reset_required = ptmp.set( d, *this, this );
   State_ stmp = S_;
-  stmp.set( d, P_, reset_required );
+  stmp.set( d, P_, reset_required, this );
 
   device_.set_status( d );
   P_ = ptmp;

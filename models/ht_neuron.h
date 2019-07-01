@@ -44,6 +44,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+// Includes from
+
 // Includes from sli:
 #include "stringdatum.h"
 
@@ -88,7 +90,8 @@ Documentation and Examples:
 Parameters:
 
 \verbatim embed:rst
-=============== ======= ===========================================================
+=============== =======
+===========================================================
  V_m            mV      Membrane potential
  tau_m          ms      Membrane time constant applying to all currents except
                         repolarizing K-current (see [1], p 1677)
@@ -96,7 +99,8 @@ Parameters:
                         potassium current (t_spike in [1])
  tau_spike      ms      Membrane time constant for post-spike repolarizing
                         potassium current
- voltage_clamp  boolean If true, clamp voltage to value at beginning of simulation
+ voltage_clamp  boolean If true, clamp voltage to value at beginning of
+simulation
                         (default: false, mainly for testing)
  theta          mV      Threshold
  theta_eq       mV      Equilibrium value
@@ -106,9 +110,11 @@ Parameters:
  g_NaL          nS      Conductance for sodium leak currents
  E_Na           mV      Reversal potential for Na leak currents
  tau_D_KNa      ms      Relaxation time constant for I_KNa
- receptor_types         Dictionary mapping synapse names to ports on neuron model
+ receptor_types         Dictionary mapping synapse names to ports on neuron
+model
  recordables            List of recordable quantities
-=============== ======= ===========================================================
+=============== =======
+===========================================================
 
 +------------------------------------------------------------+
 |{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B} |
@@ -227,8 +233,8 @@ private:
   {
     Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
     // Leaks
@@ -297,7 +303,6 @@ private:
 public:
   struct State_
   {
-
     // y_ = [V, theta, Synapses]
     enum StateVecElems_
     {
@@ -341,7 +346,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron& );
+    void set( const DictionaryDatum&, const ht_neuron&, Node* node );
   };
 
 private:

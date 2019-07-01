@@ -23,6 +23,8 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
+#include <ctime>
+
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
@@ -121,6 +123,9 @@ class KernelManager
 private:
   KernelManager();
   ~KernelManager();
+
+  std::clock_t fingerprint_;
+
   static KernelManager* kernel_manager_instance_;
 
   KernelManager( KernelManager const& );  // do not implement
@@ -157,7 +162,7 @@ public:
   /**
    * Reset kernel.
    *
-   * Resets kernel by finalizing and initalizing.
+   * Resets kernel by finalizing and initializing.
    *
    * @see initialize(), finalize()
    */
@@ -166,11 +171,12 @@ public:
   /**
    * Change number of threads.
    *
-   * No need to reset all managers, only those affected by num thread changes.
+   * The kernel first needs to be finalized with the old number of threads
+   * and then initialized with the new number of threads.
    *
    * @see initialize(), finalize()
    */
-  void change_num_threads( thread num_threads );
+  void change_number_of_threads( thread );
 
   void prepare();
   void cleanup();
@@ -180,6 +186,8 @@ public:
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
+
+  std::clock_t get_fingerprint() const;
 
   LoggingManager logging_manager;
   MPIManager mpi_manager;
@@ -221,6 +229,12 @@ inline bool
 nest::KernelManager::is_initialized() const
 {
   return initialized_;
+}
+
+inline std::clock_t
+nest::KernelManager::get_fingerprint() const
+{
+  return fingerprint_;
 }
 
 #endif /* KERNEL_MANAGER_H */

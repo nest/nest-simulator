@@ -26,13 +26,15 @@
 #include <numeric>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "gid_collection.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
+#include "nest_datums.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -69,23 +71,71 @@ nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::senders ] = senders_;
-  ( *d )[ names::targets ] = targets_;
+  if ( senders_.get() )
+  {
+    ( *d )[ names::senders ] = senders_;
+  }
+  else
+  {
+    ArrayDatum ad;
+    ( *d )[ names::senders ] = ad;
+  }
+  if ( targets_.get() )
+  {
+    ( *d )[ names::targets ] = targets_;
+  }
+  else
+  {
+    ArrayDatum ad;
+    ( *d )[ names::targets ] = ad;
+  }
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   if ( d->known( names::senders ) )
   {
-    senders_ = getValue< std::vector< long > >( d->lookup( names::senders ) );
-    std::sort( senders_.begin(), senders_.end() );
+    const Token& tkn = d->lookup( names::senders );
+    if ( tkn.is_a< GIDCollectionDatum >() )
+    {
+      senders_ = getValue< GIDCollectionDatum >( tkn );
+    }
+    else
+    {
+      if ( tkn.is_a< IntVectorDatum >() )
+      {
+        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+        senders_ = GIDCollection::create( ivd );
+      }
+      if ( tkn.is_a< ArrayDatum >() )
+      {
+        ArrayDatum ad = getValue< ArrayDatum >( tkn );
+        senders_ = GIDCollection::create( ad );
+      }
+    }
   }
 
   if ( d->known( names::targets ) )
   {
-    targets_ = getValue< std::vector< long > >( d->lookup( names::targets ) );
-    std::sort( targets_.begin(), targets_.end() );
+    const Token& tkn = d->lookup( names::targets );
+    if ( tkn.is_a< GIDCollectionDatum >() )
+    {
+      targets_ = getValue< GIDCollectionDatum >( tkn );
+    }
+    else
+    {
+      if ( tkn.is_a< IntVectorDatum >() )
+      {
+        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+        targets_ = GIDCollection::create( ivd );
+      }
+      if ( tkn.is_a< ArrayDatum >() )
+      {
+        ArrayDatum ad = getValue< ArrayDatum >( tkn );
+        targets_ = GIDCollection::create( ad );
+      }
+    }
   }
 }
 
@@ -125,15 +175,20 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // get the data from the device
   RecordingDevice::get_status( d );
 
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
 
@@ -144,7 +199,7 @@ void
 nest::weight_recorder::set_status( const DictionaryDatum& d )
 {
   RecordingDevice::set_status( d );
-  P_.set( d );
+  P_.set( d, this );
 }
 
 
@@ -155,12 +210,10 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   // emitted
   if ( is_active( e.get_stamp() ) )
   {
-    bool senders_set = not P_.senders_.empty();
-    bool sender_gid_in_senders = std::binary_search( P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() );
-    bool targets_set = not P_.targets_.empty();
-    bool target_gid_in_targets = std::binary_search( P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() );
-
-    if ( ( senders_set and not sender_gid_in_senders ) or ( targets_set and not target_gid_in_targets ) )
+    // P_senders_ is defined and sender is not in it
+    // or P_targets_ is defined and receiver is not in it
+    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_gid() ) )
+      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
     {
       return;
     }

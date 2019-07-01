@@ -79,8 +79,8 @@ M_ERROR setverbosity
   << >> begin
     /T Set
     ResetKernel
-    0 << /resolution resolution
-         /overwrite_files true >> SetStatus
+    << /resolution resolution
+         /overwrite_files true >> SetKernelStatus
   
     /iaf_psc_alpha iaf_params SetDefaults
     /voltmeter vm_params  SetDefaults
@@ -107,7 +107,7 @@ M_ERROR setverbosity
 
     { 
       T Simulate
-      0 [ /time ] get simtime geq
+      GetKernelStatus /time get simtime geq
       { exit } if
     } loop
 

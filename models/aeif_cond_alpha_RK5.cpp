@@ -30,6 +30,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -151,32 +152,32 @@ nest::aeif_cond_alpha_RK5::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   double tmp = 0.0;
 
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_peak, V_peak_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_peak, V_peak_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_syn_ex );
-  updateValue< double >( d, names::tau_syn_in, tau_syn_in );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in, node );
 
-  updateValue< double >( d, names::a, a );
-  updateValue< double >( d, names::b, b );
-  updateValue< double >( d, names::Delta_T, Delta_T );
-  updateValue< double >( d, names::tau_w, tau_w );
+  updateValueParam< double >( d, names::a, a, node );
+  updateValueParam< double >( d, names::b, b, node );
+  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
+  updateValueParam< double >( d, names::tau_w, tau_w, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
 
-  if ( updateValue< double >( d, names::MAXERR, tmp ) )
+  if ( updateValueParam< double >( d, names::MAXERR, tmp, node ) )
   {
     if ( not( tmp > 0.0 ) )
     {
@@ -185,7 +186,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
     MAXERR = tmp;
   }
 
-  if ( updateValue< double >( d, names::HMIN, tmp ) )
+  if ( updateValueParam< double >( d, names::HMIN, tmp, node ) )
   {
     if ( not( tmp > 0.0 ) )
     {
@@ -246,14 +247,14 @@ nest::aeif_cond_alpha_RK5::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
-  updateValue< double >( d, names::dg_ex, y_[ DG_EXC ] );
-  updateValue< double >( d, names::g_in, y_[ G_INH ] );
-  updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
-  updateValue< double >( d, names::w, y_[ W ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
+  updateValueParam< double >( d, names::dg_ex, y_[ DG_EXC ], node );
+  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
+  updateValueParam< double >( d, names::dg_in, y_[ DG_INH ], node );
+  updateValueParam< double >( d, names::w, y_[ W ], node );
   if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );
@@ -565,7 +566,7 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // keep conductances positive
+  }
 }
 
 void
@@ -576,7 +577,6 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

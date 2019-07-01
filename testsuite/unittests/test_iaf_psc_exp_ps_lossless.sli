@@ -98,10 +98,10 @@
 
 ResetKernel
 
-0 << 
-      /local_num_threads 1 
-      /resolution h
-  >> SetStatus
+<< 
+  /local_num_threads 1 
+  /resolution h
+>> SetKernelStatus
 
 /iaf_psc_exp_ps_lossless Create /neuron Set
 
@@ -219,10 +219,10 @@ reset
 (unittest) run
 /unittest using
 
-0 << 
-      /local_num_threads 1 
-      /resolution 1.     % low resolution is crucial.
-  >> SetStatus
+<< 
+  /local_num_threads 1 
+  /resolution 1.     % low resolution is crucial.
+>> SetKernelStatus
 
 /iaf_psc_exp_ps_lossless << 
       /tau_m 100.

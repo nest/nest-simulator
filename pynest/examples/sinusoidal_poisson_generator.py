@@ -85,11 +85,11 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus([m[j]])[0]['events']
+    ev = nest.GetStatus(m[j])[0]['events']
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus([s[j]])[0]['events']['times']
+    sp = nest.GetStatus(s[j])[0]['events']['times']
     plt.subplot(221)
     h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])

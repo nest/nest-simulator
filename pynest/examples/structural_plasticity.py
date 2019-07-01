@@ -48,6 +48,7 @@ First, we have import all necessary modules.
 
 
 class StructralPlasticityExample:
+
     def __init__(self):
         '''
         We define general simulation parameters
@@ -60,7 +61,7 @@ class StructralPlasticityExample:
         self.number_inhibitory_neurons = 200
 
         # Structural_plasticity properties
-        self.update_interval = 1000
+        self.update_interval = 10000.0
         self.record_interval = 1000.0
         # rate of background Poisson input
         self.bg_rate = 10000.0
@@ -181,12 +182,12 @@ class StructralPlasticityExample:
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_synapses': {
                 'synapse_ex': {
-                    'model': 'synapse_ex',
+                    'synapse_model': 'synapse_ex',
                     'post_synaptic_element': 'Den_ex',
                     'pre_synaptic_element': 'Axon_ex',
                 },
                 'synapse_in': {
-                    'model': 'synapse_in',
+                    'synapse_model': 'synapse_in',
                     'post_synaptic_element': 'Den_in',
                     'pre_synaptic_element': 'Axon_in',
                 },
@@ -317,6 +318,7 @@ class StructralPlasticityExample:
             if i % 20 == 0:
                 print("Progress: " + str(i / 2) + "%")
         print("Simulation finished successfully")
+
 
 '''
 Finally we take all the functions that we have defined and create the sequence

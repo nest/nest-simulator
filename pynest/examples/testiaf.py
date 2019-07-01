@@ -86,6 +86,7 @@ def build_network(dt):
 # The neuron is simulated for three different resolutions and then the
 # voltage trace is plotted
 
+
 for dt in [0.1, 0.5, 1.0]:
     print("Running simulation with dt=%.2f" % dt)
     vm, sd = build_network(dt)

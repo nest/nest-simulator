@@ -20,21 +20,14 @@
  *
  */
 
-/*
- * See #336 for discussion.
- * HEP
- */
+/* BeginDocumentation
+Name: testsuite::test_neuron_vp - Test that neurons are assigned to correct VP
 
-% run this program sequentially with:
-% 
-%      nest_indirect test_neuron_vp.sli
-%
-% the result should always be the same because the 
-% distribution of nodes over virtual processes is 
-% independent of the number of jobs used to carry out
-% the calculation.
+Synopsis: nest_indirect test_neuron_vp.sli -> -
 
-% /vp get
+Description:
+Tests that neurons are assigned to correct VP in various configurations.
+*/
 
 (unittest) run
 /unittest using
@@ -45,49 +38,14 @@ skip_if_not_threaded
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 4 >> SetStatus
+  << /total_num_virtual_procs 4 >> SetKernelStatus
 
-  /subnet Create /net Set
-  net ChangeSubnet
-    /iaf_psc_alpha Create /n1 Set
-    /iaf_psc_alpha Create /n2 Set
-    /iaf_psc_alpha Create /n3 Set
-    /iaf_psc_alpha Create /n4 Set
-  0 ChangeSubnet
+  /nodes /iaf_psc_alpha 4 Create def
 
-  net GetGlobalNodesInfo /nodes Set
-
- Rank 0 eq
- {
-
-  () =
-  (gid vp | gid vp | gid vp | gid vp) =
-  (---------------------------------) =
-  ()
-  nodes 
-  { 
-    /d Set
-    d /global_id get cvs  (   ) join d /vp get cvs join  ( |  ) join join
-  } forall
-  dup =
-
-  } if
+  % build list of GID-VP pairs for local neurons
+  nodes { GetStatus } Map
+  { /local get } Select  % keep only local dicts
+  { dup /global_id get exch /vp get 2 arraystore } Map  
 }
-
-distributed_invariant_assert_or_die
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% expected output
-%
-% gid vp | gid vp | gid vp | gid vp
-% ---------------------------------
-% 1   1 |  2   2 |  3   3 |  4   0
-%
-%
+distributed_process_invariant_collect_assert_or_die
+% pooled over all processes, we must always have the same pairs

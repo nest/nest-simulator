@@ -75,10 +75,10 @@ M_INFO setverbosity
  /d Set /h Set
 
   ResetKernel
-      0 << 
+      << 
       /local_num_threads 1   
       /resolution h
-      >> SetStatus
+      >> SetKernelStatus
 
       /iaf_psc_alpha Create /neuron1 Set
       neuron1 << /I_e 1450.0 >> SetStatus

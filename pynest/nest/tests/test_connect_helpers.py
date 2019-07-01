@@ -99,16 +99,12 @@ def get_connectivity_matrix(pop1, pop2):
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1 == node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2 == node)[0][0]
-    for conn in connections:
-        source_id = conn[0]
-        target_id = conn[1]
-        M[index_dic[target_id]][index_dic[source_id]] += 1
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
+    for source, target in zip(connections.source(), connections.target()):
+        M[index_dic[target]][index_dic[source]] += 1
     return M
 
 
@@ -121,18 +117,17 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
+    sources = connections.get('source')
+    targets = connections.get('target')
+    weights = connections.get(label)
     index_dic = {}
-    pop1 = np.asarray(pop1)
-    pop2 = np.asarray(pop2)
-    for node in pop1:
-        index_dic[node] = np.where(pop1 == node)[0][0]
-    for node in pop2:
-        index_dic[node] = np.where(pop2 == node)[0][0]
-    for conn in connections:
-        source_id = conn[0]
-        target_id = conn[1]
-        weight = nest.GetStatus(nest.GetConnections(
-            [source_id], [target_id]))[0][label]
+    for count, node in enumerate(pop1):
+        index_dic[node] = count
+    for count, node in enumerate(pop2):
+        index_dic[node] = count
+    for counter, weight in enumerate(weights):
+        source_id = sources[counter]
+        target_id = targets[counter]
         M[index_dic[target_id]][index_dic[source_id]] += weight
     return M
 
@@ -142,9 +137,8 @@ def check_synapse(params, values, syn_params, TestCase):
         syn_params[param] = values[i]
     TestCase.setUpNetwork(TestCase.conn_dict, syn_params)
     for i, param in enumerate(params):
-        conns = nest.GetStatus(nest.GetConnections(
-            TestCase.pop1, TestCase.pop2))
-        conn_params = [conn[param] for conn in conns]
+        conns = nest.GetConnections(TestCase.pop1, TestCase.pop2)
+        conn_params = conns.get(param)
         TestCase.assertTrue(all_equal(conn_params))
         TestCase.assertTrue(conn_params[0] == values[i])
 
@@ -291,10 +285,10 @@ def reset_seed(seed, nr_threads):
 
     nest.ResetKernel()
     nest.SetKernelStatus({'local_num_threads': nr_threads})
-    nr_procs = nest.GetStatus([0])[0]['total_num_virtual_procs']
+    nr_procs = nest.GetKernelStatus()['total_num_virtual_procs']
     seeds = [((nr_procs + 1) * seed + k) for k in range(nr_procs)]
-    nest.SetKernelStatus({'rng_seeds': seeds})
-    nest.SetKernelStatus({'grng_seed': nr_procs * (seed + 1) + seed})
+    nest.SetKernelStatus({'rng_seeds': seeds,
+                          'grng_seed': nr_procs * (seed + 1) + seed})
 
 # copied from Masterthesis, Daniel Hjertholm
 

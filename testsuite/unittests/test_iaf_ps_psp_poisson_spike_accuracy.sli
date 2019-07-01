@@ -183,7 +183,7 @@ def
  i dexp /h Set        % computation step size in ms  
 
  ResetKernel
- 0 << /tics_per_ms min_exponent neg dexp /resolution h  >> SetStatus
+ << /tics_per_ms min_exponent neg dexp /resolution h  >> SetKernelStatus
 
  /dc_generator Create /dc Set
  dc <<    

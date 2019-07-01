@@ -38,49 +38,59 @@ _ignore_modules = set()
 #   `from .libs.$X import *`
 # for every module in ./libs/$X.py that is left
 _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
+# Do the same with files in random folder
+_il.import_libs(__file__, globals(), 'random', ignore=_ignore_modules)
+
 ############################
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
-    'BeginSubnet',  # deprecated
     'CGConnect',
     'CGParse',
     'CGSelectImplementation',
-    'ChangeSubnet',  # deprecated
     'Cleanup',
     'Connect',
     'ConnectionRules',
+    'Connectome',
     'CopyModel',
+    'ConnectLayers',
     'Create',
-    'CurrentSubnet',  # deprecated
-    'DataConnect',  # deprecated
+    'CreateMask',
+    'CreateParameter',
     'DisableStructuralPlasticity',
     'Disconnect',
-    'DisconnectOneToOne',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
     'EnableStructuralPlasticity',
-    'EndSubnet',  # deprecated
-    'GetChildren',  # deprecated
+    'FindCenterElement',
+    'FindNearestElement',
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
-    'GetLeaves',  # deprecated
-    'GetLID',  # deprecated
-    'GetNetwork',  # deprecated
-    'GetNodes',  # deprecated
+    'GetPosition',
     'GetStatus',
     'GetStructuralPlasticityStatus',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'GIDCollection',
     'Install',
-    'LayoutNetwork',  # deprecated
+    'Mask',
     'Models',
     'NumProcesses',
+    'Parameter',
+    'PlotKernel',
+    'PlotLayer',
+    'PlotTargets',
     'Prepare',
-    'PrintNetwork',  # deprecated
     'Rank',
     'ResetKernel',
     'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
+    'SelectNodesByMask',
     'SetAcceptableLatency',
     'SetDefaults',
     'SetKernelStatus',

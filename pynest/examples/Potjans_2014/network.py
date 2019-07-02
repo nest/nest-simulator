@@ -212,17 +212,32 @@ class Network:
                     }
                 )
             if self.net_dict['V0_type'] == 'optimized':
-                nest.SetStatus(population, 'V_m', np.random.normal(
-                    self.net_dict['neuron_params']['V0_mean']['optimized'][i],
-                    self.net_dict['neuron_params']['V0_sd']['optimized'][i],
-                    len(population)))
+                for thread in \
+                        np.arange(nest.GetKernelStatus('local_num_threads')):
+                    # Using GetNodes is a work-around until NEST 3.0 is
+                    # released. It will issue a deprecation warning.
+                    local_nodes = nest.GetNodes(
+                        [0], {
+                            'model': self.net_dict['neuron_model'],
+                            'thread': thread
+                        }, local_only=True
+                    )[0]
+                    vp = nest.GetStatus(local_nodes)[0]['vp']
+                    # vp is the same for all local nodes on the same thread
+                    local_pop = list(set(local_nodes).intersection(population))
+                    nest.SetStatus(
+                        local_pop, 'V_m', self.pyrngs[vp].normal(
+                            self.net_dict
+                            ['neuron_params']['V0_mean']['optimized'][i],
+                            self.net_dict
+                            ['neuron_params']['V0_sd']['optimized'][i],
+                            len(local_pop))
+                    )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
         if self.net_dict['V0_type'] == 'original':
             for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-                # Using GetNodes is a work-around until NEST 3.0 is released. It
-                # will issue a deprecation warning.
                 local_nodes = nest.GetNodes(
                     [0], {
                         'model': self.net_dict['neuron_model'],
@@ -230,7 +245,6 @@ class Network:
                         }, local_only=True
                     )[0]
                 vp = nest.GetStatus(local_nodes)[0]['vp']
-                # vp is the same for all local nodes on the same thread
                 nest.SetStatus(
                     local_nodes, 'V_m', self.pyrngs[vp].normal(
                         self.net_dict['neuron_params']['V0_mean']['original'],

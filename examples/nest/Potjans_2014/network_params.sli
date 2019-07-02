@@ -104,7 +104,8 @@ def
 
 % Initial conditions for the membrane potential, options are:
 % (original): uniform mean and std for all populations
-% (optimized): population-specific mean and std from stationary state
+% (optimized): population-specific mean and std, allowing a reduction of the 
+% initial activity burst in the network
 /Vm0_type (optimized) def        % choose either (original) or (optimized)
 Vm0_type (optimized) eq
 {

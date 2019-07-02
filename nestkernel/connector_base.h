@@ -284,12 +284,10 @@ public:
       dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
-
-  Connector< ConnectionT >&
+  void
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );
-    return *this;
   }
 
   void

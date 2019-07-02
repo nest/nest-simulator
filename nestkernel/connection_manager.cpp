@@ -426,13 +426,7 @@ nest::ConnectionManager::connect( const index sgid,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( not have_connections_changed_[ target_thread ] )
-  {
-    have_connections_changed_.set( target_thread, true );
-  }
+  set_have_connections_changed( target_thread );
 
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
   const thread tid = kernel().vp_manager.get_thread_id();
@@ -509,13 +503,7 @@ nest::ConnectionManager::connect( const index sgid,
 
   const thread tid = kernel().vp_manager.get_thread_id();
 
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( not have_connections_changed_[ tid ] )
-  {
-    have_connections_changed_.set( tid, true );
-  }
+  set_have_connections_changed( tid );
 
   if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
@@ -705,13 +693,7 @@ nest::ConnectionManager::find_connection( const thread tid, const synindex syn_i
 void
 nest::ConnectionManager::disconnect( const thread tid, const synindex syn_id, const index sgid, const index tgid )
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( not have_connections_changed_[ tid ] )
-  {
-    have_connections_changed_.set( tid, true );
-  }
+  set_have_connections_changed( tid );
 
   assert( syn_id != invalid_synindex );
 
@@ -916,8 +898,10 @@ nest::ConnectionManager::data_connect_single( const index source_id, DictionaryD
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
-  have_connections_changed_.resize( kernel().vp_manager.get_num_threads(), true );
-
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    set_have_connections_changed( tid );
+  }
   for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
@@ -1591,4 +1575,30 @@ void
 nest::ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
+}
+
+void
+nest::ConnectionManager::set_have_connections_changed( const thread tid )
+{
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
+  if ( not have_connections_changed_[ tid ] )
+  {
+    std::string msg = "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+    LOG( M_WARNING, "ConnectionManager", msg );
+    have_connections_changed_.set( tid, true );
+  }
+}
+
+void
+nest::ConnectionManager::unset_have_connections_changed( const thread tid )
+{
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
+  if ( have_connections_changed_[ tid ] )
+  {
+    have_connections_changed_.set( tid, false );
+  }
 }

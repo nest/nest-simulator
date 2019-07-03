@@ -329,7 +329,7 @@ class GIDCollection(object):
 
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
@@ -353,7 +353,7 @@ class GIDCollection(object):
 
     def __eq__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
 
         if self.__len__() != other.__len__():
             return False
@@ -364,7 +364,7 @@ class GIDCollection(object):
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
         return not self == other
 
     def __len__(self):
@@ -606,7 +606,7 @@ class Connectome(object):
 
     def __eq__(self, other):
         if not isinstance(other, Connectome):
-            return NotImplemented
+            raise NotImplementedError()
 
         if self.__len__() != other.__len__():
             return False
@@ -620,7 +620,7 @@ class Connectome(object):
 
     def __neq__(self, other):
         if not isinstance(other, Connectome):
-            return NotImplemented
+            raise NotImplementedError()
         return not self == other
 
     def __getitem__(self, key):
@@ -827,7 +827,7 @@ class Mask(object):
     # Generic binary operation
     def _binop(self, op, other):
         if not isinstance(other, Mask):
-            return NotImplemented
+            raise NotImplementedError()
         return sli_func(op, self._datum, other._datum)
 
     def __or__(self, other):
@@ -882,7 +882,7 @@ class Parameter(object):
         if isinstance(other, (int, float)):
             other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
-            return NotImplemented
+            raise NotImplementedError()
 
         if params is None:
             return sli_func(op, self._datum, other._datum)

@@ -107,12 +107,13 @@ ConnectionCreator::connect_to_target_( Iterator from,
         < kernel_->value( rng, iter->first, tgt_pos, source.compute_displacement( tgt_pos, iter->first ) ) )
     {
       const auto disp = source.compute_displacement( tgt_pos, iter->first );
-      connect_( iter->second,
+      kernel().connection_manager.connect( iter->second,
         tgt_ptr,
         tgt_thread,
-        weight_->value( rng, iter->first, tgt_pos, disp ),
+        synapse_model_,
+        dummy_param_,
         delay_->value( rng, iter->first, tgt_pos, disp ),
-        synapse_model_ );
+        weight_->value( rng, iter->first, tgt_pos, disp ) );
     }
   }
 }

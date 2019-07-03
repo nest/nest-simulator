@@ -133,8 +133,6 @@ Node::get_status_base()
 {
   DictionaryDatum dict = get_status_dict_();
 
-  assert( dict.valid() );
-
   // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
@@ -155,14 +153,12 @@ Node::get_status_base()
   // now call the child class' hook
   get_status( dict );
 
-  assert( dict.valid() );
   return dict;
 }
 
 void
 Node::set_status_base( const DictionaryDatum& dict )
 {
-  assert( dict.valid() );
   try
   {
     set_status( dict );

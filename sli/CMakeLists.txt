@@ -41,6 +41,7 @@ set( sli_sources
     iostreamdatum.cc iostreamdatum.h
     literaldatum.cc
     lockptrdatum.h lockptrdatum_impl.h
+    sharedptrdatum.h
     name.cc name.h
     slinames.h slinames.cpp
     namedatum.cc namedatum.h

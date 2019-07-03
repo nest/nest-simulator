@@ -151,7 +151,6 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
-      pd->unlock();
       positions_.clear();
       auto num_nodes = this->gid_collection_->size();
       positions_.reserve( num_nodes );

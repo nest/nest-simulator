@@ -362,9 +362,8 @@ class TestNodeParametrization(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             layer.set({'V_m': nest.spatial.pos.n(-1)})
 
-        # TODO: this causes a C++ assertion to fail
-        # with self.assertRaises(nest.kernel.NESTError):
-        #     layer.set({'V_m': nest.spatial.pos.z})
+        with self.assertRaises(nest.kernel.NESTError):
+            layer.set({'V_m': nest.spatial.pos.z})
 
     def test_conn_distance_parameter(self):
         """Test connection distance parameter"""

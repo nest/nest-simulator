@@ -75,7 +75,7 @@ nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
-  if ( senders_.valid() )
+  if ( senders_.get() )
   {
     ( *d )[ names::senders ] = senders_;
   }
@@ -84,7 +84,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
     ArrayDatum ad;
     ( *d )[ names::senders ] = ad;
   }
-  if ( targets_.valid() )
+  if ( targets_.get() )
   {
     ( *d )[ names::targets ] = targets_;
   }
@@ -251,8 +251,8 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( P_.senders_.valid() and not P_.senders_->contains( e.get_sender_gid() ) )
-      or ( P_.targets_.valid() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
+    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_gid() ) )
+      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
     {
       return;
     }

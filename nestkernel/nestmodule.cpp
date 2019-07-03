@@ -434,7 +434,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.valid() )
+  if ( not meta.get() )
   {
     throw KernelException( "The GIDCollection has invalid metadata." );
   }

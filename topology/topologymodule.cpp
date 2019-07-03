@@ -1034,13 +1034,6 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
     }
   }
 
-  if ( abstract_layer.islocked() )
-  {
-    // Need to unlock the layer in case we call the function several times,
-    // or the layer is to be used in some other way.
-    abstract_layer.unlock();
-  }
-
   i->OStack.pop( 3 );
   i->OStack.push( mask_gids );
   i->EStack.pop();

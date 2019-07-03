@@ -317,7 +317,7 @@ private:
                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index

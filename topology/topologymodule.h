@@ -28,8 +28,8 @@
 #include "exceptions.h"
 
 // Includes from sli:
-#include "lockptr.h"
 #include "slimodule.h"
+#include "sharedptrdatum.h"
 
 // Includes from topology:
 #include "ntree.h"
@@ -208,7 +208,7 @@ public:
    *          as value, and optionally an anchor.
    * @returns Either the MaskDatum given as argument, or a new mask.
    */
-  static lockPTRDatum< AbstractMask, &TopologyModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
+  static sharedPtrDatum< AbstractMask, &TopologyModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
 
   /**
    * Create a new Mask object using the mask factory.

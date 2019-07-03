@@ -33,6 +33,7 @@
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
+#include "sharedptrdatum.h"
 
 #include "generic_factory.h"
 
@@ -63,7 +64,7 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static lockPTRDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
   static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
 
   using ParameterFactory = GenericFactory< Parameter >;

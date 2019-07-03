@@ -197,7 +197,7 @@ void
 nest::RNGManager::create_rngs_()
 {
   // if old generators exist, remove them; since rng_ contains
-  // lockPTRs, we don't have to worry about deletion
+  // shared_ptrs, we don't have to worry about deletion
   if ( not rng_.empty() )
   {
     LOG( M_INFO, "Network::create_rngs_", "Deleting existing random number generators" );

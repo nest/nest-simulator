@@ -29,11 +29,11 @@
 #include "conngen.h"
 
 // Includes from sli:
-#include "lockptrdatum_impl.h"
+#include "sharedptrdatum.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
 
-template class lockPTRDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
+template class sharedPtrDatum< ConnectionGenerator, &nest::ConnectionGeneratorType >;
 
 namespace nest
 {
@@ -360,13 +360,11 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
     }
 
     delete[] values;
-    cgd.unlock();
 
     i->OStack.push( true );
   }
   else
   {
-    cgd.unlock();
     i->OStack.push( false );
   }
 

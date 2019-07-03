@@ -58,9 +58,7 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
-  // test requiring get() first so that unlock() can be run afterwards
-  assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
-  collection_ptr.unlock();
+  assert( not collection_ptr.get() or collection_ptr.get() == &collection );
 
   if ( offset > collection.size() ) // allow == size() for end iterator
   {
@@ -80,9 +78,7 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
-  // test requiring get() first so that unlock() can be run afterwards
-  assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
-  collection_ptr.unlock();
+  assert( not collection_ptr.get() or collection_ptr.get() == &collection );
 
   if ( ( part >= collection.parts_.size() or offset >= collection.parts_[ part ].size() )
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
@@ -284,7 +280,7 @@ GIDCollectionPrimitive::to_array() const
 
 GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 {
-  if ( ( get_metadata().valid() or rhs->get_metadata().valid() ) and not( get_metadata() == rhs->get_metadata() ) )
+  if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "Can only join GIDCollections with same metadata." );
   }
@@ -293,7 +289,6 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
     throw KernelException( "InvalidGIDCollection" );
   }
   GIDCollectionPrimitive const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
-  rhs.unlock();
 
   if ( rhs_ptr ) // if rhs is Primitive
   {
@@ -322,7 +317,6 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
   else // if rhs is not Primitive, i.e. Composite
   {
     GIDCollectionComposite* rhs_ptr = dynamic_cast< GIDCollectionComposite* >( rhs.get() );
-    rhs.unlock();
     assert( rhs_ptr );
     return rhs_ptr->operator+( *this ); // use Composite operator+
   }
@@ -393,7 +387,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start, size_t stop
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  std::string metadata = metadata_.valid() ? metadata_->get_type() : "None";
+  std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
 
   out << "GIDCollection("
       << "metadata=" << metadata << ", ";
@@ -473,7 +467,7 @@ GIDCollectionComposite::GIDCollectionComposite( const std::vector< GIDCollection
   parts_.reserve( parts.size() );
   for ( std::vector< GIDCollectionPrimitive >::const_iterator gc = parts.begin(); gc != parts.end(); ++gc )
   {
-    if ( meta.valid() and not( meta == ( *gc ).get_metadata() ) )
+    if ( meta.get() and not( meta == ( *gc ).get_metadata() ) )
     {
       throw BadProperty( "all metadata in a GIDCollection must be the same" );
     }
@@ -526,7 +520,7 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
 {
-  if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
+  if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
   }
@@ -539,7 +533,6 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
   }
   GIDCollectionPrimitive const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
-  rhs.unlock();
   if ( rhs_ptr ) // if rhs is Primitive
   {
     // check primitives in the composite for overlap
@@ -556,7 +549,6 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   else // rhs is Composite
   {
     GIDCollectionComposite const* const rhs_ptr = dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
-    rhs.unlock();
     if ( rhs_ptr->step_ > 1 or rhs_ptr->stop_part_ != 0 or rhs_ptr->stop_offset_ != 0 )
     {
       throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
@@ -610,7 +602,7 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
 
 GIDCollectionPTR GIDCollectionComposite::operator+( const GIDCollectionPrimitive& rhs ) const
 {
-  if ( get_metadata().valid() and not( get_metadata() == rhs.get_metadata() ) )
+  if ( get_metadata().get() and not( get_metadata() == rhs.get_metadata() ) )
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
   }
@@ -718,10 +710,10 @@ GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& part
     {
       if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
       {
-        GIDCollectionPTR merged_primitivesPTR = parts[ i ] + GIDCollectionPTR( parts[ i + 1 ] );
+        GIDCollectionPTR merged_primitivesPTR =
+          parts[ i ] + std::make_shared< GIDCollectionPrimitive >( parts[ i + 1 ] );
         GIDCollectionPrimitive const* const merged_primitives =
           dynamic_cast< GIDCollectionPrimitive const* >( merged_primitivesPTR.get() );
-        merged_primitivesPTR.unlock();
 
         parts[ i ] = *merged_primitives;
         parts.erase( parts.begin() + i + 1 );
@@ -736,7 +728,7 @@ GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& part
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  std::string metadata = get_metadata().valid() ? get_metadata()->get_type() : "None";
+  std::string metadata = get_metadata().get() ? get_metadata()->get_type() : "None";
   std::string gc = "GIDCollection(";
   std::string space( gc.size(), ' ' );
 

@@ -934,7 +934,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
     return;
   }
 
-  if ( not source.valid() and not target.valid() )
+  if ( not source.get() and not target.get() )
   {
 #pragma omp parallel
     {
@@ -966,7 +966,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
     } // of omp parallel
     return;
   } // if
-  else if ( not source.valid() and target.valid() )
+  else if ( not source.get() and target.get() )
   {
 #pragma omp parallel
     {
@@ -1017,7 +1017,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
     } // of omp parallel
     return;
   } // else if
-  else if ( source.valid() )
+  else if ( source.get() )
   {
 #pragma omp parallel
     {
@@ -1028,7 +1028,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       // Split targets into neuron- and device-vectors.
       std::vector< index > target_neuron_gids;
       std::vector< index > target_device_gids;
-      if ( target.valid() )
+      if ( target.get() )
       {
         split_to_neuron_device_vectors_( tid, target, target_neuron_gids, target_device_gids );
       }
@@ -1042,7 +1042,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
           const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
           if ( source->contains( source_gid ) )
           {
-            if ( not target.valid() )
+            if ( not target.get() )
             {
               // Passing target_gid = 0 ignores target_gid while getting
               // connections.
@@ -1061,7 +1061,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       for ( ; s_id != source->end(); ++s_id )
       {
         const index source_gid = ( *s_id ).gid;
-        if ( not target.valid() )
+        if ( not target.get() )
         {
           target_table_devices_.get_connections( source_gid, 0, tid, syn_id, synapse_label, conns_in_thread );
         }

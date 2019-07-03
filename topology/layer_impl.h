@@ -38,7 +38,7 @@ namespace nest
 {
 
 template < int D >
-lockPTR< Ntree< D, index > > Layer< D >::cached_ntree_;
+std::shared_ptr< Ntree< D, index > > Layer< D >::cached_ntree_;
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ = 0;
@@ -101,9 +101,6 @@ Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc, 
   AbstractLayer* target_abs = target_layer.get();
   assert( target_abs != 0 );
 
-  // unlock before try, otherwise lockPTR would remain locked on error
-  target_layer.unlock();
-
   try
   {
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
@@ -116,25 +113,25 @@ Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc, 
 }
 
 template < int D >
-lockPTR< Ntree< D, index > >
+std::shared_ptr< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree()
 {
   if ( cached_ntree_gc_ == get_metadata() )
   {
-    assert( cached_ntree_.valid() );
+    assert( cached_ntree_.get() );
     return cached_ntree_;
   }
 
   clear_ntree_cache_();
 
   cached_ntree_ =
-    lockPTR< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
+    std::shared_ptr< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
 
   return do_get_global_positions_ntree_();
 }
 
 template < int D >
-lockPTR< Ntree< D, index > >
+std::shared_ptr< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D > lower_left, Position< D > extent )
 {
   clear_ntree_cache_();
@@ -150,7 +147,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
     }
   }
 
-  cached_ntree_ = lockPTR< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, extent, periodic ) );
+  cached_ntree_ = std::shared_ptr< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, extent, periodic ) );
 
   do_get_global_positions_ntree_();
 
@@ -161,7 +158,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
 }
 
 template < int D >
-lockPTR< Ntree< D, index > >
+std::shared_ptr< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_()
 {
   if ( cached_vector_gc_ == get_metadata() )
@@ -313,7 +310,6 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
-      target_layer.unlock();
 
       out << ' ';
       const index tgid = tgt_layer->gid_collection_->find( target_gid );
@@ -327,7 +323,7 @@ template < int D >
 void
 MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 {
-  if ( not mask_.valid() )
+  if ( not mask_.get() )
   {
     mask_ = new AllMask< D >();
   }

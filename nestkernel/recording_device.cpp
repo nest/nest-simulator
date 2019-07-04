@@ -26,11 +26,24 @@
 
 #include "recording_device.h"
 
+nest::RecordingDevice::RecordingDevice()
+  : DeviceNode()
+  , Device()
+{
+}
+
+nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
+  : DeviceNode( rd )
+  , Device( rd )
+{
+}
+
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
 {
-  record_to_.push_back( LiteralDatum( Name( "memory" ) ) );
+#pragma omp critical
+  record_to_.push_back( LiteralDatum( names::memory ) );
 }
 
 void

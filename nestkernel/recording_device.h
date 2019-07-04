@@ -213,6 +213,10 @@ JME: Update for NESTIO!! All of this documentation is kind of outdated
 class RecordingDevice : public DeviceNode, public Device
 {
 public:
+
+  RecordingDevice( );
+  RecordingDevice( const RecordingDevice& );
+    
   void
   init_state( const RecordingDevice& pr )
   {
@@ -220,6 +224,8 @@ public:
     S_ = pr.S_;
   }
 
+
+    // remove, as this anyway happens due to the inheritance RD->D
   void
   init_buffers()
   {

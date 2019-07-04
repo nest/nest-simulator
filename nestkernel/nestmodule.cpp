@@ -1777,6 +1777,36 @@ NestModule::Conditional_P_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Min_P_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  double other_value = getValue< double >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = min_parameter( param, other_value );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
+NestModule::Max_P_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+  double other_value = getValue< double >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = max_parameter( param, other_value );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
 NestModule::Dimension2d_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1875,6 +1905,10 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "compare_P_P_D", &compare_P_P_Dfunction );
   i->createcommand( "conditional_P_P_P", &conditional_P_P_Pfunction );
+
+  i->createcommand( "min_P_d", &min_P_dfunction );
+  i->createcommand( "max_P_d", &max_P_dfunction );
+  i->createcommand( "redraw_P_d_d", &redraw_P_d_dfunction );
 
   i->createcommand( "exp_P", &exp_Pfunction );
   i->createcommand( "sin_P", &sin_Pfunction );

@@ -136,6 +136,8 @@ ParameterDatum
 compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d );
 ParameterDatum
 conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 );
+ParameterDatum min_parameter( const ParameterDatum& param, const double other_value );
+ParameterDatum max_parameter( const ParameterDatum& param, const double other_value );
 ParameterDatum exp_parameter( const ParameterDatum& param );
 ParameterDatum sin_parameter( const ParameterDatum& param );
 ParameterDatum cos_parameter( const ParameterDatum& param );

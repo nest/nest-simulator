@@ -536,6 +536,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } conditional_P_P_Pfunction;
 
+  class Min_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } min_P_dfunction;
+
+  class Max_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } max_P_dfunction;
+
   class Exp_PFunction : public SLIFunction
   {
   public:

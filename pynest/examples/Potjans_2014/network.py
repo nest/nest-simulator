@@ -232,7 +232,7 @@ class Network:
                             self.net_dict
                             ['neuron_params']['V0_sd']['optimized'][i],
                             len(local_pop))
-                    )
+                    )                
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()

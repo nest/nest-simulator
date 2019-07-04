@@ -25,6 +25,9 @@ __all__ = [
     'exp',
     'sin',
     'cos',
+    'min',
+    'max',
+    'redraw',
 ]
 
 # TODO: Special cases when argument is a number?
@@ -40,3 +43,15 @@ def sin(parameter):
 
 def cos(parameter):
     return sli_func("cos", parameter)
+
+
+def min(parameter, value):
+    return sli_func("min", parameter, float(value))
+
+
+def max(parameter, value):
+    return sli_func("max", parameter, float(value))
+
+
+def redraw(parameter, min, max):
+    return sli_func("redraw", parameter, float(min), float(max))

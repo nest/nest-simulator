@@ -520,6 +520,49 @@ class TestNodeParametrization(unittest.TestCase):
                 self.assertEqual((p**exponent).GetValue(),
                                  value**exponent)
 
+    def test_min_parameter(self):
+        """Test min of parameter"""
+        reference_value = 2.0
+        for value in np.linspace(-5.0, 5.0, 21):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            self.assertEqual(nest.math.min(p, reference_value).GetValue(),
+                             np.minimum(value, reference_value))
+
+    def test_max_parameter(self):
+        """Test max of parameter"""
+        reference_value = 2.0
+        for value in np.linspace(-5.0, 5.0, 21):
+            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            self.assertEqual(nest.math.max(p, reference_value).GetValue(),
+                             np.maximum(value, reference_value))
+
+    def test_redraw_parameter(self):
+        """Test redraw of parameter"""
+        min_value = 1.0
+        max_value = 1.5
+        p = nest.random.normal()
+        for _ in range(100):
+            value = nest.math.redraw(p, min_value, max_value).GetValue()
+            self.assertGreaterEqual(value, min_value)
+            self.assertLessEqual(value, max_value)
+
+    def test_redraw_wrong_limits(self):
+        """Test redraw of parameter with wrong limits"""
+        min_value = 1.5
+        max_value = 1.0
+        p = nest.random.normal()
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.math.redraw(p, min_value, max_value)
+
+    def test_redraw_value_impossible(self):
+        """Test redraw of parameter with impossible to satisfy limits"""
+
+        min_value = 1.5
+        max_value = 2.0
+        p = nest.random.uniform(min=0.0, max=1.0)
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.math.redraw(p, min_value, max_value).GetValue()
+
     def test_parameter_comparison(self):
         """Test comparison of parameters"""
         p1 = nest.hl_api.CreateParameter('constant', {'value': 1.0})

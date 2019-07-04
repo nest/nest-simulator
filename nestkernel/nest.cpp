@@ -360,6 +360,12 @@ max_parameter( const ParameterDatum& param, const double other_value)
 }
 
 ParameterDatum
+redraw_parameter( const ParameterDatum& param, const double min, const double max)
+{
+  return param->redraw(min, max);
+}
+
+ParameterDatum
 exp_parameter( const ParameterDatum& param )
 {
   return param->exp();

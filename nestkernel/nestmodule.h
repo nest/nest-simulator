@@ -548,6 +548,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } max_P_dfunction;
 
+  class Redraw_P_d_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } redraw_P_d_dfunction;
+
   class Exp_PFunction : public SLIFunction
   {
   public:

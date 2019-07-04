@@ -1807,6 +1807,22 @@ NestModule::Max_P_dFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Redraw_P_d_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 2 ) );
+  double min = getValue< double >( i->OStack.pick( 1 ) );
+  double max = getValue< double >( i->OStack.pick( 0 ) );
+
+  ParameterDatum newparam = redraw_parameter( param, min, max );
+
+  i->OStack.pop( 3 );
+  i->OStack.push( newparam );
+  i->EStack.pop();
+}
+
+void
 NestModule::Dimension2d_P_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );

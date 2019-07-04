@@ -202,4 +202,63 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   }
 }
 
+RedrawParameter::RedrawParameter( const Parameter& p, const double min, const double max )
+  : Parameter( p )
+  , p_( p.clone() )
+  , min_( min )
+  , max_( max )
+  , max_redraws_( 1000 )
+{
+  if ( min > max )
+  {
+    throw BadParameterValue( "min <= max required." );
+  }
+  if ( max < min )
+  {
+    throw BadParameterValue( "max >= min required." );
+  }
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng, Node* node ) const
+{
+  double value;
+  size_t num_redraws = 0;
+  do
+  {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
+    value = p_->value( rng, node );
+  } while ( value < min_ or value > max_ );
+  return value;
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+{
+  double value;
+  do
+  {
+    value = p_->value( rng, sgid, target, target_thread );
+  } while ( value < min_ or value > max_ );
+  return value;
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const std::vector< double >& displacement ) const
+{
+  double value;
+  do
+  {
+    value = p_->value( rng, source_pos, target_pos, displacement );
+  } while ( value < min_ or value > max_ );
+
+  return value;
+}
+
 } /* namespace nest */

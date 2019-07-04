@@ -138,6 +138,11 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* max( const double other ) const;
+  /**
+   * Create parameter redrawing the value if the value of a parameter is outside the set limits.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* redraw( const double min, const double max ) const;
 
   /**
    * Create the exponential of this parameter.

@@ -348,6 +348,10 @@ def
   /max_P_d load
 def
 
+/redraw [/parametertype /doubletype /doubletype]
+  /redraw_P_d_d load
+def
+
 /exp [/parametertype]
   /exp_P load
 def

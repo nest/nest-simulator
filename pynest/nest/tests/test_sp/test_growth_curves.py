@@ -423,7 +423,7 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         psi = 0.10
-        
+
         local_nodes = nest.GetLocalGIDCollection(self.pop)
         local_nodes.set(
             {
@@ -451,9 +451,9 @@ class TestGrowthCurve(unittest.TestCase):
             0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
         ])
 
-        local_pop_as_list = list(local_nodes)        
+        local_pop_as_list = list(local_nodes)
         for count, n in enumerate(self.pop):
-            loc = self.se_nest[ local_pop_as_list.index(n), 30]
+            loc = self.se_nest[local_pop_as_list.index(n), 30]
             ex = expected[count]
             testing.assert_almost_equal(loc, ex, decimal=5)
 

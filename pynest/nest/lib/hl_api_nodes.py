@@ -135,6 +135,7 @@ def PrintNodes():
     sr("PrintNodesToStream")
     print(spp())
 
+
 @check_stack
 def GetLocalGIDCollection(gc):
     """Get local nodes of a GIDCollection as a new GIDCollection.

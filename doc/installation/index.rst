@@ -1,32 +1,110 @@
 Installation Instructions
 ==========================
 
+Standard Installation Instructions
+------------------------------------
+
+**These intallation instructions should work for most of our users, who do not  need
+special configurations for their systems.**
+
+
+.. tabs::
+
+   .. tab:: Linux
+
+     .. code-block:: bash
+
+       sudo add-apt-repository ppa:nest-simulator/nest
+       sudo apt-get update
+       sudo apt install nest
+
+   .. tab:: MacOS
+
+       .. code-block:: bash
+
+           brew tap brewsci/science
+           brew install nest
+
+       Options have to be appended, so for example, to install NEST with PyNEST run::
+
+           brew install nest --with-python
+
+
+       *  To install homebrew, follow the instructions at `brew.sh <http://brew.sh/>`_
+
+   .. tab:: Windows
+
+       We don't support NEST natively on Windows, but you can run NEST in a virtual machine.
+
+       :doc:`Download the live media here <livemedia>`.
+
+   .. tab:: Conda for Linux or MacOS
+
+       If you prefer using conda environments, we also have a :doc:`conda-forge package <conda_install>`
+
+
+
+**Once NEST is installed you can run it in Python**::
+
+     python
+     import nest
+
+**or as a stand alone application**::
+
+     nest
+
+Now let's create your first network!
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+----
+
+Advanced Installation Instructions
+-----------------------------------
+
+**If you need special configuration options or want to compile NEST yourselves, follow
+these instructions.**
+
+
+.. tabs::
+
+   .. tab:: Linux
+
+       Download source code for the  `current release NEST 2.18.0 <https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz>`_
+
+       Follow instructions for :doc:`linux_install`
+
+   .. tab:: GitHub
+
+       Get the latest developer version
+
+     .. note::
+
+         The developer version should only be used if you really know what you're doing!
+
+     .. code-block:: bash
+
+         mkdir nest-master
+         cd nest-master
+         git clone https://nest/nest-simulator.git
+
+
+   .. tab:: MacOS
+
+       For further options on installing NEST on MacOS, see :ref:`mac_manual` for Macs.
+
+   .. tab:: HPC systems?
+
+       :doc:`hpc_install`
+
 .. toctree::
    :hidden:
 
-   conda_install
    linux_install
    mac_install
+   conda_install
    hpc_install
    livemedia
    install_options
-
-If you have not done so, you can :doc:`download NEST here <../download>`.
-
-Please choose on which system you want to install NEST:
-
-
-* **BETA** :doc:`Conda installation for Linux and macOS <conda_install>`
-* :doc:`Ubuntu/Debian installation <linux_install>`
-* :doc:`Standard macOS installation <mac_install>`
-* :doc:`High Performance Computer Systems <hpc_install>`
-* :doc:`NEST Live Media for Virtual Machines <livemedia>`
-
-For more information regarding installation see our :doc:`install_options`.
-
-
-
-.. note::  NEST is not supported natively on Microsoft Windows. However, it is possible to use NEST in Windows using a :doc:`virtual machine <livemedia>`.
 
 
 .. note:: These installation instructions are for **NEST 2.12 and later** as well as the most recent version obtained from `GitHub <https://github.com/nest/nest-simulator>`_.

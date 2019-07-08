@@ -69,7 +69,6 @@ nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
 nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})
 t_plot = 1000.
 t_tot = 1500.
 

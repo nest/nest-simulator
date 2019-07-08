@@ -58,8 +58,7 @@ M_ERROR setverbosity
                /foo << >> def foo exch /V_m exch put foo SetStatus } forall
 
     % multimeter
-    /ac /multimeter << /record_from [ /V_m ] /withgid true /interval 1.
-                       /to_memory true /to_accumulator false >> Create def
+    /ac /multimeter << /record_from [ /V_m ] /interval 1.0 >> Create def
                        
     ac nrns Connect
 

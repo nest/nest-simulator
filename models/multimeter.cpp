@@ -33,7 +33,6 @@ namespace nest
 Multimeter::Multimeter()
   : RecordingDevice()
   , P_()
-  , S_()
   , B_()
 {
 }
@@ -41,7 +40,6 @@ Multimeter::Multimeter()
 Multimeter::Multimeter( const Multimeter& n )
   : RecordingDevice( n )
   , P_( n.P_ )
-  , S_()
   , B_()
 {
 }
@@ -161,7 +159,6 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 void
 Multimeter::init_state_( const Node& np )
 {
-  S_.data_.clear();
 }
 
 void
@@ -229,8 +226,6 @@ Multimeter::handle( DataLoggingReply& reply )
     // const double offset = reply.get_offset();
 
     RecordingDevice::write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
-
-    S_.data_.push_back( info[ j ].data );
   }
 }
 
@@ -240,20 +235,4 @@ Multimeter::get_type() const
   return RecordingDevice::MULTIMETER;
 }
 
-void
-Multimeter::add_data_( DictionaryDatum& d ) const
-{
-  // re-organize data into one vector per recorded variable
-  for ( size_t v = 0; v < P_.record_from_.size(); ++v )
-  {
-    std::vector< double > dv( S_.data_.size() );
-    for ( size_t t = 0; t < S_.data_.size(); ++t )
-    {
-      assert( v < S_.data_[ t ].size() );
-      dv[ t ] = S_.data_[ t ][ v ];
-    }
-    initialize_property_doublevector( d, P_.record_from_[ v ] );
-    append_property( d, P_.record_from_[ v ], dv );
-  }
-}
-}
+} // namespace nest

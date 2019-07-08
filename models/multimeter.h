@@ -183,24 +183,6 @@ protected:
   void update( Time const&, const long, const long );
 
 private:
-  /**
-   * "Print" one value to file or screen, depending on settings in
-   * RecordingDevice.
-   * @note The default implementation supports only EntryTypes which
-   *       RecordingDevice::print_value() can handle. Otherwise, specialization
-   *       is required.
-   */
-  void print_value_( const std::vector< double >& );
-
-  /**
-   * Add recorded data to dictionary.
-   * @note By default, only implemented for EntryType double, must
-   *       otherwise be specialized.
-   * @param /events dictionary to be placed in properties dictionary
-   */
-  void add_data_( DictionaryDatum& ) const;
-
-  // ------------------------------------------------------------
 
   struct Buffers_;
 
@@ -218,22 +200,6 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_
-  {
-    /** Recorded data.
-     * First dimension: time
-     * Second dimension: recorded variables
-     * @note In normal mode, data is stored as follows:
-     *          For each recorded node, all data points for one time slice are
-     *          put after one another in the first dimension. Each entry is a
-     *          vector containing one element per recorded quantity.
-     *       In accumulating mode, only one data point is stored per time step
-     *          and values are added across nodes.
-     */
-    std::vector< std::vector< double > > data_; //!< Recorded data
-  };
-
-  // ------------------------------------------------------------
 
   struct Buffers_
   {
@@ -249,7 +215,6 @@ private:
   // ------------------------------------------------------------
 
   Parameters_ P_;
-  State_ S_;
   Buffers_ B_;
 };
 
@@ -264,10 +229,6 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   {
     return; // no data to collect
   }
-
-  // we need to add analog data to the events dictionary
-  DictionaryDatum dd = getValue< DictionaryDatum >( d, names::events );
-  add_data_( dd );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -306,6 +267,6 @@ nest::Multimeter::sends_signal() const
   return ALL;
 }
 
-} // namespace
+} // namespace nest
 
 #endif

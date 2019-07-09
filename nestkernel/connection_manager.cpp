@@ -379,8 +379,6 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
-  //check_have_connections_changed_.resize(kernel().vp_manager.get_num_threads(), true);
-
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -460,7 +458,10 @@ nest::ConnectionManager::connect( const index sgid,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  have_connections_changed_.set(target_thread, true);
+  if ( not have_connections_changed_[ target_thread ] )
+  {
+    have_connections_changed_.set( target_thread, true );
+  }
 
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
   const thread tid = kernel().vp_manager.get_thread_id();
@@ -543,7 +544,10 @@ nest::ConnectionManager::connect( const index sgid,
 
   const thread tid = kernel().vp_manager.get_thread_id();
 
-  have_connections_changed_.set(tid, true);
+  if ( not have_connections_changed_[ tid ] )
+  {
+    have_connections_changed_.set( tid, true );
+  }
 
   if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
@@ -746,7 +750,10 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index sgid,
   const index tgid )
 {
-  have_connections_changed_.set(tid, true);
+  if ( not have_connections_changed_[ tid ] )
+  {
+    have_connections_changed_.set( tid, true );
+  }
 
   assert( syn_id != invalid_synindex );
 

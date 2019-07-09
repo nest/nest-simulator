@@ -727,8 +727,9 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp single
   {
     kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.set_have_connections_changed( false );
+    //kernel().connection_manager.set_have_connections_changed( false );
   }
+  kernel().connection_manager.set_have_connections_changed( tid, false );
 }
 
 bool

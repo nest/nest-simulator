@@ -460,7 +460,10 @@ nest::ConnectionManager::connect( const index sgid,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  have_connections_changed_.set(target_thread, true);
+  if ( not have_connections_changed_[ target_thread ] )
+  {
+    have_connections_changed_.set( target_thread, true );
+  }
 
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
   const thread tid = kernel().vp_manager.get_thread_id();

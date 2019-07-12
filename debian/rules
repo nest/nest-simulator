@@ -9,6 +9,7 @@ INSTALLDIR = \/$(BUILDDIR)\/$(PACKAGEVERSION)\/$(DESTDIR)
 CMAKE_FLAGS = -DCMAKE_INSTALL_PREFIX:PATH=$(DESTDIR)/usr -Dwith-python=3 -DCMAKE_INSTALL_LIBDIR:PATH=lib
 CMAKE_FLAGS += -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc
 CMAKE_FLAGS += -Dwith-mpi:BOOL=On
+CMAKE_FLAGS += -Dwith-openmp:BOOL=On
 CMAKE_FLAGS += -Dwith-gsl:BOOL=On /usr/local/lib
 CMAKE_FLAGS += -Dwith-libneurosim:BOOL=On /usr/local/lib
 CMAKE_FLAGS += -Dwith-music=On /usr/lib

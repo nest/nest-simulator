@@ -2,4 +2,4 @@ nest (2.18.0+1SNAPSHOT-0ubuntu1ppa1) unstable; urgency=low
 
   * NEST nightly builds of master in 'ppa:nest-simulator/nest-nightly'
 
- -- Steffen Graber <s.graber@fz-juelich.de>  Fri, 12 Jul 2019 13:20:16 +0200
+ -- Steffen Graber <s.graber@fz-juelich.de>  Fri, 12 Jul 2019 14:50:16 +0200

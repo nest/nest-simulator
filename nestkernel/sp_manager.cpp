@@ -243,6 +243,7 @@ SPManager::disconnect_single( index sgid,
 {
   if ( kernel().connection_manager.have_connections_changed() )
   {
+    kernel().connection_manager.check_secondary_connections_exist();
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
       kernel()
@@ -346,6 +347,7 @@ SPManager::disconnect( GIDCollection& sources,
 {
   if ( kernel().connection_manager.have_connections_changed() )
   {
+    kernel().connection_manager.check_secondary_connections_exist();
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
       kernel()

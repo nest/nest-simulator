@@ -1,17 +1,5 @@
-nest (1.9.8710) unstable; urgency=low
+nest (2.18.0+1SNAPSHOT-0ubuntu1ppa1) unstable; urgency=low
 
-  * Okinawa Summer School release.
+  * NEST nightly builds of master in 'ppa:nest-simulator/nest-nightly'
 
- -- Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>  Tue, 08 Jun 2010 17:51:10 +0200
-
-nest (1.9.8316) unstable; urgency=low
-
-  * CNS*09 Bernstein Tutorial release.
-
- -- Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>  Fri, 19 Jun 2009 11:13:18 +0200
-
-nest (1.9.8300) unstable; urgency=low
-
-  * Okinawa Summer School Release.
-
- -- Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>  Sat, 06 Jun 2009 00:34:10 +0200
+ -- Steffen Graber <s.graber@fz-juelich.de>  Fri, 12 Jul 2019 13:20:16 +0200

@@ -73,6 +73,7 @@ from . import pynestkernel as kernel      # noqa
 
 __all__ = [
     'check_stack',
+    'set_communicator',
     'get_debug',
     'set_debug',
     'sli_func',

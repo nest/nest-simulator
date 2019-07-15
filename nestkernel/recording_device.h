@@ -275,6 +275,7 @@ private:
     ArrayDatum record_to_; //!< Array of recording backends to use
 
     Parameters_();
+    Parameters_( const Parameters_& );
     void get( const RecordingDevice&, DictionaryDatum& ) const;
     void set( const RecordingDevice&, const DictionaryDatum&, long );
   };

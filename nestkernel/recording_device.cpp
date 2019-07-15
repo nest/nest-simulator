@@ -29,12 +29,14 @@
 nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
+  , P_ ()
 {
 }
 
 nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
+  , P_ ( rd.P_ )
 {
 }
 
@@ -44,6 +46,16 @@ nest::RecordingDevice::Parameters_::Parameters_()
 {
 #pragma omp critical
   record_to_.push_back( LiteralDatum( names::memory ) );
+}
+
+nest::RecordingDevice::Parameters_::Parameters_( const Parameters_& p )
+  : label_( p.label_ )
+  , time_in_steps_( p.time_in_steps_ )
+  , record_to_()
+{
+#pragma omp critical
+  for ( auto& t: p.record_to_ )
+    record_to_.push_back( t );
 }
 
 void

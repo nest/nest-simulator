@@ -109,7 +109,7 @@ g_Na        nS      Sodium peak conductance
 E_K         mV      Potassium reversal potential
 g_K         nS      Potassium peak conductance
 Act_m       real    Activation variable m
-Inact_h     real    Inativation variable h
+Inact_h     real    Inactivation variable h
 Act_n       real    Activation variable n
 I_e         pA      External input current
 =========== ======  ===========================================================

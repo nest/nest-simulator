@@ -65,8 +65,8 @@ RecordablesMap< hh_cond_exp_traub >::create()
   insert_( names::g_ex, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_EXC > );
   insert_( names::g_in, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_INH > );
   insert_( names::Act_m, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_M > );
-  insert_( names::Act_h, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_H > );
-  insert_( names::Inact_n, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_N > );
+  insert_( names::Inact_h, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_H > );
+  insert_( names::Act_n, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_N > );
 }
 
 extern "C" int
@@ -245,8 +245,8 @@ nest::hh_cond_exp_traub::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
   def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Act_h, y_[ HH_H ] );
-  def< double >( d, names::Inact_n, y_[ HH_N ] );
+  def< double >( d, names::Inact_h, y_[ HH_H ] );
+  def< double >( d, names::Act_n, y_[ HH_N ] );
 }
 
 void
@@ -254,8 +254,8 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
-  updateValue< double >( d, names::Act_h, y_[ HH_H ] );
-  updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
+  updateValue< double >( d, names::Inact_h, y_[ HH_H ] );
+  updateValue< double >( d, names::Act_n, y_[ HH_N ] );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );

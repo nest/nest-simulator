@@ -38,7 +38,7 @@ if 'linux' in sys.platform and 'Anaconda' in sys.version:
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
     import scipy
-except:
+except ImportError:
     pass
 
 # Make MPI-enabled NEST import properly. The underlying problem is that the
@@ -293,23 +293,25 @@ def check_stack(thing):
 
 initialized = False
 
+
 def set_communicator(comm):
     """Set global communicator for NEST.
 
     Paramters
     ---------
     comm: MPI.Comm from mpi4py
-    
+
     Raises
     ------
     _kernel.NESTError
     """
-    
+
     if "mpi4py" not in sys.modules:
         raise _kernel.NESTError("set_communicator: "
                                 "mpi4py not loaded.")
-    
+
     engine.set_communicator(comm)
+
 
 def init(argv):
     """Initializes NEST.

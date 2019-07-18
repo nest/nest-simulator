@@ -1,5 +1,5 @@
 /*
- *  recording_backend_sionlib.cpp
+ *  recording_backend_arbor.cpp
  *
  *  This file is part of NEST.
  *

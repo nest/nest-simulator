@@ -1,5 +1,5 @@
 /*
- *  recording_backend_sionlib.h
+ *  recording_backend_arbor.h
  *
  *  This file is part of NEST.
  *

@@ -183,23 +183,23 @@ class TestNodeParametrization(unittest.TestCase):
         self.assertEqual(nest.GetStatus(node, 'V_m'), Vm_ref)
         self.assertEqual(nest.GetStatus(node, 'C_m'), Cm_ref)
 
-    def test_SetStatus_with_dict_with_string(self):
+    def test_SetStatus_with_dict_with_bool(self):
         """Test SetStatus with dict with bool"""
         nodes = nest.Create('spike_detector', 3)
         withport_ref = (True, True, True)
-        nest.SetStatus(nodes, {'withport': True})
+        nest.SetStatus(nodes, {'time_in_steps': True})
 
-        self.assertEqual(nest.GetStatus(nodes, 'withport'), withport_ref)
+        self.assertEqual(nest.GetStatus(nodes, 'time_in_steps'), withport_ref)
 
-    def test_SetStatus_with_dict_with_list_with_strings(self):
+    def test_SetStatus_with_dict_with_list_with_bools(self):
         """Test SetStatus with dict with list of bools"""
         nodes = nest.Create('spike_detector', 3)
         withport_ref = (True, False, True)
-        nest.SetStatus(nodes, {'withport': [True, False, True]})
+        nest.SetStatus(nodes, {'time_in_steps': [True, False, True]})
 
-        self.assertEqual(nest.GetStatus(nodes, 'withport'), withport_ref)
+        self.assertEqual(nest.GetStatus(nodes, 'time_in_steps'), withport_ref)
 
-    def test_SetStatus_on_spike_generetor(self):
+    def test_SetStatus_on_spike_generator(self):
         """Test SetStatus with dict with list that is not to be split"""
         sg = nest.Create('spike_generator')
         nest.SetStatus(sg, {'spike_times': [1., 2., 3.]})
@@ -266,15 +266,15 @@ class TestNodeParametrization(unittest.TestCase):
         self.assertEqual(node.get('V_m'), Vm_ref)
         self.assertEqual(node.get('C_m'), Cm_ref)
 
-    def test_set_with_dict_with_list_with_strings(self):
+    def test_set_with_dict_with_list_with_bools(self):
         """Test set with dict with list with bool"""
         nodes = nest.Create('spike_detector', 3)
         withport_ref = (True, False, True)
-        nodes.set({'withport': [True, False, True]})
+        nodes.set({'time_in_steps': [True, False, True]})
 
-        self.assertEqual(nodes.get('withport'), withport_ref)
+        self.assertEqual(nodes.get('time_in_steps'), withport_ref)
 
-    def test_set_on_spike_generetor(self):
+    def test_set_on_spike_generator(self):
         """Test set with dict with list that is not to be split"""
         sg = nest.Create('spike_generator')
         sg.set({'spike_times': [1., 2., 3.]})

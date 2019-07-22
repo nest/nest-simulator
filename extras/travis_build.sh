@@ -215,82 +215,83 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
 else
     echo "MSGBLD0225: Static code analysis skipped due to build configuration."
-fi  # End of Static code analysis.
 
+    # static code analysis disabled: do a full build
 
-cd "$NEST_VPATH"
-cp ../examples/sli/nestrc.sli ~/.nestrc
-# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
-# Not having this in place leads to a "not enough slots available" error.
-if [[ "$OSTYPE" == "darwin"* ]] ; then
-    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-fi
+    cd "$NEST_VPATH"
+    cp ../examples/sli/nestrc.sli ~/.nestrc
+    # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
+    # Not having this in place leads to a "not enough slots available" error.
+    if [[ "$OSTYPE" == "darwin"* ]] ; then
+        sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
+    fi
 
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0230: Configuring CMake."
-cmake \
-    -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-    -Dwith-optimize=ON \
-    -Dwith-warning=ON \
-    $CONFIGURE_BOOST \
-    $CONFIGURE_THREADING \
-    $CONFIGURE_MPI \
-    $CONFIGURE_PYTHON \
-    $CONFIGURE_MUSIC \
-    $CONFIGURE_GSL \
-    $CONFIGURE_LTDL \
-    $CONFIGURE_READLINE \
-    $CONFIGURE_LIBNEUROSIM \
-    ..
-
-echo "MSGBLD0240: CMake configure completed."
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               B U I L D   N E S T                                           +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0250: Running Make."
-make VERBOSE=1
-echo "MSGBLD0260: Make completed."
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               I N S T A L L   N E S T                                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0270: Running make install."
-make install
-echo "MSGBLD0280: Make install completed."
-
-if [ "$xRUN_TESTSUITE" = "1" ]; then
     echo
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "+               R U N   N E S T   T E S T S U I T E                           +"
+    echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
-        export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-        export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+    echo "MSGBLD0230: Configuring CMake."
+    cmake \
+        -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+        -Dwith-optimize=ON \
+        -Dwith-warning=ON \
+        $CONFIGURE_BOOST \
+        $CONFIGURE_THREADING \
+        $CONFIGURE_MPI \
+        $CONFIGURE_PYTHON \
+        $CONFIGURE_MUSIC \
+        $CONFIGURE_GSL \
+        $CONFIGURE_LTDL \
+        $CONFIGURE_READLINE \
+        $CONFIGURE_LIBNEUROSIM \
+        ..
+
+    echo "MSGBLD0240: CMake configure completed."
+
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               B U I L D   N E S T                                           +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0250: Running Make."
+    make VERBOSE=1
+    echo "MSGBLD0260: Make completed."
+
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               I N S T A L L   N E S T                                       +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0270: Running make install."
+    make install
+    echo "MSGBLD0280: Make install completed."
+
+    if [ "$xRUN_TESTSUITE" = "1" ]; then
+        echo
+        echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        echo "+               R U N   N E S T   T E S T S U I T E                           +"
+        echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+        echo "MSGBLD0290: Running make installcheck."
+        if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+            export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+            export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+        elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+            export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+            export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+        fi
+        make installcheck
+        echo "MSGBLD0300: Make installcheck completed."
+    else
+        echo "MSGBLD0305: Skip installcheck."
     fi
-    make installcheck
-    echo "MSGBLD0300: Make installcheck completed."
-else
-    echo "MSGBLD0305: Skip installcheck."
-fi
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "MSGBLD0310: This build was triggered by a pull request."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
+    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+        echo "MSGBLD0310: This build was triggered by a pull request."
+        echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
+    fi
 
-if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
+    if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
+        echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
+        echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
+    fi
 
-echo "MSGBLD0340: Build completed."
+    echo "MSGBLD0340: Build completed."
+fi

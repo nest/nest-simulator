@@ -104,6 +104,7 @@ M_ERROR setverbosity
                                               /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
+   /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
    /sli_neuron << /params << /calibrate { }
                              /update { /spike ex_spikes 10. gt def } 

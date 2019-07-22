@@ -63,7 +63,8 @@ M_ERROR setverbosity
              /rate_transformer_sigmoid_gg_1998 % rate transformer
              /parrot_neuron
              /parrot_neuron_ps
-             /iaf_cond_alpha_mc    % cannot readout V_m directly
+             /iaf_cond_alpha_mc         % cannot readout V_m directly
+             /pp_cond_exp_mc_urbanczik  % cannot readout V_m directly
              /music_event_in_proxy        % music device
              /music_event_out_proxy       % music device
              /music_cont_in_proxy         % music device
@@ -88,7 +89,6 @@ M_ERROR setverbosity
                                               /tau_rise [ 1.0 ]
                                               /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
    /sli_neuron << /params << /calibrate { /V_m 0.0 def }
                              /update { /V_m V_m ex_spikes add def } 

@@ -44,7 +44,9 @@ class TestDisconnect(unittest.TestCase):
             'rate_connection_delayed',
             'rate_connection_delayed_lbl',
             'clopath_synapse',
-            'clopath_synapse_lbl'
+            'clopath_synapse_lbl',
+            'urbanczik_synapse',
+            'urbanczik_synapse_lbl',
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

@@ -121,6 +121,15 @@ before_install:
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo ${MATRIX_EVAL}
          eval "${MATRIX_EVAL}"
+         export SOURCEDIR=$PWD
+         echo $PWD
+         ls $PWD
+         cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+         cd $HOME/build
+         echo $PATH
+  # Upgrade pip and setuptools
+         if [[ $TRAVIS_BUILD_STAGE_NAME == "Gcc8clang7" ]]; then pyenv global 3.6.3; fi
+         if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
       fi
 
 install:

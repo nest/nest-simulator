@@ -173,16 +173,6 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
     fi
     file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
-    printf '%s\n' "$file_names" | while IFS= read -r line
-     do
-       for single_file_name in $file_names
-       do
-       done
-     done
-    echo "MSGBLD0100: Retrieving changed files completed."
-    echo
-
-
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.

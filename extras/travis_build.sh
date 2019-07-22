@@ -151,7 +151,7 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
         # Copy and not move because '.cache' may aleady contain other subdirectories and files.
         cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
         echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
+
         # Remove these directories, otherwise the copyright-header check will complain.
         rm -rf ./cppcheck
         rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
@@ -177,7 +177,6 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
      do
        for single_file_name in $file_names
        do
-         echo "MSGBLD0095: File changed: $single_file_name"
        done
      done
     echo "MSGBLD0100: Retrieving changed files completed."

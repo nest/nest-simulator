@@ -115,31 +115,13 @@ cache:
 
 before_install:
    - |
-     if [ "$xSTATIC_ANALYSIS" = "0" ]; then
+     if [ "$xSTATIC_ANALYSIS" == "0" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo ${MATRIX_EVAL}
          eval "${MATRIX_EVAL}"
-         export SOURCEDIR=$PWD
-         echo $PWD
-         ls $PWD
-         cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
-         cd $HOME/build
-         echo $PATH
-  # Upgrade pip and setuptools
-         if [[ $TRAVIS_BUILD_STAGE_NAME == "Gcc8clang7" ]]; then pyenv global 3.6.3; fi
-         if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
-         pip install -U pip
-         pip install -U setuptools
-  
-  # Installing additional packages using pip as they only have
-  # outdated versions in the Travis package whitelist.
-  # terminaltables is required by parse_travis_log.py to create
-  # the build summary.
-         pip install cython scipy matplotlib terminaltables
-         pip install numpy==1.13.3
-     fi
+      fi
 
 install:
    - which cython
@@ -162,7 +144,7 @@ before_script:
 script:
    - set -o pipefail
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
-   - if [ "$xSTATIC_ANALYSIS" = "0" ]; then
+   - if [ "$xSTATIC_ANALYSIS" == "0" ]; then
         python extras/parse_travis_log.py travis_build.sh.log ;
      fi
 

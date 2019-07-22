@@ -114,6 +114,7 @@ cache:
      - $HOME/.cache
 
 before_install:
+   - export SOURCEDIR=$PWD
    - |
      if [[ "$xSTATIC_ANALYSIS" == "0" ]]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -121,9 +122,6 @@ before_install:
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo ${MATRIX_EVAL}
          eval "${MATRIX_EVAL}"
-         export SOURCEDIR=$PWD
-         echo $PWD
-         ls $PWD
          cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
          cd $HOME/build
          echo $PATH

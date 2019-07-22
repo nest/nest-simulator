@@ -168,9 +168,10 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
        file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
     else
-       echo "MSGBLD0090: Retrieving changed files using git diff."    
+       echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
+    file_names = `find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
     printf '%s\n' "$file_names" | while IFS= read -r line
      do
@@ -186,7 +187,7 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8

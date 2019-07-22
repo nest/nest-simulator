@@ -171,7 +171,7 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
        echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
-    file_names = `find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
+    file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
     printf '%s\n' "$file_names" | while IFS= read -r line
      do

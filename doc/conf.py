@@ -86,6 +86,7 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
 # compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 
+
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):

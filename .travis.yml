@@ -141,18 +141,21 @@ before_install:
       fi
 
 install:
-   - which cython
-   - cython --version
-   - which python
-   - python --version
-   - which pip
-   - pip list
-   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then which nosetests; nosetests --version; nosetests --plugins; fi
-   - which cmake
-   - cmake --version
-   - echo ${CC}
-   - echo ${CXX}
-  
+   - |
+     if [[ "$xSTATIC_ANALYSIS" == "0" ]]; then
+         which cython
+         cython --version
+         which python
+         python --version
+         which pip
+         pip list
+         if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then which nosetests; nosetests --version; nosetests --plugins; fi
+         which cmake
+         cmake --version
+         echo ${CC}
+         echo ${CXX}
+     fi
+
 before_script:
    # Change directory back to the NEST source code directory.
    - cd $SOURCEDIR

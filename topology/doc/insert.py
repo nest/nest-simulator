@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# conttest.py
+# insert.py
 #
 # This file is part of NEST.
 #
@@ -90,7 +90,8 @@ def snippet(filename, startID, stopID, indent='', **kwargs):
 
 
 def insert(filename, keyword="", fences=None):
-    regex = r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>.+?)\s+lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$' % keyword
+    regex = (r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>'
+             r'.+?)\s+lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$') % keyword
 
     log.debug("looking for %s", repr(regex))
     insert_re = re.compile(regex)
@@ -115,10 +116,9 @@ if __name__ == '__main__':
         log.setLevel(logging.DEBUG)
     log.debug(pformat(args))
 
-    for line in insert(
-            args['<file>'],
-            keyword = args['--keyword'],
-            fences = args.get('--fences', None),
-        ):
-        print(line.rstrip("\n"))
+    lines = insert(args['<file>'],
+                   keyword=args['--keyword'],
+                   fences=args.get('--fences', None))
 
+    for line in lines:
+        print(line.rstrip("\n"))

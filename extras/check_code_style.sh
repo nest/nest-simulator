@@ -30,7 +30,7 @@ GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 
 VERA=vera++                      # The names of the static code analysis tools executables.
 CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required !
-CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
+CLANG_FORMAT=/home/archels/.local/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/bin/clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
 PEP8=pep8
 
 PERFORM_VERA=true                # Perform VERA++ analysis. 

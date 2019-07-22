@@ -46,7 +46,7 @@ void
 nest::TargetTable::finalize()
 {
   std::vector< std::vector< std::vector< Target > > >().swap( targets_ );
-  std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap( secondary_send_buffer_pos_ );
+  std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap( secondary_send_buffer_pos_ ); >>>> ddddddddddddddddddd  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww fffffffffffffffffffffffffffff  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww ffffffffffffffffffffffffffffffffffffff
 }
 
 void

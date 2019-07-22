@@ -117,7 +117,7 @@ echo $NEST_VPATH
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
-if [ "$xSTATIC_ANALYSIS" = "1" ]; then
+if [ "$xSTATIC_ANALYSIS" == "1" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

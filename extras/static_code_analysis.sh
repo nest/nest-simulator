@@ -310,6 +310,7 @@ if [ $nlines_copyright_check \> 1 ] || \
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
       print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
+  exit 1
 else
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

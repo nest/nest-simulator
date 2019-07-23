@@ -82,6 +82,7 @@
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
+#include "pp_cond_exp_mc_urbanczik.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
@@ -146,6 +147,7 @@
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
+#include "urbanczik_connection.h"
 #include "vogels_sprekeler_connection.h"
 
 // Includes from nestkernel:
@@ -227,6 +229,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
+  kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
@@ -441,6 +444,13 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_connection_model< ClopathConnection< TargetIdentifierPtrRport > >( "clopath_synapse",
     /*requires_symmetric=*/false,
     /*requires_clopath_archiving=*/true );
+
+  kernel().model_manager.register_connection_model< UrbanczikConnection< TargetIdentifierPtrRport > >(
+    "urbanczik_synapse",
+    /*requires_symmetric=*/false,
+    /*requires_clopath_archiving=*/false,
+    /*requires_urbanczik_archiving=*/true );
+
 
   /** @BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low

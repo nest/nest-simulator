@@ -22,6 +22,7 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     clopath_archiving_node.h clopath_archiving_node.cpp
+    urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
     common_synapse_properties.h common_synapse_properties.cpp
     completed_checker.h completed_checker.cpp
     sibling_container.h sibling_container.cpp

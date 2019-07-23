@@ -42,7 +42,7 @@ namespace nest
 /**
  * \class Clopath_Archiving_Node
  * a archiving node which additionally archives parameters
- * needed for the Clopath plasticity rule
+ * and buffers needed for the Clopath plasticity rule
  */
 class Clopath_Archiving_Node : public Archiving_Node
 {
@@ -75,8 +75,8 @@ public:
    */
   void get_LTP_history( double t1,
     double t2,
-    std::deque< histentry_cl >::iterator* start,
-    std::deque< histentry_cl >::iterator* finish );
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish );
 
   /**
    * \fn double get_theta_plus()
@@ -121,8 +121,8 @@ protected:
   void set_status( const DictionaryDatum& d );
 
 private:
-  std::vector< histentry_cl > ltd_history_;
-  std::deque< histentry_cl > ltp_history_;
+  std::vector< histentry_extended > ltd_history_;
+  std::deque< histentry_extended > ltp_history_;
 
   double A_LTD_;
 

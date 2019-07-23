@@ -136,6 +136,11 @@ public:
   virtual bool has_proxies() const;
 
   /**
+   * Returns true if the node supports the Urbanczik-Senn plasticity rule
+   */
+  virtual bool supports_urbanczik_archiving() const;
+
+  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -692,10 +697,24 @@ public:
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
 
+  // for Clopath synapse
   virtual void get_LTP_history( double t1,
     double t2,
-    std::deque< histentry_cl >::iterator* start,
-    std::deque< histentry_cl >::iterator* finish );
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish );
+  // for Urbanczik synapse
+  virtual void get_urbanczik_history( double t1,
+    double t2,
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish,
+    int );
+  // make neuron parameters accessible in Urbanczik synapse
+  virtual double get_C_m( int comp );
+  virtual double get_g_L( int comp );
+  virtual double get_tau_L( int comp );
+  virtual double get_tau_s( int comp );
+  virtual double get_tau_syn_ex( int comp );
+  virtual double get_tau_syn_in( int comp );
 
   /**
    * Modify Event object parameters during event delivery.
@@ -951,6 +970,12 @@ inline bool
 Node::node_uses_wfr() const
 {
   return node_uses_wfr_;
+}
+
+inline bool
+Node::supports_urbanczik_archiving() const
+{
+  return false;
 }
 
 inline void

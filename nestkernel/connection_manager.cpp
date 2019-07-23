@@ -598,6 +598,14 @@ nest::ConnectionManager::connect_( Node& s,
       "connection." );
   }
 
+  if ( kernel().model_manager.connector_requires_urbanczik_archiving( syn_id )
+    and not r.supports_urbanczik_archiving() )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
+
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );

@@ -83,14 +83,16 @@ template < typename ConnectionT, template < typename > class ConnectorModelT >
 void
 ModelManager::register_connection_model( const std::string& name,
   const bool requires_symmetric,
-  const bool requires_clopath_archiving )
+  const bool requires_clopath_archiving,
+  const bool requires_urbanczik_archiving )
 {
   ConnectorModel* cf = new ConnectorModelT< ConnectionT >( name,
     /*is_primary=*/true,
     /*has_delay=*/true,
     requires_symmetric,
     /*supports_wfr*/ false,
-    requires_clopath_archiving );
+    requires_clopath_archiving,
+    requires_urbanczik_archiving );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
@@ -100,7 +102,8 @@ ModelManager::register_connection_model( const std::string& name,
       /*has_delay=*/true,
       requires_symmetric,
       /*supports_wfr=*/false,
-      requires_clopath_archiving );
+      requires_clopath_archiving,
+      requires_urbanczik_archiving );
     register_connection_model_( cf );
   }
 }
@@ -109,10 +112,11 @@ template < typename ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name,
   const bool requires_symmetric,
-  const bool requires_clopath_archiving )
+  const bool requires_clopath_archiving,
+  const bool requires_urbanczik_archiving )
 {
   register_connection_model< ConnectionT, GenericConnectorModel >(
-    name, requires_symmetric, requires_clopath_archiving );
+    name, requires_symmetric, requires_clopath_archiving, requires_urbanczik_archiving );
 }
 
 /**

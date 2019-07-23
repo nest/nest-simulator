@@ -47,22 +47,18 @@ public:
   double t_;              //!< point in time when spike occurred (in ms)
   double Kminus_;         //!< value of Kminus at that time
   double triplet_Kminus_; //!< value of triplet STDP Kminus at that time
-  //! how often this entry was accessed (to enable removal, once read by all
-  //! neurons which need it)
-  size_t access_counter_;
+  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
 };
 
-// entry in the history of LTD and LTP for clopath-STDP synapse
-class histentry_cl
+// entry in the history of plasticity rules which consider additional factors
+class histentry_extended
 {
 public:
-  histentry_cl( double t, double dw, size_t access_counter );
+  histentry_extended( double t, double dw, size_t access_counter );
 
-  double t_; //!< point in time when spike occurred (in ms)
-  double dw_;
-  //! how often this entry was accessed (to enable removal, once read by all
-  //! neurons which need it)
-  size_t access_counter_;
+  double t_;              //!< point in time when spike occurred (in ms)
+  double dw_;             //!< value dependend on the additional factor
+  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
 };
 }
 

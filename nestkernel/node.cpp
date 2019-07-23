@@ -449,8 +449,54 @@ nest::Node::get_history( double, double, std::deque< histentry >::iterator*, std
 void
 nest::Node::get_LTP_history( double,
   double,
-  std::deque< histentry_cl >::iterator*,
-  std::deque< histentry_cl >::iterator* )
+  std::deque< histentry_extended >::iterator*,
+  std::deque< histentry_extended >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::get_urbanczik_history( double,
+  double,
+  std::deque< histentry_extended >::iterator*,
+  std::deque< histentry_extended >::iterator*,
+  int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_C_m( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_g_L( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_tau_L( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_tau_s( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_tau_syn_ex( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::Node::get_tau_syn_in( int )
 {
   throw UnexpectedEvent();
 }

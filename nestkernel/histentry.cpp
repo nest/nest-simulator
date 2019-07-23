@@ -38,7 +38,7 @@ nest::histentry::histentry( double t, double Kminus, double triplet_Kminus, size
 {
 }
 
-nest::histentry_cl::histentry_cl( double t, double dw, size_t access_counter )
+nest::histentry_extended::histentry_extended( double t, double dw, size_t access_counter )
   : t_( t )
   , dw_( dw )
   , access_counter_( access_counter )

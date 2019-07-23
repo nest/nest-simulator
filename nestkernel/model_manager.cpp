@@ -438,6 +438,14 @@ ModelManager::connector_requires_clopath_archiving( const synindex syn_id ) cons
   return prototypes_[ 0 ][ syn_id ]->requires_clopath_archiving();
 }
 
+bool
+ModelManager::connector_requires_urbanczik_archiving( const synindex syn_id ) const
+{
+  assert_valid_syn_id( syn_id );
+
+  return prototypes_[ 0 ][ syn_id ]->requires_urbanczik_archiving();
+}
+
 void
 ModelManager::clear_models_( bool called_from_destructor )
 {

@@ -88,7 +88,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
             r_type = syns["soma_exc"]
 
-        return neurons,r_type
+        return neurons, r_type
 
     def test_SetLabelToSynapseOnConnect(self):
         """Set a label to a labeled synapse on connect."""
@@ -96,7 +96,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a,r_type = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -118,7 +118,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a,r_type = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -150,7 +150,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a,r_type = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -173,7 +173,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a,r_type = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -202,7 +202,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if not s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a,r_type = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')

@@ -41,7 +41,7 @@ Description:
  reported at time 3.0 ms, corresponding to computation step 30, 15, 6, 
  and 3, respectively.
 
- The results are consistent with those of iaf_psc_alpha_canon capable of
+ The results are consistent with those of iaf_psc_alpha_ps capable of
  handling off-grid spike timing when the interpolation order is set to
  0.
 

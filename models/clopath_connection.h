@@ -41,6 +41,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+@ingroup clopath_s
+
 Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
 
 Description:
@@ -57,9 +61,13 @@ hh_psc_alpha_clopath.
 
 Parameters:
 
-tau_x    double - Time constant of the trace of the presynaptic spike train.
-Wmax     double - Maximum allowed weight.
-Wmin     double - Minimum allowed weight.
+\verbatim embed:rst
+=======  ======  ==========================================================
+tau_x    ms      Time constant of the trace of the presynaptic spike train
+Wmax     real    Maximum allowed weight
+Wmin     real    Minimum allowed weight
+=======  ======  ==========================================================
+\endverbatim
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
@@ -69,15 +77,16 @@ Transmits: SpikeEvent
 
 References:
 
-[1] Clopath et al. (2010) Connectivity reflects coding:
-    a model of voltage-based STDP with homeostasis.
-    Nature Neuroscience 13:3, 344--352
-[2] Clopath and Gerstner (2010) Voltage and spike timing interact
-    in STDP – a unified model. Front. Synaptic Neurosci. 2:25
-    doi: 10.3389/fnsyn.2010.00025
-[3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-    https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
-
+\verbatim embed:rst
+.. [1] Clopath et al. (2010). Connectivity reflects coding:
+       a model of voltage-based STDP with homeostasis.
+       Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
+.. [2] Clopath and Gerstner (2010). Voltage and spike timing interact
+       in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
+       DOI: https://doi.org/10.3389/fnsyn.2010.00025
+.. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
+       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
+\endverbatim
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
@@ -146,10 +155,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -198,9 +204,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-ClopathConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and
@@ -220,22 +224,17 @@ ClopathConnection< targetidentifierT >::send( Event& e,
   // history[0, ..., t_last_spike - dendritic_delay] have been
   // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
   // details.
-  target->get_LTP_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic activity since last pre-synaptic spike
   while ( start != finish )
   {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
-    weight_ =
-      facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
+    weight_ = facilitate_( weight_, start->dw_, x_bar_ * exp( minus_dt / tau_x_ ) );
     ++start;
   }
 
   // depression due to new pre-synaptic spike
-  weight_ =
-    depress_( weight_, target->get_LTD_value( t_spike - dendritic_delay ) );
+  weight_ = depress_( weight_, target->get_LTD_value( t_spike - dendritic_delay ) );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -246,8 +245,7 @@ ClopathConnection< targetidentifierT >::send( Event& e,
   e();
 
   // compute the trace of the presynaptic spike train
-  x_bar_ =
-    x_bar_ * std::exp( ( t_lastspike_ - t_spike ) / tau_x_ ) + 1.0 / tau_x_;
+  x_bar_ = x_bar_ * std::exp( ( t_lastspike_ - t_spike ) / tau_x_ ) + 1.0 / tau_x_;
 
   t_lastspike_ = t_spike;
 }
@@ -266,8 +264,7 @@ ClopathConnection< targetidentifierT >::ClopathConnection()
 }
 
 template < typename targetidentifierT >
-ClopathConnection< targetidentifierT >::ClopathConnection(
-  const ClopathConnection< targetidentifierT >& rhs )
+ClopathConnection< targetidentifierT >::ClopathConnection( const ClopathConnection< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , x_bar_( rhs.x_bar_ )
@@ -293,8 +290,7 @@ ClopathConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-ClopathConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+ClopathConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -304,15 +300,13 @@ ClopathConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmin_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmin must have same sign." );
   }
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmax_ > 0 ) - ( Wmax_ <= 0 ) ) ) )
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ > 0 ) - ( Wmax_ <= 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

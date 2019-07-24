@@ -91,8 +91,7 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
-          ++it )
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
       recordables.push_back( new LiteralDatum( it->first ) );
     }
@@ -166,8 +165,7 @@ public:
  * @ingroup Devices
  */
 template < typename HostNode >
-class DynamicRecordablesMap
-  : public std::map< Name, const DataAccessFunctor< HostNode > >
+class DynamicRecordablesMap : public std::map< Name, const DataAccessFunctor< HostNode > >
 {
   typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
 
@@ -198,8 +196,7 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
-          ++it )
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
       recordables.push_back( new LiteralDatum( it->first ) );
     }
@@ -219,8 +216,7 @@ public:
   erase( const Name& n )
   {
     // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::iterator it =
-      this->find( n.toString() );
+    typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n.toString() );
     // If the Name is not in the map, throw an error
     if ( it == this->end() )
     {

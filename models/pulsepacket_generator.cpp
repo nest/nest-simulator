@@ -69,15 +69,13 @@ nest::pulsepacket_generator::Variables_::Variables_()
 void
 nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::pulse_times ] =
-    DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
+  ( *d )[ names::pulse_times ] = DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
   ( *d )[ names::activity ] = a_;
   ( *d )[ names::sdev ] = sdev_;
 }
 
 void
-nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
-  pulsepacket_generator& ppg )
+nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg )
 {
 
   // We cannot use a single line here since short-circuiting may stop evaluation
@@ -94,8 +92,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
 
-  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ )
-    || neednewpulse )
+  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) || neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -113,8 +110,7 @@ nest::pulsepacket_generator::pulsepacket_generator()
 {
 }
 
-nest::pulsepacket_generator::pulsepacket_generator(
-  const pulsepacket_generator& ppg )
+nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
   : Node( ppg )
   , device_( ppg.device_ )
   , P_( ppg.P_ )
@@ -162,11 +158,10 @@ nest::pulsepacket_generator::calibrate()
 
   // determine pulse-center times that lie within
   // a window sdev*sdev_tolerance around the current time
-  while ( V_.stop_center_idx_ < P_.pulse_times_.size()
-    && P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
+  while (
+    V_.stop_center_idx_ < P_.pulse_times_.size() && P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
   {
-    if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now )
-      > V_.tolerance )
+    if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now ) > V_.tolerance )
     {
       V_.start_center_idx_++;
     }
@@ -176,15 +171,12 @@ nest::pulsepacket_generator::calibrate()
 
 
 void
-nest::pulsepacket_generator::update( Time const& T,
-  const long from,
-  const long to )
+nest::pulsepacket_generator::update( Time const& T, const long from, const long to )
 {
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size()
-         && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
   {
     return; // nothing left to do
   }
@@ -193,8 +185,7 @@ nest::pulsepacket_generator::update( Time const& T,
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
   {
     while ( V_.stop_center_idx_ < P_.pulse_times_.size()
-      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T )
-           .get_ms() <= V_.tolerance )
+      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms() <= V_.tolerance )
     {
       V_.stop_center_idx_++;
     }
@@ -211,8 +202,7 @@ nest::pulsepacket_generator::update( Time const& T,
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double x = P_.sdev_ * V_.norm_dev_( rng )
-          + P_.pulse_times_.at( V_.start_center_idx_ );
+        double x = P_.sdev_ * V_.norm_dev_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
         {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );
@@ -231,8 +221,7 @@ nest::pulsepacket_generator::update( Time const& T,
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while ( not B_.spiketimes_.empty()
-    && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();
@@ -242,8 +231,7 @@ nest::pulsepacket_generator::update( Time const& T,
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      kernel().event_delivery_manager.send(
-        *this, se, prev_spike - T.get_steps() );
+      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

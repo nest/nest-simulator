@@ -83,12 +83,10 @@ std::ostream& operator<<( std::ostream& out, const LoggingEvent& e )
     break;
   }
   // print time and day
-  out << "[" << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "."
-      << ptm->tm_mday << " " << ptm->tm_hour << ":" << ptm->tm_min << ":"
-      << ptm->tm_sec << " ";
+  out << "[" << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "." << ptm->tm_mday << " " << ptm->tm_hour << ":"
+      << ptm->tm_min << ":" << ptm->tm_sec << " ";
 
-  out << e.file_name << ":" << e.line_number << " @ " << e.function
-      << "] : " << e.message;
+  out << e.file_name << ":" << e.line_number << " @ " << e.function << "] : " << e.message;
 
   return out;
 }

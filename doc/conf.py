@@ -82,8 +82,12 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 
 # -- General configuration ------------------------------------------------
 
+
 # import errors on libraries that depend on C modules
-# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
+# compile-with-readthedocs-when-youre-using-numpy-and-scipy/
+
+
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
@@ -121,8 +125,12 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
+    'breathe',
 ]
 
+breathe_projects = {"EXTRACT_MODELS": "./xml/"}
+
+breathe_default_project = "EXTRACT_MODELS"
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts
@@ -132,13 +140,9 @@ extensions = [
 #    'backreferences_dir': False
 # }
 
+subprocess.call('doxygen', shell=True)
 
-
-mathjax_path = \
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-                ".js?config=TeX" \
-              "-AMS-MML_HTMLorMML"
-
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -180,7 +184,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'manni'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -188,6 +192,9 @@ todo_include_todos = False
 # add numbered figure link
 numfig = True
 
+numfig_secnum_depth = (2)
+numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
+                 'code-block': 'Code Block %s'}
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -224,6 +231,7 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
+    app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
     app.add_config_value('recommonmark_config', {
             'auto_toc_tree_section': 'Contents',
@@ -258,8 +266,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NESTsimulator.tex', u'NEST simulator Documentation',
-     u'steffengraber', 'manual'),
+    (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
+     u'NEST Developer Community', 'manual'),
 ]
 
 

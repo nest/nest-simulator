@@ -19,7 +19,8 @@
 
 set( precise_sources
     slice_ring_buffer.cpp slice_ring_buffer.h
-    iaf_psc_delta_canon.cpp iaf_psc_delta_canon.h
+    iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
+    iaf_psc_delta_ps.cpp iaf_psc_delta_ps.h
     iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.h
     iaf_psc_alpha_presc.cpp iaf_psc_alpha_presc.h
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h

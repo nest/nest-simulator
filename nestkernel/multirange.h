@@ -136,8 +136,7 @@ Multirange::empty() const
   return size_ == 0;
 }
 
-inline Multirange::iterator::iterator( RangeVector::const_iterator iter,
-  index n )
+inline Multirange::iterator::iterator( RangeVector::const_iterator iter, index n )
   : pair_iter_( iter )
   , n_( n )
 {

@@ -198,14 +198,14 @@ tic % start timer on construction
   (Creating excitatory population.) =  % show message
   /E_net /subnet Create def            % create subnet
   E_net ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NE Create       % create neurons in subnet
+  /iaf_psc_alpha_ps NE Create       % create neurons in subnet
   ;                                    % pop gids returned by Create
   0 ChangeSubnet                     % return to full network
 
   (Creating inhibitory population.) =  % show message
   /I_net /subnet Create def            % create subnet
   I_net ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NI Create       % create neurons in subnet
+  /iaf_psc_alpha_ps NI Create       % create neurons in subnet
   ;                                    % pop gids returned by Create
   0 ChangeSubnet                     % return to full network
 

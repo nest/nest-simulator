@@ -252,8 +252,7 @@ RollFunction::execute( SLIInterpreter* i ) const
     throw StackUnderflow( 2, load );
   }
 
-  IntegerDatum* idn =
-    dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* idn = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   if ( idn == NULL )
   {
     throw ArgumentType( 1 );

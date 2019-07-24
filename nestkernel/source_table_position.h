@@ -46,8 +46,7 @@ struct SourceTablePosition
   SourceTablePosition( const SourceTablePosition& rhs );
 
   template < typename T >
-  void wrap_position(
-    const std::vector< std::vector< BlockVector< T > > >& sources );
+  void wrap_position( const std::vector< std::vector< BlockVector< T > > >& sources );
 
   bool is_at_end() const;
 };
@@ -59,17 +58,14 @@ inline SourceTablePosition::SourceTablePosition()
 {
 }
 
-inline SourceTablePosition::SourceTablePosition( const long tid,
-  const long syn_id,
-  const long lcid )
+inline SourceTablePosition::SourceTablePosition( const long tid, const long syn_id, const long lcid )
   : tid( tid )
   , syn_id( syn_id )
   , lcid( lcid )
 {
 }
 
-inline SourceTablePosition::SourceTablePosition(
-  const SourceTablePosition& rhs )
+inline SourceTablePosition::SourceTablePosition( const SourceTablePosition& rhs )
   : tid( rhs.tid )
   , syn_id( rhs.syn_id )
   , lcid( rhs.lcid )
@@ -78,8 +74,7 @@ inline SourceTablePosition::SourceTablePosition(
 
 template < typename T >
 inline void
-SourceTablePosition::wrap_position(
-  const std::vector< std::vector< BlockVector< T > > >& sources )
+SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector< T > > >& sources )
 {
   // check for validity of indices and update if necessary
   while ( lcid < 0 )
@@ -122,21 +117,17 @@ SourceTablePosition::is_at_end() const
   }
 }
 
-inline bool operator==( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
-  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id )
-    and ( lhs.lcid == rhs.lcid ) );
+  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id ) and ( lhs.lcid == rhs.lcid ) );
 }
 
-inline bool operator!=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator!=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator==( lhs, rhs );
 }
 
-inline bool operator<( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   if ( lhs.tid == rhs.tid )
   {
@@ -155,20 +146,17 @@ inline bool operator<( const SourceTablePosition& lhs,
   }
 }
 
-inline bool operator>( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator>( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool operator<=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator<=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator>( lhs, rhs );
 }
 
-inline bool operator>=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator<( lhs, rhs );
 }

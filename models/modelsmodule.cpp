@@ -184,8 +184,7 @@ ModelsModule::~ModelsModule()
 const std::string
 ModelsModule::name( void ) const
 {
-  return std::string(
-    "NEST Standard Models Module" ); // Return name of the module
+  return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
 
 const std::string
@@ -201,111 +200,68 @@ void
 ModelsModule::init( SLIInterpreter* )
 {
   // rate models with input noise
-  kernel().model_manager.register_node_model< gauss_rate_ipn >(
-    "gauss_rate_ipn" );
+  kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< sigmoid_rate_ipn >(
-    "sigmoid_rate_ipn" );
-  kernel().model_manager.register_node_model< sigmoid_rate_gg_1998_ipn >(
-    "sigmoid_rate_gg_1998_ipn" );
-  kernel().model_manager.register_node_model< tanh_rate_ipn >(
-    "tanh_rate_ipn" );
-  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
-    "threshold_lin_rate_ipn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_ipn >( "sigmoid_rate_ipn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_gg_1998_ipn >( "sigmoid_rate_gg_1998_ipn" );
+  kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >( "threshold_lin_rate_ipn" );
 
   // rate models with output noise
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
-  kernel().model_manager.register_node_model< tanh_rate_opn >(
-    "tanh_rate_opn" );
-  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
-    "threshold_lin_rate_opn" );
+  kernel().model_manager.register_node_model< tanh_rate_opn >( "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >( "threshold_lin_rate_opn" );
 
   // rate transformer nodes
-  kernel().model_manager.register_node_model< rate_transformer_gauss >(
-    "rate_transformer_gauss" );
-  kernel().model_manager.register_node_model< rate_transformer_lin >(
-    "rate_transformer_lin" );
-  kernel().model_manager.register_node_model< rate_transformer_sigmoid >(
-    "rate_transformer_sigmoid" );
-  kernel()
-    .model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >(
-      "rate_transformer_sigmoid_gg_1998" );
-  kernel().model_manager.register_node_model< rate_transformer_tanh >(
-    "rate_transformer_tanh" );
-  kernel().model_manager.register_node_model< rate_transformer_threshold_lin >(
-    "rate_transformer_threshold_lin" );
+  kernel().model_manager.register_node_model< rate_transformer_gauss >( "rate_transformer_gauss" );
+  kernel().model_manager.register_node_model< rate_transformer_lin >( "rate_transformer_lin" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid >( "rate_transformer_sigmoid" );
+  kernel().model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >( "rate_transformer_sigmoid_gg_1998" );
+  kernel().model_manager.register_node_model< rate_transformer_tanh >( "rate_transformer_tanh" );
+  kernel().model_manager.register_node_model< rate_transformer_threshold_lin >( "rate_transformer_threshold_lin" );
 
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha >(
-    "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >(
-    "iaf_psc_alpha_multisynapse" );
-  kernel().model_manager.register_node_model< iaf_psc_delta >(
-    "iaf_psc_delta" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >(
-    "iaf_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< iaf_tum_2000 >( "iaf_tum_2000" );
-  kernel().model_manager.register_node_model< amat2_psc_exp >(
-    "amat2_psc_exp" );
+  kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
-  kernel().model_manager.register_node_model< parrot_neuron >(
-    "parrot_neuron" );
+  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
-  kernel().model_manager.register_node_model< pp_pop_psc_delta >(
-    "pp_pop_psc_delta" );
+  kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
-  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
-    "gif_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
-  kernel().model_manager.register_node_model< spike_generator >(
-    "spike_generator" );
-  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >(
-    "inhomogeneous_poisson_generator" );
-  kernel().model_manager.register_node_model< poisson_generator >(
-    "poisson_generator" );
-  kernel().model_manager.register_node_model< pulsepacket_generator >(
-    "pulsepacket_generator" );
-  kernel().model_manager.register_node_model< noise_generator >(
-    "noise_generator" );
-  kernel().model_manager.register_node_model< step_current_generator >(
-    "step_current_generator" );
-  kernel().model_manager.register_node_model< step_rate_generator >(
-    "step_rate_generator" );
-  kernel().model_manager.register_node_model< mip_generator >(
-    "mip_generator" );
-  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >(
-    "sinusoidal_poisson_generator" );
-  kernel().model_manager.register_node_model< ppd_sup_generator >(
-    "ppd_sup_generator" );
-  kernel().model_manager.register_node_model< gamma_sup_generator >(
-    "gamma_sup_generator" );
+  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >( "inhomogeneous_poisson_generator" );
+  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
+  kernel().model_manager.register_node_model< pulsepacket_generator >( "pulsepacket_generator" );
+  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
+  kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
+  kernel().model_manager.register_node_model< step_rate_generator >( "step_rate_generator" );
+  kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
+  kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
+  kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
+  kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
   kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
-  kernel().model_manager.register_node_model< ginzburg_neuron >(
-    "ginzburg_neuron" );
-  kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(
-    "mcculloch_pitts_neuron" );
+  kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
+  kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
-  kernel().model_manager.register_node_model< spike_dilutor >(
-    "spike_dilutor" );
+  kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 
-  kernel().model_manager.register_node_model< spike_detector >(
-    "spike_detector" );
-  kernel().model_manager.register_node_model< weight_recorder >(
-    "weight_recorder" );
-  kernel().model_manager.register_node_model< spin_detector >(
-    "spin_detector" );
+  kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
+  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
+  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
-  kernel().model_manager.register_node_model< correlation_detector >(
-    "correlation_detector" );
-  kernel().model_manager.register_node_model< correlomatrix_detector >(
-    "correlomatrix_detector" );
-  kernel().model_manager.register_node_model< correlospinmatrix_detector >(
-    "correlospinmatrix_detector" );
-  kernel().model_manager.register_node_model< volume_transmitter >(
-    "volume_transmitter" );
+  kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
+  kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
+  kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
+  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
   // Create voltmeter as a multimeter pre-configured to record V_m.
   /** @BeginDocumentation
@@ -379,76 +335,49 @@ ModelsModule::init( SLIInterpreter* )
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
   ( *vmdict )[ names::record_from ] = ad;
   const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< Multimeter >(
-    name, vmdict, false );
+  kernel().model_manager.register_preconf_node_model< Multimeter >( name, vmdict, false );
 
 #ifdef HAVE_GSL
-  kernel().model_manager.register_node_model< iaf_chxk_2008 >(
-    "iaf_chxk_2008" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha >(
-    "iaf_cond_alpha" );
-  kernel().model_manager.register_node_model< iaf_cond_beta >(
-    "iaf_cond_beta" );
+  kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
+  kernel().model_manager.register_node_model< iaf_cond_beta >( "iaf_cond_beta" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
-  kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >(
-    "iaf_cond_exp_sfa_rr" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >(
-    "iaf_cond_alpha_mc" );
-  kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >(
-    "hh_cond_beta_gap_traub" );
+  kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >( "iaf_cond_exp_sfa_rr" );
+  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
+  kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >( "hh_cond_beta_gap_traub" );
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
-  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >(
-    "hh_psc_alpha_clopath" );
-  kernel().model_manager.register_node_model< hh_psc_alpha_gap >(
-    "hh_psc_alpha_gap" );
-  kernel().model_manager.register_node_model< hh_cond_exp_traub >(
-    "hh_cond_exp_traub" );
-  kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
-    "sinusoidal_gamma_generator" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
+  kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
+  kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
+  kernel().model_manager.register_node_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
-  kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
-    "gif_cond_exp_multisynapse" );
-  kernel().model_manager.register_node_model< gif_pop_psc_exp >(
-    "gif_pop_psc_exp" );
+  kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >( "gif_cond_exp_multisynapse" );
+  kernel().model_manager.register_node_model< gif_pop_psc_exp >( "gif_pop_psc_exp" );
 
-  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >(
-    "aeif_psc_delta_clopath" );
-  kernel().model_manager.register_node_model< aeif_cond_alpha >(
-    "aeif_cond_alpha" );
-  kernel().model_manager.register_node_model< aeif_cond_exp >(
-    "aeif_cond_exp" );
-  kernel().model_manager.register_node_model< aeif_psc_alpha >(
-    "aeif_psc_alpha" );
+  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
   kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
-  kernel().model_manager.register_node_model< aeif_psc_delta >(
-    "aeif_psc_delta" );
+  kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
-  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
-    "aeif_cond_beta_multisynapse" );
-  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
-    "aeif_cond_alpha_multisynapse" );
-  kernel().model_manager.register_node_model< siegert_neuron >(
-    "siegert_neuron" );
+  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >( "aeif_cond_beta_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
 #endif
 
   // This version of the AdEx model does not depend on GSL.
-  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
-    "aeif_cond_alpha_RK5",
+  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5",
     /*private_model*/ false,
     /*deprecation_info*/ "NEST 3.0" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC
-  kernel().model_manager.register_node_model< music_event_in_proxy >(
-    "music_event_in_proxy" );
-  kernel().model_manager.register_node_model< music_event_out_proxy >(
-    "music_event_out_proxy" );
-  kernel().model_manager.register_node_model< music_cont_in_proxy >(
-    "music_cont_in_proxy" );
-  kernel().model_manager.register_node_model< music_cont_out_proxy >(
-    "music_cont_out_proxy" );
-  kernel().model_manager.register_node_model< music_message_in_proxy >(
-    "music_message_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_in_proxy >( "music_event_in_proxy" );
+  kernel().model_manager.register_node_model< music_event_out_proxy >( "music_event_out_proxy" );
+  kernel().model_manager.register_node_model< music_cont_in_proxy >( "music_cont_in_proxy" );
+  kernel().model_manager.register_node_model< music_cont_out_proxy >( "music_cont_out_proxy" );
+  kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
 #endif
 
   // register synapses
@@ -465,14 +394,8 @@ ModelsModule::init( SLIInterpreter* )
 
      SeeAlso: synapsedict, static_synapse
   */
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnection< TargetIdentifierPtrRport > >(
-      "static_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnection< TargetIdentifierIndex > >(
-      "static_synapse_hpc" );
+  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierPtrRport > >( "static_synapse" );
+  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierIndex > >( "static_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -480,47 +403,34 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
-      "static_synapse_hom_w" );
-  kernel()
-    .model_manager
-    .register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
-      "static_synapse_hom_w_hpc" );
+  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
+    "static_synapse_hom_w" );
+  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
+    "static_synapse_hom_w_hpc" );
 
   /** @BeginDocumentation
      Name: gap_junction - Connection model for gap junctions.
      SeeAlso: synapsedict
   */
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/true,
-      /*supports_wfr=*/true );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-      "rate_connection_instantaneous",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/true );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-      "rate_connection_delayed",
-      /*has_delay=*/true,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/false );
-  kernel()
-    .model_manager
-    .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-      "diffusion_connection",
-      /*has_delay=*/false,
-      /*requires_symmetric=*/false,
-      /*supports_wfr=*/true );
+  kernel().model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >( "gap_junction",
+    /*has_delay=*/false,
+    /*requires_symmetric=*/true,
+    /*supports_wfr=*/true );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
+    "rate_connection_instantaneous",
+    /*has_delay=*/false,
+    /*requires_symmetric=*/false,
+    /*supports_wfr=*/true );
+  kernel().model_manager.register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
+    "rate_connection_delayed",
+    /*has_delay=*/true,
+    /*requires_symmetric=*/false,
+    /*supports_wfr=*/false );
+  kernel().model_manager.register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
+    "diffusion_connection",
+    /*has_delay=*/false,
+    /*requires_symmetric=*/false,
+    /*supports_wfr=*/true );
 
 
   /** @BeginDocumentation
@@ -528,21 +438,12 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnection< TargetIdentifierPtrRport > >(
-      "stdp_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnection< TargetIdentifierIndex > >(
-      "stdp_synapse_hpc" );
+  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierPtrRport > >( "stdp_synapse" );
+  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierIndex > >( "stdp_synapse_hpc" );
 
-  kernel()
-    .model_manager
-    .register_connection_model< ClopathConnection< TargetIdentifierPtrRport > >(
-      "clopath_synapse",
-      /*requires_symmetric=*/false,
-      /*requires_clopath_archiving=*/true );
+  kernel().model_manager.register_connection_model< ClopathConnection< TargetIdentifierPtrRport > >( "clopath_synapse",
+    /*requires_symmetric=*/false,
+    /*requires_clopath_archiving=*/true );
 
   kernel()
     .model_manager
@@ -564,14 +465,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
-      "stdp_pl_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
-      "stdp_pl_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
+    "stdp_pl_synapse_hom" );
+  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
+    "stdp_pl_synapse_hom_hpc" );
 
 
   /** @BeginDocumentation
@@ -579,14 +476,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
-      "stdp_triplet_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
-      "stdp_triplet_synapse_hpc" );
+  kernel().model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
+    "stdp_triplet_synapse" );
+  kernel().model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
+    "stdp_triplet_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -594,14 +487,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
-      "quantal_stp_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
-      "quantal_stp_synapse_hpc" );
+  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
+    "quantal_stp_synapse" );
+  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
+    "quantal_stp_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -609,14 +498,10 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
-      "stdp_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >(
-      "stdp_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
+    "stdp_synapse_hom" );
+  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >(
+    "stdp_synapse_hom_hpc" );
 
 
   /** @BeginDocumentation
@@ -624,14 +509,10 @@ ModelsModule::init( SLIInterpreter* )
      with low memory consumption.
      SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
-      "stdp_facetshw_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
-      "stdp_facetshw_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
+    "stdp_facetshw_synapse_hom" );
+  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
+    "stdp_facetshw_synapse_hom_hpc" );
 
 
   /** @BeginDocumentation
@@ -639,14 +520,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
-      "cont_delay_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
-      "cont_delay_synapse_hpc" );
+  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
+    "cont_delay_synapse" );
+  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
+    "cont_delay_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -654,14 +531,10 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
-      "tsodyks_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
-      "tsodyks_synapse_hpc" );
+  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
+    "tsodyks_synapse" );
+  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
+    "tsodyks_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -669,14 +542,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
-      "tsodyks_synapse_hom" );
-  kernel()
-    .model_manager
-    .register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
-      "tsodyks_synapse_hom_hpc" );
+  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
+    "tsodyks_synapse_hom" );
+  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
+    "tsodyks_synapse_hom_hpc" );
 
 
   /** @BeginDocumentation
@@ -684,28 +553,18 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
-      "tsodyks2_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
-      "tsodyks2_synapse_hpc" );
+  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
+    "tsodyks2_synapse" );
+  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
+    "tsodyks2_synapse_hpc" );
 
 
   /** @BeginDocumentation
      Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
      SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< HTConnection< TargetIdentifierPtrRport > >(
-      "ht_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< HTConnection< TargetIdentifierIndex > >(
-      "ht_synapse_hpc" );
+  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierPtrRport > >( "ht_synapse" );
+  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierIndex > >( "ht_synapse_hpc" );
 
 
   /** @BeginDocumentation
@@ -713,14 +572,10 @@ ModelsModule::init( SLIInterpreter* )
      memory consumption.
      SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
   */
-  kernel()
-    .model_manager
-    .register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
-      "stdp_dopamine_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
-      "stdp_dopamine_synapse_hpc" );
+  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
+    "stdp_dopamine_synapse" );
+  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
+    "stdp_dopamine_synapse_hpc" );
 
   /** @BeginDocumentation
      Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
@@ -728,23 +583,17 @@ ModelsModule::init( SLIInterpreter* )
      consumption.
      SeeAlso: synapsedict, vogels_sprekeler_synapse
   */
-  kernel()
-    .model_manager
-    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
-      "vogels_sprekeler_synapse" );
-  kernel()
-    .model_manager
-    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
-      "vogels_sprekeler_synapse_hpc" );
+  kernel().model_manager.register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
+    "vogels_sprekeler_synapse" );
+  kernel().model_manager.register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
+    "vogels_sprekeler_synapse_hpc" );
 
   /** @BeginDocumentation
      Name: bernoulli_synapse - Static synapse with stochastic transmission
      SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
   */
-  kernel()
-    .model_manager
-    .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
-      "bernoulli_synapse" );
+  kernel().model_manager.register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
+    "bernoulli_synapse" );
 }
 
 } // namespace nest

@@ -115,7 +115,13 @@ Change compilation behavior:
     -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
                                                    Separate multiple defines by ';'. [default OFF]
     -Dwith-boost=[OFF|ON]                          Build C++-testsuite using the Boost unittest
-                                                   framework. Highly experimental!!!
+                                                   framework.
+
+Other options:
+
+    -Dwith-version-suffix                          Set a user defined version suffix. [default '']
+
+
 
 Configuring NEST for Distributed Simulation with MPI
 ====================================================

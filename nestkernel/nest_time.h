@@ -302,23 +302,19 @@ public:
   // Time(const Time& t);
 
   Time( tic t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 )
-            ? LIM_NEG_INF.tics
-            : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 
   Time( step t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.steps )
-          ? t.t * Range::TICS_PER_STEP
-          : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP : ( t.t < 0 ) ? LIM_NEG_INF.tics
+                                                                                           : LIM_POS_INF.tics )
   {
   }
 
   Time( ms t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.ms )
-          ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
-          : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
+                                             : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 

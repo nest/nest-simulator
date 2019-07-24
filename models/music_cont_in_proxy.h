@@ -48,6 +48,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup music
+
 
 Name: music_cont_in_proxy - A device which receives continuous data from MUSIC.
 
@@ -64,21 +67,23 @@ GetStatus to retrieve the messages.
 Parameters:
 
 The following properties are available in the status dictionary:
-
-port_name      - The name of the MUSIC input port to listen to (default:
-                 cont_in)
-port_width     - The width of the MUSIC input port
-data           - The data received on the port as vector of doubles
-published      - A bool indicating if the port has been already published
-                 with MUSIC
-
+\verbatim embed:rst
+=========== ======= ========================================================
+ port_name  string  The name of the MUSIC input port to listen to (default:
+                    cont_in)
+ port_width integer The width of the MUSIC input port
+ data       list    The data received on the port
+ published  boolean A bool indicating if the port has been already published
+                    with MUSIC
+=========== ======= ========================================================
+\endverbatim
 The parameter port_name can be set using SetStatus.
 
 Examples:
 
-/music_cont_in_proxy Create /mcip Set
-10 Simulate
-mcip GetStatus /data get /gaze_directions Set
+    /music_cont_in_proxy Create /mcip Set
+    10 Simulate
+    mcip GetStatus /data get /gaze_directions Set
 
 Author: Jochen Martin Eppler
 
@@ -130,7 +135,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 

@@ -88,10 +88,39 @@ code.descclassname {
     display: none;
 }
 
+.rst-content dl:not(.docutils) dt  em[class^='property']{
+     display:none;
+}
 .rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
     line-height: 1.3em;
 }
 
 .highlight {
     background: rgba(255, 165, 0, 0.1);
+}
+
+.rst-content .admonition-title::before {
+    display:none;
+}
+
+.rst-content .admonition-title {
+    background: #ffae18;
+
+}
+
+.rst-content .admonition {
+    background: #e0e0e0;
+
+/* override table width restrictions */
+@media screen and (min-width: 767px) {
+
+   .wy-table-responsive table td {
+      /* !important prevents the common CSS stylesheets from overriding
+         this as on RTD they are loaded after this stylesheet */
+      white-space: normal !important;
+   }
+
+   .wy-table-responsive {
+      overflow: visible !important;
+   }
 }

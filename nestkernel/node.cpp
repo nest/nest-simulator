@@ -130,8 +130,7 @@ Node::get_status_dict_()
 void
 Node::set_local_device_id( const index lsdid )
 {
-  assert(
-    false && "set_local_device_id() called on a non-device node of type" );
+  assert( false && "set_local_device_id() called on a non-device node of type" );
 }
 
 index
@@ -196,10 +195,7 @@ Node::set_status_base( const DictionaryDatum& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with GID %2: %3",
-        get_name(),
-        get_gid(),
-        e.message() ) );
+      String::compose( "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
@@ -445,10 +441,7 @@ Node::get_K_values( double, double&, double&, double& )
 }
 
 void
-nest::Node::get_history( double,
-  double,
-  std::deque< histentry >::iterator*,
-  std::deque< histentry >::iterator* )
+nest::Node::get_history( double, double, std::deque< histentry >::iterator*, std::deque< histentry >::iterator* )
 {
   throw UnexpectedEvent();
 }

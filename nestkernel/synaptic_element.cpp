@@ -60,22 +60,19 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , growth_rate_( se.growth_rate_ )
   , tau_vacant_( se.tau_vacant_ )
 {
-  growth_curve_ =
-    kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
+  growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
   assert( growth_curve_ != 0 );
   DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
   se.get( gc_parameters );
   growth_curve_->set( gc_parameters );
 }
 
-nest::SynapticElement& nest::SynapticElement::operator=(
-  const SynapticElement& other )
+nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {
     // 1: allocate new memory and copy the elements
-    GrowthCurve* new_gc =
-      kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
+    GrowthCurve* new_gc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
     DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
 
     other.get( gc_parameters );
@@ -147,10 +144,7 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 * Update the number of element at the time t (in ms)
 * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::update( double t,
-  double t_minus,
-  double Ca_minus,
-  double tau_Ca )
+nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {
   if ( z_t_ != t_minus )
   {

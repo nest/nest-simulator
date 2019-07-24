@@ -13,7 +13,9 @@ Table of Contents
    installation/index
    getting_started
    tutorials/index
+   models/index
    examples/index
+   topology/index
    guides/index
    getting_help
    ref_material/index

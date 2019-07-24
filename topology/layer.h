@@ -70,8 +70,7 @@ public:
    * @param sind subnet index of node
    * @returns position of node as std::vector
    */
-  virtual std::vector< double > get_position_vector(
-    const index sind ) const = 0;
+  virtual std::vector< double > get_position_vector( const index sind ) const = 0;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -80,9 +79,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double > compute_displacement(
-    const std::vector< double >& from_pos,
-    const index to ) const = 0;
+  virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const = 0;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -91,8 +88,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  virtual double compute_distance( const std::vector< double >& from_pos,
-    const index to ) const = 0;
+  virtual double compute_distance( const std::vector< double >& from_pos, const index to ) const = 0;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -101,8 +97,7 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayer& target,
-    ConnectionCreator& connector ) = 0;
+  virtual void connect( AbstractLayer& target, ConnectionCreator& connector ) = 0;
 
   /**
    * Factory function for layers. The supplied dictionary contains
@@ -119,9 +114,8 @@ public:
    * @param allow_oversized allow mask to be greater than layer
    * @returns nodes in layer inside mask.
    */
-  virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double >& anchor,
-    bool allow_oversized ) = 0;
+  virtual std::vector< index >
+  get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized ) = 0;
 
   /**
    * Write layer data to stream.
@@ -139,8 +133,7 @@ public:
    * @param out output stream
    * @param synapse_id type of connection
    */
-  virtual void dump_connections( std::ostream& out,
-    const Token& syn_model ) = 0;
+  virtual void dump_connections( std::ostream& out, const Token& syn_model ) = 0;
 
   using Subnet::local_begin;
   using Subnet::local_end;
@@ -295,8 +288,7 @@ public:
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
    */
-  virtual Position< D > compute_displacement( const Position< D >& from_pos,
-    const Position< D >& to_pos ) const;
+  virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -305,12 +297,9 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  Position< D > compute_displacement( const Position< D >& from_pos,
-    const index to ) const;
+  Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
 
-  std::vector< double > compute_displacement(
-    const std::vector< double >& from_pos,
-    const index to ) const;
+  std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -319,18 +308,15 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  double compute_distance( const Position< D >& from_pos,
-    const index to ) const;
+  double compute_distance( const Position< D >& from_pos, const index to ) const;
 
-  double compute_distance( const std::vector< double >& from_pos,
-    const index to ) const;
+  double compute_distance( const std::vector< double >& from_pos, const index to ) const;
 
 
   /**
    * Get positions for local nodes in layer.
    */
-  lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    Selector filter = Selector() );
+  lockPTR< Ntree< D, index > > get_local_positions_ntree( Selector filter = Selector() );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -339,8 +325,7 @@ public:
    * user should group together all ConnectLayers calls using the same
    * pool layer.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    Selector filter = Selector() );
+  lockPTR< Ntree< D, index > > get_global_positions_ntree( Selector filter = Selector() );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -353,11 +338,9 @@ public:
     Position< D > lower_left,
     Position< D > extent );
 
-  std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    Selector filter = Selector() );
+  std::vector< std::pair< Position< D >, index > >* get_global_positions_vector( Selector filter = Selector() );
 
-  virtual std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( Selector filter,
+  virtual std::vector< std::pair< Position< D >, index > > get_global_positions_vector( Selector filter,
     const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized );
@@ -365,9 +348,8 @@ public:
   /**
    * Return a vector with the GIDs of the nodes inside the mask.
    */
-  std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double >& anchor,
-    bool allow_oversized );
+  std::vector< index >
+  get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized );
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -418,27 +400,23 @@ protected:
    */
   void clear_vector_cache_() const;
 
-  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_(
-    const Selector& filter );
+  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_( const Selector& filter );
 
   /**
    * Insert global position info into ntree.
    */
-  virtual void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+  virtual void insert_global_positions_ntree_( Ntree< D, index >& tree, const Selector& filter ) = 0;
 
   /**
    * Insert global position info into vector.
    */
-  virtual void insert_global_positions_vector_(
-    std::vector< std::pair< Position< D >, index > >&,
+  virtual void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >&,
     const Selector& filter ) = 0;
 
   /**
    * Insert local position info into ntree.
    */
-  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree, const Selector& filter ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
@@ -473,11 +451,7 @@ public:
    * @param allow_oversized If true, allow larges masks than layers when using
    *                        periodic b.c.
    */
-  MaskedLayer( Layer< D >& layer,
-    Selector filter,
-    const MaskDatum& mask,
-    bool include_global,
-    bool allow_oversized );
+  MaskedLayer( Layer< D >& layer, Selector filter, const MaskDatum& mask, bool include_global, bool allow_oversized );
 
   /**
    * Constructor for applying "converse" mask to layer. To be used for
@@ -509,8 +483,7 @@ public:
    * @returns an iterator for the nodes inside the mask centered on the anchor
    * position
    */
-  typename Ntree< D, index >::masked_iterator begin(
-    const Position< D >& anchor );
+  typename Ntree< D, index >::masked_iterator begin( const Position< D >& anchor );
 
   /**
    * @return end iterator
@@ -565,10 +538,8 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( filter,
-      target.get_periodic_mask(),
-      target.get_lower_left(),
-      target.get_extent() );
+    ntree_ = layer.get_global_positions_ntree(
+      filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
   }
   // else
   //  ntree_ = layer.get_local_positions_ntree(filter,
@@ -590,8 +561,7 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
 {
   try
   {
-    return ntree_->masked_begin(
-      dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
+    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
   catch ( std::bad_cast& e )
   {
@@ -642,33 +612,28 @@ inline Layer< D >::~Layer()
 
 template < int D >
 inline Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos,
-  const index to ) const
+Layer< D >::compute_displacement( const Position< D >& from_pos, const index to ) const
 {
   return compute_displacement( from_pos, get_position( to ) );
 }
 
 template < int D >
 inline std::vector< double >
-Layer< D >::compute_displacement( const std::vector< double >& from_pos,
-  const index to ) const
+Layer< D >::compute_displacement( const std::vector< double >& from_pos, const index to ) const
 {
-  return std::vector< double >(
-    compute_displacement( Position< D >( from_pos ), to ) );
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to ) );
 }
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const Position< D >& from_pos,
-  const index to ) const
+Layer< D >::compute_distance( const Position< D >& from_pos, const index to ) const
 {
   return compute_displacement( from_pos, to ).length();
 }
 
 template < int D >
 inline double
-Layer< D >::compute_distance( const std::vector< double >& from_pos,
-  const index to ) const
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const index to ) const
 {
   return compute_displacement( Position< D >( from_pos ), to ).length();
 }

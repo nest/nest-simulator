@@ -126,8 +126,7 @@ sli::pool::grow( size_t nelements )
   char* last = &start[ ( nelements - 1 ) * el_size ];
   for ( char* p = start; p < last; p += el_size )
   {
-    reinterpret_cast< link* >( p )->next =
-      reinterpret_cast< link* >( p + el_size );
+    reinterpret_cast< link* >( p )->next = reinterpret_cast< link* >( p + el_size );
   }
   reinterpret_cast< link* >( last )->next = NULL;
   head = reinterpret_cast< link* >( start );

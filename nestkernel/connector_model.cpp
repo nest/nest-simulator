@@ -41,8 +41,7 @@ ConnectorModel::ConnectorModel( const std::string name,
 {
 }
 
-ConnectorModel::ConnectorModel( const ConnectorModel& cm,
-  const std::string name )
+ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( cm.is_primary_ )

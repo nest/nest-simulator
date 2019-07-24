@@ -49,6 +49,8 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup music
 
 Name: music_cont_out_proxy - A device which sends continuous data from NEST to
 MUSIC.
@@ -68,25 +70,32 @@ started for the first time.
 In case of multiple recordables the data can be read out (PyNEST only) of the
 receiving buffer via the following access pattern:
 
-buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
-record_from.size() + recordable_index ]
-For example:  target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
-we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
+    buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
+    record_from.size() + recordable_index ]
+
+    For example:
+    target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
+
+    we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
 
 Parameters:
 
 The following properties are available in the status dictionary:
 
-interval     double   - Recording interval in milliseconds
-targets      array    - Global id list of neurons to be observed
-port_name    string   - The name of the MUSIC output port to send to
-                        (default: cont_out)
-port_width   integer  - The width of the MUSIC input port
-published    bool     - A bool indicating if the port has been already
-                        published with MUSIC. Read only property.
-record_from  array    - Array containing the names of variables to record
-                        from, obtained from the /recordables entry of the
-                        model from which one wants to record
+\verbatim embed:rst
+============ ========  ========================================================
+ interval    ms        Recording interval
+ targets     array     Global id list of neurons to be observed
+ port_name   string    The name of the MUSIC input port to listen to (default:
+                       cont_in)
+ port_width  integer   The width of the MUSIC input port
+ published   boolean   A bool indicating if the port has been already published
+                       with MUSIC
+ record_from array     Array containing the names of variables to record
+                       from, obtained from the /recordables entry of the
+                       model from which one wants to record
+============ ========  ========================================================
+\endverbatim
 
 Author: Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
 
@@ -159,9 +168,8 @@ private:
 
   struct Parameters_
   {
-    Parameters_(); //!< Sets default parameter values
-    Parameters_(
-      const Parameters_& ); //!< Copy constructor for parameter values
+    Parameters_();                     //!< Sets default parameter values
+    Parameters_( const Parameters_& ); //!< Copy constructor for parameter values
 
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
@@ -169,21 +177,18 @@ private:
     std::vector< long > target_gids_; //!< Neuron GIDs to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      const Node&,
-      const State_&,
-      const Buffers_& ); //!< Set values from dictionary
+    void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    State_();                //!< Sets default state value
-    State_( const State_& ); //!< Copy constructor for state values
-    bool published_;         //!< indicates whether this node has been published
-                             //!< already with MUSIC
-    size_t port_width_;      //!< the width of the MUSIC port
+    State_();                           //!< Sets default state value
+    State_( const State_& );            //!< Copy constructor for state values
+    bool published_;                    //!< indicates whether this node has been published
+                                        //!< already with MUSIC
+    size_t port_width_;                 //!< the width of the MUSIC port
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 
@@ -193,8 +198,8 @@ private:
   {
     Buffers_();                  //!< Initializes default buffer
     Buffers_( const Buffers_& ); //!< Copy constructor for the data buffer
-    bool has_targets_; //!< Indicates whether the proxy is recording from any
-                       //!neurons or not
+    bool has_targets_;           //!< Indicates whether the proxy is recording from any
+                                 //!neurons or not
     std::vector< double > data_; //!< Recorded data
   };
 

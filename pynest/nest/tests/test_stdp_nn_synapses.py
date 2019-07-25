@@ -44,10 +44,11 @@ class STDPNNSynapsesTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.resolution = 0.1
-        self.presynaptic_firing_rate = 20.0
-        self.postsynaptic_firing_rate = 20.0
-        self.simulation_duration = 1e+4
+        self.resolution = 0.1  # [ms]
+        self.presynaptic_firing_rate = 20.0  # [Hz]
+        self.postsynaptic_firing_rate = 20.0  # [Hz]
+        self.simulation_duration = 1e+4  # [ms]
+        self.hardcoded_trains_length = 15.  # [ms]
         self.synapse_parameters = {
             #"model": "stdp_nn_pre-centered_synapse",
             #"model": "stdp_nn_restr_synapse",
@@ -104,30 +105,56 @@ class STDPNNSynapsesTest(unittest.TestCase):
                 "poisson_generator",
                 2,
                 params=({"rate": self.presynaptic_firing_rate,
-                         "stop": self.simulation_duration},
+                         "stop": (self.simulation_duration
+                                  - self.hardcoded_trains_length)},
                         {"rate": self.postsynaptic_firing_rate,
-                         "stop": self.simulation_duration}))
+                         "stop": (self.simulation_duration
+                                  - self.hardcoded_trains_length)}))
 
-        # Add one more presynaptic spike, so that the simulation ends with
-        # a presynaptic spike, not postsynaptic,
-        # because otherwise the last pre-before-post pair.
-        # will not be accounted in NEST.
-        additional_spike_sender = nest.Create(
+        # While the random sequences, fairly long, would supposedly
+        # reveal small differences in the weight change between NEST
+        # and ours, some low-probability events (say, coinciding
+        # spikes) can well not have occured. To generate and
+        # test every possible combination of pre/post precedence, we
+        # append some hardcoded spike sequences:
+        # pre: 1       5 6 7   9    11 12 13
+        # post:  2 3 4       8 9 10    12
+        (
+            hardcoded_pre_times,
+            hardcoded_post_times
+        ) = [
+            [
+                self.simulation_duration - self.hardcoded_trains_length
+                + t * 1.0  # ms
+                for t in train
+            ] for train in (
+                (1, 5, 6, 7, 9, 11, 12, 13),
+                (2, 3, 4, 8, 9, 10, 12)
+            )
+        ]
+
+        (
+            additional_pre_spike_sender,
+            additional_post_spike_sender
+        ) = nest.Create(
                 "spike_generator",
-                params={"spike_times": (self.simulation_duration
-                                        - self.resolution, )})
-        nest.Connect(
-                additional_spike_sender,
-                (presynaptic_neuron, ),
-                syn_spec={"model": "static_synapse",
-                          "receptor_type": 1})
+                2,
+                params=({"spike_times": hardcoded_pre_times},
+                        {"spike_times": hardcoded_post_times})
+        )
 
         # The detector is to save the randomly generated spike trains.
         spike_detector = nest.Create("spike_detector")
 
         nest.Connect(
-                (presynaptic_generator, postsynaptic_generator),
-                (presynaptic_neuron, postsynaptic_neuron),
+                (
+                    presynaptic_generator, additional_pre_spike_sender,
+                    postsynaptic_generator, additional_post_spike_sender
+                ),
+                (
+                    presynaptic_neuron, presynaptic_neuron,
+                    postsynaptic_neuron, postsynaptic_neuron
+                ),
                 syn_spec={"model": "static_synapse"},
                 conn_spec="one_to_one")
         nest.Connect(

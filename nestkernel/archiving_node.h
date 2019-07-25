@@ -148,10 +148,7 @@ public:
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  void get_K_values( double t,
-    double& Kminus,
-    double& nearest_neighbor_Kminus,
-    double& triplet_Kminus );
+  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
 
   /**
    * \fn void get_K_values( double t,
@@ -165,8 +162,7 @@ public:
   get_K_values( double t, double& Kminus, double& triplet_Kminus )
   {
     double nearest_neighbor_Kminus_to_discard;
-    get_K_values(
-      t, Kminus, nearest_neighbor_Kminus_to_discard, triplet_Kminus );
+    get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, triplet_Kminus );
   }
 
   /**

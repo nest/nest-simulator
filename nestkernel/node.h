@@ -681,10 +681,7 @@ public:
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double t,
-    double& Kminus,
-    double& nearest_neighbor_Kminus,
-    double& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
 
   /**
   * return the spike history for (t1,t2].

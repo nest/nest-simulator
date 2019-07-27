@@ -93,11 +93,11 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   ( *file ) << "# sender";
   if ( device.get_time_in_steps() )
   {
-    ( *file ) << "\ttime(step)\toffset";
+    ( *file ) << "\ttime_step\ttime_offset";
   }
   else
   {
-    ( *file ) << "\ttime(ms)";
+    ( *file ) << "\ttime_ms";
   }
   for ( auto& val : double_value_names )
   {
@@ -133,9 +133,6 @@ nest::RecordingBackendASCII::post_run_hook()
   }
 }
 
-// JME: Document that Simulate used to append to files previously
-// unless close_after_simulate (default:false) was set to true and will
-// overwrite files now with nestio.
 
 void
 nest::RecordingBackendASCII::cleanup()

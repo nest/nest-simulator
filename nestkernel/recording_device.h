@@ -42,139 +42,13 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-  Name: RecordingDevice - Common properties of all recording devices.
-
-  Description:
-
-  Recording devices are used to measure properties of or signals emitted
-  by network nodes, e.g., using a multimeter, voltmeter or a spike detector.
-
-  Recording devices can collect data in memory, display it on the terminal
-  output or write it to file in any combination. The output format can be
-  controlled by device parameters as discussed below.
-
-  Recording devices can be subdivided into two groups: collectors and samplers.
-  - Collectors collect events sent to them; the spike detector is the
-    archetypical example. Nodes are connected to collectors and the collector
-    then collects all spikes emitted by the nodes connected to it and records
-    them.
-  - Samplers actively interrogate their targets at given time intervals
-    (default: 1ms), and record the data they obtain. This means that the sampler
-    must be connected to the node (not the node to the sampler), and that the
-    node must support the particular type of sampling; see device specific
-    documentation for details.
-
-  Recording devices share the start, stop, and origin parameters global to
-  devices. Start and stop have the following meaning for stimulating devices
-  (origin is just a global offset):
-  - Collectors collect all events with timestamps T that fulfill
-      start < T <= stop.
-    Note that events with timestamp T == start are NOT recorded.
-  - Sampling devices sample at times t = nh with
-      start < t <= stop
-      (t-start) mod interval == 0
-
-  Remarks:
-  - Recording devices can only reliably record data generated during the
-    previous min_delay interval. This means that in order to ensure consistent
-    results, you should always set a stop time for a recording device that is at
-    least one min_delay before the end of the simulation time.
-  - By default, devices record to memory. If you want to record to file, it may
-    be a good idea to turn off recording to memory, to avoid that you computer's
-    memory fills up with gigabytes of data: << /record_to [/ascii] >>.
-  - Events are not necessarily recorded in chronological order.
-  - The device will not open an existing file, since that would erase the
-    existing data in the file. If you want existing files to be overwritten
-    automatically, you must set /overwrite_files in the root node.
-
-  Parameters:
-  The following parameters are shared with all devices:
-  /start  - Activation time, relative to origin.
-  /stop   - Inactivation time, relative to origin.
-  /origin - Reference time for start and stop.
-
-  The following parameter is only relevant for sampling devices:
-  /interval - Sampling interval in ms (default: 1ms).
-
-
-JME: Update for NESTIO!! All of this documentation is kind of outdated
-
-
-  The following parameters control where output is sent/data collected:
-  /record_to - An array containing any combination of /file, /memory, /screen,
-               indicating whether to write to file, record in memory or write
-               to the console window. An empty array turns all recording of
-               individual events off, only an event count is kept. You can also
-               pass strings (file), (memory), (screen), mainly for compatibility
-               with Python.
-
-               The name of the output file is
-                 data_path/data_prefix(label|model_name)-gid-vp.file_extension
-
-               See /label and /file_extension for how to change the name.
-               /data_prefix is changed in the root node. If you change any part
-               of the name, an open file will be closed and a new file opened.
-
-               To close the file, pass a /record_to array without /file, or pass
-               /to_file false. If you later turn recording to file on again, the
-               file will be overwritten, unless you have changed data_prefix,
-               label, or file_extension.
-
-  /filenames - Array containing the filenames where data is recorded to. This
-               array has one entry per local thread and is only available if
-               /to_file is set to true, or if /record_to contains /to_file.
-
-  /label     - String specifying an arbitrary label for the device. It is used
-               instead of model_name in the output file name.
-  /file_extension - String specifying the file name extension, without leading
-                    dot. The default depends on the specific device.
-  /close_after_simulate - Close output stream before Simulate returns. If set to
-                          false, any output streams will remain open when
-                          Simulate returns. (Default: false).
-  /flush_after_simulate - Flush output stream before Simulate returns. If set to
-                          false, any output streams will be in an undefined
-                          state when Simulate returns. (Default: true).
-  /flush_records - Flush output stream whenever new data has been written to the
-                   stream. This may impede performance (Default: false).
-  /close_on_reset - Close output file stream upon ResetNetwork. Upon the next
-                    call to Simulate, the file is reopened, overwriting its
-                    contents. If set to false, the file will remain open after
-                    ResetNetwork, so you can record continuously. NB:
-                    the file is always closed upon ResetKernel. (Default: true).
-  /use_gid_in_filename - Determines if the GID is used in the file name of the
-  recording device. Setting this to false can lead to conflicting file names.
-
-//JME: document the flags for different backends (e.g. precision for ascii) and
-// add an info message to the sionlib backend explaining that time_in_steps is
-// not working there
-
-  The following parameters control how output is formatted:
-  /time_in_steps - boolean value which specifies whether to print time in steps,
-                   i.e., multiples of the resolution, rather than in ms. If
-                   combined with /precise_times, each time is printed as a pair
-                   of an integer step number and a double offset < 0.
-
-  Data recorded in memory is available through the following parameter:
-  /n_events      - Number of events collected or sampled. n_events can be set to
-                   0, but no other value. Setting n_events to 0 will delete all
-                   spikes recorded in memory. n_events will count events even
-                   when not recording to memory.
-  /events        - Dictionary with elements /senders (sender GID), /times (spike
-                   times in ms or steps, depending on /time_in_steps) and
-                   /offsets (only if /time_in_steps is true). All data stored in
-                   memory is erased when /n_events is set to 0.
-
-  SeeAlso: Device, StimulatingDevice
-*/
-
 /**
  * Base class for all recording devices.
  *
- * Recording devices collect data and output it to the screen,
- * store it internally or write it to files. This class provides
- * for time windowing of data registration, temporary storage of
- * data and output of data to files.
+ * Recording devices collect data and output it to one or more
+ * recording backends. This class provides for time windowing of data
+ * registration, temporary storage of data and output of data to
+ * files.
  *
  * If the device is configured to record from start to stop, this
  * is interpreted as (start, stop], i.e., the earliest recorded
@@ -329,7 +203,8 @@ RecordingDevice::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  // JME: The number of events needs to be stored on a per-backend basis
+  // JME: The number of events needs to be stored and handled on a
+  // per-recording_device basis only in the memory backend
   ++S_.n_events_;
   for ( auto& backend_token : P_.record_to_ )
   {

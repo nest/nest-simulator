@@ -51,6 +51,7 @@
 
 #if defined( HAVE_STD_NAN )
 #include <cmath>
+#define NAN (0.0f/ 0.0f)
 #elif defined( HAVE_NAN )
 #include <math.h>
 #endif

@@ -37,6 +37,11 @@
 
 #if defined( HAVE_STD_ISNAN )
 #include <cmath>
+#ifdef __NVPTX__
+#define NAN (0.0f/ 0.0f)
+typedef double double_t;
+#include <cmath>
+#endif
 #elif defined( HAVE_ISNAN )
 #include <math.h>
 #endif

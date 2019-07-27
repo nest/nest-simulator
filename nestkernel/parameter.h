@@ -127,6 +127,23 @@ public:
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* conditional_parameter( const Parameter& if_true, const Parameter& if_false ) const;
+
+  /**
+   * Create parameter whose value is the minimum of a given parameter's value and the given value.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* min( const double other ) const;
+  /**
+   * Create parameter whose value is the maximum of a given parameter's value and the given value.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* max( const double other ) const;
+  /**
+   * Create parameter redrawing the value if the value of a parameter is outside the set limits.
+   * @returns a new dynamically allocated parameter.
+   */
+  virtual Parameter* redraw( const double min, const double max ) const;
+
   /**
    * Create the exponential of this parameter.
    * @returns a new dynamically allocated parameter.
@@ -1103,6 +1120,195 @@ protected:
 
 
 /**
+ * Parameter class representing the minimum of a parameter's value and a given value.
+ */
+class MinParameter : public Parameter
+{
+public:
+  /**
+   * Construct a min parameter. A copy is made of the supplied Parameter
+   * object.
+   */
+  MinParameter( const Parameter& p, const double other_value )
+    : Parameter( p )
+    , p_( p.clone() )
+    , other_value_( other_value )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  MinParameter( const MinParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , other_value_( p.other_value_ )
+  {
+  }
+
+  ~MinParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::min( p_->value( rng, node ), other_value_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  {
+    return std::min( p_->value( rng, sgid, target, target_thread ), other_value_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::min( p_->value( rng, source_pos, target_pos, displacement ), other_value_ );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new MinParameter( *this );
+  }
+
+protected:
+  const Parameter* p_;
+  double other_value_;
+};
+
+
+/**
+ * Parameter class representing the maximum of a parameter's value and a given value.
+ */
+class MaxParameter : public Parameter
+{
+public:
+  /**
+   * Construct a max parameter. A copy is made of the supplied Parameter
+   * object.
+   */
+  MaxParameter( const Parameter& p, const double other_value )
+    : Parameter( p )
+    , p_( p.clone() )
+    , other_value_( other_value )
+  {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  MaxParameter( const MaxParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , other_value_( p.other_value_ )
+  {
+  }
+
+  ~MaxParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( librandom::RngPtr& rng, Node* node ) const
+  {
+    return std::max( p_->value( rng, node ), other_value_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  {
+    return std::max( p_->value( rng, sgid, target, target_thread ), other_value_ );
+  }
+
+  double
+  value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const
+  {
+    return std::max( p_->value( rng, source_pos, target_pos, displacement ), other_value_ );
+  }
+
+  Parameter*
+  clone() const
+  {
+    return new MaxParameter( *this );
+  }
+
+protected:
+  const Parameter* p_;
+  double other_value_;
+};
+
+
+/**
+ * Parameter class redrawing a parameter value if it is outside of specified limits.
+ */
+class RedrawParameter : public Parameter
+{
+public:
+  /**
+   * Construct a redrawing parameter. A copy is made of the supplied Parameter
+   * object.
+   */
+  RedrawParameter( const Parameter& p, const double min, const double max );
+
+  /**
+   * Copy constructor.
+   */
+  RedrawParameter( const RedrawParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , min_( p.min_ )
+    , max_( p.max_ )
+    , max_redraws_( p.max_redraws_ )
+  {
+  }
+
+  ~RedrawParameter()
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double value( librandom::RngPtr& rng, Node* node ) const;
+  double value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const;
+  double value( librandom::RngPtr& rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const std::vector< double >& displacement ) const;
+
+  Parameter*
+  clone() const
+  {
+    return new RedrawParameter( *this );
+  }
+
+protected:
+  const Parameter* p_;
+  double min_;
+  double max_;
+  const size_t max_redraws_;
+};
+
+
+/**
  * Parameter class representing the exponential of a parameter.
  */
 class ExpParameter : public Parameter
@@ -1493,6 +1699,22 @@ inline Parameter*
 Parameter::conditional_parameter( const Parameter& if_true, const Parameter& if_false ) const
 {
   return new ConditionalParameter( *this, if_true, if_false );
+}
+
+inline Parameter*
+Parameter::min( const double other_value ) const
+{
+  return new MinParameter( *this, other_value );
+}
+inline Parameter*
+Parameter::max( const double other_value ) const
+{
+  return new MaxParameter( *this, other_value );
+}
+inline Parameter*
+Parameter::redraw( const double min, const double max ) const
+{
+  return new RedrawParameter( *this, min, max );
 }
 
 inline Parameter*

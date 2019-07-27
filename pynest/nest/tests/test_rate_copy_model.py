@@ -86,8 +86,10 @@ class RateCopyModelTestCase(unittest.TestCase):
         # make sure rates are identical
         events = nest.GetStatus(multimeter)[0]['events']
         senders = events['senders']
-        rate_1 = np.array(events['rate'][np.where(senders == rate_neuron_1)])
-        rate_2 = np.array(events['rate'][np.where(senders == rate_neuron_2)])
+        rate_1 = np.array(events['rate'][
+            np.where(senders == rate_neuron_1.get('global_id'))])
+        rate_2 = np.array(events['rate'][
+            np.where(senders == rate_neuron_2.get('global_id'))])
         assert(np.sum(np.abs(rate_2 - rate_1)) < 1e-12)
 
 

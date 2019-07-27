@@ -28,7 +28,9 @@
 // Includes from sli:
 #include "datum.h"
 
-
+/**
+ * @brief Smart pointer data object.
+ */
 template < class D, SLIType* slt >
 class sharedPtrDatum : public std::shared_ptr< D >, public TypedDatum< slt >
 {
@@ -39,13 +41,7 @@ class sharedPtrDatum : public std::shared_ptr< D >, public TypedDatum< slt >
   }
 
 public:
-  sharedPtrDatum()
-  {
-  }
-
-  //   template<SLIType *st>
-  //   sharedPtrDatum(const sharedPtrDatum<D,st> &d):lockPTR<D>(d),
-  //   TypedDatum<slt>(){}
+  sharedPtrDatum() = default;
 
   sharedPtrDatum( const std::shared_ptr< D > d )
     : std::shared_ptr< D >( d )
@@ -53,33 +49,20 @@ public:
   {
   }
 
-  /* Constructor from D* d
-     By the definition of lockPTR, d must be unique. It will be
-     destructed/deallocated by the implementation of lockPTR,
-     therefore no references should be kept after construction,
-     including constructing any other instances of this class with
-     that data, except via copy constructor.
-  */
+  /**
+   * @brief Constructor
+   * @param d a pointer to an object to manage
+   *
+   * The shared_ptr will control the destruction of the object. The object is automatically destroyed,
+   * so no references to it should be kept after construction.
+   */
   sharedPtrDatum( D* d )
     : std::shared_ptr< D >( d )
     , TypedDatum< slt >()
   {
   }
 
-  /* Constructor from D d
-     Like the above, this is actually a constructor to a D*, so d
-     should be dynamically allocated, and any reference discarded
-     after this construction.
-   */
-  // sharedPtrDatum( D& d )
-  //   : std::shared_ptr< D >( d )
-  //   , TypedDatum< slt >()
-  // {
-  // }
-
-  ~sharedPtrDatum()
-  {
-  } // this class must not be a base class
+  ~sharedPtrDatum() = default;
 
   void
   print( std::ostream& out ) const
@@ -90,42 +73,26 @@ public:
   void
   pprint( std::ostream& out ) const
   {
-    throw NotImplemented( "pprint is not implemented for lockPTRDatum" );
-    // out << "<lockPTR[" << this->references() << "]->" << this->gettypename()
-    //     << '(' << static_cast< void* >( this->get() ) << ")>";
+    out << "<shared_ptr[" << this->use_count() << "]->" << this->gettypename() << '('
+        << static_cast< void* >( this->get() ) << ")>";
   }
 
   void
   info( std::ostream& out ) const
   {
-    //  out << *dynamic_cast<C *>(const_cast<lockPTR<C,slt> *>(this));
     pprint( out );
   }
 
-  // tests for equality via lockPTR<D>::operator==
-  // It is defined as identity of the underly D, i.e. &this->D == &other->D
+  /**
+   * @brief Tests for equality between this and another datum.
+   * @param dat datum to check against
+   */
   bool
-  equals( const Datum* dat ) const
+  equals( const Datum* other ) const
   {
-    const sharedPtrDatum< D, slt >* ddc = dynamic_cast< const sharedPtrDatum< D, slt >* >( dat );
-    return ddc && *this == *ddc;
+    const sharedPtrDatum< D, slt >* other_dc = dynamic_cast< const sharedPtrDatum< D, slt >* >( other );
+    return other_dc && *this == *other_dc;
   }
-
-  /* operator=
-    The assignment operator is defaulted.
-    Therefore, lockPTR<D>::operator= is called, and
-    TypedDatum<slt>::operator= is called.
-    The TypedDatum = is simply return *this.
-  */
-  // sharedPtrDatumLegacy<D, sli>& operator=(const sharedPtrDatumLegacy<D, sli>&)
-
-  /* operator==
-    sharedPtrDatum should only use the equals method for equality testing.
-    Thus, the inherited lockPTR<D>::operator== is made private.  No
-    implementation is defined.
-  */
-private:
-  bool operator==( std::shared_ptr< D >& );
 };
 
 #endif

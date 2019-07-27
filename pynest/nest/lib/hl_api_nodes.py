@@ -30,10 +30,11 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
-from .hl_api_types import Parameter
+from .hl_api_types import GIDCollection, Parameter
 
 __all__ = [
     'Create',
+    'GetLocalGIDCollection',
     'PrintNodes',
 ]
 
@@ -133,3 +134,29 @@ def PrintNodes():
 
     sr("PrintNodesToStream")
     print(spp())
+
+
+@check_stack
+def GetLocalGIDCollection(gc):
+    """Get local nodes of a GIDCollection as a new GIDCollection.
+
+    This function gets the local elements in a GIDCollection. The
+    resulting elements are returned in a new GIDCollection. If there are no
+    local elements, an empty GIDCollection is returned.
+
+    Parameters:
+    -----------
+    gc: GIDCollection
+        GIDCollection for which to get local nodes
+
+    Returns
+    -------
+    GIDCollection:
+        Object representing the local nodes of the given GIDCollection
+    """
+    if not isinstance(gc, GIDCollection):
+        raise TypeError("Must provide a GIDCollection GIDCollection")
+
+    sps(gc)
+    sr("LocalOnly")
+    return spp()

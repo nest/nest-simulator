@@ -49,7 +49,7 @@ def gaussian2D(x, y, p_center=1.0, mean_x=0.0, mean_y=0.0, std_deviation_x=1.0,
     x_term = (x - mean_x)**2/std_deviation_x**2
     y_term = (y - mean_y)**2/std_deviation_y**2
     xy_term = (x - mean_x)*(y - mean_y)/(std_deviation_x*std_deviation_y)
-    return p_center * exp(- (x_term - y_term + 2*rho*xy_term)/(2*(1-rho**2)))
+    return p_center * exp(- (x_term + y_term - 2*rho*xy_term)/(2*(1-rho**2)))
 
 
 def gamma(x, alpha=1.0, theta=1.0):

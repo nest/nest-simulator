@@ -30,36 +30,6 @@ __all__ = [
     'uniform',
 ]
 
-# TODO: Can ParameterWrapper be removed?
-
-
-class ParameterWrapper(Parameter):
-    def __init__(self, parametertype, specs):
-        self._parameter = CreateParameter(parametertype, specs)
-
-    def get_value(self):
-        return self._parameter.GetValue()
-
-    def __add__(self, other):
-        self._parameter += other
-        return self
-
-    def __sub__(self, other):
-        self._parameter -= other
-        return self
-
-    def __mul__(self, other):
-        self._parameter *= other
-        return self
-
-    def __div__(self, other):
-        self._parameter /= other
-        return self
-
-    def __truediv__(self, other):
-        self._parameter /= other
-        return self
-
 
 def uniform(min=0.0, max=1.0):
     return CreateParameter('uniform', {'min': min, 'max': max})

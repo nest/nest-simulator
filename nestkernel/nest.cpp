@@ -333,6 +333,24 @@ conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param
 }
 
 ParameterDatum
+min_parameter( const ParameterDatum& param, const double other_value)
+{
+  return param->min(other_value);
+}
+
+ParameterDatum
+max_parameter( const ParameterDatum& param, const double other_value)
+{
+  return param->max(other_value);
+}
+
+ParameterDatum
+redraw_parameter( const ParameterDatum& param, const double min, const double max)
+{
+  return param->redraw(min, max);
+}
+
+ParameterDatum
 exp_parameter( const ParameterDatum& param )
 {
   return param->exp();

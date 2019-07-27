@@ -153,8 +153,6 @@ private:
   template < int D >
   void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
-  void connect_( index s, Node* target, thread target_thread, double w, double d, index syn );
-
   /**
    * Calculate parameter values for this position.
    *
@@ -182,26 +180,6 @@ private:
   //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;
 };
-
-// TODO481 : do we need this function at all? Why not call kernel's connect
-// directly?
-inline void
-ConnectionCreator::connect_( index s, Node* target, thread target_thread, double w, double d, index syn )
-{
-  // TODO481 Why do we need to check for locality her?
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_node( target ) )
-  {
-    // TODO481 Why do we need to check for thread locality here?
-    // check whether the target is on our thread
-    thread tid = kernel().vp_manager.get_thread_id();
-    if ( tid == target_thread )
-    {
-      // TODO481 implement in terms of nest-api
-      kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_, d, w );
-    }
-  }
-}
 
 } // namespace nest
 

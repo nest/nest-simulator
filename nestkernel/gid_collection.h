@@ -619,47 +619,6 @@ inline GIDTriple gc_const_iterator::operator*() const
     gt.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
     gt.lid += element_idx_;
-
-    // TODO481 : Temporary check of correctness
-    if ( composite_collection_->operator[]( gt.lid ) != gt.gid )
-    {
-      std::cerr << composite_collection_->operator[]( gt.lid ) << " != " << gt.gid << std::endl;
-      throw KernelException( "The GID at the local_placement does not match the GID of the Triple" );
-    }
-
-    // Add to local placement from GIDCollectionPrimitives that comes before the
-    // current one.
-    gt.lid = 0;
-    for ( std::vector< GIDCollectionPrimitive >::const_iterator part = composite_collection_->parts_.begin();
-          part != composite_collection_->parts_.end();
-          ++part )
-    {
-      if ( ( *part ) == composite_collection_->parts_[ part_idx_ ] )
-      {
-        break;
-      }
-      gt.lid += part->size();
-    }
-
-    gt.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
-    gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
-    gt.lid += element_idx_;
-
-    // TODO481 : Temporary check of correctness
-    if ( composite_collection_->operator[]( gt.lid ) != gt.gid )
-    {
-      std::cerr << composite_collection_->operator[]( gt.lid ) << " != " << gt.gid << std::endl;
-      throw KernelException( "The GID at the local_placement does not match the GID of the Triple" );
-    }
-  }
-  return gt;
-}
-
-inline gc_const_iterator& gc_const_iterator::operator++()
-{
-  if ( primitive_collection_ )
-  {
-    element_idx_ += step_;
   }
   return gt;
 }

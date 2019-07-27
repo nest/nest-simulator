@@ -57,6 +57,10 @@ updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node*
     auto tid = kernel().vp_manager.vp_to_thread( vp );
     auto rng = get_vp_rng( tid );
     value = pd->get()->value( rng, node );
+<<<<<<< Updated upstream
+=======
+    pd->unlock();
+>>>>>>> Stashed changes
     return true;
   }
   else

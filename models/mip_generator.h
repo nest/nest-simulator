@@ -28,7 +28,6 @@
 
 // Includes from nestkernel:
 #include "connection.h"
-#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
@@ -192,7 +191,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
 };
@@ -200,7 +198,7 @@ private:
 inline port
 mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< SpikeEvent >::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -220,7 +218,7 @@ inline void
 mip_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< SpikeEvent >::get_status( d );
 }
 
 inline void
@@ -232,7 +230,7 @@ mip_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< SpikeEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

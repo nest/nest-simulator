@@ -121,7 +121,7 @@ namespace nest
  * @ingroup Devices
  */
 template < typename EmittedEvent >
-class StimulatingDevice : public Device
+class StimulatingDevice : public Device, public DeviceNode
 {
 public:
   StimulatingDevice();
@@ -187,7 +187,7 @@ StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active( const Time& T 
 {
   // same as for the CurrentEvent
   const long step = T.get_steps() + 1;
-  return get_t_min_() <= step && step < get_t_max_();
+  return get_t_min_() <= step and step < get_t_max_();
 }
 
 template <>

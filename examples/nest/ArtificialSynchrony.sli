@@ -210,8 +210,9 @@ modeldict begin
 
   (Create voltmeter ) =only
   %% generate spike detectors and voltmeter for each neuron
-  % /spike_detector << /record_to record_to >> Create /detec Set   % spike detectors will generate enormous amounts of data!
-  /voltmeter << /record_to record_to >> Create /volt Set
+  % spike detectors will generate enormous amounts of data!
+  % /spike_detector << /record_to record_to >> Create /detec Set
+  /voltmeter << /record_to record_to /interval 1.0 >> Create /volt Set
 
   sim 1 eq {volt  <<  /label (voltmeter-Canon-) strength cvs join >> SetStatus}
            {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse

@@ -156,15 +156,23 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         empty_array_float = np.array([], dtype=np.float64)
         empty_array_int = np.array([], dtype=np.int64)
 
+<<<<<<< Updated upstream
         nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
         nest.Simulate(10.0)
 
+=======
+>>>>>>> Stashed changes
         # Single node, literal parameter
         self.assertEqual(single_sd.get('start'), 0.0)
 
         # Single node, array parameter
+<<<<<<< Updated upstream
         self.assertEqual(single_sd.get(['start', 'time_in_steps']),
                          {'start': 0.0, 'time_in_steps': False})
+=======
+        self.assertEqual(single_sd.get(['start', 'to_file']),
+                         {'start': 0.0, 'to_file': False})
+>>>>>>> Stashed changes
 
         # Single node, hierarchical with literal parameter
         np.testing.assert_array_equal(single_sd.get('events', 'times'),
@@ -196,12 +204,20 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get()
+<<<<<<< Updated upstream
         num_values_single_sd = len(values.keys())
+=======
+        self.assertEqual(len(values.keys()), 38)
+>>>>>>> Stashed changes
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get()
+<<<<<<< Updated upstream
         self.assertEqual(len(values.keys()), num_values_single_sd)
+=======
+        self.assertEqual(len(values.keys()), 38)
+>>>>>>> Stashed changes
         self.assertEqual(values['start'],
                          tuple(0.0 for i in range(len(multi_sd))))
 
@@ -214,9 +230,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         multi_sd = nest.Create('spike_detector', 10)
         empty_array_float = np.array([], dtype=np.float64)
 
+<<<<<<< Updated upstream
         nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
         nest.Simulate(10.0)
 
+=======
+>>>>>>> Stashed changes
         # Single node, literal parameter
         pt.assert_frame_equal(single_sd.get('start', output='pandas'),
                               pandas.DataFrame({'start': [0.0]},
@@ -280,12 +299,20 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
+<<<<<<< Updated upstream
         num_values_single_sd = values.shape[1]
+=======
+        self.assertEqual(values.shape, (1, 38))
+>>>>>>> Stashed changes
         self.assertEqual(values['start'][tuple(single_sd)[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get(output='pandas')
+<<<<<<< Updated upstream
         self.assertEqual(values.shape, (len(multi_sd), num_values_single_sd))
+=======
+        self.assertEqual(values.shape, (len(multi_sd), 38))
+>>>>>>> Stashed changes
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
                                               for key in tuple(multi_sd)},
@@ -293,15 +320,22 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                              name='start'))
 
         # With data in events
+<<<<<<< Updated upstream
         nest.ResetKernel()
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
+=======
+>>>>>>> Stashed changes
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
+<<<<<<< Updated upstream
         nest.Simulate(39.0)
+=======
+        nest.Simulate(40)
+>>>>>>> Stashed changes
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
@@ -327,9 +361,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
 
+<<<<<<< Updated upstream
         nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
         nest.Simulate(10.0)
 
+=======
+>>>>>>> Stashed changes
         # Single node, literal parameter
         self.assertEqual(json.loads(
             single_sd.get('start', output='json')), 0.0)
@@ -379,11 +416,16 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = json.loads(single_sd.get(output='json'))
+<<<<<<< Updated upstream
         num_values_single_sd = len(values)
+=======
+        self.assertEqual(len(values), 38)
+>>>>>>> Stashed changes
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = json.loads(multi_sd.get(output='json'))
+<<<<<<< Updated upstream
         self.assertEqual(len(values), num_values_single_sd)
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
@@ -391,12 +433,22 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nest.ResetKernel()
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
+=======
+        self.assertEqual(len(values), 38)
+        self.assertEqual(values['start'], len(multi_sd) * [0.0])
+
+        # With data in events
+>>>>>>> Stashed changes
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
+<<<<<<< Updated upstream
         nest.Simulate(39.0)
+=======
+        nest.Simulate(40.)
+>>>>>>> Stashed changes
 
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}

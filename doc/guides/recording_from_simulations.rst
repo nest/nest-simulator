@@ -190,10 +190,30 @@ Store data in main memory
 
 The `memory` backend is the default for all recording devices.
 
--  After one has simulated a little, the ``events`` entry of the
-   multimeter status dictionary will contain one numpy array of data for
-   each recordable.
+After one has simulated a little, the ``events`` entry of the
+multimeter status dictionary will contain one numpy array of data for
+each recordable.
 
+
+The data is added to vectors, made available in a sub-dictionary of
+the recorder's status dictionary called ``events``. It contains the
+recorded data in the form of vectors. 
+
+
+. The interpretation of the field `time` depends on the value of the
+property `time_in_steps`. With the default setting (*false*), the
+*times* field contains the simulation time in ms as a floating point
+
+
+
+ If set to *false* (which is the default), time is
+written as one floating point number representing the simulation time
+in ms. If `time_in_steps` is *true*, the time of the event is written
+as a value pair consisting of the integer simulation time step and the
+floating point offset in ms from the next grid point.
+
+   value. If it is set to *true*, the field *times* contains the time in integer mudepends
+   on the setting of the property `time_in_steps`.
 
 Parameter summary
 +++++++++++++++++
@@ -201,8 +221,7 @@ Parameter summary
 `events`
   is a dictionary which contains the sender global IDs of recorded
   events under the key *senders* and the time of the recording in
-  *times*. The meaning of *times* depends on the setting of the
-  property `time_in_steps`.
+  *times*.
 
 `n_events`
   is the number of events collected or sampled since the last reset of
@@ -210,10 +229,9 @@ Parameter summary
   will be discarded from memory.
 
 `time_in_steps`
-  A boolean (default: false) specifying whether to record time in
+  A boolean (default: false) specifying whether to store time in
   steps, i.e. in integer multiples of the resolution and an offset,
-  rather than just in ms. Please note that a given backend may chose
-  to ignore this setting.
+  rather than just in ms.
 
 
 Write data to plain text files
@@ -260,13 +278,15 @@ starts with a `#` character.
 
 The first field of each record written is the global id of the neuron
 the event originated from, i.e. the *source* of the event. This is
-followed by the time of the measurement.
+followed by the time of the measurement, the recorded floating point
+values and the recorded integer values.
 
-If the property `time_in_steps` is set to *false* (which is the
-default), time is written as a floating point number representing the
-simulation time in ms. If `time_in_steps` is *true*, the time of the
-event is written as a pair consisting of the integer simulation time
-step and the negative offset in ms from the next grid point.
+The format of the time field depends on the value of the property
+`time_in_steps`. If set to *false* (which is the default), time is
+written as one floating point number representing the simulation time
+in ms. If `time_in_steps` is *true*, the time of the event is written
+as a value pair consisting of the integer simulation time step and the
+floating point offset in ms from the next grid point.
 
 .. note::
 
@@ -294,15 +314,29 @@ Parameter summary
   to the output file.
 
 `time_in_steps`
-  A boolean (default: false) specifying whether to record time in
+  A boolean (default: false) specifying whether to write time in
   steps, i.e. in integer multiples of the resolution and an offset,
-  rather than just in ms. Please note that a given backend may chose
-  to ignore this setting.
+  rather than just in ms.
 
 Write data to the terminal
 ##########################
 
-[[TODO]]
+When initially conceiving and debugging simulations, it can be useful
+to check recordings in a more ad hoc fashion. The recording backend
+`screen` can be used to dump all recorded data onto the console for
+quick inspection.
+
+The first field of each record written is the global id of the neuron
+the event originated from, i.e. the *source* of the event. This is
+followed by the time of the measurement, the recorded floating point
+values and the recorded integer values.
+
+The format of the time field depends on the value of the property
+`time_in_steps`. If set to *false* (which is the default), time is
+written as one floating point number representing the simulation time
+in ms. If `time_in_steps` is *true*, the time of the event is written
+as a value pair consisting of the integer simulation time step and the
+floating point offset in ms from the next grid point.
 
 .. note::
    
@@ -315,13 +349,12 @@ Parameter summary
 
 `precision`
   controls the number of decimal places used to write decimal numbers
-  to the output file.
+  to the terminal.
 
 `time_in_steps`
-  A boolean (default: false) specifying whether to record time in
+  A boolean (default: false) specifying whether to print time in
   steps, i.e. in integer multiples of the resolution and an offset,
-  rather than just in ms. Please note that a given backend may chose
-  to ignore this setting.  
+  rather than just in ms.
 
 Store data to an efficient binary format
 ########################################

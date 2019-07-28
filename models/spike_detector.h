@@ -37,36 +37,24 @@ namespace nest
 {
 
 /** @BeginDocumentation
-@ingroup Devices
 @ingroup detector
 
-Name: spike_detector - Device for detecting single spikes.
+Spike detector
+##############
 
-Description:
+The most universal collector device is the ``spike_detector``. It
+collects and records all *spikes* it receives from neurons that are
+connected to it. The spike detector records spike times with full
+precision from neurons emitting precisely timed spikes. [[Link to
+guide for precise spike timing]]
 
-The spike_detector device is a recording device. It is used to record
-spikes from a single neuron, or from multiple neurons at once. Data
-is recorded in memory or to file as for all RecordingDevices.
-By default, GID and time of each spike is recorded.
-
-The spike detector will record spike times with full precision
-from neurons emitting precisely timed spikes.
+Each spike event received by the spike detector is immediately handed
+over to the prescribed recording backend for further processing.
 
 Any node from which spikes are to be recorded, must be connected to
-the spike detector using a normal connect command. Any connection weight
-and delay will be ignored for that connection.
+the spike detector using the standard ``Connect`` command. The
+connection weight and delay are ignored by the spike detector.
 
-Simulations progress in cycles defined by the minimum delay. During each
-cycle, the spike detector records (stores in memory or writes to screen/file)
-the spikes. Setting the /stop parameter stops the recording before the end of
-simulation.
-
-Spike are not necessarily written to file in chronological order.
-
-
-Receives: SpikeEvent
-
-SeeAlso: spike_detector, Device, RecordingDevice
 */
 
 class spike_detector : public RecordingDevice
@@ -103,9 +91,6 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  /*
-   * Write incoming spikes.
-   */
   void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
@@ -117,16 +102,10 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( Node const& );
-  void init_buffers_();
-  void calibrate();
-
-  /**
-   * Update detector.
-   *
-   * @see RecordingDevice
-   */
-  void update( Time const&, const long, const long );
+    void calibrate();
+    void init_state_( Node const& ) {}
+    void init_buffers_() {}
+    void update( Time const&, const long, const long ) {}
 };
 
 inline port

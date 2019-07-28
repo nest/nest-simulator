@@ -39,31 +39,29 @@ namespace nest
 {
 
 /** @BeginDocumentation
-@ingroup Devices
 @ingroup detector
 
-Name: weight_recorder - Device for detecting single spikes.
+@name weight_recorder
+@short_description Device for detecting single spikes.
 
-Description:
+Weight recorder
+###############
 
-The weight_recorder device is a recording device. It is used to record
-weights from synapses. Data is recorded in memory or to file as for all
-RecordingDevices.
-By default, source GID, target GID, time and weight of each spike is recorded.
+The weight recorder is a recording device used to record weights from
+synapses. It records the source and target global IDs together with
+the weight of each spike event that travels through the observed
+synapses.
 
-In order to record only from a subset of connected synapses, the
-weight_recorder accepts the parameters 'senders' and 'targets', with which the
-recorded data is limited to the synapses with the corresponding source or target
-gid.
+In order to only record from a subset of the connected synapses, the
+weight recorder accepts two list parameters 'senders' and 'targets'.
+If set, they restrict the recording of data to synapses with the
+corresponding source or target global IDs.
 
 The weight recorder will record weights with full precision from
 neurons emitting precisely timed spikes.
 
-Data is not necessarily written to file in chronological order.
+[[Needs connect example]]
 
-Receives: WeightRecordingEvent
-
-SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
 */
 
 class weight_recorder : public RecordingDevice

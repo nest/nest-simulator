@@ -52,26 +52,10 @@ nest::spike_detector::spike_detector( const spike_detector& n )
 }
 
 void
-nest::spike_detector::init_state_( const Node& )
-{
-  init_buffers_();
-}
-
-void
-nest::spike_detector::init_buffers_()
-{
-}
-
-void
 nest::spike_detector::calibrate()
 {
   RecordingDevice::calibrate();
   RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
-}
-
-void
-nest::spike_detector::update( Time const&, const long, const long )
-{
 }
 
 nest::RecordingDevice::Type
@@ -83,7 +67,6 @@ nest::spike_detector::get_type() const
 void
 nest::spike_detector::get_status( DictionaryDatum& d ) const
 {
-  // get the data from the device
   RecordingDevice::get_status( d );
 
   if ( is_model_prototype() )
@@ -91,8 +74,7 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
     return; // no data to collect
   }
 
-  // if we are the device on thread 0, also get the data from the
-  // siblings on other threads
+  // if we are the device on thread 0, also get the data from the siblings on other threads
   if ( get_thread() == 0 )
   {
     const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
@@ -113,8 +95,7 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
 void
 nest::spike_detector::handle( SpikeEvent& e )
 {
-  // accept spikes only if detector was active when spike was
-  // emitted
+  // accept spikes only if detector was active when spike was emitted
   if ( is_active( e.get_stamp() ) )
   {
     assert( e.get_multiplicity() > 0 );

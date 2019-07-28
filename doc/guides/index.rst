@@ -1,7 +1,7 @@
 Guides
 ==============
 
-Here you can find detailed look into a variety of topics in NEST.
+Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1

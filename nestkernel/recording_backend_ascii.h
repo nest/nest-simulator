@@ -31,9 +31,6 @@ namespace nest
 /**
  * ASCII specialization of the RecordingBackend interface.
  *
- * Recorded data is written to plain text files on a
- * per-device-per-thread basis.
- *
  * RecordingBackendASCII maintains a data structure mapping one file
  * stream to every recording device instance on every thread. Files
  * are opened and inserted into the map during the enroll() call

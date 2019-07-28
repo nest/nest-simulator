@@ -2,7 +2,7 @@ Recording from simulations
 ==========================
 
 *Recording devices* (or *recorders*, in short) are used to obtain and
-record different quantities of neurons or synapses.
+record different observable quantities from neurons or synapses.
 
 The recorded data is stored by *recording backend*s. Each recording
 device can specify a number of recording backends to be used. The
@@ -13,14 +13,14 @@ different backends and their usage is explained in detail below
 Recording devices can fundamentally be subdivided into two groups:
 
 - **Collector devices** collect events sent to them; the archetypical
-  example for this category is the ``spike_detector``. Nodes are
-  connected to collectors and the collector collects all events
-  emitted by the nodes connected to it.
+  example is the ``spike_detector``. Nodes are connected to collectors
+  and the collector collects the events emitted by the nodes connected
+  to it.
+
 - **Sampling devices** actively interrogate their targets at given
   time intervals and record the data they obtain. This means that the
   sampler must be connected to the node (not the node to the sampler),
-  and that the node must support the particular type of sampling; the
-  device specific documentation contains details.
+  and that the node must support the particular type of sampling.
 
 Recording devices can only reliably record data that was generated
 during the previous min_delay interval [[Link to Running
@@ -30,14 +30,14 @@ Simulations]].
 
    Due to the need for internal buffering and the unpredictable order
    of thread execution, events are not necessarily recorded in
-   chronological order. For backend-specific details, see the
-   corresponding documentation.
+   chronological order.
 
 Common recorder properties
 --------------------------
 
 All recorders share a set of common properties that can be set using
-``SetStatus`` on the corresponding device:
+``SetDefaults`` on the model class or ``SetStatus`` on a device
+instance:
 
 `record_to`
   A list (default: ["memory"]) containing any combination of names of
@@ -49,41 +49,37 @@ All recorders share a set of common properties that can be set using
   device.  Recording backends might use the label to generate device
   specific identifiers like filenames and such.
 
-`time_in_steps`
-  A boolean (default: false) specifying whether to output time in
-  steps, i.e. in integer multiples of the resolution plus an offset,
-  rather than in ms. Please note that a given backend may chose to
-  ignore this setting.
-
-
 Sampling continuous quantities from neurons
 -------------------------------------------
 
-All models that support analog sampling have a `recordables` property,
-which lists all recordable quantities. The property can be inspected
-using ``GetDefaults`` on the model or ``GetStatus`` on a model
-instance.
+The universal sampling device ``multimeter`` is used available to
+record analog values from neurons. Models providing such values expose
+a `recordables` property that lists all recordable quantities.  This
+internal property can be inspected using ``GetDefaults`` on the model
+class or ``GetStatus`` on a model instance. It cannot be changed by
+the user.
 
    ::
 
        In [0]: nest.GetDefaults('iaf_cond_alpha')['recordables']
        Out[0]: ['V_m', 'g_ex', 'g_in', 't_ref_remaining']
 
-The property `record_from` of the main device for analog sampling, the
- ``multimeter``, is used to set the names of the quantities to be
- sampled.
+The `record_from` property of a ``multimeter`` can be set to one or
+more recordable names to have these quantities sampled during
+simulation.
 
    ::
 
-       In[1]: nest.Create('multimeter', params={'record_from': ['V_m', 'g_ex']})
+       In[1]: mm = nest.Create('multimeter', params={'record_from': ['V_m', 'g_ex']})
 
-All sampling devices share a common parameter `interval` that controls
-the sampling interval of recordings. It defaults to 1 ms and can be
-changed either during the call to ``Create`` or using ``SetStatus``.
+The sampling interval of recordings in ms can be controlled using the
+``multimeter``'s parameter `interval`.  The default value of 1 ms can
+be changed by supplying it in either in the call to ``Create`` or by
+using ``SetStatus`` on the model instance.
 
    ::
 
-       In[2]: nest.Create('multimeter', params={'record_from': ['V_m'], 'interval' :0.1})
+       In[2]: nest.SetStatus(mm, 'interval': 0.1})
 
 .. note:
    
@@ -91,57 +87,60 @@ changed either during the call to ``Create`` or using ``SetStatus``.
    be set **before** the multimeter is connected to any node, and
    cannot be changed afterwards.
 
-In order to make recording the membrane potential of a neuron easy, a
-pre-configured ``multimeter`` is available as ``voltmeter``. It's
-`record_from` property is already set to record the variable ``V_m``
-from the neurons it is connected to.
-
-[[The variable V_m ideally would link somehow to the variable name
-convention, i.e. the Dayan Abbott book default names]]
-
-Sampling devices can be connected to the neurons they record from
-using the usual ``Connect`` routine with all its parameters.
+After configuration, a ``multimeter`` can be connected to the neurons
+it should record from by using the standard ``Connect`` routine
+possibly including any of its usual parameters.
 
    ::
 
        In[3]: neurons = nest.Create("iaf_psc_alpha", 100)
-       In[4]: voltmeter = nest.Create("voltmeter")
-       In[5]: nest.Connect(voltmeter, neurons)
+       In[4]: nest.Connect(mm, neurons)
 
-Collect event data from neurons
--------------------------------
+.. note:
 
-[[@Jessica: Where is the documentation of the recording devices in the
-doc tree? I think that their model documentation should be included
-here.]]
+   To ease the recording of the membrane potential, a pre-configured
+   ``multimeter`` is available under the name ``voltmeter``.  Its
+   `record_from` property is already set to record the variable
+   ``V_m`` from the neurons it is connected to.
 
-The most simple and universal collector device is the ``spike_detector``.
+Collect event data from neurons and synapses
+--------------------------------------------
+
+Spike detector
+##############
+
+The most universal collector device is the ``spike_detector``. It
+collects and records all *spikes* it receives from neurons that are
+connected to it. The spike detector records spike times with full
+precision from neurons emitting precisely timed spikes. [[Link to
+guide for precise spike timing]]
+
+Each spike event received by the spike detector is immediately handed
+over to the prescribed recording backend for further processing.
+
+Any node from which spikes are to be recorded, must be connected to
+the spike detector using the standard ``Connect`` command. The
+connection weight and delay are ignored by the spike detector.
 
 
-``correlation_detector``
+Correlation detector
+####################
 
+[[TODO]]
 
+Weight recorder
+###############
 
-Record weights from synapses
-----------------------------
+[[Can we include the model documentation here?
 
-The ``weight_recorder``
-
-
-
+Coolest would be if just the first two paragraphs with a "Read More"
+link to the full documentation or maybe just the one-line summary
+after the name in the old BeginDocumentation blocks?]]
 
 
 
 Windowing
 ---------
-
-
-[[Ideally, this would be a separate page to which this page and the
-one for stimulation devices could link.]]
-
-The operation times of recording devices can be controlled using the
-flags start stop origin...
-
 
 Recording devices share the start, stop, and origin parameters global to
   devices. Start and stop have the following meaning for stimulating devices
@@ -157,6 +156,8 @@ Recording devices share the start, stop, and origin parameters global to
 
 Where does data end up?
 -----------------------
+
+
 
 One question only touched upon slightly is what happens with recorded
 data during a simulation.
@@ -181,8 +182,42 @@ How to set/retrieve general per-recording-backend properties and
 per-device recording-backend settings
 
 
-Write data to plain text files (`ascii`)
-########################################
+[[Include the backend documentations here]]
+
+
+Store data in main memory
+#########################
+
+The `memory` backend is the default for all recording devices.
+
+-  After one has simulated a little, the ``events`` entry of the
+   multimeter status dictionary will contain one numpy array of data for
+   each recordable.
+
+
+Parameter summary
++++++++++++++++++
+
+`events`
+  is a dictionary which contains the sender global IDs of recorded
+  events under the key *senders* and the time of the recording in
+  *times*. The meaning of *times* depends on the setting of the
+  property `time_in_steps`.
+
+`n_events`
+  is the number of events collected or sampled since the last reset of
+  `n_events`. By setting `n_events` to 0, all spikes recorded so far
+  will be discarded from memory.
+
+`time_in_steps`
+  A boolean (default: false) specifying whether to record time in
+  steps, i.e. in integer multiples of the resolution and an offset,
+  rather than just in ms. Please note that a given backend may chose
+  to ignore this setting.
+
+
+Write data to plain text files
+##############################
 
 The `ascii` recording backend writes collected data to a plain text
 ASCII file. It can be used for small to medium sized simulations,
@@ -194,21 +229,22 @@ each MPI process. This can entail a very high load on the file system
 in large simulations. In case of scaling problems, the `sionlib`
 backend can be a possible alternative. [[Link]]
 
-Filenames are determined according to the following rule:
+Filenames are determined according to the following pattern:
 
-   data_path/data_prefix(label|model_name)-gid-vp.file_extension
+  data_path/data_prefix(label|model_name)-gid-vp.file_extension
 
 The properties `data_path` and `data_prefix` are global kernel
 properties. They can for example be set during repetitive simulation
-protocols to separate the data resulting from indivitual runs. `gid`
-and `vp` correspond to the global ID and the virtual process of the
-recorder, respectively.
+protocols to separate the data resulting from indivitual runs. The
+`label` replaces the model name component if it is set to a non-empty
+string. `gid` and `vp` correspond to the global ID and the virtual
+process of the recorder writing the file. The filename ends in a dot
+and the `file_extension`.
 
-The `file_extension` can currently be only set on a per-backend basis.
-
-The life cycle of a file always spans the period between the call to
-``Prepare`` and the call to ``Cleanup``. Each call to ``Run`` between
-them will use the same file.
+The life of a file starts with the call to ``Prepare`` and ends with
+the call to ``Cleanup``. Data that is produced during successive calls
+to ``Run`` inbetween one pair of ``Prepare`` and ``Cleanup`` calls
+will be written to the same file.
 
 In case, a file of the same name already exists, the ``Prepare`` call
 will fail with a corresponding error message, unless the kernel
@@ -218,124 +254,84 @@ property[[link to SetKernelStatus]] `overwrite_files` is set to
 Data format
 +++++++++++
 
-The first line written to any new file is a header explaining the
-position of the data entries. The header starts with a `#` character.
+The first line written to any new file is an informational header
+containing field names for the different data columns. The header
+starts with a `#` character.
 
-The first field in the output is always the global id of the neuron,
-the record originates from (or the *source* neuron) followed by the
-time of the measurement.
+The first field of each record written is the global id of the neuron
+the event originated from, i.e. the *source* of the event. This is
+followed by the time of the measurement.
 
-If the recorder property `time_in_steps` is set to *false* (which is
-the default), time is written as a floating point number which
-represents the simulation time in ms. If `time_in_steps` is `true`,
-the time of the event is written as a pair consisting of the integer
-simulation time step and the negative offset in ms from the next grid
-point.
-
-
+If the property `time_in_steps` is set to *false* (which is the
+default), time is written as a floating point number representing the
+simulation time in ms. If `time_in_steps` is *true*, the time of the
+event is written as a pair consisting of the integer simulation time
+step and the negative offset in ms from the next grid point.
 
 .. note::
 
    The number of decimal places for all decimal numbers in the output
-   of a recording device can be controlled using the recorder property
-   `precision`.
+   can be controlled using the recorder property `precision`.
 
-
-
-
+Parameter summary
++++++++++++++++++
 
 `file_extension`
-  String specifying the file name extension, without leading dot. The
-  default depends on the specific device. ???JME
-
-
-Document that Simulate used to append to files previously unless
-close_after_simulate (default:false) was set to true and will now
-attempt to overwrite files now.
-
-
-
-
-  See /label and /file_extension for how to change the name.
-
-
-  If you later turn recording to file on again, the
-  file will be overwritten, unless you have changed data_prefix,
-  label, or file_extension.
-
-
+  specifies the file name extension, without leading dot. As the exact
+  type of data cannot be known a priori, the default extension is
+  simply *.dat*.
 
 `filenames`
-  Array containing the filenames where data is recorded to. This array
-  has one entry per local thread and is only available if /to_file is
-  set to true, or if /record_to contains /to_file.
-
-
-`use_gid_in_filename`
-  Determines if the GID is used in the file name of the recording
-  device. Setting this to false can lead to conflicting file
-  names. ???JME
+  contains the filenames where data is recorded to. This list has one
+  entry per local thread. This is a read-only property.
 
 `label`
-  String specifying an arbitrary textual label for the
-  device. Recording backends might use this to generate device
-  specifiers like i.e. filenames.
+  replaces the model name component in the filename if it is set to a
+  non-empty string.
 
+`precision`
+  controls the number of decimal places used to write decimal numbers
+  to the output file.
 
-Write data to the terminal (`screen`)
-#####################################
+`time_in_steps`
+  A boolean (default: false) specifying whether to record time in
+  steps, i.e. in integer multiples of the resolution and an offset,
+  rather than just in ms. Please note that a given backend may chose
+  to ignore this setting.
 
-This is not recommended for production runs, as it may produce *huge*
-amounts of output to the terminal and thereby may slow down the
-simulation *considerably*.
+Write data to the terminal
+##########################
 
-- Write time in double, ???JME
-- Allow to set the precision of time and values (default to 3 digits) ???JME
+[[TODO]]
 
+.. note::
+   
+   Using this backend for production runs is not recommended, as it
+   may produce *huge* amounts of console output and thereby might slow
+   down the simulation *considerably*.
 
-Store data in the computer memory (`memory`)
-############################################
+Parameter summary
++++++++++++++++++
 
--  After one has simulated a little, the ``events`` entry of the
-   multimeter status dictionary will contain one numpy array of data for
-   each recordable.
+`precision`
+  controls the number of decimal places used to write decimal numbers
+  to the output file.
 
+`time_in_steps`
+  A boolean (default: false) specifying whether to record time in
+  steps, i.e. in integer multiples of the resolution and an offset,
+  rather than just in ms. Please note that a given backend may chose
+  to ignore this setting.  
 
-  Data recorded in memory is available through the following parameter:
-  /n_events      - Number of events collected or sampled. n_events can be set to
-                   0, but no other value. Setting n_events to 0 will delete all
-                   spikes recorded in memory. n_events will count events even
-                   when not recording to memory.
+Store data to an efficient binary format
+########################################
 
+ (`sionlib`)
 
-  /events        - Dictionary with elements /senders (sender GID), /times (spike
-                   times in ms or steps, depending on /time_in_steps) and
-                   /offsets (only if /time_in_steps is true). All data stored in
-                   memory is erased when /n_events is set to 0.
+Stream data to an arbor instance:
+#################################
 
-[[Note]]
-- If using a backend that writes data toi disk, you may want to
-  disable this backend in order to conserve memory
--
-
-
-Store data to an efficient binary format (`sionlib`)
-####################################################
-
-Stream data to an arbor instance: (`arbor`)
-###########################################
-
-
-
-
-
-Setting backend properties
---------------------------
-
-%  JME:- Provide NEST API + PyNEST function for accessing backend settings
-
-
-
+ (`arbor`)
 
 Writing own recording backends
 ------------------------------

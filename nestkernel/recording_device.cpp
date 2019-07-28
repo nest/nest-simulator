@@ -43,6 +43,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
+  , record_to_()
 {
 #pragma omp critical
   record_to_.push_back( LiteralDatum( names::memory ) );

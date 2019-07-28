@@ -25,19 +25,11 @@
 #include "topology.h"
 
 // includes from sli
-<<<<<<< Updated upstream
 #include "sharedptrdatum.h"
 
 #include "parameter.h"
 
 template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
-=======
-#include "lockptrdatum_impl.h"
-
-#include "parameter.h"
-
-template class lockPTRDatum< nest::Parameter, &nest::NestModule::ParameterType >;
->>>>>>> Stashed changes
 
 namespace nest
 {
@@ -56,38 +48,22 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
     throw KernelException( "NodePosParameter: not node" );
   }
   GIDCollectionPTR gc = node->get_gc();
-<<<<<<< Updated upstream
   if ( not gc.get() )
-=======
-  if ( not gc.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "NodePosParameter: not gc" );
   }
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-<<<<<<< Updated upstream
   if ( not meta.get() )
-=======
-  if ( not meta.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
   LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
-<<<<<<< Updated upstream
-=======
-  meta.unlock();
->>>>>>> Stashed changes
   if ( not layer_meta )
   {
     throw KernelException( "NodePosParameter: not layer_meta" );
   }
   AbstractLayerPTR layer = layer_meta->get_layer();
-<<<<<<< Updated upstream
   if ( not layer.get() )
-=======
-  if ( not layer.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
@@ -119,38 +95,22 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   // Source
 
   GIDCollectionPTR source_gc = source->get_gc();
-<<<<<<< Updated upstream
   if ( not source_gc.get() )
-=======
-  if ( not source_gc.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not source gc" );
   }
   GIDCollectionMetadataPTR source_meta = source_gc->get_metadata();
-<<<<<<< Updated upstream
   if ( not source_meta.get() )
-=======
-  if ( not source_meta.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not source meta" );
   }
   LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
-<<<<<<< Updated upstream
-=======
-  source_meta.unlock();
->>>>>>> Stashed changes
   if ( not source_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
   }
   AbstractLayerPTR source_layer = source_layer_meta->get_layer();
-<<<<<<< Updated upstream
   if ( not source_layer.get() )
-=======
-  if ( not source_layer.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
@@ -161,38 +121,22 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   // Target
 
   GIDCollectionPTR target_gc = target->get_gc();
-<<<<<<< Updated upstream
   if ( not target_gc.get() )
-=======
-  if ( not target_gc.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not target gc" );
   }
   GIDCollectionMetadataPTR target_meta = target_gc->get_metadata();
-<<<<<<< Updated upstream
   if ( not target_meta.get() )
-=======
-  if ( not target_meta.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not target meta" );
   }
   LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
-<<<<<<< Updated upstream
-=======
-  target_meta.unlock();
->>>>>>> Stashed changes
   if ( not target_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );
   }
   AbstractLayerPTR target_layer = target_layer_meta->get_layer();
-<<<<<<< Updated upstream
   if ( not target_layer.get() )
-=======
-  if ( not target_layer.valid() )
->>>>>>> Stashed changes
   {
     throw KernelException( "SpatialDistanceParameter: not valid target layer" );
   }

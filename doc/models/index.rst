@@ -36,8 +36,6 @@ on Github for you to check out.
 
 * **Device categories**
 
-    * :doc:`generator`
-    * :doc:`detector`
     * :doc:`music`
 
 * **Network models**

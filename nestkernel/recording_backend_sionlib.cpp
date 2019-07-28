@@ -62,8 +62,6 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const thread t = device.get_thread();
   const thread gid = device.get_gid();
 
-  //JME: add an info message explaining that time_in_steps == false has no effect in this backend
-  
   device_map::value_type::iterator device_it = devices_[ t ].find( gid );
   if ( device_it != devices_[ t ].end() )
   {
@@ -608,8 +606,6 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& 
 void
 nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib& al, const DictionaryDatum& d )
 {
-//JME: only set these in case no file is open at the moment
-    
   updateValue< std::string >( d, names::filename, filename_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );

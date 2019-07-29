@@ -108,8 +108,8 @@ E_K          mV      Potassium reversal potential
 g_Kv1        nS      Potassium peak conductance
 g_Kv3        nS      Potassium peak conductance
 Act_m        real    Activation variable m
-Act_h        real    Activation variable h
-Inact_n      real    Inactivation variable n
+Inact_h      real    Inactivation variable h
+Act_n        real    Activation variable n
 I_e          pA      External input current
 ===========  ======  ============================================================
 \endverbatim

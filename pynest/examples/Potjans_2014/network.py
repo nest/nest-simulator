@@ -160,6 +160,17 @@ class Network:
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
+        v0_type_options = ['original', 'optimized']
+        if self.net_dict['V0_type'] not in v0_type_options:
+            print(
+                '''
+                '{0}' is not a valid option, replacing it with '{1}'
+                Valid options are {2}
+                '''.format(self.net_dict['V0_type'],
+                           v0_type_options[0],
+                           v0_type_options)
+                )
+            self.net_dict['V0_type'] = v0_type_options[0]
         if nest.Rank() == 0:
             print(
                 'The number of neurons is scaled by a factor of: %.2f'
@@ -199,26 +210,46 @@ class Network:
                     'I_e': self.DC_amp_e[i]
                     }
                 )
+            if self.net_dict['V0_type'] == 'optimized':
+                for thread in \
+                        np.arange(nest.GetKernelStatus('local_num_threads')):
+                    # Using GetNodes is a work-around until NEST 3.0 is
+                    # released. It will issue a deprecation warning.
+                    local_nodes = nest.GetNodes(
+                        [0], {
+                            'model': self.net_dict['neuron_model'],
+                            'thread': thread
+                        }, local_only=True
+                    )[0]
+                    vp = nest.GetStatus(local_nodes)[0]['vp']
+                    # vp is the same for all local nodes on the same thread
+                    local_pop = list(set(local_nodes).intersection(population))
+                    nest.SetStatus(
+                        local_pop, 'V_m', self.pyrngs[vp].normal(
+                            self.net_dict
+                            ['neuron_params']['V0_mean']['optimized'][i],
+                            self.net_dict
+                            ['neuron_params']['V0_sd']['optimized'][i],
+                            len(local_pop))
+                    )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
-        for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            # Using GetNodes is a work-around until NEST 3.0 is released. It
-            # will issue a deprecation warning.
-            local_nodes = nest.GetNodes(
-                [0], {
-                    'model': self.net_dict['neuron_model'],
-                    'thread': thread
-                    }, local_only=True
-                )[0]
-            vp = nest.GetStatus(local_nodes)[0]['vp']
-            # vp is the same for all local nodes on the same thread
-            nest.SetStatus(
-                local_nodes, 'V_m', self.pyrngs[vp].normal(
-                    self.net_dict['neuron_params']['V0_mean'],
-                    self.net_dict['neuron_params']['V0_sd'],
-                    len(local_nodes))
-                    )
+        if self.net_dict['V0_type'] == 'original':
+            for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
+                local_nodes = nest.GetNodes(
+                    [0], {
+                        'model': self.net_dict['neuron_model'],
+                        'thread': thread
+                        }, local_only=True
+                    )[0]
+                vp = nest.GetStatus(local_nodes)[0]['vp']
+                nest.SetStatus(
+                    local_nodes, 'V_m', self.pyrngs[vp].normal(
+                        self.net_dict['neuron_params']['V0_mean']['original'],
+                        self.net_dict['neuron_params']['V0_sd']['original'],
+                        len(local_nodes))
+                        )
 
     def create_devices(self):
         """ Creates the recording devices.

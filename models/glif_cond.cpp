@@ -59,6 +59,7 @@ RecordablesMap< nest::glif_cond >::create()
 {
   insert_(
     names::V_m, &nest::glif_cond::get_y_elem_< nest::glif_cond::State_::V_M > );
+  insert_( names::ASCurrents_sum, &nest::glif_cond::get_ASCurrents_sum_ );
 }
 }
 
@@ -96,8 +97,7 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   double I_syn = 0.0;
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-      + node.P_.n_ASCurrents_() - 1;
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     I_syn +=
       y[ S::G_SYN + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
@@ -108,26 +108,11 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
     / node.P_.C_m_;
 
-  // dI_asc/dt
-  for ( std::size_t a = 0; a < node.P_.n_ASCurrents_(); ++a )
-  {
-    if ( model_type == 3 || model_type == 4 || model_type == 5 )
-    {
-      // for glif3/4/5 models with "ASC"
-      f[ S::ASC + a ] = -node.P_.k_[ a ] * y[ S::ASC + a ];
-    }
-    else
-    {
-      // for glif1/2 models without "ASC"
-      f[ S::ASC + a ] = 0.0;
-    }
-  }
 
-  // d dg_exc/dt, dg_exc/dt
+  // d dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-      + node.P_.n_ASCurrents_() - 1;
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
     f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
     f[ S::G_SYN + j ] =
@@ -143,8 +128,8 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::glif_cond::Parameters_::Parameters_()
-  : E_L_( -78.85 )            // in mV
-  , G_( 9.43 )                // in nS
+  : G_( 9.43 )                // in nS
+  , E_L_( -78.85 )            // in mV
   , th_inf_( 27.17 )          // in mv, rel to E_L_, 51.68 - E_L_
   , C_m_( 58.72 )             // in pF
   , t_ref_( 3.75 )            // in ms
@@ -159,8 +144,8 @@ nest::glif_cond::Parameters_::Parameters_()
   , k_( std::vector< double >{ 0.003, 0.1 } )            // in 1/ms
   , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
   , r_( std::vector< double >( 2, 1.0 ) )                // deterministic
-  , tau_syn_( 1, 2.0 )                                   // in ms
-  , E_rev_( 1, -78.85 )                                  // mV
+  , tau_syn_( std::vector< double >{ 0.2, 2.0 } )        // in ms
+  , E_rev_( std::vector< double >{ 0.0, -85.0 } )        // in mV
   , has_connections_( false )
   , glif_model_( "lif" )
 {
@@ -172,9 +157,9 @@ nest::glif_cond::State_::State_( const Parameters_& p )
 
 {
   y_[ V_M ] = 0.0; // initialize to membrane potential
-  for ( std::size_t a = 0; a < p.n_ASCurrents_(); ++a )
+  for ( std::size_t a = 0; a < ASCurrents_.size(); ++a )
   {
-    y_[ ASC + a ] = p.asc_init_[ a ];
+    ASCurrents_[ a ] = p.asc_init_[ a ];
   }
 }
 
@@ -363,22 +348,20 @@ void
 nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] + p.E_L_ );
+  def< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
 
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
 
   for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-                - p.n_ASCurrents_() )
+        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
               / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back(
-      y_[ State_::DG_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i
-                             + p.n_ASCurrents_() - 1 ) ] );
-    g->push_back(
-      y_[ State_::G_SYN + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i
-                            + p.n_ASCurrents_() - 1 ) ] );
+    dg->push_back( y_[ State_::DG_SYN
+      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
+    g->push_back( y_[ State_::G_SYN
+      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
@@ -398,6 +381,8 @@ nest::glif_cond::State_::set( const DictionaryDatum& d,
   {
     y_[ V_M ] -= delta_EL;
   }
+
+  updateValue< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
 }
 
 nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
@@ -512,7 +497,7 @@ nest::glif_cond::calibrate()
 
   V_.CondInitialValues_.resize( P_.n_receptors_() );
   B_.spikes_.resize( P_.n_receptors_() );
-  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + P_.n_ASCurrents_()
+  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
       + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
     0.0 );
 
@@ -565,7 +550,6 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
   double spike_component = 0.0;
   double voltage_component = 0.0;
   double th_old = S_.threshold_;
-
   for ( long lag = from; lag < to; ++lag )
   {
     // exact solution of dynamics of spike component of threshold for glif2/4/5
@@ -583,9 +567,11 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
     // for glif3/4/5 models with "ASC"
     if ( model_type == 3 || model_type == 4 || model_type == 5 )
     {
-      for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
+      for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
       {
-        S_.ASCurrents_sum_ += S_.y_[ State_::ASC + a ];
+        S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+        S_.ASCurrents_[ a ] =
+          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
       }
     }
 
@@ -631,10 +617,11 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
         // Reset ASC_currents for glif3/4/5 models with "ASC"
         if ( model_type == 3 || model_type == 4 || model_type == 5 )
         {
-          for ( std::size_t a = 0; a < P_.n_ASCurrents_(); ++a )
+          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
           {
-            S_.y_[ State_::ASC + a ] =
-              P_.asc_amps_[ a ] + S_.y_[ State_::ASC + a ];
+            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
+              + S_.ASCurrents_[ a ] * P_.r_[ a ]
+                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
           }
         }
 
@@ -720,12 +707,10 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
     {
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
-      S_.y_[ State_::DG_SYN + P_.n_ASCurrents_() - 1
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spikes_[ i ].get_value( lag )
+      const size_t jjj = i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      S_.y_[ State_::DG_SYN + jjj ] += B_.spikes_[ i ].get_value( lag )
         * V_.CondInitialValues_[ i ]; // add incoming spike
     }
-
     // Update any external currents
     B_.I_stim_ = B_.currents_.get_value( lag );
 

@@ -196,9 +196,9 @@ private:
 
   struct Parameters_
   {
-    double th_inf_;  // infinity threshold in mV
     double G_;       // membrane conductance in nS
     double E_L_;     // resting potential in mV
+    double th_inf_;  // infinity threshold in mV
     double C_m_;     // capacitance in pF
     double t_ref_;   // refractory time in ms
     double V_reset_; // Membrane voltage following spike in mV
@@ -211,7 +211,6 @@ private:
                              // component of the threshold in 1/ms
     double b_voltage_;       // inverse of which is the time constant of the
     // voltage-dependent component of the threshold in 1/ms
-
     std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
     std::vector< double > k_;        // predefined time scale in 1/ms
     std::vector< double > asc_amps_; // in pA
@@ -224,8 +223,7 @@ private:
 
     model_type glif_model_;
 
-    size_t n_receptors_() const;  //!< Returns the size of tau_syn_
-    size_t n_ASCurrents_() const; //!< Returns the size of after spike currents
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
     Parameters_();
 
@@ -236,15 +234,16 @@ private:
 
   struct State_
   {
-    double V_m_;            // membrane potential in mV
-    double ASCurrents_sum_; // in pA
-    double threshold_;      // voltage threshold in mV
+    double V_m_;                       // membrane potential in mV
+    std::vector< double > ASCurrents_; // after-spike currents in pA
+    double ASCurrents_sum_;            // in pA
+    double threshold_;                 // voltage threshold in mV
 
     //! Symbolic indices to the elements of the state vector y
+    // repeat DG_SYN, G_SYN if more receptors
     enum StateVecElems
     {
       V_M = 0,
-      ASC,
       DG_SYN,
       G_SYN,
       STATE_VECTOR_MIN_SIZE
@@ -334,6 +333,12 @@ private:
     }
   }
 
+  double
+  get_ASCurrents_sum_() const
+  {
+    return S_.ASCurrents_sum_;
+  }
+
   Parameters_ P_;
   State_ S_;
   Variables_ V_;
@@ -350,11 +355,6 @@ nest::glif_cond::Parameters_::n_receptors_() const
   return tau_syn_.size();
 }
 
-inline size_t
-nest::glif_cond::Parameters_::n_ASCurrents_() const
-{
-  return k_.size();
-}
 
 inline nest::port
 nest::glif_cond::send_test_event( nest::Node& target,

@@ -56,7 +56,7 @@ void
 RecordablesMap< nest::glif_psc >::create()
 {
   insert_( names::V_m, &nest::glif_psc::get_V_m_ );
-  insert_( Name( "AScurrents_sum" ), &nest::glif_psc::get_AScurrents_sum_ );
+  insert_( names::ASCurrents_sum, &nest::glif_psc::get_ASCurrents_sum_ );
   insert_( names::I_syn, &nest::glif_psc::get_I_syn_ );
 }
 }
@@ -66,8 +66,8 @@ RecordablesMap< nest::glif_psc >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::Parameters_::Parameters_()
-  : E_L_( -78.85 )            // in mV
-  , G_( 9.43 )                // in nS
+  : G_( 9.43 )                // in nS
+  , E_L_( -78.85 )            // in mV
   , th_inf_( 27.17 )          // in mv, rel to E_L_, 51.68 - E_L_
   , C_m_( 58.72 )             // in pF
   , t_ref_( 3.75 )            // in ms
@@ -89,10 +89,9 @@ nest::glif_psc::Parameters_::Parameters_()
 }
 
 nest::glif_psc::State_::State_( const Parameters_& p )
-  : U_( 0.0 )                                      // in mV
-  , ASCurrents_( std::vector< double >( 2, 0.0 ) ) // in pA
-  , threshold_( -51.68 - p.E_L_ )                  // in mV
-  , I_( 0.0 )                                      // in pA
+  : U_( 0.0 )                     // in mV
+  , threshold_( -51.68 - p.E_L_ ) // in mV
+  , I_( 0.0 )                     // in pA
 {
   y1_.clear();
   y2_.clear();
@@ -254,7 +253,6 @@ nest::glif_psc::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   double delta_EL )
 {
-  // updateValue< double >( d, names::V_m, V_m_ );
   if ( updateValue< double >( d, names::V_m, U_ ) )
   {
     U_ -= p.E_L_;

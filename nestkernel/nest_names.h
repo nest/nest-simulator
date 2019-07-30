@@ -86,6 +86,7 @@ extern const Name archiver_length;
 extern const Name asc_amps;
 extern const Name asc_init;
 extern const Name ASCurrents;
+extern const Name ASCurrents_sum;
 extern const Name autapses;
 extern const Name available;
 

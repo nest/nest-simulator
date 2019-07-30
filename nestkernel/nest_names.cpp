@@ -65,6 +65,7 @@ const Name archiver_length( "archiver_length" );
 const Name asc_amps( "asc_amps" );
 const Name asc_init( "asc_init" );
 const Name ASCurrents( "ASCurrents" );
+const Name ASCurrents_sum( "ASCurrents_sum" );
 const Name autapses( "autapses" );
 const Name available( "available" );
 

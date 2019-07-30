@@ -174,13 +174,12 @@ private:
 
   struct Parameters_
   {
-    double th_inf_;  // infinity threshold in mV
     double G_;       // membrane conductance in nS
     double E_L_;     // resting potential in mV
+    double th_inf_;  // infinity threshold in mV
     double C_m_;     // capacitance in pF
     double t_ref_;   // refractory time in ms
     double V_reset_; // Membrane voltage following spike in mV
-
     double a_spike_; // threshold additive constant following reset in mV
     double b_spike_; // spike induced threshold in 1/ms
     double voltage_reset_a_; // voltage fraction following reset coefficient
@@ -189,7 +188,6 @@ private:
                              // component of the threshold in 1/ms
     double b_voltage_;       // inverse of which is the time constant of the
     // voltage-dependent component of the threshold in 1/ms
-
     std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
     std::vector< double > k_;        // predefined time scale in 1/ms
     std::vector< double > asc_amps_; // in pA
@@ -199,9 +197,9 @@ private:
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
-
     model_type glif_model_;
+
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
     Parameters_();
 
@@ -273,7 +271,7 @@ private:
   }
 
   double
-  get_AScurrents_sum_() const
+  get_ASCurrents_sum_() const
   {
     // return S_.ASCurrents_[ 0 ];
     return S_.ASCurrents_sum_;

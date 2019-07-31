@@ -1,100 +1,206 @@
-Installation Instructions
-==========================
+NEST Installation Instructions
+================================
 
 Standard Installation Instructions
 ------------------------------------
 
-**These intallation instructions should work for most of our users, who do not  need
-special configurations for their systems.**
-
+**These installation instructions should work for most of our users, who do not need
+custom configurations for their systems. If you want to compile NEST from source, see
+section** :ref:`advanced_install`.
 
 .. tabs::
 
-   .. tab:: Linux
 
-     .. code-block:: bash
+   .. tab:: Ubuntu PPA
 
-       sudo add-apt-repository ppa:nest-simulator/nest
-       sudo apt-get update
-       sudo apt install nest
+       Install NEST via the PPA repository.
 
-   .. tab:: MacOS
+       1. Add the PPA repository for NEST and update apt:
 
        .. code-block:: bash
 
-           brew tap brewsci/science
-           brew install nest
+           sudo add-apt-repository ppa:nest-simulator/nest
+           sudo apt-get update
 
-       Options have to be appended, so for example, to install NEST with PyNEST run::
+       2. Install NEST:
 
-           brew install nest --with-python
+       .. code-block:: bash
+
+           sudo apt-get install nest
+
+   .. tab:: Docker (Linux/macOS)
 
 
-       *  To install homebrew, follow the instructions at `brew.sh <http://brew.sh/>`_
+       Docker provides an isolated container to run applications. The NEST Docker container includes a complete install
+       of NEST and is set up so you can create, modify, and run Juptyer Notebooks and save them on your host machine.
+       (See the Note below for alternative ways to use the Docker container.)
+
+       If you do not have Docker installed, follow the Docker installation instructions for your system
+       here: https://docs.docker.com/install/.
+
+       If you are using **Linux**, we **strongly recommend** you also create a Docker group to manage
+       Docker as a non-root user. See instructions on the Docker website: https://docs.docker.com/install/linux/linux-postinstall/
+
+
+       1. Create a directory or change into a directory that you want to use for your Jupyter Notebooks.
+
+       .. code-block:: bash
+
+           mkdir my_nest_scripts
+           cd my_nest_scripts
+
+       2. Run the Docker container. Replace the ``<version>`` with one of the latest NEST versions (e.g., ``2.18.0``) or use ``latest`` for the
+          most recent build from the source code.
+
+       .. code-block:: bash
+
+           docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
+
+
+       3. Once completed, a link to a Jupyter Notebook will be generated, as shown below. You can then copy and paste the link into your browser.
+
+           .. image:: ../../_static/img/docker_link.png
+              :align: center
+              :width: 1000px
+
+
+       4. You can now use the Jupyter Notebook as you normally would. Anything saved in the Notebook will be placed in the directory you started the Notebook from.
+
+       5. You can shutdown the Notebook in the terminal by typing :kbd:`Ctl-c` twice.
+          Once the Notebook is shutdown the container running NEST is removed.
+
+
+       .. note::
+
+           You can check for updates to the Docker build by typing:
+
+           .. code-block:: bash
+
+                docker pull nestsim/nest:<version>
+
+       .. note::
+
+          You can also create an instance of a terminal within the container itself and, for example, run Python scripts.
+
+          .. code-block::
+
+              docker run --rm -it -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> /bin/bash
+
+          See the `README <https://github.com/nest/nest-docker>`_ to find out more, but note some functionality, such as DISPLAY, will not be available.
+
+   .. tab:: Conda (Linux/macOS)
+
+       1. Create your conda environment and install NEST. We recommend that you **create a dedicated
+          environment for NEST**, which should ensure there are no conflicts with previously
+          installed packages.
+
+       .. pull-quote::
+
+          We strongly recommend that you **install all programs** you'll need,
+          (such as ``ipython`` or ``jupyter-lab``) in the environment (ENVNAME) **at the same time**, by **appending them to the command below**.
+
+          Installing packages later may override previously installed dependencies and potentially break packages!
+          See `managing environments in the Conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ for more information.
+
+       WITHOUT openmpi:
+
+       .. code-block:: sh
+
+          conda create --name ENVNAME -c conda-forge nest-simulator python
+
+       WITH openmpi:
+
+       .. code-block:: sh
+
+          conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*  python
+
+       Where the syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
+
+
+       2. Activate your environment:
+
+       .. code-block:: sh
+
+          conda activate ENVNAME
 
    .. tab:: Windows
 
        We don't support NEST natively on Windows, but you can run NEST in a virtual machine.
 
-       :doc:`Download the live media here <livemedia>`.
-
-   .. tab:: Conda for Linux or MacOS
-
-       If you prefer using conda environments, we also have a :doc:`conda-forge package <conda_install>`
+       :ref:`Download the live media here <download_livemedia>`.
 
 
 
-**Once NEST is installed you can run it in Python**::
+
+**Once NEST is installed, you can run it in Python, IPython, or Jupyter Notebook**::
 
      python
      import nest
+
+.. note::
+
+    If you get ImportError: No module named nest after running ``python``.  Try to run ``python3`` instead.
 
 **or as a stand alone application**::
 
      nest
 
-Now let's create your first network!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If installation was successful, you should see the NEST splash screen in the terminal:
+
+.. figure:: ../_static/img/import_nest.png
+   :scale: 50%
+   :alt: import nest
+
+
+**Installation is now complete!**  See the :doc:`troubleshooting section <../troubleshooting>`, if it didn't work.
+
+
+:doc:`Now we can start creating simulations! <../getting_started>`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. seealso::
+
+    * :doc:`PyNEST tutorials <../tutorials/index>`
+
+    * :doc:`Example networks <../examples/index>`
+
 
 ----
+
+.. _advanced_install:
 
 Advanced Installation Instructions
 -----------------------------------
 
-**If you need special configuration options or want to compile NEST yourselves, follow
+**If you need special configuration options or want to compile NEST yourself, follow
 these instructions.**
 
 
 .. tabs::
 
-   .. tab:: Linux
+   .. tab::  Ubuntu/Debian
 
-       Download source code for the  `current release NEST 2.18.0 <https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz>`_
+       Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz>`_.
 
-       Follow instructions for :doc:`linux_install`
+       Follow instructions for :doc:`linux_install` and take a look at our :doc:`install_options`.
+
 
    .. tab:: GitHub
 
-       Get the latest developer version
-
-     .. note::
-
-         The developer version should only be used if you really know what you're doing!
-
-     .. code-block:: bash
-
-         mkdir nest-master
-         cd nest-master
-         git clone https://nest/nest-simulator.git
+       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on `GitHub workflows here <https://nest.github.io/nest-simulator/>`_).
 
 
-   .. tab:: MacOS
+   .. tab:: macOS
 
-       For further options on installing NEST on MacOS, see :ref:`mac_manual` for Macs.
+       For further options on installing NEST on macOS, see :ref:`mac_manual` for Macs.
 
-   .. tab:: HPC systems?
 
-       :doc:`hpc_install`
+   .. tab:: HPC systems
+
+       :doc:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
+       Please :doc:`contact us <../community>` if you need help with your system.
+
 
 .. toctree::
    :hidden:
@@ -107,8 +213,9 @@ these instructions.**
    install_options
 
 
-.. note:: These installation instructions are for **NEST 2.12 and later** as well as the most recent version obtained from `GitHub <https://github.com/nest/nest-simulator>`_.
- Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
- up-to-date with most recent version of NEST. We cannot support out-dated versions.
+.. note::
+
+    Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
+    up-to-date with most recent version of NEST. We cannot support out-dated versions.
 
 

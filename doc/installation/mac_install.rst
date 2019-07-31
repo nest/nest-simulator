@@ -7,6 +7,10 @@ On the Mac, you can install NEST either via Homebrew or manually. If you want to
 Installation via Homebrew
 --------------------------
 
+.. note::
+
+    Note that the homebrew package is not updated with the latest NEST version.
+
 The easiest way to install NEST on a Mac is to install it via the Homebrew package manager:
 
 *  To install homebrew, follow the instructions at `brew.sh <http://brew.sh/>`_

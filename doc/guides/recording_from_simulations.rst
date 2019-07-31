@@ -222,6 +222,24 @@ property `time_in_steps`. With the default setting (*false*), the
 
 
 
+After one has simulated a little, the ``events`` entry of the
+multimeter status dictionary will contain one numpy array of data for
+each recordable.
+
+   value. If it is set to *true*, the field *times* contains the time in integer mudepends
+   on the setting of the property `time_in_steps`.
+
+The data is added to vectors, made available in a sub-dictionary of
+the recorder's status dictionary called ``events``. It contains the
+recorded data in the form of vectors. 
+
+
+. The interpretation of the field `time` depends on the value of the
+property `time_in_steps`. With the default setting (*false*), the
+*times* field contains the simulation time in ms as a floating point
+
+
+
  If set to *false* (which is the default), time is
 written as one floating point number representing the simulation time
 in ms. If `time_in_steps` is *true*, the time of the event is written
@@ -231,7 +249,6 @@ floating point offset in ms from the next grid point.
    value. If it is set to *true*, the field *times* contains the time in integer mudepends
    on the setting of the property `time_in_steps`.
 
-   
 Parameter summary
 +++++++++++++++++
 

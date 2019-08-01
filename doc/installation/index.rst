@@ -106,13 +106,13 @@ section** :ref:`advanced_install`.
 
        .. code-block:: sh
 
-          conda create --name ENVNAME -c conda-forge nest-simulator python
+          conda create --name ENVNAME -c conda-forge nest-simulator
 
        WITH openmpi:
 
        .. code-block:: sh
 
-          conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*  python
+          conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
 
        Where the syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
 

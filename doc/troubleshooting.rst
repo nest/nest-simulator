@@ -1,6 +1,7 @@
-Frequently Asked Questions
+Troubleshooting
 ==============================
 
+Here you can find some tips to try to find out why your installation of NEST didn't work.
 
 
 1. CMAKE error says a <package> was not found or <package> is too old
@@ -28,20 +29,21 @@ required dependencies.*
 
 **If the error still persists**, you may have more than one installation of the <package>.  A conflict may occur between different package binaries:
 Your system may prefentially choose a system-wide installation of a package (e.g., /usr/bin/<package>), rather than a
-local environment installation (e.g., /home/user/ENV/bin).
+local environment installation (e.g., /home/user/ENV/bin/<package>).
 
 
 1. Determine the path and version of the <package>:
 
 
-``which <package>``
+which <package>
     searches the path of executables set in the $PATH environment variable. It will tell you the path to the <package> binary that is being used in the current environment.
 
-``echo $PATH``
-    shows the complete list of directories that your system looks in to run executables (binary files).
+
+type -a <package>
+    shows the complete list of directories that your sytem found the binary file.
     The first result should be the location to your active environment.
 
-``<package> --version``
+<package> --version
     will tell you the version of the <package> binary.
 
 Here is an example,
@@ -50,13 +52,32 @@ Here is an example,
 
     which python
 
-    /usr/local/bin/python
+The terminal will display the path to the binary it found:
+
+.. code-block:: bash
+
+    /home/user/ENVNAME/bin/python
+
+.. code-block:: bash
+
+    type -a python
+
+The terminal will list the paths it found to the package binaries:
+
+.. code-block:: bash
+
+    python is /home/user/ENVNAME/bin/python
+    python is /usr/bin/python
 
 .. code-block:: bash
 
     python --version
 
-    Python 2.7.15+
+The terminal will display the version number:
+
+.. code-block:: bash
+
+    Python 3.6.5
 
 
 

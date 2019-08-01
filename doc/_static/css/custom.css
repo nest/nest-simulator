@@ -120,8 +120,9 @@ code.descclassname {
 }
 
 .rst-content dl:not(.docutils) dt {
-    background: none;
-    border-top: none;
+    background: #ff663336;
+    border-top: solid 3px #ff6633;
+    color: black;
 }
 
 .rst-content .pull-quote {

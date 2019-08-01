@@ -120,6 +120,8 @@ for details about neuron update in continuous time and the
 :doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
 
+.. _stepped_simulations:
+
 Splitting a simulation into multiple intervals
 ----------------------------------------------
 

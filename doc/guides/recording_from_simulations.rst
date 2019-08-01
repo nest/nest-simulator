@@ -1,6 +1,16 @@
 Recording from simulations
 ==========================
 
+.. note::
+   - What are the conventions for writing
+      - model names (so that they are linked)
+      - PyNEST commands (so that they are linked)
+      - model property names
+      - model property values
+   - Do we directly address the user or keep it more passive and indirect?
+   - How to include file content into files?
+
+
 *Recording devices* (or *recorders*, in short) are used to sample or
 collect observable quantities like potentials, conductances or spikes
 from neurons and synapses.
@@ -37,44 +47,43 @@ temporal aspects of the simulation loop.
 Common recorder properties
 --------------------------
 
-All recorders two common properties that can be set using
+All recorders have a set of common properties that can be set using
 ``SetDefaults`` on the model class or ``SetStatus`` on a device
 instance:
 
 `record_to`
-  A string (default: ``"memory"``) containing the name of the recording
+  A string (default: *"memory"*) containing the name of the recording
   backend where to write data to. An empty string turns all recording
   of individual events off.
 
 `label`
-  A string (default: ``""``) specifying an arbitrary textual label for the
-  device.  Recording backends might use the label to generate device
-  specific identifiers like filenames and such.
+  A string (default: *""*) specifying an arbitrary textual label for
+  the device.  Recording backends might use the label to generate
+  device specific identifiers like filenames and such.
 
-Windowing
-#########
+.. note::
+   **WORK IN PROGRESS**
+   
+   Recording devices share the start, stop, and origin parameters global
+   to devices. Start and stop have the following meaning for stimulating
+   devices (origin is just a global offset):
 
-Recording devices share the start, stop, and origin parameters global
-to devices. Start and stop have the following meaning for stimulating
-devices (origin is just a global offset):
+   - Collectors collect all events with timestamps T that fulfill
 
-  
-- Collectors collect all events with timestamps T that fulfill
+     ::
 
-  ::
+	start < T <= stop.
 
-     start < T <= stop.
- 
-  Note that events with timestamp T == start are NOT recorded.
-  
-- Sampling devices sample at times t = nh with
+     Note that events with timestamp T == start are NOT recorded.
 
-  ::
+   - Sampling devices sample at times t = nh with
 
-     start < t <= stop
-     (t-start) mod interval == 0
+     ::
 
-  
+	start < t <= stop
+	(t-start) mod interval == 0
+
+
 Sampling continuous quantities from neurons
 -------------------------------------------
 
@@ -87,8 +96,8 @@ the user.
 
 ::
 
-   In [0]: nest.GetDefaults('iaf_cond_alpha')['recordables']
-   Out[0]: ['g_ex', 'g_in', 't_ref_remaining', 'V_m']
+   >>> nest.GetDefaults('iaf_cond_alpha')['recordables']
+   ['g_ex', 'g_in', 't_ref_remaining', 'V_m']
 
 The ``record_from`` property of a ``multimeter`` (a list) can be set
 to the name(s) of one or more of these recordables to have them
@@ -96,7 +105,7 @@ sampled during simulation.
 
 ::
 
-   In[1]: mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
+   >>> mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
 
 The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter``'s parameter ``interval``.  The default value
@@ -105,14 +114,14 @@ of 1 ms can be changed by supplying it either in the call to
 
 ::
 
-   In[2]: nest.SetStatus(mm, 'interval': 0.1})
+   >>> nest.SetStatus(mm, 'interval': 0.1})
 
 The recording interval must be greater than or equal to the
 :doc:`simulation resolution <running_simulations>`, which defaults to
 0.1 ms.
 
 .. warning::
-   
+
    The set of variables to record from and the recording interval must
    be set **before** the ``multimeter`` is connected to any neuron.
    These properties cannot be changed afterwards.
@@ -122,8 +131,8 @@ it should record from by using the standard ``Connect`` routine.
 
 ::
 
-   In[3]: neurons = nest.Create("iaf_psc_alpha", 100)
-   In[4]: nest.Connect(mm, neurons)
+   >>> neurons = nest.Create('iaf_psc_alpha', 100)
+   >>> nest.Connect(mm, neurons)
 
 To learn more about possible connection patterns and other options
 when using ``Connect``, see the guide on :doc:`connection management
@@ -158,8 +167,9 @@ connection weight and delay are ignored by the spike detector.
 
 ::
 
-   In[5]: sd = nest.Create("spike_detector")
-   In[6]: nest.Connect(neurons, sd)
+   >>> neurons = nest.Create('iaf_psc_alpha', 5)
+   >>> sd = nest.Create('spike_detector')
+   >>> nest.Connect(neurons, sd)
 
 The call to ``Connect`` in the example above would fail, if the
 *neurons* would not be sending ``SpikeEvent``s during a
@@ -174,26 +184,48 @@ simulation. Likewise, a reversed connection direction (i.e. connecting
 Correlation detector
 ####################
 
-**TODO: include the model documentation here**
+**TODO: include model documentation here**
 
 Weight recorder
 ###############
 
-**TODO: include the model documentation here**
+**TODO: include model documentation here**
 
-  
+
 .. _recording_backends:
 
 Where does data end up?
 -----------------------
 
-The way, data is processed after the recording device sampled or
+The way in which data is processed after a recording device sampled or
 collected it is the responsibility of the *recording backends*.
 
-Theoretically, recording backends can do with the data whatever their
-author wants them to do. The ones included in NEST can collect data in
-memory, display it on the terminal, write it to file, or stream it out
-to other applications.
+Theoretically, recording backends are not restricted in what they do
+with the data. The ones included in NEST can collect data in memory,
+display it on the terminal, write it to file, or stream it out to
+other applications.
+
+To specify the recording backend for a given recording device, the
+property ``record_to`` of the latter has to be set to the name of the
+recording backend to be used. This can either happen already in the
+call to ``Create`` or by using ``SetStatus`` on the model instance.
+
+::
+
+   >>> sd = nest.Create('spike_detector', params={'record_to': 'ascii'})
+
+Each recording backend provides a different set of parameters
+(explained in the backend documentation below) that will be included
+in the model status dictionary once the backend is set. This means
+that they can only be reviewed and changed *after* the backend has
+been selected.
+
+.. note::
+   Even though parameters of different recording backends may have the
+   same name, they are separate entities internally. This means that a
+   value that was set for a paramater of a recording device when a
+   specific backend was selected has to be *set again* on the new
+   backend, if the backend is changed later on.
 
 .. _memory_backend:
 
@@ -201,92 +233,89 @@ Store data in main memory
 #########################
 
 The ``memory`` backend is the default for all recording devices as it
-does not require a setup of data paths or permissions and allows to
-read data out in a convenient fashion.
+does not require any additional setup of data paths or filesystem
+permissions and allows a convenient readout of data by the user after
+simulation.
 
-After one has simulated a little, the ``events`` entry of the
-multimeter status dictionary will contain one numpy array of data for
-each recordable.
+When a recording device sends data to the ``memory`` backend, it is
+internally stored in efficient vectors, that are made in the devices'
+status dictionary under the key *events*.
 
-The data is added to vectors, made available in a sub-dictionary of
-the recorder's status dictionary called ``events``. It contains the
-recorded data in the form of vectors. 
+The *events* dictionary always contains the global IDs of the source
+nodes of the recorded data in the field *sender*. It also always
+contains the time of the recording. Depending on the setting of the
+property `time_in_steps`, this time can be stored in two different
+formats:
 
+* if `time_in_steps` is *false* (which is the default) the time is
+  stored as a single floating point number in the field *times*,
+  interpreted as the simulation time in ms
 
-DATA LIFE SPAN
+* if `time_in_steps` is *true*, the time is stored as a pair
+  consisting of the integer number of simulation time steps in units
+  of the simulation resolution in *times* and the negative offset from
+  the next such grid point as a floating point number in ms in
+  *offset*.
 
+All additional data collected or sampled by the recording device is
+contained in the *events* dictionary in arrays named as the recordable
+it came from and with the appropriate data type (either integer or
+floating point).
 
-. The interpretation of the field `time` depends on the value of the
-property `time_in_steps`. With the default setting (*false*), the
-*times* field contains the simulation time in ms as a floating point
+The number of events that have been collected by the ``memory``
+backend can be read out of the *n_events* entry in the status
+dictionary of the recording device.
 
+To delete data from memory between consecutive calls to the ``Run``
+function in the context of :doc:`stepped simulations
+<running_simulations#stepped_simulations>`, the value of *n_events*
+can be set to 0. Other values cannot be set.
 
-
-After one has simulated a little, the ``events`` entry of the
-multimeter status dictionary will contain one numpy array of data for
-each recordable.
-
-   value. If it is set to *true*, the field *times* contains the time in integer mudepends
-   on the setting of the property `time_in_steps`.
-
-The data is added to vectors, made available in a sub-dictionary of
-the recorder's status dictionary called ``events``. It contains the
-recorded data in the form of vectors. 
-
-
-. The interpretation of the field `time` depends on the value of the
-property `time_in_steps`. With the default setting (*false*), the
-*times* field contains the simulation time in ms as a floating point
-
-
-
- If set to *false* (which is the default), time is
-written as one floating point number representing the simulation time
-in ms. If `time_in_steps` is *true*, the time of the event is written
-as a value pair consisting of the integer simulation time step and the
-floating point offset in ms from the next grid point.
-
-   value. If it is set to *true*, the field *times* contains the time in integer mudepends
-   on the setting of the property `time_in_steps`.
+If the data is not deleted manually, it is kept for readout until the
+next call to ``Prepare`` or ``Simulate`` and discared before any new
+data is recorded.
 
 Parameter summary
 +++++++++++++++++
 
 `events`
-  is a dictionary containing the recorded data in the form of one
-  numeric array for each quantity measured. It always has the sender
-  global IDs of recorded events under the key *senders* and the time
-  of the recording, the format of which depends on the setting of
+  A dictionary containing the recorded data in the form of one numeric
+  array for each quantity measured. It always has the sender global
+  IDs of recorded events under the key *senders* and the time of the
+  recording, the format of which depends on the setting of
   `time_in_steps`.
 
 `n_events`
-  is the number of events collected or sampled since the last reset of
-  `n_events`. By setting `n_events` to 0, all spikes recorded so far
+  The number of events collected or sampled since the last reset of
+  `n_events`. By setting `n_events` to 0, all events recorded so far
   will be discarded from memory.
 
 `time_in_steps`
-  is a Boolean (default: *false*) specifying whether to store time in
+  A Boolean (default: *false*) specifying whether to store time in
   steps, i.e. in integer multiples of the simulation resolution (under
   the key *times* of the *events* dictionary) plus a floating point
   number for the negative offset from the next grid point in ms (under
   key *offset*), or just the simulation time in ms under key *times*.
 
 .. _ascii_backend:
-  
+
 Write data to plain text files
 ##############################
 
-The `ascii` recording backend writes collected data to a plain text
-ASCII file. It can be used for small to medium sized simulations,
-where the ease of a simple data format outweights the benefits of
-high-performance output operations.
+The `ascii` recording backend writes collected data persistently to a
+plain text ASCII file. It can be used for small to medium sized
+simulations, where the ease of a simple data format outweights the
+benefits of high-performance output operations.
 
 This backend will open one file per recording device per thread on
 each MPI process. This can entail a very high load on the file system
-in large simulations. In case of scaling problems, the :ref:`SIONlib
+in large simulations. Especially on machines with distributed
+filesystems using this backend can become prohibitively inefficient.
+In case of experiencing such scaling problems, the :ref:`SIONlib
 backend <sionlib_backend>` can be a possible alternative.
 
-Filenames are determined according to the following pattern:
+Filenames of data files are determined according to the following
+pattern:
 
 ::
 
@@ -294,21 +323,25 @@ Filenames are determined according to the following pattern:
 
 The properties `data_path` and `data_prefix` are global kernel
 properties. They can for example be set during repetitive simulation
-protocols to separate the data resulting from indivitual runs. The
+protocols to separate the data originating from indivitual runs. The
 `label` replaces the model name component if it is set to a non-empty
-string. `gid` and `vp` correspond to the global ID and the virtual
+string. `gid` and `vp` denote the zero-padded global ID and virtual
 process of the recorder writing the file. The filename ends in a dot
 and the `file_extension`.
 
 The life of a file starts with the call to ``Prepare`` and ends with
 the call to ``Cleanup``. Data that is produced during successive calls
-to ``Run`` inbetween one pair of ``Prepare`` and ``Cleanup`` calls
-will be written to the same file.
+to ``Run`` inbetween a pair of ``Prepare`` and ``Cleanup`` calls will
+be written to the same file, while the call to ``Run`` will flush all
+data to the file, so it is available for immediate inspection.
 
-In case, a file of the same name already exists, the ``Prepare`` call
-will fail with a corresponding error message, unless the kernel
-property[[link to SetKernelStatus]] `overwrite_files` is set to
-*true*.
+In case, a file of the designated name for a new recording already
+exists, the ``Prepare`` call will fail with a corresponding error
+message. To instead overwrite the old file, the kernel property
+`overwrite_files` can be set to *true* using ``SetKernelStatus``.  An
+alternative way for avoiding name clashes is to re-set the kernel
+properties `data_path` or `data_prefix`, so that another filename is
+chosen.
 
 Data format
 +++++++++++
@@ -324,43 +357,44 @@ values and the recorded integer values.
 
 The format of the time field depends on the value of the property
 `time_in_steps`. If set to *false* (which is the default), time is
-written as one floating point number representing the simulation time
-in ms. If `time_in_steps` is *true*, the time of the event is written
-as a value pair consisting of the integer simulation time step and the
-floating point offset in ms from the next grid point.
+written as a single floating point number representing the simulation
+time in ms. If `time_in_steps` is *true*, the time of the event is
+written as a pair of values consisting of the integer simulation time
+step in units of the simulation resolution and the negative floating
+point offset in ms from the next integer grid point.
 
 .. note::
-
-   The number of decimal places for all decimal numbers in the output
-   can be controlled using the recorder property `precision`.
+   The number of decimal places for all decimal numbers written can be
+   controlled using the recorder property `precision`.
 
 Parameter summary
 +++++++++++++++++
 
 `file_extension`
-  specifies the file name extension, without leading dot. As the exact
-  type of data cannot be known a priori, the default extension is
-  simply *.dat*.
+  A string (default: *"dat"*) that specifies the file name extension,
+  without leading dot. The generic default was chosen, because the
+  exact type of data cannot be known a priori.
 
 `filenames`
-  contains the filenames where data is recorded to. This list has one
-  entry per local thread. This is a read-only property.
+  A list of the filenames where data is recorded to. This list has one
+  entry per local thread and is a read-only property.
 
 `label`
-  replaces the model name component in the filename if it is set to a
-  non-empty string.
+  A string (default: *""*) that replaces the model name component in
+  the filename if it is set.
 
 `precision`
-  controls the number of decimal places used to write decimal numbers
-  to the output file.
+  An integer (default: *3*) that controls the number of decimal places
+  used to write decimal numbers to the output file.
 
 `time_in_steps`
-  A boolean (default: false) specifying whether to write time in
-  steps, i.e. in integer multiples of the resolution and an offset,
-  rather than just in ms.
+  A Boolean (default: *false*) specifying whether to write time in
+  steps, i.e. in integer multiples of the simulation resolution plus a
+  floating point number for the negative offset from the next grid
+  point in ms, or just the simulation time in ms.
 
 .. _screen_backend:
-  
+
 Write data to the terminal
 ##########################
 
@@ -382,7 +416,7 @@ as a value pair consisting of the integer simulation time step and the
 floating point offset in ms from the next grid point.
 
 .. note::
-   
+
    Using this backend for production runs is not recommended, as it
    may produce *huge* amounts of console output and thereby might slow
    down the simulation *considerably*.
@@ -400,20 +434,20 @@ Parameter summary
   rather than just in ms.
 
 .. _sionlib_backend:
-  
+
 Store data to an efficient binary format
 ########################################
 
  (`sionlib`)
 
 .. _arbor_backend:
- 
+
 Stream data to an arbor instance:
 #################################
 
  (`arbor`)
 
 
- 
+
 Writing own recording backends
 ------------------------------

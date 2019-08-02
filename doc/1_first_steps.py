@@ -64,7 +64,7 @@ nest.help('iaf_psc_exp')
 # to extract certain information from a simulation, you need a device which is
 # able to deliver this information. Likewise, if you want to send specific input
 # to the network, you need a device which delivers this input.
-# 
+#
 # Devices have a built-in timer which controls the period they are active. Outside
 # this interval, a device will remain silent. The timer can be configured using
 # the command ``SetStatus``.

@@ -46,7 +46,7 @@ namespace nest
 Weight recorder
 ###############
 
-The weight recorder is a recording device used to record weights from
+The ``weight_recorder`` is a recording device used to record weights from
 synapses. It records the source and target global IDs together with
 the weight of each spike event that travels through the observed
 synapses.
@@ -59,8 +59,16 @@ corresponding source or target global IDs.
 The weight recorder will record weights with full precision from
 neurons emitting precisely timed spikes.
 
-..note:
-  Needs connect example
+::
+
+   wr = nest.Create('weight_recorder')
+   nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
+
+   pre = nest.Create("iaf_psc_alpha", 10)
+   post = nest.Create("iaf_psc_alpha", 10)
+
+   nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+
 
 \endverbatim
 */

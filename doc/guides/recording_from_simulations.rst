@@ -71,7 +71,7 @@ instance:
   the device.  Recording backends might use the label to generate
   device specific identifiers like filenames and such.
 
-`origin`:
+`origin`
   A positive floating point number (default : `0.0`) used as the
   reference time for `start` and `stop`.
   

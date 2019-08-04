@@ -65,11 +65,6 @@ The call to ``Connect`` in the example above would fail, if the
 simulation. Likewise, a reversed connection direction (i.e. connecting
 *sd* to *neurons*) would fail.
 
-.. note::
-   The spike detector records spike times with full precision from
-   neurons emitting :doc:`precisely timed spikes
-   <simulations_with_precise_spike_time>`.
-
 \endverbatim
 */
 

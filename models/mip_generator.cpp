@@ -100,13 +100,15 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::mip_generator()
-    : StimulatingDevice< SpikeEvent > ()
+  : DeviceNode()
+  , device_()
   , P_()
 {
 }
 
 nest::mip_generator::mip_generator( const mip_generator& n )
-  : StimulatingDevice< SpikeEvent > ( n )
+  : DeviceNode( n )
+  , device_( n.device_ )
   , P_( n.P_ ) // also causes deep copy of random nnumber generator
 {
 }
@@ -121,19 +123,19 @@ nest::mip_generator::init_state_( const Node& proto )
 {
   const mip_generator& pr = downcast< mip_generator >( proto );
 
-  StimulatingDevice< SpikeEvent >::init_state( pr );
+  device_.init_state( pr.device_ );
 }
 
 void
 nest::mip_generator::init_buffers_()
 {
-  StimulatingDevice< SpikeEvent >::init_buffers();
+  device_.init_buffers();
 }
 
 void
 nest::mip_generator::calibrate()
 {
-  StimulatingDevice< SpikeEvent >::calibrate();
+  device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -152,7 +154,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not StimulatingDevice< SpikeEvent >::is_active( T ) || P_.rate_ <= 0 )
+    if ( not device_.is_active( T ) || P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }

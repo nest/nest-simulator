@@ -46,6 +46,9 @@
  *  This is a subgroup for devices that modify models (generators, dilutor)
  *  of NEST
  */
+/** @defgroup spike_generator */
+/** @defgroup correlation_detector */
+/** @defgroup weight_recorder */
 /** @defgroup Neurons
  *
  * This module is for the neurons of NEST

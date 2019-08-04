@@ -40,9 +40,7 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup detector
-
-@name weight_recorder
-@short_description Device for detecting single spikes.
+@ingroup weight_recorder
 
 Weight recorder
 ###############
@@ -60,7 +58,8 @@ corresponding source or target global IDs.
 The weight recorder will record weights with full precision from
 neurons emitting precisely timed spikes.
 
-[[Needs connect example]]
+..note:
+  Needs connect example
 
 */
 

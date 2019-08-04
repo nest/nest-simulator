@@ -40,8 +40,10 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup detector
+@ingroup correlation_detector
 
 Correlation detector
+####################
 
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of

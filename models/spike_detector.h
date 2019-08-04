@@ -38,22 +38,36 @@ namespace nest
 
 /** @BeginDocumentation
 @ingroup detector
+@ingroup spike_detector
 
 Spike detector
 ##############
 
 The most universal collector device is the ``spike_detector``. It
 collects and records all *spikes* it receives from neurons that are
-connected to it. The spike detector records spike times with full
-precision from neurons emitting precisely timed spikes. [[Link to
-guide for precise spike timing]]
-
-Each spike event received by the spike detector is immediately handed
-over to the prescribed recording backend for further processing.
+connected to it. Each spike received by the spike detector is
+immediately handed over to the prescribed recording backend for
+further processing.
 
 Any node from which spikes are to be recorded, must be connected to
 the spike detector using the standard ``Connect`` command. The
 connection weight and delay are ignored by the spike detector.
+
+::
+
+   >>> neurons = nest.Create('iaf_psc_alpha', 5)
+   >>> sd = nest.Create('spike_detector')
+   >>> nest.Connect(neurons, sd)
+
+The call to ``Connect`` in the example above would fail, if the
+*neurons* would not be sending ``SpikeEvent``s during a
+simulation. Likewise, a reversed connection direction (i.e. connecting
+*sd* to *neurons*) would fail.
+
+.. note::
+   The spike detector records spike times with full precision from
+   neurons emitting :doc:`precisely timed spikes
+   <simulations_with_precise_spike_time>`.
 
 */
 

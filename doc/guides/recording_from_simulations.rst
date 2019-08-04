@@ -1,16 +1,6 @@
 Recording from simulations
 ==========================
 
-.. note::
-   - What are the conventions for writing
-      - model names (so that they are linked)
-      - PyNEST commands (so that they are linked)
-      - model property names
-      - model property values
-   - Do we directly address the user or keep it more passive and indirect?
-   - How to include file content into files?
-
-
 *Recording devices* (or *recorders*, in short) are used to sample or
 collect observable quantities like potentials, conductances or spikes
 from neurons and synapses.
@@ -44,6 +34,31 @@ temporal aspects of the simulation loop.
    of thread execution, events are not necessarily recorded in
    chronological order.
 
+The time span, a recorder is actually recording, can be specified
+using the additional properties `start` and `stop`, which define
+activation and inactivation times of the device in ms. An additional
+property `origin` is available to shift the recording window by a
+certain amount, which can be useful in simulation protocols with
+repeaded simulations. The follow rules apply:
+
+- Collectors collect all events with timestamps T that fulfill
+  
+  ::
+	
+     start < T <= stop.
+
+  Events with timestamp T == start are not recorded.
+
+
+- Sampling devices sample at times *t = nh* (*h* being the simulation
+  resolution) with
+
+  ::
+
+     start < t <= stop
+     (t-start) mod interval == 0
+
+   
 Common recorder properties
 --------------------------
 
@@ -51,65 +66,56 @@ All recorders have a set of common properties that can be set using
 ``SetDefaults`` on the model class or ``SetStatus`` on a device
 instance:
 
-`record_to`
-  A string (default: *"memory"*) containing the name of the recording
-  backend where to write data to. An empty string turns all recording
-  of individual events off.
-
 `label`
-  A string (default: *""*) specifying an arbitrary textual label for
+  A string (default: `""`) specifying an arbitrary textual label for
   the device.  Recording backends might use the label to generate
   device specific identifiers like filenames and such.
 
-.. note::
-   **WORK IN PROGRESS**
-   
-   Recording devices share the start, stop, and origin parameters global
-   to devices. Start and stop have the following meaning for stimulating
-   devices (origin is just a global offset):
+`origin`:
+  A positive floating point number (default : `0.0`) used as the
+  reference time for `start` and `stop`.
+  
+`record_to`
+  A string (default: `"memory"`) containing the name of the recording
+  backend where to write data to. An empty string turns all recording
+  of individual events off.
 
-   - Collectors collect all events with timestamps T that fulfill
+`start`
+  A positive floating point number (default: `0.0`) specifying the
+  activation time in ms, relative to `origin`.
 
-     ::
-
-	start < T <= stop.
-
-     Note that events with timestamp T == start are NOT recorded.
-
-   - Sampling devices sample at times t = nh with
-
-     ::
-
-	start < t <= stop
-	(t-start) mod interval == 0
+`stop`
+  A floating point number (default: `infinity`) specifying the
+  deactication time in ms, relative to `origin`. The value of `stop`
+  must be greater than or equal to `start`
 
 
 Sampling continuous quantities from neurons
 -------------------------------------------
 
-In most cases, the universal sampling device ``multimeter`` is used to
-record analog values from neurons. Models providing such values expose
-a ``recordables`` property that lists all recordable quantities.  This
-internal property can be inspected using ``GetDefaults`` on the model
-class or ``GetStatus`` on a model instance. It cannot be changed by
-the user.
+Most sampling use cases are covered by the ``multimeter``, which
+allows to record analog values from neurons. Models which have such
+values expose a ``recordables`` property that lists all recordable
+quantities.  This property can be inspected using ``GetDefaults`` on
+the model class or ``GetStatus`` on a model instance. It cannot be
+changed by the user.
 
 ::
 
    >>> nest.GetDefaults('iaf_cond_alpha')['recordables']
    ['g_ex', 'g_in', 't_ref_remaining', 'V_m']
 
-The ``record_from`` property of a ``multimeter`` (a list) can be set
-to the name(s) of one or more of these recordables to have them
-sampled during simulation.
+The ``record_from`` property of a ``multimeter`` (a list, empty by
+default) can be set to contain the name(s) of one or more of these
+recordables to have them sampled during simulation.
 
 ::
 
    >>> mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
 
 The sampling interval for recordings (given in ms) can be controlled
-using the ``multimeter``'s parameter ``interval``.  The default value
-of 1 ms can be changed by supplying it either in the call to
+using the ``multimeter`` parameter `interval`.  The default value of
+1.0 ms can be changed by supplying a new value either in the call to
 ``Create`` or by using ``SetStatus`` on the model instance.
 
 ::
@@ -134,9 +140,9 @@ it should record from by using the standard ``Connect`` routine.
    >>> neurons = nest.Create('iaf_psc_alpha', 100)
    >>> nest.Connect(mm, neurons)
 
-To learn more about possible connection patterns and other options
-when using ``Connect``, see the guide on :doc:`connection management
-<connection_management>`.
+To learn more about possible connection patterns and additional
+options when using ``Connect``, see the guide on :doc:`connection
+management <connection_management>`.
 
 The abbove call to ``Connect`` would fail if the neurons would not
 support the sampling of the values *V_m* and *g_ex*. It would also
@@ -146,50 +152,20 @@ fail if carried out in the wrong direction, i.e. trying to connect the
 .. note::
    To ease the recording of the membrane potential, a pre-configured
    ``multimeter`` is available under the name ``voltmeter``.  Its
-   ``record_from`` property is already set to record the variable
-   ``V_m`` from the neurons it is connected to.
+   `record_from` property is already set to record the variable `V_m`
+   from the neurons it is connected to.
 
 Collect event data from neurons and synapses
 --------------------------------------------
 
-Spike detector
-##############
+.. doxygengroup:: spike_detector
+   :content-only:
 
-The most universal collector device is the ``spike_detector``. It
-collects and records all *spikes* it receives from neurons that are
-connected to it. Each spike received by the spike detector is
-immediately handed over to the prescribed recording backend for
-further processing.
+.. doxygengroup:: correlation_detector
+   :content-only:
 
-Any node from which spikes are to be recorded, must be connected to
-the spike detector using the standard ``Connect`` command. The
-connection weight and delay are ignored by the spike detector.
-
-::
-
-   >>> neurons = nest.Create('iaf_psc_alpha', 5)
-   >>> sd = nest.Create('spike_detector')
-   >>> nest.Connect(neurons, sd)
-
-The call to ``Connect`` in the example above would fail, if the
-*neurons* would not be sending ``SpikeEvent``s during a
-simulation. Likewise, a reversed connection direction (i.e. connecting
-*sd* to *neurons*) would fail.
-
-.. note::
-   The spike detector records spike times with full precision from
-   neurons emitting :doc:`precisely timed spikes
-   <simulations_with_precise_spike_time>`.
-
-Correlation detector
-####################
-
-**TODO: include model documentation here**
-
-Weight recorder
-###############
-
-**TODO: include model documentation here**
+.. doxygengroup:: weight_recorder
+   :content-only:
 
 
 .. _recording_backends:
@@ -197,8 +173,9 @@ Weight recorder
 Where does data end up?
 -----------------------
 
-The way in which data is processed after a recording device sampled or
-collected it is the responsibility of the *recording backends*.
+The way in which data is processed after a recording device has
+sampled or collected it is the responsibility of the *recording
+backends*.
 
 Theoretically, recording backends are not restricted in what they do
 with the data. The ones included in NEST can collect data in memory,
@@ -214,6 +191,11 @@ call to ``Create`` or by using ``SetStatus`` on the model instance.
 
    >>> sd = nest.Create('spike_detector', params={'record_to': 'ascii'})
 
+Storing data in memory using the `memory` backend is the default for
+all recording devices as this does not require any additional setup of
+data paths or filesystem permissions and allows a convenient readout
+of data by the user after simulation.
+   
 Each recording backend provides a different set of parameters
 (explained in the backend documentation below) that will be included
 in the model status dictionary once the backend is set. This means
@@ -232,30 +214,25 @@ been selected.
 Store data in main memory
 #########################
 
-The ``memory`` backend is the default for all recording devices as it
-does not require any additional setup of data paths or filesystem
-permissions and allows a convenient readout of data by the user after
-simulation.
-
 When a recording device sends data to the ``memory`` backend, it is
-internally stored in efficient vectors, that are made in the devices'
-status dictionary under the key *events*.
+internally stored in efficient vectors, that are made available to the
+user level in the devices' status dictionary under the key `events`.
 
-The *events* dictionary always contains the global IDs of the source
-nodes of the recorded data in the field *sender*. It also always
+The `events` dictionary always contains the global IDs of the source
+nodes of the recorded data in the field `sender`. It also always
 contains the time of the recording. Depending on the setting of the
 property `time_in_steps`, this time can be stored in two different
 formats:
 
-* if `time_in_steps` is *false* (which is the default) the time is
-  stored as a single floating point number in the field *times*,
+- if `time_in_steps` is `false` (which is the default) the time is
+  stored as a single floating point number in the field `times`,
   interpreted as the simulation time in ms
 
-* if `time_in_steps` is *true*, the time is stored as a pair
+- if `time_in_steps` is `true`, the time is stored as a pair
   consisting of the integer number of simulation time steps in units
-  of the simulation resolution in *times* and the negative offset from
+  of the simulation resolution in `times` and the negative offset from
   the next such grid point as a floating point number in ms in
-  *offset*.
+  `offset`.
 
 All additional data collected or sampled by the recording device is
 contained in the *events* dictionary in arrays named as the recordable

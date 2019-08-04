@@ -25,7 +25,7 @@
  * And further groups can be included as appropriate.
  * For examples, see the ../models/*.h directory.
  *
- * /
+ */
 /** @defgroup Devices
  *
  *  This module is for the devices of NEST
@@ -41,14 +41,13 @@
  *  This is a subgroup for detector and recorder type devices of NEST
  *
  */
+/** @defgroup Spike_detector */
+/** @defgroup Weight_recorder */
 /** @defgroup generator
  *
  *  This is a subgroup for devices that modify models (generators, dilutor)
  *  of NEST
  */
-/** @defgroup spike_generator */
-/** @defgroup correlation_detector */
-/** @defgroup weight_recorder */
 /** @defgroup Neurons
  *
  * This module is for the neurons of NEST

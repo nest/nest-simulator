@@ -39,8 +39,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
-@ingroup detector
-@ingroup weight_recorder
+@ingroup Weight_recorder
+
+\verbatim embed:rst
 
 Weight recorder
 ###############
@@ -61,6 +62,7 @@ neurons emitting precisely timed spikes.
 ..note:
   Needs connect example
 
+\endverbatim
 */
 
 class weight_recorder : public RecordingDevice

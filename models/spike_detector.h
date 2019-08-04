@@ -37,8 +37,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
-@ingroup detector
-@ingroup spike_detector
+@ingroup Spike_detector
+
+\verbatim embed:rst
 
 Spike detector
 ##############
@@ -69,8 +70,14 @@ simulation. Likewise, a reversed connection direction (i.e. connecting
    neurons emitting :doc:`precisely timed spikes
    <simulations_with_precise_spike_time>`.
 
+\endverbatim
 */
 
+    
+/**
+ * Class spike_detector
+ */
+    
 class spike_detector : public RecordingDevice
 {
 

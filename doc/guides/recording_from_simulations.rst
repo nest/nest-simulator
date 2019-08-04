@@ -158,13 +158,10 @@ fail if carried out in the wrong direction, i.e. trying to connect the
 Collect event data from neurons and synapses
 --------------------------------------------
 
-.. doxygengroup:: spike_detector
+.. doxygengroup:: Spike_detector
    :content-only:
 
-.. doxygengroup:: correlation_detector
-   :content-only:
-
-.. doxygengroup:: weight_recorder
+.. doxygengroup:: Weight_recorder
    :content-only:
 
 

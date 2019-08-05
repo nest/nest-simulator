@@ -40,91 +40,74 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginDocumentation
 
-Name: multimeter - Device to record analog data from neurons.
+Sampling continuous quantities from neurons
+###########################################
 
-Synopsis: multimeter Create
+Most sampling use cases are covered by the ``multimeter``, which
+allows to record analog values from neurons. Models which have such
+values expose a ``recordables`` property that lists all recordable
+quantities.  This property can be inspected using ``GetDefaults`` on
+the model class or ``GetStatus`` on a model instance. It cannot be
+changed by the user.
 
-Description:
+::
 
-A multimeter records a user-defined set of state variables from connected nodes
-to memory, file or stdout.
+   >>> nest.GetDefaults('iaf_cond_alpha')['recordables']
+   ['g_ex', 'g_in', 't_ref_remaining', 'V_m']
 
-The multimeter must be configured with the list of variables to record
-from, otherwise it will not record anything. The /recordables property
-of a neuron model shows which quantities can be recorded with a multimeter.
-A single multimeter should only record from neurons of the same basic
-type (e.g. /iaf_cond_alpha and any user-defined models derived from it
-using CopyModel). If the defaults or status dictionary of a model neuron
-does not contain a /recordables entry, it is not ready for use with
-multimeter.
+The ``record_from`` property of a ``multimeter`` (a list, empty by
+default) can be set to contain the name(s) of one or more of these
+recordables to have them sampled during simulation.
 
-By default, multimeters record values once per ms. Set the parameter /interval
-to change this. The recording interval cannot be smaller than the resolution.
+::
 
-Results are returned in the /events entry of the status dictionary. For
-each recorded quantity, a vector of doubles is returned. The vector has the
-same name as the /recordable.
+   >>> mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
 
-Remarks:
-- The set of variables to record and the recording interval must be set
-  BEFORE the multimeter is connected to any node, and cannot be changed
-  afterwards.
-- A multimeter cannot be frozen.
+The sampling interval for recordings (given in ms) can be controlled
+using the ``multimeter`` parameter `interval`.  The default value of
+1.0 ms can be changed by supplying a new value either in the call to
+``Create`` or by using ``SetStatus`` on the model instance.
 
-@note If you want to pick up values at every time stamp,
-  you must set the interval to the simulation resolution.
-@see UniversalDataLogger
+::
 
+   >>> nest.SetStatus(mm, 'interval': 0.1})
 
-Parameters:
+The recording interval must be greater than or equal to the
+:doc:`simulation resolution <running_simulations>`, which defaults to
+0.1 ms.
 
-The following parameters can be set in the status dictionary:
+.. warning::
 
-\verbatim embed:rst
-============  ======  ===================================================
- interval     ms      Recording interval
- record_from  array   Array containing the names of variables to record
-                      from, obtained from the /recordables entry of the
-                      model from which one wants to record
-============  ======  ===================================================
-\endverbatim
+   The set of variables to record from and the recording interval must
+   be set **before** the ``multimeter`` is connected to any neuron.
+   These properties cannot be changed afterwards.
 
-Examples:
+After configuration, a ``multimeter`` can be connected to the neurons
+it should record from by using the standard ``Connect`` routine.
 
-    SLI ] /iaf_cond_alpha Create /n Set
-    SLI ] n /recordables get ==
-    [/V_m /g_ex /g_in /t_ref_remaining]
-    SLI ] /multimeter Create /mm Set
-    SLI ] mm << /interval 0.5 /record_from [/V_m /g_ex /g_in] >> SetStatus
-    SLI ] mm n Connect
-    SLI ] 10 Simulate
-    SLI ] mm /events get info
-    --------------------------------------------------
-    Name                     Type                Value
-    --------------------------------------------------
-    g_ex                     doublevectortype    <doublevectortype>
-    g_in                     doublevectortype    <doublevectortype>
-    senders                  intvectortype       <intvectortype>
-    times                    doublevectortype    <doublevectortype>
-    t_ref_remaining          doublevectortype    <doublevectortype>
-    V_m                      doublevectortype    <doublevectortype>
-    rate                     doublevectortype    <doublevectortype>
-    --------------------------------------------------
-    Total number of entries: 6
+::
 
+   >>> neurons = nest.Create('iaf_psc_alpha', 100)
+   >>> nest.Connect(mm, neurons)
 
-Sends: DataLoggingRequest
+To learn more about possible connection patterns and additional
+options when using ``Connect``, see the guide on :doc:`connection
+management <connection_management>`.
 
-FirstVersion: 2009-04-01
+The abbove call to ``Connect`` would fail if the neurons would not
+support the sampling of the values *V_m* and *g_ex*. It would also
+fail if carried out in the wrong direction, i.e. trying to connect the
+*neurons* to *mm*.
 
-Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
+.. note::
+   To ease the recording of the membrane potential, a pre-configured
+   ``multimeter`` is available under the name ``voltmeter``.  Its
+   `record_from` property is already set to record the variable `V_m`
+   from the neurons it is connected to.
 
-SeeAlso: Device, RecordingDevice
-*/
+EndDocumentation */
 
 class Multimeter : public RecordingDevice
 {

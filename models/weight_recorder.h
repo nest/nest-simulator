@@ -38,13 +38,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Weight_recorder
+/* BeginDocumentation
 
-\verbatim embed:rst
-
-Weight recorder
-###############
+Recording weights from synapses
+###############################
 
 The ``weight_recorder`` is a recording device used to record weights from
 synapses. It records the source and target global IDs together with
@@ -69,9 +66,7 @@ neurons emitting precisely timed spikes.
 
    nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
 
-
-\endverbatim
-*/
+EndDocumentation */
 
 class weight_recorder : public RecordingDevice
 {

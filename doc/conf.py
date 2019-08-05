@@ -301,3 +301,22 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
+
+models_with_documentation = (
+    "multimeter",
+    "spike_detector",
+    "weight_recorder",
+)
+
+import re
+pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
+for model in models_with_documentation:
+    with open("../models/%s.h" % model) as f:
+        match = re.search(pattern, f.read())
+        if match:
+            rstfile = open("models/%s.rst" % model, "w")
+            rstfile.write(match.group(1))
+            rstfile.close()
+            print("Wrote model documentation for model " + model)
+        else:
+            print("No documentation found for model " + model)

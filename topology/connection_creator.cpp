@@ -28,6 +28,7 @@ namespace nest
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
+  , allow_oversized_( false )
   , source_filter_()
   , target_filter_()
   , number_of_connections_()
@@ -47,27 +48,22 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
     if ( dit->first == names::connection_type )
     {
-
       connection_type = getValue< std::string >( dit->second );
     }
     else if ( dit->first == names::allow_autapses )
     {
-
       allow_autapses_ = getValue< bool >( dit->second );
     }
     else if ( dit->first == names::allow_multapses )
     {
-
       allow_multapses_ = getValue< bool >( dit->second );
     }
     else if ( dit->first == names::allow_oversized_mask )
     {
-
       allow_oversized_ = getValue< bool >( dit->second );
     }
     else if ( dit->first == names::number_of_connections )
     {
-
       number_of_connections = getValue< long >( dit->second );
 
       if ( number_of_connections < 0 )
@@ -79,17 +75,14 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::mask )
     {
-
       mask_ = TopologyModule::create_mask( dit->second );
     }
     else if ( dit->first == names::kernel )
     {
-
       kernel_ = TopologyModule::create_parameter( dit->second );
     }
     else if ( dit->first == names::synapse_model )
     {
-
       const std::string syn_name = getValue< std::string >( dit->second );
 
       const Token synmodel =
@@ -104,27 +97,22 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::targets )
     {
-
       target_filter_ = getValue< DictionaryDatum >( dit->second );
     }
     else if ( dit->first == names::sources )
     {
-
       source_filter_ = getValue< DictionaryDatum >( dit->second );
     }
     else if ( dit->first == names::weights )
     {
-
       weight_ = TopologyModule::create_parameter( dit->second );
     }
     else if ( dit->first == names::delays )
     {
-
       delay_ = TopologyModule::create_parameter( dit->second );
     }
     else
     {
-
       throw BadProperty( "ConnectLayers cannot handle parameter '"
         + dit->first.toString() + "'." );
     }
@@ -153,7 +141,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
   if ( connection_type == names::convergent )
   {
-
     if ( number_of_connections >= 0 )
     {
       type_ = Convergent;
@@ -165,7 +152,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   else if ( connection_type == names::divergent )
   {
-
     if ( number_of_connections >= 0 )
     {
       type_ = Divergent;

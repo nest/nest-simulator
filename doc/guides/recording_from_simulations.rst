@@ -138,9 +138,7 @@ been selected.
    value that was set for a paramater of a recording device when a
    specific backend was selected has to be *set again* on the new
    backend, if the backend is changed later on.
-
-.. _memory_backend:
-
+   
 Store data in main memory
 #########################
 
@@ -203,8 +201,6 @@ Parameter summary
   the key *times* of the *events* dictionary) plus a floating point
   number for the negative offset from the next grid point in ms (under
   key *offset*), or just the simulation time in ms under key *times*.
-
-.. _ascii_backend:
 
 Write data to plain text files
 ##############################
@@ -300,8 +296,6 @@ Parameter summary
   floating point number for the negative offset from the next grid
   point in ms, or just the simulation time in ms.
 
-.. _screen_backend:
-
 Write data to the terminal
 ##########################
 
@@ -347,14 +341,7 @@ Store data to an efficient binary format
 
  (`sionlib`)
 
-.. _arbor_backend:
-
 Stream data to an arbor instance:
 #################################
 
  (`arbor`)
-
-
-
-Writing own recording backends
-------------------------------

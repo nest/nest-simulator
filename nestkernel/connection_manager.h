@@ -746,7 +746,8 @@ ConnectionManager::have_connections_changed() const
 }
 
 inline void
-ConnectionManager::set_have_connections_changed( thread tid, const bool changed )
+ConnectionManager::set_have_connections_changed( thread tid,
+  const bool changed )
 {
   have_connections_changed_.set( tid, changed );
 }

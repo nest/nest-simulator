@@ -231,7 +231,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
   {
-    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
+    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) =
+      new Dictionary();
   }
 
   // If make_symmetric_ is requested call reset on all parameters in order
@@ -437,12 +438,20 @@ nest::ConnBuilder::single_connect_( index sgid,
   {
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_manager.connect( sgid, &target, target_thread, synapse_model_id_, dummy_param_dicts_[target_thread] );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        dummy_param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
     {
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, dummy_param_dicts_[target_thread], delay_->value_double( target_thread, rng ) );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        dummy_param_dicts_[ target_thread ],
+        delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
     {
@@ -450,7 +459,7 @@ nest::ConnBuilder::single_connect_( index sgid,
         &target,
         target_thread,
         synapse_model_id_,
-		dummy_param_dicts_[target_thread],
+        dummy_param_dicts_[ target_thread ],
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -458,8 +467,13 @@ nest::ConnBuilder::single_connect_( index sgid,
     {
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, dummy_param_dicts_[target_thread], delay, weight );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        dummy_param_dicts_[ target_thread ],
+        delay,
+        weight );
     }
   }
   else

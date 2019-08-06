@@ -965,7 +965,8 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 bool
 nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
-  have_connections_changed_.resize( kernel().vp_manager.get_num_threads(), true );
+  have_connections_changed_.resize(
+    kernel().vp_manager.get_num_threads(), true );
 
   for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {

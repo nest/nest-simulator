@@ -369,7 +369,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               *tgt_it,
               target_thread,
               synapse_model_,
-              dummy_param_,
+              dummy_param_dicts_[ target_thread ],
               d,
               w );
           }
@@ -397,7 +397,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
         }
@@ -459,7 +459,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
               *tgt_it,
               target_thread,
               synapse_model_,
-              dummy_param_,
+              dummy_param_dicts_[ target_thread ],
               d,
               w );
           }
@@ -487,7 +487,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
         }
@@ -644,7 +644,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
           is_selected[ random_id ] = true;
@@ -691,7 +691,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
           is_selected[ random_id ] = true;
@@ -788,7 +788,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
           is_selected[ random_id ] = true;
@@ -828,7 +828,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             *tgt_it,
             target_thread,
             synapse_model_,
-            dummy_param_,
+            dummy_param_dicts_[ target_thread ],
             d,
             w );
           is_selected[ random_id ] = true;
@@ -980,7 +980,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         target_ptr,
         target_ptr->get_thread(),
         synapse_model_,
-        dummy_param_,
+        dummy_param_dicts_[ target_ptr->get_thread() ],
         d,
         w );
     }

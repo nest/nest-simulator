@@ -1,12 +1,11 @@
 #!/bin/sh
-
 set -e
 rm -f /etc/profile.d/nest-simulator.sh
 touch /etc/profile.d/nest-simulator.sh
 cat >>/etc/profile.d/nest-simulator.sh <<EOF
-export NEST_INSTALL_DIR='/usr'
-export NEST_DATA_DIR='/usr/share/nest'
-export NEST_DOC_DIR='/usr/share/doc/nest'
+#!/bin/sh
+set -e
+. /usr/bin/nest_vars.sh
 EOF
-
 exit 0
+

@@ -36,5 +36,6 @@ override_dh_auto_install:
 	cmake $(CMAKE_FLAGS) .
 	make
 	make install
-	rm -f $(DESTDIR)/usr/bin/nest_serial $(DESTDIR)/usr/bin/nest_indirect $(DESTDIR)/usr/bin/sli $(DESTDIR)/usr/bin/nest_vars.sh
 
+	# Now changing nest_vars.sh setting the correct paths
+	sed -i 's/\/build\/\(.*\)nest\(.*\)\/debian\/nest//g' $(DESTDIR)/usr/bin/nest_vars.sh

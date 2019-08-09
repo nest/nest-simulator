@@ -303,12 +303,21 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value
+                        elif rule == 'fixed_total_number':
+                            if ('N' in conn_spec
+                                    and value.shape[0] != conn_spec['N']):
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(conn_spec['N']) + ", a "
+                                    "scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "One-dimensional parameter arrays can "
                                 "only be used in conjunction with rule "
-                                "'one_to_one'.")
+                                "'one_to_one' or 'fixed_total_number'.")
 
                     elif len(value.shape) == 2:
                         if rule == 'all_to_all':

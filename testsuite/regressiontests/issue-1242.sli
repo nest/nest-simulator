@@ -40,7 +40,7 @@ FirstVersion: July 2019
 
 M_ERROR setverbosity
 
-% Check if such a connections results in an exception
+% Check if such a connection results in an exception
 {
   ResetKernel
 

@@ -471,7 +471,6 @@ nest::ConnectionManager::connect( const index sgid,
     if ( not source->has_proxies() )
     {
       throw IllegalConnection( "We do not allow to connect a device to a global receiver at the moment" );
-      return;
     }
     target = kernel().node_manager.get_node( target->get_gid(), tid );
     connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
@@ -555,7 +554,6 @@ nest::ConnectionManager::connect( const index sgid,
     if ( not source->has_proxies() )
     {
       throw IllegalConnection( "We do not allow to connect a device to a global receiver at the moment" );
-      return false;
     }
     target = kernel().node_manager.get_node( tgid, tid );
     connect_( *source, *target, sgid, tid, syn_id, params );

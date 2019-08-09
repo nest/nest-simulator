@@ -318,13 +318,16 @@ def init(argv):
     # or other modules.
     nest_argv = argv[:]
 
-    quiet = "--quiet" in nest_argv
-    if quiet:
+    quiet = "--quiet" in nest_argv or 'PYNEST_QUIET' in os.environ
+    if "--quiet" in nest_argv:
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
         nest_argv.remove("--debug")
     if "--sli-debug" in nest_argv:
         nest_argv.remove("--sli-debug")
+        nest_argv.append("--debug")
+
+    if 'PYNEST_DEBUG' in os.environ and '--debug' not in nest_argv:
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
@@ -351,5 +354,4 @@ def init(argv):
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
 
 
-if 'DELAY_PYNEST_INIT' not in os.environ:
-    init(sys.argv)
+init(sys.argv)

@@ -92,7 +92,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d)
 {
   if ( d->known( names::senders ) )
   {
@@ -187,8 +187,11 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 void
 nest::weight_recorder::set_status( const DictionaryDatum& d )
 {
+  Parameters_ ptmp = P_;
+  ptmp.set( d );
+
   RecordingDevice::set_status( d );
-  P_.set( d, this );
+  P_ = ptmp;
 }
 
 

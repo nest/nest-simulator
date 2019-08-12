@@ -124,7 +124,7 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum& );
   };
 
   Parameters_ P_;

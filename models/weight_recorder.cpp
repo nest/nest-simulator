@@ -207,10 +207,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
       return;
     }
 
-    RecordingDevice::write( e,
-      { e.get_weight() },
-      { static_cast< long >( e.get_receiver_gid() ),
-       static_cast< long >( e.get_rport() ),
-       static_cast< long >( e.get_port() ) } );
+    write( e,{ e.get_weight() }, { static_cast< long >( e.get_receiver_gid() ),
+      static_cast< long >( e.get_rport() ), static_cast< long >( e.get_port() ) } );
   }
 }

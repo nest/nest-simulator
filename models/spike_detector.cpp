@@ -102,7 +102,7 @@ nest::spike_detector::handle( SpikeEvent& e )
 
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
+      write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     }
   }
 }

@@ -77,8 +77,7 @@ nest::spin_detector::update( Time const&, const long, const long )
 {
   if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
   {
-    RecordingDevice::write(
-      last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
+    write( last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     last_in_gid_ = 0;
   }
 }
@@ -152,12 +151,11 @@ nest::spin_detector::handle( SpikeEvent& e )
     if ( last_in_gid_ != 0 ) // if last_* is empty we dont write
     {
       // if it's the second event we write out the last event first
-      RecordingDevice::write(
-        last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
+      write( last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     }
     if ( m == 2 )
     { // already full event
-      RecordingDevice::write( e, RecordingBackend::NO_DOUBLE_VALUES, { 1 } );
+      write( e, RecordingBackend::NO_DOUBLE_VALUES, { 1 } );
       last_in_gid_ = 0;
     }
     else

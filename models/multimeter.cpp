@@ -215,7 +215,7 @@ Multimeter::handle( DataLoggingReply& reply )
     // const Time stamp = reply.get_stamp();
     // const double offset = reply.get_offset();
 
-    RecordingDevice::write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
+    write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
   }
 }
 

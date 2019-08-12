@@ -733,6 +733,13 @@ public:
    */
   void set_model_id( int );
 
+  /** Execute post-initialization actions in node models.
+   * This method is called by NodeManager::add_node() on a node once
+   * is fully initialized, i.e. after gid, gc, model_id, thread, vp is
+   * set.
+   */
+  void set_initialized();
+
   /**
    * @returns type of signal this node produces
    * used in check_connection to only connect neurons which send / receive
@@ -898,6 +905,8 @@ private:
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
+
+  bool initialized_;         //!< set true once a node is fully initialized
 
   GIDCollectionPTR gc_ptr_;
 };

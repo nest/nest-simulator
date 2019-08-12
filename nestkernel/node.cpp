@@ -98,6 +98,18 @@ Node::init_buffers_()
 {
 }
 
+void
+Node::set_initialized()
+{
+  set_initialized_();
+  initialized_ = true;
+}
+
+void
+Node::set_initialized_()
+{
+}
+
 std::string
 Node::get_name() const
 {

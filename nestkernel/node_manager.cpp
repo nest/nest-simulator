@@ -251,6 +251,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
+        node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
         gid += num_vps;
@@ -291,6 +292,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
         node->set_local_device_id( num_local_devices_ - 1 );
+        node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
       }
@@ -327,6 +329,8 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
           node->set_local_device_id( num_local_devices_ - 1 );
+          node->set_initialized();
+
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }

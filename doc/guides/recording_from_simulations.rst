@@ -42,9 +42,9 @@ certain amount, which can be useful in simulation protocols with
 repeaded simulations. The follow rules apply:
 
 - Collectors collect all events with timestamps T that fulfill
-  
+
   ::
-	
+
      start < T <= stop.
 
   Events with timestamp T == start are not recorded.
@@ -58,7 +58,7 @@ repeaded simulations. The follow rules apply:
      start < t <= stop
      (t-start) mod interval == 0
 
-   
+
 Common recorder properties
 --------------------------
 
@@ -74,7 +74,7 @@ instance:
 `origin`
   A positive floating point number (default : `0.0`) used as the
   reference time for `start` and `stop`.
-  
+
 `record_to`
   A string (default: `"memory"`) containing the name of the recording
   backend where to write data to. An empty string turns all recording
@@ -109,8 +109,7 @@ backends*.
 
 Theoretically, recording backends are not restricted in what they do
 with the data. The ones included in NEST can collect data in memory,
-display it on the terminal, write it to file, or stream it out to
-other applications.
+display it on the terminal or write it to files.
 
 To specify the recording backend for a given recording device, the
 property ``record_to`` of the latter has to be set to the name of the
@@ -125,7 +124,7 @@ Storing data in memory using the `memory` backend is the default for
 all recording devices as this does not require any additional setup of
 data paths or filesystem permissions and allows a convenient readout
 of data by the user after simulation.
-   
+
 Each recording backend provides a different set of parameters
 (explained in the backend documentation below) that will be included
 in the model status dictionary once the backend is set. This means
@@ -138,7 +137,31 @@ been selected.
    value that was set for a paramater of a recording device when a
    specific backend was selected has to be *set again* on the new
    backend, if the backend is changed later on.
-   
+
+The full list of available recording backends and their respective
+properties can be obtained from the kernel's status dictionary.
+
+::
+
+   >>> nest.GetKernelStatus("recording_backends")
+   {u'ascii': {},
+    u'memory': {},
+    u'screen': {},
+    u'sionlib': {u'buffer_size': 1024,
+     u'filename': u'',
+     u'sion_chunksize': 262144,
+     u'sion_collective': False,
+     u'sion_n_files': 1}}
+
+The example shows that only the `sionlib` backend has backend-specific
+global properties, which can be modified using ``SetKernelStatus()``
+with a nested dictionary as argument.
+
+::
+
+   >>> nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffersize': 512}}})
+
+
 Store data in main memory
 #########################
 

@@ -126,13 +126,10 @@ public:
     SPIN_DETECTOR,
     WEIGHT_RECORDER
   };
+
   virtual Type get_type() const = 0;
 
-  const std::string&
-  get_label() const
-  {
-    return P_.label_;
-  }
+  const std::string& get_label() const;
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -142,6 +139,7 @@ protected:
   void enroll( const std::vector< Name >&, const std::vector< Name >& );
 
 private:
+
   struct Parameters_
   {
     std::string label_;    //!< A user-defined label for symbolic device names.

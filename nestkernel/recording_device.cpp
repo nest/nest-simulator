@@ -40,6 +40,12 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 {
 }
 
+const std::string&
+nest::RecordingDevice::get_label() const
+{
+  return P_.label_;
+}
+
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )

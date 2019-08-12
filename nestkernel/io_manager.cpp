@@ -169,7 +169,7 @@ nest::IOManager::set_status( const DictionaryDatum& d )
     for ( const auto& it: recording_backends_ )
     {
       DictionaryDatum recording_backend_status;
-      if ( updateValue< DictionaryDatum >( recording_backends, it->first, recording_backend_status ) )
+      if ( updateValue< DictionaryDatum >( recording_backends, it.first, recording_backend_status ) )
       {
         it.second->set_status( recording_backend_status );
       }

@@ -303,20 +303,29 @@ texinfo_documents = [
 #    html_theme = 'nat'
 
 models_with_documentation = (
-    "multimeter",
-    "spike_detector",
-    "weight_recorder",
+    "models/multimeter",
+    "models/spike_detector",
+    "models/weight_recorder",
+    "nestkernel/recording_backend_ascii",
+    "nestkernel/recording_backend_memory",
+    "nestkernel/recording_backend_screen",
+    "nestkernel/recording_backend_sionlib",
 )
 
 import re
+import os
 pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
 for model in models_with_documentation:
-    with open("../models/%s.h" % model) as f:
+    with open("../%s.h" % model) as f:
         match = re.search(pattern, f.read())
         if match:
-            rstfile = open("models/%s.rst" % model, "w")
-            rstfile.write(match.group(1))
-            rstfile.close()
+            rst_dir = "from_cpp/"
+            if not os.path.exists(rst_dir):
+                os.mkdir(rst_dir)
+            rst_fname = rst_dir + os.path.basename(model) + ".rst"
+            rst_file = open(rst_fname, "w")
+            rst_file.write(match.group(1))
+            rst_file.close()
             print("Wrote model documentation for model " + model)
         else:
             print("No documentation found for model " + model)

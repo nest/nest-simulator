@@ -92,11 +92,11 @@ instance:
 Recorders for every-day situations
 ----------------------------------
 
-.. include:: ../models/multimeter.rst
+.. include:: ../from_cpp/multimeter.rst
 
-.. include:: ../models/spike_detector.rst
+.. include:: ../from_cpp/spike_detector.rst
 
-.. include:: ../models/weight_recorder.rst
+.. include:: ../from_cpp/weight_recorder.rst
 
 .. _recording_backends:
 
@@ -154,217 +154,19 @@ properties can be obtained from the kernel's status dictionary.
      u'sion_n_files': 1}}
 
 The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified using ``SetKernelStatus()``
-with a nested dictionary as argument.
+global properties, which can be modified by supplying a nested
+dictionary to ``SetKernelStatus()``.
 
 ::
 
-   >>> nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffersize': 512}}})
+   >>> nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
 
+.. include:: ../from_cpp/recording_backend_memory.rst
 
-Store data in main memory
-#########################
+.. include:: ../from_cpp/recording_backend_ascii.rst
 
-When a recording device sends data to the ``memory`` backend, it is
-internally stored in efficient vectors, that are made available to the
-user level in the devices' status dictionary under the key `events`.
-
-The `events` dictionary always contains the global IDs of the source
-nodes of the recorded data in the field `sender`. It also always
-contains the time of the recording. Depending on the setting of the
-property `time_in_steps`, this time can be stored in two different
-formats:
-
-- if `time_in_steps` is `false` (which is the default) the time is
-  stored as a single floating point number in the field `times`,
-  interpreted as the simulation time in ms
-
-- if `time_in_steps` is `true`, the time is stored as a pair
-  consisting of the integer number of simulation time steps in units
-  of the simulation resolution in `times` and the negative offset from
-  the next such grid point as a floating point number in ms in
-  `offset`.
-
-All additional data collected or sampled by the recording device is
-contained in the *events* dictionary in arrays named as the recordable
-it came from and with the appropriate data type (either integer or
-floating point).
-
-The number of events that have been collected by the ``memory``
-backend can be read out of the *n_events* entry in the status
-dictionary of the recording device.
-
-To delete data from memory between consecutive calls to the ``Run``
-function in the context of :doc:`stepped simulations
-<running_simulations#stepped_simulations>`, the value of *n_events*
-can be set to 0. Other values cannot be set.
-
-If the data is not deleted manually, it is kept for readout until the
-next call to ``Prepare`` or ``Simulate`` and discared before any new
-data is recorded.
-
-Parameter summary
-+++++++++++++++++
-
-`events`
-  A dictionary containing the recorded data in the form of one numeric
-  array for each quantity measured. It always has the sender global
-  IDs of recorded events under the key *senders* and the time of the
-  recording, the format of which depends on the setting of
-  `time_in_steps`.
-
-`n_events`
-  The number of events collected or sampled since the last reset of
-  `n_events`. By setting `n_events` to 0, all events recorded so far
-  will be discarded from memory.
-
-`time_in_steps`
-  A Boolean (default: *false*) specifying whether to store time in
-  steps, i.e. in integer multiples of the simulation resolution (under
-  the key *times* of the *events* dictionary) plus a floating point
-  number for the negative offset from the next grid point in ms (under
-  key *offset*), or just the simulation time in ms under key *times*.
-
-Write data to plain text files
-##############################
-
-The `ascii` recording backend writes collected data persistently to a
-plain text ASCII file. It can be used for small to medium sized
-simulations, where the ease of a simple data format outweights the
-benefits of high-performance output operations.
-
-This backend will open one file per recording device per thread on
-each MPI process. This can entail a very high load on the file system
-in large simulations. Especially on machines with distributed
-filesystems using this backend can become prohibitively inefficient.
-In case of experiencing such scaling problems, the :ref:`SIONlib
-backend <sionlib_backend>` can be a possible alternative.
-
-Filenames of data files are determined according to the following
-pattern:
-
-::
-
-   data_path/data_prefix(label|model_name)-gid-vp.file_extension
-
-The properties `data_path` and `data_prefix` are global kernel
-properties. They can for example be set during repetitive simulation
-protocols to separate the data originating from indivitual runs. The
-`label` replaces the model name component if it is set to a non-empty
-string. `gid` and `vp` denote the zero-padded global ID and virtual
-process of the recorder writing the file. The filename ends in a dot
-and the `file_extension`.
-
-The life of a file starts with the call to ``Prepare`` and ends with
-the call to ``Cleanup``. Data that is produced during successive calls
-to ``Run`` inbetween a pair of ``Prepare`` and ``Cleanup`` calls will
-be written to the same file, while the call to ``Run`` will flush all
-data to the file, so it is available for immediate inspection.
-
-In case, a file of the designated name for a new recording already
-exists, the ``Prepare`` call will fail with a corresponding error
-message. To instead overwrite the old file, the kernel property
-`overwrite_files` can be set to *true* using ``SetKernelStatus``.  An
-alternative way for avoiding name clashes is to re-set the kernel
-properties `data_path` or `data_prefix`, so that another filename is
-chosen.
-
-Data format
-+++++++++++
-
-The first line written to any new file is an informational header
-containing field names for the different data columns. The header
-starts with a `#` character.
-
-The first field of each record written is the global id of the neuron
-the event originated from, i.e. the *source* of the event. This is
-followed by the time of the measurement, the recorded floating point
-values and the recorded integer values.
-
-The format of the time field depends on the value of the property
-`time_in_steps`. If set to *false* (which is the default), time is
-written as a single floating point number representing the simulation
-time in ms. If `time_in_steps` is *true*, the time of the event is
-written as a pair of values consisting of the integer simulation time
-step in units of the simulation resolution and the negative floating
-point offset in ms from the next integer grid point.
-
-.. note::
-   The number of decimal places for all decimal numbers written can be
-   controlled using the recorder property `precision`.
-
-Parameter summary
-+++++++++++++++++
-
-`file_extension`
-  A string (default: *"dat"*) that specifies the file name extension,
-  without leading dot. The generic default was chosen, because the
-  exact type of data cannot be known a priori.
-
-`filenames`
-  A list of the filenames where data is recorded to. This list has one
-  entry per local thread and is a read-only property.
-
-`label`
-  A string (default: *""*) that replaces the model name component in
-  the filename if it is set.
-
-`precision`
-  An integer (default: *3*) that controls the number of decimal places
-  used to write decimal numbers to the output file.
-
-`time_in_steps`
-  A Boolean (default: *false*) specifying whether to write time in
-  steps, i.e. in integer multiples of the simulation resolution plus a
-  floating point number for the negative offset from the next grid
-  point in ms, or just the simulation time in ms.
-
-Write data to the terminal
-##########################
-
-When initially conceiving and debugging simulations, it can be useful
-to check recordings in a more ad hoc fashion. The recording backend
-`screen` can be used to dump all recorded data onto the console for
-quick inspection.
-
-The first field of each record written is the global id of the neuron
-the event originated from, i.e. the *source* of the event. This is
-followed by the time of the measurement, the recorded floating point
-values and the recorded integer values.
-
-The format of the time field depends on the value of the property
-`time_in_steps`. If set to *false* (which is the default), time is
-written as one floating point number representing the simulation time
-in ms. If `time_in_steps` is *true*, the time of the event is written
-as a value pair consisting of the integer simulation time step and the
-floating point offset in ms from the next grid point.
-
-.. note::
-
-   Using this backend for production runs is not recommended, as it
-   may produce *huge* amounts of console output and thereby might slow
-   down the simulation *considerably*.
-
-Parameter summary
-+++++++++++++++++
-
-`precision`
-  controls the number of decimal places used to write decimal numbers
-  to the terminal.
-
-`time_in_steps`
-  A boolean (default: false) specifying whether to print time in
-  steps, i.e. in integer multiples of the resolution and an offset,
-  rather than just in ms.
+.. include:: ../from_cpp/recording_backend_screen.rst
 
 .. _sionlib_backend:
 
-Store data to an efficient binary format
-########################################
-
- (`sionlib`)
-
-Stream data to an arbor instance:
-#################################
-
- (`arbor`)
+.. include:: ../from_cpp/recording_backend_sionlib.rst

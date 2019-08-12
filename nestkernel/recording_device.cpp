@@ -84,12 +84,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const Dictionar
 {
   updateValue< std::string >( d, names::label, label_ );
 
-  Name record_to;
-  if ( updateValue< Name >( d, names::record_to, record_to ) )
+  std::string record_to;
+  if ( updateValue< std::string >( d, names::record_to, record_to ) )
   {
     if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
-      std::string msg = String::compose( "Unknown recording backend '%1'", record_to.toString() );
+      std::string msg = String::compose( "Unknown recording backend '%1'", record_to );
       throw BadProperty( msg );
     }
 

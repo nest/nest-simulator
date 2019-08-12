@@ -23,7 +23,6 @@
 #ifndef WEIGHT_RECORDER_H
 #define WEIGHT_RECORDER_H
 
-
 // C++ includes:
 #include <vector>
 
@@ -34,9 +33,6 @@
 #include "kernel_manager.h"
 #include "nest_types.h"
 #include "recording_device.h"
-
-namespace nest
-{
 
 /* BeginDocumentation
 
@@ -67,6 +63,9 @@ neurons emitting precisely timed spikes.
    nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
 
 EndDocumentation */
+
+namespace nest
+{
 
 class weight_recorder : public RecordingDevice
 {

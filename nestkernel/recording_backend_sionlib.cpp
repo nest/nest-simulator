@@ -46,6 +46,7 @@ const unsigned int nest::RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
 
 nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
   : files_opened_( false )
+  , num_enrolled_devices_( 0 )
 {
 }
 
@@ -88,6 +89,8 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device )
     info.t_stop = device.get_stop().get_steps();
 
     devices_[ t ].insert( std::make_pair( gid, entry ) );
+
+    ++num_enrolled_devices_;
   }
 }
 
@@ -138,7 +141,7 @@ nest::RecordingBackendSIONlib::pre_run_hook()
 void
 nest::RecordingBackendSIONlib::open_files_()
 {
-  if ( files_opened_ )
+  if ( files_opened_ or ( num_enrolled_devices_ == 0 ) )
   {
     return;
   }

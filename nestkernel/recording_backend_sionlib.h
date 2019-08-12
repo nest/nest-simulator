@@ -29,6 +29,15 @@
 
 #include "recording_backend.h"
 
+/* BeginDocumentation
+
+Store data to an efficient binary format
+########################################
+
+ (`sionlib`)
+
+EndDocumentation */
+
 namespace nest
 {
 
@@ -82,6 +91,7 @@ private:
   const std::string build_filename_() const;
 
   bool files_opened_;
+  size_t num_enrolled_devices_;
 
   class SIONBuffer
   {

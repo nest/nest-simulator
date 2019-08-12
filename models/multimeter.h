@@ -37,9 +37,6 @@
 #include "dictutils.h"
 #include "name.h"
 
-namespace nest
-{
-
 /* BeginDocumentation
 
 Sampling continuous quantities from neurons
@@ -108,6 +105,9 @@ fail if carried out in the wrong direction, i.e. trying to connect the
    from the neurons it is connected to.
 
 EndDocumentation */
+
+namespace nest
+{
 
 class Multimeter : public RecordingDevice
 {

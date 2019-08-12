@@ -33,9 +33,6 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-namespace nest
-{
-
 /* BeginDocumentation
 
 Collecting spikes from neurons
@@ -66,6 +63,8 @@ simulation. Likewise, a reversed connection direction (i.e. connecting
 
 EndDocumentation */
 
+namespace nest
+{
     
 /**
  * Class spike_detector

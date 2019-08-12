@@ -76,6 +76,11 @@ Node::init_state()
 }
 
 void
+Node::init_state_( Node const& )
+{
+}
+
+void
 Node::init_buffers()
 {
   if ( buffers_initialized_ )
@@ -86,6 +91,11 @@ Node::init_buffers()
   init_buffers_();
 
   buffers_initialized_ = true;
+}
+
+void
+Node::init_buffers_()
+{
 }
 
 std::string

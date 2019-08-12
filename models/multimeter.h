@@ -152,8 +152,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 protected:
-  void init_state_( Node const& );
-  void init_buffers_();
   void calibrate();
 
   /**
@@ -240,7 +238,6 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   ptmp.set( d, B_, this );
 
   RecordingDevice::set_status( d );
-
   P_ = ptmp;
 }
 

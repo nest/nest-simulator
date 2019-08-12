@@ -140,17 +140,6 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::weight_recorder::init_state_( const Node& np )
-{
-  init_buffers_();
-}
-
-void
-nest::weight_recorder::init_buffers_()
-{
-}
-
-void
 nest::weight_recorder::calibrate()
 {
   RecordingDevice::calibrate();

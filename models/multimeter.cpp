@@ -157,16 +157,6 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-Multimeter::init_state_( const Node& np )
-{
-}
-
-void
-Multimeter::init_buffers_()
-{
-}
-
-void
 Multimeter::calibrate()
 {
   RecordingDevice::calibrate();

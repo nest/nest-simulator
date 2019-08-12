@@ -843,7 +843,7 @@ protected:
    *       scheme, init_state_() has a default implementation calling
    *       init_dynamic_state_().
    */
-  virtual void init_state_( Node const& ) = 0;
+  virtual void init_state_( Node const& );
 
   /**
    * Private function to initialize the buffers of a node.
@@ -851,7 +851,9 @@ protected:
    * the implementation for initializing the buffers of a node.
    * @see Node::init_buffers()
    */
-  virtual void init_buffers_() = 0;
+  virtual void init_buffers_();
+
+  virtual void set_initialized_();
 
   Model& get_model_() const;
 

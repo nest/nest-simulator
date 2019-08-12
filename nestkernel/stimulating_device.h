@@ -89,7 +89,7 @@ namespace nest
  * @ingroup Devices
  */
 template < typename EmittedEvent >
-class StimulatingDevice : public Device, public DeviceNode
+class StimulatingDevice : public Device
 {
 public:
   StimulatingDevice();

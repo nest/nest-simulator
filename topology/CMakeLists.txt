@@ -62,8 +62,15 @@ install( TARGETS topology
 install( FILES sli/topology-interface.sli
     DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
-install( FILES doc/Topology_UserManual.pdf
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
+file( GLOB topo_unittests "testsuite/unittests/*" )
+install( FILES ${topo_unittests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests
+    )
+
+file( GLOB topo_mpitests "testsuite/mpitests/*" )
+install( FILES ${topo_mpitests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
+    )
 
 FILTER_HEADERS("${topo_sources}" install_headers )
 install( FILES ${install_headers}

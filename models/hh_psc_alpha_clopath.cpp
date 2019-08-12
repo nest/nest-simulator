@@ -63,8 +63,8 @@ RecordablesMap< hh_psc_alpha_clopath >::create()
   insert_( names::I_syn_ex, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_EXC > );
   insert_( names::I_syn_in, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_INH > );
   insert_( names::Act_m, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_M > );
-  insert_( names::Act_h, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_H > );
-  insert_( names::Inact_n, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_N > );
+  insert_( names::Inact_h, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_H > );
+  insert_( names::Act_n, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_N > );
   insert_( names::u_bar_plus, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_PLUS > );
   insert_( names::u_bar_minus, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_MINUS > );
   insert_( names::u_bar_bar, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_BAR > );
@@ -262,8 +262,8 @@ nest::hh_psc_alpha_clopath::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Act_h, y_[ HH_H ] );
-  def< double >( d, names::Inact_n, y_[ HH_N ] );
+  def< double >( d, names::Inact_h, y_[ HH_H ] );
+  def< double >( d, names::Act_n, y_[ HH_N ] );
   def< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ] );
   def< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ] );
   def< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ] );
@@ -274,8 +274,8 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValueParam< double >( d, names::Act_h, y_[ HH_H ], node );
-  updateValueParam< double >( d, names::Inact_n, y_[ HH_N ], node );
+  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
+  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
   updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
   updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
   updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );

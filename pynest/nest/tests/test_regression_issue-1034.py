@@ -115,7 +115,7 @@ class PostTraceTester(object):
             t = nest.GetKernelStatus("time")
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_)
-                < self.resolution_/2.)
+                < self.resolution_ / 2.)
             if show_all_nest_trace_samples or nearby_pre_spike:
                 trace_nest_t.append(t)
                 post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
@@ -184,7 +184,7 @@ class PostTraceTester(object):
                         (t_search - (np.array(self.post_spike_times_)
                                      + self.delay_
                                      + self.dendritic_delay_))**2
-                        < self.resolution_/2.)
+                        < self.resolution_ / 2.)
 
                     if debug:
                         print("\t* Testing " + str(t_search) + "...")
@@ -225,7 +225,7 @@ class PostTraceTester(object):
                     break
 
             if ((not traces_match)
-               and i_search == len(self.pre_spike_times_) - 1):
+                    and i_search == len(self.pre_spike_times_) - 1):
                 if debug:
                     print("\tthe time before the first pre spike")
                 # the time before the first pre spike

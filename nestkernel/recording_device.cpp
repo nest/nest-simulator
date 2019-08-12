@@ -40,6 +40,20 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 {
 }
 
+void
+nest::RecordingDevice::set_initialized_()
+{
+  kernel().io_manager.enroll_recorder( P_.record_to_, *this );
+}
+
+void
+nest::RecordingDevice::calibrate(
+  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+{
+  Device::calibrate();
+  kernel().io_manager.set_recording_value_names( P_.record_to_, *this , double_value_names, long_value_names );
+}
+
 const std::string&
 nest::RecordingDevice::get_label() const
 {
@@ -48,120 +62,83 @@ nest::RecordingDevice::get_label() const
 
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
-  , time_in_steps_( false )
-  , record_to_()
+  , record_to_( names::memory )
 {
-#pragma omp critical
-  record_to_.push_back( LiteralDatum( names::memory ) );
 }
 
 nest::RecordingDevice::Parameters_::Parameters_( const Parameters_& p )
   : label_( p.label_ )
-  , time_in_steps_( p.time_in_steps_ )
-  , record_to_()
+  , record_to_( p.record_to_ )
 {
-#pragma omp critical
-  for ( auto& t: p.record_to_ )
-    record_to_.push_back( t );
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice&, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
-  ( *d )[ names::record_to ] = record_to_;
+  ( *d )[ names::record_to ] = LiteralDatum( record_to_ );
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d, long n_events )
+nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
-  bool time_in_steps = time_in_steps_;
-  updateValue< bool >( d, names::time_in_steps, time_in_steps );
-  if ( time_in_steps != time_in_steps_ and n_events != 0 )
+  Name record_to;
+  if ( updateValue< Name >( d, names::record_to, record_to ) )
   {
-    throw BadProperty(
-      "Property /time_in_steps cannot be set if recordings exist. "
-      "Please clear the events first by setting /n_events to 0." );
-  }
-  time_in_steps_ = time_in_steps;
-
-  ArrayDatum record_to;
-  if ( updateValue< ArrayDatum >( d, names::record_to, record_to ) )
-  {
-    record_to_.clear();
-    for ( Token* t = record_to.begin(); t != record_to.end(); ++t )
+    if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
-      Name backend_name( getValue< std::string >( *t ) );
-      if ( not kernel().io_manager.is_valid_recording_backend( backend_name ) )
-      {
-        std::string msg = String::compose( "Unknown recording backend '%1'", backend_name.toString() );
-        throw BadProperty( msg );
-      }
-      record_to_.push_back( LiteralDatum( backend_name ) );
+      std::string msg = String::compose( "Unknown recording backend '%1'", record_to.toString() );
+      throw BadProperty( msg );
     }
-  }
-}
 
-nest::RecordingDevice::State_::State_()
-  : n_events_( 0 )
-{
-}
-
-void
-nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
-{
-  // if we already have the n_events entry, we add to it, otherwise we create it
-  if ( d->known( names::n_events ) )
-  {
-    long n_events = getValue< long >( d, names::n_events );
-    ( *d )[ names::n_events ] = n_events + n_events_;
-  }
-  else
-  {
-    ( *d )[ names::n_events ] = n_events_;
-  }
-}
-
-void
-nest::RecordingDevice::State_::set( const DictionaryDatum& d, const RecordingDevice& rd )
-{
-  long n_events = n_events_;
-  if ( updateValue< long >( d, names::n_events, n_events ) )
-  {
-    if ( n_events == 0 )
-    {
-      kernel().io_manager.clear_recording_backends( rd );
-      n_events_ = n_events;
-    }
-    else
-    {
-      throw BadProperty(
-        "Property /n_events can only be set "
-        "to 0 (which clears all stored events)." );
-    }
+    record_to_ = record_to;
   }
 }
 
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  State_ stmp = S_;                     // temporary copy in case of errors
-  stmp.set( d, *this );                 // throws if BadProperty
-  Parameters_ ptmp = P_;                // temporary copy in case of errors
-  ptmp.set( *this, d, stmp.n_events_ ); // throws if BadProperty
+  //JME: make sure we're outside of Prepare/Run/Cleanup context
+
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( *this, d );   // throws if BadProperty
 
   Device::set_status( d );
 
-  for ( auto& backend_token : P_.record_to_ )
-  {
-    Name backend_name( getValue< std::string >( backend_token ) );
-    kernel().io_manager.set_recording_device_status( backend_name, *this, d );
-  }
+  kernel().io_manager.set_recording_device_status( P_.record_to_, *this, d );
 
-  // if we get here, temporaries contain consistent set of properties
+  // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
-  S_ = stmp;
+
+  kernel().io_manager.enroll_recorder( P_.record_to_, *this );
+}
+
+void
+nest::RecordingDevice::get_status( DictionaryDatum& d ) const
+{
+  P_.get( *this, d );
+
+  Device::get_status( d );
+
+  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
+
+  kernel().io_manager.get_recording_device_status( P_.record_to_, *this, d );
+}
+
+bool
+nest::RecordingDevice::is_active( Time const& T ) const
+{
+  const long stamp = T.get_steps();
+
+  return get_t_min_() < stamp && stamp <= get_t_max_();
+}
+
+void
+nest::RecordingDevice::write( const Event& event,
+			const std::vector< double >& double_values,
+			const std::vector< long >& long_values )
+{
+  kernel().io_manager.write( P_.record_to_, *this, event, double_values, long_values );
 }

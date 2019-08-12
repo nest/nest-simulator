@@ -66,9 +66,6 @@ public:
    */
   const std::string& get_data_path() const;
 
-  //! Helper function to set device data path and prefix.
-  void set_data_path_prefix_( const DictionaryDatum& d );
-
   /**
    * Indicate if existing data files should be overwritten.
    * @return true if existing data files should be overwritten by devices.
@@ -81,37 +78,38 @@ public:
    * calling the backends' post_run_cleanup() functions
    */
   void post_run_hook();
+  void pre_run_hook();
 
   /**
    * Finalize all registered recording backends after a call to
    * SimulationManager::simulate() or SimulationManager::cleanup() by
    * calling the backends' finalize() functions
    */
-  void prepare();
   void cleanup();
-
-  /**
-   * Force a synchronization in all registered recording backends by
-   * calling the backends' synchronize() functions
-   */
-  void synchronize();
+  void prepare();
 
   template < class RBT >
   void register_recording_backend( Name );
 
-  bool is_valid_recording_backend( Name );
+  bool is_valid_recording_backend( Name ) const;
 
-  void clear_recording_backends( const RecordingDevice& );
+  void write( Name, const RecordingDevice&, const Event&,
+	      const std::vector< double >&, const std::vector< long >& );
 
-  void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  void enroll_recorder( Name, const RecordingDevice& );
 
-  void enroll_recorder( Name, const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& );
+  void set_recording_value_names( Name backend_name, const RecordingDevice& device,
+				  const std::vector< Name >& double_value_names,
+				  const std::vector< Name >& long_value_names );
 
   void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
 
   void set_recording_device_status( Name, const RecordingDevice&, const DictionaryDatum& );
 
 private:
+  void set_data_path_prefix_( const DictionaryDatum& );
+  void register_recording_backends_();
+
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.
@@ -120,15 +118,6 @@ private:
    * A mapping from names to registered recording backends.
    */
   std::map< Name, RecordingBackend* > recording_backends_;
-
-  /**
-   * Return the recording backend stored under the given name.  This
-   * function assumes and asserts that the backend actually exists and
-   * expects the caller to have called is_valid_recording_backend()
-   * previously.
-   * @return a pointer to the recording backend.
-   */
-  RecordingBackend* get_recording_backend_( Name );
 };
 
 } // namespace nest

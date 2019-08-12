@@ -23,6 +23,9 @@
 #ifndef RECORDING_BACKEND_ASCII_H
 #define RECORDING_BACKEND_ASCII_H
 
+// C++ includes:
+#include <fstream>
+
 #include "recording_backend.h"
 
 namespace nest
@@ -35,7 +38,7 @@ namespace nest
  * stream to every recording device instance on every thread. Files
  * are opened and inserted into the map during the enroll() call
  * (issued by the recorder's calibrate() function) and closed in
- * finalize(), which is called on all registered recording backends by
+ * cleanup(), which is called on all registered recording backends by
  * IOManager::cleanup().
  */
 class RecordingBackendASCII : public RecordingBackend
@@ -45,83 +48,71 @@ public:
 
   ~RecordingBackendASCII() throw();
 
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+  void initialize() override;
+
+  void finalize() override;
+
+  void enroll( const RecordingDevice& device ) override;
+
+  void disenroll( const RecordingDevice& device ) override;
+
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+
+  void prepare() override;
+
+  void cleanup() override;
+
+  void pre_run_hook() override;
 
   /**
    * Flush files after a single call to Run
    */
   void post_run_hook() override;
 
-  /**
-   * Finalize the RecordingBackendASCII after the simulation has finished.
-   */
-  void cleanup() override;
-
-  /**
-   * Trivial synchronization function. The RecordingBackendASCII does
-   * not need explicit synchronization after each time step.
-   */
-  void synchronize() override;
-
-  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&,
+	      const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;
 
-  /**
-   * Initialize the RecordingBackendASCII during simulation preparation.
-   */
-  void pre_run_hook() override;
-
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
-
-  void prepare() override;
-
-  void clear( const RecordingDevice& ) override;
-
   void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
 private:
   /**
-   * Build device filename.
-   * The filename consists of the data path set in IOManager, the
-   * device's label (or name as a fallback if no label is given),
-   * the device GID, and the virtual process ID, all separated by
-   * dashes, followed by the filename extension file_ext.
+   * Build device file basename as being the device's label (or model
+   * name if no label is given), the device's GID, and the virtual
+   * process ID, all separated by dashes, followed by a dot and the
+   * filename extension.
    */
-  const std::string build_filename_( const RecordingDevice& device ) const;
+  const std::string build_basename_( const RecordingDevice& device ) const;
 
-  struct Parameters_
+  struct DeviceData
   {
-    long precision_;       //!< Number of decimal places to use for values
-    std::string file_ext_; //!< File name extension to use, without leading "."
-
-    Parameters_();
-
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    DeviceData() = delete;
+    DeviceData( std::string );
+    void set_value_names( const std::vector< Name >&, const std::vector< Name >&);
+    void open_file();
+    void write( const Event&, const std::vector< double >&, const std::vector< long >& );
+    void flush_file();
+    void close_file();
+    void get_status( DictionaryDatum& ) const;
+    void set_status( const DictionaryDatum& );
+  private:
+    long precision_;                          //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_;                      //!< Should time be recorded in steps (ms if false)
+    std::string file_basename_;               //!< File name up to but not including the "."
+    std::string file_extension_;              //!< File name extension without leading "."
+    std::string filename_;                    //!< Full filename as determined and used by open_file()
+    std::ofstream file_;                      //!< File stream to use for the device
+    std::vector< Name > double_value_names_;  //!< names for values of type double
+    std::vector< Name > long_value_names_;    //!< names for values of type long
   };
 
-  Parameters_ P_;
-
-  /**
-   * A map for the data files.  We have a vector with one map per
-   * local thread. The map associates the gid of a device on a given
-   * thread with the file name and a pointer to the file stream
-   *
-   * vp -> ( gid -> [ file_name, file_stream ] )
-  */
-  typedef std::vector< std::map< size_t, std::pair< std::string, std::ofstream* > > > file_map;
-  file_map files_;
+  typedef std::vector< std::map< size_t, DeviceData > > data_map;
+  data_map device_data_;
 };
-
-inline void
-RecordingBackendASCII::get_status( DictionaryDatum& d ) const
-{
-  P_.get( d );
-}
 
 } // namespace
 

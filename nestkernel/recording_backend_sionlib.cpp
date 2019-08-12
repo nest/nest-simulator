@@ -55,9 +55,44 @@ nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendSIONlib::initialize()
+{
+  device_map devices( kernel().vp_manager.get_num_threads() );
+  devices_.swap( devices );
+}
+
+void
+nest::RecordingBackendSIONlib::finalize()
+{
+}
+
+void
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device )
+{
+  const thread t = device.get_thread();
+  const thread gid = device.get_gid();
+
+  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  if ( device_it == devices_[ t ].end() )
+  {
+    DeviceEntry entry( device );
+    DeviceInfo& info = entry.info;
+
+    info.gid = gid;
+    info.type = static_cast< unsigned int >( device.get_type() );
+    info.name = device.get_name();
+    info.label = device.get_label();
+
+    info.origin = device.get_origin().get_steps();
+    info.t_start = device.get_start().get_steps();
+    info.t_stop = device.get_stop().get_steps();
+
+    devices_[ t ].insert( std::make_pair( gid, entry ) );
+  }
+}
+
+void
+nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 {
   const thread t = device.get_thread();
   const thread gid = device.get_gid();
@@ -67,40 +102,37 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   {
     devices_[ t ].erase( device_it );
   }
+}
 
-  DeviceEntry entry( device );
-  DeviceInfo& info = entry.info;
+void
+nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
+  const thread t = device.get_thread();
+  const thread gid = device.get_gid();
 
-  info.gid = gid;
-  info.type = static_cast< unsigned int >( device.get_type() );
-  info.name = device.get_name();
-  info.label = device.get_label();
-
-  info.origin = device.get_origin().get_steps();
-  info.t_start = device.get_start().get_steps();
-  info.t_stop = device.get_stop().get_steps();
-
-  info.double_value_names.reserve( double_value_names.size() );
-  for ( auto& val : double_value_names )
+  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  if ( device_it != devices_[ t ].end() )
   {
-    info.double_value_names.push_back( val.toString() );
-  }
-  info.long_value_names.reserve( long_value_names.size() );
-  for ( auto& val : long_value_names )
-  {
-    info.long_value_names.push_back( val.toString() );
-  }
+    DeviceInfo& info = device_it->second.info;
 
-  devices_[ t ].insert( std::make_pair( gid, entry ) );
-
-  open_files_();
+    info.double_value_names.reserve( double_value_names.size() );
+    for ( auto& val : double_value_names )
+    {
+      info.double_value_names.push_back( val.toString() );
+    }
+    info.long_value_names.reserve( long_value_names.size() );
+    for ( auto& val : long_value_names )
+    {
+      info.long_value_names.push_back( val.toString() );
+    }
+  }
 }
 
 void
 nest::RecordingBackendSIONlib::pre_run_hook()
 {
-  device_map devices( kernel().vp_manager.get_num_threads() );
-  devices_.swap( devices );
 }
 
 void
@@ -381,24 +413,6 @@ nest::RecordingBackendSIONlib::close_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::synchronize()
-{
-  if ( not files_opened_ or not P_.sion_collective_ )
-  {
-    return;
-  }
-
-  const thread t = kernel().vp_manager.get_thread_id();
-  const thread task = kernel().vp_manager.thread_to_vp( t );
-
-  FileEntry& file = files_[ task ];
-  SIONBuffer& buffer = file.buffer;
-
-  sion_coll_fwrite( buffer.read(), 1, buffer.get_size(), file.sid );
-  buffer.clear();
-}
-
-void
 nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
@@ -634,19 +648,25 @@ nest::RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendSIONlib::prepare()
 {
-  // nothing to do
+  open_files_();
 }
 
 void
 nest::RecordingBackendSIONlib::post_run_hook()
 {
-  // nothing to do
-}
+  if ( not files_opened_ or not P_.sion_collective_ )
+  {
+    return;
+  }
 
-void
-nest::RecordingBackendSIONlib::clear( const nest::RecordingDevice& device )
-{
-  // nothing to do
+  const thread t = kernel().vp_manager.get_thread_id();
+  const thread task = kernel().vp_manager.thread_to_vp( t );
+
+  FileEntry& file = files_[ task ];
+  SIONBuffer& buffer = file.buffer;
+
+  sion_coll_fwrite( buffer.read(), 1, buffer.get_size(), file.sid );
+  buffer.clear();
 }
 
 void

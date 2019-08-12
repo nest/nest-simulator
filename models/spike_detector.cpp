@@ -54,8 +54,7 @@ nest::spike_detector::spike_detector( const spike_detector& n )
 void
 nest::spike_detector::calibrate()
 {
-  RecordingDevice::calibrate();
-  RecordingDevice::enroll( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 nest::RecordingDevice::Type

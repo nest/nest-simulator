@@ -45,15 +45,19 @@ public:
 
   ~RecordingBackendSIONlib() throw();
 
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+  void initialize() override;
+  void finalize() override;
+
+  void enroll( const RecordingDevice& device ) override;
+
+  void disenroll( const RecordingDevice& device ) override;
+
+  void set_value_names(const RecordingDevice& device,
+    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
 
   void cleanup() override;
-
-  void synchronize() override;
 
   void write( const RecordingDevice& device,
     const Event& event,
@@ -67,8 +71,6 @@ public:
   void pre_run_hook() override;
 
   void post_run_hook() override;
-
-  void clear( const RecordingDevice& ) override;
 
   void set_device_status( const RecordingDevice& device, const DictionaryDatum& params_dictionary ) override;
 

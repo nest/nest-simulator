@@ -30,7 +30,6 @@
 #include "dictdatum.h"
 #include "name.h"
 
-
 namespace nest
 {
 
@@ -44,23 +43,27 @@ class Event;
  * with which `RecordingDevice`s can be enrolled for recording and
  * which they can use to write their data.
  *
- * All recording backends are registered in the pre_run_hook() function
- * of the IOManager by inserting an instance of each of them into a std::map
- * indexed by the name of the backend. A user level call to the NEST Simulate
- * function internally executes the sequence Prepare → Run → Cleanup.
- * During Prepare, the pre_run_hook() function of each backend is called by the
- * IOManager. This gives the backend an opportunity to prepare data structures
- * for the upcoming simulation. The user level function Run runs the simulation
- * main loop and in every cycle updates all nodes and calls the function
- * IOManager::synchronize(), which in turn calls all backends’ synchronize()
- * function. During the simulation cycles, the recording devices might call
- * the write() function of the IOManager. These calls are forwarded to all
- * backends.At the end of Run the IOManager calls the post_run_hook() function
- * of every backend. Cleanup on the user level finally calls the cleanup()
- * function of all backends.
+ * Built-in recording backends are registered in the constructor of
+ * IOManager by inserting an instance of each of them into a std::map
+ * under the name of the backend.
  *
- * Backend functions have to return as soon as possible if they have nothing to
- *do.
+ * A user level call to Simulate internally executes the sequence
+ * Prepare → Run → Cleanup.  During Prepare, the prepare() function of
+ * each backend is called by the IOManager. This gives the backend an
+ * opportunity to prepare data structures for the upcoming
+ * simulation cycle.
+ *
+ * The user level function Run drives the simulation main loop by
+ * uptating all nodes. At its beginning it calls pre_run_hook() on
+ * each recording backend via the IOManager. At the end of each run,
+ * it calls post_run_hook() respectively.
+ *
+ * During the simulation, recording devices call IOManager::write() in
+ * order to record data. These calls are forwarded to the backend, the
+ * device is enrolled with. Cleanup on the user level finally calls
+ * the cleanup() function of all backends.
+ *
+ * @ingroup NESTio
 */
 
 class RecordingBackend
@@ -74,41 +77,80 @@ public:
   {
   }
 
+  virtual void initialize() = 0;
+  virtual void finalize() = 0;
+
   /**
    * Enroll a `RecordingDevice` with the `RecordingBackend`.
    *
-   * When this function is called by a `RecordingDevice` @p device, the
-   * `RecordingBackend` can set up or extend device-specific data
-   * structures by using identifying properties of the @p device like
-   * `thread` or `gid` that may be needed during the simulation phase
-   * where data is written by the device.
+   * When this function is called by a `RecordingDevice` @p device,
+   * the `RecordingBackend` can set up per-device data structures and
+   * properties. Individual device instances can be identified using
+   * the `thread` and `gid` of the @p device.
    *
+   * This function is called from the constructor of the @p device and
+   * at the end of calls to their set_status() function. The companion
+   * function @p set_value_names() is called from Node::pre_run_hook()
+   * and makes the names of values to be recorded known.
+   *
+   * A common implementation of this function will create an entry in
+   * a thread-local map, associating the device's global id with the
+   * properties of the device and an output facility of some kind.
+   *
+   * Each recording backend must ensure that enrollment (including all
+   * settings made by the user) is persistent over multiple calls to
+   * Prepare, while all enrollments should end with a call to
+   * finalize().
+   *
+   * @param device the RecordingDevice to be enrolled
+   *
+   * @see set_value_names(), disenroll(), write(),
+   *
+   * @ingroup NESTio
+   */
+   virtual void enroll( const RecordingDevice& device ) = 0;
+
+  /**
+   * Disenroll a `RecordingDevice` from the `RecordingBackend`.
+   *
+   * This function is considered to be the opposite of enroll() in the
+   * sense that it cancels the enrollment of a RecordingDevice from a
+   * RecordingBackend by deleting all device specific data. When
+   * setting a new recording backend for a recording device, this
+   * function is called for each backend the device is not enrolled
+   * with.
+   *
+   * @param device the RecordingDevice to be disenrolled
+   *
+   * @see enroll()
+   *
+   * @ingroup NESTio
+   */
+  virtual void disenroll ( const RecordingDevice& device ) = 0;
+
+  /**
    * To make the names of recorded quantities known to the
    * `RecordingBackend`, the vectors @p double_value_names and @p
    * long_value_names can be set appropriately. If no values of a
    * certain type (or none at all) will be recorded by @p device, the
    * constants @ref NO_DOUBLE_VALUE_NAMES and @ref NO_LONG_VALUE_NAMES
    * can be used. Please note that the lengths of the value names
-   * vectors have to correspond to the length of the data vectors
+   * vectors *must* correspond to the length of the data vectors
    * written during calls to `write()`, although this is not enforced
    * by the API.
    *
-   * A common implementation of this function will create an entry in
-   * a map, associating the device and the name of its stored values
-   * with some kind of output facility. In this case, the containing
-   * map itself would be created in the `pre_run_hook()` function.
-   *
-   * @param device the RecordingDevice to be enrolled
+   * @param device the device to set the value names for
    * @param double_value_names the names for double values to be recorded
    * @param long_value_names the names for long values to be recorded
    *
-   * @see write(), pre_run_hook()
+   * @see enroll(), disenroll(), write(),
    *
    * @ingroup NESTio
    */
-  virtual void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) = 0;
+  virtual void set_value_names(
+      const RecordingDevice& device,
+      const std::vector< Name >& double_value_names,
+      const std::vector< Name >& long_value_names ) = 0;
 
   /**
    * Prepare the backend at begin of the NEST Simulate function.
@@ -130,13 +172,15 @@ public:
   * This function is called by `SimulationManager::cleanup()` and allows the
   * backend to close open files or network connections or take similar action.
   *
+  * @see prepare()
+  *
   * @ingroup NESTio
   */
   virtual void cleanup() = 0;
 
   /**
    * Initialize global backend-specific data structures.
-
+   *
    * This function is called on each backend on simulator startup as well as
    * upon changes in the number of threads. It is also called within Prepare.
    * As the number of threads can change in between calls to this function,
@@ -161,31 +205,6 @@ public:
   * @ingroup NESTio
   */
   virtual void post_run_hook() = 0;
-
-  /**
-  * Synchronize backends at the end of each simulation cycle.
-  *
-  * This is called once per simulation cycle after all nodes have been
-  * updated. Backends which record data collectively in a thread- or
-  * MPI-parallel manner can implement backend-specific synchronization
-  * tasks here.
-  *
-  * @ingroup NESTio
-  */
-  virtual void synchronize() = 0;
-
-  /**
-   * Discard all recorded data.
-   *
-   * Called when the user sets the property
-   * n_events on @p device to 0. This function only needs to be
-   * implemented by backends which store data of devices in memory.
-   *
-   * @param device the RecordingDevice to be cleared
-   *
-   * @ingroup NESTio
-   */
-  virtual void clear( const RecordingDevice& device ) = 0;
 
   /**
    * Write the data from the event to the backend specific channel together

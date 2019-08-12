@@ -78,9 +78,17 @@ nest::RecordingBackendArbor::~RecordingBackendArbor() throw()
 }
 
 void
-nest::RecordingBackendArbor::enroll( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendArbor::initialize()
+{
+}
+
+void
+nest::RecordingBackendArbor::finalize()
+{
+}
+
+void
+nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
   {
@@ -102,6 +110,19 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device,
 }
 
 void
+nest::RecordingBackendArbor::disenroll( const RecordingDevice& device )
+{
+  //JME: implement disenroll
+}
+
+void
+nest::RecordingBackendArbor::set_value_names( const RecordingDevice&,
+  const std::vector< Name >&, const std::vector< Name >& )
+{
+  // nothing to do
+}
+
+void
 nest::RecordingBackendArbor::pre_run_hook()
 {
   auto nthreads = kernel().vp_manager.get_num_threads();
@@ -115,7 +136,23 @@ nest::RecordingBackendArbor::cleanup()
 {
   if ( prepared_ )
   {
-    cleanup_();
+    if ( not enrolled_ )
+    {
+      return;
+    }
+
+    if ( not prepared_ )
+    {
+      throw BackendNotPrepared( "RecordingBackendArbor" );
+    }
+    prepared_ = false;
+
+    if ( steps_left_ != 0 )
+    {
+      throw UnmatchedSteps( steps_left_, arbor_steps_ );
+    }
+
+    MPI_Comm_free( &arbor_->info.comm );
   }
 }
 
@@ -180,53 +217,6 @@ nest::RecordingBackendArbor::prepare()
 }
 
 void
-nest::RecordingBackendArbor::cleanup_()
-{
-  if ( not enrolled_ )
-  {
-    return;
-  }
-
-  if ( not prepared_ )
-  {
-    throw BackendNotPrepared( "RecordingBackendArbor" );
-  }
-  prepared_ = false;
-
-  if ( steps_left_ != 0 )
-  {
-    throw UnmatchedSteps( steps_left_, arbor_steps_ );
-  }
-
-  MPI_Comm_free( &arbor_->info.comm );
-}
-
-void
-nest::RecordingBackendArbor::synchronize()
-{
-#pragma omp single
-  {
-    auto& buffers = arbor_->spike_buffers;
-
-    std::vector< arb::shadow::spike > local_spikes;
-    std::size_t size = 0;
-    for ( const auto& spikes : buffers )
-    {
-      size += spikes.size();
-    }
-    local_spikes.reserve( size );
-
-    for ( auto& spikes : buffers )
-    {
-      local_spikes.insert( local_spikes.end(), spikes.begin(), spikes.end() );
-      spikes.clear();
-    }
-
-    exchange_( local_spikes );
-  }
-}
-
-void
 nest::RecordingBackendArbor::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >&,
@@ -259,13 +249,26 @@ nest::RecordingBackendArbor::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendArbor::post_run_hook()
 {
-  // nothing to do
-}
+#pragma omp single
+  {
+    auto& buffers = arbor_->spike_buffers;
 
-void
-nest::RecordingBackendArbor::clear( const nest::RecordingDevice& )
-{
-  // nothing to do
+    std::vector< arb::shadow::spike > local_spikes;
+    std::size_t size = 0;
+    for ( const auto& spikes : buffers )
+    {
+      size += spikes.size();
+    }
+    local_spikes.reserve( size );
+
+    for ( auto& spikes : buffers )
+    {
+      local_spikes.insert( local_spikes.end(), spikes.begin(), spikes.end() );
+      spikes.clear();
+    }
+
+    exchange_( local_spikes );
+  }
 }
 
 void

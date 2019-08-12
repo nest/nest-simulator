@@ -29,31 +29,59 @@
 #include "recording_backend_screen.h"
 
 void
-nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
-  const std::vector< Name >&,
-  const std::vector< Name >& )
+nest::RecordingBackendScreen::initialize()
+{
+  device_data_map tmp( kernel().vp_manager.get_num_threads() );
+  device_data_.swap( tmp );
+}
+
+void
+nest::RecordingBackendScreen::finalize()
+{
+}
+
+void
+nest::RecordingBackendScreen::enroll( const RecordingDevice& device )
 {
   const index gid = device.get_gid();
   const thread t = device.get_thread();
 
-  enrolled_devices_[ t ].insert( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data == device_data_[ t ].end() )
+  {
+    device_data_[ t ].insert( std::make_pair( gid, DeviceData( ) ) );
+  }
+}
+
+void
+nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
+{
+  const index gid = device.get_gid();
+  const thread t = device.get_thread();
+
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data != device_data_[ t ].end() )
+  {
+    device_data_[ t ].erase( device_data );
+  }
+}
+void
+nest::RecordingBackendScreen::set_value_names( const RecordingDevice&,
+  const std::vector< Name >&, const std::vector< Name >&)
+{
+  // nothing to do
 }
 
 void
 nest::RecordingBackendScreen::pre_run_hook()
 {
-  enrollment_map tmp( kernel().vp_manager.get_num_threads() );
-  enrolled_devices_.swap( tmp );
+  // nothing to do
 }
 
 void
 nest::RecordingBackendScreen::cleanup()
 {
-}
-
-void
-nest::RecordingBackendScreen::synchronize()
-{
+  // nothing to do
 }
 
 void
@@ -65,51 +93,17 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  if ( enrolled_devices_[ t ].find( gid ) == enrolled_devices_[ t ].end() )
+  if ( device_data_[ t ].find( gid ) == device_data_[ t ].end() )
   {
     return;
   }
 
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
-
-#pragma omp critical
-  {
-    prepare_cout_();
-
-    std::cout << sender << "\t";
-    if ( device.get_time_in_steps() )
-    {
-      std::cout << stamp.get_steps() << "\t" << offset;
-    }
-    else
-    {
-      std::cout << stamp.get_ms() - offset;
-    }
-    for ( auto& val : double_values )
-    {
-      std::cout << "\t" << val;
-    }
-    for ( auto& val : long_values )
-    {
-      std::cout << "\t" << val;
-    }
-    std::cout << std::endl;
-
-    restore_cout_();
-  }
+  device_data_[ t ][ gid ].write( event, double_values, long_values );
 }
 
 void
 nest::RecordingBackendScreen::get_device_status( nest::RecordingDevice const&,
   lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendScreen::clear( nest::RecordingDevice const& )
 {
   // nothing to do
 }
@@ -133,37 +127,84 @@ nest::RecordingBackendScreen::post_run_hook()
   // nothing to do
 }
 
-/* ----------------------------------------------------------------
- * Parameter extraction and manipulation functions
- * ---------------------------------------------------------------- */
+void
+nest::RecordingBackendScreen::set_status( const DictionaryDatum& d )
+{
+  // nothing to do
+}
 
-nest::RecordingBackendScreen::Parameters_::Parameters_()
+void
+nest::RecordingBackendScreen::get_status( DictionaryDatum& d ) const
+{
+  // nothing to do
+}
+
+/* ******************* Device meta data class DeviceInfo ******************* */
+
+nest::RecordingBackendScreen::DeviceData::DeviceData()
   : precision_( 3 )
+  , time_in_steps_( false )
 {
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::get( const RecordingBackendScreen&, DictionaryDatum& d ) const
+nest::RecordingBackendScreen::DeviceData::get_status( DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
+  ( *d )[ names::time_in_steps ] = time_in_steps_;
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::set( const RecordingBackendScreen&, const DictionaryDatum& d )
+nest::RecordingBackendScreen::DeviceData::set_status( const DictionaryDatum& d )
 {
-  if ( updateValue< long >( d, names::precision, precision_ ) )
+  updateValue< long >( d, names::precision, precision_ );
+  updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
+}
+
+void
+nest::RecordingBackendScreen::DeviceData::write( const Event& event,
+					   const std::vector< double >& double_values,
+					   const std::vector< long >& long_values)
+{
+#pragma omp critical
   {
-    std::cout << std::fixed;
-    std::cout << std::setprecision( precision_ );
+    prepare_cout_();
+
+    std::cout << event.get_sender_gid() << "\t";
+
+    if ( time_in_steps_ )
+    {
+      std::cout << event.get_stamp().get_steps() << "\t" << event.get_offset();
+    }
+    else
+    {
+      std::cout << event.get_stamp().get_ms() - event.get_offset();
+    }
+
+    for ( auto& val : double_values )
+    {
+      std::cout << "\t" << val;
+    }
+    for ( auto& val : long_values )
+    {
+      std::cout << "\t" << val;
+    }
+    std::cout << std::endl;
+
+    restore_cout_();
   }
 }
 
 void
-nest::RecordingBackendScreen::set_status( const DictionaryDatum& d )
+nest::RecordingBackendScreen::DeviceData::prepare_cout_()
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( *this, d );  // throws if BadProperty
+  old_fmtflags_ = std::cout.flags( std::ios::fixed );
+  old_precision_ = std::cout.precision( precision_ );
+}
 
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
+void
+nest::RecordingBackendScreen::DeviceData::restore_cout_()
+{
+  std::cout.flags( old_fmtflags_ );
+  std::cout.precision( old_precision_ );
 }

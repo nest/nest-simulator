@@ -23,9 +23,7 @@
 #ifndef RECORDING_BACKEND_MEMORY_H
 #define RECORDING_BACKEND_MEMORY_H
 
-// Includes from sli:
-#include "arraydatum.h"
-
+// Includes from nestkernel:
 #include "recording_backend.h"
 
 namespace nest
@@ -44,54 +42,34 @@ namespace nest
  * and closed in finalize(). The concrete data vectors are added to
  * the basic data structure during the call to enroll(), when the
  * exact fields are known.
+ *
+ * JME: Explain data life span
+ *
  */
 class RecordingBackendMemory : public RecordingBackend
 {
 public:
-  /**
-   * RecordingBackendMemory constructor.
-   * The actual setup is done in initialize().
-   */
   RecordingBackendMemory();
-
-  /**
-   * RecordingBackendMemory descructor.
-   */
   ~RecordingBackendMemory() throw();
 
-  virtual void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+  void initialize() override;
+  void finalize() override;
 
-  /**
-   * Finalize the RecordingBackendMemory after the simulation has finished.
-   */
-  void cleanup() override;
+  void enroll( const RecordingDevice& device ) override;
 
-  /**
-   * Trivial synchronization function. The RecordingBackendMemory does
-   * not need explicit synchronization after each time step.
-   */
-  void synchronize() override;
+  void disenroll( const RecordingDevice& device ) override;
 
-  /**
-   * Clear the recorded data for the given RecordingDevice.
-   */
-  void clear( const RecordingDevice& ) override;
-
-  virtual void
-  write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
-
-  /**
-   * Initialize the RecordingBackendMemory during simulation preparation.
-   */
-  void pre_run_hook() override;
-
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
-
-  void set_device_status( const RecordingDevice& device, const DictionaryDatum& ) override;
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
+
+  void cleanup() override;
+
+  void write( const RecordingDevice&, const Event&,
+    const std::vector< double >&, const std::vector< long >& ) override;
+
+  void pre_run_hook() override;
 
   void post_run_hook() override;
 
@@ -99,143 +77,34 @@ public:
 
   void get_status( DictionaryDatum& ) const override;
 
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& ) override;
+
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
+
 private:
-  class Recordings
+
+  struct DeviceData
   {
-  public:
-    Recordings( const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
-      : double_value_names_( double_value_names )
-      , long_value_names_( long_value_names )
-      , time_in_steps_( false )
-    {
-      double_values_.resize( double_value_names.size() );
-      long_values_.resize( long_value_names.size() );
-    }
-
-    void
-    push_back( index sender,
-      const Event& event,
-      const std::vector< double >& double_values,
-      const std::vector< long >& long_values )
-    {
-      const Time stamp = event.get_stamp();
-      const double offset = event.get_offset();
-
-      senders_.push_back( sender );
-
-      if ( time_in_steps_ )
-      {
-        times_steps_.push_back( stamp.get_steps() );
-        times_offset_.push_back( offset );
-      }
-      else
-      {
-        times_ms_.push_back( stamp.get_ms() - offset );
-      }
-
-      for ( size_t i = 0; i < double_values.size(); ++i )
-      {
-        double_values_[ i ].push_back( double_values[ i ] );
-      }
-      for ( size_t i = 0; i < long_values.size(); ++i )
-      {
-        long_values_[ i ].push_back( long_values[ i ] );
-      }
-    }
-
-    void
-    get_status( DictionaryDatum& d ) const
-    {
-      DictionaryDatum events;
-
-      if ( not d->known( names::events ) )
-      {
-        events = DictionaryDatum( new Dictionary );
-        ( *d )[ names::events ] = events;
-      }
-      else
-      {
-        events = getValue< DictionaryDatum >( d, names::events );
-      }
-
-      initialize_property_intvector( events, names::senders );
-      append_property( events, names::senders, senders_ );
-
-      if ( time_in_steps_ )
-      {
-        initialize_property_intvector( events, names::times );
-        append_property( events, names::times, times_steps_ );
-
-        initialize_property_doublevector( events, names::offsets );
-        append_property( events, names::offsets, times_offset_ );
-      }
-      else
-      {
-        initialize_property_doublevector( events, names::times );
-        append_property( events, names::times, times_ms_ );
-      }
-
-      for ( size_t i = 0; i < double_values_.size(); ++i )
-      {
-        initialize_property_doublevector( events, double_value_names_[ i ] );
-        append_property( events, double_value_names_[ i ], double_values_[ i ] );
-      }
-      for ( size_t i = 0; i < long_values_.size(); ++i )
-      {
-        initialize_property_intvector( events, long_value_names_[ i ] );
-        append_property( events, long_value_names_[ i ], long_values_[ i ] );
-      }
-    }
-
-    void
-    set_time_in_steps( bool time_in_steps )
-    {
-      time_in_steps_ = time_in_steps;
-    }
-
-    void
-    clear()
-    {
-      senders_.clear();
-      targets_.clear();
-      times_ms_.clear();
-      times_steps_.clear();
-      times_offset_.clear();
-
-      for ( size_t i = 0; i < double_values_.size(); ++i )
-      {
-        double_values_[ i ].clear();
-      }
-      for ( size_t i = 0; i < long_values_.size(); ++i )
-      {
-        long_values_[ i ].clear();
-      }
-    }
-
+    DeviceData();
+    void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
+    void push_back( const Event&, const std::vector< double >&, const std::vector< long >& );
+    void get_status( DictionaryDatum& ) const;
+    void set_status( const DictionaryDatum& );
   private:
-    Recordings();
-
-    std::vector< long > senders_;        //!< sender gids of the events
-    std::vector< long > targets_;        //!< receiver gids of the events
-    std::vector< double > times_ms_;     //!< times of registered events in ms
-    std::vector< long > times_steps_;    //!< times of registered events in steps
-    std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
-    std::vector< Name > double_value_names_;
-    std::vector< Name > long_value_names_;
-    std::vector< std::vector< double > > double_values_;
-    std::vector< std::vector< long > > long_values_;
-    bool time_in_steps_;
+    void clear();
+    std::vector< long > senders_;                         //!< sender gids of the events
+    std::vector< double > times_ms_;                      //!< times of registered events in ms
+    std::vector< long > times_steps_;                     //!< times of registered events in steps
+    std::vector< double > times_offset_;                  //!< offsets of registered events if time_in_steps_
+    std::vector< Name > double_value_names_;              //!< names for values of type double
+    std::vector< Name > long_value_names_;                //!< names for values of type long
+    std::vector< std::vector< double > > double_values_;  //!< recorded values of type double, one vector per time
+    std::vector< std::vector< long > > long_values_;      //!< recorded values of type long, one vector per time
+    bool time_in_steps_;                                  //!< Should time be recorded in steps (ms if false)
   };
 
-  /**
-   * A map for the data. We have a vector with one map per local
-   * thread. The map associates the gid of a device on a given thread
-   * with its recordings.
-  */
-  typedef std::vector< std::map< size_t, Recordings* > > data_map;
-  data_map data_;
-
-  void delete_data_();
+  typedef std::vector< std::map< size_t, DeviceData > > device_data_map;
+  device_data_map device_data_;
 };
 
 } // namespace

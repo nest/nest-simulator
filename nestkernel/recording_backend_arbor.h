@@ -38,17 +38,22 @@ public:
   RecordingBackendArbor();
   ~RecordingBackendArbor() throw();
 
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+  void initialize() override;
+  void finalize() override;
+
+  void enroll( const RecordingDevice& device ) override;
+
+  void disenroll( const RecordingDevice& device ) override;
+
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
 
   void cleanup() override;
 
-  void synchronize() override;
-
   void prepare() override;
 
-  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&,
+    const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
 
@@ -57,8 +62,6 @@ public:
   void pre_run_hook() override;
 
   void post_run_hook() override;
-
-  void clear( const RecordingDevice& ) override;
 
   void set_device_status( const RecordingDevice& device, const DictionaryDatum& params_dictionary ) override;
 
@@ -88,7 +91,6 @@ private:
   };
 
   Parameters_ P_;
-  void cleanup_();
 };
 
 } // namespace

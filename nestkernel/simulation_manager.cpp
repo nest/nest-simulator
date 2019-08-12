@@ -502,6 +502,8 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  kernel().io_manager.pre_run_hook();
+
   if ( not prepared_ )
   {
     std::string msg = "Run called without calling Prepare.";
@@ -935,9 +937,6 @@ nest::SimulationManager::update_()
           print_progress_();
         }
       }
-
-      kernel().io_manager.synchronize();
-
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 

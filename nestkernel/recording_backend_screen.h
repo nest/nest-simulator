@@ -36,106 +36,63 @@ namespace nest
 class RecordingBackendScreen : public RecordingBackend
 {
 public:
-  /**
-   * RecordingBackendScreen constructor
-   * The actual initialization is happening in RecordingBackend::initialize()
-   */
   RecordingBackendScreen()
   {
   }
 
-  /**
-   * RecordingBackendScreen destructor
-   * The actual finalization is happening in RecordingBackend::finalize()
-   */
   ~RecordingBackendScreen() throw()
   {
   }
 
-  void enroll( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+  void initialize() override;
 
-  /**
-   * Finalization function. Nothing has to be finalized in case of the
-   * RecordingBackendScreen.
-   */
+  void finalize() override;
+
+  void enroll( const RecordingDevice& device ) override;
+
+  void disenroll( const RecordingDevice& device ) override;
+
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+
+  void prepare() override;
+
   void cleanup() override;
 
-  /**
-   * Synchronization function called at the end of each time step.
-   * Again, the RecordingBackendScreen is not doing anything in this function.
-   */
-  void synchronize() override;
+  void write( const RecordingDevice&, const Event&,
+    const std::vector< double >&, const std::vector< long >& ) override;
 
-  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
-
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const override;
-
-  /**
-   * Initialization function.
-   */
   void pre_run_hook() override;
 
   void post_run_hook() override;
 
+  void set_status( const DictionaryDatum& );
+
+  void get_status( DictionaryDatum& ) const override;
+
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
-
-  void prepare() override;
-
-  void clear( const RecordingDevice& ) override;
 
   void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
 
 private:
-  struct Parameters_
+  struct DeviceData
   {
-    long precision_;
-
-    Parameters_();
-
-    void get( const RecordingBackendScreen&, DictionaryDatum& ) const;
-    void set( const RecordingBackendScreen&, const DictionaryDatum& );
+    DeviceData();
+    void get_status( DictionaryDatum& ) const;
+    void set_status( const DictionaryDatum& );
+    void write( const Event&, const std::vector< double >&, const std::vector< long >& );
+  private:
+    void prepare_cout_();
+    void restore_cout_();
+    std::ios::fmtflags old_fmtflags_;
+    long old_precision_;
+    long precision_;      //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_;  //!< Should time be recorded in steps (ms if false)
   };
 
-  Parameters_ P_;
-
-  /**
-   * A map for the enrolled devices. We have a vector with one map per local
-   * thread. The map associates the gid of a device on a given thread
-   * with its recordings.
-  */
-  typedef std::vector< std::set< index > > enrollment_map;
-  enrollment_map enrolled_devices_;
-
-  void prepare_cout_();
-  void restore_cout_();
-
-  std::ios::fmtflags old_fmtflags_;
-  long old_precision_;
+  typedef std::vector< std::map< size_t, DeviceData > > device_data_map;
+  device_data_map device_data_;
 };
-
-inline void
-RecordingBackendScreen::get_status( DictionaryDatum& d ) const
-{
-  P_.get( *this, d );
-}
-
-
-inline void
-RecordingBackendScreen::prepare_cout_()
-{
-  old_fmtflags_ = std::cout.flags( std::ios::fixed );
-  old_precision_ = std::cout.precision( P_.precision_ );
-}
-
-inline void
-RecordingBackendScreen::restore_cout_()
-{
-  std::cout.flags( old_fmtflags_ );
-  std::cout.precision( old_precision_ );
-}
 
 } // namespace
 

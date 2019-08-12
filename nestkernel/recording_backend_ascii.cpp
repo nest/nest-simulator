@@ -38,124 +38,87 @@ nest::RecordingBackendASCII::RecordingBackendASCII()
 
 nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
 {
-  cleanup();
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendASCII::initialize()
+{
+  data_map tmp( kernel().vp_manager.get_num_threads() );
+  device_data_.swap( tmp );
+}
+
+void
+nest::RecordingBackendASCII::finalize()
+{
+}
+
+void
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  file_map::value_type::iterator file_it = files_[ t ].find( gid );
-  if ( file_it != files_[ t ].end() ) // already enrolled
+  data_map::value_type::iterator file = device_data_[ t ].find( gid );
+  if ( file == device_data_[ t ].end() )
   {
-    files_[ t ].erase( file_it );
+    std::string basename = build_basename_( device );
+    device_data_[ t ].insert( std::make_pair( gid, DeviceData( basename ) ) );
   }
+}
 
-  std::string filename = build_filename_( device );
+void
+nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
+{
+  const thread t = device.get_thread();
+  const thread gid = device.get_gid();
 
-  std::ifstream test( filename.c_str() );
-  if ( test.good() && not kernel().io_manager.overwrite_files() )
+  data_map::value_type::iterator file = device_data_[ t ].find( gid );
+  if ( file != device_data_[ t ].end() )
   {
-    std::string msg = String::compose(
-      "The device file '%1' exists already and will not be overwritten. "
-      "Please change data_path, data_prefix or label, or set /overwrite_files "
-      "to true in the root node.",
-      filename );
-    LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-
-    files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
-
-    throw IOError();
+    device_data_[ t ].erase( file );
   }
-  test.close();
+}
 
-  std::ofstream* file = new std::ofstream( filename.c_str() );
-  ( *file ) << std::fixed << std::setprecision( P_.precision_ );
+void
+nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
+  const thread t = device.get_thread();
+  const thread gid = device.get_gid();
 
-  if ( not file->good() )
-  {
-    std::string msg = String::compose(
-      "I/O error while opening file '%1'. "
-      "This may be caused by too many open files in networks "
-      "with many recording devices and threads.",
-      filename );
-    LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-
-    files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
-
-    throw IOError();
-  }
-
-  ( *file ) << "# sender";
-  if ( device.get_time_in_steps() )
-  {
-    ( *file ) << "\ttime_step\ttime_offset";
-  }
-  else
-  {
-    ( *file ) << "\ttime_ms";
-  }
-  for ( auto& val : double_value_names )
-  {
-    ( *file ) << "\t" << val;
-  }
-  for ( auto& val : long_value_names )
-  {
-    ( *file ) << "\t" << val;
-  }
-  ( *file ) << std::endl;
-
-  // enroll the device
-  files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, file ) ) );
+  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  assert ( device_data != device_data_[ t ].end() );
+  device_data->second.set_value_names( double_value_names, long_value_names );
 }
 
 void
 nest::RecordingBackendASCII::pre_run_hook()
 {
-  file_map tmp( kernel().vp_manager.get_num_threads() );
-  files_.swap( tmp );
 }
 
 void
 nest::RecordingBackendASCII::post_run_hook()
 {
-  file_map::iterator inner;
-  for ( inner = files_.begin(); inner != files_.end(); ++inner )
+  for ( auto& inner: device_data_ )
   {
-    for ( file_map::value_type::iterator f = inner->begin(); f != inner->end(); ++f )
+    for ( auto& device_data: inner )
     {
-      f->second.second->flush();
+      device_data.second.flush_file();
     }
   }
 }
-
 
 void
 nest::RecordingBackendASCII::cleanup()
 {
-  file_map::iterator inner;
-  for ( inner = files_.begin(); inner != files_.end(); ++inner )
+  for ( auto& inner: device_data_ )
   {
-    file_map::value_type::iterator f;
-    for ( f = inner->begin(); f != inner->end(); ++f )
+    for ( auto& device_data: inner )
     {
-      if ( f->second.second != NULL )
-      {
-        f->second.second->close();
-        delete f->second.second;
-        f->second.second = NULL;
-      }
+      device_data.second.close_file();
     }
   }
-}
-
-void
-nest::RecordingBackendASCII::synchronize()
-{
 }
 
 void
@@ -167,136 +130,209 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  if ( files_[ t ].find( gid ) == files_[ t ].end() )
+  data_map::value_type::iterator file = device_data_[ t ].find( gid );
+  if ( file == device_data_[ t ].end() )
   {
     return;
   }
 
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
-
-  std::ofstream& file = *( files_[ t ][ gid ].second );
-  file << sender << "\t";
-  if ( device.get_time_in_steps() )
-  {
-    file << stamp.get_steps() << "\t" << offset;
-  }
-  else
-  {
-    file << stamp.get_ms() - offset;
-  }
-
-  for ( auto& val : double_values )
-  {
-    file << "\t" << val;
-  }
-  for ( auto& val : long_values )
-  {
-    file << "\t" << val;
-  }
-  file << "\n";
+  file->second.write( event, double_values, long_values );
 }
 
 const std::string
-nest::RecordingBackendASCII::build_filename_( const RecordingDevice& device ) const
+nest::RecordingBackendASCII::build_basename_( const RecordingDevice& device ) const
 {
-  // number of digits in number of virtual processes
-  const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
-  const int giddigits =
-    static_cast< int >( std::floor( std::log10( static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
+  const float num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const float num_nodes = kernel().node_manager.size();
+  const int vp_digits = static_cast< int >( std::floor( std::log10( num_vps ) ) + 1 );
+  const int gid_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
+
+  std::string label = device.get_label();
+  if ( label.empty() )
+  {
+    label = device.get_name();
+  }
 
   std::ostringstream basename;
-  const std::string& path = kernel().io_manager.get_data_path();
-  if ( not path.empty() )
-  {
-    basename << path << '/';
-  }
-  basename << kernel().io_manager.get_data_prefix();
+  basename << label
+	   << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid()
+	   << "-" << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
 
-  const std::string& label = device.get_label();
-  if ( not label.empty() )
-  {
-    basename << label;
-  }
-  else
-  {
-    basename << device.get_name();
-  }
-
-  int vp = device.get_vp();
-  int gid = device.get_gid();
-
-  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid << "-" << std::setfill( '0' )
-           << std::setw( vpdigits ) << vp;
-
-  return basename.str() + '.' + P_.file_ext_;
-}
-
-void
-nest::RecordingBackendASCII::clear( nest::RecordingDevice const& )
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendASCII::set_device_status( nest::RecordingDevice const&,
-  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
-{
-  // nothing to do
+  return basename.str();
 }
 
 void
 nest::RecordingBackendASCII::prepare()
 {
+  for ( auto& inner: device_data_ )
+  {
+    for ( auto& device_info: inner )
+    {
+      device_info.second.open_file();
+    }
+  }
+}
+
+void
+nest::RecordingBackendASCII::set_status( const DictionaryDatum& )
+{
   // nothing to do
 }
 
-/* ----------------------------------------------------------------
- * Parameter extraction and manipulation functions
- * ---------------------------------------------------------------- */
-
-nest::RecordingBackendASCII::Parameters_::Parameters_()
-  : precision_( 3 )
-  , file_ext_( "dat" )
+void
+nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
 {
+  // nothing to do
 }
 
 void
-nest::RecordingBackendASCII::Parameters_::get( DictionaryDatum& d ) const
-{
-  ( *d )[ names::precision ] = precision_;
-  ( *d )[ names::file_extension ] = file_ext_;
-}
-
-void
-nest::RecordingBackendASCII::Parameters_::set( const DictionaryDatum& d )
-{
-  updateValue< long >( d, names::precision, precision_ );
-  updateValue< std::string >( d, names::file_extension, file_ext_ );
-}
-
-void
-nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-}
-
-void
-nest::RecordingBackendASCII::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendASCII::set_device_status( const nest::RecordingDevice& device, const DictionaryDatum& d)
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  file_map::value_type::const_iterator file = files_[ t ].find( gid );
-  if ( file != files_[ t ].end() )
+  data_map::value_type::iterator file = device_data_[ t ].find( gid );
+  if ( file != device_data_[ t ].end() )
   {
-    initialize_property_array( d, names::filenames );
-    append_property( d, names::filenames, file->second.first );
+    file->second.set_status( d );
   }
+}
+
+void
+nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
+{
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  data_map::value_type::const_iterator file = device_data_[ t ].find( gid );
+  if ( file != device_data_[ t ].end() )
+  {
+    file->second.get_status( d );
+  }
+}
+
+/* ******************* Device meta data class DeviceInfo ******************* */
+
+nest::RecordingBackendASCII::DeviceData::DeviceData( std::string file_basename )
+  : precision_( 3 )
+  , time_in_steps_( false )
+  , file_basename_( file_basename )
+  , file_extension_( "dat" )
+{
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::set_value_names(
+  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+{
+  double_value_names_ = double_value_names;
+  long_value_names_ = long_value_names;
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::flush_file()
+{
+  file_.flush();
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::open_file()
+{
+  std::string data_path = kernel().io_manager.get_data_path();
+  if ( not data_path.empty() and not ( data_path[ data_path.size() - 1 ] == '/' ) )
+  {
+    data_path += '/';
+  }
+
+  std::string data_prefix = kernel().io_manager.get_data_prefix();
+
+  filename_ = data_path + data_prefix + file_basename_ + "." + file_extension_;
+
+  std::ifstream test( filename_.c_str() );
+  if ( test.good() && not kernel().io_manager.overwrite_files() )
+  {
+    std::string msg = String::compose(
+      "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
+      "the kernel property overwrite_files to true. To change the name or location of the file, "
+      "change the kernel properties data_path or data_prefix, or the device property label.",
+      filename_ );
+    LOG( M_ERROR, "RecordingBackendASCII::enroll()", msg );
+    throw IOError();
+  }
+  test.close();
+
+  file_ = std::ofstream( filename_.c_str() );
+
+  if ( not file_.good() )
+  {
+    std::string msg = String::compose("I/O error while opening file '%1'.", filename_ );
+    LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
+    throw IOError();
+  }
+
+  const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
+  file_ << std::fixed << std::setprecision( precision_ )
+	<< "# sender" << timehead;
+  for ( auto& val : double_value_names_ )
+  {
+    file_ << "\t" << val;
+  }
+  for ( auto& val : long_value_names_ )
+  {
+    file_ << "\t" << val;
+  }
+  file_ << std::endl;
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::close_file()
+{
+  file_.close();
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::write( const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values)
+{
+  file_ << event.get_sender_gid() << "\t";
+
+  if ( time_in_steps_ )
+  {
+    file_ << event.get_stamp().get_steps() << "\t" << event.get_offset();
+  }
+  else
+  {
+    file_ << ( event.get_stamp().get_ms() - event.get_offset() );
+  }
+
+  for ( auto& val : double_values )
+  {
+    file_ << "\t" << val;
+  }
+  for ( auto& val : long_values )
+  {
+    file_ << "\t" << val;
+  }
+
+  file_ << "\n";
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
+{
+  ( *d )[ names::precision ] = precision_;
+  ( *d )[ names::file_extension ] = file_extension_;
+  ( *d )[ names::time_in_steps ] = time_in_steps_;
+
+  initialize_property_array( d, names::filenames );
+  append_property( d, names::filenames, filename_ );
+}
+
+void
+nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
+{
+  updateValue< long >( d, names::precision, precision_ );
+  updateValue< std::string >( d, names::file_extension, file_extension_ );
+  updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
 }

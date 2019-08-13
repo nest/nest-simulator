@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_nestio.py
+# test_recording_backends.py
 #
 # This file is part of NEST.
 #

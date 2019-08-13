@@ -6,12 +6,12 @@ collect observable quantities like potentials, conductances or spikes
 from neurons and synapses.
 
 To determine what happens to recorded data, each recording device can
-specify a *recording backend* in its ``record_to`` property. The default
-backend is *memory*, which just stores the recorded data in memory for
-later retrieval. Other backends write the data to file or screen, or
-stream the data out to other applications.  The different backends and
-their usage is explained in detail in the section about
-:ref:`Recording Backends <recording_backends>`.
+specify a *recording backend* in its ``record_to`` property. The
+default backend is *memory*, which just stores the recorded data in
+memory for later retrieval. Other backends write the data to file or
+to the screen. The different backends and their usage is explained in
+detail in the section about :ref:`Recording Backends
+<recording_backends>`.
 
 Recording devices can fundamentally be subdivided into two groups:
 

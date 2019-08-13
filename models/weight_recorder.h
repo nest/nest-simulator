@@ -39,18 +39,22 @@
 Recording weights from synapses
 ###############################
 
-The ``weight_recorder`` is a recording device used to record weights from
-synapses. It records the source and target global IDs together with
-the weight of each spike event that travels through the observed
+The temporal evolution of synaptic weights is the key observable in
+studies of plasticity in neurornal network models. To obtain it, the
+``weight_recorder`` can be used. In contrast to other recording
+devices, which are connected to a specific set of neurons, the weight
+recorder is instead set as a parameter in the synapse model.
+
+After assigning an instance of a weight recorder to the synapse model
+by means of setting its *weight_recorder* property, the weight
+recorder collects the global IDs of source and target neurons together
+with the weight for each spike event that travels through the observed
 synapses.
 
-In order to only record from a subset of the connected synapses, the
-weight recorder accepts two list parameters 'senders' and 'targets'.
-If set, they restrict the recording of data to synapses with the
-corresponding source or target global IDs.
-
-The weight recorder will record weights with full precision from
-neurons emitting precisely timed spikes.
+In order to only record from a subset of connected synapses, the
+weight recorder accepts GIDCollections in the parameters *senders* and
+*targets*. If set, they restrict the recording of data to only
+synapses that fullfill the given criteria.
 
 ::
 

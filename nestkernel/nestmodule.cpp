@@ -696,6 +696,23 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::GetNodes_D_b::execute( SLIInterpreter* i ) const
+{
+  // check for stack load
+  i->assert_stack_load( 2 );
+
+  // extract arguments
+  const bool local_only = getValue< bool >( i->OStack.pick( 0 ) );
+  const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+
+  GIDCollectionDatum nodes = get_nodes( params, local_only );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( nodes );
+  i->EStack.pop();
+}
+
+void
 NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
@@ -1913,6 +1930,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
   i->createcommand( "Create_l_i", &create_l_ifunction );
+
+  i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
   i->createcommand( "mul_P_P", &mul_P_Pfunction );
   i->createcommand( "div_P_P", &div_P_Pfunction );

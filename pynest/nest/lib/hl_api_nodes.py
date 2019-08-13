@@ -35,6 +35,7 @@ from .hl_api_types import GIDCollection, Parameter
 __all__ = [
     'Create',
     'GetLocalGIDCollection',
+    'GetNodes',
     'PrintNodes',
 ]
 
@@ -134,6 +135,33 @@ def PrintNodes():
 
     sr("PrintNodesToStream")
     print(spp())
+
+
+def GetNodes(properties={}, local_only=False):
+    """Return all global ids with the given properties.
+
+    Parameters
+    ----------
+    properties : dict, optional
+        Only global ids of nodes matching the properties given in the
+        dictionary exactly will be returned. Matching properties with float
+        values (e.g. the membrane potential) may fail due to tiny numerical
+        discrepancies and should be avoided. Note that when a params dict is
+        present, thread parallelization is not possible, the function will
+        be run thread serial.
+    local_only : bool, optional
+        If True, only GIDs of nodes simulated on the local MPI process will
+        be returned. By default, global ids of nodes in the entire simulation
+        will be returned. This requires MPI communication and may slow down
+        the script.
+
+    Returns
+    -------
+    GIDCollection:
+        GIDcollection of nodes
+    """
+
+    return sli_func('GetNodes', properties, local_only)
 
 
 @check_stack

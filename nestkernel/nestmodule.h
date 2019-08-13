@@ -266,6 +266,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } create_l_ifunction;
 
+  class GetNodes_D_b : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getnodes_D_bfunction;
+
   class RestoreNodes_aFunction : public SLIFunction
   {
   public:

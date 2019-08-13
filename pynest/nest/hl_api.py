@@ -71,6 +71,7 @@ __all__ = [
     'GetDefaults',
     'GetKernelStatus',
     'GetLocalGIDCollection',
+    'GetNodes',
     'GetPosition',
     'GetStatus',
     'GetStructuralPlasticityStatus',

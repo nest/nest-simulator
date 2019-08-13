@@ -186,6 +186,12 @@ create( const Name& model_name, const index n_nodes )
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
+GIDCollectionPTR
+get_nodes( const DictionaryDatum& params, const bool local_only )
+{
+  return kernel().node_manager.get_nodes( params, local_only );
+}
+
 void
 connect( GIDCollectionPTR sources,
   GIDCollectionPTR targets,
@@ -348,21 +354,21 @@ conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param
 }
 
 ParameterDatum
-min_parameter( const ParameterDatum& param, const double other_value)
+min_parameter( const ParameterDatum& param, const double other_value )
 {
-  return param->min(other_value);
+  return param->min( other_value );
 }
 
 ParameterDatum
-max_parameter( const ParameterDatum& param, const double other_value)
+max_parameter( const ParameterDatum& param, const double other_value )
 {
-  return param->max(other_value);
+  return param->max( other_value );
 }
 
 ParameterDatum
-redraw_parameter( const ParameterDatum& param, const double min, const double max)
+redraw_parameter( const ParameterDatum& param, const double min, const double max )
 {
-  return param->redraw(min, max);
+  return param->redraw( min, max );
 }
 
 ParameterDatum

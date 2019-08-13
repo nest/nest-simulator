@@ -92,7 +92,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d)
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
   if ( d->known( names::senders ) )
   {
@@ -142,8 +142,8 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d)
 void
 nest::weight_recorder::calibrate()
 {
-  RecordingDevice::calibrate( { nest::names::weights },
-    { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  RecordingDevice::calibrate(
+    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
 void
@@ -209,7 +209,10 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
       return;
     }
 
-    write( e,{ e.get_weight() }, { static_cast< long >( e.get_receiver_gid() ),
-      static_cast< long >( e.get_rport() ), static_cast< long >( e.get_port() ) } );
+    write( e,
+      { e.get_weight() },
+      { static_cast< long >( e.get_receiver_gid() ),
+       static_cast< long >( e.get_rport() ),
+       static_cast< long >( e.get_port() ) } );
   }
 }

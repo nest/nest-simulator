@@ -61,8 +61,9 @@ public:
 
   void disenroll( const RecordingDevice& device ) override;
 
-  void set_value_names(const RecordingDevice& device,
-    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
 

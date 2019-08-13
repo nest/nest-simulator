@@ -49,7 +49,7 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device )
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
   if ( device_data == device_data_[ t ].end() )
   {
-    device_data_[ t ].insert( std::make_pair( gid, DeviceData( ) ) );
+    device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
   }
 }
 
@@ -67,7 +67,8 @@ nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
 }
 void
 nest::RecordingBackendScreen::set_value_names( const RecordingDevice&,
-  const std::vector< Name >&, const std::vector< Name >&)
+  const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   // nothing to do
 }
@@ -163,8 +164,8 @@ nest::RecordingBackendScreen::DeviceData::set_status( const DictionaryDatum& d )
 
 void
 nest::RecordingBackendScreen::DeviceData::write( const Event& event,
-					   const std::vector< double >& double_values,
-					   const std::vector< long >& long_values)
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
 #pragma omp critical
   {

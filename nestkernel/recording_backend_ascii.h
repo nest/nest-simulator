@@ -155,7 +155,8 @@ public:
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
 
@@ -168,8 +169,7 @@ public:
    */
   void post_run_hook() override;
 
-  void write( const RecordingDevice&, const Event&,
-	      const std::vector< double >&, const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;
@@ -190,22 +190,23 @@ private:
   {
     DeviceData() = delete;
     DeviceData( std::string );
-    void set_value_names( const std::vector< Name >&, const std::vector< Name >&);
+    void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
     void open_file();
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
     void flush_file();
     void close_file();
     void get_status( DictionaryDatum& ) const;
     void set_status( const DictionaryDatum& );
+
   private:
-    long precision_;                          //!< Number of decimal places used when writing decimal values
-    bool time_in_steps_;                      //!< Should time be recorded in steps (ms if false)
-    std::string file_basename_;               //!< File name up to but not including the "."
-    std::string file_extension_;              //!< File name extension without leading "."
-    std::string filename_;                    //!< Full filename as determined and used by open_file()
-    std::ofstream file_;                      //!< File stream to use for the device
-    std::vector< Name > double_value_names_;  //!< names for values of type double
-    std::vector< Name > long_value_names_;    //!< names for values of type long
+    long precision_;                         //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_;                     //!< Should time be recorded in steps (ms if false)
+    std::string file_basename_;              //!< File name up to but not including the "."
+    std::string file_extension_;             //!< File name extension without leading "."
+    std::string filename_;                   //!< Full filename as determined and used by open_file()
+    std::ofstream file_;                     //!< File stream to use for the device
+    std::vector< Name > double_value_names_; //!< names for values of type double
+    std::vector< Name > long_value_names_;   //!< names for values of type long
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > data_map;

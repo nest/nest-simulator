@@ -88,7 +88,7 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
   const thread gid = device.get_gid();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
-  assert ( device_data != device_data_[ t ].end() );
+  assert( device_data != device_data_[ t ].end() );
   device_data->second.set_value_names( double_value_names, long_value_names );
 }
 
@@ -100,9 +100,9 @@ nest::RecordingBackendASCII::pre_run_hook()
 void
 nest::RecordingBackendASCII::post_run_hook()
 {
-  for ( auto& inner: device_data_ )
+  for ( auto& inner : device_data_ )
   {
-    for ( auto& device_data: inner )
+    for ( auto& device_data : inner )
     {
       device_data.second.flush_file();
     }
@@ -112,9 +112,9 @@ nest::RecordingBackendASCII::post_run_hook()
 void
 nest::RecordingBackendASCII::cleanup()
 {
-  for ( auto& inner: device_data_ )
+  for ( auto& inner : device_data_ )
   {
-    for ( auto& device_data: inner )
+    for ( auto& device_data : inner )
     {
       device_data.second.close_file();
     }
@@ -154,9 +154,8 @@ nest::RecordingBackendASCII::build_basename_( const RecordingDevice& device ) co
   }
 
   std::ostringstream basename;
-  basename << label
-	   << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid()
-	   << "-" << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
+  basename << label << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid() << "-"
+           << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
 
   return basename.str();
 }
@@ -164,9 +163,9 @@ nest::RecordingBackendASCII::build_basename_( const RecordingDevice& device ) co
 void
 nest::RecordingBackendASCII::prepare()
 {
-  for ( auto& inner: device_data_ )
+  for ( auto& inner : device_data_ )
   {
-    for ( auto& device_info: inner )
+    for ( auto& device_info : inner )
     {
       device_info.second.open_file();
     }
@@ -186,7 +185,7 @@ nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendASCII::set_device_status( const nest::RecordingDevice& device, const DictionaryDatum& d)
+nest::RecordingBackendASCII::set_device_status( const nest::RecordingDevice& device, const DictionaryDatum& d )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -222,8 +221,8 @@ nest::RecordingBackendASCII::DeviceData::DeviceData( std::string file_basename )
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_value_names(
-  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   double_value_names_ = double_value_names;
   long_value_names_ = long_value_names;
@@ -239,7 +238,7 @@ void
 nest::RecordingBackendASCII::DeviceData::open_file()
 {
   std::string data_path = kernel().io_manager.get_data_path();
-  if ( not data_path.empty() and not ( data_path[ data_path.size() - 1 ] == '/' ) )
+  if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
   {
     data_path += '/';
   }
@@ -265,14 +264,13 @@ nest::RecordingBackendASCII::DeviceData::open_file()
 
   if ( not file_.good() )
   {
-    std::string msg = String::compose("I/O error while opening file '%1'.", filename_ );
+    std::string msg = String::compose( "I/O error while opening file '%1'.", filename_ );
     LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
-  file_ << std::fixed << std::setprecision( precision_ )
-	<< "# sender" << timehead;
+  file_ << std::fixed << std::setprecision( precision_ ) << "# sender" << timehead;
   for ( auto& val : double_value_names_ )
   {
     file_ << "\t" << val;
@@ -293,7 +291,7 @@ nest::RecordingBackendASCII::DeviceData::close_file()
 void
 nest::RecordingBackendASCII::DeviceData::write( const Event& event,
   const std::vector< double >& double_values,
-  const std::vector< long >& long_values)
+  const std::vector< long >& long_values )
 {
   file_ << event.get_sender_gid() << "\t";
 

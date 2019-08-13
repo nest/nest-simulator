@@ -164,7 +164,6 @@ protected:
   void update( Time const&, const long, const long );
 
 private:
-
   struct Buffers_;
 
   struct Parameters_

@@ -45,7 +45,7 @@ init_nest( int* argc, char** argv[] )
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
 }
-    
+
 void
 fail_exit( int )
 {
@@ -333,21 +333,21 @@ conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param
 }
 
 ParameterDatum
-min_parameter( const ParameterDatum& param, const double other_value)
+min_parameter( const ParameterDatum& param, const double other_value )
 {
-  return param->min(other_value);
+  return param->min( other_value );
 }
 
 ParameterDatum
-max_parameter( const ParameterDatum& param, const double other_value)
+max_parameter( const ParameterDatum& param, const double other_value )
 {
-  return param->max(other_value);
+  return param->max( other_value );
 }
 
 ParameterDatum
-redraw_parameter( const ParameterDatum& param, const double min, const double max)
+redraw_parameter( const ParameterDatum& param, const double min, const double max )
 {
-  return param->redraw(min, max);
+  return param->redraw( min, max );
 }
 
 ParameterDatum

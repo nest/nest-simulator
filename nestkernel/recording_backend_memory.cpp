@@ -55,7 +55,7 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device )
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
   if ( device_data == device_data_[ t ].end() )
   {
-    device_data_[ t ].insert( std::make_pair( gid, DeviceData( ) ) );
+    device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
   }
 }
 
@@ -81,7 +81,7 @@ nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
   const thread gid = device.get_gid();
 
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
-  assert ( device_data != device_data_[ t ].end() );
+  assert( device_data != device_data_[ t ].end() );
   device_data->second.set_value_names( double_value_names, long_value_names );
 }
 
@@ -112,8 +112,8 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
     device_data->second.push_back( event, double_values, long_values );
   }
 
-  //JME: why is this not working?
-  //device_data_[ t ][ gid ].push_back( event, double_values, long_values );
+  // JME: why is this not working?
+  // device_data_[ t ][ gid ].push_back( event, double_values, long_values );
 }
 
 void
@@ -174,8 +174,8 @@ nest::RecordingBackendMemory::DeviceData::DeviceData()
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_value_names(
-  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   double_value_names_ = double_value_names;
   long_value_names_ = long_value_names;
@@ -256,7 +256,7 @@ nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d)
+nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
 {
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
 
@@ -265,7 +265,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d)
   {
     if ( n_events != 0 )
     {
-      throw BadProperty("Property n_events can only be set to 0 (which clears all stored events)." );
+      throw BadProperty( "Property n_events can only be set to 0 (which clears all stored events)." );
     }
 
     clear();

@@ -57,6 +57,12 @@ nest::spike_detector::calibrate()
   RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
+void
+nest::spike_detector::update( Time const&, const long, const long )
+{
+  // Nothing to do. Writing to the backend happens in handle().
+}
+
 nest::RecordingDevice::Type
 nest::spike_detector::get_type() const
 {

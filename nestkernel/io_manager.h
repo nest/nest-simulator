@@ -93,14 +93,14 @@ public:
 
   bool is_valid_recording_backend( Name ) const;
 
-  void write( Name, const RecordingDevice&, const Event&,
-	      const std::vector< double >&, const std::vector< long >& );
+  void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
   void enroll_recorder( Name, const RecordingDevice& );
 
-  void set_recording_value_names( Name backend_name, const RecordingDevice& device,
-				  const std::vector< Name >& double_value_names,
-				  const std::vector< Name >& long_value_names );
+  void set_recording_value_names( Name backend_name,
+    const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
 

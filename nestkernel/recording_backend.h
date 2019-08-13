@@ -108,7 +108,7 @@ public:
    *
    * @ingroup NESTio
    */
-   virtual void enroll( const RecordingDevice& device ) = 0;
+  virtual void enroll( const RecordingDevice& device ) = 0;
 
   /**
    * Disenroll a `RecordingDevice` from the `RecordingBackend`.
@@ -126,7 +126,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll ( const RecordingDevice& device ) = 0;
+  virtual void disenroll( const RecordingDevice& device ) = 0;
 
   /**
    * To make the names of recorded quantities known to the
@@ -147,10 +147,9 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void set_value_names(
-      const RecordingDevice& device,
-      const std::vector< Name >& double_value_names,
-      const std::vector< Name >& long_value_names ) = 0;
+  virtual void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) = 0;
 
   /**
    * Prepare the backend at begin of the NEST Simulate function.

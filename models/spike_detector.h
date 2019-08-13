@@ -65,11 +65,11 @@ EndDocumentation */
 
 namespace nest
 {
-    
+
 /**
  * Class spike_detector
  */
-    
+
 class spike_detector : public RecordingDevice
 {
 
@@ -115,10 +115,8 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-    void calibrate();
-    void init_state_( Node const& ) {}
-    void init_buffers_() {}
-    void update( Time const&, const long, const long ) {}
+  void calibrate();
+  void update( Time const&, const long, const long );
 };
 
 inline port

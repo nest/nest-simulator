@@ -207,22 +207,26 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
 
 #include <mpi4py/mpi4py.h>
 
-void set_communicator(PyObject* pyobj) {
+void
+set_communicator( PyObject* pyobj )
+{
   import_mpi4py();
 
   // If object is not a mpi4py communicator, bail
-  if (! PyObject_TypeCheck(pyobj, &PyMPIComm_Type))
+  if ( !PyObject_TypeCheck( pyobj, &PyMPIComm_Type ) )
   {
-    throw nest::KernelException("set_communicator: argument is not a mpi4py communicator");
+    throw nest::KernelException( "set_communicator: argument is not a mpi4py communicator" );
   }
 
-  nest::kernel().mpi_manager.set_communicator(*PyMPIComm_Get(pyobj));
+  nest::kernel().mpi_manager.set_communicator( *PyMPIComm_Get( pyobj ) );
 }
 
 #else // ! HAVE_MPI4PY
 
-void set_communicator(PyObject*) {
-  throw nest::KernelException("set_communicator: NEST not compiled with MPI4PY");
+void
+set_communicator( PyObject* )
+{
+  throw nest::KernelException( "set_communicator: NEST not compiled with MPI4PY" );
 }
 
 #endif

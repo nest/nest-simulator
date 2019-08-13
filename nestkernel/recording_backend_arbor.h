@@ -46,14 +46,14 @@ public:
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void cleanup() override;
 
   void prepare() override;
 
-  void write( const RecordingDevice&, const Event&,
-    const std::vector< double >&, const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
 

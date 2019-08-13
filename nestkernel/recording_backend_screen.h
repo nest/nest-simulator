@@ -95,14 +95,14 @@ public:
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
 
   void cleanup() override;
 
-  void write( const RecordingDevice&, const Event&,
-    const std::vector< double >&, const std::vector< long >& ) override;
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void pre_run_hook() override;
 
@@ -123,13 +123,14 @@ private:
     void get_status( DictionaryDatum& ) const;
     void set_status( const DictionaryDatum& );
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
+
   private:
     void prepare_cout_();
     void restore_cout_();
     std::ios::fmtflags old_fmtflags_;
     long old_precision_;
-    long precision_;      //!< Number of decimal places used when writing decimal values
-    bool time_in_steps_;  //!< Should time be recorded in steps (ms if false)
+    long precision_;     //!< Number of decimal places used when writing decimal values
+    bool time_in_steps_; //!< Should time be recorded in steps (ms if false)
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > device_data_map;

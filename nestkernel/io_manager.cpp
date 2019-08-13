@@ -60,7 +60,7 @@ nest::IOManager::IOManager()
 
 nest::IOManager::~IOManager()
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     delete it.second;
   }
@@ -132,7 +132,7 @@ nest::IOManager::initialize()
 
   overwrite_files_ = false;
 
-  for ( const auto& it: recording_backends_ )
+  for ( const auto& it : recording_backends_ )
   {
     it.second->initialize();
   }
@@ -141,7 +141,7 @@ nest::IOManager::initialize()
 void
 nest::IOManager::finalize()
 {
-  for ( const auto& it: recording_backends_ )
+  for ( const auto& it : recording_backends_ )
   {
     it.second->finalize();
   }
@@ -149,7 +149,7 @@ nest::IOManager::finalize()
 
 void nest::IOManager::change_num_threads( thread )
 {
-  for ( const auto& it: recording_backends_ )
+  for ( const auto& it : recording_backends_ )
   {
     it.second->finalize();
     it.second->initialize();
@@ -166,7 +166,7 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   DictionaryDatum recording_backends;
   if ( updateValue< DictionaryDatum >( d, names::recording_backends, recording_backends ) )
   {
-    for ( const auto& it: recording_backends_ )
+    for ( const auto& it : recording_backends_ )
     {
       DictionaryDatum recording_backend_status;
       if ( updateValue< DictionaryDatum >( recording_backends, it.first, recording_backend_status ) )
@@ -185,7 +185,7 @@ nest::IOManager::get_status( DictionaryDatum& d )
   ( *d )[ names::overwrite_files ] = overwrite_files_;
 
   DictionaryDatum recording_backends( new Dictionary );
-  for ( const auto& it: recording_backends_ )
+  for ( const auto& it : recording_backends_ )
   {
     DictionaryDatum recording_backend_status( new Dictionary );
     it.second->get_status( recording_backend_status );
@@ -197,7 +197,7 @@ nest::IOManager::get_status( DictionaryDatum& d )
 void
 nest::IOManager::pre_run_hook()
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     it.second->pre_run_hook();
   }
@@ -206,7 +206,7 @@ nest::IOManager::pre_run_hook()
 void
 nest::IOManager::post_run_hook()
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     it.second->post_run_hook();
   }
@@ -215,7 +215,7 @@ nest::IOManager::post_run_hook()
 void
 nest::IOManager::prepare()
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     it.second->prepare();
   }
@@ -224,7 +224,7 @@ nest::IOManager::prepare()
 void
 nest::IOManager::cleanup()
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     it.second->cleanup();
   }
@@ -239,8 +239,11 @@ nest::IOManager::is_valid_recording_backend( Name backend_name ) const
 }
 
 void
-nest::IOManager::write( Name backend_name, const RecordingDevice& device, const Event& event,
-  const std::vector< double >& double_values, const std::vector< long >& long_values )
+nest::IOManager::write( Name backend_name,
+  const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   recording_backends_[ backend_name ]->write( device, event, double_values, long_values );
 }
@@ -248,7 +251,7 @@ nest::IOManager::write( Name backend_name, const RecordingDevice& device, const 
 void
 nest::IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device )
 {
-  for ( auto& it: recording_backends_ )
+  for ( auto& it : recording_backends_ )
   {
     if ( it.first == backend_name )
     {
@@ -262,22 +265,24 @@ nest::IOManager::enroll_recorder( Name backend_name, const RecordingDevice& devi
 }
 
 void
-nest::IOManager::set_recording_value_names( Name backend_name, const RecordingDevice& device,
-  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+nest::IOManager::set_recording_value_names( Name backend_name,
+  const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   recording_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
 }
 
 void
-nest::IOManager::get_recording_device_status( Name backend_name,
-  const RecordingDevice& device, DictionaryDatum& d )
+nest::IOManager::get_recording_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }
 
 void
 nest::IOManager::set_recording_device_status( Name backend_name,
-  const RecordingDevice& device, const DictionaryDatum& d )
+  const RecordingDevice& device,
+  const DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->set_device_status( device, d );
 }

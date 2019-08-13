@@ -112,12 +112,13 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
 void
 nest::RecordingBackendArbor::disenroll( const RecordingDevice& device )
 {
-  //JME: implement disenroll
+  // JME: implement disenroll
 }
 
 void
 nest::RecordingBackendArbor::set_value_names( const RecordingDevice&,
-  const std::vector< Name >&, const std::vector< Name >& )
+  const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   // nothing to do
 }

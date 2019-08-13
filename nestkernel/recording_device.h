@@ -94,11 +94,10 @@ protected:
   void set_initialized_() override;
 
 private:
-
   struct Parameters_
   {
-    std::string label_;    //!< A user-defined label for symbolic device names.
-    Name record_to_;       //!< The name of the recording backend to use
+    std::string label_; //!< A user-defined label for symbolic device names.
+    Name record_to_;    //!< The name of the recording backend to use
 
     Parameters_();
     Parameters_( const Parameters_& );

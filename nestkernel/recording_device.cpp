@@ -29,14 +29,14 @@
 nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
-  , P_ ()
+  , P_()
 {
 }
 
 nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
-  , P_ ( rd.P_ )
+  , P_( rd.P_ )
 {
 }
 
@@ -47,11 +47,11 @@ nest::RecordingDevice::set_initialized_()
 }
 
 void
-nest::RecordingDevice::calibrate(
-  const std::vector< Name >& double_value_names, const std::vector< Name >& long_value_names )
+nest::RecordingDevice::calibrate( const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
 {
   Device::calibrate();
-  kernel().io_manager.set_recording_value_names( P_.record_to_, *this , double_value_names, long_value_names );
+  kernel().io_manager.set_recording_value_names( P_.record_to_, *this, double_value_names, long_value_names );
 }
 
 const std::string&
@@ -100,10 +100,10 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const Dictionar
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  //JME: make sure we're outside of Prepare/Run/Cleanup context
+  // JME: make sure we're outside of Prepare/Run/Cleanup context
 
-  Parameters_ ptmp = P_;  // temporary copy in case of errors
-  ptmp.set( *this, d );   // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( *this, d );  // throws if BadProperty
 
   Device::set_status( d );
 
@@ -137,8 +137,8 @@ nest::RecordingDevice::is_active( Time const& T ) const
 
 void
 nest::RecordingDevice::write( const Event& event,
-			const std::vector< double >& double_values,
-			const std::vector< long >& long_values )
+  const std::vector< double >& double_values,
+  const std::vector< long >& long_values )
 {
   kernel().io_manager.write( P_.record_to_, *this, event, double_values, long_values );
 }

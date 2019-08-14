@@ -35,7 +35,7 @@ meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 meip n /one_to_one << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
-vm << /label (receiver) /record_to [ /ascii ] >> SetStatus
+vm << /label (receiver) /record_to /ascii >> SetStatus
 
 vm n Connect
 

@@ -35,7 +35,7 @@ sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 sg n /one_to_one << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
-vm << /label (sender) /record_to [ /ascii ] >> SetStatus
+vm << /label (sender) /record_to /ascii >> SetStatus
 
 vm n Connect
 

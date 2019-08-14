@@ -188,7 +188,7 @@ def from_device(detec, **kwargs):
     if not type_id.name == "spike_detector":
         raise nest.kernel.NESTError("Please provide a spike_detector.")
 
-    if "memory" in nest.GetStatus(detec, "record_to")[0]:
+    if nest.GetStatus(detec, "record_to")[0] == "memory":
 
         ts, gids = _from_memory(detec)
 
@@ -206,7 +206,7 @@ def from_device(detec, **kwargs):
 
         return _make_plot(ts, ts, gids, gids, xlabel=xlabel, **kwargs)
 
-    elif "ascii" in nest.GetStatus(detec, "record_to")[0]:
+    elif nest.GetStatus(detec, "record_to")[0] == "ascii":
         fname = nest.GetStatus(detec, "filenames")[0]
         return from_file(fname, **kwargs)
 

@@ -160,12 +160,12 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
-        elif ("memory" not in nest.GetStatus(detec, "record_to")[0] and
+        elif ( nest.GetStatus(detec, "record_to")[0] != "memory" and
               len(nest.GetStatus(detec, "record_from")[0]) > 1):
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring only V_m or record to memory!")
 
-    if "memory" in nest.GetStatus(detec, "record_to")[0]:
+    if nest.GetStatus(detec, "record_to")[0] == "memory":
 
         timefactor = 1.0
         if not nest.GetStatus(detec)[0]['time_in_steps']:
@@ -215,13 +215,13 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
         return plotids
 
-    elif "ascii" in nest.GetStatus(detec, "record_to")[0]:
+    elif nest.GetStatus(detec, "record_to")[0] == "ascii":
         fname = nest.GetStatus(detec, "filenames")[0]
         return from_file(fname, **kwargs)
 
     else:
         raise nest.kernel.NESTError("Provided devices neither record to \
-            file, nor to memory.")
+            ascii file, nor to memory.")
 
 
 def _from_memory(detec):

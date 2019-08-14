@@ -93,7 +93,7 @@ n = nest.Create("iaf_cond_alpha",
 m = nest.Create("multimeter",
                 params={"interval": 0.1,
                         "record_from": ["V_m", "g_ex", "g_in"],
-                        "record_to": ["ascii"],
+                        "record_to": "ascii",
                         "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",

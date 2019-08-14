@@ -200,12 +200,12 @@ ispikes = nest.Create("spike_detector")
 
 ###############################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory
-# spikes using `set`. Setting the property "record_to" to `["ascii"]`
+# spikes using `set`. Setting the property "record_to" to `"ascii"`
 # ensures that the spikes will be recorded to a file, whose name starts with
 # the string assigned to label.
 
-espikes.set({"label": "brunel-py-ex", "record_to": ["ascii"]})
-ispikes.set({"label": "brunel-py-in", "record_to": ["ascii"]})
+espikes.set({"label": "brunel-py-ex", "record_to": "ascii"})
+ispikes.set({"label": "brunel-py-in", "record_to": "ascii"})
 
 print("Connecting devices")
 

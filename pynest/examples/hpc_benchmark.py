@@ -264,7 +264,7 @@ def build_network(logger):
             brunel_params['filestem'],
             'alpha_' + str(stdp_params['alpha']) + '_spikes')
         E_detector = nest.Create('spike_detector', params={
-            'record_to': ['ascii', 'memory'],
+            'record_to': 'ascii',
             'label': detector_label
         })
 

@@ -59,7 +59,7 @@ h = 0.1  # simulation step size in mS
 neuron = nest.Create('hh_psc_alpha')
 sd = nest.Create('spike_detector')
 
-nest.SetStatus(sd, {'record_to': ['memory']})
+nest.SetStatus(sd)
 
 nest.Connect(neuron, sd, syn_spec={'weight': 1.0, 'delay': h})
 

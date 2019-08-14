@@ -125,11 +125,14 @@ all recording devices as this does not require any additional setup of
 data paths or filesystem permissions and allows a convenient readout
 of data by the user after simulation.
 
-Each recording backend provides a different set of parameters
+Each recording backend may provide a specific set of parameters
 (explained in the backend documentation below) that will be included
 in the model status dictionary once the backend is set. This means
-that they can only be reviewed and changed *after* the backend has
-been selected.
+that these parameters can only be reviewed and changed *after* the
+backend has been selected. In particular, recording-device specific
+per-device parameters cannot be set using ``SetDefaults``, but must
+rather be supplied either in the call to ``Create`` or set on an
+instance using ``SetStatus()``.
 
 .. note::
    Even though parameters of different recording backends may have the

@@ -42,14 +42,14 @@ M_ERROR setverbosity
 
 
 /clear_error
-{ 
+{
   counttomark npop % pop all but mark
   errordict begin /newerror false def end
 } def
 
 % integer_data --- return array with only unique entries in ascending order
 %                  data must be intergers
-%           
+%
 /unique_ascending
 {
   /d << >> def
@@ -71,7 +71,7 @@ def
 }
 def
 
-% times data --- times and data have corresponding entries; entries in 
+% times data --- times and data have corresponding entries; entries in
 %                data with equal times are summed.
 /sum_by_times
 {
@@ -90,14 +90,13 @@ def
 % one noded, cycled
 {
   << >> begin
-   /build_net { 
+   /build_net {
      /iaf_psc_alpha << /I_e 50.0 >> SetDefaults
-     /multimeter << /record_from [ /V_m ] /interval 0.5 >> SetDefaults
-     /n  /iaf_psc_alpha Create def  
-     /mm /multimeter Create def
+     /n  /iaf_psc_alpha Create def
+     /mm /multimeter << /record_from [ /V_m ] /interval 0.5 >> Create def
      mm n Connect
    } def
- 
+
    % sim with freeze/thaw
    ResetKernel
    build_net
@@ -116,7 +115,7 @@ def
    build_net
    10. Simulate
    mm /events get /V_m get cva /rV Set
-     
+
    fV rV eq  % both should give same result
 
   end
@@ -126,14 +125,13 @@ def
 % two nodes, one cycled
 {
   << >> begin
-   /build_net { 
-     /iaf_psc_alpha << /I_e 50.0 >> SetDefaults 
-     /multimeter << /record_from [ /V_m ]
-                    /interval 0.5 
-                    /time_in_steps true >> SetDefaults
+   /build_net {
+     /iaf_psc_alpha << /I_e 50.0 >> SetDefaults
      /nc /iaf_psc_alpha Create def
      /np /iaf_psc_alpha Create def
-     /mm /multimeter Create def  
+     /mm /multimeter << /record_from [ /V_m ]
+                        /interval 0.5
+			/time_in_steps true >> Create def
      mm nc Connect
      mm np Connect
    } def
@@ -159,13 +157,13 @@ def
    np 0 get cvs cvlit get [5 190 5] Range eq exch
    nc 0 get cvs cvlit get [55 100 5] Range [155 190 5] Range join eq
    and
-   
+
    % check event data by sender---frozen data equal to first points in non-frozen
    sall Vall split_data dup
    nc 0 get cvs cvlit get /Vc Set
    np 0 get cvs cvlit get Vc length Take Vc eq
    and
-  
+
   end
 } assert_or_die
 

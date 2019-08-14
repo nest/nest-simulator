@@ -200,7 +200,7 @@ net_dict = {
     # 'optimized': population-specific mean and std, allowing a reduction of
     # the initial activity burst in the network.
     # Choose either 'original' or 'optimized'.
-    'V0_type': 'optimized',
+    'V0_type': 'original',
     # Parameters of the neurons.
     'neuron_params': {
         # Membrane potential average for the neurons (in mV).

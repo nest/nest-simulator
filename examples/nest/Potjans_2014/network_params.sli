@@ -106,7 +106,7 @@ def
 % (original): uniform mean and std for all populations
 % (optimized): population-specific mean and std, allowing a reduction of the
 % initial activity burst in the network
-/Vm0_type (optimized) def        % choose either (original) or (optimized)
+/Vm0_type (original) def        % choose either (original) or (optimized)
 Vm0_type (optimized) eq
 {
     % optimized

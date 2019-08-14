@@ -129,7 +129,7 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
   }
 
   size_t n_events = 0;
-  for (auto& device_data_for_thread: device_data_)
+  for ( auto& device_data_for_thread : device_data_ )
   {
     const auto device_data = device_data_for_thread.find( gid );
     if ( device_data != device_data_for_thread.end() )

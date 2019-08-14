@@ -60,5 +60,5 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
 BOOST_AUTO_TEST_SUITE_END()
 
 #endif /* BOOST_VERSION */
-    
+
 #endif /* TEST_PARAMETER_H */

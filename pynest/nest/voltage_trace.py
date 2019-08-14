@@ -160,7 +160,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
-        elif ( nest.GetStatus(detec, "record_to")[0] != "memory" and
+        elif (nest.GetStatus(detec, "record_to")[0] != "memory" and
               len(nest.GetStatus(detec, "record_from")[0]) > 1):
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring only V_m or record to memory!")

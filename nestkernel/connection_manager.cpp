@@ -1697,6 +1697,7 @@ void
 nest::ConnectionManager::sync_has_primary_connections()
 {
   has_primary_connections_ = check_primary_connections_.any_true();
+
 #pragma omp single
   has_primary_connections_ =
     kernel().mpi_manager.any_true( has_primary_connections_ );
@@ -1706,6 +1707,7 @@ void
 nest::ConnectionManager::check_secondary_connections_exist()
 {
   secondary_connections_exist_ = check_secondary_connections_.any_true();
+#pragma omp barrier
 
 #pragma omp single
   secondary_connections_exist_ =

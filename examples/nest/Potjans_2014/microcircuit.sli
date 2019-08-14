@@ -229,9 +229,9 @@
 % th_spike_detector_GID
 /CreateNetworkNodes
 {
-    /spikes_record_to          save_cortical_spikes {[/ascii /memory]}{[/memory]} ifelse def
-    /voltages_record_to        save_voltages        {[/ascii /memory]}{[/memory]} ifelse def
-    /thalamic_spikes_record_to save_thalamic_spikes {[/ascii /memory]}{[/memory]} ifelse def 
+    /spikes_record_to          save_cortical_spikes {/ascii}{/memory} ifelse def
+    /voltages_record_to        save_voltages        {/ascii}{/memory} ifelse def
+    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def 
 
     neuron_model model_params SetDefaults
     % arrays of GIDs:

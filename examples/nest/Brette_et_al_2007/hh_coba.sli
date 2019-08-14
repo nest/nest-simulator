@@ -95,7 +95,7 @@
   /detector /spike_detector
   /detector_params
   <<
-   /record_to [/ascii /memory]
+   /record_to /ascii
    /label (hh_coba)
   >>
 

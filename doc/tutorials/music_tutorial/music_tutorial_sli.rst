@@ -67,7 +67,7 @@ use :math:`\texttt{put}`.
 
     % Create spike detector
     /spike_detector Create /sdetector Set
-    sdetector << /record_to [/ascii]
+    sdetector << /record_to /ascii
                  /label (output)
     >> SetStatus
 

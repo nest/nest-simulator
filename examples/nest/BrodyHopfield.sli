@@ -56,7 +56,7 @@ ResetKernel
 /spike_detector     Create /sd      Set
 /iaf_psc_alpha   N  Create /neurons Set
 
-sd << /record_to [/ascii /memory] >> SetStatus
+sd << /record_to /ascii >> SetStatus
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

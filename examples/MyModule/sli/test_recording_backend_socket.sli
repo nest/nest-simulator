@@ -39,7 +39,7 @@
 (mymodule) Install
 
 /iaf_psc_alpha << /I_e 1450.0 >> Create
-/spike_detector << /record_to [/socket]  >> Create
+/spike_detector << /record_to /socket >> Create
 Connect
 
 100 Simulate

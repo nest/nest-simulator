@@ -295,15 +295,15 @@ extracting the value of ``events``. However, for larger or longer
 simulations, we may prefer to write the data to file for later
 analysis instead. All recording devices allow the specification of
 where data is stored over the parameter ``record_to``, which is set to
-an array of recording backend to record to.  To dump recorded data to
-a file, add ``/ascii`` to the array, to print to the screen, add
-``/screen`` and to hold the data in memory, add ``/memory``, which is
-also the default behavior for most devices. The following code sets up
-a ``multimeter`` to record data to a named file:
+the name of the recording backend to use.  To dump recorded data to a
+file, set ``/ascii``, to print to the screen, use ``/screen`` and to
+hold the data in memory, set ``/memory``, which is also the default
+for all recording devices. The following code sets up a ``multimeter``
+to record data to a named file:
 
 ::
 
-    recdict = {"record_to" : ["ascii"], "label" : "epop_mp"}
+    recdict = {"record_to" : "ascii", "label" : "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
 If no name for the file is specified using the ``label`` parameter, NEST

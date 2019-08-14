@@ -334,8 +334,7 @@ functions, see documentation.
     # ! the recorded neurons, but not the time.
     nest.CopyModel('multimeter', 'RecordingNode',
                    params={'interval': Params['sim_interval'],
-                           'record_from': ['V_m'],
-                           'record_to': ['memory']})
+                           'record_from': ['V_m']})
 
     # ! Populations
     # ! ===========

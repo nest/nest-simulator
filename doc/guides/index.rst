@@ -8,7 +8,6 @@ Here you can find details on a variety of topics in NEST.
 
     connection_management
     running_simulations
-    devices
     stimulating_the_network
     recording_from_simulations
     parallel_computing

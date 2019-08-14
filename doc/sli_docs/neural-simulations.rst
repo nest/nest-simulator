@@ -56,7 +56,7 @@ recording interval to 0.1 ms. The default is 1.0 ms.
 
 ::
 
-   SLI ] vm << /record_to [/screen] /interval 0.1 >> SetStatus
+   SLI ] vm << /record_to /screen /interval 0.1 >> SetStatus
 
 The double angled brackets ``<<`` and ``>>``\ delimit a dictionary
 definition which consists of successive ``/key value`` pairs.
@@ -463,31 +463,33 @@ Recording devices
 ~~~~~~~~~~~~~~~~~
 
 All devices which are used to observe the state of other network nodes
-are called recording devices. Examples are ``voltmeter`` and
+are called recording devices. Examples are ``multimeter`` and
 ``spike_detector``.
 
-Recording devices have properties which control the amount, the format, and
-the destination of their output. The latter is done by setting their property
-``record_to`` to an array containing the name(s) of the recording backend(s) to
-use. To dump recorded data to a file, add ``/ascii`` to the array, to print to
-the screen, add ``/screen`` and to hold the data in memory, add ``/memory``, which
-is also the default behavior for most devices. Data stored in memory can be
-retrieved after the simulation using ``GetStatus``. To get a list of all available
-recording backends, run
+Recording devices have properties which control the amount, the
+format, and the destination of their output. The latter is done by
+setting their property ``record_to`` to the name of the recording
+backend to use. To dump recorded data to a file, set ``/ascii``, to
+print to the screen, use ``/screen`` and to hold the data in memory,
+set ``/memory``, which is also the default for all devices. Data
+stored in memory can be retrieved after the simulation using
+``GetStatus``. To get a list of all available recording backends, run
 
 ::
    
-   0 GetStatus /recording_backends get keys ==
+   SLI ] GetKernelStatus /recording_backends get keys ==
 
 Device models are also stored in the dictionary ``modeldict``. The most
 important devices are:
 
-Model name Description ``voltmeter`` Device to observe membrane
-potentials. ``multimeter`` Device to observe arbitrary analog
-quantities. ``spike_detector`` Device to observe spike times. Please
-note that the connection direction for analog recorders (all except
-``spike_detector`` in above list) is inverted with respect to other
-recorders.
+* ``voltmeter`` Device to observe membrane potentials.
+* ``multimeter`` Device to observe arbitrary analog quantities.
+* ``spike_detector`` Device to observe spike times.
+
+Please note that the connection direction for analog recorders (all
+except ``spike_detector`` in above list) is inverted with respect to
+other recorders, i.e. the recorder has to connected to the neurons in
+this case.
 
 Example 6
 ^^^^^^^^^

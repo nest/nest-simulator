@@ -276,7 +276,7 @@ brunel_params dup using
     /E_detector /spike_detector Create def
     E_detector
     <<
-       /record_to [/ascii /memory]
+       /record_to /ascii
        /label detector_label
     >> SetStatus
   } if

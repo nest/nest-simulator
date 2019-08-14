@@ -246,7 +246,7 @@ statusdict/userargs :: size 1 geq
       exsd
       <<
         /label (brunel-2-ex-threaded)
-        /record_to [/ascii /memory]
+        /record_to /ascii
       >> SetStatus
 
       (Creating inhibitory spike detector.) =
@@ -254,7 +254,7 @@ statusdict/userargs :: size 1 geq
       insd
       <<
         /label (brunel-2-in-threaded)
-        /record_to [/ascii /memory]
+        /record_to /ascii
       >> SetStatus
 
       % Create custom synapse types with appropriate values for

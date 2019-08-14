@@ -82,7 +82,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #  - `record_to` indicates where to put recorded data. All possible values are
 #    available by typing `nest.GetKernelStatus("recording_backends").keys()`.
 #  - `label` specifies an arbitrary label for the device. It is used instead of
-#   the name of the model in the output file name.
+#    the name of the model in the output file name.
 #
 #  * For the spike generators, the spike times in ms (`spike_times`) are given
 #    explicitly.

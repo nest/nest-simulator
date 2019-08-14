@@ -262,7 +262,7 @@ end
       exsd
       <<
         /label (brunel-1-ex)
-        /record_to [/ascii]
+        /record_to /ascii
       >> SetStatus
 
       (Creating inhibitory spike detector.) =
@@ -270,7 +270,7 @@ end
       insd
       <<
         /label (brunel-1-in)
-        /record_to [/ascii]
+        /record_to /ascii
       >> SetStatus
 
       % Create custom synapse types with appropriate values for

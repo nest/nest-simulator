@@ -206,7 +206,7 @@ modeldict begin
   } forall
   (-DONE-) =
 
-  /record_to tofile { [/ascii] } { [] } ifelse def
+  /record_to tofile { /ascii } { [] } ifelse def
 
   (Create voltmeter ) =only
   %% generate spike detectors and voltmeter for each neuron

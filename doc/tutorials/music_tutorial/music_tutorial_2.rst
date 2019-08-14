@@ -26,7 +26,7 @@ configuration file:
         nest.Connect([n], music_out, "one_to_one",{'music_channel': i})
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"record_to": ["ascii"], "label": "send"})
+    nest.SetStatus(sdetector, {"record_to": "ascii", "label": "send"})
 
     nest.Connect(neurons, sdetector)
 

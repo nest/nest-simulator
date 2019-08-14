@@ -24,6 +24,7 @@ import subprocess as sp
 import unittest
 import nest
 
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
 
 class TestRecordingBackendstes(unittest.TestCase):

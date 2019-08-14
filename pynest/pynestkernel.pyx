@@ -593,9 +593,10 @@ cdef inline object sli_datum_to_object(Datum* dat):
         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
-        obj = SLILiteral(obj_str.decode())
-        ret = None if obj == nest.pynestkernel.SLILiteral('None') else obj
-        ignore_none = True
+        ret = obj_str.decode()
+        if ret == 'None':
+            ret = None
+            ignore_none = True
     elif datum_type == SLI_TYPE_ARRAY:
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:

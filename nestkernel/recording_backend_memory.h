@@ -165,8 +165,8 @@ private:
     std::vector< double > times_offset_;                 //!< offsets of registered events if time_in_steps_
     std::vector< Name > double_value_names_;             //!< names for values of type double
     std::vector< Name > long_value_names_;               //!< names for values of type long
-    std::vector< std::vector< double > > double_values_; //!< recorded values of type double, one vector per time
-    std::vector< std::vector< long > > long_values_;     //!< recorded values of type long, one vector per time
+    std::vector< std::vector< double > > double_values_; //!< recorded values of type double, one vector per value
+    std::vector< std::vector< long > > long_values_;     //!< recorded values of type long, one vector per value
     bool time_in_steps_;                                 //!< Should time be recorded in steps (ms if false)
   };
 

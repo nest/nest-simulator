@@ -178,7 +178,10 @@ nest::RecordingBackendMemory::DeviceData::set_value_names( const std::vector< Na
   const std::vector< Name >& long_value_names )
 {
   double_value_names_ = double_value_names;
+  double_values_.resize( double_value_names.size() );
+
   long_value_names_ = long_value_names;
+  long_values_.resize( long_value_names.size() );
 }
 
 void

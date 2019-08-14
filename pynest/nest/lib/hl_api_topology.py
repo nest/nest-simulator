@@ -932,7 +932,8 @@ def FindCenterElement(layer):
     if not isinstance(layer, nest.GIDCollection):
         raise nest.kernel.NESTError("layer must be a GIDCollection")
 
-    return FindNearestElement(layer, layer.spatial['center'])[0]
+    gid_of_center_element = FindNearestElement(layer, layer.spatial['center'])[0]
+    return layer[layer.index(gid_of_center_element)]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
@@ -1324,7 +1325,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     import matplotlib.pyplot as plt
 
-    if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
+    if not isinstance(src_nrn, nest.GIDCollection) or len(src_nrn) != 1:
         raise ValueError("src_nrn must be a single element GIDCollection.")
     if not isinstance(tgt_layer, nest.GIDCollection):
         raise ValueError("tgt_layer must be a GIDCollection.")

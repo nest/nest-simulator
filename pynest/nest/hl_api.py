@@ -86,6 +86,7 @@ __all__ = [
     'PlotLayer',
     'PlotTargets',
     'Prepare',
+    'PrintNodes',
     'Rank',
     'ResetKernel',
     'ResetNetwork',  # deprecated

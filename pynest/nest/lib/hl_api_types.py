@@ -547,6 +547,22 @@ class GIDCollection(object):
     def tolist(self):
         return list(self)
 
+    def index(self, gid):
+        """
+        Find the index of a GID in the GIDCollection.
+
+        Parameters
+        ----------
+        gid : int
+            Global ID to be found.
+
+        Raises
+        ------
+        ValueError
+            If the GID is not in the GIDCollection.
+        """
+        return self.tolist().index(gid)
+
 
 class ConnectomeIterator(object):
     """

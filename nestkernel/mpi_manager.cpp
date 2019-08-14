@@ -1024,6 +1024,11 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
+nest::MPIManager::communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer )
+{
+}
+
+void
 nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
 {
 }

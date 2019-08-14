@@ -115,7 +115,6 @@ public:
    */
   void mpi_abort( int exitcode );
 
-
   /*
    * gather all send_buffer vectors on other mpi process to recv_buffer
    * vector

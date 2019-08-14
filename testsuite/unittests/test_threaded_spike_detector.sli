@@ -57,10 +57,6 @@ M_ERROR setverbosity
 
     % spike_detector
     /sd  /spike_detector Create def
-<<<<<<< Updated upstream
-=======
-    sd << /withgid true /withtime true /to_memory true >> SetStatus 
->>>>>>> Stashed changes
 
     nrns sd Connect
 

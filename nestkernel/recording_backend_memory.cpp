@@ -122,11 +122,22 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  device_data_map::value_type::const_iterator device_data = device_data_[ t ].find( gid );
+  const auto device_data = device_data_[ t ].find( gid );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data->second.get_status( d );
   }
+
+  size_t n_events = 0;
+  for (auto& device_data_for_thread: device_data_)
+  {
+    const auto device_data = device_data_for_thread.find( gid );
+    if ( device_data != device_data_for_thread.end() )
+    {
+      n_events += device_data->second.get_n_events();
+    }
+  }
+  ( *d )[ names::n_events ] = n_events;
 }
 
 void
@@ -211,6 +222,12 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
   }
 }
 
+size_t
+nest::RecordingBackendMemory::DeviceData::get_n_events() const
+{
+  return senders_.size();
+}
+
 void
 nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 {
@@ -255,7 +272,6 @@ nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
-  ( *d )[ names::n_events ] = senders_.size();
 }
 
 void

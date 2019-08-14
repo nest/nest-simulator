@@ -154,6 +154,7 @@ private:
     DeviceData();
     void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
     void push_back( const Event&, const std::vector< double >&, const std::vector< long >& );
+    size_t get_n_events() const;
     void get_status( DictionaryDatum& ) const;
     void set_status( const DictionaryDatum& );
 

@@ -41,8 +41,6 @@
  *  This is a subgroup for detector and recorder type devices of NEST
  *
  */
-/** @defgroup Spike_detector */
-/** @defgroup Weight_recorder */
 /** @defgroup generator
  *
  *  This is a subgroup for devices that modify models (generators, dilutor)

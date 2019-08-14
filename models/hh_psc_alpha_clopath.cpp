@@ -272,13 +272,13 @@ nest::hh_psc_alpha_clopath::State_::get( DictionaryDatum& d ) const
 void
 nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ], node );
-  updateValue< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValue< double >( d, names::Inact_h, y_[ HH_H ], node );
-  updateValue< double >( d, names::Act_n, y_[ HH_N ], node );
-  updateValue< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
-  updateValue< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
-  updateValue< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
+  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
+  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
+  updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
+  updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );

@@ -124,6 +124,11 @@ public:
    */
   void mpi_abort( int exitcode );
 
+  /*
+   * gather all send_buffer vectors on other mpi process to recv_buffer
+   * vector
+   */
+  void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
 
   void communicate( std::vector< unsigned int >& send_buffer,
     std::vector< unsigned int >& recv_buffer,

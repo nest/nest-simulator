@@ -91,14 +91,27 @@ public:
    * The following entries must be present in each dictionary:
    * /model - with the name or index of a neuron mode.
    *
-   * The following entries are optional:
-   * /parent - the node is created in the parent subnet
-   *
    * Restore nodes uses the current working node as root. Thus, all
    * GIDs in the status dictionaties are offset by the GID of the current
-   * working node. This allows entire subnetworks to be copied.
+   * working node.
    */
   void restore_nodes( const ArrayDatum& );
+
+  /**
+   * Get global id's of all nodes with the given properties.
+   *
+   * Only global id's of nodes matching the properties given in the dictionary
+   * exactly will be returned. If the dictionary is empty, all nodes will be
+   * returned. If the local_only bool is true, only GIDs of nodes simulated on
+   * the local MPI process will be returned.
+   *
+   * @param dict parameter dictionary of selection properties
+   * @param local_only bool indicating whether all nodes, or just mpi local nodes
+   * should be returned.
+   *
+   * @returns GIDCollection as lock pointer
+   */
+  GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
    * Set the state (observable dynamic variables) of a node to model defaults.

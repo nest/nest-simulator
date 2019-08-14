@@ -629,6 +629,31 @@ def
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/** @BeginDocumentation
+   Name: GetNodes - Return IDs of all nodes that fulfill the conditions given in
+                    the dictionary, or all nodes if no dictionary given. Returns
+                    only mpi local nodes if local_bool is true.
+   Synopsis:
+     <<dict>> local_bool GetNodes -> GIDCollection
+   Parameters:
+     <<dict>>   - Dictionary of selection properties
+     local_bool - Bool indicating whether or not we want only local nodes.
+   Returns:
+     GIDCollection  - GIDCollection with the global ids of all nodes or all mpi
+                      local nodes if local_bool is true.
+   Description:
+   This function recursively traverses all nodes and returns the global
+   ids of all nodes in increasing order of gid if local_bool is false, if not, it
+   returns local nodes. If a dictionary is provided, only those nodes which fulfill
+   the given criteria are returned.
+*/
+
+/GetNodes trie
+  [/dictionarytype /booltype] { GetNodes_D_b } bind addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %     Create and variants
 %

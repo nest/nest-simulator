@@ -375,6 +375,88 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
   }
 }
 
+GIDCollectionPTR
+NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
+{
+  std::vector< long > nodes;
+
+  if ( params->empty() )
+  {
+    std::vector< std::vector< long > > nodes_on_thread;
+    nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+    {
+      thread tid = kernel().vp_manager.get_thread_id();
+
+      for ( auto node : get_local_nodes( tid ) )
+      {
+        nodes_on_thread[ tid ].push_back( node.get_gid() );
+      }
+    }
+#pragma omp barrier
+
+    for ( auto vec : nodes_on_thread )
+    {
+      nodes.insert( nodes.end(), vec.begin(), vec.end() );
+    }
+  }
+  else
+  {
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+      // Select those nodes fulfilling the key/value pairs of the dictionary
+      for ( auto node : get_local_nodes( tid ) )
+      {
+        bool match = true;
+        index gid = node.get_gid();
+
+        DictionaryDatum node_status = get_status( gid );
+        for ( Dictionary::iterator dict_entry = params->begin(); dict_entry != params->end(); ++dict_entry )
+        {
+          if ( node_status->known( dict_entry->first ) )
+          {
+            const Token token = node_status->lookup( dict_entry->first );
+            if ( not( token == dict_entry->second or token.matches_as_string( dict_entry->second ) ) )
+            {
+              match = false;
+              break;
+            }
+          }
+        }
+        if ( match )
+        {
+          nodes.push_back( gid );
+        }
+      }
+    }
+  }
+
+  if ( not local_only )
+  {
+    std::vector< long > globalnodes;
+    kernel().mpi_manager.communicate( nodes, globalnodes );
+
+    for ( size_t i = 0; i < globalnodes.size(); ++i )
+    {
+      if ( globalnodes[ i ] )
+      {
+        nodes.push_back( globalnodes[ i ] );
+      }
+    }
+
+    // get rid of any multiple entries
+    std::sort( nodes.begin(), nodes.end() );
+    std::vector< long >::iterator it;
+    it = std::unique( nodes.begin(), nodes.end() );
+    nodes.resize( it - nodes.begin() );
+  }
+
+  IntVectorDatum nodes_datum( nodes );
+  GIDCollectionDatum gidcoll( GIDCollection::create( nodes_datum ) );
+
+  return gidcoll;
+}
+
 void
 NodeManager::init_state( index GID )
 {

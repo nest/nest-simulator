@@ -89,9 +89,10 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 
 
 class Mock(MagicMock):
+
     @classmethod
     def __getattr__(cls, name):
-            return MagicMock()
+        return MagicMock()
 
 
 MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
@@ -144,8 +145,8 @@ subprocess.call('doxygen', shell=True)
 
 mathjax_path = \
     "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-              ".js?config=TeX" \
-              "-AMS-MML_HTMLorMML"
+    ".js?config=TeX" \
+    "-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -237,11 +238,11 @@ def setup(app):
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
     app.add_config_value('recommonmark_config', {
-            'auto_toc_tree_section': 'Contents',
-            'enable_inline_math': True,
-            'enable_auto_doc_ref': True,
-            'enable_eval_rst': True
-            }, True)
+        'auto_toc_tree_section': 'Contents',
+        'enable_inline_math': True,
+        'enable_auto_doc_ref': True,
+        'enable_eval_rst': True
+    }, True)
     app.add_transform(AutoStructify)
 
 

@@ -1,0 +1,167 @@
+/*
+ *  test_get_nodes.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/** @BeginDocumentation
+Name: testsuite::test_get_nodes - sli script for test of GetNodes
+
+Synopsis: nest_indirect test_get_nodes --> success
+
+Description:
+
+
+Author: August 2019, Stine B. Vennemo
+*/
+
+(unittest) run
+/unittest using
+
+
+[1 2 4] % check for 1, 2 and 4 processes
+{
+  ResetKernel
+  /iaf_psc_alpha 2 Create       % gids 1,2
+  /iaf_psc_delta 3 Create join  % gids 3,4,5
+  /iaf_psc_alpha 3 Create join  % gids 6,7,8
+  /iaf_psc_exp   3 Create join  % gids 9,10,11
+  /nodes Set
+
+  /all_nodes_list [1 2 3 4 5 6 7 8 9 10 11 ] def
+
+   % ---------------------------- local_only is false  -> we want all nodes ------------------------------------------%
+  << >> false GetNodes cva all_nodes_list eq  
+
+  % ---------------------- local_only is true  -> we only want local nodes on mpi process ----------------------------%
+  << >> true GetNodes cva nodes LocalOnly cva eq and
+
+  % ------------------------------------ Also test on params ---------------------------------------------------------%
+  [ -70. -60. -50. -70. -60. -50. -70. -60. -50. -70. -60. ] /Vm_list Set
+  [   5.   5.   5.   5.  10.  10.  10.  10.  10.  10.  10. ] /tau_m_list Set
+
+  /indx 0 def
+  nodes
+  {
+    << /V_m Vm_list indx get
+       /tau_m tau_m_list indx get >> SetStatus
+    /indx indx 1 add def
+  } forall
+
+  << /V_m -60. /tau_m 10. >> false GetNodes cva /test_nodes Set
+
+  /indx 0 def
+  [ ] /reference_list Set
+  all_nodes_list
+  {
+    /gid Set
+    Vm_list indx get -60. eq tau_m_list indx get 10. eq and
+    {
+      reference_list gid append /reference_list Set
+    } if
+    /indx indx 1 add def
+  } forall
+
+  reference_list test_nodes cva eq and
+
+  % -------------------------------- local only is true (we only test V_m) -------------------------------------------%
+  << /V_m -60. >> true GetNodes cva /test_nodes Set
+
+  /indx 0 def
+  nodes LocalOnly /V_m get /Vm_list_ref Set
+  [ ] /reference_list Set
+  nodes LocalOnly cva
+  {
+    /gid Set
+    Vm_list_ref indx get -60. eq
+    {
+      reference_list gid append /reference_list Set
+    } if
+    /indx indx 1 add def
+  } forall
+
+  reference_list test_nodes cva eq and
+
+  % ------------------------------------------------------------------------------------------------------------------%
+  %                              Now, we do the same, but we add threads                                              %
+  % ------------------------------------------------------------------------------------------------------------------%
+
+  ResetKernel
+  << /local_num_threads 2 >> SetKernelStatus
+
+  /iaf_psc_alpha 2 Create       % gids 1,2
+  /iaf_psc_delta 3 Create join  % gids 3,4,5
+  /iaf_psc_alpha 3 Create join  % gids 6,7,8
+  /iaf_psc_exp   3 Create join  % gids 9,10,11
+  /nodes Set
+
+  % ----------------------------- local_only is false -> we want all nodes  ------------------------------------------%
+  << >> false GetNodes cva all_nodes_list eq and
+
+  % ---------------------- local_only is true  -> we only want local nodes on mpi process ----------------------------%
+  << >> true GetNodes cva nodes LocalOnly cva eq and
+
+  % ------------------------------------ Also test on params ---------------------------------------------------------%
+
+  /indx 0 def
+  nodes
+  {
+    << /V_m Vm_list indx get
+       /tau_m tau_m_list indx get >> SetStatus
+    /indx indx 1 add def
+  } forall
+
+  << /V_m -60. /tau_m 10. >> false GetNodes cva /test_nodes Set
+
+  /indx 0 def
+  [ ] /reference_list Set
+  all_nodes_list
+  {
+    /gid Set
+    Vm_list indx get -60. eq tau_m_list indx get 10. eq and
+    {
+      reference_list gid append /reference_list Set
+    } if
+    /indx indx 1 add def
+  } forall
+
+  reference_list test_nodes cva eq and
+
+  % -------------------------------- local only is true (we only test V_m) -------------------------------------------%
+
+  << /V_m -60. >> true GetNodes cva /test_nodes Set
+
+  /indx 0 def
+  nodes LocalOnly /V_m get /Vm_list_ref Set
+  [ ] /reference_list Set
+  nodes LocalOnly cva
+  {
+    /gid Set
+    Vm_list_ref indx get -60. eq
+    {
+      reference_list gid append /reference_list Set
+    } if
+    /indx indx 1 add def
+  } forall
+
+  reference_list test_nodes cva eq and
+}
+distributed_collect_assert_or_die
+

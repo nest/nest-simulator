@@ -24,7 +24,7 @@
 """ Runs a battery of unit tests on PyNEST """
 
 import sys, os
-os.environ['DELAY_PYNEST_INIT'] = '1'
+os.environ['PYNEST_QUIET'] = '1'
 
 def myprint(msg):
     sys.stderr.write(msg)
@@ -42,12 +42,12 @@ def _setup(arg):
             MethodName = str(arg).split('(')[0].split(' ')[0]
         except:
             MethodName = str(arg)
-    
+
     sys.stderr.write("  Running test " + MethodName + "...\n")
 
 
 import nest
-nest.ll_api.init(["--verbosity=WARNING", "--quiet"])
+nest.set_verbosity('M_WARNING')
 
 import nest.tests
 

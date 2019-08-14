@@ -290,11 +290,11 @@ nest::hh_psc_alpha_gap::State_::get( DictionaryDatum& d ) const
 void
 nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ], node );
-  updateValue< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValue< double >( d, names::Inact_h, y_[ HH_H ], node);
-  updateValue< double >( d, names::Act_n, y_[ HH_N ], node );
-  updateValue< double >( d, names::Inact_p, y_[ HH_P ], node );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
+  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
+  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  updateValueParam< double >( d, names::Inact_p, y_[ HH_P ], node );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );

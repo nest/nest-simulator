@@ -139,9 +139,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
         return syn_spec
     rule = conn_spec['rule']
     if isinstance(syn_spec, str):
-        sps(syn_spec)
-        sr("cvlit")
-        return spp()
+        return kernel.SLILiteral(syn_spec)
     elif isinstance(syn_spec, dict):
         for key, value in syn_spec.items():
             # if value is a list, it is converted to a numpy array

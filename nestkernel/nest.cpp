@@ -186,6 +186,12 @@ create( const Name& model_name, const index n_nodes )
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
+GIDCollectionPTR
+get_nodes( const DictionaryDatum& params, const bool local_only )
+{
+  return kernel().node_manager.get_nodes( params, local_only );
+}
+
 void
 connect( GIDCollectionPTR sources,
   GIDCollectionPTR targets,

@@ -71,6 +71,8 @@ DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
 GIDCollectionPTR create( const Name& model_name, const index n );
 
+GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+
 void connect( GIDCollectionPTR sources,
   GIDCollectionPTR targets,
   const DictionaryDatum& connectivity,

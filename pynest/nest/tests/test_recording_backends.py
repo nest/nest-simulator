@@ -69,108 +69,107 @@ if __name__ == '__main__':
 
 
 
-    
 
-(=============================================) =
-
-0 GetStatus /recording_backends get ==
-0 GetStatus /recording_backend get =
-0 GetStatus /recording_backend_status get info
-
-(=============================================) =
-
-0 << /recording_backend /ascii >> SetStatus
-0 GetStatus /recording_backend get =
-0 GetStatus /recording_backend_status get info
-
-(=============================================) =
-
-0 << /recording_backend /screen >> SetStatus
-0 GetStatus /recording_backend get =
-0 GetStatus /recording_backend_status get info
-
-(=============================================) =
-
-0 << /recording_backend /sionlib >> SetStatus
-0 GetStatus /recording_backend get =
-0 GetStatus /recording_backend_status get info
-
-(=============================================) =
-
-0 << /recording_backend /memory >> SetStatus
-/iaf_psc_alpha << /I_e 1800.0 >> Create /n Set
-/spike_detector Create /sd Set
-n sd Connect
-
-sd GetStatus info
-
-100 Simulate
-
-2 GetStatus info
-2 GetStatus /events get dup
-  /senders get size == ==
-  /times get ==
-
-(=============================================) =
-
-
-% Check if n_events works and if it can be set to 0 to delete the data
-2 << /n_events 0 >> SetStatus
-
-2 GetStatus info
-2 GetStatus /events get dup
-  /senders get size == ==
-  /times get ==
-
-
-% threading and MPI
-
-
-%
-% 0 GetStatus /recording_backends get
-% -> [/ascii /memory /screen /sionlib]
-% 
-% 0 GetStatus /recording_backend_status get
-%
-%  <<
-%     /file_extension    /dat
-%     /name              /ascii
-%     /precision         3
-%  >> 
-% 
-%  <<
-%     /name              /memory
-%  >>
-%
-%  <<
-%     /name              /screen
-%     /precision         3
-%  >>
-%
-%  <<
-%     /buffer_size       1024
-%     /file_extension    (sion)
-%     /name              /sionlib
-%     /precision         3
-%     /sion_chunksize    1 << 48
-%     /sion_collective   false
-%  >>
-%
-% << /recording_backend /memory >> SetKernelStatus
-%
-
-
-% Conversion guide:
-
-
-% Lost properties in nestio:
-%   /close_after_simulate    always true
-%   /fbuffer_size            always OS default
-%   /flush_after_simulate    always true
-
-
-
-% 
-%   /time_in_steps           always in ms
-% 
-
+#
+#(=============================================) =
+#
+#0 GetStatus /recording_backends get ==
+#0 GetStatus /recording_backend get =
+#0 GetStatus /recording_backend_status get info
+#
+#(=============================================) =
+#
+#0 << /recording_backend /ascii >> SetStatus
+#0 GetStatus /recording_backend get =
+#0 GetStatus /recording_backend_status get info
+#
+#(=============================================) =
+#
+#0 << /recording_backend /screen >> SetStatus
+#0 GetStatus /recording_backend get =
+#0 GetStatus /recording_backend_status get info
+#
+#(=============================================) =
+#
+#0 << /recording_backend /sionlib >> SetStatus
+#0 GetStatus /recording_backend get =
+#0 GetStatus /recording_backend_status get info
+#
+#(=============================================) =
+#
+#0 << /recording_backend /memory >> SetStatus
+#/iaf_psc_alpha << /I_e 1800.0 >> Create /n Set
+#/spike_detector Create /sd Set
+#n sd Connect
+#
+#sd GetStatus info
+#
+#100 Simulate
+#
+#2 GetStatus info
+#2 GetStatus /events get dup
+#  /senders get size == ==
+#  /times get ==
+#
+#(=============================================) =
+#
+#
+#% Check if n_events works and if it can be set to 0 to delete the data
+#2 << /n_events 0 >> SetStatus
+#
+#2 GetStatus info
+#2 GetStatus /events get dup
+#  /senders get size == ==
+#  /times get ==
+#
+#
+#% threading and MPI
+#
+#
+#%
+#% 0 GetStatus /recording_backends get
+#% -> [/ascii /memory /screen /sionlib]
+#%
+#% 0 GetStatus /recording_backend_status get
+#%
+#%  <<
+#%     /file_extension    /dat
+#%     /name              /ascii
+#%     /precision         3
+#%  >>
+#%
+#%  <<
+#%     /name              /memory
+#%  >>
+#%
+#%  <<
+#%     /name              /screen
+#%     /precision         3
+#%  >>
+#%
+#%  <<
+#%     /buffer_size       1024
+#%     /file_extension    (sion)
+#%     /name              /sionlib
+#%     /precision         3
+#%     /sion_chunksize    1 << 48
+#%     /sion_collective   false
+#%  >>
+#%
+#% << /recording_backend /memory >> SetKernelStatus
+#%
+#
+#
+#% Conversion guide:
+#
+#
+#% Lost properties in nestio:
+#%   /close_after_simulate    always true
+#%   /fbuffer_size            always OS default
+#%   /flush_after_simulate    always true
+#
+#
+#
+#%
+#%   /time_in_steps           always in ms
+#%

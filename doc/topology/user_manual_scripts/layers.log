@@ -1,179 +1,149 @@
-[INFO] [2019.2.27 11:4:53 /home/mitchell/fzj/documentation_project/nest_216/nest_download/nest-simulator-2.16.0/nestkernel/rng_manager.cpp:238 @ Network::create_rngs_] : Creating default RNGs
-[INFO] [2019.2.27 11:4:53 /home/mitchell/fzj/documentation_project/nest_216/nest_download/nest-simulator-2.16.0/nestkernel/rng_manager.cpp:284 @ Network::create_grng_] : Creating new default global RNG
+[INFO] [2019.8.13 15:17:26 /home/hakon/Work/NEST/src/nestkernel/rng_manager.cpp:208 @ Network::create_rngs_] : Creating default RNGs
+[INFO] [2019.8.13 15:17:26 /home/hakon/Work/NEST/src/nestkernel/rng_manager.cpp:251 @ Network::create_grng_] : Creating new default global RNG
 
               -- N E S T --
   Copyright (C) 2004 The NEST Initiative
 
- Version: 
- Built: Nov  6 2018 14:20:01
+ Version: nest3/nest-3@04040197d
+ Built: Aug 12 2019 09:58:13
 
  This program is provided AS IS and comes with
  NO WARRANTY. See the file LICENSE for details.
 
  Problems or suggestions?
-   Visit http://www.nest-simulator.org
+   Visit https://www.nest-simulator.org
 
  Type 'nest.help()' to find out more about NEST.
 
 
-Feb 27 11:04:53 ModelManager::clear_models_ [Info]: 
+Aug 13 15:17:27 ModelManager::clear_models_ [Info]: 
     Models will be cleared and parameters reset.
 
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
     Deleting existing random number generators
 
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
     Creating default RNGs
 
-Feb 27 11:04:53 Network::create_grng_ [Info]: 
+Aug 13 15:17:27 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:27 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:27 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:27 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:27 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:27 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:27 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:27 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
+    Creating new default global RNG
+
+Aug 13 15:17:28 ModelManager::clear_models_ [Info]: 
+    Models will be cleared and parameters reset.
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Deleting existing random number generators
+
+Aug 13 15:17:28 Network::create_rngs_ [Info]: 
+    Creating default RNGs
+
+Aug 13 15:17:28 Network::create_grng_ [Info]: 
     Creating new default global RNG
 #{ layer1s.log #}
-{'center': (0.0, 0.0), 'columns': 5, 'depth': 1, 'edge_wrap': False, 'extent': (1.0, 1.0), 'rows': 5}
+{'network_size': 25, 'center': (0.0, 0.0), 'columns': 5, 'edge_wrap': False, 'extent': (1.0, 1.0), 'rows': 5}
 #{ end.log #}
 #{ layer1p.log #}
-+-[0] root dim=[1 25]
-   |
-   +-[1] topology_layer_grid dim=[25]
-      |
-      +-[1]...[25] iaf_psc_alpha
-      
+ 1 .. 25 iaf_psc_alpha
 #{ end.log #}
-
-Feb 27 11:04:53 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:53 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:53 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:53 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:53 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:53 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:53 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:53 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:53 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
 #{ layer6 #}
-+-[0] root dim=[1 4]
-   |
-   +-[1] topology_layer_grid dim=[4]
-      |
-      +-[1]...[2] iaf_cond_alpha
-      +-[3]...[4] poisson_generator
-      
+1 .. 2 iaf_cond_alpha
+3 .. 4 poisson_generator
 #{ end #}
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-#{ layer7 #}
-+-[0] root dim=[1 26]
-   |
-   +-[1] topology_layer_grid dim=[26]
-      |
-      +-[1]...[20] iaf_cond_alpha
-      +-[21]...[22] poisson_generator
-      +-[23]...[26] noise_generator
-      
-#{ end #}
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
-
-Feb 27 11:04:54 ModelManager::clear_models_ [Info]: 
-    Models will be cleared and parameters reset.
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Deleting existing random number generators
-
-Feb 27 11:04:54 Network::create_rngs_ [Info]: 
-    Creating default RNGs
-
-Feb 27 11:04:54 Network::create_grng_ [Info]: 
-    Creating new default global RNG
+{'network_size': 441, 'center': (0.0, 0.0), 'columns': 21, 'edge_wrap': False, 'extent': (1.0, 1.0), 'rows': 21}
+None

@@ -19,17 +19,17 @@ consult the online documentation in PyNEST for details; where
 appropriate, that documentation also points to relevant SLI
 documentation.
 
-This manual describes the Topology Module included with NEST 2.16; the
-user interface and behavior of the module has not changed significantly
-since NEST 2.2.
+This manual describes the Topology Module included with NEST 3.0.
+
+.. TODO: Chapter 5 about parameters?
 
 In the next chapter of this manual, we introduce Topology layers, which
 place neurons in space. In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect layers with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
 Topology networks. Chapter \ :ref:`5 <ch:extending>` deals with the more
-advanced topic of extending the Topology module with custom kernel
-functions and masks provided by C++ classes in an extension module.
+advanced topic of extending the Topology module with custom masks provided
+by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
 the NEST source code directory under
@@ -51,11 +51,13 @@ Undocumented features
 Layers
 ======
 
+.. TODO: Not called Module anymore?
+
 The Topology Module (just Topology for short in the remainder of this
-document) organizes neuronal networks in *layers*. We will first
+document) organizes neuronal networks in *layers*. Layers in NEST 3
+are GIDCollections with spatial metadata. We will first
 illustrate how Topology places elements in simple layers, where each
-element is a single model neuron. Layers with composite elements are
-discussed in the following section.
+element is a single model neuron.
 
 We will illustrate the definition and use of layers using examples.
 
@@ -80,7 +82,7 @@ Grid-based Layers
 A very simple layer
 ~~~~~~~~~~~~~~~~~~~
 
-We create a first, grid-based simple layer with the following commands:
+We create a first, grid-based simple layer with the following command:
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1 #}
@@ -97,18 +99,18 @@ We create a first, grid-based simple layer with the following commands:
 
 The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
--  The layer has five *rows* and five *columns*.
+- We are using the standard ``Create`` function, but in addition to model
+  type, we are also passing a ``nest.spatial.grid`` object as the
+  ``positions`` argument.
 
--  The ``'elements'`` entry of the dictionary passed to ``CreateLayer``
-   determines the *elements* of the layer. In this case, the layer
-   contains ``iaf_psc_alpha`` neurons.
+-  The layer has five *rows* and five *columns*.
 
 -  The *center* of the layer is at the origin of the coordinate system,
    :math:`(0,0)`.
 
 -  The *extent* or size of the layer is :math:`1\times  1`. This is the
-   default size for layers. The extent is marked by the thin square in
-    :numref:`fig_layer1`.
+   default size for grid-based layers. The extent is marked by the thin
+   square in :numref:`fig_layer1`.
 
 -  The *grid spacing* of the layer is
 
@@ -146,10 +148,9 @@ but the grid spacing may differ in x- and y-direction.
 Setting the extent
 ~~~~~~~~~~~~~~~~~~
 
-Layers have a default extent of :math:`1\times 1`. You can specify a
+Grid-based layers have a default extent of :math:`1\times 1`. You can specify a
 different extent of a layer, i.e., its size in :math:`x`- and
-:math:`y`-direction by adding an ``'extent'`` entry to the dictionary
-passed to ``CreateLayer``:
+:math:`y`-direction by passing the ``extent`` argument to ``nest.spatial.grid()``:
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer2 #}
@@ -167,7 +168,7 @@ a two-element tuple of floats. In this example, we have grid spacings
 :math:`dx=0.4` and :math:`dy=0.1`. Changing the extent does not affect
 grid indices.
 
-The size of ``'extent'`` in :math:`x`- and :math:`y`-directions should
+The size of ``extent`` in :math:`x`- and :math:`y`-directions should
 be numbers that can be expressed exactly as binary fractions. This is
 automatically ensured for integer values. Otherwise, under rare
 circumstances, subtle rounding errors may occur and trigger an
@@ -179,9 +180,9 @@ Setting the center
 ~~~~~~~~~~~~~~~~~~
 
 Layers are centered about the origin :math:`(0,0)` by default. This can
-be changed through the ``'center'`` entry in the dictionary specifying
-the layer. The following code creates layers centered about
-:math:`(0,0)`, :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
+be changed by passing the ``center`` argument to ``nest.spatial.grid()``.
+The following code creates layers centered about :math:`(0,0)`,
+:math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer3 #}
@@ -201,7 +202,7 @@ center does not affect grid indices: For each of the three layers in
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
-The ``'center'`` coordinates should be numbers that can be expressed
+The ``center`` coordinates should be numbers that can be expressed
 exactly as binary fractions. For more information, see
 Sec. \ :ref:`2.1.2 <sec:setextent>`.
 
@@ -252,8 +253,9 @@ Free layers
 -----------
 
 *Free layers* do not restrict node positions to a grid, but allow free
-placement within the extent. To this end, the user needs to specify the
-positions of all nodes explicitly. The following code creates a layer of
+placement within the extent. To this end, the user can specify the
+positions of all nodes explicitly, or pass a random distribution
+parameter to ``nest.spatial.free()``. The following code creates a layer of
 50 ``iaf_psc_alpha`` neurons uniformly distributed in a layer with
 extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
@@ -273,24 +275,16 @@ extent :math:`1\times 1`, i.e., spanning the square
 Note the following points:
 
 -  For free layers, element *positions* are specified by the
-   ``'positions'`` entry in the dictionary passed to ``CreateLayer``.
-   ``'positions'`` is mutually exclusive with ``'rows'``/``'columns'``
-   entries in the dictionary.
+   ``nest.spatial.free`` object.
 
--  The ``'positions'`` entry must be a Python ``list`` (or ``tuple``) of
+-  The ``'positions'`` entry must either be a Python ``list`` (or ``tuple``) of
    element coordinates, i.e., of two-element tuples of floats giving the
-   (:math:`x`, :math:`y`)-coordinates of the elements. One layer element
-   is created per element in the ``'positions'`` entry.
+   (:math:`x`, :math:`y`)-coordinates of the elements, or a parameter object.
 
 -  All layer element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
    periodic boundary conditions are used; see
    Sec. \ :ref:`2.4 <sec:periodic>`.
-
--  Element positions in free layers are *not* shifted when specifying
-   the ``'center'`` of the layer. The user must make sure that the
-   positions given lie within the extent when centered about the given
-   center.
 
 .. _sec:3dlayer:
 
@@ -372,18 +366,15 @@ Chapter \ :ref:`3 <sec:connections>`.
 
 .. _sec:subnet:
 
-Topology layer as NEST subnet
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Topology layer as NEST GIDCollection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From the perspective of NEST, a Topology layer is a special type of
-*subnet*. From the user perspective, the following points may be of
-interest:
+*GIDCollection*. From the user perspective, the following points may
+be of interest:
 
--  Grid-based layers have the NEST model type ``topology_layer_grid``,
-   free layers the model type ``topology_layer_free``.
-
--  The status dictionary of a layer has a ``'topology'`` entry
-   describing the layer properties (``l`` is the layer created above):
+-  The GICCollection has a ``spatial`` property describing the layer
+   properties (``l`` is the layer created above):
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1s #}
@@ -395,11 +386,15 @@ interest:
 
 
 
-The `'topology'` entry is read-only.
+The ``spatial`` propery is read-only; changing any values will
+not change properties of the layer.
 
--  The NEST kernel sees the elements of the layer in the same way as the
-   elements of any subnet. You will notice this when printing a network
-   with a Topology layer:
+-  NEST sees the elements of the layer in the same way as the
+   elements of any GIDCollection. GIDCollections created as layers can
+   therefore be used in the same ways as any standard GIDCollection.
+   However, operations requiring a GIDCollection with spatial data (e.g.
+   ``Connect`` with spatial dependence, or visualization of layers) can
+   only be used on GIDCollections created as layers.
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1p #}
@@ -409,14 +404,9 @@ The `'topology'` entry is read-only.
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
 
-
-
-The `5 times` 5 layer created above appears here as a
-`topology_layer_grid` subnet of 25 `iaf_psc_alpha` neurons. Only
-Topology connection and visualization functions heed the spatial
-structure of the layer.
-
 .. _sec:composite_layers:
+
+.. TODO: Composite section rewrite
 
 Layers with composite elements
 ------------------------------
@@ -483,6 +473,8 @@ Note the following points:
 
 .. _sec:layerdesign:
 
+.. TODO: Rewrite this section and code example
+
 Designing layers
 ~~~~~~~~~~~~~~~~
 
@@ -517,7 +509,7 @@ Connections
 The most important feature of the Topology module is the ability to
 create connections between layers with quite some flexibility. In this
 chapter, we will illustrate how to specify and create connections. All
-connections are created using the ``ConnectLayers`` function.
+connections are created using the ``Connect`` function.
 
 .. _sec:conn_basics:
 
@@ -534,12 +526,12 @@ We begin by introducing important terminology:
 Connection
    In the context of connections between the elements of Topology
    layers, we often call the set of all connections between pairs of
-   network nodes created by a single call to ``ConnectLayers`` a
+   network nodes created by a single call to ``Connect`` a
    *connection*.
 
 Connection dictionary
    A dictionary specifying the properties of a connection between two
-   layers in a call to ``CreateLayers``.
+   layers in a call to ``Create``.
 
 Source
    The *source* of a single connection is the node sending signals
@@ -551,28 +543,32 @@ Target
    (usually spikes). In a projection, the target layer is the layer from
    which target nodes are chosen.
 
+.. TODO: Can we remove connection type definition? How about convergent and divergent?
+
 Connection type
    The *connection type* determines how nodes are selected when
-   ``ConnectLayers`` creates connections between layers. It is either
+   ``Connect`` creates connections between layers. It is either
    ``'convergent'`` or ``'divergent'``.
 
 Convergent connection
-   When creating a *convergent connection* between layers, Topology
-   visits each node in the target layer in turn and selects sources for
-   it in the source layer. Masks and kernels are applied to the source
-   layer, and periodic boundary conditions are applied in the source
-   layer, provided that the source layer has periodic boundary
+   When creating a *convergent connection* between layers, Topology visits
+   each node in the target layer in turn and selects sources for it in the
+   source layer. Masks and connection probabilities are applied to the
+   source layer, and periodic boundary conditions are applied in the
+   source layer, provided that the source layer has periodic boundary
    conditions.
 
 Divergent connection
    When creating a *divergent connection*, Topology visits each node in
-   the source layer and selects target nodes from the target layer.
-   Masks, kernels, and boundary conditions are applied in the target
-   layer.
+   the source layer and selects target nodes from the target layer. Masks,
+   connection probabilities, and boundary conditions are applied in the
+   target layer.
 
 Driver
    When connecting two layers, the *driver* layer is the one in which
    each node is considered in turn.
+
+.. TODO: Rewrite Pool and table
 
 Pool
    | When connecting two layers, the *pool* layer is the one from which
@@ -600,6 +596,8 @@ Mask
    potential targets for each driver node. See
    Sec. \ :ref:`3.3 <sec:conn_masks>` for details.
 
+.. TODO: Rewrite kernel to p/probability?
+
 Kernel
    The *kernel* is a function returning a (possibly distance- or
    displacement-dependent) probability for creating a connection between
@@ -610,36 +608,25 @@ Kernel
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
    Autapses are permitted by default, but can be disabled by adding
-   ``'allow_autapses': False`` to the connection dictionary.
+   ``'autapses': False`` to the connection dictionary.
 
 Multapse
    Node A is connected to node B by a *multapse* if there are synapses
    (connections) from A to B. Multapses are permitted by default, but
-   can be disabled by adding ``'allow_multapses': False`` to the
+   can be disabled by adding ``'multapses': False`` to the
    connection dictionary.
 
 .. _sec:minimalcall:
 
-A minimal ConnectLayers call
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Connecting Topology layers
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Connections between Topology layers are created by calling
-``ConnectLayers`` with the following arguments [3]_:
-
-1. The source layer.
-
-2. The target layer (can be identical to source layer).
-
-3. A connection dictionary that contains at least the following entry:
-
-   ‘connection_type’
-      either ``'convergent'`` or ``'divergent'``.
-
-In many cases, the connection dictionary will also contain
-
-‘mask’
-   a mask specification as described in
-   Sec. \ :ref:`3.3 <sec:conn_masks>`.
+Connections between Topology layers are created by calling ``Connect``, as
+with normal GIDCollections. But in addition to the usual ways one could
+connect GIDCollections, having spatial information about the nodes makes
+position-based options available. In many cases when connecting layers, a
+mask will be specified. Mask specifications are described in
+Sec. \ :ref:`3.3 <sec:conn_masks>`.
 
 Only neurons within the mask are considered as potential sources or
 targets. If no mask is given, all neurons in the respective layer are
@@ -669,13 +656,12 @@ Here is a simple example, cf. :numref:`fig_conn1`
    we wrapped the layer to a torus, they would form a :math:`5\times 3`
    rectangle centered on the node at :math:`(4,5)`.
 
-In this example, layer ``l`` is both source and target layer. Connection
-type is divergent, i.e., for each node in the layer we choose targets
-according to the rectangular mask centered about each source node. Since
-no connection kernel is specified, we connect to all nodes within the
-mask. Note the effect of normal and periodic boundary conditions on the
-connections created for different nodes in the layer, as illustrated in
- :numref:`fig_conn1`.
+In this example, layer ``l`` is both source and target layer. For each
+node in the layer we choose targets according to the rectangular mask
+centered about each source node. Since the connection probability is 1.0,
+we connect to all nodes within the mask. Note the effect of normal and
+periodic boundary conditions on the connections created for different
+nodes in the layer, as illustrated in :numref:`fig_conn1`.
 
 .. _sec:mapping:
 
@@ -758,8 +744,7 @@ Doughnut
 
 Elliptical
    All nodes within an ellipsis are connected. The area is specified by
-   its major and minor axis. Note that this mask was added to NEST with
-   NEST 2.14.
+   its major and minor axis.
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2e #}
@@ -807,6 +792,8 @@ examples (cf.  :numref:`fig_conn2_b`).
    The same masks as in :numref:`fig_conn2_a`, but centered about
    :math:`(-1.5,-1.5)`, :math:`(-2,0)`, :math:`(1.5,1.5)` and
    :math:`(2, -1)`, respectively, using the ``'anchor'`` parameter.
+
+.. TODO: missing first part of the sentence?
 
 and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
 add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
@@ -857,8 +844,7 @@ Spherical
 
 Ellipsoidal
    All nodes within an ellipsoid are connected. The area is specified by
-   its major, minor, and polar axis. This mask has been part of NEST
-   since NEST 2.14.
+   its major, minor, and polar axis.
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_3d_c #}
@@ -903,7 +889,7 @@ this example:
 
 The resulting connections are shown in  :numref:`fig_conn3`. By default the
 top-left corner of a grid mask, i.e., the grid mask element with grid
-index :math:`[0,0]`\  [4]_, is aligned with the driver node. You can
+index :math:`[0,0]`\  [3]_, is aligned with the driver node. You can
 change this alignment by specifying an *anchor* for the mask:
 
 .. literalinclude:: user_manual_scripts/connections.py
@@ -949,117 +935,182 @@ Note the following:
 
 .. _sec:conn_kernels:
 
-Kernels
--------
+Probabilistic connection rules
+------------------------------
 
 Many neuronal network models employ probabilistic connection rules.
-Topology supports probabilistic connections through *kernels*. A kernel
-is a function mapping the distance (or displacement) between a driver
-and a pool node to a connection probability. Topology then generates a
-connection according to this probability.
+Topology supports probabilistic connections through the
+``pairwise_bernoulli`` rule. The probability can then be a constant,
+depend on the position of the source or the target neuron, or on the
+distance between a driver and a pool node to a connection probability. To
+create dependencies on neuron positions, NEST Parameters objects are used.
+Topology then generates a connection according to this probability.
 
-Probabilistic connections can be generated in two different ways using
-Topology:
+Probabilistic connections between layers can be generated in two different
+ways:
 
-Free probabilistic connections
-   are the default. In this case, ``ConnectLayers`` considers each
-   driver node :math:`D` in turn. For each :math:`D`, it evaluates the
-   kernel for each pool node :math:`P` within the mask and creates a
-   connection according to the resulting probability. This means in
-   particular that *each possible driver-pool pair is inspected exactly
-   once* and that there will be *at most one connection between each
-   driver-pool pair*.
+Free probabilistic connections using pairwise_bernoulli
+   In this case, ``Connect`` considers each driver node :math:`D` in turn.
+   For each :math:`D`, it evaluates the parameter value for each pool node
+   :math:`P` within the mask and creates a connection according to the
+   resulting probability. This means in particular that *each possible
+   driver-pool pair is inspected exactly once* and that there will be *at
+   most one connection between each driver-pool pair*.
 
 Prescribed number of connections
-   can be obtained by specifying the number of connections to create per
-   driver node. See Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for
-   details.
+   can be obtained by using ``fixed_indegree`` or ``fixed_outdegree``, and
+   specifying the number of connections to create per driver node. See
+   Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
 
-Available kernel functions are shown in Table :ref:`tbl_kernels`. More
-kernel functions may be created in a NEST extension module. This is
-covered in Chapter \ `5 <#ch:extending>`__.
+A selection of topology-specific NEST Parameters are shown in Table
+:ref:`tbl_parameters`.
 
-.. _tbl_kernels:
+.. _tbl_parameters:
 
-Functions currently available in the Topology module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Topology-specific NEST Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :math:`d` is the distance and :math:`(d_x,d_y)` the displacement. All
-   functions can be used to specify weights and delays, but only the
-   constant and the distance-dependent functions, i.e., all functions above
-   the double line, can be used as kernels.
+.. TODO: Something about spatial parameters here.
 
-   +-----------------+---------------+-------------------------------------------------+
-   | Name            | Parameters    | Function                                        |
-   |                 |               |                                                 |
-   +=================+===============+=================================================+
-   | ``constant``    |               | constant :math:`p\in[0,1]`                      |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``linear``      | ``a``,        | .. math:: p(d) = c + a d                        |
-   |                 | ``c``         |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``exponential`` | ``a``,        | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
-   |                 | ``c``,        |                                                 |
-   |                 | ``tau``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gausssian``   | ``p_center``, | .. math::                                       |
-   |                 | ``sigma``,    |     p(d) = c + p_{\text{center}}  e^{-\frac     |
-   |                 | ``mean``,     |     {(d-\mu)^2}{2\sigma^2}}                     |
-   |                 | ``c``         |                                                 |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gaussian2D``  | ``p_center``, | .. math::                                       |
-   |                 | ``sigma_x``,  |                                                 |
-   |                 | ``sigma_y``,  |    p(d) = c + p_{\text{center}}                 |
-   |                 | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-  |
-   |                 | ``mean_y``,   |    \frac{(d_y-\mu_y)^2}{\sigma_y^2}             |
-   |                 | ``rho``,      |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
-   |                 | ``c``         |    \sigma_y}}{2(1-\rho^2)}}                     |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gamma``       | ``kappa``,    | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
-   |                 |               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}     |
-   |                 | ``theta``     |                                                 |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``uniform``     | ``min``,      | :math:`p\in [\text{min},\text{max})` uniformly  |
-   |                 |               |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``normal``      | ``mean``,     | :math:`p \in [\text{min},\text{max})` normal    |
-   |                 | ``sigma``,    | with given mean and :math:`\sigma`              |
-   |                 | ``min``,      |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``lognormal``   | ``mu``,       | :math:`p \in [\text{min},\text{max})` lognormal |
-   |                 | ``sigma``,    | with given :math:`\mu` and :math:`\sigma`       |
-   |                 | ``min``,      |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
+Something about parameters here.
+
+
+  +-----------------------------------------+-------------------------------------------------------------------------+
+  | Parameter                               | Description                                                             |
+  +=========================================+=========================================================================+
+  | | ``nest.spatial.pos.x``                | | Position of a neuron, on the x, y, and z axis.                        |
+  | | ``nest.spatial.pos.y``                | | Can be used to set node properties, but not for connecting.           |
+  | | ``nest.spatial.pos.z``                |                                                                         |
+  +-----------------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.source_pos.x``         | | Position of the source neuron, on the x, y, and z axis.               |
+  | | ``nest.spatial.source_pos.y``         | | Can only be used when connecting.                                     |
+  | | ``nest.spatial.source_pos.z``         |                                                                         |
+  +-----------------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.target_pos.x``         |                                                                         |
+  | | ``nest.spatial.target_pos.y``         | | Position of the target neuron, on the x, y, and z axis.               |
+  | | ``nest.spatial.target_pos.z``         | | Can only be used when connecting.                                     |
+  +-----------------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.distance``             | | Distance between two nodes. Can only be used when connecting.         |
+  +-----------------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.dimension_distance.x`` |                                                                         |
+  | | ``nest.spatial.dimension_distance.y`` | | Distance on the x, y and z axis between the source and target neuron. |
+  | | ``nest.spatial.dimension_distance.z`` | | Can only be used when connecting.                                     |
+  +-----------------------------------------+-------------------------------------------------------------------------+
+
+.. TODO: Something about distributions here.
+
+Something about distributions here.
+
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  | Distribution function                | Arguments          | Function                                             |
+  +======================================+====================+======================================================+
+  |                                      |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
+  | ``nest.distributions.exponential()`` | | x,               |                                                      |
+  |                                      | | a,               |                                                      |
+  |                                      | | tau              |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      | | x,               | .. math::                                            |
+  | ``nest.distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
+  |                                      | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
+  |                                      | | std_deviation    |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      |                    | .. math::                                            |
+  |                                      | | x,               |                                                      |
+  |                                      | | y,               |    p(x) = p_{\text{center}}                          |
+  |                                      | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
+  | ``nest.distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
+  |                                      | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
+  |                                      | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                      | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
+  |                                      | | rho              |    {2(1-\rho^2)}}                                    |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      |                    | .. math:: p(d) = \frac{x^{\alpha-1}e^{-\frac{x}      |
+  | ``nest.distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
+  |                                      | | alpha,           |                                                      |
+  |                                      | | theta            |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      |                    | :math:`p\in [\text{min},\text{max})` uniformly       |
+  | ``nest.random.uniform()``            | | min,             |                                                      |
+  |                                      | | max              |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      |                    | :math:`p \in [\text{min},\text{max})` normal         |
+  |                                      | | loc,             | with given mean and :math:`\sigma`                   |
+  | ``nest.random.normal()``             | | scale,           |                                                      |
+  |                                      | | min,             |                                                      |
+  |                                      | | max              |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+  |                                      |                    | :math:`p \in [\text{min},\text{max})` lognormal      |
+  |                                      | | mean,            | with given :math:`\mu` and :math:`\sigma`            |
+  | ``nest.random.lognormal()``          | | sigma,           |                                                      |
+  |                                      | | min,             |                                                      |
+  |                                      | | max,             |                                                      |
+  |                                      | | dimension        |                                                      |
+  +--------------------------------------+--------------------+------------------------------------------------------+
+
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | Name                                 | Function                                                        |
+   +======================================+=================================================================+
+   | ``nest.distributions.exponential(x,                 | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
+   |                                  a=1.0,             |                                                 |
+   |                                  tau=1.0) ``        |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.distributions.gausssian(      | ``p_center``, | .. math::                                       |
+   |                               ,      | ``sigma``,    |     p(d) = c + p_{\text{center}}  e^{-\frac     |
+   |                                      | ``mean``,     |     {(d-\mu)^2}{2\sigma^2}}                     |
+   |                                ``    | ``c``         |                                                 |
+   |                                      |               |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.distributions.gaussian2D()``  | ``p_center``, | .. math::                                       |
+   |                                      | ``sigma_x``,  |                                                 |
+   |                                      | ``sigma_y``,  |    p(d) = c + p_{\text{center}}                 |
+   |                                      | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-  |
+   |                                      | ``mean_y``,   |    \frac{(d_y-\mu_y)^2}{\sigma_y^2}             |
+   |                                      | ``rho``,      |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
+   |                                      | ``c``         |    \sigma_y}}{2(1-\rho^2)}}                     |
+   |                                      |               |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.distributions.gamma()``       | ``kappa``,    | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
+   |                                      |               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}     |
+   |                                      | ``theta``     |                                                 |
+   |                                      |               |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.random.uniform()``            | ``min``,      | :math:`p\in [\text{min},\text{max})` uniformly  |
+   |                                      |               |                                                 |
+   |                                      | ``max``       |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.random.normal()``             | ``mean``,     | :math:`p \in [\text{min},\text{max})` normal    |
+   |                                      | ``sigma``,    | with given mean and :math:`\sigma`              |
+   |                                      | ``min``,      |                                                 |
+   |                                      | ``max``       |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
+   | ``nest.random.lognormal()``          | ``mu``,       | :math:`p \in [\text{min},\text{max})` lognormal |
+   |                                      | ``sigma``,    | with given :math:`\mu` and :math:`\sigma`       |
+   |                                      | ``min``,      |                                                 |
+   |                                      | ``max``       |                                                 |
+   +--------------------------------------+---------------+-------------------------------------------------+
 
 .. _fig_conn4:
 
 .. figure:: user_manual_figures/conn4.png
    :name: fig:conn4
 
-   Illustration of various kernel functions. Top left: constant kernel,
-   :math:`p=0.5`. Top center: Gaussian kernel, green dashed lines show
-   :math:`\sigma`, :math:`2\sigma`, :math:`3\sigma`. Top right: Same
-   Gaussian kernel anchored at :math:`(1.5,1.5)`. Bottom left: Same
-   Gaussian kernel, but all :math:`p<0.5` treated as :math:`p=0`. Bottom
-   center: 2D-Gaussian.
+   Illustration of various connection probabilities. Top left: constant probability,
+   :math:`p=0.5`. Top right: Distance dependent Gaussian probability, green dashed lines show
+   :math:`\sigma`, :math:`2\sigma`, :math:`3\sigma`. Bottom left: Same distance dependent
+   Gaussian probability, but all :math:`p<0.5` treated as :math:`p=0`. Bottom
+   right: 2D-Gaussian.
 
 Several examples follow. They are illustrated in  :numref:`fig_conn4`.
 
 Constant
-   The simplest kernel is a fixed connection probability:
+   Fixed connection probability:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4cp #}
     :end-before: #{ end #}
 
 Gaussian
-   This kernel is distance dependent. In the example, connection
+   The distance between neurons is used in a Gaussian distribution. In the example, connection
    probability is 1 for :math:`d=0` and falls off with a “standard
    deviation” of :math:`\sigma=1`:
 
@@ -1067,31 +1118,21 @@ Gaussian
     :start-after: #{ conn4g #}
     :end-before: #{ end #}
 
-Eccentric Gaussian
-   In this example, both kernel and mask have been moved using anchors:
-
-.. literalinclude:: user_manual_scripts/connections.py
-    :start-after: #{ conn4gx #}
-    :end-before: #{ end #}
-
-
-
-Note that the anchor for the kernel is specified inside the
-dictionary containing the parameters for the Gaussian.
-
 Cut-off Gaussian
-   In this example, all probabilities less than :math:`0.5` are set to
-   zero:
+   In this example we have a distance-dependent Gaussian distributon,
+   where all probabilities less than :math:`0.5` are set to zero:
+
+.. TODO: Reference to full Parameter table with nest.logic.conditional().
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn4cut #}
     :end-before: #{ end #}
 
 2D Gaussian
-   We conclude with an example using a two-dimensional Gaussian, i.e., a
-   Gaussian with different widths in :math:`x`- and :math:`y-`
-   directions. This kernel depends on displacement, not only on
-   distance:
+   We conclude with an example using a two-dimensional Gaussian
+   distribution, i.e., a Gaussian with different widths in :math:`x`- and
+   :math:`y-` directions. This probability depends on displacement, not
+   only on distance:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn42d #}
@@ -1099,16 +1140,16 @@ Cut-off Gaussian
 
 Note that for pool layers with periodic boundary conditions, Topology
 always uses the shortest possible displacement vector from driver to
-pool neuron as argument to the kernel function.
+pool neuron as ``nest.spatial.distance``.
 
 .. _sec:conn_wd:
 
 Weights and delays
 ------------------
 
-The functions presented in Table :ref:`tbl_kernels` can also be used to
-specify distance-dependent or randomized weights and delays for the
-connections created by ``ConnectLayers``.
+Parameters, such as those presented in Table :ref:`tbl_parameters`, can
+also be used to specify distance-dependent or randomized weights and
+delays for the connections created by ``Connect``.
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
 functions with the following code examples. All examples use a “layer”
@@ -1154,7 +1195,8 @@ Various functions
     :end-before: #{ end #}
 
 Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
-linear, exponential and Gaussian weight functions for the node at
+linear, exponential and Gaussian distributions of the distance between
+connected nodes, used with weight functions for the node at
 :math:`(25,0)`.
 
 Randomized weights and delays
@@ -1163,10 +1205,9 @@ Randomized weights and delays
     :start-after: #{ conn5uniform #}
     :end-before: #{ end #}
 
-By using the ``'uniform'`` function for weights or delays, one can
+By using the ``nest.random.uniform()`` Parameter for weights or delays, one can
 obtain randomized values for weights and delays, as shown by the red
-circles in the bottom panel of :numref:`fig_conn5`. Weights and delays can
-currently only be randomized with uniform distribution.
+circles in the bottom panel of :numref:`fig_conn5`.
 
 .. _fig_conn5:
 
@@ -1175,6 +1216,33 @@ currently only be randomized with uniform distribution.
 
    Distance-dependent and randomized weights and delays. See text for
    details.
+
+Designing distance-dependent Parameters
+---------------------------------------
+
+Although NEST comes with some pre-defined functions that can be used to
+create distributions of distance-dependent Parameters, this is not a limit
+to how Parameters can be combined.
+
+.. TODO: reference to Parameter documentation
+
+As an example, we will combine Parameters to create a Parameter that is
+linear (actually affine) in the displacement of the nodes, on the form
+
+.. math:: p = 0.5 + d_x + 2 d_y.
+
+\ where :math:`d_x` and :math:`d_y` are the displacements between the source and
+target neuron on the x and y axis, respectively. The Parameter is then simply:
+
+.. literalinclude:: user_manual_scripts/connections.py
+    :start-after: #{ conn_param_design #}
+    :end-before: #{ end #}
+
+And can be directly plugged into the ``Connect`` function:
+
+.. literalinclude:: user_manual_scripts/connections.py
+    :start-after: #{ conn_param_design_ex #}
+    :end-before: #{ end #}
 
 .. _sec:conn_pbc:
 
@@ -1195,8 +1263,9 @@ on the following principles:
    different extents in :math:`x`- and :math:`y`-directions this means
    that the maximum layer size is determined by the smaller extension.
 
--  Kernel, weight and delay functions always consider the shortest
-   distance (displacement) between driver and pool node.
+-  ``nest.spatial.distance`` and ``nest.spatial.dimension_distance``
+   always consider the shortest distance (displacement) between driver and
+   pool node.
 
 In most physical systems simulated using periodic boundary conditions,
 interactions between entities are short-range. Periodic boundary
@@ -1211,49 +1280,51 @@ applied to.
 Prescribed number of connections
 --------------------------------
 
-We have so far described how to connect layers by either connecting to
-all nodes inside the mask or by considering each pool node in turn and
+We have so far described how to connect layers by either connecting to all
+nodes inside the mask or by considering each pool node in turn and
 connecting it according to a given probability function. In both cases,
-the number of connections generated depends on mask and kernel.
+the number of connections generated depends on mask and connection
+probability.
 
 Many neuron models in the literature, in contrast, prescribe a certain
-*fan in* (number of incoming connections) or *fan out* (number of
-outgoing connections) for each node. You can achieve this in Topology by
-prescribing the number of connections for each driver node. For
-convergent connections, where the target layer is the driver layer, you
-thus achieve a constant fan in, for divergent connections a constant fan
-out.
+*fan in* (number of incoming connections) or *fan out* (number of outgoing
+connections) for each node. You can achieve this in Topology by
+prescribing the number of connections for each driver node by using
+``fixed_indegree`` or ``fixed_outdegree``.
 
 Connection generation now proceeds in a different way than before:
 
-1. For each driver node, ``ConnectLayers`` randomly selects a node from
+1. For each driver node, ``Connect`` randomly selects a node from
    the mask region in the pool layer, and creates a connection with the
-   probability prescribed by the kernel. This is repeated until the
+   probability prescribed. This is repeated until the
    requested number of connections has been created.
 
 2. Thus, if all nodes in the mask shall be connected with equal
-   probability, you should not specify any kernel.
+   probability, you should not specify a connection probability.
 
-3. If you specify a non-uniform kernel (e.g., Gaussian, linear,
-   exponential), the connections will be distributed within the mask
-   with the spatial profile given by the kernel.
+3. If you specify a probability with a distance-dependent distribution
+   (e.g., Gaussian, linear, exponential), the connections will be
+   distributed within the mask with the spatial profile given by the
+   probability.
 
 4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
    and prescribe a number of connections greater than the number of pool
-   nodes in the mask, ``ConnectLayers`` may get stuck in an infinite
+   nodes in the mask, ``Connect`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
    the mask may vary considerably for free layers with randomly placed
    nodes.
 
 The following code generates a network of 1000 randomly placed nodes and
-connects them with a fixed fan out of 50 outgoing connections per node
+connects them with a fixed fan out, of 50 outgoing connections per node
 distributed with a profile linearly decaying from unit probability to
 zero probability at distance :math:`0.5`. Multiple connections
 (multapses) between pairs of nodes are allowed, self-connections
 (autapses) prohibited. The probability of finding a connection at a
 certain distance is then given by the product of the probabilities for
-finding nodes at a certain distance with the kernel value for this
-distance. For the kernel and parameter values below we have
+finding nodes at a certain distance with the probability value for this
+distance. For the connection probability and parameter values below we have
+
+.. TODO: Is this equation correct?
 
 .. _eq_ptheo:
 
@@ -1284,46 +1355,50 @@ Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
 number of connections is prescribed.
 
+.. TODO: Remove this section?
+
 .. _sec:conn_composite:
 
-Connecting composite layers
----------------------------
+.. Connecting composite layers
+.. ---------------------------
 
-Connections between layers with composite elements are based on the
-following principles:
+.. Connections between layers with composite elements are based on the
+.. following principles:
 
--  All nodes within a composite element have the same coordinates, the
-   coordinates of the element.
+.. -  All nodes within a composite element have the same coordinates, the
+..    coordinates of the element.
 
--  All nodes within a composite element are treated equally. If, e.g.,
-   an element of the pool layer contains three nodes and connection
-   probability is 1, then connections with all three nodes will be
-   created. For probabilistic connection schemes, each of the three
-   nodes will be considered individually.
+.. -  All nodes within a composite element are treated equally. If, e.g.,
+..    an element of the pool layer contains three nodes and connection
+..    probability is 1, then connections with all three nodes will be
+..    created. For probabilistic connection schemes, each of the three
+..    nodes will be considered individually.
 
--  If only nodes of a given model within each element shall be
-   considered as sources or targets then this can be achieved by adding
-   a ``'sources'`` or ``'targets'`` entry to the connection dictionary,
-   which specifies the model to connect.
+.. -  If only nodes of a given model within each element shall be
+..    considered as sources or targets then this can be achieved by adding
+..    a ``'sources'`` or ``'targets'`` entry to the connection dictionary,
+..    which specifies the model to connect.
 
-This is exemplified by the following code, which connects pyramidal
-cells (``pyr``) to interneurons (``in``) with a circular mask and
-uniform probability and interneurons to pyramidal cells with a
-rectangular mask unit probability.
+.. This is exemplified by the following code, which connects pyramidal
+.. cells (``pyr``) to interneurons (``in``) with a circular mask and
+.. uniform probability and interneurons to pyramidal cells with a
+.. rectangular mask unit probability.
 
-.. literalinclude:: user_manual_scripts/connections.py
-    :start-after: #{ conn7 #}
-    :end-before: #{ end #}
+.. .. literalinclude:: user_manual_scripts/connections.py
+..     :start-after: #{ conn7 #}
+..     :end-before: #{ end #}
 
 .. _sec:conn_synapse:
 
 Synapse models and properties
 -----------------------------
 
-By default, ``ConnectLayers`` creates connections using the default
-synapse model in NEST, ``static_synapse``. You can specify a different
-model by adding a ``'synapse_model'`` entry to the connection
+By default, ``Connect`` creates connections using the default synapse
+model in NEST, ``static_synapse``. You can specify a different model by
+adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
+
+.. TODO: Update code example
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn8 #}
@@ -1337,6 +1412,8 @@ not be set in distance-dependent ways at present.
 
 Connecting devices to subregions of layers
 ------------------------------------------
+
+.. TODO: divergent vs convergent when connecting devices
 
 It is possible to connect stimulation and recording devices only to
 specific subregions of layers. A simple way to achieve this is to create
@@ -1393,66 +1470,58 @@ connectivity.
 Query functions
 ---------------
 
-The following table presents some query functions provided by NEST
-(``nest.``) and Topology (``tp.``). For detailed information about these
-functions, please see the online Python and SLI documentation.
+The following table presents some query functions provided by NEST. For
+detailed information about these functions, please see the online Python
+and SLI documentation.
 
-+-------------------------------+---------------------------------------------+
-| ``nest.PrintNetwork()``       | Print structure of network or subnet from   |
-|                               | NEST perspective.                           |
-+-------------------------------+---------------------------------------------+
-| ``nest.GetConnections()``     | Retrieve connections (all or for a given    |
-|                               | source or target); see also                 |
-|                               | http://www.nest-simulator.org/connection_ma |
-|                               | nagement.                                   |
-+-------------------------------+---------------------------------------------+
-| ``nest.GetNodes()``           | Applied to a layer, returns GIDs of the     |
-|                               | layer elements. For simple layers, these    |
-|                               | are the actual model neurons, for composite |
-|                               | layers the top-level subnets.               |
-+-------------------------------+---------------------------------------------+
-| ``nest.GetLeaves()``          | Applied to a layer, returns GIDs of all     |
-|                               | actual model neurons, ignoring subnets.     |
-+-------------------------------+---------------------------------------------+
-| ``tp.GetPosition()``          | Return the spatial locations of nodes.      |
-+-------------------------------+---------------------------------------------+
-| ``tp.GetLayer()``             | Return the layer to which nodes belong.     |
-+-------------------------------+---------------------------------------------+
-| ``tp.GetElement()``           | Return the node(s) at the location(s) in    |
-|                               | the given grid-based layer(s).              |
-+-------------------------------+---------------------------------------------+
-| ``tp.GetTargetNodes()``       | Obtain targets of a list of sources in a    |
-|                               | given target layer.                         |
-+-------------------------------+---------------------------------------------+
-| ``tp.GetTargetPositions()``   | Obtain positions of targets of a list of    |
-|                               | sources in a given target layer.            |
-+-------------------------------+---------------------------------------------+
-| ``tp.FindNearestElement()``   | Return the node(s) closest to the           |
-|                               | location(s) in the given layer(s).          |
-+-------------------------------+---------------------------------------------+
-| ``tp.FindCenterElement()``    | Return GID(s) of node closest to center of  |
-|                               | layer(s).                                   |
-+-------------------------------+---------------------------------------------+
-| ``tp.Displacement()``         | Obtain vector of lateral displacement       |
-|                               | between nodes, taking periodic boundary     |
-|                               | conditions into account.                    |
-+-------------------------------+---------------------------------------------+
-| ``tp.Distance()``             | Obtain vector of lateral distances between  |
-|                               | nodes, taking periodic boundary conditions  |
-|                               | into account.                               |
-+-------------------------------+---------------------------------------------+
-| ``tp.DumpLayerNodes()``       | Write layer element positions to file.      |
-|                               |                                             |
-+-------------------------------+---------------------------------------------+
-| ``tp.DumpLayerConnections()`` | Write connectivity information to file.     |
-|                               | This function may be very useful to check   |
-|                               | that Topology created the correct           |
-|                               | connection structure.                       |
-+-------------------------------+---------------------------------------------+
-| ``tp.SelectNodesByMask()``    | Obtain GIDs of nodes/elements inside a      |
-|                               | masked area of a layer. Part of NEST since  |
-|                               | NEST 2.14.                                  |
-+-------------------------------+---------------------------------------------+
++---------------------------------+---------------------------------------------+
+| ``nest.PrintNodes()``           | Print the GID ranges and model names of the |
+|                                 | nodes in the network.                       |
++---------------------------------+---------------------------------------------+
+| ``nest.GetConnections()``       | Retrieve connections (all or for a given    |
+|                                 | source or target); see also                 |
+|                                 | http://www.nest-simulator.org/connection_ma |
+|                                 | nagement.                                   |
++---------------------------------+---------------------------------------------+
+| ``nest.GetNodes()``             | Returns a GIDCollection of the layer        |
+|                                 | elements.                                   |
+|                                 |                                             |
+|                                 |                                             |
++---------------------------------+---------------------------------------------+
+| ``nest.GetPosition()``          | Return the spatial locations of nodes.      |
++---------------------------------+---------------------------------------------+
+| ``nest.GetTargetNodes()``       | Obtain targets of a list of sources in a    |
+|                                 | given target layer.                         |
++---------------------------------+---------------------------------------------+
+| ``nest.GetTargetPositions()``   | Obtain positions of targets of a list of    |
+|                                 | sources in a given target layer.            |
++---------------------------------+---------------------------------------------+
+| ``nest.FindNearestElement()``   | Return the node(s) closest to the           |
+|                                 | location(s) in the given layer(s).          |
++---------------------------------+---------------------------------------------+
+| ``nest.FindCenterElement()``    | Return GID(s) of node closest to center of  |
+|                                 | layer(s).                                   |
++---------------------------------+---------------------------------------------+
+| ``nest.Displacement()``         | Obtain vector of lateral displacement       |
+|                                 | between nodes, taking periodic boundary     |
+|                                 | conditions into account.                    |
++---------------------------------+---------------------------------------------+
+| ``nest.Distance()``             | Obtain vector of lateral distances between  |
+|                                 | nodes, taking periodic boundary conditions  |
+|                                 | into account.                               |
++---------------------------------+---------------------------------------------+
+| ``nest.DumpLayerNodes()``       | Write layer element positions to file.      |
+|                                 |                                             |
++---------------------------------+---------------------------------------------+
+| ``nest.DumpLayerConnections()`` | Write connectivity information to file.     |
+|                                 | This function may be very useful to check   |
+|                                 | that Topology created the correct           |
+|                                 | connection structure.                       |
++---------------------------------+---------------------------------------------+
+| ``nest.SelectNodesByMask()``    | Obtain GIDs of nodes/elements inside a      |
+|                                 | masked area of a layer.                     |
+|                                 |                                             |
++---------------------------------+---------------------------------------------+
 
 .. _sec:visualize:
 
@@ -1460,6 +1529,8 @@ Visualization functions
 -----------------------
 
 Topology provides three functions to visualize networks:
+
+.. TODO: Remove PlotKernel?
 
 +-------------------+------------------------------------------+
 | ``PlotLayer()``   | Plot nodes in a layer.                   |
@@ -1484,13 +1555,13 @@ Topology provides three functions to visualize networks:
    targets of the center neuron (marked by large light-red circle). The
    large red circle is the mask, the dashed green lines mark
    :math:`\sigma`, :math:`2\sigma` and :math:`3\sigma` of the Gaussian
-   kernel.
+   probability distribution.
 
-The following code shows a practical example: A :math:`21\times21`
-network which connects to itself with divergent Gaussian connections.
-The resulting graphics is shown in :numref:`fig_vislayer`. All elements
-and the targets of the center neuron are shown, as well as mask and
-kernel.
+The following code shows a practical example: A :math:`21\times21` network
+which connects to itself with divergent Gaussian connections. The
+resulting graphics is shown in :numref:`fig_vislayer`. All elements and
+the targets of the center neuron are shown, as well as mask and connection
+probability.
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ vislayer #}
@@ -1498,14 +1569,14 @@ kernel.
 
 .. _ch:extending:
 
-Adding topology kernels and masks
-=================================
+Adding masks
+============
 
 This chapter will show examples of how to extend the topology module by
-adding custom kernel functions and masks. Some knowledge of the C++
-programming language is needed for this. The functions will be added as
-a part of an extension module which is dynamically loaded into NEST. For
-more information on writing an extension module, see the section titled
+adding custom masks. Some knowledge of the C++ programming language is
+needed for this. The functions will be added as a part of an extension
+module which is dynamically loaded into NEST. For more information on
+writing an extension module, see the section titled
 `“Writing an Extension
 Module” <http://nest.github.io/nest-simulator/extension_modules>`__ in
 the NEST Developer Manual. The basic steps required to get started are:
@@ -1552,107 +1623,7 @@ the NEST Developer Manual. The basic steps required to get started are:
    The previous command installed MyModule to the NEST installation
    directory, including help files generated from the source code.
 
-Adding kernel functions
------------------------
-
-As an example, we will add a kernel function called ``'affine2d'``,
-which will be linear (actually affine) in the displacement of the nodes,
-on the form
-
-.. math:: p(d) = a d_x + b d_y + c.
-
-\ The kernel functions are provided by C++ classes subclassed from
-``nest::Parameter``. To enable subclassing, add the following lines at
-the top of the file ``mymodule.h``:
-
-.. code:: c
-
-   #include "topologymodule.h"
-   #include "parameter.h"
-
-Then, add the class definition, e.g. near the bottom of the file before
-the brace closing the namespace ``mynest``:
-
-.. code:: c
-
-     class Affine2DParameter: public nest::Parameter
-     {
-     public:
-       Affine2DParameter(const DictionaryDatum& d):
-         Parameter(d),
-         a_(1.0),
-         b_(1.0),
-         c_(0.0)
-         {
-           updateValue<double>(d, "a", a_);
-           updateValue<double>(d, "b", b_);
-           updateValue<double>(d, "c", c_);
-         }
-
-       double raw_value(const nest::Position<2>& disp,
-                        librandom::RngPtr&) const
-         {
-           return a_*disp[0] + b_*disp[1] + c_;
-         }
-
-       nest::Parameter * clone() const
-         { return new Affine2DParameter(*this); }
-
-     private:
-       double a_, b_, c_;
-     };
-
-The class contains a constructor, which reads the value of the
-parameters :math:`a`, :math:`b` and :math:`c` from the dictionary
-provided by the user. The function ``updateValue`` will do nothing if
-the given key is not in the dictionary, and the default values
-:math:`a=b=1,\ c=0` will be used.
-
-The overridden method ``raw_value()`` will return the actual value of
-the kernel function for the displacement given as the first argument,
-which is of type ``nest::Position<2>``. The template argument 2 refers
-to a 2-dimensional position. You can also implement a method taking a
-``nest::Position<3>`` as the first argument if you want to support
-3-dimensional layers. The second argument, a random number generator, is
-not used in this example.
-
-The class also needs to have a ``clone()`` method, which will return a
-dynamically allocated copy of the object. We use the (default) copy
-constructor to implement this.
-
-To make the custom function available to the Topology module, you need
-to register the class you have provided. To do this, add the line
-
-.. code:: c
-
-   nest::TopologyModule::register_parameter<Affine2DParameter>("affine2d");
-
-to the function ``MyModule::init()`` in the file ``mymodule.cpp``. Now
-compile and install the module by issuing
-
-.. code:: bash
-
-   make
-   make install
-
-To use the function, the module must be loaded into NEST using
-``nest.Install()``. Then, the function is available to be used in
-connections, e.g.
-
-::
-
-   nest.Install('mymodule')
-   l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                           'elements': 'iaf_psc_alpha'})
-   tp.ConnectLayers(l,l,{'connection_type': 'convergent',
-               'mask': {'circular': {'radius': 0.5}},
-               'kernel': {'affine2d': {'a': 1.0, 'b': 2.0, 'c': 0.5}}})
-
-Adding masks
-------------
-
-The process of adding a mask is similar to that of adding a kernel
-function. A subclass of ``nest::Mask<D>`` must be defined, where ``D``
+To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``
 is the dimension (2 or 3). In this case we will define a 2-dimensional
 elliptic mask by creating a class called ``EllipticMask``. Note that
 elliptical masks are already part of NEST see
@@ -1665,8 +1636,7 @@ file:
 
    #include "mask.h"
 
-Compared to the ``Parameter`` class discussed in the previous section,
-the ``Mask`` class has a few more methods that must be overridden:
+The ``Mask`` class has a few methods that must be overridden:
 
 .. code:: c
 
@@ -1724,9 +1694,9 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-Similar to kernel functions, the mask class must be registered with the
-topology module, and this is done by adding a line to the function
-``MyModule::init()`` in the file ``mymodule.cpp``:
+The mask class must then be registered with the topology module, and this
+is done by adding a line to the function ``MyModule::init()`` in the file
+``mymodule.cpp``:
 
 .. code:: c
 
@@ -1738,10 +1708,13 @@ used in connections, e.g.
 ::
 
    nest.Install('mymodule')
-   l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                           'elements': 'iaf_psc_alpha'})
-   tp.ConnectLayers(l,l,{'connection_type': 'convergent',
-               'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
+   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[1., 1.]))
+   nest.Connect(l, l, {'rule': 'pairwise_bernoulli',
+                       'p': 1.0,
+                       'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
+
+
+.. TODO: remove changes?
 
 .. _sec:changes:
 
@@ -1859,9 +1832,5 @@ References
    models.
 
 .. [3]
-   You can also use standard NEST connection functions to connect nodes
-   in Topology layers.
-
-.. [4]
    See Sec. :ref:`2.1.1 <sec:verysimple>` for the distinction between
    layer coordinates and grid indices

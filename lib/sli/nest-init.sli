@@ -652,16 +652,31 @@ def
     /n Set
     /model Set
 
-    % Only store the old parameters that are present in params.
-    model GetDefaults /oldparams Set
-    /tmp << >> def
-    % get implicitly checks if params contains 'illegal' keys
-    params keys { /key Set tmp key oldparams key get put } forall
-    tmp /oldparams Set
+    model GetDefaults /element_type get /recorder eq
+    {
+      % For recorders, we can't use the more efficient method of
+      % setting parameters via SetDefaults as used below, because
+      % recording backend properties are only available in instances
+      % after their enrollment
 
-    model params SetDefaults
-    model n Create_l_i
-    model oldparams SetDefaults
+      model n Create_l_i
+      dup params SetStatus
+    }
+    {
+      % For stimulators and neurons, we store the old parameters that
+      % are given in params. We then set params as defaults, create
+      % the nodes and restore the old parameters.
+
+      model GetDefaults /oldparams Set
+      /tmp << >> def
+      % get implicitly checks if params contains 'illegal' keys
+      params keys { /key Set tmp key oldparams key get put } forall
+      tmp /oldparams Set
+
+      model params SetDefaults
+      model n Create_l_i
+      model oldparams SetDefaults
+    } ifelse
 
   end % local namespace
 } def

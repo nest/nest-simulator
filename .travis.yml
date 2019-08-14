@@ -26,7 +26,7 @@ language: python
 
 # Using the Sudo-enabled Ubuntu Trusty (14.04 LTS).
 sudo: required
-dist: trusty
+dist: xenial
 
 stages:
    - Staticcheck
@@ -40,28 +40,28 @@ stages:
 jobs:
   include:
     - stage: Staticcheck
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis and build
     - stage: MPI-Threading-Python
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
     - stage: MPI-Threading-Python
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only threading
     - stage: MPI-Threading-Python
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
     - stage: MPI-Threading-Python
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
     - stage: MPI-Threading-Python
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only Python
     - stage: Python-Full-build
-      python: 3.4.4
+      python: 3.6.7
       env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: Python-Full-build
-      python: 2.7.13
+      python: 2.7.15
       env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: GCC8Clang7
       language: cpp
@@ -83,6 +83,7 @@ addons:
      - ubuntu-toolchain-r-test
      - llvm-toolchain-trusty-7
     packages:
+     - gcc-8
      - g++-8
      - clang-7
      - build-essential

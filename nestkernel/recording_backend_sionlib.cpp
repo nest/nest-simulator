@@ -26,6 +26,9 @@
 #include <mpix.h>
 #endif // BG_MULTIFILE
 
+// Generated includes:
+#include "config.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 
@@ -326,16 +329,12 @@ nest::RecordingBackendSIONlib::close_files_()
       // write version of the sionlib recording backend into container file
       sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_uint32 ), 1, file.sid );
 
-      // get nest version info from the SLI interpreter's statusdict
-      SLIInterpreter& i = get_engine();
-      const Token& rcsinfo_token = i.statusdict->lookup2( Name( "rcsinfo" ) );
-      std::string rcsinfo = getValue< std::string >( rcsinfo_token );
-
       // write nest version into sionlib container file
-      char rcsinfo_buffer[ NEST_VERSION_BUFFERSIZE ];
-      strncpy( rcsinfo_buffer, rcsinfo.c_str(), NEST_VERSION_BUFFERSIZE - 1 );
-      rcsinfo_buffer[ NEST_VERSION_BUFFERSIZE - 1 ] = '\0';
-      sion_fwrite( rcsinfo_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
+      const char* nest_version = NEST_VERSION_STRING;
+      char version_buffer[ NEST_VERSION_BUFFERSIZE ];
+      strncpy( version_buffer, nest_version, NEST_VERSION_BUFFERSIZE - 1 );
+      version_buffer[ NEST_VERSION_BUFFERSIZE - 1 ] = '\0';
+      sion_fwrite( version_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
 
       // write device info
       const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ t ].size() );

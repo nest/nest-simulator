@@ -20,12 +20,34 @@
  *
  */
 
+// C++ includes:
 #include <string>
-
-#include "logging_manager.h"
+#include <map>
+#include <iostream>
 
 #ifndef DEPRECATION_WARNING_H
 #define DEPRECATION_WARNING_H
+
+
+/** @BeginDocumentation
+
+   Name: DeprecationWarning - General deprecation warning class for models with
+                              deprecated parameters
+
+   Description:
+   General class for handling deprecations. The deprecation warning will only
+   be issued the first time the deprecated parameter is updated.
+
+   How to use:
+   In model constructor put
+     this->deprecation_warning.set_deprecated(deprecated_parameter);
+
+   In function updating the deprecated parameter put
+     node->deprecation_warning.deprecation_warning(deprecated_parameter);
+   or
+     node->deprecation_warning.deprecation_warning(deprecated_parameter,
+                                                   new_parameter);
+ */
 
 
 namespace nest
@@ -44,37 +66,22 @@ public:
   {
   }
 
+  /*
+   * Set parameter name to be deprecated.
+   */
   void set_deprecated( std::string name )
   {
-    deprecated_functions_[name] = true;
+    deprecated_functions_[ name ] = true;
   }
 
-  void deprecation_warning( std::string name )
-  {
-    if ( deprecated_functions_[name] )
-    {
-      LOG( M_DEPRECATED,
-        name,
-        name + " is deprecated and will be removed in a future version of NEST." );
-
-      deprecated_functions_[name] = false; // to not issue warning again
-    }
-  }
-
-  void deprecation_warning( std::string name, std::string new_name )
-  {
-    if ( deprecated_functions_[name] )
-    {
-      LOG( M_DEPRECATED,
-        name,
-        name + " is deprecated and will be removed in a future version of NEST, use " + new_name + " instead." );
-
-      deprecated_functions_[name] = false; // to not issue warning again
-    }
-  }
+  /*
+   * Issues deprecation warning.
+   */
+  void deprecation_warning( std::string name );
+  void deprecation_warning( std::string name, std::string new_name );
 
 private:
-  std::map<std::string, bool> deprecated_functions_;
+  std::map< std::string, bool > deprecated_functions_;
 };
 
 }

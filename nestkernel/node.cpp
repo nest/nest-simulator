@@ -39,7 +39,8 @@ namespace nest
 {
 
 Node::Node()
-  : gid_( 0 )
+  :  deprecation_warning( )
+  ,  gid_( 0 )
   , thread_lid_( invalid_index )
   , model_id_( -1 )
   , thread_( 0 )
@@ -51,7 +52,8 @@ Node::Node()
 }
 
 Node::Node( const Node& n )
-  : gid_( 0 )
+  : deprecation_warning( n.deprecation_warning )
+  , gid_( 0 )
   , thread_lid_( n.thread_lid_ )
   , model_id_( n.model_id_ )
   , thread_( n.thread_ )

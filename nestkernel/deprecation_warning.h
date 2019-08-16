@@ -20,6 +20,10 @@
  *
  */
 
+#include <string>
+
+#include "logging_manager.h"
+
 #ifndef DEPRECATION_WARNING_H
 #define DEPRECATION_WARNING_H
 
@@ -31,17 +35,48 @@ class DeprecationWarning
 {
 public:
   DeprecationWarning()
-    : deprecated_functions_(0)
+    : deprecated_functions_()
   {
   }
 
+  DeprecationWarning( const DeprecationWarning& dw )
+    : deprecated_functions_( dw.deprecated_functions_ )
+  {
+  }
+
+  void set_deprecated( std::string name )
+  {
+    deprecated_functions_[name] = true;
+  }
+
+  void deprecation_warning( std::string name )
+  {
+    if ( deprecated_functions_[name] )
+    {
+      LOG( M_DEPRECATED,
+        name,
+        name + " is deprecated and will be removed in a future version of NEST." );
+
+      deprecated_functions_[name] = false; // to not issue warning again
+    }
+  }
+
+  void deprecation_warning( std::string name, std::string new_name )
+  {
+    if ( deprecated_functions_[name] )
+    {
+      LOG( M_DEPRECATED,
+        name,
+        name + " is deprecated and will be removed in a future version of NEST, use " + new_name + " instead." );
+
+      deprecated_functions_[name] = false; // to not issue warning again
+    }
+  }
 
 private:
   std::map<std::string, bool> deprecated_functions_;
 };
 
 }
-
-
 
 #endif /* DEPRECATION_WARNING_H */

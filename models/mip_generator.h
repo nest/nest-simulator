@@ -42,6 +42,9 @@ namespace nest
 
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: mip_generator - create spike trains as described by the MIP model.
 
 Description:
@@ -59,10 +62,14 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-rate         double - Mean firing rate of the mother process in Hz
-p_copy       double - Copy probability
-mother_rng   rng    - Random number generator of mother process
-mother_seed  long   - Seed of RNG of mother process
+\verbatim embed:rst
+============  ======== ================================================
+ rate         spikes/s Mean firing rate of the mother process
+ p_copy       real     Copy probability
+ mother_rng   rng      Random number generator of mother process
+ mother_seed  integer  Seed of RNG of mother process
+============  ======== ================================================
+\endverbatim
 
 Remarks:
 
@@ -87,10 +94,12 @@ Sends: SpikeEvent
 
 References:
 
-[1] Alexandre Kuhn, Ad Aertsen, Stefan Rotter
-    Higher-Order Statistics of Input Ensembles and the Response of Simple
-    Model Neurons
-    Neural Computation 15, 67-101 (2003)
+\verbatim embed:rst
+.. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
+       ensembles and the response of simple model neurons. Neural Computation
+       15:67-101.
+       DOI: https://doi.org/10.1162/089976603321043702
+ \endverbatim
 
 Author: May 2006, Helias
 
@@ -162,17 +171,16 @@ private:
    */
   struct Parameters_
   {
-    double rate_;   //!< process rate in Hz
-    double p_copy_; //!< copy probability for each spike in the mother process
+    double rate_;               //!< process rate in Hz
+    double p_copy_;             //!< copy probability for each spike in the mother process
     unsigned long mother_seed_; //!< seed of the mother process
     librandom::RngPtr rng_;     //!< random number generator for mother process
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -190,10 +198,7 @@ private:
 };
 
 inline port
-mip_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

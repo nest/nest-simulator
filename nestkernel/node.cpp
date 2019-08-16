@@ -119,8 +119,7 @@ Node::get_status_dict_()
 void
 Node::set_local_device_id( const index lsdid )
 {
-  assert(
-    false && "set_local_device_id() called on a non-device node of type" );
+  assert( false && "set_local_device_id() called on a non-device node of type" );
 }
 
 index
@@ -133,8 +132,6 @@ DictionaryDatum
 Node::get_status_base()
 {
   DictionaryDatum dict = get_status_dict_();
-
-  assert( dict.valid() );
 
   // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
@@ -156,14 +153,12 @@ Node::get_status_base()
   // now call the child class' hook
   get_status( dict );
 
-  assert( dict.valid() );
   return dict;
 }
 
 void
 Node::set_status_base( const DictionaryDatum& dict )
 {
-  assert( dict.valid() );
   try
   {
     set_status( dict );
@@ -171,10 +166,7 @@ Node::set_status_base( const DictionaryDatum& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with GID %2: %3",
-        get_name(),
-        get_gid(),
-        e.message() ) );
+      String::compose( "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
@@ -420,10 +412,7 @@ Node::get_K_values( double, double&, double& )
 }
 
 void
-nest::Node::get_history( double,
-  double,
-  std::deque< histentry >::iterator*,
-  std::deque< histentry >::iterator* )
+nest::Node::get_history( double, double, std::deque< histentry >::iterator*, std::deque< histentry >::iterator* )
 {
   throw UnexpectedEvent();
 }

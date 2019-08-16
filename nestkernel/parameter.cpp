@@ -25,12 +25,11 @@
 #include "topology.h"
 
 // includes from sli
-#include "lockptrdatum_impl.h"
+#include "sharedptrdatum.h"
 
 #include "parameter.h"
 
-template class lockPTRDatum< nest::Parameter,
-  &nest::NestModule::ParameterType >;
+template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -49,37 +48,38 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
     throw KernelException( "NodePosParameter: not node" );
   }
   GIDCollectionPTR gc = node->get_gc();
-  if ( not gc.valid() )
+  if ( not gc.get() )
   {
     throw KernelException( "NodePosParameter: not gc" );
   }
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.valid() )
+  if ( not meta.get() )
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
-  LayerMetadata const* const layer_meta =
-    dynamic_cast< LayerMetadata const* >( meta.get() );
-  meta.unlock();
+  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
   {
     throw KernelException( "NodePosParameter: not layer_meta" );
   }
   AbstractLayerPTR layer = layer_meta->get_layer();
-  if ( not layer.valid() )
+  if ( not layer.get() )
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
   index lid = node->get_gid() - meta->get_first_gid();
   std::vector< double > pos = layer->get_position_vector( lid );
+  if ( ( unsigned int ) dimension_ >= pos.size() )
+  {
+    throw KernelException(
+      "Node position dimension must be within the defined number of "
+      "dimensions for the node." );
+  }
   return pos[ dimension_ ];
 }
 
 double
-SpatialDistanceParameter::value( librandom::RngPtr& rng,
-  index sgid,
-  Node* target,
-  thread target_thread ) const
+SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
 {
   Node* source = gid_to_node_ptr_( sgid, target_thread );
   // Initial checks
@@ -95,24 +95,22 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   // Source
 
   GIDCollectionPTR source_gc = source->get_gc();
-  if ( not source_gc.valid() )
+  if ( not source_gc.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not source gc" );
   }
   GIDCollectionMetadataPTR source_meta = source_gc->get_metadata();
-  if ( not source_meta.valid() )
+  if ( not source_meta.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not source meta" );
   }
-  LayerMetadata const* const source_layer_meta =
-    dynamic_cast< LayerMetadata const* >( source_meta.get() );
-  source_meta.unlock();
+  LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
   if ( not source_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
   }
   AbstractLayerPTR source_layer = source_layer_meta->get_layer();
-  if ( not source_layer.valid() )
+  if ( not source_layer.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
@@ -123,32 +121,144 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   // Target
 
   GIDCollectionPTR target_gc = target->get_gc();
-  if ( not target_gc.valid() )
+  if ( not target_gc.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not target gc" );
   }
   GIDCollectionMetadataPTR target_meta = target_gc->get_metadata();
-  if ( not target_meta.valid() )
+  if ( not target_meta.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not target meta" );
   }
-  LayerMetadata const* const target_layer_meta =
-    dynamic_cast< LayerMetadata const* >( target_meta.get() );
-  target_meta.unlock();
+  LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
   if ( not target_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );
   }
   AbstractLayerPTR target_layer = target_layer_meta->get_layer();
-  if ( not target_layer.valid() )
+  if ( not target_layer.get() )
   {
     throw KernelException( "SpatialDistanceParameter: not valid target layer" );
   }
   index target_lid = target->get_gid() - target_meta->get_first_gid();
-  std::vector< double > target_pos =
-    target_layer->get_position_vector( target_lid );
+  std::vector< double > target_pos = target_layer->get_position_vector( target_lid );
 
-  return source_layer->compute_distance( target_pos, source_lid );
+  switch ( dimension_ )
+  {
+  case 0:
+    return source_layer->compute_distance( target_pos, source_lid );
+  case 1:
+  case 2:
+  case 3:
+    if ( ( unsigned int ) dimension_ > target_pos.size() )
+    {
+      throw KernelException(
+        "Spatial distance dimension must be within the defined number of "
+        "dimensions for the nodes." );
+    }
+    return std::abs( source_layer->compute_displacement( target_pos, source_lid )[ dimension_ - 1 ] );
+  default:
+    throw KernelException( String::compose(
+      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+      " or 1-3 for x-z. Got ",
+      dimension_ ) );
+    break;
+  }
+}
+
+double
+SpatialDistanceParameter::value( librandom::RngPtr& rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const std::vector< double >& displacement ) const
+{
+  switch ( dimension_ )
+  {
+  case 0:
+  {
+    double sq_sum = 0;
+    for ( auto&& disp_n : displacement )
+    {
+      sq_sum += disp_n * disp_n;
+    }
+    return std::sqrt( sq_sum );
+  }
+  case 1:
+  case 2:
+  case 3:
+    if ( ( unsigned int ) dimension_ > displacement.size() )
+    {
+      throw KernelException(
+        "Spatial distance dimension must be within the defined number of "
+        "dimensions for the nodes." );
+    }
+    return std::abs( displacement[ dimension_ - 1 ] );
+  default:
+    throw KernelException( String::compose(
+      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
+      " or 1-3 for x-z. Got ",
+      dimension_ ) );
+    break;
+  }
+}
+
+RedrawParameter::RedrawParameter( const Parameter& p, const double min, const double max )
+  : Parameter( p )
+  , p_( p.clone() )
+  , min_( min )
+  , max_( max )
+  , max_redraws_( 1000 )
+{
+  if ( min > max )
+  {
+    throw BadParameterValue( "min <= max required." );
+  }
+  if ( max < min )
+  {
+    throw BadParameterValue( "max >= min required." );
+  }
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng, Node* node ) const
+{
+  double value;
+  size_t num_redraws = 0;
+  do
+  {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
+    value = p_->value( rng, node );
+  } while ( value < min_ or value > max_ );
+  return value;
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+{
+  double value;
+  do
+  {
+    value = p_->value( rng, sgid, target, target_thread );
+  } while ( value < min_ or value > max_ );
+  return value;
+}
+
+double
+RedrawParameter::value( librandom::RngPtr& rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const std::vector< double >& displacement ) const
+{
+  double value;
+  do
+  {
+    value = p_->value( rng, source_pos, target_pos, displacement );
+  } while ( value < min_ or value > max_ );
+
+  return value;
 }
 
 } /* namespace nest */

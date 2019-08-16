@@ -339,12 +339,10 @@ RepeatFunction::execute( SLIInterpreter* i ) const
   {
     i->EStack.pop();
 
-    ProcedureDatum* proc =
-      dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+    ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
     if ( proc )
     {
-      IntegerDatum* id =
-        dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+      IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
       if ( id == 0 )
       {
         throw ArgumentType( 1 );
@@ -467,8 +465,7 @@ StopFunction::execute( SLIInterpreter* i ) const
     if ( not found )
     {
       std::cerr << "No 'stopped' context found." << std::endl
-                << "Stack unrolling will erase the execution stack."
-                << std::endl
+                << "Stack unrolling will erase the execution stack." << std::endl
                 << "Entering debug mode. Type '?' for help." << std::endl;
     }
 
@@ -532,8 +529,7 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
     if ( not found )
     {
       std::cerr << "In closeinput: No active input file was found." << std::endl
-                << "Stack unrolling will erase the execution stack."
-                << std::endl
+                << "Stack unrolling will erase the execution stack." << std::endl
                 << "Entering debug mode. Type '?' for help." << std::endl;
     }
 
@@ -549,8 +545,7 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
 
   if ( not found )
   {
-    i->message(
-      30, "closeinput", "No active input file was found. \n  Restarting..." );
+    i->message( 30, "closeinput", "No active input file was found. \n  Restarting..." );
     i->EStack.clear();
     i->EStack.push( i->baselookup( Name( "start" ) ) );
     return;
@@ -670,8 +665,7 @@ IparseFunction::execute( SLIInterpreter* i ) const
   // Estack: handle  iparse
   // pick      1         0
 
-  XIstreamDatum* is =
-    dynamic_cast< XIstreamDatum* >( i->EStack.pick( 1 ).datum() );
+  XIstreamDatum* is = dynamic_cast< XIstreamDatum* >( i->EStack.pick( 1 ).datum() );
   assert( is );
   assert( is->valid() );
 
@@ -706,8 +700,7 @@ DefFunction::execute( SLIInterpreter* i ) const
     throw StackUnderflow( 2, i->OStack.load() );
   }
 
-  LiteralDatum* nd =
-    dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
+  LiteralDatum* nd = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
   if ( not nd )
   {
     throw ArgumentType( 1 );
@@ -903,8 +896,7 @@ void
 ForFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc =
-    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push_by_ref( i->baselookup( i->mark_name ) );
@@ -984,8 +976,7 @@ Forall_aFunction::execute( SLIInterpreter* i ) const
   static Token mark( i->baselookup( i->mark_name ) );
   static Token forall( i->baselookup( i->iforallarray_name ) );
 
-  ProcedureDatum* proc =
-    static_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc = static_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.pop();
@@ -1043,8 +1034,7 @@ void
 Forallindexed_aFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc =
-    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -1071,8 +1061,7 @@ void
 Forallindexed_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc =
-    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -1099,8 +1088,7 @@ void
 Forall_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc =
-    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -1184,9 +1172,7 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
   Name* cmdname = dynamic_cast< Name* >( cmd.datum() );
   if ( ( not errorname ) || ( not cmdname ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
-      "raiseerror",
-      "Usage: /command /errorname raiserror" );
+    i->message( SLIInterpreter::M_ERROR, "raiseerror", "Usage: /command /errorname raiserror" );
     i->raiseerror( "ArgumentType" );
     return;
   }
@@ -1561,9 +1547,7 @@ PclocksFunction::execute( SLIInterpreter* i ) const
 
   if ( realtime == static_cast< clock_t >( -1 ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
-      "PclocksFunction",
-      "System function times() returned error!" );
+    i->message( SLIInterpreter::M_ERROR, "PclocksFunction", "System function times() returned error!" );
     i->raiseerror( Processes::systemerror( i ) );
     return;
   }
@@ -1611,9 +1595,8 @@ PclockspersecFunction::execute( SLIInterpreter* i ) const
 
   if ( cps <= 0 )
   {
-    i->message( SLIInterpreter::M_ERROR,
-      "PclockspersecFunction",
-      "This system does not support sysconf(_SC_CLK_TCK)!" );
+    i->message(
+      SLIInterpreter::M_ERROR, "PclockspersecFunction", "This system does not support sysconf(_SC_CLK_TCK)!" );
     i->raiseerror( "FunctionUnsupported" );
     return;
   }
@@ -1655,18 +1638,15 @@ PgetrusageFunction::execute( SLIInterpreter* i ) const
 
   if ( not getinfo_( RUSAGE_SELF, self ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
-      "PgetrusageFunction",
-      "System function getrusage() returned error for self!" );
+    i->message( SLIInterpreter::M_ERROR, "PgetrusageFunction", "System function getrusage() returned error for self!" );
     i->raiseerror( Processes::systemerror( i ) );
     return;
   }
 
   if ( not getinfo_( RUSAGE_CHILDREN, children ) )
   {
-    i->message( SLIInterpreter::M_ERROR,
-      "PgetrusageFunction",
-      "System function getrusage() returned error for children!" );
+    i->message(
+      SLIInterpreter::M_ERROR, "PgetrusageFunction", "System function getrusage() returned error for children!" );
     i->raiseerror( Processes::systemerror( i ) );
     return;
   }
@@ -1747,15 +1727,13 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
 
   if ( t > std::numeric_limits< int >::max() )
   {
-    throw BadParameterValue( String::compose(
-      "t < %1s required.", std::numeric_limits< int >::max() ) );
+    throw BadParameterValue( String::compose( "t < %1s required.", std::numeric_limits< int >::max() ) );
   }
 
   /* Since sleep() only handles entire seconds and usleep() only
    * times shorter than 1s, we need to split the sleep; see #973. */
   const unsigned int t_sec = static_cast< unsigned int >( t );
-  const unsigned int t_musec =
-    std::min( 999999U, static_cast< unsigned int >( ( t - t_sec ) * 1e6 ) );
+  const unsigned int t_musec = std::min( 999999U, static_cast< unsigned int >( ( t - t_sec ) * 1e6 ) );
 
   sleep( t_sec );
   usleep( t_musec );
@@ -1904,8 +1882,7 @@ void
 SetGuardFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  IntegerDatum* count =
-    dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
+  IntegerDatum* count = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( count );
   i->setcycleguard( count->get() );
   i->OStack.pop();
@@ -2061,8 +2038,7 @@ void
 SetVerbosityFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() > 0 );
-  IntegerDatum* count =
-    dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
+  IntegerDatum* count = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( count );
   i->verbosity( count->get() );
   i->OStack.pop();
@@ -2105,14 +2081,11 @@ MessageFunction::execute( SLIInterpreter* i ) const
 
   assert( i->OStack.load() >= 3 );
 
-  IntegerDatum* lev =
-    dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
+  IntegerDatum* lev = dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
   assert( lev );
-  StringDatum* frm =
-    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* frm = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   assert( frm );
-  StringDatum* msg =
-    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* msg = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( msg );
 
   i->message( lev->get(), frm->c_str(), msg->c_str() );

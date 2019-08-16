@@ -65,14 +65,11 @@ void
 RecordablesMap< gif_cond_exp >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_(
-    names::V_m, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::V_M > );
+  insert_( names::V_m, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::V_M > );
   insert_( names::E_sfa, &gif_cond_exp::get_E_sfa_ );
   insert_( names::I_stc, &gif_cond_exp::get_I_stc_ );
-  insert_(
-    names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
-  insert_(
-    names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
+  insert_( names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
+  insert_( names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
 }
 } // namespace
 
@@ -84,8 +81,7 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::gif_cond_exp& node =
-    *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
+  const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -99,8 +95,7 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh
-             - stc ) / node.P_.c_m_;
+  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -171,8 +166,7 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=(
-  const State_& s )
+nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -324,18 +318,15 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_cond_exp::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, neuron_state_[ V_M ] ); // Membrane potential
-  def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
-  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
+  def< double >( d, names::E_sfa, sfa_ );               // Adaptive threshold potential
+  def< double >( d, names::I_stc, stc_ );               // Spike-triggered current
 }
 
 void
-nest::gif_cond_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  Node* node )
+nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
 {
   updateValueParam< double >( d, names::V_m, neuron_state_[ V_M ], node );
 }
@@ -423,8 +414,7 @@ nest::gif_cond_exp::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -492,8 +482,7 @@ void
 nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -551,17 +540,14 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
-      const double lambda =
-        P_.lambda_0_ * std::exp( ( S_.neuron_state_[ State_::V_M ] - S_.sfa_ )
-                         / P_.Delta_V_ );
+      const double lambda = P_.lambda_0_ * std::exp( ( S_.neuron_state_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
 
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand()
-          < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
+        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
 
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -608,14 +594,12 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // keep conductance positive
 }
@@ -629,9 +613,7 @@ nest::gif_cond_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

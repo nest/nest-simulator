@@ -46,13 +46,7 @@
 // record time, gid, weight and receiver gid
 nest::weight_recorder::weight_recorder()
   : DeviceNode()
-  , device_( *this,
-      RecordingDevice::WEIGHT_RECORDER,
-      "csv",
-      true,
-      true,
-      true,
-      true )
+  , device_( *this, RecordingDevice::WEIGHT_RECORDER, "csv", true, true, true, true )
   , user_set_precise_times_( false )
   , P_()
 {
@@ -81,7 +75,7 @@ nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
-  if ( senders_.valid() )
+  if ( senders_.get() )
   {
     ( *d )[ names::senders ] = senders_;
   }
@@ -90,7 +84,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
     ArrayDatum ad;
     ( *d )[ names::senders ] = ad;
   }
-  if ( targets_.valid() )
+  if ( targets_.get() )
   {
     ( *d )[ names::targets ] = targets_;
   }
@@ -167,8 +161,7 @@ nest::weight_recorder::init_buffers_()
 void
 nest::weight_recorder::calibrate()
 {
-  if ( kernel().event_delivery_manager.get_off_grid_communication()
-    and not device_.is_precise_times_user_set() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() )
   {
     device_.set_precise_times( true );
     std::string msg = String::compose(
@@ -199,9 +192,7 @@ void
 nest::weight_recorder::update( Time const&, const long from, const long to )
 {
 
-  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin();
-        e != B_.events_.end();
-        ++e )
+  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin(); e != B_.events_.end(); ++e )
   {
     device_.record_event( *e );
   }
@@ -226,8 +217,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
@@ -261,10 +251,8 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( P_.senders_.valid()
-           and not P_.senders_->contains( e.get_sender_gid() ) )
-      or ( P_.targets_.valid()
-           and not P_.targets_->contains( e.get_receiver_gid() ) ) )
+    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_gid() ) )
+      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
     {
       return;
     }

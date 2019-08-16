@@ -94,8 +94,7 @@ librandom::RngPtr
 get_vp_rng( thread tid )
 {
   assert( tid >= 0 );
-  assert(
-    tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
+  assert( tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
   return kernel().rng_manager.get_rng( tid );
 }
 
@@ -110,8 +109,7 @@ set_kernel_status( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
   kernel().set_status( dict );
-  ALL_ENTRIES_ACCESSED(
-    *dict, "SetKernelStatus", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
 DictionaryDatum
@@ -138,21 +136,18 @@ get_node_status( const index node_id )
 }
 
 void
-set_connection_status( const ConnectionDatum& conn,
-  const DictionaryDatum& dict )
+set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
   const index source_gid = getValue< long >( conn_dict, nest::names::source );
   const index target_gid = getValue< long >( conn_dict, nest::names::target );
   const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  const synindex syn_id =
-    getValue< long >( conn_dict, nest::names::synapse_modelid );
+  const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
   const port p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
-  kernel().connection_manager.set_synapse_status(
-    source_gid, target_gid, tid, syn_id, p, dict );
+  kernel().connection_manager.set_synapse_status( source_gid, target_gid, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -179,8 +174,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model =
-    kernel().model_manager.get_modeldict()->lookup( model_name );
+  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
   {
     throw UnknownModelName( model_name );
@@ -192,14 +186,19 @@ create( const Name& model_name, const index n_nodes )
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
+GIDCollectionPTR
+get_nodes( const DictionaryDatum& params, const bool local_only )
+{
+  return kernel().node_manager.get_nodes( params, local_only );
+}
+
 void
 connect( GIDCollectionPTR sources,
   GIDCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
-  kernel().connection_manager.connect(
-    sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
 ArrayDatum
@@ -209,8 +208,7 @@ get_connections( const DictionaryDatum& dict )
 
   ArrayDatum array = kernel().connection_manager.get_connections( dict );
 
-  ALL_ENTRIES_ACCESSED(
-    *dict, "GetConnections", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
 }
@@ -274,9 +272,7 @@ cleanup()
 }
 
 void
-copy_model( const Name& oldmodname,
-  const Name& newmodname,
-  const DictionaryDatum& dict )
+copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
@@ -290,10 +286,8 @@ set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 DictionaryDatum
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel =
-    kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( modelname );
+  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
 
   DictionaryDatum dict;
 
@@ -348,19 +342,33 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 }
 
 ParameterDatum
-compare_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2,
-  const DictionaryDatum& d )
+compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d )
 {
   return param1->compare_parameter( *param2, d );
 }
 
 ParameterDatum
-conditional_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2,
-  const ParameterDatum& param3 )
+conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 )
 {
   return param1->conditional_parameter( *param2, *param3 );
+}
+
+ParameterDatum
+min_parameter( const ParameterDatum& param, const double other_value )
+{
+  return param->min( other_value );
+}
+
+ParameterDatum
+max_parameter( const ParameterDatum& param, const double other_value )
+{
+  return param->max( other_value );
+}
+
+ParameterDatum
+redraw_parameter( const ParameterDatum& param, const double min, const double max )
+{
+  return param->redraw( min, max );
 }
 
 ParameterDatum
@@ -382,14 +390,31 @@ cos_parameter( const ParameterDatum& param )
 }
 
 ParameterDatum
+pow_parameter( const ParameterDatum& param, const double exponent )
+{
+  return param->pow( exponent );
+}
+
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y )
+{
+  return param_x->dimension_parameter( *param_y );
+}
+
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z )
+{
+  return param_x->dimension_parameter( *param_y, *param_z );
+}
+
+ParameterDatum
 create_parameter( const DictionaryDatum& param_dict )
 {
   param_dict->clear_access_flags();
 
-  ParameterDatum datum( NestModule::create_nest_parameter( param_dict ) );
+  ParameterDatum datum( NestModule::create_parameter( param_dict ) );
 
-  ALL_ENTRIES_ACCESSED(
-    *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
 
   return datum;
 }

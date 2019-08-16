@@ -37,6 +37,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
+
 Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
 exponential PSCs and adaptive threshold.
 
@@ -79,27 +83,33 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-C_m          double - Capacity of the membrane in pF
-E_L          double - Resting potential in mV
-tau_m        double - Membrane time constant in ms
-tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-t_ref        double - Duration of absolute refractory period (no spiking)
-                     in ms
-V_m          double - Membrane potential in mV
-I_e          double - Constant input current in pA
-t_spike      double - Point in time of last spike in ms
-tau_1        double - Short time constant of adaptive threshold in ms
-tau_2        double - Long time constant of adaptive threshold in ms
-alpha_1      double - Amplitude of short time threshold adaption in mV [3]
-alpha_2      double - Amplitude of long time threshold adaption in mV [3]
-omega        double - Resting spike threshold in mV (absolute value, not
-                     relative to E_L as in [3])
+\verbatim embed:rst
+============ =======  ========================================================
+ C_m          pF      Capacity of the membrane
+ E_L          mV      Resting potential
+ tau_m        ms      Membrane time constant
+ tau_syn_ex   ms      Time constant of postsynaptic excitatory currents
+ tau_syn_in   ms      Time constant of postsynaptic inhibitory currents
+ t_ref        ms      Duration of absolute refractory period (no spiking)
+ V_m          mV      Membrane potential
+ I_e          pA      Constant input current
+ t_spike      ms      Point in time of last spike
+ tau_1        ms      Short time constant of adaptive threshold
+ tau_2        ms      Long time constant of adaptive threshold
+ alpha_1      mV      Amplitude of short time threshold adaption [3]
+ alpha_2      mV      Amplitude of long time threshold adaption [3]
+ omega        mV      Resting spike threshold (absolute value, not
+                      relative to E_L as in [3])
+============ =======  ========================================================
+\endverbatim
 
 The following state variables can be read out with the multimeter device:
-
-V_m          Non-resetting membrane potential
-V_th         Two-timescale adaptive threshold
+\verbatim embed:rst
+====== ====  =================================
+ V_m   mV    Non-resetting membrane potential
+ V_th  mV    Two-timescale adaptive threshold
+====== ====  =================================
+\endverbatim
 
 Remarks:
 
@@ -109,16 +119,20 @@ numerics will be unstable.
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of
-   time-invariant linear systems with applications to neuronal
-   modeling. Biologial Cybernetics 81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State
-   space analysis of synchronous spiking in cortical neural
-   networks. Neurocomputing 38-40:565-571.
-[3] Kobayashi R, Tsubo Y and Shinomoto S (2009) Made-to-order
-   spiking neuron model equipped with a multi-timescale adaptive
-   threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
-
+\verbatim embed:rst
+.. [1] Rotter S and Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI:https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [3] Kobayashi R, Tsubo Y and Shinomoto S (2009). Made-to-order
+       spiking neuron model equipped with a multi-timescale adaptive
+       threshold. Frontiers in Computuational Neuroscience 3:9.
+       DOI: https://doi.org/10.3389/neuro.10.009.2009
+\endverbatim
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
@@ -215,8 +229,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -335,10 +348,7 @@ private:
 
 
 inline port
-mat2_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -390,10 +400,10 @@ mat2_psc_exp::get_status( DictionaryDatum& d ) const
 inline void
 mat2_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                    // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

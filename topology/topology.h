@@ -40,7 +40,6 @@
 // Includes from topology:
 #include "layer.h"
 #include "mask.h"
-#include "topology_parameter.h"
 
 
 namespace nest
@@ -83,7 +82,7 @@ public:
   {
     first_gid_ = gid;
   }
-  const index
+  index
   get_first_gid() const
   {
     return first_gid_;
@@ -97,33 +96,16 @@ private:
 AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( GIDCollectionPTR layer_gc );
-ArrayDatum displacement( GIDCollectionPTR layer_to_gc,
-  GIDCollectionPTR layer_from_gc );
+ArrayDatum displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc );
 ArrayDatum displacement( GIDCollectionPTR layer_gc, const ArrayDatum point );
-std::vector< double > distance( GIDCollectionPTR layer_to_gc,
-  GIDCollectionPTR layer_from_gc );
-std::vector< double > distance( GIDCollectionPTR layer_gc,
-  const ArrayDatum point );
+std::vector< double > distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc );
+std::vector< double > distance( GIDCollectionPTR layer_gc, const ArrayDatum point );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-TopologyParameterDatum multiply_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum divide_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum add_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-TopologyParameterDatum subtract_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 );
-void connect_layers( GIDCollectionPTR source_gc,
-  GIDCollectionPTR target_gc,
-  const DictionaryDatum& dict );
-TopologyParameterDatum create_topology_parameter(
-  const DictionaryDatum& param_dict );
-double get_value( const std::vector< double >& point,
-  const TopologyParameterDatum& param );
+void connect_layers( GIDCollectionPTR source_gc, GIDCollectionPTR target_gc, const DictionaryDatum& dict );
 void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR source_layer_gc,

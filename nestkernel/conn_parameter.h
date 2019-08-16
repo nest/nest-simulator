@@ -77,8 +77,7 @@ public:
    * @param rng   random number generator pointer
    * will be ignored except for random parameters.
    */
-  virtual double
-  value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
+  virtual double value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual long value_int( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual void
   skip( thread, size_t n_skip ) const
@@ -95,8 +94,7 @@ public:
   virtual void
   reset() const
   {
-    throw NotImplemented(
-      "Symmetric connections require parameters that can be reset." );
+    throw NotImplemented( "Symmetric connections require parameters that can be reset." );
   }
 
   /**
@@ -142,8 +140,7 @@ public:
   long
   value_int( thread, librandom::RngPtr&, index, Node* ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
   inline bool
@@ -233,8 +230,7 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayDoubleParameter( const std::vector< double >& values,
-    const size_t nthreads )
+  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -275,8 +271,7 @@ public:
   long
   value_int( thread, librandom::RngPtr&, index, Node* ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    throw KernelException( "ConnParameter calls value function with false return type." );
   }
 
   inline bool
@@ -288,10 +283,7 @@ public:
   void
   reset() const
   {
-    for ( std::vector< std::vector< double >::const_iterator >::iterator it =
-            next_.begin();
-          it != next_.end();
-          ++it )
+    for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
       *it = values_->begin();
     }
@@ -320,8 +312,7 @@ private:
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long >& values,
-    const size_t nthreads )
+  ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -381,10 +372,7 @@ public:
   void
   reset() const
   {
-    for ( std::vector< std::vector< long >::const_iterator >::iterator it =
-            next_.begin();
-          it != next_.end();
-          ++it )
+    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
       *it = values_->begin();
     }
@@ -432,16 +420,10 @@ class ParameterConnParameterWrapper : public ConnParameter
 public:
   ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
 
-  double value_double( thread target_thread,
-    librandom::RngPtr& rng,
-    index sgid,
-    Node* target ) const;
+  double value_double( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const;
 
   long
-  value_int( thread target_thread,
-    librandom::RngPtr& rng,
-    index sgid,
-    Node* target ) const
+  value_int( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const
   {
     return value_double( target_thread, rng, sgid, target );
   }

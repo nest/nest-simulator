@@ -36,6 +36,10 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
+
 Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
                       with exponential PSCs and adaptive threshold.
 
@@ -72,9 +76,9 @@ Remarks:
 - If identical parameters are used, and beta==0, then this model shall
   behave exactly as mat2_psc_exp.
 - The time constants in the model must fullfill the following conditions:
-  - tau_m != {tau_syn_ex, tau_syn_in}
-  - tau_v != {tau_syn_ex, tau_syn_in}
-  - tau_m != tau_v
+  - \f$ \tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
+  - \f$ \tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
+  - \f$ \tau_m != \tau_v \f$
   This is required to avoid singularities in the numerics. This is a
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
@@ -84,57 +88,65 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-C_m          double - Capacity of the membrane in pF
-E_L          double - Resting potential in mV
-tau_m        double - Membrane time constant in ms
-tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-t_ref        double - Duration of absolute refractory period (no spiking) in
-                      ms
-V_m          double - Membrane potential in mV
-I_e          double - Constant input current in pA
-t_spike      double - Point in time of last spike in ms
-tau_1        double - Short time constant of adaptive threshold in ms
-                      [3, eqs 2-3]
-tau_2        double - Long time constant of adaptive threshold in ms
-                      [3, eqs 2-3]
-alpha_1      double - Amplitude of short time threshold adaption in mV
-                      [3, eqs 2-3]
-alpha_2      double - Amplitude of long time threshold adaption in mV
-                      [3, eqs 2-3]
-tau_v        double - Time constant of kernel for voltage-dependent threshold
-                      component in ms [3, eqs 16-17]
-beta         double - Scaling coefficient for voltage-dependent threshold
-                      component in 1/ms [3, eqs 16-17]
-omega        double - Resting spike threshold in mV (absolute value, not
-                      relative to E_L as in [3])
+\verbatim embed:rst
+=========== ======= ===========================================================
+ C_m        pF      Capacity of the membrane
+ E_L        mV      Resting potential
+ tau_m      ms      Membrane time constant
+ tau_syn_ex ms      Time constant of postsynaptic excitatory currents
+ tau_syn_in ms      Time constant of postsynaptic inhibitory currents
+ t_ref      ms      Duration of absolute refractory period (no spiking)
+ V_m        mV      Membrane potential
+ I_e        pA      Constant input current
+ t_spike    ms      Point in time of last spike
+ tau_1      ms      Short time constant of adaptive threshold [3, eqs 2-3]
+ tau_2      ms      Long time constant of adaptive threshold [3, eqs 2-3]
+ alpha_1    mV      Amplitude of short time threshold adaption [3, eqs 2-3]
+ alpha_2    mV      Amplitude of long time threshold adaption [3, eqs 2-3]
+ tau_v      ms      Time constant of kernel for voltage-dependent threshold
+                    component [3, eqs 16-17]
+ beta       1/ms    Scaling coefficient for voltage-dependent threshold
+                    component [3, eqs 16-17]
+ omega      mV      Resting spike threshold (absolute value, not
+                    relative to E_L as in [3])
+=========== ======= ===========================================================
 
-The following state variables can be read out with the multimeter device:
 
-V_m          Non-resetting membrane potential
-V_th         Two-timescale adaptive threshold
+=========== ==== =======================================================
+**State variables that can be read out with the multimeter device**
+------------------------------------------------------------------------
+ V_m        mV   Non-resetting membrane potential
+ V_th       mV   Two-timescale adaptive threshold
+=========== ==== =======================================================
+\endverbatim
 
 Remarks:
 
-tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]. For very similar values,
-numerics will be unstable.
+\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation
+to
+avoid a degenerate case of the ODE describing the model [1].
+For very similar values, numerics will be unstable.
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of
-    time-invariant linear systems with applications to neuronal
-    modeling. Biologial Cybernetics 81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State
-    space analysis of synchronous spiking in cortical neural
-    networks. Neurocomputing 38-40:565-571.
-[3] Kobayashi R, Tsubo Y and Shinomoto S (2009) Made-to-order
-    spiking neuron model equipped with a multi-timescale adaptive
-    threshold. Front. Comput. Neurosci. 3:9. doi:10.3389/neuro.10.009.2009
-[4] Yamauchi S, Kim H and Shinomoto S (2011) Elemental spiking neuron model
-            for reproducing diverse firing patterns and predicting precise
-            firing times. Front. Comput. Neurosci. 5:42.
-            doi: 10.3389/fncom.2011.00042
+\verbatim embed:rst
+.. [1] Rotter S, Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [3] Kobayashi R, Tsubo Y and Shinomoto S (2009). Made-to-order
+       spiking neuron model equipped with a multi-timescale adaptive
+       threshold. Frontiers in Computational Neuroscience, 3:9.
+       DOI: https://dx.doi.org/10.3389%2Fneuro.10.009.2009
+.. [4] Yamauchi S, Kim H, Shinomoto S (2011). Elemental spiking neuron model
+       for reproducing diverse firing patterns and predicting precise
+       firing times. Frontiers in Computational Neuroscience, 5:42.
+       DOI: https://doi.org/10.3389/fncom.2011.00042
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -238,8 +250,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -387,10 +398,7 @@ private:
 
 
 inline port
-amat2_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+amat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -419,8 +427,7 @@ amat2_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+amat2_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -442,10 +449,10 @@ amat2_psc_exp::get_status( DictionaryDatum& d ) const
 inline void
 amat2_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                    // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

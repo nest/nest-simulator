@@ -60,8 +60,7 @@ DoubleFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 1 );
   i->EStack.pop();
 
-  IntegerDatum* op =
-    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   if ( op != NULL )
   {
 
@@ -76,10 +75,8 @@ Add_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() += ( op2->get() );
   i->OStack.pop();
@@ -105,8 +102,7 @@ Add_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
 
   op2->get() += ( op1->get() );
@@ -121,8 +117,7 @@ Add_idFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
   op1->get() += ( op2->get() );
   i->OStack.swap();
@@ -135,10 +130,8 @@ Sub_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() -= ( op2->get() );
   i->OStack.pop();
@@ -164,8 +157,7 @@ Sub_diFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() -= ( op2->get() );
   i->OStack.pop();
@@ -177,8 +169,7 @@ Sub_idFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   op2->get() = op1->get() - op2->get();
@@ -192,10 +183,8 @@ Mul_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() *= ( op2->get() );
   i->OStack.pop();
@@ -221,8 +210,7 @@ Mul_diFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() *= ( op2->get() );
   i->OStack.pop();
@@ -235,8 +223,7 @@ Mul_idFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
 
   op1->get() *= ( op2->get() );
   i->OStack.swap();
@@ -248,10 +235,8 @@ Div_iiFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 2 );
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op2->get() != 0 )
   {
@@ -281,10 +266,8 @@ Mod_iiFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1 == NULL || op2 == NULL )
   {
@@ -330,8 +313,7 @@ Div_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op2->get() != 0 )
   {
@@ -350,8 +332,7 @@ Div_idFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 2 );
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op2->get() != 0 )
@@ -620,8 +601,7 @@ Pow_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   // can raise anything to an integer power, except zero to neg power
   if ( not( op1->get() == 0.0 && op2->get() < 0 ) )
   {
@@ -719,8 +699,7 @@ Ldexp_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   *op1 = std::ldexp( op1->get(), op2->get() );
 
@@ -745,8 +724,7 @@ Dexp_iFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 1 );
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   double d = std::ldexp( 1.0, op1->get() );
 
@@ -965,10 +943,8 @@ Geq_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() >= op2->get() );
   i->OStack.pop( 2 );
@@ -981,8 +957,7 @@ Geq_idFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() >= op2->get() );
@@ -997,8 +972,7 @@ Geq_diFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() >= op2->get() );
   i->OStack.pop( 2 );
@@ -1036,10 +1010,8 @@ Leq_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() <= op2->get() );
   i->OStack.pop( 2 );
@@ -1052,8 +1024,7 @@ Leq_idFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() <= op2->get() );
@@ -1068,8 +1039,7 @@ Leq_diFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = ( op1->get() <= op2->get() );
   i->OStack.pop( 2 );
@@ -1218,10 +1188,8 @@ And_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() = op1->get() & op2->get();
   i->OStack.pop();
@@ -1233,10 +1201,8 @@ Or_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   op1->get() = op1->get() | op2->get();
   i->OStack.pop();
@@ -1260,8 +1226,7 @@ Gt_idFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool result = *op1 > *op2;
@@ -1277,8 +1242,7 @@ Gt_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
 
   bool result = *op1 > *op2;
@@ -1295,10 +1259,8 @@ Gt_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   assert( op1 != NULL && op2 != NULL );
 
   bool result = op1->get() > op2->get();
@@ -1359,8 +1321,7 @@ Lt_idFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
   assert( op1 != NULL && op2 != NULL );
 
@@ -1377,8 +1338,7 @@ Lt_diFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
   assert( op1 != NULL && op2 != NULL );
 
@@ -1396,10 +1356,8 @@ Lt_iiFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() > 1 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   assert( op1 != NULL && op2 != NULL );
 
   bool result = op1->get() < op2->get();
@@ -1603,10 +1561,8 @@ Max_i_iFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
   {
@@ -1621,8 +1577,7 @@ Max_i_dFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
@@ -1639,8 +1594,7 @@ Max_d_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
   {
@@ -1674,10 +1628,8 @@ Min_i_iFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
   {
@@ -1692,8 +1644,7 @@ Min_i_dFunction::execute( SLIInterpreter* i ) const
   assert( i->OStack.load() >= 2 );
   i->EStack.pop();
 
-  IntegerDatum* op1 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* op1 = static_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
@@ -1710,8 +1661,7 @@ Min_d_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   DoubleDatum* op1 = static_cast< DoubleDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* op2 =
-    static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* op2 = static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
   {

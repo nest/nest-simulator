@@ -39,9 +39,14 @@
     /ConnectLayers_g_g_D load
   def
 
-  /CreateLayer [/dictionarytype]
-    /CreateLayer_D load
+  /CreateLayerParams [/dictionarytype /dictionarytype]
+    /CreateLayer_D_D load
   def
+
+  /CreateLayer [/dictionarytype]
+  {
+    << >> CreateLayerParams
+  } def
 
   /GetPosition [/gidcollectiontype]
     /GetPosition_g load
@@ -99,34 +104,6 @@
 
   /sub [/masktype /masktype]
     /sub_M_M load
-  def
-
-  /mul [/topologyparametertype /topologyparametertype]
-    /multopo_P_P load
-  def
-
-  /div [/topologyparametertype /topologyparametertype]
-    /divtopo_P_P load
-  def
-
-  /add [/topologyparametertype /topologyparametertype]
-    /addtopo_P_P load
-  def
-
-  /sub [/topologyparametertype /topologyparametertype]
-    /subtopo_P_P load
-  def
-
-  /CreateTopologyParameter [/dictionarytype]
-    /CreateTopologyParameter_D load
-  def
-
-  /CreateTopologyParameter [/doubletype]
-    /CreateTopologyParameter_D load
-  def
-
-  /GetValue [/arraytype /topologyparametertype]
-    /GetValue_a_P load
   def
 
   /cvdict [/masktype]

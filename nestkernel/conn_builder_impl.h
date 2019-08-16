@@ -33,16 +33,13 @@ namespace nest
 {
 
 inline void
-ConnBuilder::single_disconnect_( index sgid,
-  Node& target,
-  thread target_thread )
+ConnBuilder::single_disconnect_( index sgid, Node& target, thread target_thread )
 {
   // index tgid = target.get_gid();
   // This is the most simple case in which only the synapse_model_ has been
   // defined. TODO: Add functionality to delete synapses with a given weight
   // or a given delay
-  kernel().sp_manager.disconnect(
-    sgid, &target, target_thread, synapse_model_id_ );
+  kernel().sp_manager.disconnect( sgid, &target, target_thread, synapse_model_id_ );
 }
 
 } // namespace nest

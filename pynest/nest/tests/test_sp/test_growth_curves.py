@@ -423,13 +423,9 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         psi = 0.10
-        # TODO481 Temporary fix, gets easier if we make the PyNEST function
-        # local_only, this is already available in SLI
-        local_nodes = [gid for gid in self.pop
-                       if nest.GetStatus([gid], 'local')]
 
-        nest.SetStatus(
-            local_nodes,
+        local_nodes = nest.GetLocalGIDCollection(self.pop)
+        local_nodes.set(
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -440,8 +436,8 @@ class TestGrowthCurve(unittest.TestCase):
                         'eps': eps, 'psi': 0.1, 'z': 0.0
                     }
                 }
-            }
-        )
+            })
+
         self.se_integrator.append(
             SigmoidNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
                               eps=eps, psi=psi, growth_rate=growth_rate))
@@ -455,14 +451,11 @@ class TestGrowthCurve(unittest.TestCase):
             0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
         ])
 
-        pop_as_list = list(self.pop)
-        for n in self.pop:
-            loc = self.se_nest[local_nodes.index(n), 30]
-            ex = expected[pop_as_list.index(n)]
-            testing.assert_almost_equal(
-                self.se_nest[local_nodes.index(n), 30], expected[
-                    pop_as_list.index(n)],
-                decimal=5)
+        local_pop_as_list = list(local_nodes)
+        for count, n in enumerate(self.pop):
+            loc = self.se_nest[local_pop_as_list.index(n), 30]
+            ex = expected[count]
+            testing.assert_almost_equal(loc, ex, decimal=5)
 
 
 def suite():

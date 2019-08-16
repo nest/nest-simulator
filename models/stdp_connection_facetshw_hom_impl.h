@@ -40,8 +40,7 @@ namespace nest
 //
 
 template < typename targetidentifierT >
-STDPFACETSHWHomCommonProperties< targetidentifierT >::
-  STDPFACETSHWHomCommonProperties()
+STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonProperties()
   : CommonSynapseProperties()
   , tau_plus_( 20.0 )
   , tau_minus_( 20.0 )
@@ -121,11 +120,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::
-  calc_readout_cycle_duration_()
+STDPFACETSHWHomCommonProperties< targetidentifierT >::calc_readout_cycle_duration_()
 {
-  readout_cycle_duration_ = int( ( no_synapses_ - 1.0 ) / synapses_per_driver_
-                              + 1.0 ) * driver_readout_time_;
+  readout_cycle_duration_ = int( ( no_synapses_ - 1.0 ) / synapses_per_driver_ + 1.0 ) * driver_readout_time_;
   // std::cout << "stdp_connection_facetshw_hom::debug: readout cycle duration
   // changed to " <<
   // readout_cycle_duration_ << std::endl;
@@ -133,8 +130,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
@@ -148,25 +144,17 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status(
   def< double >( d, names::driver_readout_time, driver_readout_time_ );
   def< double >( d, names::readout_cycle_duration, readout_cycle_duration_ );
 
-  ( *d )[ names::lookuptable_0 ] =
-    IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
-  ( *d )[ names::lookuptable_1 ] =
-    IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
-  ( *d )[ names::lookuptable_2 ] =
-    IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
-  ( *d )[ names::configbit_0 ] =
-    IntVectorDatum( new std::vector< long >( configbit_0_ ) );
-  ( *d )[ names::configbit_1 ] =
-    IntVectorDatum( new std::vector< long >( configbit_1_ ) );
-  ( *d )[ names::reset_pattern ] =
-    IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
+  ( *d )[ names::lookuptable_0 ] = IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
+  ( *d )[ names::lookuptable_1 ] = IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
+  ( *d )[ names::lookuptable_2 ] = IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
+  ( *d )[ names::configbit_0 ] = IntVectorDatum( new std::vector< long >( configbit_0_ ) );
+  ( *d )[ names::configbit_1 ] = IntVectorDatum( new std::vector< long >( configbit_1_ ) );
+  ( *d )[ names::reset_pattern ] = IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
 }
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
@@ -178,30 +166,25 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  updateValue< double >(
-    d, names::weight_per_lut_entry, weight_per_lut_entry_ );
-  updateValue< double >(
-    d, names::readout_cycle_duration, readout_cycle_duration_ );
+  updateValue< double >( d, names::weight_per_lut_entry, weight_per_lut_entry_ );
+  updateValue< double >( d, names::readout_cycle_duration, readout_cycle_duration_ );
   if ( updateValue< long >( d, names::no_synapses, no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
-  if ( updateValue< long >(
-         d, names::synapses_per_driver, synapses_per_driver_ ) )
+  if ( updateValue< long >( d, names::synapses_per_driver, synapses_per_driver_ ) )
   {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double >(
-         d, names::driver_readout_time, driver_readout_time_ ) )
+  if ( updateValue< double >( d, names::driver_readout_time, driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
   if ( d->known( names::lookuptable_0 ) )
   {
-    updateValue< std::vector< long > >(
-      d, names::lookuptable_0, lookuptable_0_ );
+    updateValue< std::vector< long > >( d, names::lookuptable_0, lookuptable_0_ );
 
     // right size?
     if ( lookuptable_0_.size() != lookuptable_1_.size() )
@@ -220,8 +203,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( names::lookuptable_1 ) )
   {
-    updateValue< std::vector< long > >(
-      d, names::lookuptable_1, lookuptable_1_ );
+    updateValue< std::vector< long > >( d, names::lookuptable_1, lookuptable_1_ );
 
     // right size?
     if ( lookuptable_1_.size() != lookuptable_0_.size() )
@@ -240,8 +222,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( names::lookuptable_2 ) )
   {
-    updateValue< std::vector< long > >(
-      d, names::lookuptable_2, lookuptable_2_ );
+    updateValue< std::vector< long > >( d, names::lookuptable_2, lookuptable_2_ );
 
     // right size?
     if ( lookuptable_2_.size() != lookuptable_0_.size() )
@@ -281,8 +262,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( names::reset_pattern ) )
   {
-    updateValue< std::vector< long > >(
-      d, names::reset_pattern, reset_pattern_ );
+    updateValue< std::vector< long > >( d, names::reset_pattern, reset_pattern_ );
 
     // right size?
     if ( reset_pattern_.size() != 6 )
@@ -312,8 +292,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom(
-  const STDPFACETSHWConnectionHom& rhs )
+STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , a_causal_( rhs.a_causal_ )
@@ -330,8 +309,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom(
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
@@ -355,9 +333,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );

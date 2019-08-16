@@ -69,7 +69,13 @@ __all__ = [
 # or function parameters, all flags for deprecated functions will be registered
 # by the @deprecated decorator.
 _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
-                                             'replacement': 'replacement_mod'}}
+                                             'replacement': 'replacement_mod'},
+                        'iaf_psc_alpha_canon': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_alpha_ps'},
+                        'iaf_psc_alpha_presc': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_alpha_ps'},
+                        'iaf_psc_delta_canon': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_delta_ps'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
@@ -170,6 +176,7 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
+
 
 uni_str = get_unistring_type()
 
@@ -508,6 +515,13 @@ def show_help_with_pager(hlpobj, pager=None):
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
+
     Returns
     -------
     int:
@@ -523,6 +537,13 @@ def get_verbosity():
 @check_stack
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
+
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
 
     Parameters
     ----------

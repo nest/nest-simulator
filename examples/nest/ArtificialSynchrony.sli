@@ -163,7 +163,7 @@ modeldict begin
          /overwrite_files true          % overwrite previous output
        >> SetKernelStatus
 
-  sim 1 eq { /neurons /iaf_psc_alpha_canon nr Create def }
+  sim 1 eq { /neurons /iaf_psc_alpha_ps nr Create def }
            { /neurons /iaf_psc_alpha nr Create def } ifelse
 
   % connect neurons all to all

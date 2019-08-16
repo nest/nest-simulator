@@ -28,7 +28,6 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
-from nest.topology import CreateTopologyParameter
 
 import numpy
 
@@ -39,16 +38,12 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    '_get_hierarchical_addressing',
-    '_get_params_is_strings',
-    '_restructure_data',
     'Connectome',
     'CreateParameter',
     'GIDCollection',
     'GIDCollectionIterator',
     'Mask',
     'Parameter',
-    'TopologyParameter',
 ]
 
 
@@ -334,7 +329,7 @@ class GIDCollection(object):
 
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
@@ -358,7 +353,7 @@ class GIDCollection(object):
 
     def __eq__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
 
         if self.__len__() != other.__len__():
             return False
@@ -369,7 +364,7 @@ class GIDCollection(object):
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):
-            return NotImplemented
+            raise NotImplementedError()
         return not self == other
 
     def __len__(self):
@@ -611,7 +606,7 @@ class Connectome(object):
 
     def __eq__(self, other):
         if not isinstance(other, Connectome):
-            return NotImplemented
+            raise NotImplementedError()
 
         if self.__len__() != other.__len__():
             return False
@@ -625,7 +620,7 @@ class Connectome(object):
 
     def __neq__(self, other):
         if not isinstance(other, Connectome):
-            return NotImplemented
+            raise NotImplementedError()
         return not self == other
 
     def __getitem__(self, key):
@@ -832,7 +827,7 @@ class Mask(object):
     # Generic binary operation
     def _binop(self, op, other):
         if not isinstance(other, Mask):
-            return NotImplemented
+            raise NotImplementedError()
         return sli_func(op, self._datum, other._datum)
 
     def __or__(self, other):
@@ -887,7 +882,7 @@ class Parameter(object):
         if isinstance(other, (int, float)):
             other = CreateParameter('constant', {'value': float(other)})
         if not isinstance(other, Parameter):
-            return NotImplemented
+            raise NotImplementedError()
 
         if params is None:
             return sli_func(op, self._datum, other._datum)
@@ -920,6 +915,9 @@ class Parameter(object):
 
     def __truediv__(self, other):
         return self._binop("div", other)
+
+    def __pow__(self, exponent):
+        return sli_func("pow", self._datum, float(exponent))
 
     def __lt__(self, other):
         return self._binop("compare", other, {'comparator': 0})
@@ -973,78 +971,3 @@ class Parameter(object):
 
         """
         return sli_func("GetValue", self._datum)
-
-
-class TopologyParameter(Parameter):
-    """
-    Class for parameters for distance dependency or randomization.
-
-    Parameters are spatial functions which are used when creating
-    connections in the Topology module. A parameter may be used as a
-    probability kernel when creating connections or as synaptic parameters
-    (such as weight and delay). Parameters are created using the
-    ``CreateTopologyParameter`` command.
-    """
-    # The constructor should not be called by the user
-
-    def __init__(self, datum):
-        """
-        Parameters must be created using the CreateTopologyParameter
-        command.
-        """
-        if not (isinstance(datum, kernel.SLIDatum)
-                or datum.dtype != "topologyparametertype"):
-            raise TypeError("expected parameter datum")
-        self._datum = datum
-
-    # Generic binary operation
-    def _binop(self, op, other):
-        if isinstance(other, (int, float)):
-            other = CreateTopologyParameter(
-                'constant', {'value': float(other)})
-        if not isinstance(other, Parameter):
-            return NotImplemented
-
-        return sli_func(op, self._datum, other._datum)
-
-    def GetValue(self, point):
-        """
-        Compute value of parameter at a point.
-
-
-        Parameters
-        ----------
-        point : tuple/list of float values
-            coordinate of point
-
-
-        Returns
-        -------
-        out : value
-            The value of the parameter at the point
-
-
-        See also
-        --------
-        CreateTopologyParameter : create parameter for e.g.,
-        distance dependency
-
-
-        Notes
-        -----
-        -
-
-
-        **Example**
-            ::
-
-                import nest.topology as tp
-
-                #linear dependent parameter
-                P = tp.CreateTopologyParameter('linear', {'a' : 2., 'c' : 0.})
-
-                #get out value
-                P.GetValue(point=[3., 4.])
-
-        """
-        return sli_func("GetValue", point, self._datum)

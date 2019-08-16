@@ -428,7 +428,7 @@ TEST_FAILED=0
 TIME_TOTAL=0
 TIME_ELAPSED=0
 
-echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_VERSION@ testsuite log"
+echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_STRING@ testsuite log"
 echo >> "${TEST_LOGFILE}" "======================"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 
@@ -553,11 +553,9 @@ echo "--------------------------------"
 junit_open 'core.phase_3'
 
 for test_ext in sli py ; do
-    for test_dir in "unittests/" "topology/unittests/" ; do
-        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep ".*\.${test_ext}\$") ; do
-            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-        done
-    done
+      for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+          run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+      done
 done
 
 junit_close
@@ -598,10 +596,8 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     CODES_SUCCESS=${SAVE_CODES_SUCCESS}
     CODES_FAILURE=${SAVE_CODES_FAILURE}
 
-    for test_dir in "mpitests/" "topology/mpitests/" ; do
-        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep '.*\.sli$') ; do
-            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-        done
+    for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
+        run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 
     junit_close
@@ -722,7 +718,6 @@ else
   echo "  for it. See the file README.md for details."
 fi
 
-
 if test "x${TEST_PYNEST}" = xtrue ; then
 
     echo
@@ -744,7 +739,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo "  Using nosetests."
         echo
 
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/topology/tests 2>&1 \
+        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"

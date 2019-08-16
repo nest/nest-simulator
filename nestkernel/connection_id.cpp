@@ -31,11 +31,7 @@
 namespace nest
 {
 
-ConnectionID::ConnectionID( long source_gid,
-  long target_gid,
-  long target_thread,
-  long synapse_modelid,
-  long port )
+ConnectionID::ConnectionID( long source_gid, long target_gid, long target_thread, long synapse_modelid, long port )
   : source_gid_( source_gid )
   , target_gid_( target_gid )
   , target_thread_( target_thread )
@@ -44,10 +40,7 @@ ConnectionID::ConnectionID( long source_gid,
 {
 }
 
-ConnectionID::ConnectionID( long source_gid,
-  long target_thread,
-  long synapse_modelid,
-  long port )
+ConnectionID::ConnectionID( long source_gid, long target_thread, long synapse_modelid, long port )
   : source_gid_( source_gid )
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
@@ -89,15 +82,14 @@ ConnectionID::to_ArrayDatum() const
 bool ConnectionID::operator==( const ConnectionID& c ) const
 {
   return ( source_gid_ == c.source_gid_ ) and ( target_gid_ == c.target_gid_ )
-    and ( target_thread_ == c.target_thread_ ) and ( port_ == c.port_ )
-    and ( synapse_modelid_ == c.synapse_modelid_ );
+    and ( target_thread_ == c.target_thread_ ) and ( port_ == c.port_ ) and ( synapse_modelid_ == c.synapse_modelid_ );
 }
 
 void
 ConnectionID::print_me( std::ostream& out ) const
 {
-  out << "<" << source_gid_ << "," << target_gid_ << "," << target_thread_
-      << "," << synapse_modelid_ << "," << port_ << ">";
+  out << "<" << source_gid_ << "," << target_gid_ << "," << target_thread_ << "," << synapse_modelid_ << "," << port_
+      << ">";
 }
 
 } // namespace

@@ -42,10 +42,7 @@ namespace nest
  */
 template < typename FT, typename VT >
 bool
-updateValueParam( DictionaryDatum const& d,
-  Name const n,
-  VT& value,
-  nest::Node* node )
+updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
 {
   const Token& t = d->lookup( n );
 
@@ -60,7 +57,6 @@ updateValueParam( DictionaryDatum const& d,
     auto tid = kernel().vp_manager.vp_to_thread( vp );
     auto rng = get_vp_rng( tid );
     value = pd->get()->value( rng, node );
-    pd->unlock();
     return true;
   }
   else

@@ -38,6 +38,9 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup detector
+
 Name: correlomatrix_detector - Device for measuring the covariance matrix
 from several inputs
 
@@ -48,7 +51,8 @@ record spikes from several pools of spike inputs and calculates the
 covariance matrix of inter-spike intervals (raw auto and cross correlation)
 binned to bins of duration delta_tau. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
-the covariance matrix C(t) = C^T(-t).
+the covariance matrix
+  \f$  C(t) = C^T(-t) \f$.
 The result can be obtained via GetStatus under the key /count_covariance.
 In parallel it records a weighted histogram, where the connection weight are
 used to weight every count, which is available under the key /covariance.
@@ -62,7 +66,9 @@ diagonal and in the upper triangular part the intervals are left-open and
 right-closed. This ensures proper counting of events at the border of bins,
 allowing consistent integration of a histogram over negative and positive
 time lags by stacking two parts of the histogram
-(C(t)=[C[i][j][::-1],C[j][i][1:]]).
+
+    (C(t)=[C[i][j][::-1],C[j][i][1:]]).
+
 In this case one needs to exclude C[j][i][0] to avoid counting the zero-lag
 bin twice.
 
@@ -72,34 +78,37 @@ specified receptor will be pooled.
 
 Parameters:
 
-Tstart     double    - Time when to start counting events. This time should
-                      be set to at least start + tau_max in order to avoid
-                      edge effects of the correlation counts.
-Tstop      double    - Time when to stop counting events. This time should be
-                      set to at most Tsim - tau_max, where Tsim is the
-                      duration of simulation, in order to avoid edge effects
-                      of the correlation counts.
-delta_tau  double    - bin width in ms. This has to be an odd multiple of the
-                      resolution, to allow the symmetry between positive and
-                      negative time-lags.
-tau_max    double    - one-sided width in ms. In the lower triagnular part
-                      events with differences in [0, tau_max+delta_tau/2)
-                      are counted. On the diagonal and in the upper
-                      triangular part events with differences in
-                      (0, tau_max+delta_tau/2]
-
-N_channels long      - The number of pools. This defines the range of
-                      receptor_type. Default is 1.
-                      Setting N_channels clears count_covariance, covariance
-                      and n_events.
-
-covariance        matrix of double vectors, read-only - raw, weighted
-                                                       auto/cross
-                                                       correlation counts
-count_covariance  matrix of long vectors, read-only   - raw, auto/cross
-                                                       correlation counts
-n_events          integer vector                      - number of events
-                                                       from all sources.
+\verbatim embed:rst
+================ ========= ====================================================
+Tstart           real      Time when to start counting events. This time should
+                           be set to at least start + tau_max in order to avoid
+                           edge effects of the correlation counts.
+Tstop            real      Time when to stop counting events. This time should
+                           be set to at most Tsim - tau_max, where Tsim is the
+                           duration of simulation, in order to avoid edge
+                           effects of the correlation counts.
+delta_tau        ms        Bin width. This has to be an odd multiple of
+                           the resolution, to allow the symmetry between
+                           positive and negative time-lags.
+tau_max          ms        One-sided width. In the lower triagnular part
+                           events with differences in [0, tau_max+delta_tau/2)
+                           are counted. On the diagonal and in the upper
+                           triangular part events with differences in
+                           (0, tau_max+delta_tau/2].
+N_channels       integer   The number of pools. This defines the range of
+                           receptor_type. Default is 1.
+                           Setting N_channels clears count_covariance,
+                           covariance and n_events.
+covariance       3D        matrix of read-only -raw, weighted, auto/cross
+                 matrix of correlation
+                 integers
+count_covariance 3D        matrix of read-only -raw, auto/cross correlation
+                 matrix of counts
+                 integers
+n_events         list of   number of events from all sources
+                 integers
+================ ========= ====================================================
+\endverbatim
 
 Remarks:
 This recorder does not record to file, screen or memory in the usual
@@ -121,21 +130,22 @@ sense.
    entries, then registers new entries in histogram
 
 Example:
-   /s1 /spike_generator Create def
-   /s2 /spike_generator Create def
-   s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-   s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-   /cm /correlomatrix_detector Create def
-   cm << /N_channels 2 /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-   s1 cm << /receptor_type 0 >> Connect
-   s2 cm << /receptor_type 1 >> Connect
-   10 Simulate
-   cm [/n_events] get ==   --> [# 5 7 #]
-   cm [/count_covariance] get ==  --> [[<# 5 1 2 2 0 2 #> <# 3 4 1 3 3 0 #>]
-                                       [<# 3 2 6 1 2 2 #> <# 9 3 4 6 1 2 #>]]
-   cm << /N_channels 2 >> SetStatus
-   cm [/count_covariance] get ==  --> [[<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]
-                                       [<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]]
+
+    /s1 /spike_generator Create def
+    /s2 /spike_generator Create def
+    s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
+    s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
+    /cm /correlomatrix_detector Create def
+    cm << /N_channels 2 /delta_tau 0.5 /tau_max 2.5 >> SetStatus
+    s1 cm << /receptor_type 0 >> Connect
+    s2 cm << /receptor_type 1 >> Connect
+    10 Simulate
+    cm [/n_events] get ==   --> [# 5 7 #]
+    cm [/count_covariance] get ==  --> [[<# 5 1 2 2 0 2 #> <# 3 4 1 3 3 0 #>]
+                                        [<# 3 2 6 1 2 2 #> <# 9 3 4 6 1 2 #>]]
+    cm << /N_channels 2 >> SetStatus
+    cm [/count_covariance] get ==  --> [[<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]
+                                        [<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]]
 
 Receives: SpikeEvent
 
@@ -245,8 +255,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool
-    set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+    bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
   };
 
   // ------------------------------------------------------------

@@ -39,9 +39,10 @@
 namespace nest
 {
 /** @BeginDocumentation
-Name: dc_generator - provides DC input current
-
 @ingroup Devices
+@ingroup generator
+
+Name: dc_generator - provides DC input current
 
 Description: The DC-Generator provides a constant DC Input
 to the connected node. The unit of the current is pA.
@@ -49,15 +50,23 @@ to the connected node. The unit of the current is pA.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-amplitude  double - Amplitude of current in pA
+
+\verbatim embed:rst
+========== ======  =============================
+ amplitude pA      Amplitude of current
+========== ======  =============================
+\endverbatim
+
 
 Examples:
 
-The dc current can be altered in the following way:
-/dc_generator Create /dc_gen Set    % Creates a dc_generator, which is a node
-dc_gen GetStatus info                    % View properties (amplitude is 0)
-dc_gen << /amplitude 1500. >> SetStatus
-dc_gen GetStatus info                    % amplitude is now 1500.0
+    SLI
+
+    The dc current can be altered in the following way:
+    /dc_generator Create /dc_gen Set  % Creates a dc_generator, which is a node
+    dc_gen GetStatus info             % View properties (amplitude is 0)
+    dc_gen << /amplitude 1500. >> SetStatus
+    dc_gen GetStatus info             % amplitude is now 1500.0
 
 Remarks:
 
@@ -130,9 +139,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&,
-      Node* node ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -183,10 +191,7 @@ private:
 };
 
 inline port
-dc_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+dc_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

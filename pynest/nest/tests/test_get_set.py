@@ -125,15 +125,14 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Check that we get None where not applicable
         # tau_syn_ex is part of iaf_psc_alpha
-        None_literal = nest.kernel.SLILiteral('None')
-        tau_ref = (2., 2., None_literal, None_literal, 2., 2., 2., 2.)
+        tau_ref = (2., 2., None, None, 2., 2., 2., 2.)
         self.assertEqual(status_dict['tau_syn_ex'], tau_ref)
 
         # refractory_input is part of iaf_psc_delta
-        refrac_ref = (None_literal, None_literal,
+        refrac_ref = (None, None,
                       False, False,
-                      None_literal, None_literal,
-                      None_literal, None_literal)
+                      None, None,
+                      None, None)
 
         self.assertEqual(status_dict['refractory_input'], refrac_ref)
 
@@ -253,19 +252,24 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                                index=tuple(multi_sd)))
 
         # Single node, hierarchical with array parameter
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                            output='pandas'),
-                              pandas.DataFrame({'times': [[]],
-                                                'senders': [[]]},
-                                               index=tuple(single_sd)))
+        ref_df = pandas.DataFrame(
+            {'times': [[]], 'senders': [[]]}, index=tuple(single_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
+        pt.assert_frame_equal(single_sd.get(
+            'events', ['senders', 'times'], output='pandas'),
+            ref_df)
 
         # Multiple nodes, hierarchical with array parameter
         ref_dict = {'times': [[] for i in range(len(multi_sd))],
                     'senders': [[] for i in range(len(multi_sd))]}
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                           output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+        ref_df = pandas.DataFrame(
+            ref_dict,
+            index=tuple(multi_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
+        sd_df = multi_sd.get('events', ['senders', 'times'], output='pandas')
+        sd_df = sd_df.reindex(sorted(sd_df.columns), axis=1)
+        pt.assert_frame_equal(sd_df,
+                              ref_df)
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
@@ -291,18 +295,20 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
                                             output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(single_sd)))
+                              ref_df)
 
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd))
+        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
                                            output='pandas'),
-                              pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+                              ref_df)
 
     def test_get_JSON(self):
         """

@@ -31,6 +31,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup static
+
 Name: static_synapse_hom_w - Synapse type for static connections with
 homogeneous weight.
 
@@ -49,13 +52,6 @@ CopyModel, each derived model can have a different weight.
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DataLoggingRequest, DoubleDataEvent
 
-Parameters:
-
-No Parameters
-
-References:
-
-No References
 
 FirstVersion: April 2008
 
@@ -132,10 +128,7 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -184,8 +177,7 @@ public:
 
 template < typename targetidentifierT >
 void
-StaticConnectionHomW< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+StaticConnectionHomW< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< long >( d, names::size_of, sizeof( *this ) );

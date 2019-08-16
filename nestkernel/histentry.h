@@ -42,10 +42,7 @@ namespace nest
 class histentry
 {
 public:
-  histentry( double t,
-    double Kminus,
-    double triplet_Kminus,
-    size_t access_counter );
+  histentry( double t, double Kminus, double triplet_Kminus, size_t access_counter );
 
   double t_;              //!< point in time when spike occurred (in ms)
   double Kminus_;         //!< value of Kminus at that time

@@ -61,9 +61,7 @@ get_layer( GIDCollectionPTR gc )
 {
   GIDCollectionMetadataPTR meta = gc->get_metadata();
 
-  LayerMetadata const* const layer_meta =
-    dynamic_cast< LayerMetadata const* >( meta.get() );
-  meta.unlock();
+  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
   {
     throw LayerExpected();
@@ -78,8 +76,7 @@ create_layer( const DictionaryDatum& layer_dict )
 
   GIDCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED(
-    *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
 
   return layer;
 }
@@ -94,16 +91,13 @@ get_position( GIDCollectionPTR layer_gc )
   ArrayDatum result;
   result.reserve( layer_gc->size() );
 
-  for ( GIDCollection::const_iterator it = layer_gc->begin();
-        it < layer_gc->end();
-        ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin(); it < layer_gc->end(); ++it )
   {
     index gid = ( *it ).gid;
 
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
-      throw KernelException(
-        "GetPosition is currently implemented for local nodes only." );
+      throw KernelException( "GetPosition is currently implemented for local nodes only." );
     }
 
     const long lid = gid - first_gid;
@@ -135,15 +129,12 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
     index gid = layer_from_gc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
-      throw KernelException(
-        "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
     const long lid = gid - first_gid;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin();
-          it != layer_to_positions.end();
-          ++it )
+    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
     {
       std::vector< double > pos = getValue< std::vector< double > >( *it );
       Token disp = layer_from->compute_displacement( pos, lid );
@@ -152,21 +143,17 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for ( GIDCollection::const_iterator it = layer_from_gc->begin();
-          it < layer_from_gc->end();
-          ++it )
+    for ( GIDCollection::const_iterator it = layer_from_gc->begin(); it < layer_from_gc->end(); ++it )
     {
       index gid = ( *it ).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
       {
-        throw KernelException(
-          "Displacement is currently implemented for local nodes only." );
+        throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
 
       const long lid = gid - first_gid;
 
-      std::vector< double > pos =
-        getValue< std::vector< double > >( layer_to_positions[ counter ] );
+      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
       Token disp = layer_from->compute_displacement( pos, lid );
       result.push_back( disp );
 
@@ -191,21 +178,17 @@ displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
 
   int counter = 0;
   ArrayDatum result;
-  for ( GIDCollection::const_iterator it = layer_gc->begin();
-        it != layer_gc->end();
-        ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin(); it != layer_gc->end(); ++it )
   {
     index gid = ( *it ).gid;
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
-      throw KernelException(
-        "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
 
     const long lid = gid - first_gid;
 
-    std::vector< double > pos =
-      getValue< std::vector< double > >( point[ counter ] );
+    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
     Token disp = layer->compute_displacement( pos, lid );
     result.push_back( disp );
 
@@ -239,15 +222,12 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
     index gid = layer_from_gc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
-      throw KernelException(
-        "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
     const long lid = gid - first_gid;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
-    for ( Token const* it = layer_to_positions.begin();
-          it != layer_to_positions.end();
-          ++it )
+    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
     {
       std::vector< double > pos = getValue< std::vector< double > >( *it );
       double disp = layer_from->compute_distance( pos, lid );
@@ -256,21 +236,17 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for ( GIDCollection::const_iterator it = layer_from_gc->begin();
-          it < layer_from_gc->end();
-          ++it )
+    for ( GIDCollection::const_iterator it = layer_from_gc->begin(); it < layer_from_gc->end(); ++it )
     {
       index gid = ( *it ).gid;
       if ( not kernel().node_manager.is_local_gid( gid ) )
       {
-        throw KernelException(
-          "Displacement is currently implemented for local nodes only." );
+        throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
 
       const long lid = gid - first_gid;
 
-      std::vector< double > pos =
-        getValue< std::vector< double > >( layer_to_positions[ counter ] );
+      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
       double disp = layer_from->compute_distance( pos, lid );
       result.push_back( disp );
 
@@ -295,21 +271,17 @@ distance( GIDCollectionPTR layer_gc, const ArrayDatum point )
 
   int counter = 0;
   std::vector< double > result;
-  for ( GIDCollection::const_iterator it = layer_gc->begin();
-        it < layer_gc->end();
-        ++it )
+  for ( GIDCollection::const_iterator it = layer_gc->begin(); it < layer_gc->end(); ++it )
   {
     index gid = ( *it ).gid;
     if ( not kernel().node_manager.is_local_gid( gid ) )
     {
-      throw KernelException(
-        "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
 
     const long lid = gid - first_gid;
 
-    std::vector< double > pos =
-      getValue< std::vector< double > >( point[ counter ] );
+    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
     double disp = layer->compute_distance( pos, lid );
     result.push_back( disp );
 
@@ -330,8 +302,7 @@ create_mask( const DictionaryDatum& mask_dict )
 
   MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
 
-  ALL_ENTRIES_ACCESSED(
-    *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -360,38 +331,8 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
   return mask1->minus_mask( *mask2 );
 }
 
-TopologyParameterDatum
-multiply_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 )
-{
-  return param1->multiply_topology_parameter( *param2 );
-}
-
-TopologyParameterDatum
-divide_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 )
-{
-  return param1->divide_topology_parameter( *param2 );
-}
-
-TopologyParameterDatum
-add_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 )
-{
-  return param1->add_topology_parameter( *param2 );
-}
-
-TopologyParameterDatum
-subtract_parameter( const TopologyParameterDatum& param1,
-  const TopologyParameterDatum& param2 )
-{
-  return param1->subtract_topology_parameter( *param2 );
-}
-
 void
-connect_layers( GIDCollectionPTR source_gc,
-  GIDCollectionPTR target_gc,
-  const DictionaryDatum& connection_dict )
+connect_layers( GIDCollectionPTR source_gc, GIDCollectionPTR target_gc, const DictionaryDatum& connection_dict )
 {
   kernel().connection_manager.set_have_connections_changed( true );
 
@@ -400,33 +341,9 @@ connect_layers( GIDCollectionPTR source_gc,
 
   connection_dict->clear_access_flags();
   ConnectionCreator connector( connection_dict );
-  ALL_ENTRIES_ACCESSED(
-    *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
   source->connect( target, target_gc, connector );
-}
-
-TopologyParameterDatum
-create_topology_parameter( const DictionaryDatum& param_dict )
-{
-  param_dict->clear_access_flags();
-
-  TopologyParameterDatum datum(
-    TopologyModule::create_topology_parameter( param_dict ) );
-
-  ALL_ENTRIES_ACCESSED( *param_dict,
-    "topology::CreateTopologyParameter",
-    "Unread dictionary entries: " );
-
-  return datum;
-}
-
-double
-get_value( const std::vector< double >& point,
-  const TopologyParameterDatum& param )
-{
-  librandom::RngPtr rng = get_global_rng();
-  return param->value( point, rng );
 }
 
 void

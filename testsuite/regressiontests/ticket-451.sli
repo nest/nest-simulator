@@ -30,7 +30,7 @@ Description:
  Random connection routines can hang in infinite loops if the user request
  more connections than possible if restrictions on multapses and autapses
  are taken into account. This test ensures that such conditions are caught.
- 
+
 Author: Hans Ekkehard Plesser, 2010-09-20
  */
 
@@ -62,7 +62,7 @@ M_INFO setverbosity
 } pass_or_die
 
 {
-[1 1 1 2] [1] << /rule /fixed_indegree /indegree 1 /multapses true /autapses true >> Connect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 1 /multapses true /autapses true >> Connect
 } pass_or_die
 
 % ---------------------
@@ -88,7 +88,7 @@ M_INFO setverbosity
 } pass_or_die
 
 {
-[1] [1 1 1 2] << /rule /fixed_outdegree /outdegree 1 /multapses true /autapses false >> Connect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 1 /multapses true /autapses false >> Connect
 } pass_or_die
 
 endusing

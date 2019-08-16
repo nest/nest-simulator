@@ -44,8 +44,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_exp_ps_lossless >
-  nest::iaf_psc_exp_ps_lossless::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_exp_ps_lossless > nest::iaf_psc_exp_ps_lossless::recordablesMap_;
 
 namespace nest
 {
@@ -97,8 +96,7 @@ nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( iaf_psc_exp_ps_lossless& n )
 {
 }
 
-nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( const Buffers_&,
-  iaf_psc_exp_ps_lossless& n )
+nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_ps_lossless& n )
   : logger_( n )
 {
 }
@@ -122,8 +120,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d,
-  Node* node )
+nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -172,8 +169,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d,
 
   if ( U_reset_ < U_min_ )
   {
-    throw BadProperty(
-      "Reset potential must be greater than or equal to minimum potential." );
+    throw BadProperty( "Reset potential must be greater than or equal to minimum potential." );
   }
 
   if ( c_m_ <= 0 )
@@ -210,13 +206,11 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const DictionaryDatum& d,
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::iaf_psc_exp_ps_lossless::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
-  def< double >(
-    d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
+  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
   def< double >( d, names::offset, last_spike_offset_ );
   def< double >( d, names::I_syn_ex, I_syn_ex_ );
   def< double >( d, names::I_syn_in, I_syn_in_ );
@@ -255,8 +249,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(
-  const iaf_psc_exp_ps_lossless& n )
+nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_lossless& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -271,8 +264,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(
 void
 nest::iaf_psc_exp_ps_lossless::init_state_( const Node& proto )
 {
-  const iaf_psc_exp_ps_lossless& pr =
-    downcast< iaf_psc_exp_ps_lossless >( proto );
+  const iaf_psc_exp_ps_lossless& pr = downcast< iaf_psc_exp_ps_lossless >( proto );
 
   S_ = pr.S_;
 }
@@ -298,13 +290,10 @@ nest::iaf_psc_exp_ps_lossless::calibrate()
   V_.expm1_tau_ex_ = numerics::expm1( -V_.h_ms_ / P_.tau_ex_ );
   V_.expm1_tau_in_ = numerics::expm1( -V_.h_ms_ / P_.tau_in_ );
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P21_ex_ = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_
-    * ( V_.expm1_tau_ex_ - V_.expm1_tau_m_ );
-  V_.P21_in_ = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_
-    * ( V_.expm1_tau_in_ - V_.expm1_tau_m_ );
+  V_.P21_ex_ = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_ * ( V_.expm1_tau_ex_ - V_.expm1_tau_m_ );
+  V_.P21_in_ = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_ * ( V_.expm1_tau_in_ - V_.expm1_tau_m_ );
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.refractory_steps_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   V_.a1_ = P_.tau_m_ * P_.tau_ex_;
   V_.a2_ = P_.tau_m_ * ( P_.tau_m_ - P_.tau_ex_ );
@@ -317,8 +306,7 @@ nest::iaf_psc_exp_ps_lossless::calibrate()
   V_.b4_ = -P_.c_m_ * ( P_.tau_m_ - P_.tau_ex_ );
 
   V_.c1_ = P_.tau_m_ / P_.c_m_;
-  V_.c2_ =
-    ( -P_.tau_m_ * P_.tau_ex_ ) / ( P_.c_m_ * ( P_.tau_m_ - P_.tau_ex_ ) );
+  V_.c2_ = ( -P_.tau_m_ * P_.tau_ex_ ) / ( P_.c_m_ * ( P_.tau_m_ - P_.tau_ex_ ) );
   V_.c3_ = ( P_.tau_m_ * P_.tau_m_ ) / ( P_.c_m_ * ( P_.tau_m_ - P_.tau_ex_ ) );
   V_.c4_ = P_.tau_ex_ / P_.tau_m_;
   V_.c5_ = ( P_.c_m_ * P_.U_th_ ) / P_.tau_m_;
@@ -330,13 +318,10 @@ nest::iaf_psc_exp_ps_lossless::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
-  const long from,
-  const long to )
+nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from )
-    < kernel().connection_manager.get_min_delay() );
+  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -351,9 +336,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
   */
   if ( S_.y2_ >= P_.U_th_ )
   {
-    emit_instant_spike_( origin,
-      from,
-      V_.h_ms_ * ( 1.0 - std::numeric_limits< double >::epsilon() ) );
+    emit_instant_spike_( origin, from, V_.h_ms_ * ( 1.0 - std::numeric_limits< double >::epsilon() ) );
   }
 
   for ( long lag = from; lag < to; ++lag )
@@ -363,8 +346,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_
-      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -380,8 +362,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike(
-           T, false, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike( T, false, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -390,8 +371,8 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
-        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_
-          + V_.P21_in_ * S_.I_syn_in_ + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
+        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_ + V_.P21_in_ * S_.I_syn_in_
+          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );
@@ -468,8 +449,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin,
         V_.I_syn_in_before_ = S_.I_syn_in_;
         V_.y2_before_ = S_.y2_;
         last_offset = ev_offset;
-      } while ( B_.events_.get_next_spike(
-        T, false, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike( T, false, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -506,9 +486,7 @@ nest::iaf_psc_exp_ps_lossless::handle( SpikeEvent& e )
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
-  B_.events_.add_spike(
-    e.get_rel_delivery_steps(
-      nest::kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -523,10 +501,7 @@ nest::iaf_psc_exp_ps_lossless::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps(
-      nest::kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
@@ -552,13 +527,12 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
     const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 
     const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
-      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
-      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
+    const double P21_ex =
+      -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
+    const double P21_in =
+      -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
-    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_
-      + P21_in * S_.I_syn_in_ + expm1_tau_m * S_.y2_ + S_.y2_;
+    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + expm1_tau_m * S_.y2_ + S_.y2_;
   }
 
   S_.I_syn_ex_ = S_.I_syn_ex_ * expm1_tau_ex + S_.I_syn_ex_;
@@ -566,10 +540,7 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin,
-  const long lag,
-  const double t0,
-  const double dt )
+nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, const double t0, const double dt )
 {
   // dt == 0 may occur if two spikes arrive simultaneously;
   // emit_spike_() shall not be called then; see #368.
@@ -594,9 +565,7 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin,
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin,
-  const long lag,
-  const double spike_offs )
+nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const long lag, const double spike_offs )
 {
   assert( S_.y2_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -640,14 +609,13 @@ nest::iaf_psc_exp_ps_lossless::bisectioning_( const double dt ) const
     const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
 
     const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
-      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
-      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
+    const double P21_ex =
+      -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
+    const double P21_in =
+      -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
-    y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.I_syn_ex_before_
-      + P21_in * V_.I_syn_in_before_ + expm1_tau_m * V_.y2_before_
-      + V_.y2_before_;
+    y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.I_syn_ex_before_ + P21_in * V_.I_syn_in_before_
+      + expm1_tau_m * V_.y2_before_ + V_.y2_before_;
   }
   return root;
 }
@@ -666,8 +634,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   const double V_0 = V_.y2_before_;
   const double exp_tau_s = numerics::expm1( dt / P_.tau_ex_ );
   const double exp_tau_m = numerics::expm1( dt / P_.tau_m_ );
-  const double exp_tau_m_s =
-    numerics::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
+  const double exp_tau_m_s = numerics::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
   const double I_e = V_.y0_before_ + P_.I_e_;
 
   /* Expressions for f and b below are rewritten but equivalent
@@ -680,14 +647,11 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
      g and f are interchanged. (compare to Fig.6)
   */
 
-  const double f =
-    ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ )
-        + V_.a3_ ) / V_.a4_ );
+  const double f = ( ( V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * ( V_.a3_ - I_e * V_.a2_ ) + V_.a3_ ) / V_.a4_ );
 
 
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
-  if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s )
-                   + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
+  if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s ) + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
                  / ( V_.b4_ * exp_tau_s ) ) ) and ( V_0 <= f ) )
   {
     return numerics::nan;
@@ -699,9 +663,8 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
     return dt;
   }
   // no-spike, NS_2, V < b(I)
-  else if ( V_0 < ( V_.c1_ * I_e + V_.c2_ * I_0
-                    + V_.c3_ * std::pow( I_0, V_.c4_ )
-                      * std::pow( ( V_.c5_ - I_e ), V_.c6_ ) ) )
+  else if ( V_0
+    < ( V_.c1_ * I_e + V_.c2_ * I_0 + V_.c3_ * std::pow( I_0, V_.c4_ ) * std::pow( ( V_.c5_ - I_e ), V_.c6_ ) ) )
   {
     return numerics::nan;
   }
@@ -709,7 +672,6 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // missed spike detected, S_2
   {
     return ( V_.a1_ / P_.tau_m_ * P_.tau_ex_ )
-      * std::log(
-             V_.b1_ * I_0 / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
+      * std::log( V_.b1_ * I_0 / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
   }
 }

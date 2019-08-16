@@ -36,6 +36,10 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
+% TODO: This test should be rewritten as a new test, testing parameters of the
+% new Parameter classes.
+/skipped exit_test_gracefully
+
 M_ERROR setverbosity
 
 /good_random_parameters
@@ -147,9 +151,9 @@ def
   << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap false >>
   << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_psc_alpha
-     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
   << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha
-     /extent [2. .5 3.] /center [.2 .3 .4] /edge_wrap true >>
+     /extent [2. .5 3.] /edge_wrap true >>
 ]
 def
 
@@ -160,11 +164,9 @@ def
   << /rows 2 /columns 2 /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
   << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5] /center [.2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
   << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5 .5] /center [.2 .3] /edge_wrap true >>
-  << /positions [[0.1 0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
-     /extent [2. .5] /center [.2 .2 .3] /edge_wrap true >>
+     /extent [2. .5] /edge_wrap true >>
 ]
 def
 

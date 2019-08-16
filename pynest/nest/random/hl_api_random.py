@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..lib.hl_api_types import Parameter, CreateParameter
+from ..ll_api import sli_func
 import numpy as np
 
 __all__ = [
@@ -29,42 +30,13 @@ __all__ = [
     'uniform',
 ]
 
-# TODO: Can ParameterWrapper be removed?
-
-
-class ParameterWrapper(Parameter):
-    def __init__(self, parametertype, specs):
-        self._parameter = CreateParameter(parametertype, specs)
-
-    def get_value(self):
-        return self._parameter.GetValue()
-
-    def __add__(self, other):
-        self._parameter += other
-        return self
-
-    def __sub__(self, other):
-        self._parameter -= other
-        return self
-
-    def __mul__(self, other):
-        self._parameter *= other
-        return self
-
-    def __div__(self, other):
-        self._parameter /= other
-        return self
-
-    def __truediv__(self, other):
-        self._parameter /= other
-        return self
-
 
 def uniform(min=0.0, max=1.0):
     return CreateParameter('uniform', {'min': min, 'max': max})
 
 
-def normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False):
+def normal(loc=0.0, scale=1.0, min=None, max=None,
+           redraw=False):
     if redraw:
         raise NotImplementedError('Redraw is not supported yet')
     parameters = {'mean': loc, 'sigma': scale}
@@ -79,7 +51,7 @@ def exponential(scale=1.0):
     return CreateParameter('exponential', {'scale': scale})
 
 
-def lognormal(mean=0.0, sigma=1.0, min=None, max=None):
+def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
     # TODO: mean not the same as mu?
     parameters = {'mu': mean, 'sigma': sigma}
     if min:

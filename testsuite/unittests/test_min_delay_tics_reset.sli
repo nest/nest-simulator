@@ -53,9 +53,7 @@ ResetKernel
 /spike_detector Create /sd Set
 
 
-/iaf_psc_alpha_canon Create /neuron Set
-neuron </Interpol_Order 3 >> SetStatus
-
+/iaf_psc_alpha_ps Create /neuron Set
 
    % works if "100.0 delay" is inserted
    %              | 

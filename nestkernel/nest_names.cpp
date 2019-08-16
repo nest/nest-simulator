@@ -39,8 +39,8 @@ const Name a_thresh_th( "a_thresh_th" );
 const Name a_thresh_tl( "a_thresh_tl" );
 const Name acceptable_latency( "acceptable_latency" );
 const Name accumulator( "accumulator" );
-const Name Act_h( "Act_h" );
 const Name Act_m( "Act_m" );
+const Name Act_n( "Act_n" );
 const Name activity( "activity" );
 const Name adaptive_spike_buffers( "adaptive_spike_buffers" );
 const Name adaptive_target_buffers( "adaptive_target_buffers" );
@@ -197,8 +197,7 @@ const Name grng( "grng" );
 const Name grng_seed( "grng_seed" );
 const Name growth_curve( "growth_curve" );
 const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
-const Name growth_factor_buffer_target_data(
-  "growth_factor_buffer_target_data" );
+const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );
 const Name gsl_error_tol( "gsl_error_tol" );
 
@@ -222,7 +221,7 @@ const Name I_syn_ex( "I_syn_ex" );
 const Name I_syn_in( "I_syn_in" );
 const Name I_T( "I_T" );
 const Name in_spikes( "in_spikes" );
-const Name Inact_n( "Inact_n" );
+const Name Inact_h( "Inact_h" );
 const Name Inact_p( "Inact_p" );
 const Name indegree( "indegree" );
 const Name index_map( "index_map" );
@@ -380,8 +379,7 @@ const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
-const Name structural_plasticity_update_interval(
-  "structural_plasticity_update_interval" );
+const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const Name supports_precise_spikes( "supports_precise_spikes" );
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );

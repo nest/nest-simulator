@@ -27,9 +27,6 @@
 #include <cmath>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "randomdev.h"
 #include "randomgen.h"
@@ -112,8 +109,8 @@ class PoissonRandomDev : public RandomDev
   RngPtr r; // pointer to underlying uniform RNG
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   PoissonRandomDev( RngPtr, double lambda = 0.0 );
   PoissonRandomDev( double lambda = 0.0 ); // for threaded environments
@@ -175,11 +172,7 @@ private:
   static const unsigned n_a_; //!< length of array
 
   //! Procedure F from Ahrens & Dieter
-  void proc_f_( const unsigned k,
-    double& px,
-    double& py,
-    double& fx,
-    double& fy ) const;
+  void proc_f_( const unsigned k, double& px, double& py, double& fx, double& fy ) const;
 };
 }
 

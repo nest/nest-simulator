@@ -52,7 +52,6 @@ cdef string SLI_TYPE_CONNECTION = b"connectiontype"
 cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
-cdef string SLI_TYPE_TOPO_PARAMETER = b"topologyparametertype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
 cdef string SLI_TYPE_GIDCOLLECTION = b"gidcollectiontype"
 cdef string SLI_TYPE_GIDCOLLECTIONITERATOR = b"gidcollectioniteratortype"
@@ -485,8 +484,6 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     elif isinstance(obj, SLIDatum):
         if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
-        elif (<SLIDatum> obj).dtype == SLI_TYPE_TOPO_PARAMETER.decode():
-            ret = <Datum*> new TopologyParameterDatum(deref(<TopologyParameterDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
@@ -582,6 +579,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
 
     cdef string obj_str
     cdef object ret = None
+    cdef ignore_none = False
 
     cdef string datum_type = dat.gettypename().toString()
 
@@ -595,7 +593,10 @@ cdef inline object sli_datum_to_object(Datum* dat):
         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
-        ret = SLILiteral(obj_str.decode())
+        ret = obj_str.decode()
+        if ret == 'None':
+            ret = None
+            ignore_none = True
     elif datum_type == SLI_TYPE_ARRAY:
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:
@@ -612,10 +613,6 @@ cdef inline object sli_datum_to_object(Datum* dat):
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
         ret = nest.Mask(datum)
-    elif datum_type == SLI_TYPE_TOPO_PARAMETER:
-        datum = SLIDatum()
-        (<SLIDatum> datum)._set_datum(<Datum*> new TopologyParameterDatum(deref(<TopologyParameterDatum*> dat)), SLI_TYPE_TOPO_PARAMETER.decode())
-        ret = nest.TopologyParameter(datum)
     elif datum_type == SLI_TYPE_PARAMETER:
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
@@ -630,7 +627,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     else:
         raise NESTErrors.PyNESTError("unknown SLI type: {0}".format(datum_type.decode()))
 
-    if ret is None:
+    if ret is None and not ignore_none:
         raise NESTErrors.PyNESTError("conversion resulted in a None object")
 
     return ret

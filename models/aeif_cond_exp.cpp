@@ -51,8 +51,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_exp >
-  nest::aeif_cond_exp::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_exp > nest::aeif_cond_exp::recordablesMap_;
 
 namespace nest
 {
@@ -67,30 +66,23 @@ void
 RecordablesMap< aeif_cond_exp >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::V_M > );
-  insert_(
-    names::g_ex, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_EXC > );
-  insert_(
-    names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
+  insert_( names::V_m, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::V_M > );
+  insert_( names::g_ex, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_EXC > );
+  insert_( names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
   insert_( names::w, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::W > );
 }
 }
 
 
 extern "C" int
-nest::aeif_cond_exp_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::aeif_cond_exp::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_exp& node =
-    *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
+  const nest::aeif_cond_exp& node = *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
 
@@ -103,8 +95,7 @@ nest::aeif_cond_exp_dynamics( double,
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
   // Delta_T == 0.
-  const double& V =
-    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double& V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& g_ex = y[ S::G_EXC ];
   const double& g_in = y[ S::G_INH ];
@@ -113,16 +104,12 @@ nest::aeif_cond_exp_dynamics( double,
   const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
   const double I_syn_inh = g_in * ( V - node.P_.E_in );
 
-  const double I_spike = node.P_.Delta_T == 0.
-    ? 0.
-    : ( node.P_.g_L * node.P_.Delta_T
-        * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
+  const double I_spike =
+    node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory
-    ? 0.
-    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
-        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory ? 0. : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
+                                       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -179,8 +166,7 @@ nest::aeif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=(
-  const State_& s )
+nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -256,8 +242,7 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
-    const double max_exp_arg =
-      std::log( std::numeric_limits< double >::max() / 1e20 );
+    const double max_exp_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
     if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
     {
       throw BadProperty(
@@ -304,9 +289,7 @@ nest::aeif_cond_exp::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_&,
-  Node* node )
+nest::aeif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
@@ -404,8 +387,7 @@ nest::aeif_cond_exp::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -418,8 +400,7 @@ nest::aeif_cond_exp::init_buffers_()
   }
   else
   {
-    gsl_odeiv_control_init(
-      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
   if ( B_.e_ == 0 )
@@ -465,12 +446,9 @@ nest::aeif_cond_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::update( const Time& origin,
-  const long from,
-  const long to )
+nest::aeif_cond_exp::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -504,8 +482,7 @@ nest::aeif_cond_exp::update( const Time& origin,
       }
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
-        || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
@@ -560,14 +537,12 @@ nest::aeif_cond_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -580,9 +555,7 @@ nest::aeif_cond_exp::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

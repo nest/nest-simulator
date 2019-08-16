@@ -40,7 +40,6 @@ from . import test_connect_symmetric_pairwise_bernoulli
 from . import test_create
 from . import test_csa
 from . import test_current_recording_generators
-from . import test_dataconnect
 from . import test_erfc_neuron
 from . import test_errors
 from . import test_events
@@ -94,7 +93,6 @@ def suite():
     suite.addTest(test_create.suite())
     suite.addTest(test_csa.suite())
     suite.addTest(test_current_recording_generators.suite())
-    suite.addTest(test_dataconnect.suite())
     suite.addTest(test_erfc_neuron.suite())
     suite.addTest(test_errors.suite())
     suite.addTest(test_events.suite())

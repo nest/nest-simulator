@@ -33,6 +33,7 @@
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
+#include "sharedptrdatum.h"
 
 #include "generic_factory.h"
 
@@ -63,10 +64,8 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static lockPTRDatum< Parameter, &ParameterType > create_nest_parameter(
-    const Token& );
-  static Parameter* create_nest_parameter( const Name& name,
-    const DictionaryDatum& d );
+  static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
 
   using ParameterFactory = GenericFactory< Parameter >;
   using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;
@@ -267,23 +266,17 @@ public:
     void execute( SLIInterpreter* ) const;
   } create_l_ifunction;
 
+  class GetNodes_D_b : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getnodes_D_bfunction;
+
   class RestoreNodes_aFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } restorenodes_afunction;
-
-  class DataConnect_i_D_sFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_i_D_sfunction;
-
-  class DataConnect_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_afunction;
 
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
@@ -549,6 +542,24 @@ public:
     void execute( SLIInterpreter* ) const;
   } conditional_P_P_Pfunction;
 
+  class Min_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } min_P_dfunction;
+
+  class Max_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } max_P_dfunction;
+
+  class Redraw_P_d_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } redraw_P_d_dfunction;
+
   class Exp_PFunction : public SLIFunction
   {
   public:
@@ -566,6 +577,24 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } cos_Pfunction;
+
+  class Pow_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } pow_P_dfunction;
+
+  class Dimension2d_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension2d_P_Pfunction;
+
+  class Dimension3d_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension3d_P_P_Pfunction;
 
   class CreateParameter_DFunction : public SLIFunction
   {

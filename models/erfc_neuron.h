@@ -29,6 +29,9 @@
 namespace nest
 {
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup binary
+
 Name: erfc_neuron - Binary stochastic neuron with complementary error
 function as activation function.
 
@@ -42,7 +45,7 @@ the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is
 
-g(h) = 0.5 * erfc (( h - theta_ ) / ( sqrt( 2. ) * sigma)).
+@f[ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). @f]
 
 This corresponds to a McCulloch-Pitts neuron receiving additional
 Gaussian noise with mean 0 and standard deviation sigma.
@@ -81,20 +84,28 @@ noise_generator.
 
 Parameters:
 
-tau_m      double - Membrane time constant (mean inter-update-interval) (ms)
-theta      double - threshold for sigmoidal activation function (mV)
-sigma      double - 1/sqrt(2pi) x inverse of maximal slope (mV)
+\verbatim embed:rst
+======  ======  =========================================================
+ tau_m  ms      Membrane time constant (mean inter-update-interval)
+ theta  mV      threshold for sigmoidal activation function
+ sigma  mV      1/sqrt(2pi) x inverse of maximal slope
+======  ======  =========================================================
+\endverbatim
 
 References:
 
-[1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic
-neural networks (1994). PRE 50(4) p. 3171
-[2] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
-immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
-[3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
-Neuronal Simulations. In: Lectures in Supercomputational Neuroscience,
-p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-(Eds.), Springer 2008.
+\verbatim embed:rst
+.. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
+       neural networks. PRE 50(4) p. 3171
+       DOI: https://doi.org/10.1103/PhysRevE.50.3171
+.. [2] McCulloch W, Pitts W (1943). A logical calculus of the ideas
+       immanent in nervous activity. Bulletin of Mathematical Biophysics,
+       5:115-133. DOI: https://doi.org/10.1007/BF02478259
+.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
+       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
+       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
+       (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -124,9 +135,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum&,
-    Node* node ); //!< Set values from dictionary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   bool operator()( librandom::RngPtr rng, double_t h );
 };

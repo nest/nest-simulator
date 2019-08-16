@@ -97,9 +97,7 @@ protected:
    * Creates a new entry in the LTD history and deletes old entries that
    * are not needed any more.
    */
-  void write_LTD_history( const double t_ltd_ms,
-    double u_bar_minus,
-    double u_bar_bar );
+  void write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar );
 
   /**
    * \fn void write_LTP_history( const double t_ltp_ms, double u,
@@ -116,11 +114,7 @@ protected:
    * calls write_LTD_history and write_LTP_history if
    * the corresponding Heaviside functions yield 1.
    */
-  void write_clopath_history( Time const& t_sp,
-    double u,
-    double u_bar_plus,
-    double u_bar_minus,
-    double u_bar_bar );
+  void write_clopath_history( Time const& t_sp, double u, double u_bar_plus, double u_bar_minus, double u_bar_bar );
 
   void init_clopath_buffers();
   void get_status( DictionaryDatum& d ) const;

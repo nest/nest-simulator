@@ -380,10 +380,7 @@ public:
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port send_test_event( Node& receiving_node,
-    rport receptor_type,
-    synindex syn_id,
-    bool dummy_target );
+  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -413,12 +410,9 @@ public:
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
   virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&,
-    rport receptor_type );
-  virtual port handles_test_event( DiffusionConnectionEvent&,
-    rport receptor_type );
-  virtual port handles_test_event( DelayedRateConnectionEvent&,
-    rport receptor_type );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.

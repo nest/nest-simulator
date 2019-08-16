@@ -33,6 +33,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stp
+
 Name: quantal_stp_synapse - Probabilistic synapse model with short term
 plasticity.
 
@@ -54,28 +57,35 @@ be obtained if all n release sites are activated.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-U          double - Maximal fraction of available resources [0,1],
+\verbatim embed:rst
+==========  ======= =========================================================
+ U          real    Maximal fraction of available resources [0,1],
                     default=0.5
-u          double - available fraction of resources [0,1], default=0.5
-p          double - probability that a vesicle is available, default = 1.0
-n          long   - total number of release sites, default = 1
-a          long   - number of available release sites, default = n
-tau_rec    double - time constant for depression in ms, default=800 ms
-tau_rec    double - time constant for facilitation in ms, default=0 (off)
+ u          real    Available fraction of resources [0,1], default=0.5
+ p          real    Probability that a vesicle is available, default = 1.0
+ n          integer Total number of release sites, default = 1
+ a          integer Number of available release sites, default = n
+ tau_rec    ms      Time constant for depression, default=800 ms
+ tau_rec    ms      Time constant for facilitation, default=0 (off)
+==========  ======= =========================================================
+\endverbatim
 
 
 References:
 
- [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-     temporal information by activity-dependent synapses. Journal of
-     neurophysiology, 87(1), 140-8.
- [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
-     M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
-     the distribution of synaptic efficacies in the neocortex. Frontiers
-     in computational neuroscience, 3(November), 27.
-     doi:10.3389/neuro.10.027.2009
- [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-     Neural networks, 15(2), 155-61.
+\verbatim embed:rst
+.. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       neurophysiology, 87(1):140-8.
+       DOI: https://doi.org/10.1152/jn.00258.2001
+.. [2] Loebel A, Silberberg G, Helbig D, Markram H, Tsodyks  MV, Richardson MJE
+       (2009). Multiquantal release underlies the distribution of synaptic
+       efficacies in the neocortex. Frontiers in Computational Neuroscience,
+       3, 27.  DOI: https://doi.org/10.3389/neuro.10.027.2009
+.. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
+       Neural Networks, 15(2):155-161.
+       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
+\endverbatim
 
 Transmits: SpikeEvent
 
@@ -148,10 +158,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -183,17 +190,14 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Quantal_StpConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
 
   // Compute the decay factors, based on the time since the last spike.
   const double p_decay = std::exp( -h / tau_rec_ );
-  const double u_decay =
-    ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // Compute release probability
   u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]

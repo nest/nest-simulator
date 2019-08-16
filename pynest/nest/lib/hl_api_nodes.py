@@ -25,20 +25,23 @@ Functions for node handling
 
 import warnings
 
+import nest
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
-from .hl_api_types import Parameter
+from .hl_api_types import GIDCollection, Parameter
 
 __all__ = [
     'Create',
+    'GetLocalGIDCollection',
+    'GetNodes',
     'PrintNodes',
 ]
 
 
 @check_stack
-def Create(model, n=1, params=None):
+def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
    Generates `n` new network objects of the supplied model type. If `n` is not
@@ -70,6 +73,32 @@ def Create(model, n=1, params=None):
     """
 
     model_deprecation_warning(model)
+
+    if positions is not None:
+        layer_specs = {'elements': model}
+        layer_specs['edge_wrap'] = positions.edge_wrap
+        if isinstance(positions, nest.spatial.free):
+            layer_specs['positions'] = positions.pos
+            if isinstance(positions.pos, Parameter):
+                layer_specs['n'] = n
+        else:
+            if n > 1:
+                raise kernel.NESTError(
+                    'Cannot specify number of nodes with grid positions')
+            layer_specs['rows'] = positions.rows
+            layer_specs['columns'] = positions.columns
+            if positions.center is not None:
+                layer_specs['center'] = positions.center
+            if positions.depth is not None:
+                layer_specs['depth'] = positions.depth
+        if positions.extent is not None:
+            layer_specs['extent'] = positions.extent
+        if params is None:
+            params = {}
+        layer = sli_func('CreateLayerParams', layer_specs, params)
+        layer.set_spatial()
+
+        return layer
 
     params_contains_list = True
     if isinstance(params, dict):
@@ -106,3 +135,56 @@ def PrintNodes():
 
     sr("PrintNodesToStream")
     print(spp())
+
+
+def GetNodes(properties={}, local_only=False):
+    """Return all global ids with the given properties.
+
+    Parameters
+    ----------
+    properties : dict, optional
+        Only global ids of nodes matching the properties given in the
+        dictionary exactly will be returned. Matching properties with float
+        values (e.g. the membrane potential) may fail due to tiny numerical
+        discrepancies and should be avoided. Note that when a params dict is
+        present, thread parallelization is not possible, the function will
+        be run thread serial.
+    local_only : bool, optional
+        If True, only GIDs of nodes simulated on the local MPI process will
+        be returned. By default, global ids of nodes in the entire simulation
+        will be returned. This requires MPI communication and may slow down
+        the script.
+
+    Returns
+    -------
+    GIDCollection:
+        GIDcollection of nodes
+    """
+
+    return sli_func('GetNodes', properties, local_only)
+
+
+@check_stack
+def GetLocalGIDCollection(gc):
+    """Get local nodes of a GIDCollection as a new GIDCollection.
+
+    This function gets the local elements in a GIDCollection. The
+    resulting elements are returned in a new GIDCollection. If there are no
+    local elements, an empty GIDCollection is returned.
+
+    Parameters:
+    -----------
+    gc: GIDCollection
+        GIDCollection for which to get local nodes
+
+    Returns
+    -------
+    GIDCollection:
+        Object representing the local nodes of the given GIDCollection
+    """
+    if not isinstance(gc, GIDCollection):
+        raise TypeError("Must provide a GIDCollection GIDCollection")
+
+    sps(gc)
+    sr("LocalOnly")
+    return spp()

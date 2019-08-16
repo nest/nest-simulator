@@ -91,14 +91,27 @@ public:
    * The following entries must be present in each dictionary:
    * /model - with the name or index of a neuron mode.
    *
-   * The following entries are optional:
-   * /parent - the node is created in the parent subnet
-   *
    * Restore nodes uses the current working node as root. Thus, all
    * GIDs in the status dictionaties are offset by the GID of the current
-   * working node. This allows entire subnetworks to be copied.
+   * working node.
    */
   void restore_nodes( const ArrayDatum& );
+
+  /**
+   * Get global id's of all nodes with the given properties.
+   *
+   * Only global id's of nodes matching the properties given in the dictionary
+   * exactly will be returned. If the dictionary is empty, all nodes will be
+   * returned. If the local_only bool is true, only GIDs of nodes simulated on
+   * the local MPI process will be returned.
+   *
+   * @param dict parameter dictionary of selection properties
+   * @param local_only bool indicating whether all nodes, or just mpi local nodes
+   * should be returned.
+   *
+   * @returns GIDCollection as lock pointer
+   */
+  GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
    * Set the state (observable dynamic variables) of a node to model defaults.
@@ -252,9 +265,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&,
-    const DictionaryDatum&,
-    bool clear_flags = true );
+  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -272,10 +283,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
   /**
    * Add device nodes.
@@ -286,10 +294,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -301,10 +306,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model,
-    index min_gid,
-    index max_gid,
-    GIDCollectionPTR gc_ptr );
+  void add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
 
 
 private:
@@ -314,11 +316,10 @@ private:
   */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
-                     //!< use the waveform relaxation method
-  bool wfr_is_used_; //!< there is at least one node that uses
-                     //!< waveform relaxation
+  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
+                                                      //!< use the waveform relaxation method
+  bool wfr_is_used_;                                  //!< there is at least one node that uses
+                                                      //!< waveform relaxation
   //! Network size when wfr_nodes_vec_ was last updated
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
@@ -329,7 +330,7 @@ private:
                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index

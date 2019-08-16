@@ -47,6 +47,9 @@ namespace nest
 Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
 with alpha-shape postsynaptic currents; canoncial implementation.
 
+This model is deprecated and will be removed in NEST 3. Please use
+``iaf_psc_alpha_ps`` instead.
+
 Description:
 
 iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
@@ -96,7 +99,7 @@ time and offset). If this node is connected to a spike_detector, the
 property "precise_times" of the spike_detector has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
-The iaf_psc_delta_canon neuron accepts connections transmitting
+The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
@@ -126,7 +129,7 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
 */
 class iaf_psc_alpha_canon : public Archiving_Node
 {
@@ -222,10 +225,7 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( Time const& origin,
-    const long lag,
-    const double t0,
-    const double dt );
+  void emit_spike_( Time const& origin, const long lag, const double t0, const double dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -235,9 +235,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( Time const& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
 
   /** @name Threshold-crossing interpolation
    * These functions determine the time of threshold crossing using
@@ -392,9 +390,9 @@ private:
     double P30_;             //!< progagator matrix elem, 3rd row
     double P31_;             //!< progagator matrix elem, 3rd row
     double P32_;             //!< progagator matrix elem, 3rd row
-    double y0_before_; //!< y0_ at beginning of mini-step, forinterpolation
-    double y2_before_; //!< y2_ at beginning of mini-step, for interpolation
-    double y3_before_; //!< y3_ at beginning of mini-step, for interpolation
+    double y0_before_;       //!< y0_ at beginning of mini-step, forinterpolation
+    double y2_before_;       //!< y2_ at beginning of mini-step, for interpolation
+    double y3_before_;       //!< y3_ at beginning of mini-step, for interpolation
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -440,10 +438,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha_canon::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_alpha_canon::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -471,8 +466,7 @@ iaf_psc_alpha_canon::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_alpha_canon::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_alpha_canon::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -494,10 +488,10 @@ iaf_psc_alpha_canon::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_alpha_canon::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                    // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

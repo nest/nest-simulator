@@ -175,12 +175,12 @@ public:
   static const int M_INFO;
   static const int M_DEPRECATED; //!< Predefined error level for deprecation
                                  //!< warnings
-  static const int M_PROGRESS; //!< Predefined error level for progress messages
-  static const int M_WARNING;  //!< Predefined error level for warning messages
-  static const int M_ERROR;    //!< Predefined error level for error messages
-  static const int M_FATAL;    //!< Predefined error level for failure messages
-  static const int M_QUIET;    //!< An error level above all others. Use to turn
-                               //!< off messages completely.
+  static const int M_PROGRESS;   //!< Predefined error level for progress messages
+  static const int M_WARNING;    //!< Predefined error level for warning messages
+  static const int M_ERROR;      //!< Predefined error level for error messages
+  static const int M_FATAL;      //!< Predefined error level for failure messages
+  static const int M_QUIET;      //!< An error level above all others. Use to turn
+                                 //!< off messages completely.
   /** @} */
 
 private:
@@ -281,9 +281,7 @@ public:
   int execute_debug_( size_t exitlevel = 0 );
 
   void createdouble( Name const&, double );
-  void createcommand( Name const&,
-    SLIFunction const*,
-    std::string deprecation_info = std::string() );
+  void createcommand( Name const&, SLIFunction const*, std::string deprecation_info = std::string() );
   void createconstant( Name const&, const Token& );
 
 
@@ -832,10 +830,7 @@ public:
    *  @see verbosity(void), verbosity(int)
    *  @ingroup SLIMessaging
    */
-  void message( int level,
-    const char from[],
-    const char text[],
-    const char errorname[] = "" ) const;
+  void message( int level, const char from[], const char text[], const char errorname[] = "" ) const;
 
   /** Function used by the message(int, const char*, const char*) function.
    *  Prints a message to the specified output stream.

@@ -148,8 +148,7 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
-    || tau_2_ <= 0 )
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -164,22 +163,16 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::mat2_psc_exp::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::mat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
-  def< double >( d,
-    names::V_th,
-    p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
+  def< double >( d, names::V_m, V_m_ + p.E_L_ );                          // Membrane potential
+  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
 }
 
 void
-nest::mat2_psc_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL,
-  Node* node )
+nest::mat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
@@ -310,8 +303,7 @@ nest::mat2_psc_exp::calibrate()
 
   if ( V_.RefractoryCountsTot_ < 1 )
   {
-    throw BadProperty(
-      "Total refractory time must be at least one time step." );
+    throw BadProperty( "Total refractory time must be at least one time step." );
   }
 }
 
@@ -322,8 +314,7 @@ nest::mat2_psc_exp::calibrate()
 void
 nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -331,8 +322,8 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
   {
 
     // evolve membrane potential
-    S_.V_m_ = S_.V_m_ * V_.P22_expm1_ + S_.V_m_ + S_.i_syn_ex_ * V_.P21ex_
-      + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+    S_.V_m_ = S_.V_m_ * V_.P22_expm1_ + S_.V_m_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_
+      + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
 
     // evolve adaptive threshold
     S_.V_th_1_ *= V_.P11th_;
@@ -347,8 +338,7 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 
     if ( S_.r_ == 0 ) // neuron is allowed to fire
     {
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_
-          + S_.V_th_1_ ) // threshold crossing
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ ) // threshold crossing
       {
         S_.r_ = V_.RefractoryCountsTot_;
 
@@ -384,14 +374,12 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -405,9 +393,7 @@ nest::mat2_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

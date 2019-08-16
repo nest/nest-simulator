@@ -27,9 +27,6 @@
 #include <fstream>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "nest_types.h"
@@ -495,9 +492,9 @@ private:
 
   struct Parameters_
   {
-    bool to_file_;   //!< true if recorder writes its output to a file
-    bool to_screen_; //!< true if recorder writes its output to stdout
-    bool to_memory_; //!< true if data should be recorded in memory, default
+    bool to_file_;        //!< true if recorder writes its output to a file
+    bool to_screen_;      //!< true if recorder writes its output to stdout
+    bool to_memory_;      //!< true if data should be recorded in memory, default
     bool to_accumulator_; //!< true if data is to be accumulated; exclusive to
                           //!< all other to_*
     bool time_in_steps_;  //!< true if time is printed in steps, not ms.
@@ -515,12 +512,12 @@ private:
     bool user_set_precise_times_; //!< true if user set precise_times
     bool user_set_precision_;     //!< true if user set precision
 
-    bool binary_; //!< true if to write files in binary mode instead of ASCII
+    bool binary_;       //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_; //!< output buffer size; -1 until set by user
 
-    std::string label_;    //!< a user-defined label for symbolic device names.
-    std::string file_ext_; //!< the file name extension to use, without .
-    std::string filename_; //!< the filename, if recording to a file (read-only)
+    std::string label_;         //!< a user-defined label for symbolic device names.
+    std::string file_ext_;      //!< the file name extension to use, without .
+    std::string filename_;      //!< the filename, if recording to a file (read-only)
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
     bool flush_after_simulate_; //!< if true, post_run_cleanup() flushes stream
     bool flush_records_;        //!< if true, flush stream after each output

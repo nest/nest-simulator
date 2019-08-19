@@ -243,7 +243,109 @@ Setting node status
 Connectome
 ~~~~~~~~~~
 
-.. TODO: Connectome
+Just like a GIDCollection is a container for GIDs, a Connectome is a
+container for connections. In NEST 3, when you call ``GetConnections()`` a
+Connectome is returned. Connectomes support a lot of the same operations
+as GIDCollections:
+
+Printing
+    Printing a Connectome produces a table of source and target GIDs
+
+    ::
+
+        connectome = nest.GetConnections()
+        print(connectome)
+
+    prints
+
+    ::
+
+        *--------*-------------*
+        | source | 1, 1, 2, 2, |
+        *--------*-------------*
+        | target | 1, 2, 1, 2, |
+        *--------*-------------*
+
+Getting the size
+    We can get the number of connections in the Connectome with
+
+    ::
+
+        len(connectome)
+
+Indexing
+    Indexing returns a Connectome with a single connection.
+
+    ::
+
+        print(connectome[1])
+
+    prints
+
+    ::
+
+        *--------*----*
+        | source | 1, |
+        *--------*----*
+        | target | 2, |
+        *--------*----*
+
+Slicing
+    A Connectome can be sliced with ``start:stop:step`` inside brackets
+
+    ::
+
+        print(connectome[0:3:2])
+
+    prints
+
+    ::
+
+        *--------*-------*
+        | source | 1, 2, |
+        *--------*-------*
+        | target | 1, 1, |
+        *--------*-------*
+
+Iteration
+    A Connectome can be iterated, yielding single connection Connectomes.
+
+Test of equality
+    Two Connectomes can be tested for equality, i.e. that they contain the same connections.
+
+Getting connection parameters
+    We can get the parameters of the connections in the Connectome. The
+    structure of the returned values follows the same rules as ``get()``
+    for GIDCollections.
+
+    ::
+
+        connectome.get()  # Returns a dictionary of all parameters
+        connectome[0].get('weight')  # Returns the weight value of the first connection
+        connectome.get('delay')  # Returns a list of delays
+        connectome.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
+
+    It is also possible to select an alternative output format with the
+    ``output`` keyword. Currently it is possible to get the output in a
+    json format, or a Pandas format (if Pandas is installed).
+
+    ::
+
+        connectome.get(output='json')  # returns a string in json format
+        connectome.get(output='pandas')  # returns a Pandas DataFrame
+
+Setting connection parameters
+    Likewise, we can set the parameters of connections in the Connectome
+
+    ::
+
+        connectome.set('delay', 2.0)  # Sets all delays to 2.0
+        connectome.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
+        connectome.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
+
+Getting an iterator over the sources or targets
+    Calling ``connectome.source()`` or ``connectome.target()`` returns an
+    iterator over the source GIDs or target GIDs, respectively.
 
 Parameterization
 ~~~~~~~~~~~~~~~~

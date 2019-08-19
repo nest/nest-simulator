@@ -1024,7 +1024,7 @@ Something about distributions here.
   |                                      | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
   |                                      | | rho              |    {2(1-\rho^2)}}                                    |
   +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | .. math:: p(d) = \frac{x^{\alpha-1}e^{-\frac{x}      |
+  |                                      |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
   | ``nest.distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
   |                                      | | alpha,           |                                                      |
   |                                      | | theta            |                                                      |
@@ -1046,7 +1046,7 @@ Something about distributions here.
   |                                      | | max,             |                                                      |
   |                                      | | dimension        |                                                      |
   +--------------------------------------+--------------------+------------------------------------------------------+
-  
+
 .. _fig_conn4:
 
 .. figure:: user_manual_figures/conn4.png

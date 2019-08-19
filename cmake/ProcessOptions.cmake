@@ -193,7 +193,11 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
 
+    if ( Fugaku )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Bstatic" PARENT_SCOPE )
+    else()
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static" PARENT_SCOPE )
+    endif()
 
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )

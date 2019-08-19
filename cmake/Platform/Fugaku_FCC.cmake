@@ -1,4 +1,4 @@
-# Fujitsu-Sparc64.cmake
+# Fugaku_FCC.cmake
 #
 # This file is part of NEST.
 #
@@ -18,19 +18,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # the name of the target operating system
-set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Cross-compiling for Fujitsu Sparc64, with MPI" )
-set( CMAKE_SYSTEM_PROCESSOR "s64fx" )
+set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Cross-compiling for Fugaku powered by the A64FX CPU" )
+set( CMAKE_SYSTEM_PROCESSOR "a64fx" )
 set( TRIPLET_VENDOR fujitsu )
 
 #
-# Set k-computer for main CMakeList.txt
+# Set Fugaku for main CMakeList.txt
 #
-set( k-computer ON CACHE BOOL "Enable K computer." FORCE )
-# no readline support on K computer
+set( Fugaku ON CACHE BOOL "Enable Fugaku." FORCE )
+# no readline support on Fugaku
 set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
 set( with-ltdl OFF CACHE BOOL "Find a ltdl library [default=ON]. To set a specific ltdl, set install path." FORCE )
-# we obviously want to do mpi on K computer
+# we obviously want to do mpi on Fugaku
 set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
+set( static-libraries ON CACHE BOOL "Build static libraries." FORCE )
 
 #
 # Library prefixes, suffixes, extra libs.

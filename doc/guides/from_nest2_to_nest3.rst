@@ -219,6 +219,14 @@ Getting node status
         multimeter.get('events', 'senders')  # returns an array of sender GIDs
         multimeter.get('events', ['senders', 'times'])  # returns a dictionary with arrays
 
+    It is possible to select an alternative output format with the
+    ``output`` keyword. Currently it is possible to get the output in a
+    json format, or a Pandas format (if Pandas is installed).
+
+    ::
+
+        nrns.get(output='json')  # returns a string in json format
+        nrns.get(output='pandas')  # returns a Pandas DataFrame
 
 
 Setting node status
@@ -481,7 +489,7 @@ Subnets are gone. Instead GIDCollections should be used to organize neurons.
   | ::                                          | ::                                    |
   |                                             |                                       |
   |     net = nest.LayoutNetwork(model, dim)    |     nrns = nest.Create(model, dim)    |
-  |     nrns = nest.GetLeaves(n)[0]             |                                       |
+  |     nrns = nest.GetLeaves(net)[0]           |                                       |
   |                                             |                                       |
   +---------------------------------------------+---------------------------------------+
 

@@ -132,11 +132,6 @@ public:
   bool has_been_simulated() const;
 
   /**
-   * Reset the SimulationManager to the state at T = 0.
-   */
-  void reset_network();
-
-  /**
    * Get slice number. Increased by one for each slice. Can be used
    * to choose alternating buffers.
    */

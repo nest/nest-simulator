@@ -57,7 +57,6 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  void reinit_nodes();
   /**
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.

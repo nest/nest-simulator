@@ -199,10 +199,3 @@ a Poisson spike train using different seeds and output files for each run:
         nest.Connect(nrn, sd)
     
         nest.Simulate(100)
-    
-The ``ResetNetwork()`` function available in NEST 2 is incomplete in that it
-only resets the state of neurons and devices to default values and deletes
-spikes that are in the delivery pipeline. It does does not reset plastic
-synapses or delete spikes from the spike buffers of neurons. We will
-therefore remove the function in NEST 3 and already now **advise against
-using** ``ResetNetwork()``.

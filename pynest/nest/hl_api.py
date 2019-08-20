@@ -89,7 +89,6 @@ __all__ = [
     'Prepare',
     'Rank',
     'ResetKernel',
-    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
     'SelectNodesByMask',

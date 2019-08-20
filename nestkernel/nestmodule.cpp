@@ -741,53 +741,12 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
    is not affected by ResetKernel.
    Availability: NEST
    Author: Marc-oliver Gewaltig
-   SeeAlso: ResetNetwork, reset, ResetOptions
+   SeeAlso: reset, ResetOptions
 */
 void
 NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 {
   reset_kernel();
-  i->EStack.pop();
-}
-
-/** @BeginDocumentation
-   Name: ResetNetwork - Reset the dynamic state of the network.
-   Synopsis: ResetNetwork -> -
-   Description:
-
-   ResetNetwork is deprecated as of NEST 2.18 and will be removed in NEST 3.0,
-   because it cannot be implemented in an efficient and consistent way.
-
-   ResetNetwork resets the dynamic state of the entire network to its state
-   at T=0. The dynamic state comprises typically the membrane potential,
-   synaptic currents, buffers holding input that has been delivered, but not
-   yet become effective, and all events pending delivery. Technically, this
-   is achieved by calling init_state() on all nodes and forcing a call to
-   init_buffers() upon the next call to Simulate. Node parameters, such as
-   time constants and threshold potentials, are not affected.
-
-   Remarks:
-   - Time and random number generators are NOT reset.
-   - Files belonging to recording devices (spike detector, multimeter,
-     voltmeter, etc) are closed. You must change the file name before
-     simulating again, otherwise the files will be overwritten and you
-     will receive an error, depending on the value of /overwrite_files
-     (in the root node).
-   - ResetNetwork will reset the nodes to the state values stored in the model
-     prototypes. So if you have used SetDefaults to change a state value of a
-     model since you called Simulate the first time, the network will NOT be
-     reset to the status at T=0.
-   - The dynamic state of synapses with internal dynamics (STDP, facilitation)
-     is NOT reset at present. This will be implemented in a future version
-     of NEST.
-
-   SeeAlso: ResetKernel, reset
-*/
-void
-NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
-{
-  reset_network();
-
   i->EStack.pop();
 }
 
@@ -948,7 +907,6 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
    Example:
              %%% Set fake number of processes
              100 SetFakeNumProcesses
-             ResetNetwork
 
              %%% Build network
              /iaf_psc_alpha 100 Create
@@ -1959,7 +1917,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
-  i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
   i->createcommand( "MemoryInfo", &memoryinfofunction );

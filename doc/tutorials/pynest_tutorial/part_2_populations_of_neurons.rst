@@ -327,9 +327,7 @@ there is typically no need to throw out the whole network and create and
 connect everything, it is enough to re-parameterise the network. A good
 strategy here is to create and connect your network outside the loop,
 and then carry out the parametrisation, simulation and data collection
-steps within the loop. Here it is often helpful to call the function
-``ResetNetwork()`` within each loop iteration. It resets all nodes to
-their default configuration and wipes the data from recording devices.
+steps within the loop.
 
 Command overview
 ----------------
@@ -377,8 +375,3 @@ Simulation control
    all custom models created with ``CopyModel()``. The parameters of
    built-in models are reset to their defaults. Calling this function is
    equivalent to restarting NEST.
-
--  ``ResetNetwork()``
-
-   Reset all nodes and connections to the defaults of their respective
-   model.

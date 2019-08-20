@@ -161,8 +161,7 @@ private:
    *
    * These are the parameters that can be set by the user through @c SetStatus.
    * They are initialized from the model prototype when the node is created.
-   * Parameters do not change during calls to @c update() and are not reset by
-   * @c ResetNetwork.
+   * Parameters do not change during calls to @c update().
    *
    * @note Parameters_ need neither copy constructor nor @c operator=(), since
    *       all its members are copied properly by the default copy constructor
@@ -199,8 +198,7 @@ private:
    * These are the state variables that are advanced in time by calls to
    * @c update(). In many models, some or all of them can be set by the user
    * through @c SetStatus. The state variables are initialized from the model
-   * prototype when the node is created. State variables are reset by @c
-   * ResetNetwork.
+   * prototype when the node is created.
    *
    * @note State_ need neither copy constructor nor @c operator=(), since
    *       all its members are copied properly by the default copy constructor
@@ -245,7 +243,7 @@ private:
    * Ususally buffers for incoming spikes and data logged for analog recorders.
    * Buffers must be initialized by @c init_buffers_(), which is called before
    * @c calibrate() on the first call to @c Simulate after the start of NEST,
-   * ResetKernel or ResetNetwork.
+   * ResetKernel.
    * @node Buffers_ needs neither constructor, copy constructor or assignment
    *       operator, since it is initialized by @c init_nodes_(). If Buffers_
    *       has members that cannot destroy themselves, Buffers_ will need a

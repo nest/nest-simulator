@@ -101,7 +101,6 @@ extern const Name calibrate_node;
 extern const Name capacity;
 extern const Name clear;
 extern const Name close_after_simulate;
-extern const Name close_on_reset;
 extern const Name comparator;
 extern const Name configbit_0;
 extern const Name configbit_1;

@@ -296,12 +296,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } resetkernelfunction;
 
-  class ResetNetworkFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resetnetworkfunction;
-
   class MemoryInfoFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

@@ -37,7 +37,6 @@ __all__ = [
     'Install',
     'Prepare',
     'ResetKernel',
-    'ResetNetwork',
     'Run',
     'RunManager',
     'SetKernelStatus',
@@ -179,47 +178,6 @@ def ResetKernel():
    """
 
     sr('ResetKernel')
-
-
-@check_stack
-@deprecated('', 'ResetNetwork is deprecated and will be removed in NEST 3.0.')
-def ResetNetwork():
-    """Reset all nodes and connections to their original state.
-
-    .. deprecated:: 2.18
-    `ResetNetwork` is deprecated and will be removed in NEST 3.0, because
-    this function is not fully able to reset network and simulator state.
-    The only reliable way to reset state is to call `ResetKernel` and then
-    rebuild the network.
-
-    Resets the dynamic state of the entire network to its original state.
-    The dynamic state comprises typically the membrane potential,
-    synaptic currents, buffers holding input that has been delivered, but not
-    yet become effective, and all events pending delivery. Node parameters,
-    such as time constants and threshold potentials, are not affected.
-
-    However, note that
-    * Time and random number generators are NOT reset.
-    * Files belonging to recording devices (spike detector, multimeter,
-      voltmeter, etc) are closed. You must change the file name before
-      simulating again. Otherwise the files can be overwritten or you
-      will receive an error.
-    * `ResetNetwork` will reset the nodes to the state values stored in the
-      model prototypes. So if you have used `SetDefaults` to change a state
-      value of a model since simulating the first time, the network will NOT be
-      reset to the status at T=0.
-    * The dynamic state of synapses with internal dynamics (STDP, facilitation)
-      is NOT reset at present. This will be implemented in a future version
-      of NEST.
-
-    See Also
-    --------
-    ResetKernel
-
-    KEYWORDS:
-    """
-
-    sr('ResetNetwork')
 
 
 @check_stack

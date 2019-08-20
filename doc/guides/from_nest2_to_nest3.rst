@@ -21,7 +21,7 @@ GIDCollections are compact and efficient containers containing the global
 ID representations of nodes. In NEST 3, when you create a population with
 ``nest.Create()``, a GIDCollection is returned. And when you
 connect two populations, you provide ``nest.Connect()`` with two
-populations in form of GIDCollections.
+populations in the form of GIDCollections.
 
 A GIDCollection is created by
 
@@ -48,6 +48,7 @@ Printing
 
     ::
 
+        nrns = nest.Create('iaf_psc_alpha', 10)
         print(nrns)
 
     prints
@@ -237,13 +238,13 @@ Getting node status
 
 Setting node status
     In the same way as we can ``get`` the status of nodes in a
-    GIDCollection, we can also ``set`` the status of nodes in a
-    GIDCollection.
+    GIDCollection, we can also ``set`` the status.
 
     ::
 
         nrns.set('V_m', -55.)  # sets V_m of all nodes
         nrns.set('V_m', [-50., -51., ...])  # sets different V_m for each node
+        nrns.set({'V_m': -55., 'C_m': 150.})  # sets V_m and C_m of all nodes
 
 
 Connectome
@@ -550,7 +551,7 @@ be divided by the other. They also support being raised to the power of a
 number, but they can only be raised to the power of an integer or a
 floating point number. Parameters can therefore be combined in almost any
 way. In fact the distribution functions in ``nest.distributions`` are just
-arithmetic expressions.
+arithmetic expressions defined in Python.
 
 Some examples:
 
@@ -570,6 +571,8 @@ Some examples:
 
 Using parameters to set node properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. TODO: Something about setting node parameters with Parameters
 
   +-----------------------------------------------+----------------------------------------------------+
   | NEST 2.x                                      | NEST 3.0                                           |
@@ -678,7 +681,7 @@ where ``spatial_data`` can be one of the following
     Note the following
 
     - For positions generated from NEST Parameters, the number of neurons
-      has to be provided in the ``nest.Create()`` function.
+      has to be provided in ``nest.Create()``.
     - The extent is calculated from the positions of the nodes, but can be
       set explicitly.
     - If possible, NEST tries to deduce the number of dimensions. But if
@@ -709,6 +712,8 @@ a value based on the nodes' position on the x-axis:
 It is also no longer possible to create composite layers, i.e. layers with
 multiple nodes in each position. To reproduce this, we now have to create
 multiple layers.
+
+.. TODO: Composite layer replacement recommendation/example
 
 Connecting layers
 ~~~~~~~~~~~~~~~~~

@@ -1,12 +1,18 @@
 From NEST 2.x to NEST 3.0
 =========================
 
-.. TODO: Introduction and overview
+NEST 3 introduces a number of new features and concepts, and some changes
+to the user interface that are not backwards compatible. One big change is
+the removal of subnets and all functions based on subnets. To organize
+neurons you should instead use the powerful GIDCollections, which will be
+presented below. Other big features include Connectome objects to
+efficiently work with connections, Parameter objects, and changes to how
+nodes with spatial information are defined and how to work with them.
+
+This guide is based exclusively on PyNEST.
 
 New concepts
 ------------
-
-.. TODO: Introduction to the new concepts
 
 GIDCollections
 ~~~~~~~~~~~~~~

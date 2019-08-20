@@ -67,19 +67,16 @@ detail:
 1. **Defining layers**, in which we assign the layout and types of the
    neurons within a layer of our network.
 
-2. **Defining connection profiles**, where we generate the profiles that
-   we wish our connections to have. Each connection dictionary specifies
-   the properties for one class of connection, and contains parameters
-   that allow us to tune the profile. These are related to the
-   location-dependent likelihood of choosing a target (``mask`` and
-   ``p``), and the cell-type specificity i.e. which types of cell
-   in a layer can participate in the connection class (``sources`` and
-   ``targets``).
+2. **Defining connection specifications**, where we specify the parameters
+   for connecting we wish our connections to have. Each connection
+   dictionary specifies the properties for one class of connection, and
+   contains parameters that allow us to tune the profile. These are
+   related to the location-dependent likelihood of choosing a target
+   (``mask`` and ``p``).
 
-3. **Connecting layers**, in which we apply the connection dictionaries
-   between layers, equivalent to population-specificity. Note that
-   multiple dictionaries can be applied between two layers, just as a
-   layer can be connected to itself.
+3. **Connecting layers**, in which we apply the connection specifications
+   between layers, equivalent to population-specificity. A layer can be
+   connected to itself.
 
 4. **Auxillary**, in which we visualise the results of the above steps
    either by ``nest.PrintNodes()`` or visualization functions and query
@@ -163,8 +160,8 @@ The following snippet produces :numref:`free`:
 ::
 
     positions = nest.spatial.free(
-        nest.random.uniform(min=-0.3, max=0.3), # using random positions in a uniform distribution
-        num_dimensions=2 # have to specify number of dimensions
+        nest.random.uniform(min=-0.3, max=0.3),  # using random positions in a uniform distribution
+        num_dimensions=2  # have to specify number of dimensions
     )
     nest.Create('iaf_psc_alpha', 10, positions=positions)
 
@@ -190,8 +187,8 @@ information, but with a few optional additions. If the connection ``rule``
 is one of ``pairwise_bernoulli``, ``fixed_indegree`` or
 ``fixed_outdegree``, one may specify some additional parameters that
 allows us to tune our connectivity profiles by tuning the likelihood of a
-connection, the synapse type, the weight and/or delay associated with a
-connection, or the number of connections.
+connection, the number of connections, or defining a subset of the layer
+to connect.
 
 Chapter 3 in NTUM deals comprehensively with all the different
 possibilities, and it’s suggested that you look there for learning about
@@ -243,7 +240,7 @@ that can be used.
     conn1 = {'rule': 'pairwise_bernoulli',
              'p': nest.distributions.gaussian(nest.spatial.distance, std_deviation=0.2),
              'mask': {'circular': {'radius': 0.75}},
-             'allow_autapses': False
+             'autapses': False
              }
 
     # Rectangular mask with non-centered anchor, constant connection probability
@@ -251,7 +248,7 @@ that can be used.
              'p': 0.75,
              'mask': {'rectangular': {'lower_left': [-0.5, -0.5], 'upper_right': [0.5, 0.5]},
                      'anchor': [0.5, 0.5]},
-             'allow_autapses': False
+             'autapses': False
              }
 
     # Donut mask, linear distance-dependent connection probability
@@ -268,7 +265,7 @@ that can be used.
              'weight': nest.distributions.gaussian(
                  nest.spatial.distance, p_center=J, std_deviation=0.25),
              'delay': 0.1 + 0.2 * nest.spatial.distance,
-             'allow_autapses': False
+             'autapses': False
              }
 
 +-------------------------+--------------------------------------------------+---------------------------------------+
@@ -326,16 +323,16 @@ target layer and a connection dictionary, we simply use
 
 ::
 
-    ex_layer = nest.Create('iaf_psc_alpha', nest.spatial.grid(rows=5, columns=4))
-    in_layer = nest.Create('iaf_psc_alpha', nest.spatial.grid(rows=4, columns=5))
+    ex_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=5, columns=4))
+    in_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=4, columns=5))
     conn_dict_ex = {'rule': 'pairwise_bernoulli',
                     'p': 1.0,
                     'mask': {'circular': {'radius': 0.5}}}
     # And now we connect E->I
     nest.Connect(ex_layer, in_layer, conn_dict_ex)
 
-Note that we can define several dictionaries, use the same dictionary
-multiple times and connect to the same layer:
+Note that we can use the same dictionary multiple times and connect to the
+same layer:
 
 ::
 
@@ -362,9 +359,9 @@ was built correctly:
 
 -  Create plots using the following functions:
 
-   -  ``PlotLayer``
-   -  ``PlotTargets``
-   -  ``PlotKernel``
+   -  ``nest.PlotLayer()``
+   -  ``nest.PlotTargets()``
+   -  ``nest.PlotKernel()``
 
    which allow us to generate the plots used with NUTM and this handout.
    See Section 4.2 of NTUM for more details.

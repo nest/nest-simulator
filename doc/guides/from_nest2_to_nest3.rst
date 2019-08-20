@@ -41,6 +41,26 @@ type, i.e. they have the same model. A composite GIDCollection consists of
 several primitive GIDCollections that either have different models, or
 where the GIDs are not continuous.
 
+In basic cases, the addition of GIDCollections requires no changes to the
+scripts. But instead of working with lists of GIDs you are working with
+GIDCollections.
+
+
+  +---------------------------------------------+----------------------------------------------+
+  | NEST 2.x                                    | NEST 3.0                                     |
+  +=============================================+==============================================+
+  |                                             |                                              |
+  | ::                                          | ::                                           |
+  |                                             |                                              |
+  |     # A list of 10 GIDs is returned         |     # A GIDCollection object is returned     |
+  |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
+  |                                             |                                              |
+  |     # Use lists as arguments in Connect     |     # Use GIDCollection objects as arguments |
+  |     nest.Connect(nrns, nrns)                |     # in Connect                             |
+  |                                             |     nest.Connect(nrns, nrns)                 |
+  |                                             |                                              |
+  +---------------------------------------------+----------------------------------------------+
+
 GIDCollections support the following operations:
 
 Printing
@@ -561,7 +581,7 @@ Some examples:
     p = -54. + nest.random.uniform(min=-10., max=10)
 
     # Two random distributions combined, with shifted center.
-    p = 1.0 + 2 * nest.random.exponential() + nest.random.normal()
+    p = 1.0 + 2 * nest.random.exponential() * nest.random.normal()
 
     # The node position on the x-axis, combined with a noisy y-axis component.
     p = nest.spatial.pos.x + (0.4 * nest.spatial.pos.y * nest.random.normal())
@@ -572,7 +592,7 @@ Some examples:
 Using parameters to set node properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. TODO: Something about setting node parameters with Parameters
+Using Parameters makes it easy to set node properties
 
   +-----------------------------------------------+----------------------------------------------------+
   | NEST 2.x                                      | NEST 3.0                                           |

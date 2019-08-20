@@ -600,27 +600,23 @@ plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 # ----------------------------
 
 #{ conn8 #}
-# nest.ResetKernel()
-# nest.CopyModel('iaf_psc_alpha', 'pyr')
-# nest.CopyModel('iaf_psc_alpha', 'in')
-# nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
-# nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
-# ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
-# cdict_p2i = {'connection_type': 'divergent',
-#              'mask': {'circular': {'radius': 0.5}},
-#              'kernel': 0.8,
-#              'sources': {'model': 'pyr'},
-#              'targets': {'model': 'in'},
-#              'synapse_model': 'exc'}
-# cdict_i2p = {'connection_type': 'divergent',
-#              'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
-#                                       'upper_right': [0.2, 0.2]}},
-#              'sources': {'model': 'in'},
-#              'targets': {'model': 'pyr'},
-#              'synapse_model': 'inh'}
-# l = tp.CreateLayer(ldict)
-# nest.Connect(l, l, cdict_p2i)
-# nest.Connect(l, l, cdict_i2p)
+nest.ResetKernel()
+nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
+nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
+
+pos = nest.spatial.grid(rows=10, columns=10)
+l_ex = nest.Create('iaf_psc_alpha', positions=pos)
+l_in = nest.Create('iaf_psc_alpha', positions=pos)
+
+nest.Connect(l_ex, l_in, {'rule': 'pairwise_bernoulli',
+                          'p': 0.8,
+                          'mask': {'circular': {'radius': 0.5}},
+                          'synapse_model': 'exc'})
+nest.Connect(l_in, l_ex, {'rule': 'pairwise_bernoulli',
+                          'p': 1.0,
+                          'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
+                                                   'upper_right': [0.2, 0.2]}},
+                          'synapse_model': 'inh'})
 #{ end #}
 
 

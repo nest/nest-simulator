@@ -4,6 +4,9 @@
 Topology User Manual
 =====================
 
+.. TODO: Should it still be called "Topology User Manual",
+..       now that the PyNEST Topology Module is gone?
+
 The Topology Module provides the NEST simulator [1]_
 with a convenient interface for creating layers of neurons placed in
 space and connecting neurons in such layers with probabilities and
@@ -404,73 +407,6 @@ not change properties of the layer.
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
 
-.. _sec:composite_layers:
-
-.. TODO: Composite section rewrite
-
-Layers with composite elements
-------------------------------
-
-So far, we have considered layers in which each element was a single
-model neuron. Topology can also create layers with *composite elements*,
-i.e., layers in which each element is a collection of model neurons, or,
-in general NEST network nodes.
-
-Construction of layers with composite elements proceeds exactly as for
-layers with simple elements, except that the ``'elements'`` entry of the
-dictionary passed to ``CreateLayer`` is a Python list or tuple. The
-following code creates a :math:`1\times 2` layer (to keep the output
-from ``PrintNetwork()`` compact) in which each element consists of one
-``'iaf_cond_alpha'`` and one ``'poisson_generator'`` node
-
-.. literalinclude:: user_manual_scripts/layers.py
-    :start-after: #{ layer6 #}
-    :end-before: #{ end #}
-
-.. literalinclude:: user_manual_scripts/layers.log
-    :start-after: #{ layer6 #}
-    :end-before: #{ end #}
-
-The network consist of one ``topology_layer_grid`` with four elements:
-two ``iaf_cond_alpha`` and two ``poisson_generator`` nodes. The
-identical nodes are grouped, so that the subnet contains first one full
-layer of ``iaf_cond_alpha`` nodes followed by one full layer of
-``poisson_generator`` nodes.
-
-You can create network elements with several nodes of each type by
-following a model name with the number of nodes to be created:
-
-.. literalinclude:: user_manual_scripts/layers.py
-    :start-after: #{ layer7 #}
-    :end-before: #{ end #}
-
-.. literalinclude:: user_manual_scripts/layers.log
-    :start-after: #{ layer7 #}
-    :end-before: #{ end #}
-
-In this case, each layer element consists of 10 ``iaf_cond_alpha``
-neurons, one ``poisson_generator``, and two ``noise_generator``\ s.
-
-Note the following points:
-
--  Each element of a layer has identical components.
-
--  All nodes within a composite element have identical positions, namely
-   the position of the layer element.
-
--  When inspecting a layer as a subnet, the different nodes will appear
-   in groups of identical nodes.
-
--  For grid-based layers, the function ``GetElement`` returns a list of
-   nodes at a given grid position. See Chapter \ :ref:`4 <sec:inspection>`
-   for more on inspecting layers.
-
--  In a previous version of the topology module it was possible to
-   create layers with nested, composite elements, but such nested
-   networks gobble up a lot of memory for subnet constructs and provide
-   no practical advantages, so this is no longer supported. See the next
-   section for design recommendations for more complex layers.
-
 .. _sec:layerdesign:
 
 .. TODO: Rewrite this section and code example
@@ -490,9 +426,8 @@ follows [2]_:
    while interneurons are ``iaf_psc_alpha`` neurons with threshold
    voltage :math:`V_{\text{th}}=-52`\ mV.
 
-How should you implement such a network using the Topology module? The
-recommended approach is to create different models for the neurons in
-each layer and then define the microcolumn as one composite element:
+How should you implement such a network in NEST? The recommended approach
+is to ... :
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer10 #}
@@ -545,42 +480,45 @@ Target
 
 .. TODO: Can we remove connection type definition? How about convergent and divergent?
 
-Connection type
-   The *connection type* determines how nodes are selected when
-   ``Connect`` creates connections between layers. It is either
-   ``'convergent'`` or ``'divergent'``.
+.. Connection type
+..    The *connection type* determines how nodes are selected when
+..    ``Connect`` creates connections between layers. It is either
+..    ``'convergent'`` or ``'divergent'``.
 
-Convergent connection
-   When creating a *convergent connection* between layers, Topology visits
-   each node in the target layer in turn and selects sources for it in the
-   source layer. Masks and connection probabilities are applied to the
-   source layer, and periodic boundary conditions are applied in the
-   source layer, provided that the source layer has periodic boundary
-   conditions.
+.. Convergent connection
+..    When creating a *convergent connection* between layers, Topology visits
+..    each node in the target layer in turn and selects sources for it in the
+..    source layer. Masks and connection probabilities are applied to the
+..    source layer, and periodic boundary conditions are applied in the
+..    source layer, provided that the source layer has periodic boundary
+..    conditions.
 
-Divergent connection
-   When creating a *divergent connection*, Topology visits each node in
-   the source layer and selects target nodes from the target layer. Masks,
-   connection probabilities, and boundary conditions are applied in the
-   target layer.
+.. Divergent connection
+..    When creating a *divergent connection*, Topology visits each node in
+..    the source layer and selects target nodes from the target layer. Masks,
+..    connection probabilities, and boundary conditions are applied in the
+..    target layer.
 
 Driver
    When connecting two layers, the *driver* layer is the one in which
    each node is considered in turn.
 
-.. TODO: Rewrite Pool and table
-
 Pool
    | When connecting two layers, the *pool* layer is the one from which
      nodes are chosen for each node in the driver layer. I.e., we have
 
-   +-----------------+--------------+--------------+
-   | Connection type | Driver       | Pool         |
-   +=================+==============+==============+
-   | convergent      | target layer | source layer |
-   +-----------------+--------------+--------------+
-   | divergent       | source layer | target layer |
-   +-----------------+--------------+--------------+
+   +--------------------------------+--------------+--------------+
+   | Connection parameters          | Driver       | Pool         |
+   +================================+==============+==============+
+   | ``rule='pairwise_bernoulli'``  | source layer | target layer |
+   +--------------------------------+--------------+--------------+
+   | ``rule='fixed_outdegree'``     | source layer | target layer |
+   +--------------------------------+--------------+--------------+
+   | ``rule='pairwise_bernoulli'``  | target layer | source layer |
+   | and ``use_on_source=True``     |              |              |
+   +--------------------------------+--------------+--------------+
+   | ``rule='fixed_indegree'``      | target layer | source layer |
+   +--------------------------------+--------------+--------------+
 
 Displacement
    The *displacement* between a driver and a pool node is the shortest
@@ -596,14 +534,12 @@ Mask
    potential targets for each driver node. See
    Sec. \ :ref:`3.3 <sec:conn_masks>` for details.
 
-.. TODO: Rewrite kernel to p/probability?
-
-Kernel
-   The *kernel* is a function returning a (possibly distance- or
-   displacement-dependent) probability for creating a connection between
-   a driver and a pool node. The default kernel is :math:`1`, i.e.,
-   connections are created with certainty. See
-   Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
+Connection probability or ``p``
+   The *connection probability*, specified as ``p`` in the connection
+   specifications, is either a value, or a Parameter which specifies the
+   probability for creating a connection between a driver and a pool node.
+   The default probability is :math:`1`, i.e., connections are created with
+   certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
 
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
@@ -970,10 +906,9 @@ A selection of topology-specific NEST Parameters are shown in Table
 Topology-specific NEST Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. TODO: Something about spatial parameters here.
-
-Something about parameters here.
-
+The Parameters in the table below represent positions of neurons or
+distances between two neurons. To set node parameters, only the node
+position can be used. The others can only be used when connecting.
 
   +-----------------------------------------+-------------------------------------------------------------------------+
   | Parameter                               | Description                                                             |
@@ -997,9 +932,9 @@ Something about parameters here.
   | | ``nest.spatial.dimension_distance.z`` | | Can only be used when connecting.                                     |
   +-----------------------------------------+-------------------------------------------------------------------------+
 
-.. TODO: Something about distributions here.
-
-Something about distributions here.
+NEST provides some functions to help create distributions based on for
+example the distance between two neurons, shown in the table below. There
+are also Parameters drawing values from random distributions.
 
   +--------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                | Arguments          | Function                                             |
@@ -1282,8 +1217,6 @@ certain distance is then given by the product of the probabilities for
 finding nodes at a certain distance with the probability value for this
 distance. For the connection probability and parameter values below we have
 
-.. TODO: Is this equation correct?
-
 .. _eq_ptheo:
 
 .. math::
@@ -1356,8 +1289,6 @@ model in NEST, ``static_synapse``. You can specify a different model by
 adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
-.. TODO: Update code example
-
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn8 #}
     :end-before: #{ end #}
@@ -1371,21 +1302,19 @@ not be set in distance-dependent ways at present.
 Connecting devices to subregions of layers
 ------------------------------------------
 
-.. TODO: divergent vs convergent when connecting devices
-
 It is possible to connect stimulation and recording devices only to
 specific subregions of layers. A simple way to achieve this is to create
 a layer which contains only the device placed typically in its center.
 For connecting the device layer to a neuron layer, an appropriate mask
 needs to be specified and optionally also an anchor for shifting the
 center of the mask. As demonstrated in the following example,
-stimulation devices require the divergent connection type
+stimulation devices have to be connected as the source layer
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn9 #}
     :end-before: #{ end #}
 
-while recording devices require the convergent connection type (see also
+while recording devices have to be connected as the target layer(see also
 Sec. \ :ref:`3.11 <sec:rec_dev>`):
 
 .. literalinclude:: user_manual_scripts/connections.py
@@ -1400,28 +1329,27 @@ Layers and recording devices
 Generally, one should not create a layer of recording devices,
 especially spike detectors, to record from a topology layer. Instead,
 create a single spike detector, and connect all neurons in the layer to
-that spike detector using a normal connect command:
+that spike detector:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}
     :end-before: #{ end #}
 
-Connections to a layer of recording devices as described in
-Sec. \ :ref:`3.10 <sec:dev_subregions>`, such as spike detectors, are only
-possible using the convergent connection type without a fixed number of
-connections. Note that voltmeter and multimeter are not suffering from
-this restriction, since they are connected as sources, not as targets.
+Connecting a layer of neurons to a layer of recording devices as described
+in Sec. \ :ref:`3.10 <sec:dev_subregions>`, such as spike detectors, is
+only possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
+and multimeter are not suffering from this restriction, since they are
+connected as sources, not as targets.
 
 .. _sec:inspection:
 
 Inspecting Layers
 =================
 
-We strongly recommend that you inspect the layers created by Topology to
-be sure that node placement and connectivity indeed turned out as
-expected. In this chapter, we describe some functions that NEST and
-Topology provide to query and visualize networks, layers, and
-connectivity.
+We strongly recommend that you inspect the layers created to be sure that
+node placement and connectivity indeed turned out as expected. In this
+chapter, we describe some functions that NEST provide to query and
+visualize networks, layers, and connectivity.
 
 .. _sec:queries:
 
@@ -1486,7 +1414,7 @@ and SLI documentation.
 Visualization functions
 -----------------------
 
-Topology provides three functions to visualize networks:
+NEST provides three functions to visualize networks:
 
 .. TODO: Remove PlotKernel?
 
@@ -1516,10 +1444,9 @@ Topology provides three functions to visualize networks:
    probability distribution.
 
 The following code shows a practical example: A :math:`21\times21` network
-which connects to itself with divergent Gaussian connections. The
-resulting graphics is shown in :numref:`fig_vislayer`. All elements and
-the targets of the center neuron are shown, as well as mask and connection
-probability.
+which connects to itself with Gaussian connections. The resulting graphics
+is shown in :numref:`fig_vislayer`. All elements and the targets of the
+center neuron are shown, as well as mask and connection probability.
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ vislayer #}
@@ -1530,14 +1457,13 @@ probability.
 Adding masks
 ============
 
-This chapter will show examples of how to extend the topology module by
-adding custom masks. Some knowledge of the C++ programming language is
-needed for this. The functions will be added as a part of an extension
-module which is dynamically loaded into NEST. For more information on
-writing an extension module, see the section titled
-`“Writing an Extension
-Module” <http://nest.github.io/nest-simulator/extension_modules>`__ in
-the NEST Developer Manual. The basic steps required to get started are:
+This chapter will show examples of how to extend NEST by adding custom
+masks. Some knowledge of the C++ programming language is needed for this.
+The functions will be added as a part of an extension module which is
+dynamically loaded into NEST. For more information on writing an extension
+module, see the section titled `“Writing an Extension Module”
+<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST
+Developer Manual. The basic steps required to get started are:
 
 1. From the NEST source directory, copy directory examples/MyModule to
    somewhere outside the NEST source, build or install directories.

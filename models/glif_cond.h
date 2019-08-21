@@ -146,11 +146,6 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  bool is_off_grid() const // uses off_grid events
-  {
-    return true;
-  }
-
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 

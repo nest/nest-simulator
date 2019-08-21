@@ -108,7 +108,6 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
     / node.P_.C_m_;
 
-
   // d dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
@@ -153,18 +152,17 @@ nest::glif_cond::Parameters_::Parameters_()
 
 nest::glif_cond::State_::State_( const Parameters_& p )
   : threshold_( -51.68 - p.E_L_ ) // in mV
+  , ASCurrents_( p.asc_init_ )    // in pA
   , y_( STATE_VECTOR_MIN_SIZE, 0.0 )
 
 {
   y_[ V_M ] = 0.0; // initialize to membrane potential
-  for ( std::size_t a = 0; a < ASCurrents_.size(); ++a )
-  {
-    ASCurrents_[ a ] = p.asc_init_[ a ];
-  }
 }
 
 nest::glif_cond::State_::State_( const State_& s )
 {
+  threshold_ = s.threshold_;
+  ASCurrents_ = s.ASCurrents_;
   y_ = s.y_;
 }
 
@@ -299,6 +297,16 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
       throw BadProperty(
         "After-spike current time constant must be strictly positive." );
     }
+  }
+
+  // check after ASC parameters size
+  if ( not( ( asc_init_.size() == k_.size() )
+         && ( k_.size() == asc_amps_.size() )
+         && ( asc_amps_.size() == r_.size() ) ) )
+  {
+    throw BadProperty(
+      "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
+      "must have the same size." );
   }
 
   const size_t old_n_receptors = this->n_receptors_();
@@ -687,17 +695,8 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
         // Marks that the neuron is in a refractory period
         V_.t_ref_remaining_ = V_.t_ref_total_;
 
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
-        double spike_offset =
-          ( 1
-            - ( v_old - th_old ) / ( ( S_.threshold_ - th_old )
-                                     - ( S_.y_[ State_::V_M ] - v_old ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        se.set_offset( spike_offset );
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }

@@ -91,14 +91,11 @@ nest::glif_psc::Parameters_::Parameters_()
 nest::glif_psc::State_::State_( const Parameters_& p )
   : U_( 0.0 )                     // in mV
   , threshold_( -51.68 - p.E_L_ ) // in mV
+  , ASCurrents_( p.asc_init_ )    // in pA
   , I_( 0.0 )                     // in pA
 {
   y1_.clear();
   y2_.clear();
-  for ( std::size_t a = 0; a < ASCurrents_.size(); ++a )
-  {
-    ASCurrents_[ a ] = p.asc_init_[ a ];
-  }
 }
 
 /* ----------------------------------------------------------------
@@ -176,8 +173,19 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::k, k_ );
   updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
   updateValue< std::vector< double > >( d, names::r, r_ );
+
   updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
   updateValue< model_type >( d, names::glif_model, glif_model_ );
+
+  // check after ASC parameters size
+  if ( not( ( asc_init_.size() == k_.size() )
+         && ( k_.size() == asc_amps_.size() )
+         && ( asc_amps_.size() == r_.size() ) ) )
+  {
+    throw BadProperty(
+      "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
+      "must have the same size." );
+  }
 
   if ( V_reset_ >= th_inf_ )
   {
@@ -509,15 +517,8 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 
         // Find the exact time during this step that the neuron crossed the
         // threshold and record it
-        double spike_offset =
-          ( 1
-            - ( v_old - th_old )
-              / ( ( S_.threshold_ - th_old ) - ( S_.U_ - v_old ) ) )
-          * Time::get_resolution().get_ms();
-        set_spiketime(
-          Time::step( origin.get_steps() + lag + 1 ), spike_offset );
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        se.set_offset( spike_offset );
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }

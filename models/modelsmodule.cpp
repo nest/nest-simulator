@@ -388,9 +388,7 @@ ModelsModule::init( SLIInterpreter* )
     name, vmdict, false );
 
 #ifdef HAVE_GSL
-  // glif cond models
   kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
-
   kernel().model_manager.register_node_model< iaf_chxk_2008 >(
     "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >(

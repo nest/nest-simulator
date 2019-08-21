@@ -99,16 +99,15 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 {
   Layer< D >::set_status( d );
 
-  Position< D > max_point;
-  Position< D > eta;
+  Position< D > max_point; // for each dimension, the largest value of the positions, aka upper right
+  Position< D > epsilon;   // small value which may be added to layer size ensuring that single-point layers have a size
 
   for ( int d = 0; d < D; ++d )
   {
     this->lower_left_[ d ] = std::numeric_limits< double >::infinity();
     max_point[ d ] = -std::numeric_limits< double >::infinity();
-    eta[ d ] = 0.1;
+    epsilon[ d ] = 0.1;
   }
-
 
   // Read positions from dictionary
   if ( d->known( names::positions ) )
@@ -181,15 +180,27 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     }
     if ( d->known( names::extent ) )
     {
-      Position< D > center = this->get_center();
       this->extent_ = getValue< std::vector< double > >( d, names::extent );
+
+      Position< D > center = ( max_point + this->lower_left_ ) / 2;
+      auto lower_left_point = this->lower_left_; // save lower-left-most point
       this->lower_left_ = center - this->extent_ / 2;
+
+      // check if all points are inside the specified layer extent
+      auto upper_right_limit = center + this->extent_ / 2;
+      for ( int d = 0; d < D; ++d )
+      {
+        if ( lower_left_point[ d ] < this->lower_left_[ d ] or max_point[ d ] > upper_right_limit[ d ] )
+        {
+          throw BadProperty( "Node position outside of layer" );
+        }
+      }
     }
     else
     {
       this->extent_ = max_point - this->lower_left_;
-      this->extent_ += eta * 2;
-      this->lower_left_ -= eta;
+      this->extent_ += epsilon * 2;
+      this->lower_left_ -= epsilon;
     }
   }
 }

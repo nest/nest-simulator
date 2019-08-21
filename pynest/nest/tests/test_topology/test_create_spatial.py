@@ -67,6 +67,27 @@ class CreateLayer(unittest.TestCase):
 
         self.assertEqual(len(layer), 3)
         self.assertEqual(layer.spatial['positions'], pos)
+        self.assertGreaterEqual(layer.spatial['extent'][0], 2.)
+        self.assertGreaterEqual(layer.spatial['extent'][1], 2.)
+
+    def test_Create_free_layer_with_extent(self):
+        """Test Create free layer with extent."""
+        pos = ((1., 1.), (2., 2.), (3., 3.))
+        extent = (5., 3.)
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.free(pos, extent=extent))
+
+        self.assertEqual(len(layer), 3)
+        self.assertEqual(layer.spatial['positions'], pos)
+        self.assertEqual(layer.spatial['extent'], extent)
+
+    def test_Create_free_layer_with_wrong_extent(self):
+        """Test Create free layer with too small extent."""
+        pos = ((1., 1.), (2., 2.), (3., 3.))
+        extent = (1.5, 3.)
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Create('iaf_psc_alpha',
+                        positions=nest.spatial.free(pos, extent=extent))
 
     def test_Create_free_layer_from_LognormalParameter(self):
         """Test Create free layer from lognormal parameter."""

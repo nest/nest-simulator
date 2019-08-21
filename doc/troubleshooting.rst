@@ -14,13 +14,14 @@ required dependencies.*
 
 1. Install the missing package or update the package to a more recent version.
 
-2. Remove the contents of the build directory
+2. Remove the contents of the build directory. This step ensures the old build-cache, which may be missing some of
+   the recently installed or updated packages, is cleaned out and a fresh build is triggered.
 
     .. code-block:: bash
 
         rm -r /path/to/nest-simulator-x.y.z-build/*
 
-3. Compile NEST again
+3. Compile NEST again:
 
     .. code-block:: bash
 
@@ -40,7 +41,7 @@ which <package>
 
 
 type -a <package>
-    shows the complete list of directories that your sytem found the binary file.
+    shows the complete list of directories that your system found the binary file.
     The first result should be the location to your active environment.
 
 <package> --version
@@ -85,29 +86,46 @@ The terminal will display the version number:
 
        * Remove or update old versions of <package> (You may need to uninstall and reinstall the package)
 
-   If you do not have the <package> in your local environment:
+   If you do not have the <package> in your active environment:
 
        * Install the <package> while in your active environment.
 
 3. Remove the contents of the build directory
 
-   .. code-block:: bash
+    .. code-block:: bash
 
        rm -r /path/to/nest-simulator-x.y.z-build/*
 
 4. Compile NEST again
 
-  .. code-block:: bash
+    .. code-block:: bash
 
       cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
 
-2. When I try to import nest, I get an error in Python that says 'No Module named NEST' or 'Module not found'
+2. When I try to import nest, I get an error in Python that says 'No Module named NEST' or 'ImportError'
 --------------------------------------------------------------------------------------------------------------
 
 This error message means something in your environment is not set correctly, depending on how you installed NEST.
 
-If you compiled NEST from source
+1. Check which Python version you are running
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   You must use **Python 3** if you installed NEST with
+
+   a. the Ubuntu PPA,
+   b. the conda-forge package,
+   c. the Live Media, or
+   d. if you compiled NEST with Python 3 bindings
+
+   Type ``python`` or ``ipython`` in the terminal. The python version that is used will be displayed.
+
+   If the Python version displayed is 2.X, you need to run  ``python3`` or ``ipython3`` instead of ``python`` or ``ipython``.
+
+
+If your Python version is correct and you still have the same error, then try one of the following options:
+
+2a. If you compiled NEST from source
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     * Your path variables may not be set correctly, in that case run:
@@ -117,23 +135,9 @@ If you compiled NEST from source
               source </path/to/nest_install_dir>/bin/nest_vars.sh
 
 
-    * You need to ensure you are using the correct Python version. (Did you compile NEST with python 3 or python 2 bindings?)
-      You can check which Python version you are using, by running:
 
-          .. code-block:: bash
-
-              python --version
-
-      For example, if the command above gives ``Python version 2.7``, but you compiled NEST with Python 3, then you need to run NEST in ``python3``.
-
-If you installed NEST via the PPA
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    You may need to run ``python3`` rather than just ``python`` since the PPA is built with Python 3 bindings.
-
-
-If you installed NEST via the conda-forge package
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2b. If you installed NEST via the conda-forge package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     * Make sure you have activated the correct environment
 
@@ -159,12 +163,16 @@ If you installed NEST via the conda-forge package
          .. code-block:: bash
 
              which python
+             which nest
 
-     This will show you the path to the Python binary that your environment is using. You may have more than one Python installation on your system. The path to Python should be within your active environment:
+     These commands will show you the path to the Python and NEST binary that your environment is using. You may have more than one installation on your system.
+     The path to the binary should be within your active environment:
 
          .. code-block:: bash
 
              /path/to/conda/envs/ENVNAME/bin/python
+             /path/to/conda/envs/ENVNAME/bin/nest
+
 
     You can also view the list of packages in the active environment, by running:
 
@@ -178,7 +186,6 @@ If you installed NEST via the conda-forge package
 
     You may be better off creating a new Conda environment and install NEST with all needed packages at one time!
     See the section on :doc:`installation for Conda <installation/index>`.
-
 
 
 
@@ -208,3 +215,4 @@ We may have answered your question on GitHub or in our Mailing List!
 
 Please check out our `GitHub issues page <https://github.com/nest/nest-simulator/issues?utf8=%E2%9C%93&q=is%3Aissue+?>`_ or search the
 `mailing list <https://www.nest-simulator.org/mailinglist/>`_ for your question.
+

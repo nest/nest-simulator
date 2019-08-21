@@ -35,21 +35,21 @@ section** :ref:`advanced_install`.
        of NEST and is set up so you can create, modify, and run Juptyer Notebooks and save them on your host machine.
        (See the Note below for alternative ways to use the Docker container.)
 
-       If you do not have Docker installed, follow the Docker installation instructions for your system
-       here: https://docs.docker.com/install/.
+       1. If you do not have Docker installed, follow the Docker installation instructions for your system
+          here: https://docs.docker.com/install/.
 
-       If you are using **Linux**, we **strongly recommend** you also create a Docker group to manage
-       Docker as a non-root user. See instructions on the Docker website: https://docs.docker.com/install/linux/linux-postinstall/
+          If you are using **Linux**, we **strongly recommend** you also create a Docker group to manage
+          Docker as a non-root user. See instructions on the Docker website: https://docs.docker.com/install/linux/linux-postinstall/
 
 
-       1. Create a directory or change into a directory that you want to use for your Jupyter Notebooks.
+       2. Create a directory or change into a directory that you want to use for your Jupyter Notebooks.
 
        .. code-block:: bash
 
            mkdir my_nest_scripts
            cd my_nest_scripts
 
-       2. Run the Docker container. Replace the ``<version>`` with one of the latest NEST versions (e.g., ``2.18.0``) or use ``latest`` for the
+       3. Run the Docker container. Replace the ``<version>`` with one of the latest NEST versions (e.g., ``2.18.0``) or use ``latest`` for the
           most recent build from the source code.
 
        .. code-block:: bash
@@ -57,16 +57,16 @@ section** :ref:`advanced_install`.
            docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
 
 
-       3. Once completed, a link to a Jupyter Notebook will be generated, as shown below. You can then copy and paste the link into your browser.
+       4. Once completed, a link to a Jupyter Notebook will be generated, as shown below. You can then copy and paste the link into your browser.
 
            .. image:: ../../_static/img/docker_link.png
               :align: center
               :width: 1000px
 
 
-       4. You can now use the Jupyter Notebook as you normally would. Anything saved in the Notebook will be placed in the directory you started the Notebook from.
+       5. You can now use the Jupyter Notebook as you normally would. Anything saved in the Notebook will be placed in the directory you started the Notebook from.
 
-       5. You can shutdown the Notebook in the terminal by typing :kbd:`Ctl-c` twice.
+       6. You can shutdown the Notebook in the terminal by typing :kbd:`Ctl-c` twice.
           Once the Notebook is shutdown the container running NEST is removed.
 
 
@@ -127,15 +127,25 @@ section** :ref:`advanced_install`.
 
        We don't support NEST natively on Windows, but you can run NEST in a virtual machine.
 
-       :ref:`Download the live media here <download_livemedia>`.
+       :ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virutal machine <livemedia>` .
 
 
 
 
-**Once NEST is installed, you can run it in Python, IPython, or Jupyter Notebook**::
 
-     python
-     import nest
+**Once NEST is installed, you can run it in Python, IPython, or Jupyter Notebook**
+
+For example, in the terminal type:
+
+    .. code-block:: bash
+
+         python
+
+Once in Python you can type:
+
+    .. code-block:: python
+
+        import nest
 
 .. note::
 

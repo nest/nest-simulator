@@ -1,7 +1,7 @@
 Getting Started
 ================
 
-Have you already :doc:`installed NEST? <installation/index>`?
+Have you already :doc:`installed NEST <installation/index>`?
 
 Let's look at how to create a neural network simulation!
 

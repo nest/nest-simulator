@@ -78,11 +78,14 @@ nest::iaf_psc_exp::Parameters_::Parameters_()
   , V_reset_( -70.0 - E_L_ ) // in mV
   , tau_ex_( 2.0 )           // in ms
   , tau_in_( 2.0 )           // in ms
+  , rho_( 0.01 )             // in 1/s
+  , delta_( 0.0 )            // in mV
 {
 }
 
 nest::iaf_psc_exp::State_::State_()
   : i_0_( 0.0 )
+  , i_1_( 0.0 )
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
   , V_m_( 0.0 )
@@ -106,6 +109,8 @@ nest::iaf_psc_exp::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_ex, tau_ex_ );
   def< double >( d, names::tau_syn_in, tau_in_ );
   def< double >( d, names::t_ref, t_ref_ );
+  def< double >( d, names::rho, rho_ );
+  def< double >( d, names::delta, delta_ );
 }
 
 double
@@ -151,12 +156,23 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
   {
-    throw BadProperty(
-      "Membrane and synapse time constants must be strictly positive." );
+    throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
   }
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time must not be negative." );
+  }
+
+  updateValue< double >( d, "rho", rho_ );
+  if ( rho_ < 0 )
+  {
+    throw BadProperty( "Stochastic firing intensity must not be negative." );
+  }
+
+  updateValue< double >( d, "delta", delta_ );
+  if ( delta_ < 0 )
+  {
+    throw BadProperty( "Width of threshold region must not be negative." );
   }
 
   return delta_EL;
@@ -169,9 +185,7 @@ nest::iaf_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_psc_exp::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::iaf_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
@@ -289,22 +303,25 @@ nest::iaf_psc_exp::calibrate()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
+
+  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 }
 
 void
 nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
+
+  const double h = Time::get_resolution().get_ms();
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-      S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
-        + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+      S_.V_m_ =
+        S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
     }
     else
     {
@@ -327,7 +344,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
 
-    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
+    if ( ( P_.delta_ < 1e-10 and S_.V_m_ >= P_.Theta_ )                   // deterministic threshold crossing
+      or ( P_.delta_ > 1e-10 and V_.rng_->drand() < phi_() * h * 1e-3 ) ) // stochastic threshold crossing
     {
       S_.r_ref_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
@@ -354,14 +372,12 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -377,17 +393,11 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      w * c );
+    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      w * c );
+    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
   }
 }
 

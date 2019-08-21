@@ -75,8 +75,7 @@ void
 nest::spike_detector::calibrate()
 {
 
-  if ( kernel().event_delivery_manager.get_off_grid_communication()
-    and not device_.is_precise_times_user_set() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() )
   {
     device_.set_precise_times( true );
     std::string msg = String::compose(
@@ -108,8 +107,7 @@ nest::spike_detector::calibrate()
 void
 nest::spike_detector::update( Time const&, const long, const long )
 {
-  for ( std::vector< Event* >::iterator e =
-          B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
+  for ( std::vector< Event* >::iterator e = B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
         e != B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].end();
         ++e )
   {
@@ -133,11 +131,9 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
     {
       ( *sibling )->get_status( d );
     }
@@ -160,9 +156,7 @@ nest::spike_detector::handle( SpikeEvent& e )
     assert( e.get_multiplicity() > 0 );
 
     long dest_buffer;
-    if ( kernel()
-           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
-           ->has_proxies() )
+    if ( kernel().modelrange_manager.get_model_of_gid( e.get_sender_gid() )->has_proxies() )
     {
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();

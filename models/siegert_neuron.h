@@ -46,6 +46,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup rate
+
 Name: siegert_neuron
 
 Description:
@@ -63,43 +66,47 @@ gap-junction framework.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-
-rate                double - Rate (1/s)
-tau                 double - Time constant in ms.
-mean                double - Additional constant input
+\verbatim embed:rst
+=====  ====== ==============================
+ rate  1/s    Rate (1/s)
+ tau   ms     Time constant
+ mean  real   Additional constant input
+=====  ====== ==============================
+\endverbatim
 
 The following parameters can be set in the status directory and are
 used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
 
-tau_m               double - Membrane time constant in ms.
-tau_syn             double - Time constant of postsynaptic currents in ms.
-t_ref               double - Duration of refractory period in ms.
-theta               double - Threshold relative to resting potential in mV.
-V_reset             double - Reset relative to resting membrane potential in
-                             mV.
+\verbatim embed:rst
+=========  ======  =====================================================
+ tau_m     ms      Membrane time constant
+ tau_syn   ms      Time constant of postsynaptic currents
+ t_ref     ms      Duration of refractory period
+ theta     mV      Threshold relative to resting potential
+ V_reset   mV      Reset relative to resting membrane potential
+=========  ======  =====================================================
+\endverbatim
 
 References:
 
-[1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
-    Bolten, M., Helias, M. and Diesmann, M. (2017).
-    Integration of Continuous-Time Dynamics in a
-    Spiking Neural Network Simulator.
-    Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
-
-[2] Fourcaud, N and Brunel, N. (2002). Dynamics of the firing
-    probability of noisy integrate-and-fire neurons, Neural computation,
-    14:9, pp 2057--2110
-
-[3] Schuecker, J., Diesmann, M. and Helias, M. (2015).
-    Modulated escape from a metastable state driven by colored noise.
-    Physical Review E 92:052119
-
-[4] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
-    Bolten, M., Frommer, A. and Diesmann, M. (2015).
-    A unified framework for spiking and gap-junction interactions
-    in distributed neuronal network simulations.
-    Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
+\verbatim embed:rst
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
+       Diesmann M (2017). Integration of continuous-time dynamics in a
+       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+.. [2] Fourcaud N, Brunel N (2002). Dynamics of the firing
+       probability of noisy integrate-and-fire neurons, Neural Computation,
+       14(9):2057-2110
+       DOI: https://doi.org/10.1162/089976602320264015
+.. [3] Schuecker J, Diesmann M, Helias M  (2015). Modulated escape from a
+       metastable state driven by colored noise. Physical Review E 92:052119
+       DOI: https://doi.org/10.1103/PhysRevE.92.052119
+.. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
+       (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal network simulations. Frontiers in
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+\endverbatim
 
 Sends: DiffusionConnectionEvent
 
@@ -224,14 +231,11 @@ private:
     Buffers_( siegert_neuron& );
     Buffers_( const Buffers_&, siegert_neuron& );
 
-    std::vector< double >
-      drift_input_; //!< buffer for drift term received by DiffusionConnection
+    std::vector< double > drift_input_;     //!< buffer for drift term received by DiffusionConnection
     std::vector< double > diffusion_input_; //!< buffer for diffusion term
     // received by DiffusionConnection
-    std::vector< double >
-      last_y_values; //!< remembers y_values from last wfr_update
-    UniversalDataLogger< siegert_neuron >
-      logger_; //!< Logger for all analog data
+    std::vector< double > last_y_values;           //!< remembers y_values from last wfr_update
+    UniversalDataLogger< siegert_neuron > logger_; //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -284,8 +288,7 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 }
 
 inline port
-siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
-  rport receptor_type )
+siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type == 0 )
   {
@@ -302,8 +305,7 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
 }
 
 inline port
-siegert_neuron::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

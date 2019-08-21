@@ -22,10 +22,10 @@
 from distutils.core import setup
 
 setup(name         = 'Topology',
-      version      = '@NEST_VERSION_VERSION@',
+      version      = '@NEST_VERSION_STRING@',
       description  = 'Python bindings for NEST Topology module',
       author       = 'The NEST Initiative',
-      url          = 'http://www.nest-simulator.org',
+      url          = 'https://www.nest-simulator.org',
       packages     = ['nest.topology', 'nest.topology.tests'],
       package_dir  = {'nest.topology': '@PROJECT_SOURCE_DIR@/topology/pynest',
                       'nest.topology.tests': '@PROJECT_SOURCE_DIR@/topology/pynest/tests'})

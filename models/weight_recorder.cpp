@@ -44,13 +44,7 @@
 // record time, gid, weight and receiver gid
 nest::weight_recorder::weight_recorder()
   : DeviceNode()
-  , device_( *this,
-      RecordingDevice::WEIGHT_RECORDER,
-      "csv",
-      true,
-      true,
-      true,
-      true )
+  , device_( *this, RecordingDevice::WEIGHT_RECORDER, "csv", true, true, true, true )
   , user_set_precise_times_( false )
   , P_()
 {
@@ -117,8 +111,7 @@ nest::weight_recorder::init_buffers_()
 void
 nest::weight_recorder::calibrate()
 {
-  if ( kernel().event_delivery_manager.get_off_grid_communication()
-    and not device_.is_precise_times_user_set() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() )
   {
     device_.set_precise_times( true );
     std::string msg = String::compose(
@@ -149,9 +142,7 @@ void
 nest::weight_recorder::update( Time const&, const long from, const long to )
 {
 
-  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin();
-        e != B_.events_.end();
-        ++e )
+  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin(); e != B_.events_.end(); ++e )
   {
     device_.record_event( *e );
   }
@@ -171,11 +162,9 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
-      kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
     {
       ( *sibling )->get_status( d );
     }
@@ -208,12 +197,9 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
     if ( ( not P_.senders_.empty()
-           and not std::binary_search(
-                 P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() ) )
+           and not std::binary_search( P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() ) )
       or ( not P_.targets_.empty()
-           and not std::binary_search( P_.targets_.begin(),
-                 P_.targets_.end(),
-                 e.get_receiver_gid() ) ) )
+           and not std::binary_search( P_.targets_.begin(), P_.targets_.end(), e.get_receiver_gid() ) ) )
     {
       return;
     }

@@ -122,23 +122,20 @@ inline index GIDCollection::const_iterator::operator*() const
   return ( *gc_ )[ offset_ ];
 }
 
-inline const GIDCollection::const_iterator& GIDCollection::const_iterator::
-operator++()
+inline const GIDCollection::const_iterator& GIDCollection::const_iterator::operator++()
 {
   ++offset_;
   return *this;
 }
 
-inline bool GIDCollection::const_iterator::operator!=(
-  const GIDCollection::const_iterator& rhs ) const
+inline bool GIDCollection::const_iterator::operator!=( const GIDCollection::const_iterator& rhs ) const
 {
   return offset_ != rhs.offset_;
 }
 
 inline index GIDCollection::operator[]( const size_t pos ) const
 {
-  if ( ( is_range_ and pos + gid_range_.first > gid_range_.second )
-    or ( not is_range_ and pos >= gid_array_.size() ) )
+  if ( ( is_range_ and pos + gid_range_.first > gid_range_.second ) or ( not is_range_ and pos >= gid_array_.size() ) )
   {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
   }

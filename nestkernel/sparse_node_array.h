@@ -70,8 +70,7 @@ public:
     index gid_; //!< store gid locally for faster searching
   };
 
-  typedef std::vector< SparseNodeArray::NodeEntry >::const_iterator
-    const_iterator;
+  typedef std::vector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
 
   //! Create empty spare node array
   SparseNodeArray();

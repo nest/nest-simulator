@@ -1,5 +1,7 @@
-Ubuntu / Debian Installation
+Ubuntu/Debian Installation
 ===============================
+
+.. _standard:
 
 Standard Installation
 ------------------------
@@ -7,13 +9,25 @@ Standard Installation
 The following are the basic steps to compile and install NEST from source code:
 
 
-* For most users, the following additional packages will likely be needed (see also the `Dependencies`_ section)
+* If not already installed on your system, the following packages are recommended (see also the `Dependencies`_ section)
 
-.. code-block:: sh
+.. code-block:: bash
 
-    sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev \
-    libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy \
-    python-matplotlib ipython openmpi-bin libopenmpi-dev python-nose
+    sudo apt-get install -y \
+    build-essential \
+    cmake \
+    cython \
+    libgsl-dev \
+    libltdl-dev \
+    libncurses-dev \
+    libreadline-dev \
+    python-all-dev \
+    python-numpy \
+    python-scipy \
+    python-matplotlib \
+    python-nose \
+    openmpi-bin \
+    libopenmpi-dev
 
 * Unpack the tarball
 
@@ -33,15 +47,17 @@ The following are the basic steps to compile and install NEST from source code:
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST:
+* Configure NEST.
+
+  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`
 
 .. code-block:: sh
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
+
 .. note::  ``/install/path`` should be an absolute path
 
-You may need additional ``cmake`` options and you can find the configuration options :doc:`here <install_options>`
 
 * Compile and install NEST:
 
@@ -53,7 +69,9 @@ You may need additional ``cmake`` options and you can find the configuration opt
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
-.. note:: If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
+.. admonition:: Important!
+
+ If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 
   .. code-block:: sh
 

@@ -48,13 +48,9 @@ void cg_connect( ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 
-void cg_set_masks( ConnectionGeneratorDatum& cg,
-  const GIDCollection& sources,
-  const GIDCollection& targets );
+void cg_set_masks( ConnectionGeneratorDatum& cg, const GIDCollection& sources, const GIDCollection& targets );
 
-void cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
-  RangeSet& sources,
-  RangeSet& targets );
+void cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sources, RangeSet& targets );
 
 index cg_get_right_border( index left, size_t step, const GIDCollection& gids );
 

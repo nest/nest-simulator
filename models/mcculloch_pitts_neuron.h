@@ -30,6 +30,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup binary
+
 Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                               activation function.
 
@@ -75,20 +78,27 @@ noise_generator.
 
 Parameters:
 
-tau_m      double - Membrane time constant (mean inter-update-interval)
-                   in ms.
-theta      double - threshold for sigmoidal activation function mV
+\verbatim embed:rst
+======= =======  ====================================================
+ tau_m   ms      Membrane time constant (mean inter-update-interval)
+ theta   mV      Threshold for sigmoidal activation function
+======= =======  ====================================================
+\endverbatim
 
 References:
 
-[1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
-immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
-[2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.
-Westview (1991).
-[3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
-Neuronal Simulations.
-In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
-Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
+\verbatim embed:rst
+.. [1] McCulloch W, Pitts W (1943). A logical calculus of the ideas
+       immanent in nervous activity. Bulletin of Mathematical Biophysics,
+       5:115-133. DOI: https://doi.org/10.1007/BF02478259
+.. [2] Hertz J, Krogh A, Palmer R (1991). Introduction to the theory of neural
+       computation. Addison-Wesley Publishing Conmpany.
+.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
+       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
+       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
+       (Eds.), Springer.
+       DOI: https://doi.org/10.1007/978-3-540-73159-7_10
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -119,14 +129,12 @@ public:
   bool operator()( librandom::RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
-  double h )
+inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts >
-  mcculloch_pitts_neuron;
+typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

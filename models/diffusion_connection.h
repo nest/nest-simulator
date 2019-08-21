@@ -29,6 +29,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup inst_rate
+
 Name: diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
 
@@ -61,11 +64,14 @@ Transmits: DiffusionConnectionEvent
 
 References:
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+\verbatim embed:rst
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,
+       Bolten M, Helias M, Diesmann, M. (2017).
+       Integration of continuous-time dynamics in a
+       spiking neural network simulator.
+       Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+\endverbatim
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
@@ -103,17 +109,13 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport(
-      t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -169,8 +171,7 @@ DiffusionConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

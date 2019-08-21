@@ -69,7 +69,7 @@ def conn_figure(fig, layer, connd, targets=None, showmask=True, kern=None,
                 xticks=range(-5, 6), yticks=range(-5, 6),
                 xlim=[-5.5, 5.5], ylim=[-5.5, 5.5]):
     if targets is None:
-        targets = ((nest.FindCenterElement(layer)[0], 'red'),)
+        targets = ((layer[layer.index(nest.FindCenterElement(layer))][0], 'red'),)
 
     nest.PlotLayer(layer, fig=fig, nodesize=60)
     for src, clr in targets:
@@ -104,7 +104,7 @@ nest.Connect(l, l, conndict)
 fig = plt.figure()
 fig.add_subplot(121)
 conn_figure(fig, l, conndict,
-            targets=((nest.FindCenterElement(l), 'red'),
+            targets=((l[l.index(nest.FindCenterElement(l))], 'red'),
                      (l[l.index(nest.FindNearestElement(l, [4., 5.])[0])], 'yellow')))
 
 # same another time, with periodic bcs
@@ -115,7 +115,7 @@ lpbc = nest.Create('iaf_psc_alpha',
 nest.Connect(lpbc, lpbc, conndict)
 fig.add_subplot(122)
 conn_figure(fig, lpbc, conndict, showmask=False,
-            targets=((nest.FindCenterElement(lpbc), 'red'),
+            targets=((lpbc[lpbc.index(nest.FindCenterElement(lpbc))], 'red'),
                      (lpbc[lpbc.index(nest.FindNearestElement(lpbc, [4., 5.])[0])], 'yellow')))
 
 plt.savefig('../user_manual_figures/conn1.png', bbox_inches='tight')
@@ -244,7 +244,7 @@ def conn_figure_3d(fig, layer, connd, targets=None, showmask=True,
                    xticks=range(-5, 6), yticks=range(-5, 6),
                    xlim=[-5.5, 5.5], ylim=[-5.5, 5.5]):
     if targets is None:
-        targets = ((nest.FindCenterElement(layer), 'red'),)
+        targets = ((layer[layer.index(nest.FindCenterElement(layer))], 'red'),)
 
     nest.PlotLayer(layer, fig=fig, nodesize=20, nodecolor=(.5, .5, 1.))
     for src, clr in targets:

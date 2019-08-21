@@ -932,8 +932,7 @@ def FindCenterElement(layer):
     if not isinstance(layer, nest.GIDCollection):
         raise nest.kernel.NESTError("layer must be a GIDCollection")
 
-    gid_of_center_element = FindNearestElement(layer, layer.spatial['center'])[0]
-    return layer[layer.index(gid_of_center_element)]
+    return FindNearestElement(layer, layer.spatial['center'])[0]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):

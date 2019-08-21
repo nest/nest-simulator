@@ -322,7 +322,7 @@ conndict = {'rule': 'pairwise_bernoulli',
 nest.Connect(l, l, conndict)
 fig = nest.PlotLayer(l, nodesize=80)
 
-ctr = nest.FindCenterElement(l)
+ctr = l[l.index(nest.FindCenterElement(l))]
 nest.PlotTargets(ctr, l, fig=fig,
                mask=conndict['mask'], kernel={'gaussian': {'p_center': 1.0, 'sigma': 0.15}},
                src_size=250, tgt_color='red', tgt_size=20,

@@ -243,9 +243,7 @@ nest::iaf_psc_exp::init_state_( const Node& proto )
 void
 nest::iaf_psc_exp::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.spikes_in_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.input_buffer_.clear(); // includes resize
   B_.logger_.reset();
   Archiving_Node::clear_history();
 }
@@ -253,7 +251,8 @@ nest::iaf_psc_exp::init_buffers_()
 void
 nest::iaf_psc_exp::calibrate()
 {
-  B_.currents_.resize( 2 );
+  B_.input_buffer_.resize();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
@@ -319,6 +318,9 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
+    const index idx = kernel().event_delivery_manager.get_modulo( lag );
+    std::array< double, 4 >& new_input = B_.input_buffer_.get_values( idx );
+
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
       S_.V_m_ =
@@ -340,8 +342,8 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     // the spikes arriving at T+1 have an immediate effect on the state of the
     // neuron
 
-    V_.weighted_spikes_ex_ = B_.spikes_ex_.get_value( lag );
-    V_.weighted_spikes_in_ = B_.spikes_in_.get_value( lag );
+    V_.weighted_spikes_ex_ = new_input[ 0 ];
+    V_.weighted_spikes_in_ = new_input[ 1 ];
 
     S_.i_syn_ex_ += V_.weighted_spikes_ex_;
     S_.i_syn_in_ += V_.weighted_spikes_in_;
@@ -359,8 +361,14 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     }
 
     // set new input current
-    S_.i_0_ = B_.currents_[ 0 ].get_value( lag );
-    S_.i_1_ = B_.currents_[ 1 ].get_value( lag );
+    S_.i_0_ = new_input[ 2 ];
+    S_.i_1_ = new_input[ 3 ];
+
+    // reset input in ring buffer at position lag
+    for ( auto it = new_input.begin(); it < new_input.end(); ++it )
+    {
+      (*it) = 0.0;
+    }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -372,15 +380,16 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
+  const index idx = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
+    B_.input_buffer_.add_value( idx, 0, e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
+    B_.input_buffer_.add_value( idx, 1, e.get_weight() * e.get_multiplicity() );
   }
 }
 
@@ -392,14 +401,17 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
+  const index idx = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
-    B_.currents_[ 0 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    B_.input_buffer_.add_value( idx, 2, w * c );
   }
   if ( 1 == e.get_rport() )
   {
-    B_.currents_[ 1 ].add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    B_.input_buffer_.add_value( idx, 3, w * c );
   }
 }
 

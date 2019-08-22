@@ -293,9 +293,7 @@ private:
     Buffers_( const Buffers_&, iaf_psc_exp& );
 
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spikes_ex_;
-    RingBuffer spikes_in_;
-    std::vector< RingBuffer > currents_;
+    TestRingBuffer input_buffer_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_exp > logger_;

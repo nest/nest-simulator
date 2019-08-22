@@ -94,3 +94,36 @@ nest::ListRingBuffer::clear()
     buffer_[ i ].clear();
   }
 }
+
+
+nest::TestRingBuffer::TestRingBuffer()
+  : buffer_( kernel().connection_manager.get_min_delay()
+        + kernel().connection_manager.get_max_delay(),
+             std::array< double, 4 >() )
+{
+}
+
+void
+nest::TestRingBuffer::resize()
+{
+  size_t size = kernel().connection_manager.get_min_delay()
+    + kernel().connection_manager.get_max_delay();
+  if ( buffer_.size() != size )
+  {
+    buffer_.resize( size, std::array< double, 4 >() );
+  }
+}
+
+void
+nest::TestRingBuffer::clear()
+{
+  resize(); // does nothing if size is fine
+  // set all elements to 0.0
+  for ( auto it = buffer_.begin(); it < buffer_.end(); ++it )
+  {
+    for ( auto iit = (*it).begin(); iit < (*it).end(); ++iit )
+    {
+      (*iit) = 0.0;
+    }
+  }
+}

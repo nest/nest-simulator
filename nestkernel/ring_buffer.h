@@ -24,6 +24,7 @@
 #define RING_BUFFER_H
 
 // C++ includes:
+#include <array>
 #include <list>
 #include <vector>
 
@@ -351,7 +352,63 @@ ListRingBuffer::get_index_( const delay d ) const
   assert( ( size_t ) idx < buffer_.size() );
   return idx;
 }
+
+
+class TestRingBuffer
+{
+public:
+  TestRingBuffer();
+
+  void add_value( const long idx1, const long idx2, const double val );
+
+  void set_value( const long idx1, const long idx2, const double val );
+
+  std::array< double, 4 >& get_values( const long idx1 );
+
+  void reset_values( const long idx1 );
+
+  void clear();
+
+  void resize();
+
+  size_t
+  size() const
+  {
+    return buffer_.size();
+  }
+
+private:
+  //! Buffered data
+  std::vector< std::array< double, 4 > > buffer_;
+};
+
+inline void
+TestRingBuffer::add_value( const long idx1, const long idx2, const double val )
+{
+  buffer_[ idx1 ][ idx2 ] += val;
 }
+
+inline void
+TestRingBuffer::set_value( const long idx1, const long idx2, const double val )
+{
+  buffer_[ idx1 ][ idx2 ] = val;
+}
+
+inline std::array< double, 4 >&
+TestRingBuffer::get_values( const long idx1 )
+{
+  assert( 0 <= idx1 and ( size_t ) idx1 < buffer_.size() );
+  return buffer_[ idx1 ];
+}
+
+inline void
+TestRingBuffer::reset_values( const long idx1 )
+{
+  assert( 0 <= idx1 and ( size_t ) idx1 < buffer_.size() );
+  memset( &buffer_[ idx1 ][0], 0, buffer_[ idx1 ].size() * sizeof buffer_[ idx1 ][0] );
+}
+
+} // namespace nest
 
 
 #endif

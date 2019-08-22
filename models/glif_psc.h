@@ -169,14 +169,14 @@ private:
 
   struct Parameters_
   {
-    double G_;       // membrane conductance in nS
-    double E_L_;     // resting potential in mV
-    double th_inf_;  // infinity threshold in mV
-    double C_m_;     // capacitance in pF
-    double t_ref_;   // refractory time in ms
-    double V_reset_; // Membrane voltage following spike in mV
-    double a_spike_; // threshold additive constant following reset in mV
-    double b_spike_; // spike induced threshold in 1/ms
+    double G_;               // membrane conductance in nS
+    double E_L_;             // resting potential in mV
+    double th_inf_;          // infinity threshold in mV
+    double C_m_;             // capacitance in pF
+    double t_ref_;           // refractory time in ms
+    double V_reset_;         // Membrane voltage following spike in mV
+    double a_spike_;         // threshold additive constant following reset in mV
+    double b_spike_;         // spike induced threshold in 1/ms
     double voltage_reset_a_; // voltage fraction following reset coefficient
     double voltage_reset_b_; // voltage additive constant following reset in mV
     double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
@@ -227,9 +227,8 @@ private:
     Buffers_( glif_psc& );
     Buffers_( const Buffers_&, glif_psc& );
 
-    std::vector< nest::RingBuffer >
-      spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
+    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
+    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
     nest::UniversalDataLogger< glif_psc > logger_;
@@ -295,10 +294,7 @@ nest::glif_psc::Parameters_::n_receptors_() const
 }
 
 inline nest::port
-nest::glif_psc::send_test_event( nest::Node& target,
-  nest::port receptor_type,
-  nest::synindex,
-  bool )
+nest::glif_psc::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
 {
   nest::SpikeEvent e;
   e.set_sender( *this );
@@ -306,8 +302,7 @@ nest::glif_psc::send_test_event( nest::Node& target,
 }
 
 inline nest::port
-nest::glif_psc::handles_test_event( nest::CurrentEvent&,
-  nest::port receptor_type )
+nest::glif_psc::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -317,8 +312,7 @@ nest::glif_psc::handles_test_event( nest::CurrentEvent&,
 }
 
 inline nest::port
-nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr,
-  nest::port receptor_type )
+nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {

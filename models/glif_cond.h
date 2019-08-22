@@ -198,8 +198,8 @@ private:
     double t_ref_;   // refractory time in ms
     double V_reset_; // Membrane voltage following spike in mV
 
-    double a_spike_; // threshold additive constant following reset in mV
-    double b_spike_; // spike induced threshold in 1/ms
+    double a_spike_;         // threshold additive constant following reset in mV
+    double b_spike_;         // spike induced threshold in 1/ms
     double voltage_reset_a_; // voltage fraction following reset coefficient
     double voltage_reset_b_; // voltage additive constant following reset in mV
     double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
@@ -244,9 +244,8 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; // V_M
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR =
-      2; // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        // V_M
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG_SYN, G_SYN
 
     std::vector< double > y_; //!< neuron state
 
@@ -264,9 +263,8 @@ private:
     Buffers_( glif_cond& );
     Buffers_( const Buffers_&, glif_cond& );
 
-    std::vector< nest::RingBuffer >
-      spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_; //!< Buffer incoming currents through delay,
+    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
+    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
     nest::UniversalDataLogger< glif_cond > logger_;
@@ -352,10 +350,7 @@ nest::glif_cond::Parameters_::n_receptors_() const
 
 
 inline nest::port
-nest::glif_cond::send_test_event( nest::Node& target,
-  nest::port receptor_type,
-  nest::synindex,
-  bool )
+nest::glif_cond::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
 {
   nest::SpikeEvent e;
   e.set_sender( *this );
@@ -363,8 +358,7 @@ nest::glif_cond::send_test_event( nest::Node& target,
 }
 
 inline nest::port
-nest::glif_cond::handles_test_event( nest::CurrentEvent&,
-  nest::port receptor_type )
+nest::glif_cond::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -374,8 +368,7 @@ nest::glif_cond::handles_test_event( nest::CurrentEvent&,
 }
 
 inline nest::port
-nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr,
-  nest::port receptor_type )
+nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, nest::port receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -57,8 +57,7 @@ template <>
 void
 RecordablesMap< nest::glif_cond >::create()
 {
-  insert_(
-    names::V_m, &nest::glif_cond::get_y_elem_< nest::glif_cond::State_::V_M > );
+  insert_( names::V_m, &nest::glif_cond::get_y_elem_< nest::glif_cond::State_::V_M > );
   insert_( names::ASCurrents_sum, &nest::glif_cond::get_ASCurrents_sum_ );
 }
 }
@@ -74,13 +73,11 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::glif_cond& node =
-    *( reinterpret_cast< nest::glif_cond* >( pnode ) );
+  const nest::glif_cond& node = *( reinterpret_cast< nest::glif_cond* >( pnode ) );
 
   // get node glif model type
   std::string model_str = node.P_.glif_model_;
-  std::transform(
-    model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
   if ( node.model_type_lu.find( model_str ) == node.model_type_lu.end() )
   {
     throw BadProperty( "Bad glif model type string." );
@@ -98,15 +95,13 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn +=
-      y[ S::G_SYN + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
+    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
   const double I_leak = node.P_.G_ * ( y[ S::V_M ] );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ )
-    / node.P_.C_m_;
+  f[ 0 ] = ( -I_leak - I_syn + node.B_.I_stim_ + node.S_.ASCurrents_sum_ ) / node.P_.C_m_;
 
   // d dg/dt
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
@@ -114,8 +109,7 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
     f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
-    f[ S::G_SYN + j ] =
-      y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
+    f[ S::G_SYN + j ] = y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
   }
 
   return GSL_SUCCESS;
@@ -127,18 +121,18 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::glif_cond::Parameters_::Parameters_()
-  : G_( 9.43 )                // in nS
-  , E_L_( -78.85 )            // in mV
-  , th_inf_( 27.17 )          // in mv, rel to E_L_, 51.68 - E_L_
-  , C_m_( 58.72 )             // in pF
-  , t_ref_( 3.75 )            // in ms
-  , V_reset_( 0.0 )           // in mV, rel to E_L_, -78.85 - E_L_
-  , a_spike_( 0.37 )          // in mV
-  , b_spike_( 0.009 )         // in 1/ms
-  , voltage_reset_a_( 0.20 )  // deterministic
-  , voltage_reset_b_( 18.51 ) // in mV
-  , a_voltage_( 0.005 )       // in 1/ms
-  , b_voltage_( 0.09 )        // in 1/ms
+  : G_( 9.43 )                                           // in nS
+  , E_L_( -78.85 )                                       // in mV
+  , th_inf_( 27.17 )                                     // in mv, rel to E_L_, 51.68 - E_L_
+  , C_m_( 58.72 )                                        // in pF
+  , t_ref_( 3.75 )                                       // in ms
+  , V_reset_( 0.0 )                                      // in mV, rel to E_L_, -78.85 - E_L_
+  , a_spike_( 0.37 )                                     // in mV
+  , b_spike_( 0.009 )                                    // in 1/ms
+  , voltage_reset_a_( 0.20 )                             // deterministic
+  , voltage_reset_b_( 18.51 )                            // in mV
+  , a_voltage_( 0.005 )                                  // in 1/ms
+  , b_voltage_( 0.09 )                                   // in 1/ms
   , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
   , k_( std::vector< double >{ 0.003, 0.1 } )            // in 1/ms
   , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
@@ -280,29 +274,25 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
 
   if ( b_voltage_ <= 0.0 )
   {
-    throw BadProperty(
-      "Voltage-induced threshold time constant must be strictly positive." );
+    throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
   }
 
   if ( b_spike_ <= 0.0 )
   {
-    throw BadProperty(
-      "Spike induced threshold time constant must be strictly positive." );
+    throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
   }
 
   for ( std::size_t a = 0; a < k_.size(); ++a )
   {
     if ( k_[ a ] <= 0.0 )
     {
-      throw BadProperty(
-        "After-spike current time constant must be strictly positive." );
+      throw BadProperty( "After-spike current time constant must be strictly positive." );
     }
   }
 
   // check after ASC parameters size
-  if ( not( ( asc_init_.size() == k_.size() )
-         && ( k_.size() == asc_amps_.size() )
-         && ( asc_amps_.size() == r_.size() ) ) )
+  if ( not(
+         ( asc_init_.size() == k_.size() ) && ( k_.size() == asc_amps_.size() ) && ( asc_amps_.size() == r_.size() ) ) )
   {
     throw BadProperty(
       "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
@@ -310,15 +300,12 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   }
 
   const size_t old_n_receptors = this->n_receptors_();
-  bool tau_flag =
-    updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
-  bool Erev_flag =
-    updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
+  bool tau_flag = updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
+  bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
 
   if ( tau_flag || Erev_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev_.size() != old_n_receptors
-           || tau_syn_.size() != old_n_receptors )
+    if ( ( E_rev_.size() != old_n_receptors || tau_syn_.size() != old_n_receptors )
       and ( not Erev_flag || not tau_flag ) )
     {
       throw BadProperty(
@@ -344,8 +331,7 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     {
       if ( tau_syn_[ i ] <= 0 )
       {
-        throw BadProperty(
-          "All synaptic time constants must be strictly positive." );
+        throw BadProperty( "All synaptic time constants must be strictly positive." );
       }
     }
   }
@@ -361,15 +347,12 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
 
-  for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
-              / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+  for ( size_t i = 0; i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
+                            / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back( y_[ State_::DG_SYN
-      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
-    g->push_back( y_[ State_::G_SYN
-      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
+    dg->push_back( y_[ State_::DG_SYN + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
+    g->push_back( y_[ State_::G_SYN + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
@@ -377,9 +360,7 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::glif_cond::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y_[ V_M ] ) )
   {
@@ -505,8 +486,8 @@ nest::glif_cond::calibrate()
 
   V_.CondInitialValues_.resize( P_.n_receptors_() );
   B_.spikes_.resize( P_.n_receptors_() );
-  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
+  S_.y_.resize(
+    State_::NUMBER_OF_FIXED_STATES_ELEMENTS + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors_() ),
     0.0 );
 
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
@@ -544,10 +525,8 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
 
   // get model type
   std::string model_str = P_.glif_model_;
-  std::transform(
-    model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
-  if ( nest::glif_cond::model_type_lu.find( model_str )
-    == nest::glif_cond::model_type_lu.end() )
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
+  if ( nest::glif_cond::model_type_lu.find( model_str ) == nest::glif_cond::model_type_lu.end() )
   {
     throw BadProperty( "Bad glif model type string." );
   }
@@ -578,8 +557,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
       {
         S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-        S_.ASCurrents_[ a ] =
-          S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+        S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
       }
     }
 
@@ -627,9 +605,8 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
         {
           for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
           {
-            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-              + S_.ASCurrents_[ a ] * P_.r_[ a ]
-                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
+            S_.ASCurrents_[ a ] =
+              P_.asc_amps_[ a ] + S_.ASCurrents_[ a ] * P_.r_[ a ] * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
           }
         }
 
@@ -642,8 +619,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
         else
         {
           // Reset voltage for glif2/4/5 models with "R"
-          S_.y_[ State_::V_M ] =
-            P_.voltage_reset_a_ * v_old + P_.voltage_reset_b_;
+          S_.y_[ State_::V_M ] = P_.voltage_reset_a_ * v_old + P_.voltage_reset_b_;
 
           // reset spike component of threshold
           V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
@@ -678,11 +654,9 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       {
         double beta = ( B_.I_stim_ + S_.ASCurrents_sum_ ) / P_.G_;
         double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-        voltage_component =
-          phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
+        voltage_component = phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
           + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-            * ( V_.last_voltage_ - phi * ( v_old - beta )
-                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
+            * ( V_.last_voltage_ - phi * ( v_old - beta ) - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
           + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta );
       }
 
@@ -707,8 +681,8 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
       const size_t jjj = i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      S_.y_[ State_::DG_SYN + jjj ] += B_.spikes_[ i ].get_value( lag )
-        * V_.CondInitialValues_[ i ]; // add incoming spike
+      S_.y_[ State_::DG_SYN + jjj ] +=
+        B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
     }
     // Update any external currents
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -725,8 +699,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_cond::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -741,8 +714,7 @@ nest::glif_cond::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -751,8 +723,7 @@ nest::glif_cond::handle( CurrentEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

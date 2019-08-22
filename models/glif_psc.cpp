@@ -66,18 +66,18 @@ RecordablesMap< nest::glif_psc >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::Parameters_::Parameters_()
-  : G_( 9.43 )                // in nS
-  , E_L_( -78.85 )            // in mV
-  , th_inf_( 27.17 )          // in mv, rel to E_L_, 51.68 - E_L_
-  , C_m_( 58.72 )             // in pF
-  , t_ref_( 3.75 )            // in ms
-  , V_reset_( 0.0 )           // in mV, rel to E_L_, -78.85 - E_L_
-  , a_spike_( 0.37 )          // in mV
-  , b_spike_( 0.009 )         // in 1/ms
-  , voltage_reset_a_( 0.20 )  // deterministic
-  , voltage_reset_b_( 18.51 ) // in mV
-  , a_voltage_( 0.005 )       // in 1/ms
-  , b_voltage_( 0.09 )        // in 1/ms
+  : G_( 9.43 )                                           // in nS
+  , E_L_( -78.85 )                                       // in mV
+  , th_inf_( 27.17 )                                     // in mv, rel to E_L_, 51.68 - E_L_
+  , C_m_( 58.72 )                                        // in pF
+  , t_ref_( 3.75 )                                       // in ms
+  , V_reset_( 0.0 )                                      // in mV, rel to E_L_, -78.85 - E_L_
+  , a_spike_( 0.37 )                                     // in mV
+  , b_spike_( 0.009 )                                    // in 1/ms
+  , voltage_reset_a_( 0.20 )                             // deterministic
+  , voltage_reset_b_( 18.51 )                            // in mV
+  , a_voltage_( 0.005 )                                  // in 1/ms
+  , b_voltage_( 0.09 )                                   // in 1/ms
   , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
   , k_( std::vector< double >{ 0.003, 0.1 } )            // in 1/ms
   , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
@@ -178,9 +178,8 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< model_type >( d, names::glif_model, glif_model_ );
 
   // check after ASC parameters size
-  if ( not( ( asc_init_.size() == k_.size() )
-         && ( k_.size() == asc_amps_.size() )
-         && ( asc_amps_.size() == r_.size() ) ) )
+  if ( not(
+         ( asc_init_.size() == k_.size() ) && ( k_.size() == asc_amps_.size() ) && ( asc_amps_.size() == r_.size() ) ) )
   {
     throw BadProperty(
       "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
@@ -209,22 +208,19 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
 
   if ( b_voltage_ <= 0.0 )
   {
-    throw BadProperty(
-      "Voltage-induced threshold time constant must be strictly positive." );
+    throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
   }
 
   if ( b_spike_ <= 0.0 )
   {
-    throw BadProperty(
-      "Spike induced threshold time constant must be strictly positive." );
+    throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
   }
 
   for ( std::size_t a = 0; a < k_.size(); ++a )
   {
     if ( k_[ a ] <= 0.0 )
     {
-      throw BadProperty(
-        "After-spike current time constant must be strictly positive." );
+      throw BadProperty( "After-spike current time constant must be strictly positive." );
     }
   }
 
@@ -241,8 +237,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
     {
       if ( tau_syn_[ i ] <= 0 )
       {
-        throw BadProperty(
-          "All synaptic time constants must be strictly positive." );
+        throw BadProperty( "All synaptic time constants must be strictly positive." );
       }
     }
   }
@@ -257,9 +252,7 @@ nest::glif_psc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_psc::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, U_ ) )
   {
@@ -381,10 +374,8 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 
   // get model type
   std::string model_str = P_.glif_model_;
-  std::transform(
-    model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
-  if ( nest::glif_psc::model_type_lu.find( model_str )
-    == nest::glif_psc::model_type_lu.end() )
+  std::transform( model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
+  if ( nest::glif_psc::model_type_lu.find( model_str ) == nest::glif_psc::model_type_lu.end() )
   {
     throw BadProperty( "Bad glif model type string." );
   }
@@ -423,9 +414,8 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
         {
           for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
           {
-            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ]
-              + S_.ASCurrents_[ a ] * P_.r_[ a ]
-                * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
+            S_.ASCurrents_[ a ] =
+              P_.asc_amps_[ a ] + S_.ASCurrents_[ a ] * P_.r_[ a ] * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
           }
         }
 
@@ -476,8 +466,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
           S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-          S_.ASCurrents_[ a ] =
-            S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+          S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
         }
       }
       // voltage dynamics of membranes
@@ -498,11 +487,9 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
       {
         double beta = ( S_.I_ + S_.ASCurrents_sum_ ) / P_.G_;
         double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-        voltage_component =
-          phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
+        voltage_component = phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
           + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-            * ( V_.last_voltage_ - phi * ( v_old - beta )
-                - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
+            * ( V_.last_voltage_ - phi * ( v_old - beta ) - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
           + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta );
       }
 
@@ -531,8 +518,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
-      S_.y1_[ i ] +=
-        V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
+      S_.y1_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
     double cursum = 0.0;
@@ -556,8 +542,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 nest::port
 nest::glif_psc::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -572,8 +557,7 @@ nest::glif_psc::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -582,8 +566,7 @@ nest::glif_psc::handle( CurrentEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 // Do not move this function as inline to h-file. It depends on

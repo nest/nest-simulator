@@ -303,21 +303,15 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
   bool tau_flag = updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev_ );
 
+  // receptor arrays have been modified
   if ( tau_flag || Erev_flag )
-  { // receptor arrays have been modified
-    if ( ( E_rev_.size() != old_n_receptors || tau_syn_.size() != old_n_receptors )
-      and ( not Erev_flag || not tau_flag ) )
-    {
-      throw BadProperty(
-        "If the number of receptor ports is changed, both arrays "
-        "E_rev and tau_syn must be provided." );
-    }
+  {
 
     if ( E_rev_.size() != tau_syn_.size() )
     {
       throw BadProperty(
-        "The reversal potential, and synaptic time constant arrays "
-        "must have the same size." );
+        "The reversal potential and synaptic time constant arrays, "
+        "i.e., E_rev and tau_syn, must have the same size." );
     }
 
     if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )

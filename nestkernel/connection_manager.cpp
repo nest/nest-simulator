@@ -430,21 +430,21 @@ nest::ConnectionManager::connect( const index sgid,
   have_connections_changed_ = true;
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
-  ConnectionType connection_type = connection_required(source, target, target_thread);
+  ConnectionType connection_type = connection_required( source, target, target_thread );
 
-  switch ( connection_type  )
+  switch ( connection_type )
   {
-    case CONNECT:
-      connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
-      break;
-    case CONNECT_FROM_DEVICE:
-      connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
-      break;
-    case CONNECT_TO_DEVICE:
-      connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
-      break;
-    case NO_CONNECTION:
-      return;
+  case CONNECT:
+    connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
+    break;
+  case CONNECT_FROM_DEVICE:
+    connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
+    break;
+  case CONNECT_TO_DEVICE:
+    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
+    break;
+  case NO_CONNECTION:
+    return;
   }
 }
 
@@ -467,23 +467,23 @@ nest::ConnectionManager::connect( const index sgid,
   const thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
-  ConnectionType connection_type = connection_required(source, target, target_thread);
+  ConnectionType connection_type = connection_required( source, target, target_thread );
   bool connected = true;
 
-  switch ( connection_type  )
+  switch ( connection_type )
   {
-    case CONNECT:
-      connect_( *source, *target, sgid, target_thread, syn_id, params );
-      break;
-    case CONNECT_FROM_DEVICE:
-      connect_from_device_( *source, *target, target_thread, syn_id, params );
-      break;
-    case CONNECT_TO_DEVICE:
-      connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
-      break;
-    case NO_CONNECTION:
-      connected = false;
-      break;
+  case CONNECT:
+    connect_( *source, *target, sgid, target_thread, syn_id, params );
+    break;
+  case CONNECT_FROM_DEVICE:
+    connect_from_device_( *source, *target, target_thread, syn_id, params );
+    break;
+  case CONNECT_TO_DEVICE:
+    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
+    break;
+  case NO_CONNECTION:
+    connected = false;
+    break;
   }
 
   return connected;

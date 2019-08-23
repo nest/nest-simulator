@@ -63,7 +63,6 @@ class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
 public:
-
   /**
    * Connection type.
    */

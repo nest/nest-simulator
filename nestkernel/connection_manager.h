@@ -63,6 +63,18 @@ class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
 public:
+
+  /**
+   * Connection type.
+   */
+  enum ConnectionType
+  {
+    CONNECT,
+    CONNECT_FROM_DEVICE,
+    CONNECT_TO_DEVICE,
+    NO_CONNECTION
+  };
+
   ConnectionManager();
   virtual ~ConnectionManager();
 
@@ -137,14 +149,14 @@ public:
 
   void disconnect( const thread tid, const synindex syn_id, const index sgid, const index tgid );
 
-
   /**
    * Check whether a connection between the given source and target
-   * nodes has to be established on the given thread with id tid.
+   * nodes can be established on the given thread with id tid.
    *
-   * \returns true if the connection should be made, false otherwise.
+   * \returns The type of connection as ConnectionType if the connection should
+   * be made, ConnectionType::NO_CONNECTION otherwise.
    */
-  bool connection_required( Node*& source, Node*& target, thread tid );
+  ConnectionType connection_required( Node*& source, Node*& target, thread tid );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_gid,

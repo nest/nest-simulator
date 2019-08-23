@@ -1174,8 +1174,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on tid.
-    const bool source_is_local = kernel().node_manager.is_local_node( source );
-    if ( target->one_node_per_process() && source_is_local )
+    if ( target->one_node_per_process() and source->has_proxies() )
     {
       return CONNECT_TO_DEVICE;
     }

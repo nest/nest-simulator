@@ -161,9 +161,9 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
-      #            The commit range might not properly reflect the history.
-      #            see https://github.com/travis-ci/travis-ci/issues/2668
+    # Note: BUG: Extracting the filenames may not work in all cases.
+    #            The commit range might not properly reflect the history.
+    #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
        file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
@@ -171,7 +171,9 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
        echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
-    #file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
+
+    # Note: uncomment the following line to static check *all* files, not just those that have changed. Warning: will run for a very long time (will time out on Travis CI instances)
+    # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
     # Set the command line arguments for the static code analysis script and execute it.
 

@@ -26,6 +26,8 @@
 // C++ includes:
 #include <vector>
 
+#include <sys/time.h>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 

@@ -93,7 +93,7 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /glif_cond << /initial_weight 80.0 /params << /tau_syn [ 1.0 ] /E_rev [ -85.0 ] >>
+   /glif_cond << /initial_weight 80.0 /params << /tau_syn [ 2.0 ] /E_rev [ -85.0 ] >>
                                   /receptor_type 1 >>
    /glif_psc << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>                                  

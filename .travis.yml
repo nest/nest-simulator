@@ -162,7 +162,8 @@ before_script:
 script:
    - set -o pipefail
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
-   - if [ "$xSTATIC_ANALYSIS" == "0" ]; then
+   - |
+     if [[ "$xSTATIC_ANALYSIS" == "0" ]]; then
         python extras/parse_travis_log.py travis_build.sh.log ;
      fi
 

@@ -172,8 +172,20 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
 
-    # Note: uncomment the following line to static check *all* files, not just those that have changed. Warning: will run for a very long time (will time out on Travis CI instances)
+    # Note: uncomment the following line to static check *all* files, not just those that have changed.
+    # Warning: will run for a very long time (will time out on Travis CI instances)
+
     # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
+
+    printf '%s\n' "$file_names" | while IFS= read -r line
+    do
+       for single_file_name in $file_names
+       do
+         echo "MSGBLD0095: File changed: $single_file_name"
+       done
+    done
+    echo "MSGBLD0100: Retrieving changed files completed."
+    echo
 
     # Set the command line arguments for the static code analysis script and execute it.
 
@@ -256,7 +268,7 @@ else
     make install
     echo "MSGBLD0280: Make install completed."
 
-    if [ "$xRUN_TESTSUITE" = "1" ]; then
+    if [ "$xRUN_TESTSUITE" == "1" ]; then
         echo
         echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
         echo "+               R U N   N E S T   T E S T S U I T E                           +"

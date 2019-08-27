@@ -54,8 +54,7 @@ create_layer( const DictionaryDatum& layer_dict )
 
   index layernode = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED(
-    *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
 
   return layernode;
 }
@@ -65,13 +64,11 @@ get_position( const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
   {
-    throw KernelException(
-      "GetPosition is currently implemented for local nodes only." );
+    throw KernelException( "GetPosition is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
-  AbstractLayer* const layer =
-    dynamic_cast< AbstractLayer* >( node->get_parent() );
+  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( not layer )
   {
     throw LayerExpected();
@@ -85,13 +82,11 @@ displacement( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
   {
-    throw KernelException(
-      "Displacement is currently implemented for local nodes only." );
+    throw KernelException( "Displacement is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
-  AbstractLayer* const layer =
-    dynamic_cast< AbstractLayer* >( node->get_parent() );
+  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( not layer )
   {
     throw LayerExpected();
@@ -105,13 +100,11 @@ distance( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
   {
-    throw KernelException(
-      "Distance is currently implemented for local nodes only." );
+    throw KernelException( "Distance is currently implemented for local nodes only." );
   }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
-  AbstractLayer* const layer =
-    dynamic_cast< AbstractLayer* >( node->get_parent() );
+  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
   if ( not layer )
   {
     throw LayerExpected();
@@ -127,8 +120,7 @@ create_mask( const DictionaryDatum& mask_dict )
 
   MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
 
-  ALL_ENTRIES_ACCESSED(
-    *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -182,12 +174,9 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 }
 
 ArrayDatum
-get_global_children( const index gid,
-  const MaskDatum& maskd,
-  const std::vector< double >& anchor )
+get_global_children( const index gid, const MaskDatum& maskd, const std::vector< double >& anchor )
 {
-  AbstractLayer* layer =
-    dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
   if ( layer == NULL )
   {
     throw LayerExpected();
@@ -197,8 +186,7 @@ get_global_children( const index gid,
 
   ArrayDatum result;
   result.reserve( gids.size() );
-  for ( std::vector< index >::iterator it = gids.begin(); it != gids.end();
-        ++it )
+  for ( std::vector< index >::iterator it = gids.begin(); it != gids.end(); ++it )
   {
     result.push_back( new IntegerDatum( *it ) );
   }
@@ -206,9 +194,7 @@ get_global_children( const index gid,
 }
 
 void
-connect_layers( const index source_gid,
-  const index target_gid,
-  const DictionaryDatum& connection_dict )
+connect_layers( const index source_gid, const index target_gid, const DictionaryDatum& connection_dict )
 {
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
@@ -216,10 +202,8 @@ connect_layers( const index source_gid,
     kernel().connection_manager.set_have_connections_changed( tid, true );
   }
 
-  AbstractLayer* source = dynamic_cast< AbstractLayer* >(
-    kernel().node_manager.get_node( source_gid ) );
-  AbstractLayer* target = dynamic_cast< AbstractLayer* >(
-    kernel().node_manager.get_node( target_gid ) );
+  AbstractLayer* source = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
+  AbstractLayer* target = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
   {
@@ -229,8 +213,7 @@ connect_layers( const index source_gid,
 
   ConnectionCreator connector( connection_dict );
 
-  ALL_ENTRIES_ACCESSED(
-    *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
   source->connect( *target, connector );
 }
@@ -242,8 +225,7 @@ create_parameter( const DictionaryDatum& param_dict )
 
   ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
 
-  ALL_ENTRIES_ACCESSED(
-    *param_dict, "topology::CreateParameter", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *param_dict, "topology::CreateParameter", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -258,8 +240,7 @@ get_value( const std::vector< double >& point, const ParameterDatum& param )
 void
 dump_layer_nodes( const index layer_gid, OstreamDatum& out )
 {
-  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >(
-    kernel().node_manager.get_node( layer_gid ) );
+  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
   {
@@ -268,14 +249,11 @@ dump_layer_nodes( const index layer_gid, OstreamDatum& out )
 }
 
 void
-dump_layer_connections( const Token& syn_model,
-  const index layer_gid,
-  OstreamDatum& out_file )
+dump_layer_connections( const Token& syn_model, const index layer_gid, OstreamDatum& out_file )
 {
   std::ostream& out = *out_file;
 
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >(
-    kernel().node_manager.get_node( layer_gid ) );
+  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
   if ( layer == NULL )
   {
     throw TypeMismatch( "any layer type", "something else" );
@@ -293,32 +271,27 @@ get_element( const index layer_gid, const TokenArray array )
   {
   case 2:
   {
-    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
     node_gids =
-      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ),
-        static_cast< index >( array[ 1 ] ) ) );
+      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ) ) );
   }
   break;
 
   case 3:
   {
-    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
     if ( layer == 0 )
     {
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
-    node_gids =
-      layer->get_nodes( Position< 3, int >( static_cast< index >( array[ 0 ] ),
-        static_cast< index >( array[ 1 ] ),
-        static_cast< index >( array[ 2 ] ) ) );
+    node_gids = layer->get_nodes( Position< 3, int >(
+      static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ), static_cast< index >( array[ 2 ] ) ) );
   }
   break;
 

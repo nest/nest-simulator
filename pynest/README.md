@@ -31,10 +31,10 @@ To force the usage of a specific Python version pass
 
 as an argument to `cmake`.
 
-
-To make the PyNEST module available to the Python interpreter, add the
-PyNEST installation path (without the final '/nest') to the PYTHONPATH
-environment variable.
+To make the PyNEST module available to the Python interpreter, source
+`nest_vars.sh` from the NEST installation directory (`source
+<nest-install-dir>/bin/nest_vars.sh`). This will add the PyNEST installation
+path to the PYTHONPATH environment variable.
 
 For help on a NEST object OBJ in PyNEST, type nest.help(OBJ). To find
 out more about NEST, type nest.helpdesk().

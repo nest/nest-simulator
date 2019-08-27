@@ -263,9 +263,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&,
-    const DictionaryDatum&,
-    bool clear_flags = true );
+  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -299,11 +297,10 @@ private:
    * essentially undetectable).
    */
   std::vector< std::vector< Node* > > nodes_vec_;
-  std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
-                     //!< use the waveform relaxation method
-  bool wfr_is_used_; //!< there is at least one node that uses
-                     //!< waveform relaxation
+  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
+                                                      //!< use the waveform relaxation method
+  bool wfr_is_used_;                                  //!< there is at least one node that uses
+                                                      //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes

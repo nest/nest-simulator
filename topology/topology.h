@@ -45,37 +45,24 @@ namespace nest
 {
 index create_layer( const DictionaryDatum& layer_dict );
 std::vector< double > get_position( const index node_gid );
-std::vector< double > displacement( const std::vector< double >& point,
-  const index node_gid );
+std::vector< double > displacement( const std::vector< double >& point, const index node_gid );
 double distance( const std::vector< double >& point, const index node_gid );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-ParameterDatum multiply_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum divide_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum add_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ParameterDatum subtract_parameter( const ParameterDatum& param1,
-  const ParameterDatum& param2 );
-ArrayDatum get_global_children( const index gid,
-  const MaskDatum& maskd,
-  const std::vector< double >& anchor );
-void connect_layers( const index source_gid,
-  const index target_gid,
-  const DictionaryDatum& dict );
+ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ArrayDatum get_global_children( const index gid, const MaskDatum& maskd, const std::vector< double >& anchor );
+void connect_layers( const index source_gid, const index target_gid, const DictionaryDatum& dict );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
-double get_value( const std::vector< double >& point,
-  const ParameterDatum& param );
+double get_value( const std::vector< double >& point, const ParameterDatum& param );
 void dump_layer_nodes( const index layer_gid, OstreamDatum& out );
-void dump_layer_connections( const Token& syn_model,
-  const index layer_gid,
-  OstreamDatum& out_file );
-std::vector< index > get_element( const index layer_gid,
-  const TokenArray array );
+void dump_layer_connections( const Token& syn_model, const index layer_gid, OstreamDatum& out_file );
+std::vector< index > get_element( const index layer_gid, const TokenArray array );
 }
 
 #endif /* TOPOLOGY_H */

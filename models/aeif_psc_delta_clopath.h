@@ -55,8 +55,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
 @ingroup Neurons
@@ -229,8 +228,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
+  friend int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< aeif_psc_delta_clopath >;
@@ -246,17 +244,17 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;       //!< Leak Conductance in nS
-    double C_m;       //!< Membrane Capacitance in pF
-    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;   //!< Slope faktor in ms
-    double tau_w;     //!< adaptation time-constant in ms
-    double tau_z;     //!< adaptation time-constant in ms
-    double tau_V_th;  //!< adaptive threshold time-constant in ms
-    double V_th_max;  //!< value of V_th afer a spike in mV
-    double V_th_rest; //!< resting value of V_th in mV
-    double tau_plus;  //!< time constant of u_bar_plus in ms
-    double tau_minus; //!< time constant of u_bar_minus in ms
+    double g_L;         //!< Leak Conductance in nS
+    double C_m;         //!< Membrane Capacitance in pF
+    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;     //!< Slope faktor in ms
+    double tau_w;       //!< adaptation time-constant in ms
+    double tau_z;       //!< adaptation time-constant in ms
+    double tau_V_th;    //!< adaptive threshold time-constant in ms
+    double V_th_max;    //!< value of V_th afer a spike in mV
+    double V_th_rest;   //!< resting value of V_th in mV
+    double tau_plus;    //!< time constant of u_bar_plus in ms
+    double tau_minus;   //!< time constant of u_bar_minus in ms
     double tau_bar_bar; //!< time constant of u_bar_bar in ms
     double a;           //!< Subthreshold adaptation in nS.
     double b;           //!< Spike-triggered adaptation in pA
@@ -323,9 +321,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&,
-      aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta_clopath& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_delta_clopath > logger_;
@@ -396,10 +393,7 @@ public:
 };
 
 inline port
-aeif_psc_delta_clopath::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_psc_delta_clopath::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -428,8 +422,7 @@ aeif_psc_delta_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_delta_clopath::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_psc_delta_clopath::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

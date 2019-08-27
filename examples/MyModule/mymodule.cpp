@@ -111,8 +111,7 @@ mynest::MyModule::init( SLIInterpreter* i )
   /* Register a neuron or device model.
      Give node type as template argument and the name as second argument.
   */
-  nest::kernel().model_manager.register_node_model< pif_psc_alpha >(
-    "pif_psc_alpha" );
+  nest::kernel().model_manager.register_node_model< pif_psc_alpha >( "pif_psc_alpha" );
 
   /* Register a synapse type.
      Give synapse type as template argument and the name as second argument.
@@ -125,12 +124,10 @@ mynest::MyModule::init( SLIInterpreter* i )
      even further, but limits the number of available rports. Please see
      Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
   */
-  nest::kernel()
-    .model_manager.register_connection_model< DropOddSpikeConnection< nest::
-        TargetIdentifierPtrRport > >( "drop_odd_synapse" );
+  nest::kernel().model_manager.register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
+    "drop_odd_synapse" );
 
   // Register connection rule.
-  nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >(
-    "step_pattern" );
+  nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >( "step_pattern" );
 
 } // MyModule::init()

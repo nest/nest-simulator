@@ -40,8 +40,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::RecordablesMap< nest::iaf_psc_alpha >
-  nest::iaf_psc_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
 namespace nest
 {
@@ -187,9 +186,7 @@ iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
   {
@@ -318,8 +315,7 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -327,9 +323,8 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_
-        + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_
-        + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_
+        + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -390,15 +385,11 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      s );
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
   else
   {
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      s );
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
   }
 }
 
@@ -410,9 +401,7 @@ iaf_psc_alpha::handle( CurrentEvent& e )
   const double I = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

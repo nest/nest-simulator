@@ -75,16 +75,15 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
   long vtgid;
   if ( updateValue< long >( d, names::vt, vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >( kernel().node_manager.get_node(
-      vtgid, kernel().vp_manager.get_thread_id() ) );
+    vt_ = dynamic_cast< volume_transmitter* >(
+      kernel().node_manager.get_node( vtgid, kernel().vp_manager.get_thread_id() ) );
     if ( vt_ == 0 )
     {
       throw BadProperty( "Dopamine source must be volume transmitter" );
@@ -106,8 +105,7 @@ STDPDopaCommonProperties::get_node()
 {
   if ( vt_ == 0 )
   {
-    throw BadProperty(
-      "No volume transmitter has been assigned to the dopamine synapse." );
+    throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
   }
   else
   {

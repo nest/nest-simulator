@@ -34,8 +34,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_()
   , mask_()
   , kernel_()
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
-      "static_synapse" ) )
+  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_()
   , delay_()
   , dummy_param_dicts_()
@@ -85,8 +84,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     {
       const std::string syn_name = getValue< std::string >( dit->second );
 
-      const Token synmodel =
-        kernel().model_manager.get_synapsedict()->lookup( syn_name );
+      const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
       if ( synmodel.empty() )
       {
@@ -113,18 +111,15 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else
     {
-      throw BadProperty( "ConnectLayers cannot handle parameter '"
-        + dit->first.toString() + "'." );
+      throw BadProperty( "ConnectLayers cannot handle parameter '" + dit->first.toString() + "'." );
     }
   }
 
   // Set default weight and delay if not given explicitly
-  DictionaryDatum syn_defaults =
-    kernel().model_manager.get_connector_defaults( synapse_model_ );
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_ );
   if ( not weight_.valid() )
   {
-    weight_ =
-      TopologyModule::create_parameter( ( *syn_defaults )[ names::weight ] );
+    weight_ = TopologyModule::create_parameter( ( *syn_defaults )[ names::weight ] );
   }
   if ( not delay_.valid() )
   {
@@ -134,8 +129,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else
     {
-      delay_ =
-        TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+      delay_ = TopologyModule::create_parameter( ( *syn_defaults )[ names::delay ] );
     }
   }
 
@@ -170,8 +164,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
   {
-    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) =
-      new Dictionary();
+    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
   }
 }
 

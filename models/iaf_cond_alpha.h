@@ -351,10 +351,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -382,8 +379,7 @@ iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -44,9 +44,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-librandom::BinomialRandomDev::BinomialRandomDev( RngPtr r_s,
-  double p_s,
-  unsigned int n_s )
+librandom::BinomialRandomDev::BinomialRandomDev( RngPtr r_s, double p_s, unsigned int n_s )
   : RandomDev( r_s )
   , poisson_dev_( r_s )
   , exp_dev_( r_s )
@@ -121,8 +119,7 @@ librandom::BinomialRandomDev::ldev( RngPtr rng ) const
     Y = n_ - X;
 
     // 12
-    if ( V < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ]
-        + f_[ Y + 1 ] )
+    if ( V < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ] + f_[ Y + 1 ] )
     {
       not_finished = 1;
     }
@@ -229,12 +226,10 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
   // Binomial numbers are generated from Poisson numbers.
   // To avoid an infinite loop, we limit n to slightly less than
   // the maximum possible value for Poisson numbers
-  const long N_MAX =
-    static_cast< long >( 0.998 * std::numeric_limits< long >::max() );
+  const long N_MAX = static_cast< long >( 0.998 * std::numeric_limits< long >::max() );
   if ( n_new > N_MAX )
   {
-    throw BadParameterValue( String::compose(
-      "Binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
+    throw BadParameterValue( String::compose( "Binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
   }
   if ( n_updated || p_updated )
   {

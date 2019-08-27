@@ -213,10 +213,7 @@ private:
 };
 
 inline port
-step_current_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+step_current_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -227,8 +224,7 @@ step_current_generator::send_test_event( Node& target,
 }
 
 inline port
-step_current_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

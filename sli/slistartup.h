@@ -68,8 +68,7 @@ class SLIStartup : public SLIModule
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string
-  checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
+  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
   Token targs;
   int verbosity_;

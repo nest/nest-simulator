@@ -173,12 +173,12 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th; //!< Threshold Potential in mV
-    double g_L;  //!< Leak Conductance in nS
-    double C_m;  //!< Membrane Capacitance in pF
-    double E_ex; //!< Excitatory reversal Potential in mV
-    double E_in; //!< Inhibitory reversal Potential in mV
-    double E_L;  //!< Leak reversal Potential (a.k.a. resting potential) in mV
+    double V_th;     //!< Threshold Potential in mV
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_ex;     //!< Excitatory reversal Potential in mV
+    double E_in;     //!< Inhibitory reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (a.k.a. resting potential) in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
@@ -363,10 +363,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_chxk_2008::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -395,8 +392,7 @@ iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

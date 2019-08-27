@@ -124,14 +124,11 @@ private:
     void define( MaskedLayer< D >* );
     void define( std::vector< std::pair< Position< D >, index > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin(
-      const Position< D >& pos ) const;
+    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
     typename Ntree< D, index >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    end() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
@@ -158,12 +155,7 @@ private:
   template < int D >
   void divergent_connect_( Layer< D >& source, Layer< D >& target );
 
-  void connect_( index s,
-    Node* target,
-    thread target_thread,
-    double w,
-    double d,
-    index syn );
+  void connect_( index s, Node* target, thread target_thread, double w, double d, index syn );
 
   /**
    * Calculate parameter values for this position.
@@ -171,10 +163,7 @@ private:
    * TODO: remove when all four connection variants are refactored
    */
   template < int D >
-  void get_parameters_( const Position< D >& pos,
-    librandom::RngPtr rng,
-    double& weight,
-    double& delay );
+  void get_parameters_( const Position< D >& pos, librandom::RngPtr rng, double& weight, double& delay );
 
   ConnectionType type_;
   bool allow_autapses_;
@@ -194,12 +183,7 @@ private:
 };
 
 inline void
-ConnectionCreator::connect_( index s,
-  Node* target,
-  thread target_thread,
-  double w,
-  double d,
-  index syn )
+ConnectionCreator::connect_( index s, Node* target, thread target_thread, double w, double d, index syn )
 {
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
@@ -209,13 +193,7 @@ ConnectionCreator::connect_( index s,
     if ( tid == target_thread )
     {
       // TODO implement in terms of nest-api
-      kernel().connection_manager.connect( s,
-        target,
-        target_thread,
-        syn,
-        dummy_param_dicts_[ target_thread ],
-        d,
-        w );
+      kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_dicts_[ target_thread ], d, w );
     }
   }
 }

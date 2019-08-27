@@ -76,10 +76,7 @@ TokenArrayObj::~TokenArrayObj()
 }
 
 void
-TokenArrayObj::allocate( size_t new_s,
-  size_t new_c,
-  size_t new_a,
-  const Token& t )
+TokenArrayObj::allocate( size_t new_s, size_t new_c, size_t new_a, const Token& t )
 {
   // This resize function is private and does an unconditional resize, using
   // all supplied parameters.
@@ -136,8 +133,7 @@ TokenArrayObj::resize( size_t s, size_t alloc, const Token& t )
 {
   alloc_block_size = ( alloc == 0 ) ? alloc_block_size : alloc;
 
-  if ( ( s != size() && ( s != 0 ) )
-    || ( size() == 0 && alloc_block_size != 0 ) )
+  if ( ( s != size() && ( s != 0 ) ) || ( size() == 0 && alloc_block_size != 0 ) )
   {
     allocate( s, s + alloc_block_size, alloc_block_size, t );
   }
@@ -393,7 +389,7 @@ TokenArrayObj::insert( size_t i, size_t n, const Token& t )
 
   reserve( size() + n ); // reallocate if necessary
 
-  Token* pos = p + i; // pointer to element i (starting with 0)
+  Token* pos = p + i;                      // pointer to element i (starting with 0)
   Token* from = begin_of_free_storage - 1; // first Token which has to be moved
   Token* to = from + n;                    // new location of first Token
 
@@ -416,10 +412,10 @@ TokenArrayObj::insert( size_t i, size_t n, const Token& t )
 void
 TokenArrayObj::insert_move( size_t i, TokenArrayObj& a )
 {
-  reserve( size() + a.size() ); // reallocate if necessary
+  reserve( size() + a.size() );                                      // reallocate if necessary
   assert( begin_of_free_storage + a.size() <= end_of_free_storage ); // check
 
-  Token* pos = p + i; // pointer to element i (starting with 0)
+  Token* pos = p + i;                      // pointer to element i (starting with 0)
   Token* from = begin_of_free_storage - 1; // first Token which has to be moved
   Token* to = from + a.size();             // new location of first Token
 
@@ -489,10 +485,10 @@ TokenArrayObj::assign( const TokenArrayObj& a, size_t i, size_t n )
 void
 TokenArrayObj::insert_move( size_t i, Token& t )
 {
-  reserve( size() + 1 ); // reallocate if necessary
+  reserve( size() + 1 );                                      // reallocate if necessary
   assert( begin_of_free_storage + 1 <= end_of_free_storage ); // check
 
-  Token* pos = p + i; // pointer to element i (starting with 0)
+  Token* pos = p + i;                      // pointer to element i (starting with 0)
   Token* from = begin_of_free_storage - 1; // first Token which has to be moved
   Token* to = from + 1;                    // new location of first Token
 
@@ -598,7 +594,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
 void
 TokenArrayObj::append_move( TokenArrayObj& a )
 {
-  reserve( size() + a.size() ); // reallocate if necessary
+  reserve( size() + a.size() );                                      // reallocate if necessary
   assert( begin_of_free_storage + a.size() <= end_of_free_storage ); // check
 
   Token* from = a.p;
@@ -672,23 +668,19 @@ TokenArrayObj::valid( void ) const
 
   if ( begin_of_free_storage == NULL )
   {
-    std::cerr << "TokenArrayObj::valid: begin of free storage pointer missing!"
-              << std::endl;
+    std::cerr << "TokenArrayObj::valid: begin of free storage pointer missing!" << std::endl;
     return false;
   }
 
   if ( end_of_free_storage == NULL )
   {
-    std::cerr << "TokenArrayObj::valid: end of free storage pointer missing!"
-              << std::endl;
+    std::cerr << "TokenArrayObj::valid: end of free storage pointer missing!" << std::endl;
     return false;
   }
 
   if ( begin_of_free_storage > end_of_free_storage )
   {
-    std::cerr
-      << "TokenArrayObj::valid: begin_of_free_storage  > end_of_free_storage !"
-      << std::endl;
+    std::cerr << "TokenArrayObj::valid: begin_of_free_storage  > end_of_free_storage !" << std::endl;
     return false;
   }
 

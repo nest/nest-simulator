@@ -60,7 +60,7 @@ LocalNodeListBase< LocalNodeListIterator >::begin() const
   do
   {
     assert( not current_subnet->local_empty() );
-    node = current_subnet->local_begin(); // leftmost in current subnet
+    node = current_subnet->local_begin();              // leftmost in current subnet
     current_subnet = dynamic_cast< Subnet* >( *node ); // attempt descend
   } while ( current_subnet and not current_subnet->local_empty() );
 
@@ -167,7 +167,7 @@ LocalNodeListBase< LocalLeafListIterator >::begin() const
   do
   {
     assert( not current_subnet->local_empty() );
-    node = current_subnet->local_begin(); // leftmost in current subnet
+    node = current_subnet->local_begin();              // leftmost in current subnet
     current_subnet = dynamic_cast< Subnet* >( *node ); // attempt descend
   } while ( current_subnet and not current_subnet->local_empty() );
 

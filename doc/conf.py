@@ -41,10 +41,7 @@ import pip
 import subprocess
 
 # import shlex
-# import recommonmark
 
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -55,32 +52,11 @@ sys.path.insert(0, os.path.abspath('./..'))
 sys.path.insert(0, os.path.abspath('./../topology'))
 sys.path.insert(0, os.path.abspath('./../pynest/nest'))
 
-source_suffix = ['.rst', '.md']
-source_parsers = {
-    '.md': CommonMarkParser
-}
+source_suffix = ['.rst']
 
-# -- Checking for pandoc --------------------------------------------------
-
-try:
-    print(check_output(['pandoc', '--version']))
-except CalledProcessError:
-    print("No pandoc on %s" % os.environ['PATH'])
-
-
-for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
-    for f in files:
-        if f.endswith('.md'):
-            ff = os.path.join(dirpath, f)
-            print(ff)
-            fb = os.path.basename(f)[:-3]
-            print(fb)
-            fo = fb + ".rst"
-            args = ['pandoc', ff, '-o', fo]
-            # check_output(args)
-            # check_output(args)
 
 # -- General configuration ------------------------------------------------
+
 
 # import errors on libraries that depend on C modules
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
@@ -90,7 +66,7 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
-            return MagicMock()
+        return MagicMock()
 
 
 MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
@@ -99,21 +75,6 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-# extensions = [
-#    'sphinx.ext.autodoc',
-#    'sphinx.ext.napoleon',
-#    'sphinx.ext.autosummary',
-#    'sphinx.ext.doctest',
-#    'sphinx.ext.intersphinx',
-#    'sphinx.ext.todo',
-#    'sphinx.ext.coverage',
-#    'sphinx.ext.mathjax',
-#    'sphinx_gallery.gen_gallery',
-# ]
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -141,11 +102,7 @@ breathe_default_project = "EXTRACT_MODELS"
 
 subprocess.call('doxygen', shell=True)
 
-mathjax_path = \
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-              ".js?config=TeX" \
-              "-AMS-MML_HTMLorMML"
-
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -187,7 +144,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'manni'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -195,6 +152,9 @@ todo_include_todos = False
 # add numbered figure link
 numfig = True
 
+numfig_secnum_depth = (2)
+numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
+                 'code-block': 'Code Block %s'}
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -229,16 +189,9 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 
 def setup(app):
-    # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
+    app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
-    app.add_config_value('recommonmark_config', {
-            'auto_toc_tree_section': 'Contents',
-            'enable_inline_math': True,
-            'enable_auto_doc_ref': True,
-            'enable_eval_rst': True
-            }, True)
-    app.add_transform(AutoStructify)
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -265,8 +218,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NESTsimulator.tex', u'NEST simulator Documentation',
-     u'steffengraber', 'manual'),
+    (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
+     u'NEST Developer Community', 'manual'),
 ]
 
 

@@ -96,8 +96,8 @@ g_Na      nS      Sodium peak conductance
 E_K       mV      Potassium reversal potential
 g_K       nS      Potassium peak conductance
 Act_m     real    Activation variable m
-Act_h     real    Activation variable h
-Inact_n   real    Inactivation variable n
+Inact_h   real    Inactivation variable h
+Act_n     real    Activation variable n
 I_e       pA      External input current
 ========  ======  ============================================================
 \endverbatim
@@ -323,10 +323,7 @@ private:
 
 
 inline port
-hh_psc_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

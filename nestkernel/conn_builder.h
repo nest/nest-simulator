@@ -82,10 +82,7 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  ConnBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
   virtual ~ConnBuilder();
 
   index
@@ -132,8 +129,7 @@ protected:
   virtual void
   sp_connect_()
   {
-    throw NotImplemented(
-      "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
   }
   virtual void
   disconnect_()
@@ -143,8 +139,7 @@ protected:
   virtual void
   sp_disconnect_()
   {
-    throw NotImplemented(
-      "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
   }
 
   //! Create connection between given nodes, fill parameter values
@@ -308,10 +303,7 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedInDegreeBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -324,10 +316,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedOutDegreeBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -339,10 +328,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedTotalNumberBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -354,10 +340,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  BernoulliBuilder( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -433,8 +416,7 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 inline void
 ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
 {
-  for ( std::vector< ConnParameter* >::iterator it =
-          parameters_requiring_skipping_.begin();
+  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
         ++it )
   {

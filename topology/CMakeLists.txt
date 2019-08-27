@@ -67,9 +67,6 @@ install( TARGETS topology
 install( FILES sli/topology-interface.sli
     DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
-install( FILES doc/Topology_UserManual.pdf
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
-
 file( GLOB topo_unittests "testsuite/unittests/*" )
 install( FILES ${topo_unittests}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests

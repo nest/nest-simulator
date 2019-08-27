@@ -276,8 +276,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 
   assert( connector != 0 );
 
-  Connector< ConnectionT >* vc =
-    static_cast< Connector< ConnectionT >* >( connector );
+  Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
   vc->push_back( connection );
 }
 

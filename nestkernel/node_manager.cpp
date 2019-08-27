@@ -221,27 +221,13 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
       local_nodes_.at( t ).reserve_additional( max_new_per_thread );
       model.reserve_additional( t, max_new_per_thread );
 
-      // TODO480: temporal manual implementation to sort out logic
       // Need to find smallest gid with:
-      //   - gid local to this thread
+      //   - gid local to this vp
       //   - gid >= min_gid
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
       const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
 
-      size_t gid = 0;
-      if ( min_gid_vp == vp )
-      {
-        gid = min_gid;
-      }
-      else
-      {
-        gid = ( min_gid / num_vps ) * num_vps + vp;
-        // bad hack, need to improve ...
-        if ( gid < min_gid )
-        {
-          gid += num_vps;
-        }
-      }
+      size_t gid = min_gid + ( num_vps + vp - min_gid_vp ) % num_vps;
 
       while ( gid <= max_gid )
       {

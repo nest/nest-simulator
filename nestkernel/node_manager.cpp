@@ -457,23 +457,11 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
-// TODO480: I wonder if the need to loop over threads can be a performance
-// bottleneck. BUT: I think we only need to check whether the node is local
-// TO THE THREAD, and then we do not need to loop. Also, if we need to check
-// if a node is local to our MPI process, we can do this just by computation,
-// possibly followed by a test (assertion should suffice)  that the node is
-// really there.
 bool
 NodeManager::is_local_gid( index gid ) const
 {
-  bool is_local = false;
-  thread num_threads = kernel().vp_manager.get_num_threads();
-  for ( thread t = 0; t < num_threads; ++t )
-  {
-    const bool not_a_proxy = local_nodes_[ t ].get_node_by_gid( gid ) != 0;
-    is_local = is_local or not_a_proxy;
-  }
-  return is_local;
+  const thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
+  return kernel().vp_manager.is_local_vp( vp );
 }
 
 index

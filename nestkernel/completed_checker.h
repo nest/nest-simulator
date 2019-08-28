@@ -74,12 +74,12 @@ public:
   bool all_true() const;
 
   /**
-   * Returns whether any elements are false. Waits for all threads.
+   * Returns whether any elements are false.
    */
   bool any_false() const;
 
   /**
-   * Returns whether any elements are true. Waits for all threads.
+   * Returns whether any elements are true.
    */
   bool any_true() const;
 

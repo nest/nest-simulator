@@ -1,0 +1,53 @@
+/*
+ *  issue-1242.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1242
+
+Synopsis: (issue-1242) run -> NEST exits if test fails
+
+Description:
+Tests that a connection from a node without proxies to 
+a node without proxies that has global targets throws an error
+(instead of failing silently or resulting in inconsistent results).
+
+Author: Jan Hahne
+FirstVersion: July 2019
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Check if such a connection results in an exception
+{
+  ResetKernel
+
+  /spike_generator Create /sg Set
+  /volume_transmitter Create /vt Set
+  [sg] [vt] Connect
+}
+fail_or_die
+
+endusing

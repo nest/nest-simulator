@@ -101,6 +101,12 @@ public:
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
 
+  bool
+  has_proxies() const
+  {
+    return false;
+  }
+
   // port send_test_event( Node&, rport, synindex, bool );
   void
   sends_secondary_event( DelayedRateConnectionEvent& )

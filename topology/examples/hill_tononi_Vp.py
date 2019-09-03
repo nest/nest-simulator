@@ -108,8 +108,8 @@
 # ! A network models has two essential components: *populations* and
 # ! *projections*.  We first use NEST's ``CopyModel()`` mechanism to
 # ! create specific models for all populations and subpopulations in
-# ! the network, and then create the populations using the Topology
-# ! modules ``CreateLayer()`` function.
+# ! the network, and then create the populations using the
+# ! ``Create()`` function.
 # !
 # ! We use a two-stage process to create the connections, mainly
 # ! because the same configurations are required for a number of
@@ -144,34 +144,29 @@
 # ! **Note:** By default, the script does not show any graphics.
 # ! Set ``SHOW_FIGURES`` to ``True`` to activate graphics.
 
-# ! This example uses the function GetLeaves, which is deprecated. A
-# ! deprecation warning is therefore issued. For details about deprecated
-# ! functions, see documentation.
+from pprint import pprint
+import numpy as np
+import matplotlib.pyplot as plt
 
-
-import pylab
 SHOW_FIGURES = False
 
-if not SHOW_FIGURES:
-    pylab_show = pylab.show
+if SHOW_FIGURES:
+    plt.ion()
+else:
+    plt_show = plt.show
 
     def nop(s=None):
         pass
 
-    pylab.show = nop
-else:
-    pylab.ion()
+    plt.show = nop
 
 # ! Introduction
 # !=============
 # ! This tutorial gives a brief introduction to the ConnPlotter
-# ! toolbox.  It is by no means complete.
+# ! toolbox. It is by no means complete.
 
 # ! Load pynest
 import nest
-
-# ! Load NEST Topoplogy module (NEST 2.2)
-import nest.topology as topo
 
 # ! Make sure we start with a clean slate, even if we re-run the script
 # ! in the same Python session.
@@ -198,6 +193,7 @@ import math
 # ! - Simulation duration ``simtime``; actual simulation is split into
 # !   intervals of ``sim_interval`` length, so that the network state
 # !   can be visualized in those intervals. Times are in ms.
+# ! - Periodic boundary conditions, ``edge_wrap``.
 Params = {'N': 40,
           'visSize': 8.0,
           'f_dg': 2.0,
@@ -206,7 +202,8 @@ Params = {'N': 40,
           'retDC': 30.0,
           'retAC': 30.0,
           'simtime': 100.0,
-          'sim_interval': 5.0
+          'sim_interval': 1.0,
+          'edge_wrap': True
           }
 
 # ! Neuron Models
@@ -318,20 +315,7 @@ nest.CopyModel('NeuronModel', 'ThalamicNeuron',
 # !   retinal nodes and are set directly below.
 # ! - The temporal phase ``phase`` of each node depends on its position in
 # !   the grating and can only be assigned after the retinal layer has
-# !   been created. We therefore specify a function for initalizing the
-# !   ``phase``. This function will be called for each node.
-def phaseInit(pos, lam, alpha):
-    '''Initializer function for phase of drifting grating nodes.
-
-       pos  : position (x,y) of node, in degree
-       lam  : wavelength of grating, in degree
-       alpha: angle of grating in radian, zero is horizontal
-
-       Returns number to be used as phase of sinusoidal Poisson generator.
-    '''
-    return 360.0 / lam * (math.cos(alpha) * pos[0] + math.sin(alpha) * pos[1])
-
-
+# !   been created.
 nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
                params={'amplitude': Params['retAC'],
                        'rate': Params['retDC'],
@@ -342,7 +326,7 @@ nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
 # ! Recording nodes
 # ! ---------------
 
-# ! We use the new ``multimeter`` device for recording from the model
+# ! We use the ``multimeter`` device for recording from the model
 # ! neurons. At present, ``iaf_cond_alpha`` is one of few models
 # ! supporting ``multimeter`` recording.  Support for more models will
 # ! be added soon; until then, you need to use ``voltmeter`` to record
@@ -361,91 +345,84 @@ nest.CopyModel('multimeter', 'RecordingNode',
 # ! Populations
 # ! ===========
 
-# ! We now create the neuron populations in the model, again in the
-# ! form of Python dictionaries. We define them in order from eye via
-# ! thalamus to cortex.
+# ! We now create the neuron populations in the model. We define
+# ! them in order from eye via thalamus to cortex.
 # !
-# ! We first define a dictionary defining common properties for all
-# ! populations
-layerProps = {'rows': Params['N'],
-              'columns': Params['N'],
-              'extent': [Params['visSize'], Params['visSize']],
-              'edge_wrap': True}
-# ! This dictionary does not yet specify the elements to put into the
-# ! layer, since they will differ from layer to layer. We will add them
-# ! below by updating the ``'elements'`` dictionary entry for each
-# ! population.
+# ! We first define a spatial grid defining common positions and
+# ! parameters for all populations
+layerGrid = nest.spatial.grid(rows=Params['N'],
+                              columns=Params['N'],
+                              extent=[Params['visSize'], Params['visSize']],
+                              edge_wrap=Params['edge_wrap'])
+# ! We can pass this object to the ``positions`` argument in ``Create``
+# ! to define the positions of the neurons.
 
 # ! Retina
 # ! ------
-layerProps.update({'elements': 'RetinaNode'})
-retina = topo.CreateLayer(layerProps)
+retina = nest.Create('RetinaNode', positions=layerGrid)
 
-# ! Now set phases of retinal oscillators; we use a list comprehension instead
-# ! of a loop.
-[nest.SetStatus([n], {"phase": phaseInit(topo.GetPosition([n])[0],
-                                         Params["lambda_dg"],
-                                         Params["phi_dg"])})
- for n in retina]  # TODO481 : Change this when GIDCollection gets a Set method
+# ! Now set phases of retinal oscillators; we create a Parameter
+# ! which represents the phase based on the spatial properties of
+# ! the neuron.
+
+retina_phase = 360.0 / Params['lambda_dg'] * (math.cos(Params['phi_dg']) * nest.spatial.pos.x +
+                                              math.sin(Params['phi_dg']) * nest.spatial.pos.y)
+retina.set('phase', retina_phase)
 
 # ! Thalamus
 # ! --------
 
 # ! We first introduce specific neuron models for the thalamic relay
 # ! cells and interneurons. These have identical properties, but by
-# ! treating them as different models, we can address them specifically
+# ! treating them as different populations, we can address them specifically
 # ! when building connections.
-# !
-# ! We use a list comprehension to do the model copies.
-[nest.CopyModel('ThalamicNeuron', SpecificModel) for SpecificModel in
- ('TpRelay', 'TpInter')]
+for model_name in ('TpRelay', 'TpInter'):
+    nest.CopyModel('ThalamicNeuron', model_name)
 
-# ! Now we can create the layer, with one relay cell and one
-# ! interneuron per location:
-# TODO481 : Set up one layer for each element
-layerProps.update({'elements': ['TpRelay', 'TpInter']})
-Tp = topo.CreateLayer(layerProps)
+# ! Now we can create the layers, one with relay cells,
+# ! and one with interneurons:
+TpRelay = nest.Create('TpRelay', positions=layerGrid)
+TpInter = nest.Create('TpInter', positions=layerGrid)
 
 # ! Reticular nucleus
 # ! -----------------
-# ! We follow the same approach as above, even though we have only a
-# ! single neuron in each location.
-[nest.CopyModel('ThalamicNeuron', SpecificModel) for SpecificModel in
- ('RpNeuron',)]
-layerProps.update({'elements': 'RpNeuron'})
-Rp = topo.CreateLayer(layerProps)
+nest.CopyModel('ThalamicNeuron', 'RpNeuron')
+Rp = nest.Create('RpNeuron', positions=layerGrid)
 
 # ! Primary visual cortex
 # ! ---------------------
 
-# ! We follow again the same approach. We differentiate neuron types
-# ! between layers and between pyramidal cells and interneurons. At
-# ! each location, there are two pyramidal cells and one interneuron in
-# ! each of layers 2-3, 4, and 5-6. Finally, we need to differentiate
-# ! between vertically and horizontally tuned populations. When creating
-# ! the populations, we create the vertically and the horizontally
-# ! tuned populations as separate populations.
+# ! We follow again the same approach as with Thalamus. We differentiate
+# ! neuron types between layers and between pyramidal cells and
+# ! interneurons. We have two layers for pyramidal cells, and two layers for
+# ! interneurons for each of layers 2-3, 4, and 5-6. Finally, we need to
+# ! differentiate between vertically and horizontally tuned populations.
+# ! When creating the populations, we create the vertically and the
+# ! horizontally tuned populations as separate dictionaries holding the
+# ! layers.
+for layer in ('L23', 'L4', 'L56'):
+    nest.CopyModel('CtxExNeuron', layer + 'pyr')
+for layer in ('L23', 'L4', 'L56'):
+    nest.CopyModel('CtxInNeuron', layer + 'in')
 
-# ! We use list comprehesions to create all neuron types:
-[nest.CopyModel('CtxExNeuron', layer + 'pyr')
- for layer in ('L23', 'L4', 'L56')]
-[nest.CopyModel('CtxInNeuron', layer + 'in')
- for layer in ('L23', 'L4', 'L56')]
+name_dict = {'L23pyr': 2, 'L23in': 1,
+             'L4pyr': 2, 'L4in': 1,
+             'L56pyr': 2, 'L56in': 1}
 
 # ! Now we can create the populations, suffixes h and v indicate tuning
-# TODO481 : Set up one layer for each element
-layerProps.update({'elements': ['L23pyr', 2, 'L23in', 1,
-                                'L4pyr', 2, 'L4in', 1,
-                                'L56pyr', 2, 'L56in', 1]})
-Vp_h = topo.CreateLayer(layerProps)
-Vp_v = topo.CreateLayer(layerProps)
+Vp_h_layers = {}
+Vp_v_layers = {}
+for layer_name, num_layers in name_dict.items():
+    for i in range(num_layers):
+        Vp_h_layers['{}_{}'.format(layer_name, i)] = nest.Create(layer_name, positions=layerGrid)
+        Vp_v_layers['{}_{}'.format(layer_name, i)] = nest.Create(layer_name, positions=layerGrid)
 
 # ! Collect all populations
 # ! -----------------------
 
 # ! For reference purposes, e.g., printing, we collect all populations
 # ! in a tuple:
-populations = (retina, Tp, Rp, Vp_h, Vp_v)
+populations = (retina, TpRelay, TpInter, Rp) + tuple(Vp_h_layers.values()) + tuple(Vp_v_layers.values())
 
 # ! Inspection
 # ! ----------
@@ -453,11 +430,10 @@ populations = (retina, Tp, Rp, Vp_h, Vp_v)
 # ! We can now look at the network using `PrintNodes`:
 nest.PrintNodes()
 
-# ! We can also try to plot a single layer in a network. For
-# ! simplicity, we use Rp, which has only a single neuron per position.
-topo.PlotLayer(Rp)
-pylab.title('Layer Rp')
-pylab.show()
+# ! We can also try to plot a single layer in a network. All layers have
+# ! equal positions of the nodes.
+nest.PlotLayer(Rp)
+plt.title('Layer Rp')
 
 # ! Synapse models
 # ! ==============
@@ -504,6 +480,7 @@ nest.CopyModel('static_synapse', 'GABA_A')
 # ! both populations. We follow the subdivision of connections as in
 # ! the Hill & Tononi paper.
 # !
+# TODO: Rewrite this note.
 # ! **Note:** Hill & Tononi state that their model spans 8 degrees of
 # ! visual angle and stimuli are specified according to this. On the
 # ! other hand, all connection patterns are defined in terms of cell
@@ -524,29 +501,28 @@ ctConnections = []
 # ! *Note:* "Horizontal" means "within the same cortical layer" in this
 # ! case.
 # !
-# ! We first define a dictionary with the (most) common properties for
+# ! We first define dictionaries with the (most) common properties for
 # ! horizontal intralaminar connection. We then create copies in which
 # ! we adapt those values that need adapting, and
-horIntraBase = {"connection_type": "divergent",
-                "synapse_model": "AMPA",
-                "mask": {"circular": {"radius": 12.0 * dpc}},
-                "kernel": {"gaussian": {"p_center": 0.05, "sigma": 7.5 * dpc}},
-                "weights": 1.0,
-                "delays": {"uniform": {"min": 1.75, "max": 2.25}}}
+horIntra_conn_spec = {"rule": "pairwise_bernoulli",
+                      "mask": {"circular": {"radius": 12.0 * dpc}},
+                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.05, std_deviation=7.5 * dpc)}
 
-# ! We use a loop to do the for for us. The loop runs over a list of
-# ! dictionaries with all values that need updating
-for conn in [{"sources": {"model": "L23pyr"}, "targets": {"model": "L23pyr"}},
-             {"sources": {"model": "L23pyr"}, "targets": {"model": "L23in"}},
-             {"sources": {"model": "L4pyr"}, "targets": {"model": "L4pyr"},
-              "mask": {"circular": {"radius": 7.0 * dpc}}},
-             {"sources": {"model": "L4pyr"}, "targets": {"model": "L4in"},
-              "mask": {"circular": {"radius": 7.0 * dpc}}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L56pyr"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L56in"}}]:
-    ndict = horIntraBase.copy()
-    ndict.update(conn)
-    ccConnections.append(ndict)
+horIntra_syn_spec = {"synapse_model": "AMPA",
+                     "weight": 1.0,
+                     "delay": nest.random.uniform(min=1.75, max=2.25)}
+
+# ! In a loop, we run over the sources and targets and the corresponding
+# ! dictionaries with values that needs updating.
+for conn in [{"sources": "L23pyr", "targets": "L23pyr", "conn_spec": {}},
+             {"sources": "L23pyr", "targets": "L23in", "conn_spec": {}},
+             {"sources": "L4pyr", "targets": "L4pyr", "conn_spec": {"mask": {"circular": {"radius": 7.0 * dpc}}}},
+             {"sources": "L4pyr", "targets": "L4in", "conn_spec": {"mask": {"circular": {"radius": 7.0 * dpc}}}},
+             {"sources": "L56pyr", "targets": "L56pyr", "conn_spec": {}},
+             {"sources": "L56pyr", "targets": "L56in", "conn_spec": {}}]:
+    conn_spec = horIntra_conn_spec.copy()
+    conn_spec.update(conn['conn_spec'])
+    ccConnections.append([conn['sources'], conn['targets'], conn_spec, horIntra_syn_spec])
 
 # ! Vertical intralaminar
 # ! -----------------------
@@ -554,223 +530,250 @@ for conn in [{"sources": {"model": "L23pyr"}, "targets": {"model": "L23pyr"}},
 # ! case.
 # !
 # ! We proceed as above.
-verIntraBase = {"connection_type": "divergent",
-                "synapse_model": "AMPA",
-                "mask": {"circular": {"radius": 2.0 * dpc}},
-                "kernel": {"gaussian": {"p_center": 1.0, "sigma": 7.5 * dpc}},
-                "weights": 2.0,
-                "delays": {"uniform": {"min": 1.75, "max": 2.25}}}
+verIntra_conn_spec = {"rule": "pairwise_bernoulli",
+                      "mask": {"circular": {"radius": 2.0 * dpc}},
+                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=1.0, std_deviation=7.5 * dpc)}
 
-for conn in [{"sources": {"model": "L23pyr"}, "targets": {"model": "L56pyr"},
-              "weights": 1.0},
-             {"sources": {"model": "L23pyr"}, "targets": {"model": "L23in"},
-              "weights": 1.0},
-             {"sources": {"model": "L4pyr"}, "targets": {"model": "L23pyr"}},
-             {"sources": {"model": "L4pyr"}, "targets": {"model": "L23in"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L23pyr"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L23in"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L4pyr"}},
-             {"sources": {"model": "L56pyr"}, "targets": {"model": "L4in"}}]:
-    ndict = verIntraBase.copy()
-    ndict.update(conn)
-    ccConnections.append(ndict)
+verIntra_syn_spec = {"synapse_model": "AMPA",
+                     "weight": 2.0,
+                     "delay": nest.random.uniform(min=1.75, max=2.25)}
+
+for conn in [{"sources": "L23pyr", "targets": "L56pyr",
+              "syn_spec": {"weight": 1.0}},
+             {"sources": "L23pyr", "targets": "L23in",
+              "syn_spec": {"weight": 1.0}},
+             {"sources": "L4pyr", "targets": "L23pyr", "syn_spec": {}},
+             {"sources": "L4pyr", "targets": "L23in", "syn_spec": {}},
+             {"sources": "L56pyr", "targets": "L23pyr", "syn_spec": {}},
+             {"sources": "L56pyr", "targets": "L23in", "syn_spec": {}},
+             {"sources": "L56pyr", "targets": "L4pyr", "syn_spec": {}},
+             {"sources": "L56pyr", "targets": "L4in", "syn_spec": {}}]:
+    syn_spec = verIntra_syn_spec.copy()
+    syn_spec.update(conn['syn_spec'])
+    ccConnections.append([conn['sources'], conn['targets'], verIntra_conn_spec, syn_spec])
 
 # ! Intracortical inhibitory
 # ! ------------------------
 # !
 # ! We proceed as above, with the following difference: each connection
-# ! is added to the same-orientation and the cross-orientation list of
+# ! is added to both the same-orientation and the cross-orientation list of
 # ! connections.
 # !
 # ! **Note:** Weights increased from -1.0 to -2.0, to make up for missing GabaB
 # !
 # ! Note that we have to specify the **weight with negative sign** to make
 # ! the connections inhibitory.
-intraInhBase = {"connection_type": "divergent",
-                "synapse_model": "GABA_A",
-                "mask": {"circular": {"radius": 7.0 * dpc}},
-                "kernel": {"gaussian": {"p_center": 0.25, "sigma": 7.5 * dpc}},
-                "weights": -2.0,
-                "delays": {"uniform": {"min": 1.75, "max": 2.25}}}
+intraInh_conn_spec = {"rule": "pairwise_bernoulli",
+                      "mask": {"circular": {"radius": 7.0 * dpc}},
+                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.25, std_deviation=7.5 * dpc)}
 
-# ! We use a loop to do the for for us. The loop runs over a list of
-# ! dictionaries with all values that need updating
-for conn in [{"sources": {"model": "L23in"}, "targets": {"model": "L23pyr"}},
-             {"sources": {"model": "L23in"}, "targets": {"model": "L23in"}},
-             {"sources": {"model": "L4in"}, "targets": {"model": "L4pyr"}},
-             {"sources": {"model": "L4in"}, "targets": {"model": "L4in"}},
-             {"sources": {"model": "L56in"}, "targets": {"model": "L56pyr"}},
-             {"sources": {"model": "L56in"}, "targets": {"model": "L56in"}}]:
-    ndict = intraInhBase.copy()
-    ndict.update(conn)
-    ccConnections.append(ndict)
-    ccxConnections.append(ndict)
+intraInh_syn_spec = {"synapse_model": "GABA_A",
+                     "weight": -2.0,
+                     "delay": nest.random.uniform(min=1.75, max=2.25)}
+
+for conn in [{"sources": "L23in", "targets": "L23pyr", "conn_spec": {}},
+             {"sources": "L23in", "targets": "L23in", "conn_spec": {}},
+             {"sources": "L4in", "targets": "L4pyr", "conn_spec": {}},
+             {"sources": "L4in", "targets": "L4in", "conn_spec": {}},
+             {"sources": "L56in", "targets": "L56pyr", "conn_spec": {}},
+             {"sources": "L56in", "targets": "L56in", "conn_spec": {}}]:
+    conn_spec = intraInh_conn_spec.copy()
+    conn_spec.update(conn['conn_spec'])
+    ccConnections.append([conn['sources'], conn['targets'], conn_spec, intraInh_syn_spec])
+    ccxConnections.append([conn['sources'], conn['targets'], conn_spec, intraInh_syn_spec])
 
 # ! Corticothalamic
 # ! ---------------
-corThalBase = {"connection_type": "divergent",
-               "synapse_model": "AMPA",
-               "mask": {"circular": {"radius": 5.0 * dpc}},
-               "kernel": {"gaussian": {"p_center": 0.5, "sigma": 7.5 * dpc}},
-               "weights": 1.0,
-               "delays": {"uniform": {"min": 7.5, "max": 8.5}}}
+# ! We proceed as above.
+corThal_conn_spec = {"rule": "pairwise_bernoulli",
+                     "mask": {"circular": {"radius": 5.0 * dpc}},
+                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.5, std_deviation=7.5 * dpc)}
 
-# ! We use a loop to do the for for us. The loop runs over a list of
-# ! dictionaries with all values that need updating
-for conn in [{"sources": {"model": "L56pyr"},
-              "targets": {"model": "TpRelay"}},
-             {"sources": {"model": "L56pyr"},
-              "targets": {"model": "TpInter"}}]:
-    ndict = intraInhBase.copy()
-    ndict.update(conn)
-    ctConnections.append(ndict)
+corThal_syn_spec = {"synapse_model": "AMPA",
+                    "weight": 1.0,
+                    "delay": nest.random.uniform(min=7.5, max=8.5)}
+
+for conn in [{"sources":  "L56pyr", "conn_spec": {}}]:
+    conn_spec = intraInh_conn_spec.copy()
+    conn_spec.update(conn['conn_spec'])
+    syn_spec = intraInh_syn_spec.copy()
+    ctConnections.append([conn['sources'], conn_spec, syn_spec])
 
 # ! Corticoreticular
 # ! ----------------
 
-# ! In this case, there is only a single connection, so we write the
-# ! dictionary itself; it is very similar to the corThalBase, and to
-# ! show that, we copy first, then update. We need no ``targets`` entry,
-# ! since Rp has only one neuron per location.
-corRet = corThalBase.copy()
-corRet.update({"sources": {"model": "L56pyr"}, "weights": 2.5})
+# ! In this case, there is only a single connection, so we define the
+# ! dictionaries directly; it is very similar to corThal, and to show that,
+# ! we copy first, then update.
+corRet = corThal_conn_spec.copy()
+corRet_syn_spec = corThal_syn_spec.copy()
+corRet_syn_spec.update({"weight": 2.5})
 
 # ! Build all connections beginning in cortex
 # ! -----------------------------------------
 
 # ! Cortico-cortical, same orientation
 print("Connecting: cortico-cortical, same orientation")
-[topo.ConnectLayers(Vp_h, Vp_h, conn) for conn in ccConnections]
-[topo.ConnectLayers(Vp_v, Vp_v, conn) for conn in ccConnections]
+for source, target, conn_spec, syn_spec in ccConnections:
+    for src_i in range(name_dict[source]):
+        for tgt_i in range(name_dict[target]):
+            source_name = '{}_{}'.format(source, src_i)
+            target_name = '{}_{}'.format(target, tgt_i)
+            nest.Connect(Vp_h_layers[source_name], Vp_h_layers[target_name], conn_spec, syn_spec)
+            nest.Connect(Vp_v_layers[source_name], Vp_v_layers[target_name], conn_spec, syn_spec)
 
 # ! Cortico-cortical, cross-orientation
 print("Connecting: cortico-cortical, other orientation")
-[topo.ConnectLayers(Vp_h, Vp_v, conn) for conn in ccxConnections]
-[topo.ConnectLayers(Vp_v, Vp_h, conn) for conn in ccxConnections]
+for source, target, conn_spec, syn_spec in ccxConnections:
+    for src_i in range(name_dict[source]):
+        for tgt_i in range(name_dict[target]):
+            source_name = '{}_{}'.format(source, src_i)
+            target_name = '{}_{}'.format(target, tgt_i)
+            nest.Connect(Vp_h_layers[source_name], Vp_v_layers[target_name], conn_spec, syn_spec)
+            nest.Connect(Vp_v_layers[source_name], Vp_h_layers[target_name], conn_spec, syn_spec)
 
 # ! Cortico-thalamic connections
 print("Connecting: cortico-thalamic")
-[topo.ConnectLayers(Vp_h, Tp, conn) for conn in ctConnections]
-[topo.ConnectLayers(Vp_v, Tp, conn) for conn in ctConnections]
-topo.ConnectLayers(Vp_h, Rp, corRet)
-topo.ConnectLayers(Vp_v, Rp, corRet)
+for source, conn_spec, syn_spec in ctConnections:
+    for src_i in range(name_dict[source]):
+        source_name = '{}_{}'.format(source, src_i)
+        nest.Connect(Vp_h_layers[source_name], TpRelay, conn_spec, syn_spec)
+        nest.Connect(Vp_h_layers[source_name], TpInter, conn_spec, syn_spec)
+        nest.Connect(Vp_v_layers[source_name], TpRelay, conn_spec, syn_spec)
+        nest.Connect(Vp_v_layers[source_name], TpInter, conn_spec, syn_spec)
+
+for src_i in range(name_dict['L56pyr']):
+    source_name = 'L56pyr_{}'.format(src_i)
+    nest.Connect(Vp_h_layers[source_name], Rp, corRet, corRet_syn_spec)
+    nest.Connect(Vp_v_layers[source_name], Rp, corRet, corRet_syn_spec)
 
 # ! Thalamo-cortical connections
 # ! ----------------------------
 
-# ! **Note:** According to the text on p. 1674, bottom right, of
-# ! the Hill & Tononi paper, thalamocortical connections are
-# ! created by selecting from the thalamic population for each
-# ! L4 pyramidal cell, ie, are *convergent* connections.
+# ! **Note:** According to the text on p. 1674, bottom right, of the Hill &
+# ! Tononi paper, thalamocortical connections are created by selecting from
+# ! the thalamic population for each L4 pyramidal cell. We must therefore
+# ! specify that we want to select from the source neurons.
 # !
 # ! We first handle the rectangular thalamocortical connections.
-thalCorRect = {"connection_type": "convergent",
-               "sources": {"model": "TpRelay"},
-               "synapse_model": "AMPA",
-               "weights": 5.0,
-               "delays": {"uniform": {"min": 2.75, "max": 3.25}}}
+thalCorRect_conn_spec = {"rule": "pairwise_bernoulli",
+                         "use_on_source": True}
+
+thalCorRect_syn_spec = {"synapse_model": "AMPA",
+                        "weight": 5.0,
+                        "delay": nest.random.uniform(min=2.75, max=3.25)}
 
 print("Connecting: thalamo-cortical")
 
 # ! Horizontally tuned
-thalCorRect.update(
+thalCorRect_conn_spec.update(
     {"mask": {"rectangular": {"lower_left": [-4.0 * dpc, -1.0 * dpc],
                               "upper_right": [4.0 * dpc, 1.0 * dpc]}}})
-for conn in [{"targets": {"model": "L4pyr"}, "kernel": 0.5},
-             {"targets": {"model": "L56pyr"}, "kernel": 0.3}]:
-    thalCorRect.update(conn)
-    topo.ConnectLayers(Tp, Vp_h, thalCorRect)
+
+for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
+             {"targets": "L56pyr", "conn_spec": {"p": 0.3}}]:
+    conn_spec = thalCorRect_conn_spec.copy()
+    conn_spec.update(conn['conn_spec'])
+    for trg_i in range(name_dict[conn['targets']]):
+        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        nest.Connect(
+            TpRelay, Vp_h_layers[target_name], conn_spec, thalCorRect_syn_spec)
 
 # ! Vertically tuned
-thalCorRect.update(
+thalCorRect_conn_spec.update(
     {"mask": {"rectangular": {"lower_left": [-1.0 * dpc, -4.0 * dpc],
                               "upper_right": [1.0 * dpc, 4.0 * dpc]}}})
-for conn in [{"targets": {"model": "L4pyr"}, "kernel": 0.5},
-             {"targets": {"model": "L56pyr"}, "kernel": 0.3}]:
-    thalCorRect.update(conn)
-    topo.ConnectLayers(Tp, Vp_v, thalCorRect)
+
+for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
+             {"targets": "L56pyr", "conn_spec": {"p": 0.3}}]:
+    conn_spec = thalCorRect_conn_spec.copy()
+    conn_spec.update(conn['conn_spec'])
+    for trg_i in range(name_dict[conn['targets']]):
+        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        nest.Connect(
+            TpRelay, Vp_v_layers[target_name], conn_spec, thalCorRect_syn_spec)
 
 # ! Diffuse connections
-thalCorDiff = {"connection_type": "convergent",
-               "sources": {"model": "TpRelay"},
-               "synapse_model": "AMPA",
-               "weights": 5.0,
-               "mask": {"circular": {"radius": 5.0 * dpc}},
-               "kernel": {"gaussian": {"p_center": 0.1, "sigma": 7.5 * dpc}},
-               "delays": {"uniform": {"min": 2.75, "max": 3.25}}}
+thalCorDiff_conn_spec = {"rule": "pairwise_bernoulli",
+                         "use_on_source": True,
+                         "mask": {"circular": {"radius": 5.0 * dpc}},
+                         "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.1, std_deviation=7.5*dpc)}
 
-for conn in [{"targets": {"model": "L4pyr"}},
-             {"targets": {"model": "L56pyr"}}]:
-    thalCorDiff.update(conn)
-    topo.ConnectLayers(Tp, Vp_h, thalCorDiff)
-    topo.ConnectLayers(Tp, Vp_v, thalCorDiff)
+thalCorDiff_syn_spec = {"synapse_model": "AMPA",
+                        "weight": 5.0,
+                        "delay": nest.random.uniform(min=2.75, max=3.25)}
+
+for conn in [{"targets": "L4pyr"},
+             {"targets": "L56pyr"}]:
+    for trg_i in range(name_dict[conn['targets']]):
+        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        nest.Connect(TpRelay, Vp_h_layers[target_name], thalCorDiff_conn_spec, thalCorDiff_syn_spec)
+        nest.Connect(TpRelay, Vp_v_layers[target_name], thalCorDiff_conn_spec, thalCorDiff_syn_spec)
 
 # ! Thalamic connections
 # ! --------------------
 
-# ! Connections inside thalamus, including Rp
+# ! Connections inside thalamus, including Rp.
 # !
 # ! *Note:* In Hill & Tononi, the inhibition between Rp cells is mediated by
 # ! GABA_B receptors. We use GABA_A receptors here to provide some
 # ! self-dampening of Rp.
 # !
-# ! **Note:** The following code had a serious bug in v. 0.1: During the first
+# ! **Note 1:** The following code had a serious bug in v. 0.1: During the first
 # ! iteration of the loop, "synapse_model" and "weights" were set to "AMPA" and
-# !  "0.1", respectively and remained unchanged, so that all connections were
+# ! "0.1", respectively and remained unchanged, so that all connections were
 # ! created as excitatory connections, even though they should have been
 # ! inhibitory. We now specify synapse_model and weight explicitly for each
 # ! connection to avoid this.
+# !
+# ! **Note 2:** The following code also had a serious bug in v. 0.4: In the
+# ! loop the connection dictionary would be updated directly, i.e. without
+# ! making a copy. This lead to the entry ``'sources': 'TpInter'`` being
+# ! left in the dictionary when connecting with ``Rp`` sources. Therefore no
+# ! connections for the connections with ``Rp`` as source would be created
+# ! here.
 
-thalBase = {"connection_type": "divergent",
-            "delays": {"uniform": {"min": 1.75, "max": 2.25}}}
+thal_conn_spec = {"rule": "pairwise_bernoulli"}
+thal_syn_spec = {"delay": nest.random.uniform(min=1.75, max=2.25)}
 
 print("Connecting: intra-thalamic")
 
-for src, tgt, conn in [(Tp, Rp, {"sources": {"model": "TpRelay"},
-                                 "synapse_model": "AMPA",
-                                 "mask": {"circular": {"radius": 2.0 * dpc}},
-                                 "kernel": {"gaussian": {"p_center": 1.0,
-                                                         "sigma": 7.5 * dpc}},
-                                 "weights": 2.0}),
-                       (Tp, Tp, {"sources": {"model": "TpInter"},
-                                 "targets": {"model": "TpRelay"},
-                                 "synapse_model": "GABA_A",
-                                 "weights": -1.0,
-                                 "mask": {"circular": {"radius": 2.0 * dpc}},
-                                 "kernel": {"gaussian":
-                                            {"p_center": 0.25,
-                                             "sigma": 7.5 * dpc}}}),
-                       (Tp, Tp, {"sources": {"model": "TpInter"},
-                                 "targets": {"model": "TpInter"},
-                                 "synapse_model": "GABA_A",
-                                 "weights": -1.0,
-                                 "mask": {"circular": {"radius": 2.0 * dpc}},
-                                 "kernel": {"gaussian":
-                                            {"p_center": 0.25,
-                                             "sigma": 7.5 * dpc}}}),
-                       (Rp, Tp, {"targets": {"model": "TpRelay"},
-                                 "synapse_model": "GABA_A",
-                                 "weights": -1.0,
-                                 "mask": {"circular": {"radius": 12.0 * dpc}},
-                                 "kernel": {"gaussian":
-                                            {"p_center": 0.15,
-                                             "sigma": 7.5 * dpc}}}),
-                       (Rp, Tp, {"targets": {"model": "TpInter"},
-                                 "synapse_model": "GABA_A",
-                                 "weights": -1.0,
-                                 "mask": {"circular": {"radius": 12.0 * dpc}},
-                                 "kernel": {"gaussian":
-                                            {"p_center": 0.15,
-                                             "sigma": 7.5 * dpc}}}),
-                       (Rp, Rp, {"targets": {"model": "RpNeuron"},
-                                 "synapse_model": "GABA_A",
-                                 "weights": -1.0,
-                                 "mask": {"circular": {"radius": 12.0 * dpc}},
-                                 "kernel": {"gaussian":
-                                            {"p_center": 0.5,
-                                             "sigma": 7.5 * dpc}}})]:
-    thalBase.update(conn)
-    topo.ConnectLayers(src, tgt, thalBase)
+for src, tgt, conn, syn in [(TpRelay, Rp,
+                             {"mask": {"circular": {"radius": 2.0 * dpc}},
+                              "p": nest.distributions.gaussian(
+                                 nest.spatial.distance, p_center=1.0, std_deviation=7.5*dpc)},
+                             {"synapse_model": "AMPA",
+                              "weight": 2.0}),
+                            (TpInter, TpRelay,
+                             {"mask": {"circular": {"radius": 2.0 * dpc}},
+                              "p": nest.distributions.gaussian(
+                                 nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
+                             {"synapse_model": "GABA_A",
+                              "weight": -1.0}),
+                            (TpInter, TpInter,
+                             {"mask": {"circular": {"radius": 2.0 * dpc}},
+                              "p": nest.distributions.gaussian(
+                                 nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
+                             {"synapse_model": "GABA_A", "weight": -1.0}),
+                            (Rp, TpRelay, {"mask": {"circular": {"radius": 12.0 * dpc}},
+                                           "p": nest.distributions.gaussian(
+                                               nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
+                             {"synapse_model": "GABA_A", "weight": -1.0}),
+                            (Rp, TpInter, {"mask": {"circular": {"radius": 12.0 * dpc}},
+                                           "p": nest.distributions.gaussian(
+                                               nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
+                             {"synapse_model": "GABA_A", "weight": -1.0}),
+                            (Rp, Rp, {"mask": {"circular": {"radius": 12.0 * dpc}},
+                                      "p": nest.distributions.gaussian(
+                                          nest.spatial.distance, p_center=0.5, std_deviation=7.5*dpc)},
+                             {"synapse_model": "GABA_A", "weight": -1.0})
+                            ]:
+    conn_spec = thal_conn_spec.copy()
+    conn_spec.update(conn)
+    syn_spec = thal_syn_spec.copy()
+    syn_spec.update(syn)
+    nest.Connect(src, tgt, conn_spec, syn_spec)
+
 
 # ! Thalamic input
 # ! --------------
@@ -779,19 +782,18 @@ for src, tgt, conn in [(Tp, Rp, {"sources": {"model": "TpRelay"},
 # !
 # ! **Note:** Hill & Tononi specify a delay of 0 ms for this connection.
 # ! We use 1 ms here.
-retThal = {"connection_type": "divergent",
-           "synapse_model": "AMPA",
-           "mask": {"circular": {"radius": 1.0 * dpc}},
-           "kernel": {"gaussian": {"p_center": 0.75, "sigma": 2.5 * dpc}},
-           "weights": 10.0,
-           "delays": 1.0}
+retThal_conn_spec = {"rule": "pairwise_bernoulli",
+                     "mask": {"circular": {"radius": 1.0 * dpc}},
+                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.75, std_deviation=2.5*dpc)}
+
+retThal_syn_spec = {"weight": 10.0,
+                    "delay": 1.0,
+                    "synapse_model": "AMPA"}
 
 print("Connecting: retino-thalamic")
 
-for conn in [{"targets": {"model": "TpRelay"}},
-             {"targets": {"model": "TpInter"}}]:
-    retThal.update(conn)
-    topo.ConnectLayers(retina, Tp, retThal)
+nest.Connect(retina, TpRelay, retThal_conn_spec, retThal_syn_spec)
+nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 
 # ! Checks on connections
 # ! ---------------------
@@ -800,19 +802,24 @@ for conn in [{"targets": {"model": "TpRelay"}},
 # ! the connections from the central node of various layers.
 
 # ! Connections from Retina to TpRelay
-topo.PlotTargets(topo.FindCenterElement(retina), Tp, 'TpRelay', 'AMPA')
-pylab.title('Connections Retina -> TpRelay')
-pylab.show()
+retina_ctr_gid = nest.FindCenterElement(retina)
+retina_ctr_index = retina.index(retina_ctr_gid)
+conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
+nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
+plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
-topo.PlotTargets(topo.FindCenterElement(Tp), Vp_h, 'L4pyr', 'AMPA')
-pylab.title('Connections TpRelay -> Vp(h) L4pyr')
-pylab.show()
+TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid)
+nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
+plt.title('Connections TpRelay -> Vp(h) L4pyr')
 
 # ! Connections from TpRelay to L4pyr in Vp (vertically tuned)
-topo.PlotTargets(topo.FindCenterElement(Tp), Vp_v, 'L4pyr', 'AMPA')
-pylab.title('Connections TpRelay -> Vp(v) L4pyr')
-pylab.show()
+nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_v_layers['L4pyr_0'], 'AMPA')
+plt.title('Connections TpRelay -> Vp(v) L4pyr')
+
+# ! Block until the figures are closed before we continue.
+plt.show(block=True)
 
 # ! Recording devices
 # ! =================
@@ -823,17 +830,16 @@ pylab.show()
 # ! connect. ``loc`` is the subplot location for the layer.
 print("Connecting: Recording devices")
 recorders = {}
-for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
-                                     ('Rp', 2, Rp, 'RpNeuron'),
-                                     ('Vp_v L4pyr', 3, Vp_v, 'L4pyr'),
-                                     ('Vp_h L4pyr', 4, Vp_h, 'L4pyr')]:
+
+for name, loc, population in [('TpRelay', 0, TpRelay),
+                              ('Rp', 1, Rp),
+                              ('Vp_v L4pyr 1', 2, Vp_v_layers['L4pyr_0']),
+                              ('Vp_v L4pyr 2', 3, Vp_v_layers['L4pyr_1']),
+                              ('Vp_h L4pyr 1', 4, Vp_h_layers['L4pyr_0']),
+                              ('Vp_h L4pyr 2', 5, Vp_h_layers['L4pyr_1'])]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
-    # population_leaves is a work-around until NEST 3.0 is released
-    population_leaves = nest.hl_api.GetLeaves(population)[0]
-    tgts = [nd for nd in population_leaves
-            if nest.GetStatus([nd], 'model')[0] == model]
-    # one recorder to all targetss
-    nest.Connect(recorders[name][0], nest.GIDCollection(tgts))
+    # one recorder to all targets
+    nest.Connect(recorders[name][0], population)
 
 # ! Example simulation
 # ! ====================
@@ -847,46 +853,52 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
 # ! show time during simulation
 nest.SetKernelStatus({'print_time': True})
 
-# ! lower and upper limits for color scale, for each of the four
+# ! lower and upper limits for color scale, for each of the
 # ! populations recorded.
-vmn = [-80, -80, -80, -80]
-vmx = [-50, -50, -50, -50]
+vmn = [-80, -80, -80, -80, -80, -80]
+vmx = [-50, -50, -50, -50, -50, -50]
 
-nest.Simulate(Params['sim_interval'])
+# ! Because we are running the simulation in steps, we use the
+# ! Prepare-Run-Cleanup procedure.
+nest.Prepare()
+nest.Run(Params['sim_interval'])
+
+# ! Set up the figure, assume six recorders.
+fig, axes = plt.subplots(2, 3)
+images = []
+
+for i, ax in enumerate(axes.flat):
+    # We initialize with an empty image
+    images.append(ax.imshow([[0.]], aspect='equal', interpolation='nearest',
+                            extent=(0, Params['N'] + 1, 0, Params['N'] + 1),
+                            vmin=vmn[i], vmax=vmx[i], cmap='plasma'))
+    fig.colorbar(images[-1], ax=ax)
 
 # ! loop over simulation intervals
-for t in pylab.arange(Params['sim_interval'], Params['simtime'],
-                      Params['sim_interval']):
+for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
     # do the simulation
-    nest.Simulate(Params['sim_interval'])
+    nest.Run(Params['sim_interval'])
 
-    # clear figure and choose colormap
-    pylab.clf()
-    pylab.jet()
+    # now plot data from each recorder in turn
+    for name, rec_item in recorders.items():
+        recorder, subplot_pos = rec_item
+        ax = axes.flat[subplot_pos]
+        im = images[subplot_pos]
 
-    # now plot data from each recorder in turn, assume four recorders
-    for name, r in recorders.items():
-        rec = r[0]
-        sp = r[1]
-        pylab.subplot(2, 2, sp)
-        d = nest.GetStatus(rec)[0]['events']['V_m']
-
-        if len(d) != Params['N'] ** 2:
-            # cortical layer with two neurons in each location, take average
-            d = 0.5 * (d[::2] + d[1::2])
-
+        d = recorder.get('events', 'V_m')
         # clear data from multimeter
-        nest.SetStatus(rec, {'n_events': 0})
-        pylab.imshow(pylab.reshape(d, (Params['N'], Params['N'])),
-                     aspect='equal', interpolation='nearest',
-                     extent=(0, Params['N'] + 1, 0, Params['N'] + 1),
-                     vmin=vmn[sp - 1], vmax=vmx[sp - 1])
-        pylab.colorbar()
-        pylab.title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['time'])
+        recorder.set('n_events', 0)
 
-    pylab.draw()  # force drawing inside loop
-    pylab.show()  # required by ``pyreport``
+        # update image data and title
+        im.set_data(np.reshape(d, (Params['N'], Params['N'])))
+        ax.set_title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['time'])
+
+    # We need to pause because drawing of the figure happens while the main code is sleeping
+    plt.pause(0.0001)
+
+# ! Cleanup after the simulation is complete.
+nest.Cleanup()
 
 # ! just for some information at the end
-print(nest.GetKernelStatus())
+pprint(nest.GetKernelStatus())

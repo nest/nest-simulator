@@ -877,7 +877,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
                          cvlit /synmod Set
                          /lyr_target Set
                          /lyr_source Set
-                         oname (w) file lyr_target lyr_source synmod
+                         oname (w) file lyr_source lyr_target synmod
                          DumpLayerConnections close
                          """,
                          source_layer, target_layer, synapse_model,

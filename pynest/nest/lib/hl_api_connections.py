@@ -216,8 +216,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 def _process_spatial_projections(conn_spec, syn_spec):
     allowed_conn_spec_keys = ['mask',
                               'multapses', 'autapses', 'rule', 'indegree',
-                              'outdegree', 'p', 'use_on_source', 'synapse_model']
-    allowed_syn_spec_keys = ['weight', 'delay']
+                              'outdegree', 'p', 'use_on_source']
+    allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError(
@@ -246,6 +246,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
             projections['weights'] = syn_spec['weight']
         if 'delay' in syn_spec:
             projections['delays'] = syn_spec['delay']
+        if 'synapse_model' in syn_spec:
+            projections['synapse_model'] = syn_spec['synapse_model']
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:

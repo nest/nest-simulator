@@ -123,8 +123,8 @@ private:
    */
   struct Parameters_
   {
-    double rate_;      //!< process rate [Hz]
-    double dead_time_; //!< dead time [ms]
+    double rate_;       //!< process rate [Hz]
+    double dead_time_;  //!< dead time [ms]
     bool rate_changed_; //!< flag for rate change
 
     /**

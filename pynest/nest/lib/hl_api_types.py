@@ -319,7 +319,7 @@ class GIDCollection(object):
             self._datum = gc._datum
 
         # Spatial values for layers.
-        super().__setattr__('spatial', None)
+        super(GIDCollection, self).__setattr__('spatial', None)
 
     def __iter__(self):
         return GIDCollectionIterator(self)
@@ -378,7 +378,7 @@ class GIDCollection(object):
         set spatial data to self.spatial
         """
         spatial_metadata = sli_func('GetMetadata', self._datum)
-        super().__setattr__('spatial', spatial_metadata)
+        super(GIDCollection, self).__setattr__('spatial', spatial_metadata)
 
     def get(self, *params, **kwargs):
         """

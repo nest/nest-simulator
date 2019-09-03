@@ -45,7 +45,6 @@
 nest::poisson_generator_ps::Parameters_::Parameters_()
   : rate_( 0.0 )      // Hz
   , dead_time_( 0.0 ) // ms
-  , rate_changed_( false )
   , num_targets_( 0 )
 {
 }
@@ -73,7 +72,7 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
 
   // Change of rate has to be flagged to let the event_hook handle the
   // interval from the rate change to the first subsequent spike.
-  rate_changed_ = updateValue< double >( d, names::rate, rate_ );
+  updateValue< double >( d, names::rate, rate_ );
 
   if ( rate_ < 0.0 )
   {
@@ -226,7 +225,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];
 
-  if ( nextspk.first.is_neg_inf() or P_.rate_changed_ )
+  if ( nextspk.first.is_neg_inf() or B_.rate_changed_ )
   {
     // need to initialize relative to t_min_active_
     // first spike is drawn from backward recurrence time to initialize the
@@ -258,7 +257,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     nextspk.first = Time::ms_stamp( spike_offset );
     nextspk.second = nextspk.first.get_ms() - spike_offset;
     nextspk.first += V_.t_min_active_;
-    P_.rate_changed_ = false;
+    B_.rate_changed_ = false;
   }
 
   // as long as there are spikes in active period, emit and redraw

@@ -123,9 +123,8 @@ private:
    */
   struct Parameters_
   {
-    double rate_;       //!< process rate [Hz]
-    double dead_time_;  //!< dead time [ms]
-    bool rate_changed_; //!< flag for rate change
+    double rate_;      //!< process rate [Hz]
+    double dead_time_; //!< dead time [ms]
 
     /**
      * Number of targets.
@@ -155,6 +154,7 @@ private:
      *   and that an initial interval needs to be drawn.
      */
     std::vector< SpikeTime > next_spike_;
+    bool rate_changed_; //!< flag for rate change
   };
 
   // ------------------------------------------------------------
@@ -223,6 +223,7 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
+  B_.rate_changed_ = d->known( names::rate );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

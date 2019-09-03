@@ -682,8 +682,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
+    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch

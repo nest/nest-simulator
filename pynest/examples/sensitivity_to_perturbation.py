@@ -133,13 +133,11 @@ for trial in [0, 1]:
     nest.ResetKernel()
     nest.SetKernelStatus({"resolution": dt})
 
-
     ###############################################################################
     # Now we start building the network and create excitatory and inhibitory nodes
     # and connect them. According to the connectivity specification, each neuron
     # is assigned random KE synapses from the excitatory population and random KI
     # synapses from the inhibitory population.
-
 
     nodes_ex = nest.Create(neuron_model, NE)
     nodes_in = nest.Create(neuron_model, NI)
@@ -173,7 +171,6 @@ for trial in [0, 1]:
 
     spikedetector = nest.Create("spike_detector")
     nest.Connect(allnodes, spikedetector)
-
 
     ###############################################################################
     # We then create the `spike_generator`, which provides the extra spike

@@ -38,9 +38,7 @@ DeprecationWarning::deprecation_warning( std::string name )
 {
   if ( deprecated_functions_[ name ] )
   {
-    LOG( M_DEPRECATED,
-      name,
-      name + " is deprecated and will be removed in a future version of NEST." );
+    LOG( M_DEPRECATED, name, name + " is deprecated and will be removed in a future version of NEST." );
 
     deprecated_functions_[ name ] = false; // to not issue warning again
   }
@@ -58,7 +56,6 @@ DeprecationWarning::deprecation_warning( std::string name, std::string new_name 
     deprecated_functions_[ name ] = false; // to not issue warning again
   }
 }
-
 }
 
 #endif /* DEPRECATION_WARNING_IMPL_H */

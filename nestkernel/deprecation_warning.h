@@ -69,7 +69,8 @@ public:
   /*
    * Set parameter name to be deprecated.
    */
-  void set_deprecated( std::string name )
+  void
+  set_deprecated( std::string name )
   {
     deprecated_functions_[ name ] = true;
   }
@@ -83,7 +84,6 @@ public:
 private:
   std::map< std::string, bool > deprecated_functions_;
 };
-
 }
 
 #endif /* DEPRECATION_WARNING_H */

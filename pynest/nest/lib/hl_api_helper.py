@@ -122,7 +122,7 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
                 version of NEST.\nPlease use {1} instead!\
                 ".format(func_name, alt_func_name)
                 text = get_wrapped_text(text)
-    
+
             warnings.warn('\n' + text)   # add LF so text starts on new line
             _deprecation_warning[func_name]['deprecation_issued'] = True
 

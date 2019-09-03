@@ -69,7 +69,9 @@ __all__ = [
 # or function parameters, all flags for deprecated functions will be registered
 # by the @deprecated decorator.
 _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
-                                             'replacement': 'replacement_mod'}}
+                                             'replacement': 'replacement_mod'},
+                        'iaf_psc_alpha_canon': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_alpha_ps'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):

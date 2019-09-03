@@ -48,6 +48,7 @@
 #include "model_manager_impl.h"
 
 // Includes from precise:
+#include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta_ps.h"
 #include "iaf_psc_exp_ps.h"
@@ -88,6 +89,7 @@ PreciseModule::commandstring( void ) const
 void
 PreciseModule::init( SLIInterpreter* )
 {
+  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta_ps >( "iaf_psc_delta_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );

@@ -50,9 +50,6 @@ Previous releases
 
 We continuously aim to improve NEST, implement features, and fix bugs with every new version;
 thus, we encourage our users to use the **most recent version of NEST**.
-If you do need an older version you can find `all NEST releases here <https://github.com/nest/nest-simulator/releases/>`_.
-Scroll to bottom of desired release and download the source code.
-
 
 **Older Versions of Live Media**
 
@@ -74,6 +71,8 @@ Scroll to bottom of desired release and download the source code.
    (OVA, ~2.5G)
 
     `Checksum 2.8.0 <https://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum>`_
+
+----
 
 NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
 

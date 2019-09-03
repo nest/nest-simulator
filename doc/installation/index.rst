@@ -123,14 +123,20 @@ section** :ref:`advanced_install`.
 
           conda activate ENVNAME
 
-   .. tab:: Windows
+   .. tab:: Live Media (cross-platform)
 
-       We don't support NEST natively on Windows, but you can run NEST in a virtual machine.
+       We have live media (.ova) if you want to run NEST in a virtual machine. This option is suitable for Windows users, since we don't support
+       NEST natively on Windows,
 
        :ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virutal machine <livemedia>` .
 
 
+   .. tab:: NeuroFedora
 
+       The NeuroFedora team has generously provided the latest versions of NEST on their platform.
+
+       Find out more on their site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.
+       A. Sinha also provided some helpful FAQs, `which you can find here <https://www.nest-simulator.org/mailinglist/hyperkitty/search?mlist=users%40nest-simulator.org&q=fedora>`_.
 
 
 **Once NEST is installed, you can run it in Python, IPython, or Jupyter Notebook**
@@ -163,11 +169,13 @@ If installation was successful, you should see the NEST splash screen in the ter
    :alt: import nest
 
 
-**Installation is now complete!**  See the :doc:`troubleshooting section <../troubleshooting>`, if it didn't work.
+**Installation is now complete!**
 
 
 :doc:`Now we can start creating simulations! <../getting_started>`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If installation didn't work, see the :doc:`troubleshooting section <../troubleshooting>`.
 
 .. seealso::
 

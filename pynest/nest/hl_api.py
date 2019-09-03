@@ -90,7 +90,6 @@ __all__ = [
     'PrintNodes',
     'Rank',
     'ResetKernel',
-    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
     'SelectNodesByMask',

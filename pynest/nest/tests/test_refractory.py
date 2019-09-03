@@ -67,10 +67,7 @@ neurons_interspike = [
 ]
 
 neurons_interspike_ps = [
-    "iaf_psc_alpha_canon",
-    "iaf_psc_alpha_presc",
     "iaf_psc_alpha_ps",
-    "iaf_psc_delta_canon",
     "iaf_psc_delta_ps",
     "iaf_psc_exp_ps",
 ]

@@ -971,25 +971,6 @@ nest::SimulationManager::update_()
 }
 
 void
-nest::SimulationManager::reset_network()
-{
-  if ( not has_been_simulated() )
-  {
-    return; // nothing to do
-  }
-
-  kernel().event_delivery_manager.clear_pending_spikes();
-
-  kernel().node_manager.reinit_nodes();
-
-  // ConnectionManager doesn't support resetting dynamic synapses yet
-  LOG( M_WARNING,
-    "SimulationManager::ResetNetwork",
-    "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
-    "This will be implemented in a future version of NEST." );
-}
-
-void
 nest::SimulationManager::advance_time_()
 {
   // time now advanced time by the duration of the previous step

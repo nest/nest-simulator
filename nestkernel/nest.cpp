@@ -63,16 +63,6 @@ reset_kernel()
 }
 
 void
-reset_network()
-{
-  kernel().simulation_manager.reset_network();
-  LOG( M_INFO,
-    "ResetNetworkFunction",
-    "The network has been reset. Random generators and time have NOT been "
-    "reset." );
-}
-
-void
 enable_dryrun_mode( const index n_procs )
 {
   kernel().mpi_manager.set_num_processes( n_procs );

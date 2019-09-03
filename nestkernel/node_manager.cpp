@@ -80,28 +80,6 @@ NodeManager::finalize()
   destruct_nodes_();
 }
 
-void
-NodeManager::reinit_nodes()
-{
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
-    SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
-    {
-      // Reinitialize state on all nodes, forcing init_buffers() on
-      // next call to simulate().
-      n->get_node()->init_state();
-      n->get_node()->set_buffers_initialized( false );
-    }
-  }
-}
-
 DictionaryDatum
 NodeManager::get_status( index idx )
 {

@@ -80,7 +80,6 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , close_after_simulate_( false )
   , flush_after_simulate_( true )
   , flush_records_( false )
-  , close_on_reset_( true )
   , use_gid_in_filename_( true )
 {
 }
@@ -160,8 +159,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDa
   ( *d )[ names::close_after_simulate ] = close_after_simulate_;
   ( *d )[ names::flush_after_simulate ] = flush_after_simulate_;
   ( *d )[ names::flush_records ] = flush_records_;
-  ( *d )[ names::close_on_reset ] = close_on_reset_;
-
   ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
 
   if ( to_file_ and not filename_.empty() )
@@ -220,7 +217,6 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd, Buffers_& B,
   updateValue< bool >( d, names::close_after_simulate, close_after_simulate_ );
   updateValue< bool >( d, names::flush_after_simulate, flush_after_simulate_ );
   updateValue< bool >( d, names::flush_records, flush_records_ );
-  updateValue< bool >( d, names::close_on_reset, close_on_reset_ );
 
   bool tmp_use_gid_in_filename = true;
   updateValue< bool >( d, names::use_gid_in_filename, tmp_use_gid_in_filename );
@@ -508,7 +504,7 @@ nest::RecordingDevice::init_buffers()
   // we only close files here, opening is left to calibrate()
   // we must not touch B_.fbuffer_ here, as it will be used
   // as long as B_.fs_ exists.
-  if ( P_.close_on_reset_ and B_.fs_.is_open() )
+  if ( B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear(); // filename_ only visible while file open

@@ -134,12 +134,6 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 }
 
 void
-EventDeliveryManager::clear_pending_spikes()
-{
-  configure_spike_data_buffers();
-}
-
-void
 EventDeliveryManager::resize_send_recv_buffers_target_data()
 {
   // compute send receive counts and allocate memory for buffers

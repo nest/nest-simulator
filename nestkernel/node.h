@@ -39,6 +39,8 @@
 #include "nest_types.h"
 #include "gid_collection.h"
 
+#include "deprecation_warning.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 
@@ -810,6 +812,12 @@ public:
    * @see set_local_device_id
    */
   virtual index get_local_device_id() const;
+
+  /**
+   * Member of DeprecationWarning class to be used by models if parameters are
+   * deprecated.
+   */
+  DeprecationWarning deprecation_warning;
 
 private:
   void set_gid_( index ); //!< Set global node id

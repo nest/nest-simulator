@@ -50,7 +50,6 @@ void fail_exit( int exitcode );
 void install_module( const std::string& module_name );
 
 void reset_kernel();
-void reset_network();
 
 void enable_dryrun_mode( const index n_procs );
 

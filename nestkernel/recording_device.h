@@ -140,11 +140,6 @@ namespace nest
                           state when Simulate returns. (Default: true).
   /flush_records - Flush output stream whenever new data has been written to the
                    stream. This may impede performance (Default: false).
-  /close_on_reset - Close output file stream upon ResetNetwork. Upon the next
-                    call to Simulate, the file is reopened, overwriting its
-                    contents. If set to false, the file will remain open after
-                    ResetNetwork, so you can record continuously. NB:
-                    the file is always closed upon ResetKernel. (Default: true).
   /use_gid_in_filename - Determines if the GID is used in the file name of the
   recording device. Setting this to false can lead to conflicting file names.
 
@@ -222,10 +217,9 @@ namespace nest
  *       require us to close output file streams and re-open them under
  *       new names. The only way to detect such changes is by comparing the
  *       current file name with a filename constructed anew upon each
- *       call to calibrate(). We cannot use init_buffers() here, since it
- *       is called only once after ResetNetwork. Thus, even though the file
- *       stream is a Buffer, we need to place all file opening in calibrate().
- *       init_buffers() merely closes the stream if close_on_reset_ is true.
+ *       call to calibrate(). We cannot use init_buffers() here. Thus, even
+ *       though the file stream is a Buffer, we need to place all file opening
+ *       in calibrate().
  *
  *  @todo Some aspects of RecordingDevice behavior depend on the type of device:
  *        Multimeter needs to have its data cleared on n_events==0 and provides
@@ -521,7 +515,6 @@ private:
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
     bool flush_after_simulate_; //!< if true, post_run_cleanup() flushes stream
     bool flush_records_;        //!< if true, flush stream after each output
-    bool close_on_reset_;       //!< if true, close stream in init_buffers()
 
     bool use_gid_in_filename_;
 

@@ -80,7 +80,6 @@ const Name calibrate_node( "calibrate_node" );
 const Name capacity( "capacity" );
 const Name clear( "clear" );
 const Name close_after_simulate( "close_after_simulate" );
-const Name close_on_reset( "close_on_reset" );
 const Name comparator( "comparator" );
 const Name configbit_0( "configbit_0" );
 const Name configbit_1( "configbit_1" );

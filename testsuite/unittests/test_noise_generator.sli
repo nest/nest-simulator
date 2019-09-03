@@ -98,8 +98,6 @@ M_ERROR setverbosity  % suppress warning from time reset
   /Nsims 100 def
   [Nsims] {
     pop
-    ResetNetwork 
-    <</time 0.0>> SetKernelStatus 
     1000 Simulate 
     nrn [/V_m] get
   } Table 

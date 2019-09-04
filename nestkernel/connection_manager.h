@@ -105,6 +105,8 @@ public:
    */
   void connect( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
+  void connect( TokenArray, TokenArray, const DictionaryDatum& );
+
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is

@@ -384,6 +384,42 @@ nest::ConnectionManager::connect( GIDCollectionPTR sources,
 }
 
 void
+nest::ConnectionManager::connect( TokenArray sources,
+  TokenArray targets,
+  const DictionaryDatum& syn_spec )
+{
+  // Get synapse id
+  size_t syn_id = 0;
+  auto synmodel = syn_spec->lookup( names::model );
+  if ( not synmodel.empty() )
+  {
+    std::string synmodel_name = getValue< std::string >( synmodel );
+    synmodel =
+      kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+    if ( not synmodel.empty() )
+    {
+      syn_id = static_cast< size_t >( synmodel );
+    }
+    else
+    {
+      throw UnknownModelName( synmodel_name );
+    }
+  }
+  // Connect all sources to all targets
+  for ( auto source : sources )
+  {
+    auto source_node = kernel().node_manager.get_node_or_proxy( source );
+    for ( auto target : targets )
+    {
+      auto target_node = kernel().node_manager.get_node_or_proxy( target );
+      auto target_thread = target_node->get_thread();
+      connect_(
+        *source_node, *target_node, source, target_thread, syn_id, syn_spec );
+    }
+  }
+}
+
+void
 nest::ConnectionManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();

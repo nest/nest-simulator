@@ -290,6 +290,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
 
+  class Connect_nonunique_ia_ia_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_nonunique_ia_ia_Dfunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:

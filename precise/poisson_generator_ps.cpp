@@ -70,8 +70,6 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  // Change of rate has to be flagged to let the event_hook handle the
-  // interval from the rate change to the first subsequent spike.
   updateValue< double >( d, names::rate, rate_ );
 
   if ( rate_ < 0.0 )

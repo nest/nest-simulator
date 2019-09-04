@@ -223,6 +223,9 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
+
+  // Change of rate has to be flagged to let the event_hook handle the
+  // interval from the rate change to the first subsequent spike.
   B_.rate_changed_.assign( P_.num_targets_, d->known( names::rate ) );
 
   // We now know that ptmp is consistent. We do not write it back

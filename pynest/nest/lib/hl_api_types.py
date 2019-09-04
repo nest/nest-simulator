@@ -568,16 +568,12 @@ class GIDCollection(object):
         return self.get(attr)
 
     def __setattr__(self, attr, value):
-        # check whether the attribute is a node property; need to manually
-        # exclude _datum since without it, get() does not work and we can not
-        # check whether attr is a node property
-        if attr != '_datum':
-            if attr in self.get().keys():
-                self.set({attr: value})
-                return  # if we have set the property in NEST, we are done
-
-        super().__setattr__(attr, value)  # if attr is not a node property,
-                                          # store it as regular attribute
+        # `_datum` is the only property of GIDCollection that should not be
+        # interpreted as a property of the model
+        if attr == '_datum':
+            super().__setattr__(attr, value)
+        else:
+            self.set({attr: value})
 
 
 class ConnectomeIterator(object):

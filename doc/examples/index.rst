@@ -108,8 +108,7 @@ script with the following command.
 
 .. code-block:: python
 
-   mpirun -n num_mpi_prc
-   python example.py
+   mpirun -n num_mpi_prc python example.py
 
 The default version of the simulation uses Poissonian input, which is defined
 in the file ``network_params.py`` to excite neuronal populations of the
@@ -117,10 +116,6 @@ microcircuit. If no Poissonian input is provided, DC input is calculated, which
 should approximately compensate the Poissonian input. It is also possible to
 add thalamic stimulation to the microcircuit or drive it with constant DC
 input. This can be defined in the file ``stimulus_params.py``.
-
-Tested configuration: This version has been tested with NEST 2.10.0,
-Python 2.7.12 and 3.5.2, NumPy 1.11.2
-
 
 .. toctree::
 
@@ -130,7 +125,4 @@ Python 2.7.12 and 3.5.2, NumPy 1.11.2
    Potjans_2014/stimulus_params
    Potjans_2014/example
    Potjans_2014/sim_params
-
-
-
 

@@ -172,6 +172,7 @@ nest::poisson_generator_ps::calibrate()
   if ( B_.next_spike_.size() == 0 )
   {
     B_.next_spike_.resize( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
+    B_.rate_changed_.resize( P_.num_targets_, false );
   }
 }
 
@@ -225,7 +226,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];
 
-  if ( nextspk.first.is_neg_inf() or B_.rate_changed_ )
+  if ( nextspk.first.is_neg_inf() or B_.rate_changed_[ prt ] )
   {
     // need to initialize relative to t_min_active_
     // first spike is drawn from backward recurrence time to initialize the
@@ -257,7 +258,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     nextspk.first = Time::ms_stamp( spike_offset );
     nextspk.second = nextspk.first.get_ms() - spike_offset;
     nextspk.first += V_.t_min_active_;
-    B_.rate_changed_ = false;
+    B_.rate_changed_[ prt ] = false;
   }
 
   // as long as there are spikes in active period, emit and redraw

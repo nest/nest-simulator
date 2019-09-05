@@ -154,7 +154,6 @@ private:
      *   and that an initial interval needs to be drawn.
      */
     std::vector< SpikeTime > next_spike_;
-    std::vector< bool > rate_changed_; //!< flag for rate change
   };
 
   // ------------------------------------------------------------
@@ -224,9 +223,12 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
 
-  // Change of rate has to be flagged to let the event_hook handle the
-  // interval from the rate change to the first subsequent spike.
-  B_.rate_changed_.assign( P_.num_targets_, d->known( names::rate ) );
+  // If the rate is changed, the event_hook must handle the interval from
+  // the rate change to the first subsequent spike.
+  if ( d->known( names::rate ) )
+  {
+    B_.next_spike_.assign( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
+  }
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

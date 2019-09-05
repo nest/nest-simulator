@@ -90,7 +90,8 @@ def snippet(filename, startID, stopID, indent='', **kwargs):
 
 
 def insert(filename, keyword="", fences=None):
-    regex = r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>.+?)\s+lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$' % keyword
+    regex = (r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>.+?)\s+'
+             r'lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$') % keyword
 
     log.debug("looking for %s", repr(regex))
     insert_re = re.compile(regex)

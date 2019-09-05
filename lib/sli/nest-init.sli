@@ -97,14 +97,14 @@ def
 
   size 1 neq
   { % If not a single value GIDCollection. We have a list of dictionaries.
-  
+
     % The first thing we do is set the keys in the dictionary based on the
     % first GID in the GIDCollection, and set the corresponding value in an
     % array.
     dup First {status_dict rollu 1 arraystore put_d} forall
-    
+
     status_dict keys /ks Set
-    
+
     % Then, we put the values for the rest of the GIDCollection in the right
     % place in the dictionary.
     /counter 1 def
@@ -126,11 +126,11 @@ def
           [counter] /None LayoutArray [v] join /val_array Set
           ks [k] join /ks Set
         } ifelse
-        
+
         % Add value array to status dictionary.
         status_dict k val_array put_d
       } forall
-      
+
       % If we have a composite gc and there have been values for previous GIDs
       % that is not part of this particular dictionary, we must set a None
       % value for this value.
@@ -144,10 +144,10 @@ def
           status_dict k val_array put_d
         } if
       } forall
-      
+
       counter 1 add /counter Set
     } forall
-    
+
     status_dict
   }
   {
@@ -190,9 +190,9 @@ def
 %      n-th element, we need to be a bit careful, handling the letter case
 %      here at the SLI level and mapping the former to the two-element case
 % Note that Take indexes from 1, with -1 the last element
-/Take [/gidcollectiontype /integertype] 
+/Take [/gidcollectiontype /integertype]
  {
-   << >> begin 
+   << >> begin
      /n Set
      /c Set
      n 0 geq
@@ -201,7 +201,7 @@ def
      }
      {
        n neg c size gt { c n /Take /RangeError raiseerror } if
-       
+
        c size dup n add 1 add exch
        2 arraystore
      }
@@ -213,7 +213,7 @@ def
 }
 def
 
-/Take [/gidcollectiontype /arraytype] 
+/Take [/gidcollectiontype /arraytype]
 {
   << >> begin
   /slice Set
@@ -231,7 +231,7 @@ def
   }
   ifelse
   end
-  
+
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,14 +244,14 @@ def
 
    Parameters:
    gidcollection          - GIDCollection in which to find local elements
-   local_gidcollection    - GIDCollection with only local elements 
+   local_gidcollection    - GIDCollection with only local elements
 
    Description:
    This function gets only the local elements in a GIDCollection.
    The resulting elements are returned in a new GIDCollection. If
    there are no local elements, an empty GIDCollection is returned.
 
-   Author: Håkon Mørk 
+   Author: Håkon Mørk
    FirstVersion: November 2017
 */
 /LocalOnly [/gidcollectiontype]
@@ -274,15 +274,15 @@ def
 
 % Return array containing only those GIDs for which procedure returns true
 %
-% Note: 
-% Returns array so that we can return an empty array if no node matches. 
+% Note:
+% Returns array so that we can return an empty array if no node matches.
 /Select [/gidcollectiontype /proceduretype]
 {
   /predicate Set
   mark exch
   {
-    dup 
-    predicate not  
+    dup
+    predicate not
     {
       pop
     }
@@ -401,7 +401,7 @@ def
 
 
 % oosupport.sli already defines conversions for dict
-/cvdict [/connectiontype] 
+/cvdict [/connectiontype]
  /cvdict_C load
 def
 
@@ -448,10 +448,10 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/GIDCollectionQ trie 
+/GIDCollectionQ trie
   [/gidcollectiontype] true addtotrie
   [/anytype] false addtotrie
-def                  
+def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -460,10 +460,10 @@ def
 /cva_gid_mid [/gidcollectiontype]
 {
  << >> begin
-  dup 
+  dup
   :beginiterator_g /iter Set
   :enditerator_g /enditer Set
-  
+
   mark
   {
     iter :getgidmodelid_q
@@ -493,10 +493,10 @@ def
 /forall [/gidcollectiontype /proceduretype]
 {
   /func Set
-  dup 
+  dup
   :beginiterator_g /iter Set
   :enditerator_g /enditer Set
-  
+
   {
     iter :getgid_q
     func
@@ -544,10 +544,10 @@ def
 {
   << >> begin
   /func Set
-  dup 
+  dup
   :beginiterator_g /iter Set
   :enditerator_g /enditer Set
-  
+
   mark
   {
     iter :getgid_q
@@ -600,16 +600,16 @@ def
   << >> begin
   /params Set
   /gc Set
-  
+
   params length gc size neq
   {
     gc params /SetStatus /IncompatibleLengths raiseerror
   }
   if
- 
+
   gc :beginiterator_g /iter Set
   gc :enditerator_g /enditer Set
-  
+
   params
   {
     iter :getgid_q exch
@@ -778,7 +778,7 @@ def
    Options:
    /conn_spec - dictionary with connectivity specification, must at least contain /rule
 
-                The following options may be given for all connection rules; 
+                The following options may be given for all connection rules;
                 not all rules support all options and many rules add rule-specific options.
 
                 autapses      bool  - allow self-connections (default: true)
@@ -846,7 +846,7 @@ def
 
 /Connect trie
 
-  % We create the type trie for the different variants using a loop  
+  % We create the type trie for the different variants using a loop
   [/arraytype /intvectortype /gidcollectiontype] {
       /gidlisttype Set
 
@@ -874,7 +874,7 @@ def
           4 2 roll              % bring sources and targets to top
           cvgidcollection exch  % convert targets to gidcollection
           cvgidcollection exch  % convert sources to gidcollection
-          4 2 roll              % bring sources and targets to bottom 
+          4 2 roll              % bring sources and targets to bottom
           Connect_g_g_D_D
       } bind addtotrie
 
@@ -893,7 +893,7 @@ def
           4 2 roll              % bring sources and targets to top
           cvgidcollection exch  % convert targets to gidcollection
           cvgidcollection exch  % convert sources to gidcollection
-          4 2 roll              % bring sources and targets to bottom 
+          4 2 roll              % bring sources and targets to bottom
           Connect_g_g_D_D
       } bind addtotrie
 
@@ -906,7 +906,7 @@ def
 	  3 1 roll                 % bring sources and targets to top
 	  cvgidcollection exch     % convert targets to gidcollection
 	  cvgidcollection exch     % convert sources to gidcollection
-	  3 2 roll                 % bring sources and targets to bottom 
+	  3 2 roll                 % bring sources and targets to bottom
 	  /Connect /syn_spec GetOption  % use default syn_spec
 	  Connect_g_g_D_D
       } bind addtotrie
@@ -919,7 +919,7 @@ def
 	  3 1 roll              % bring sources and targets to top
 	  cvgidcollection exch  % convert targets to gidcollection
 	  cvgidcollection exch  % convert sources to gidcollection
-	  3 2 roll              % bring sources and targets to bottom 
+	  3 2 roll              % bring sources and targets to bottom
 	  /Connect /syn_spec GetOption  % use default syn_spec
 	  Connect_g_g_D_D
       } bind addtotrie
@@ -930,14 +930,14 @@ def
       [gidlisttype gidlisttype /literaltype /literaltype] {
     	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
+	  exch                      % exchange syn_spec and conn_spec
 	  mark exch /rule exch >>   % create the conn_spec dictionary
 	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
+	  exch                      % exchange syn_spec and conn_spec
 	  4 2 roll                  % bring sources and targets to top
 	  cvgidcollection exch      % convert targets to gidcollection
 	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
+	  4 2 roll                  % bring sources and targets to bottom
 	  Connect_g_g_D_D
       } bind addtotrie
 
@@ -946,45 +946,45 @@ def
       % synapse specification
       [gidlisttype gidlisttype /literaltype /dictionarytype] {
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                     % exchange syn_spec and conn_spec		
+	  exch                     % exchange syn_spec and conn_spec
 	  mark exch /rule exch >>  % create the conn_spec dictionary
 	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                     % exchange syn_spec and conn_spec		
+	  exch                     % exchange syn_spec and conn_spec
 	  4 2 roll                 % bring sources and targets to top
 	  cvgidcollection exch     % convert targets to gidcollection
 	  cvgidcollection exch     % convert sources to gidcollection
-	  4 2 roll                 % bring sources and targets to bottom 
+	  4 2 roll                 % bring sources and targets to bottom
 	  Connect_g_g_D_D
       } bind addtotrie
 
-      % Variant: sources targets conn_rule syn_spec Connect	
+      % Variant: sources targets conn_rule syn_spec Connect
       % Connect nodes from two sets of GIDs using the given connectivity
       % specification and synapse model
       [gidlisttype gidlisttype /dictionarytype /literaltype] {
     	  mark exch /synapse_model exch >>  % create the syn_spec dictionary
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
+	  exch                      % exchange syn_spec and conn_spec
 	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                      % exchange syn_spec and conn_spec		
+	  exch                      % exchange syn_spec and conn_spec
 	  4 2 roll                  % bring sources and targets to top
 	  cvgidcollection exch      % convert targets to gidcollection
 	  cvgidcollection exch      % convert sources to gidcollection
-	  4 2 roll                  % bring sources and targets to bottom 
+	  4 2 roll                  % bring sources and targets to bottom
 	  Connect_g_g_D_D
       } bind addtotrie
-      
+
       % Variant: sources targets conn_spec syn_spec Connect
       % Connect nodes from two sets of GIDs using the given connectivity
       % and synapse specifications
       [gidlisttype gidlisttype /dictionarytype /dictionarytype] {
 	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec		
+	  exch                  % exchange syn_spec and conn_spec
 	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec		
+	  exch                  % exchange syn_spec and conn_spec
 	  4 2 roll              % bring sources and targets to top
 	  cvgidcollection exch  % convert targets to gidcollection
 	  cvgidcollection exch  % convert sources to gidcollection
-	  4 2 roll              % bring sources and targets to bottom 
+	  4 2 roll              % bring sources and targets to bottom
 	  Connect_g_g_D_D
       } bind addtotrie
 
@@ -992,9 +992,10 @@ def
 
 def
 
-/Connect_nonunique [/arraytype /arraytype /dictionarytype] {
-/syn_spec :Connect_complete_dict   % fill in missing defaults
-Connect_nonunique_ia_ia_D
+/Connect_nonunique [/arraytype /arraytype /dictionarytype]
+{
+  /syn_spec :Connect_complete_dict   % fill in missing defaults
+  Connect_nonunique_ia_ia_D
 } def
 
 
@@ -1005,14 +1006,14 @@ Connect_nonunique_ia_ia_D
    Name: GetConnections - Retrieve connections between nodes
 
    Synopsis:
-   << /source [sgid1 sgid2 ...] 
+   << /source [sgid1 sgid2 ...]
       /target [tgid1 tgid2 ...]
-      /synapse_model /smodel    
+      /synapse_model /smodel
       /synapse_label label      >> GetConnections -> [ conn1 conn2 ... ]
 
    Parameters:
    A dictionary that may contain the following fields (all are optional):
-   /source  - array with GIDs of presynaptic nodes whose connections are sought. 
+   /source  - array with GIDs of presynaptic nodes whose connections are sought.
               If not given, all neurons are searched as sources.
    /target  - array with GIDs of post-synaptic nodes whose connections are sought.
               If not given, all neurons are searched as targets.
@@ -1022,16 +1023,16 @@ Connect_nonunique_ia_ia_D
                     If not given, connections of all synapse labels are returned.
 
    Description:
-   1. If called with an empty dictionary, GetConnections returns all connections of the 
+   1. If called with an empty dictionary, GetConnections returns all connections of the
       network, as a list of arrays (IntVectorDatum), one array per connection.
    2. Each array (connection object) has the following elements:
       [source-gid target-gid target-thread synapse-model-id port]
-   3. The optional dictionary elements /source and /target can be used to filter 
+   3. The optional dictionary elements /source and /target can be used to filter
       for specific pre- and post-synaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
    5. The optional parameter /synapse_label can be used to filter for a specific synapse label.
    6. In a parallel simulation, GetConnections only returns connections with *targets*
-      on the MPI process executing the function. 
+      on the MPI process executing the function.
 
    Remarks:
    1. See synapsedict for the synapse-model-id's for all synapse models.
@@ -1064,7 +1065,7 @@ Connect_nonunique_ia_ia_D
     if
   }
   forall
-  pdict GetConnections_D 
+  pdict GetConnections_D
 }
 def
 
@@ -1405,7 +1406,7 @@ Thus, RestoreNodes can be used to copy a range of neurons to different locations
 
 /** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.
-Description: 
+Description:
 */
 
 /SaveModels
@@ -1418,15 +1419,15 @@ Description:
     models exch
     arrayload ; exch
     put /models Set
- } forall 
+ } forall
 
  [
  models
  {
    dup type /literaltype eq
    { GetDefaults } { pop } ifelse
- } forall 
- ] 
+ } forall
+ ]
  end
 } def
 

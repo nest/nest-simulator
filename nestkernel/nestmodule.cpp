@@ -788,15 +788,13 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::Connect_nonunique_ia_ia_DFunction::execute(
-  SLIInterpreter* i ) const
+NestModule::Connect_nonunique_ia_ia_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
   TokenArray sources = getValue< TokenArray >( i->OStack.pick( 2 ) );
   TokenArray targets = getValue< TokenArray >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params =
-    getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
   kernel().connection_manager.connect( sources, targets, synapse_params );
@@ -1934,8 +1932,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetValue_P", &getvalue_Pfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
-  i->createcommand(
-    "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
+  i->createcommand( "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

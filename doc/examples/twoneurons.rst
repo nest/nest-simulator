@@ -6,18 +6,15 @@
 
 .. _sphx_glr_auto_examples_twoneurons.py:
 
-Two neurons
-----------------
+Two neuron example
+----------------------------
 
-References
-~~~~~~~~~~~~
 
 See Also
 ~~~~~~~~~~
 
-:Authors:
+:doc:`one_neuron`
 
-KEYWORDS:
 
 
 .. code-block:: default

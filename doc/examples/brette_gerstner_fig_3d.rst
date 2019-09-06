@@ -6,23 +6,20 @@
 
 .. _sphx_glr_auto_examples_brette_gerstner_fig_3d.py:
 
-Test of the adapting exponential integrate and fire model from Brette and Gerstner (Fig. 3d)
-----------------------------------------------------------------------------------------------
+Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 3D)
+----------------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
-Brette and Gerstner (2005) J. Neurophysiology and
-reproduces figure 3.D of the paper.
+Brette and Gerstner [1]_ reproduces Figure 3D of the paper.
 
-Note that Brette&Gerstner give the value for b in nA.
-To be consistent with the other parameters in the equations, b must be
-converted to pA (pico Ampere).
+Note that Brette and Gerstner give the value for `b` in `nA`.
+To be consistent with the other parameters in the equations, `b` must be
+converted to `pA` (pico Ampere).
 
-See Also
+References
 ~~~~~~~~~~~
 
-:Authors:
-
-
+.. [1] Brette and Gerstner (2005) J. Neurophysiology and
 
 
 .. code-block:: default
@@ -36,7 +33,7 @@ See Also
 
 
 First we make sure that the resolution of the simulation is 0.1 ms. This is
- important, since the slop of the action potential is very steep.
+important, since the slop of the action potential is very steep.
 
 
 .. code-block:: default
@@ -77,7 +74,7 @@ We connect the DC generators.
     nest.Connect(dc, neuron, 'all_to_all')
 
 
-And add a voltmeter to record the membrane potentials.
+And add a ``voltmeter`` to record the membrane potentials.
 
 
 .. code-block:: default
@@ -87,7 +84,7 @@ And add a voltmeter to record the membrane potentials.
 
 
 We set the voltmeter to record in small intervals of 0.1 ms and connect the
- voltmeter to the neuron.
+voltmeter to the neuron.
 
 
 .. code-block:: default

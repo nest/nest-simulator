@@ -13,9 +13,12 @@ This example sets up a simple network in NEST using the Connection Set
 Algebra (CSA) instead of using the built-in connection routines.
 
 Using the CSA requires NEST to be compiled with support for
-libneurosim. For details, see [1]
+libneurosim. For details, see [1]_.
 
-For a related example, see csa_topology_example.py
+See Also
+~~~~~~~~~~
+
+:doc:`csa_topology_example`
 
 References
 ~~~~~~~~~~~~
@@ -24,12 +27,6 @@ References
        connectivity in neuronal networks from simulator-independent
        descriptions, Front. Neuroinform.
        http://dx.doi.org/10.3389/fninf.2014.00043
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
 
 
 First, we import all necessary modules for simulation and plotting.
@@ -74,7 +71,7 @@ weight and delay, respectively.
     cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
 
-Using the `Create` command from PyNEST, we create the neurons of the pre-
+Using the ``Create`` command from PyNEST, we create the neurons of the pre-
 and postsynaptic populations, each of which containing 16 neurons.
 
 
@@ -85,8 +82,8 @@ and postsynaptic populations, each of which containing 16 neurons.
     post = nest.Create("iaf_psc_alpha", 16)
 
 
-We can now connect the populations using the `CGConnect` function. It takes
- the IDs of pre- and postsynaptic neurons (``pre`` and ``post``),
+We can now connect the populations using the ``CGConnect`` function. It takes
+the IDs of pre- and postsynaptic neurons (``pre`` and ``post``),
 the connection set (``cs``) and a dictionary that maps the parameters
 weight and delay to positions in the value set associated with the
 connection set.
@@ -98,7 +95,7 @@ connection set.
     nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
 
 
-To stimulate the network, we create a `poisson_generator` and set it up to
+To stimulate the network, we create a ``poisson_generator`` and set it up to
 fire with a rate of 100000 spikes per second. It is connected to the
 neurons of the pre-synaptic population.
 
@@ -111,7 +108,7 @@ neurons of the pre-synaptic population.
 
 
 To measure and record the membrane potentials of the neurons, we create a
-`voltmeter` and connect it to all post-synaptic nodes.
+``voltmeter`` and connect it to all post-synaptic nodes.
 
 
 .. code-block:: default
@@ -122,7 +119,7 @@ To measure and record the membrane potentials of the neurons, we create a
 
 
 We save the whole connection graph of the network as a PNG image using the
-`plot_network` function of the `visualization` submodule of PyNEST.
+``plot_network`` function of the ``visualization`` submodule of PyNEST.
 
 
 .. code-block:: default

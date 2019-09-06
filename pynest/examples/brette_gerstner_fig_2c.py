@@ -19,23 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Test of the adapting exponential integrate and fire model in NEST
------------------------------------------------------------------------
+"""Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 2C)
+----------------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
-Brette and Gerstner (2005) J. Neurophysiology and
-reproduces figure 2.C of the paper.
+Brette and Gerstner [1]_ reproduces Figure 2C of the paper.
+Note that Brette and Gerstner give the value for `b` in `nA`.
+To be consistent with the other parameters in the equations, `b` must be
+converted to `pA` (pico Ampere).
 
-Note that Brette&Gerstner give the value for b in nA.
-To be consistent with the other parameters in the equations, b must be
-converted to pA (pico Ampere).
-
-See Also
+References
 ~~~~~~~~~~~
 
-:Authors:
+.. [1] Brette and Gerstner (2005) J. Neurophysiology and
 
-KEYWORDS:
 """
 
 
@@ -47,14 +44,14 @@ nest.ResetKernel()
 
 ###############################################################################
 # First we make sure that the resolution of the simulation is 0.1 ms. This is
-#  important, since the slop of the action potential is very steep.
+# important, since the slop of the action potential is very steep.
 
 res = 0.1
 nest.SetKernelStatus({"resolution": res})
 neuron = nest.Create("aeif_cond_alpha")
 
 ###############################################################################
-# a and b are parameters of the adex model. Their values come from the
+# `a` and `b` are parameters of the adex model. Their values come from the
 # publication.
 
 
@@ -75,14 +72,14 @@ nest.SetStatus(dc, [{"amplitude": 500.0, "start": 0.0, "stop": 200.0},
 nest.Connect(dc, neuron, 'all_to_all')
 
 ###############################################################################
-# And add a voltmeter to record the membrane potentials.
+# And add a ``voltmeter`` to record the membrane potentials.
 
 
 voltmeter = nest.Create("voltmeter")
 
 ###############################################################################
 # We set the voltmeter to record in small intervals of 0.1 ms and connect the
-#  voltmeter to the neuron.
+# voltmeter to the neuron.
 
 nest.SetStatus(voltmeter, {'interval': 0.1, "withgid": True, "withtime": True})
 

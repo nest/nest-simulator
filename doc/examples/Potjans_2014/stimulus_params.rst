@@ -7,7 +7,7 @@
 .. _sphx_glr_auto_examples_Potjans_2014_stimulus_params.py:
 
 
-microcircuit stimulus parameters
+Microcircuit stimulus parameters
 --------------------------------
 
 Stimulus parameters for the microcircuit.

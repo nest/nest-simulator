@@ -11,25 +11,16 @@ IF curve example
 
 This example illustrates how to measure the I-F curve of a neuron.
 The program creates a small group of neurons and injects a noisy current
-I(t) = I_mean + I_std*W(t)
-where W(t) is a white noise process.
+:math:`I(t) = I_mean + I_std*W(t)`
+where :math:`W(t)` is a white noise process.
 The programm systematically drives the current through a series of  values in
-the two-dimensional (I_mean, I_std) space and measures the firing rate of
+the two-dimensional `(I_mean, I_std)` space and measures the firing rate of
 the neurons.
 
 In this example, we measure the I-F curve of the adaptive exponential
-integrate and fire neuron (aeif_cond_exp), but any other neuron model that
+integrate and fire neuron (``aeif_cond_exp``), but any other neuron model that
 accepts current inputs is possible. The model and its parameters are
 supplied when the IF_curve object is created.
-
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
 
 
 
@@ -66,14 +57,6 @@ the transfer function.
 
 
     class IF_curve():
-        ###########################################################################
-        # This example illustrates how to measure the I-F curve of a neuron.
-        # The program creates a small group of neurons and injects a noisy current
-        # I(t)= I_mean + I_std*W(t)
-        # where W(t) is a white noise process.
-        # The programm systematically drives the current through a series of
-        # values in the two-dimensional (I_mean, I_std) space and measures the
-        # firing rate of the neurons.
 
         t_inter_trial = 200.  # Interval between two successive measurement trials
         t_sim = 1000.         # Duration of a measurement trial
@@ -133,7 +116,7 @@ the transfer function.
         def compute_transfer(self, i_mean=(400.0, 900.0, 50.0),
                              i_std=(0.0, 600.0, 50.0)):
             #######################################################################
-            # We loop through all possible combinations of (I_mean, I_sigma)
+            # We loop through all possible combinations of `(I_mean, I_sigma)`
             # and measure the output rate of the neuron.
 
             self.i_range = numpy.arange(*i_mean)

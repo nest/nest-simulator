@@ -7,10 +7,13 @@
 .. _sphx_glr_auto_examples_Potjans_2014_helpers.py:
 
 
-pynest microcircuit helpers
+Pynest microcircuit helpers
 ---------------------------
 
 Helper functions for the simulation and evaluation of the microcircuit.
+
+Authors
+~~~~~~~~
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 

@@ -20,16 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-pynest microcircuit network
+Pynest microcircuit network
 ---------------------------
 
 Main file for the microcircuit.
 
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 
 This example uses the function GetNodes, which is deprecated. A deprecation
 warning is therefore issued. For details about deprecated functions, see
 documentation.
+
+Authors
+~~~~~~~~
+
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 import nest

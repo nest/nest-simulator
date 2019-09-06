@@ -19,39 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 Structural Plasticity example
------------------------
+----------------------------------
 This example shows a simple network of two populations where structural
 plasticity is used. The network has 1000 neurons, 80% excitatory and
 20% inhibitory. The simulation starts without any connectivity. A set of
 homeostatic rules are defined, according to which structural plasticity will
 create and delete synapses dynamically during the simulation until a desired
 level of electrical activity is reached. The model of structural plasticity
-used here corresponds to the formulation presented in Butz, M., & van Ooyen, A.
-(2013). A simple rule for dendritic spine and axonal bouton formation can
-account for cortical reorganization after focal retinal lesions.
-PLoS Comput. Biol. 9 (10), e1003259.
+used here corresponds to the formulation presented in [1]_.
 
 At the end of the simulation, a plot of the evolution of the connectivity
 in the network and the average calcium concentration in the neurons is created.
-'''
+
+References
+~~~~~~~~~~~
+.. [1] Butz, M., and van Ooyen, A. (2013). A simple rule for dendritic spine and axonal bouton formation can
+       account for cortical reorganization after focal retinal lesions. PLoS Comput. Biol. 9 (10), e1003259.
+
+"""
+
+####################################################################################
+#First, we have import all necessary modules.
 
 import nest
 import numpy
 import matplotlib.pyplot as pl
 import sys
 
-'''
-First, we have import all necessary modules.
-'''
 
+####################################################################################
+# We define general simulation parameters
 
 class StructralPlasticityExample:
     def __init__(self):
-        '''
-        We define general simulation parameters
-        '''
         # simulated time (ms)
         self.t_sim = 200000.0
         # simulation step (ms).
@@ -66,14 +68,14 @@ class StructralPlasticityExample:
         self.bg_rate = 10000.0
         self.neuron_model = 'iaf_psc_exp'
 
-        '''
-        In this implementation of structural plasticity, neurons grow
-        connection points called synaptic elements. Synapses can be created
-        between compatible synaptic elements. The growth of these elements is
-        guided by homeostatic rules, defined as growth curves.
-        Here we specify the growth curves for synaptic elements of excitatory
-        and inhibitory neurons.
-        '''
+####################################################################################
+# In this implementation of structural plasticity, neurons grow
+# connection points called synaptic elements. Synapses can be created
+# between compatible synaptic elements. The growth of these elements is
+# guided by homeostatic rules, defined as growth curves.
+# Here we specify the growth curves for synaptic elements of excitatory
+# and inhibitory neurons.
+
         # Excitatory synaptic elements of excitatory neurons
         self.growth_curve_e_e = {
             'growth_curve': "gaussian",
@@ -110,9 +112,9 @@ class StructralPlasticityExample:
             'eps': self.growth_curve_i_e['eps']  # Ca2+
         }
 
-        '''
-        Now we specify the neuron model.
-        '''
+
+        # Now we specify the neuron model.
+
         self.model_params = {'tau_m': 10.0,  # membrane time constant (ms)
                              # excitatory synaptic time constant (ms)
                              'tau_syn_ex': 0.5,
@@ -132,12 +134,13 @@ class StructralPlasticityExample:
         self.total_connections_e = []
         self.total_connections_i = []
 
-        '''
-        We initialize variables for the post-synaptic currents of the
-        excitatory, inhibitory and external synapses. These values were
-        calculated from a PSP amplitude of 1 for excitatory synapses,
-        -1 for inhibitory synapses and 0.11 for external synapses.
-        '''
+
+####################################################################################
+# We initialize variables for the post-synaptic currents of the
+# excitatory, inhibitory, and external synapses. These values were
+# calculated from a PSP amplitude of 1 for excitatory synapses,
+# -1 for inhibitory synapses and 0.11 for external synapses.
+
         self.psc_e = 585.0
         self.psc_i = -585.0
         self.psc_ext = 6.2
@@ -145,35 +148,38 @@ class StructralPlasticityExample:
     def prepare_simulation(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        '''
-        We set global kernel parameters. Here we define the resolution
-        for the simulation, which is also the time resolution for the update
-        of the synaptic elements.
-        '''
+
+####################################################################################
+# We set global kernel parameters. Here we define the resolution
+# for the simulation, which is also the time resolution for the update
+# of the synaptic elements.
+
         nest.SetKernelStatus(
             {
                 'resolution': self.dt
             }
         )
 
-        '''
-        Set Structural Plasticity synaptic update interval which is how often
-        the connectivity will be updated inside the network. It is important
-        to notice that synaptic elements and connections change on different
-        time scales.
-        '''
+
+####################################################################################
+# Set Structural Plasticity synaptic update interval which is how often
+# the connectivity will be updated inside the network. It is important
+# to notice that synaptic elements and connections change on different
+# time scales.
+
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_update_interval': self.update_interval,
         })
 
-        '''
-        Now we define Structural Plasticity synapses. In this example we create
-        two synapse models, one for excitatory and one for inhibitory synapses.
-        Then we define that excitatory synapses can only be created between a
-        pre synaptic element called 'Axon_ex' and a post synaptic element
-        called Den_ex. In a similar manner, synaptic elements for inhibitory
-        synapses are defined.
-        '''
+
+####################################################################################
+# Now we define Structural Plasticity synapses. In this example we create
+# two synapse models, one for excitatory and one for inhibitory synapses.
+# Then we define that excitatory synapses can only be created between a
+# pre-synaptic element called `Axon_ex` and a post synaptic element
+# called `Den_ex`. In a similar manner, synaptic elements for inhibitory
+# synapses are defined.
+
         nest.CopyModel('static_synapse', 'synapse_ex')
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
         nest.CopyModel('static_synapse', 'synapse_in')
@@ -194,9 +200,10 @@ class StructralPlasticityExample:
         })
 
     def create_nodes(self):
-        '''
-        Now we assign the growth curves to the corresponding synaptic elements
-        '''
+
+####################################################################################
+# Now we assign the growth curves to the corresponding synaptic elements
+
         synaptic_elements = {
             'Den_ex': self.growth_curve_e_e,
             'Den_in': self.growth_curve_e_i,
@@ -209,11 +216,12 @@ class StructralPlasticityExample:
             'Axon_in': self.growth_curve_i_i,
         }
 
-        '''
-        Then it is time to create a population with 80% of the total network
-        size excitatory neurons and another one with 20% of the total network
-        size of inhibitory neurons.
-        '''
+
+####################################################################################
+# Then it is time to create a population with 80% of the total network
+# size excitatory neurons and another one with 20% of the total network
+# size of inhibitory neurons.
+
         self.nodes_e = nest.Create('iaf_psc_alpha',
                                    self.number_excitatory_neurons,
                                    {'synaptic_elements': synaptic_elements})
@@ -225,9 +233,9 @@ class StructralPlasticityExample:
         nest.SetStatus(self.nodes_i, 'synaptic_elements', synaptic_elements_i)
 
     def connect_external_input(self):
-        '''
+        """
         We create and connect the Poisson generator for external input
-        '''
+        """
         noise = nest.Create('poisson_generator')
         nest.SetStatus(noise, {"rate": self.bg_rate})
         nest.Connect(noise, self.nodes_e, 'all_to_all',
@@ -235,12 +243,13 @@ class StructralPlasticityExample:
         nest.Connect(noise, self.nodes_i, 'all_to_all',
                      {'weight': self.psc_ext, 'delay': 1.0})
 
-    '''
-    In order to save the amount of average calcium concentration in each
-    population through time we create the function record_ca. Here we use the
-    GetStatus function to retrieve the value of Ca for every neuron in the
-    network and then store the average.
-    '''
+
+####################################################################################
+# In order to save the amount of average calcium concentration in each
+# population through time we create the function ``record_ca``. Here we use the
+# ``GetStatus`` function to retrieve the value of `Ca` for every neuron in the
+# network and then store the average.
+
 
     def record_ca(self):
         ca_e = nest.GetStatus(self.nodes_e, 'Ca'),  # Calcium concentration
@@ -249,14 +258,15 @@ class StructralPlasticityExample:
         ca_i = nest.GetStatus(self.nodes_i, 'Ca'),  # Calcium concentration
         self.mean_ca_i.append(numpy.mean(ca_i))
 
-    '''
-    In order to save the state of the connectivity in the network through time
-    we create the function record_connectivity. Here we use the GetStatus
-    function to retrieve the number of connected pre synaptic elements of each
-    neuron. The total amount of excitatory connections is equal to the total
-    amount of connected excitatory pre synaptic elements. The same applies for
-    inhibitory connections.
-    '''
+
+####################################################################################
+# In order to save the state of the connectivity in the network through time
+# we create the function ``record_connectivity``. Here we use the ``GetStatus``
+# function to retrieve the number of connected pre-synaptic elements of each
+# neuron. The total amount of excitatory connections is equal to the total
+# amount of connected excitatory pre-synaptic elements. The same applies for
+# inhibitory connections.
+
 
     def record_connectivity(self):
         syn_elems_e = nest.GetStatus(self.nodes_e, 'synaptic_elements')
@@ -266,10 +276,11 @@ class StructralPlasticityExample:
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
                                             for neuron in syn_elems_i))
 
-    '''
-    We define a function to plot the recorded values
-    at the end of the simulation.
-    '''
+
+####################################################################################
+# We define a function to plot the recorded values
+# at the end of the simulation.
+
 
     def plot_data(self):
         fig, ax1 = pl.subplots()
@@ -295,13 +306,14 @@ class StructralPlasticityExample:
         ax2.legend(loc=4)
         pl.savefig('StructuralPlasticityExample.eps', format='eps')
 
-    '''
-    It is time to specify how we want to perform the simulation. In this
-    function we first enable structural plasticity in the network and then we
-    simulate in steps. On each step we record the calcium concentration and the
-    connectivity. At the end of the simulation, the plot of connections and
-    calcium concentration through time is generated.
-    '''
+
+####################################################################################
+# It is time to specify how we want to perform the simulation. In this
+# function we first enable structural plasticity in the network and then we
+# simulate in steps. On each step we record the calcium concentration and the
+# connectivity. At the end of the simulation, the plot of connections and
+# calcium concentration through time is generated.
+
 
     def simulate(self):
         if nest.NumProcesses() > 1:
@@ -318,13 +330,14 @@ class StructralPlasticityExample:
                 print("Progress: " + str(i / 2) + "%")
         print("Simulation finished successfully")
 
-'''
-Finally we take all the functions that we have defined and create the sequence
-for our example. We prepare the simulation, create the nodes for the network,
-connect the external input and then simulate. Please note that as we are
-simulating 200 biological seconds in this example, it will take a few minutes
-to complete.
-'''
+
+####################################################################################
+# Finally we take all the functions that we have defined and create the sequence
+# for our example. We prepare the simulation, create the nodes for the network,
+# connect the external input and then simulate. Please note that as we are
+# simulating 200 biological seconds in this example, it will take a few minutes
+# to complete.
+
 if __name__ == '__main__':
     example = StructralPlasticityExample()
     # Prepare simulation

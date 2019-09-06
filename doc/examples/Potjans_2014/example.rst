@@ -7,13 +7,13 @@
 .. _sphx_glr_auto_examples_Potjans_2014_example.py:
 
 
-pynest microcircuit example
+Pynest microcircuit example
 ---------------------------
 
 Example file to run the microcircuit.
 
 
-This example uses the function GetNodes, which is deprecated. A deprecation
+This example uses the function ``GetNodes``, which is deprecated. A deprecation
 warning is therefore issued. For details about deprecated functions, see
 documentation.
 
@@ -21,6 +21,7 @@ Import the necessary modules
 
 
 .. code-block:: default
+
 
     import time
     import numpy as np
@@ -34,6 +35,7 @@ Initialize the network and pass parameters to it.
 
 
 .. code-block:: default
+
 
     tic = time.time()
     net = network.Network(sim_dict, net_dict, stim_dict)
@@ -59,6 +61,7 @@ the simulation to exclude initialization artifacts.
 
 
 .. code-block:: default
+
 
     raster_plot_time_idx = np.array(
         [stim_dict['th_start'] - 100.0, stim_dict['th_start'] + 100.0]

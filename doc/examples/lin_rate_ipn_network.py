@@ -23,20 +23,11 @@
 -----------------------------------
 
 This script simulates an excitatory and an inhibitory population
-of lin_rate_ipn neurons with delayed excitatory and instantaneous
+of ``lin_rate_ipn`` neurons with delayed excitatory and instantaneous
 inhibitory connections. The rate of all neurons is recorded using
 a multimeter. The resulting rate for one excitatory and one
 inhibitory neuron is plotted.
 
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 
 import nest
@@ -88,7 +79,7 @@ neuron_params = {'linear_summation': True,
 
 ###############################################################################
 # Configuration of the simulation kernel by the previously defined time
-# resolution used in the simulation. Setting "print_time" to True prints
+# resolution used in the simulation. Setting ``print_time`` to True prints
 # the already processed simulation time as well as its percentage of the
 # total simulation time.
 
@@ -100,20 +91,20 @@ nest.SetKernelStatus({"resolution": dt, "use_wfr": False,
 print("Building network")
 
 ###############################################################################
-# Configuration of the neuron model using SetDefaults().
+# Configuration of the neuron model using ``SetDefaults``.
 
 nest.SetDefaults(neuron_model, neuron_params)
 
 ###############################################################################
-# Creation of the nodes using `Create`.
+# Creation of the nodes using ``Create``.
 
 n_e = nest.Create(neuron_model, NE)
 n_i = nest.Create(neuron_model, NI)
 
 
-###############################################################################
-# To record from the rate neurons a multimeter is created and the parameter
-# `record_from` is set to `'rate'` as well as the recording interval to `dt`
+################################################################################
+# To record from the rate neurons a ``multimeter`` is created and the parameter
+# ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
 mm = nest.Create('multimeter', params={'record_from': ['rate'],
                                        'interval': dt})
@@ -121,9 +112,9 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 ###############################################################################
 # Specify synapse and connection dictionaries:
 # Connections originating from excitatory neurons are associatated
-# with a delay d (rate_connection_delayed).
+# with a delay `d` (``rate_connection_delayed``).
 # Connections originating from inhibitory neurons are not associatated
-# with a delay (rate_connection_instantaneous).
+# with a delay (``rate_connection_instantaneous``).
 
 syn_e = {'weight': w, 'delay': d_e, 'model': 'rate_connection_delayed'}
 syn_i = {'weight': -g*w, 'model': 'rate_connection_instantaneous'}

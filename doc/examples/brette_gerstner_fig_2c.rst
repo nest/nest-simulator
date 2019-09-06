@@ -6,22 +6,19 @@
 
 .. _sphx_glr_auto_examples_brette_gerstner_fig_2c.py:
 
-Test of the adapting exponential integrate and fire model from Brette and Gerstner (Fig. 2c)
----------------------------------------------------------------------------------------------
+Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 2C)
+----------------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
-Brette and Gerstner (2005) J. Neurophysiology and
-reproduces figure 2.C of the paper.
+Brette and Gerstner [1]_ reproduces Figure 2C of the paper.
+Note that Brette and Gerstner give the value for `b` in `nA`.
+To be consistent with the other parameters in the equations, `b` must be
+converted to `pA` (pico Ampere).
 
-Note that Brette&Gerstner give the value for b in nA.
-To be consistent with the other parameters in the equations, b must be
-converted to pA (pico Ampere).
-
-See Also
+References
 ~~~~~~~~~~~
 
-:Authors:
-
+.. [1] Brette and Gerstner (2005) J. Neurophysiology and
 
 
 
@@ -37,7 +34,7 @@ See Also
 
 
 First we make sure that the resolution of the simulation is 0.1 ms. This is
- important, since the slop of the action potential is very steep.
+important, since the slop of the action potential is very steep.
 
 
 .. code-block:: default
@@ -48,7 +45,7 @@ First we make sure that the resolution of the simulation is 0.1 ms. This is
     neuron = nest.Create("aeif_cond_alpha")
 
 
-a and b are parameters of the adex model. Their values come from the
+`a` and `b` are parameters of the adex model. Their values come from the
 publication.
 
 
@@ -57,6 +54,7 @@ publication.
 
 
     nest.SetStatus(neuron, {"a": 4.0, "b": 80.5})
+
 
 Next we define the stimulus protocol. There are two DC generators,
 producing stimulus currents during two time-intervals.
@@ -80,7 +78,7 @@ We connect the DC generators.
     nest.Connect(dc, neuron, 'all_to_all')
 
 
-And add a voltmeter to record the membrane potentials.
+And add a ``voltmeter`` to record the membrane potentials.
 
 
 .. code-block:: default
@@ -91,7 +89,7 @@ And add a voltmeter to record the membrane potentials.
 
 
 We set the voltmeter to record in small intervals of 0.1 ms and connect the
- voltmeter to the neuron.
+voltmeter to the neuron.
 
 
 .. code-block:: default

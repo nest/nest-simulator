@@ -7,10 +7,10 @@
 .. _sphx_glr_auto_examples_gap_junctions_inhibitory_network.py:
 
 Gap Junctions: Inhibitory network example
-----------------------------------------------
+-----------------------------------------------
 
 This script simulates an inhibitory network of 500 Hodgkin-Huxley neurons.
-Without the gap junctions (meaning for `gap_weight = 0.0`) the network shows
+Without the gap junctions (meaning for ``gap_weight = 0.0``) the network shows
 an asynchronous irregular state that is caused by the external excitatory
 Poissonian drive being balanced by the inhibitory feedback within the
 network. With increasing `gap_weight` the network synchronizes:
@@ -20,8 +20,8 @@ state. With a weight of 0.54 nS the network switches randomly between the
 asynchronous to the synchronous state, while for a gap weight of 0.7 nS a
 stable synchronous state is reached.
 
-This example is also used as test case 2 (see figure 9 and 10)
-in [1].
+This example is also used as test case 2 (see Figure 9 and 10)
+in [1]_.
 
 References
 ~~~~~~~~~~~
@@ -29,13 +29,6 @@ References
 .. [1] Hahne et al. (2015) A unified framework for spiking and gap-junction
        interactions in distributed neuronal network simulations, Front.
        Neuroinform. http://dx.doi.org/10.3389/neuro.11.012.2008
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-
 
 
 .. code-block:: default
@@ -61,7 +54,7 @@ See Also
 
 
 First we set the random seed, adjust the kernel settings and create
-`hh_psc_alpha_gap` neurons, `spike_detector` and `poisson_generator`.
+``hh_psc_alpha_gap`` neurons, ``spike_detector`` and ``poisson_generator``.
 
 
 .. code-block:: default
@@ -88,11 +81,11 @@ First we set the random seed, adjust the kernel settings and create
     pg = nest.Create("poisson_generator", params={'rate': 500.0})
 
 
-Each neuron shall receive `inh_per_neuron = 50` inhibitory synapti inputs
+Each neuron shall receive ``inh_per_neuron = 50`` inhibitory synaptic inputs
 that are randomly selected from all other neurons, each with synaptic
-weight `j_inh = -50.0` pA and a synaptic delay of 1.0 ms. Furthermore each
- neuron shall receive an excitatory external Poissonian input of 500.0 Hz
-with synaptic weight `j_exc = 300.0` pA and the same delay.
+weight ``j_inh = -50.0`` pA and a synaptic delay of 1.0 ms. Furthermore each
+neuron shall receive an excitatory external Poissonian input of 500.0 Hz
+with synaptic weight ``j_exc = 300.0`` pA and the same delay.
 The desired connections are created with the following commands:
 
 
@@ -115,7 +108,7 @@ The desired connections are created with the following commands:
                                                       'delay': delay})
 
 
-Then the neurons are connected to the `spike_detector` and the initial
+Then the neurons are connected to the ``spike_detector`` and the initial
 membrane potential of each neuron is set randomly between -40 and -80 mV.
 
 
@@ -128,15 +121,15 @@ membrane potential of each neuron is set randomly between -40 and -80 mV.
         nest.SetStatus([neurons[i]], {'V_m': (-40. - 40. * random.random())})
 
 
-Finally gap junctions are added to the network. (60*500)/2 `gap_junction`
+Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
 connections are added randomly resulting in an average of 60 gap-junction
-connections per neuron. We must not use the `fixed_indegree` oder
-`fixed_outdegree` functionality of `nest.Connect()` to create the
-connections, as `gap_junction` connections are bidirectional connections
+connections per neuron. We must not use the ``fixed_indegree`` oder
+``fixed_outdegree`` functionality of ``nest.Connect()`` to create the
+connections, as ``gap_junction`` connections are bidirectional connections
 and we need to make sure that the same neurons are connected in both ways.
 This is achieved by creating the connections on the Python level with the
 `random` module of the Python Standard Library and connecting the neurons
-using the `make_symmetric` flag for `one_to_one` connections.
+using the ``make_symmetric`` flag for ``one_to_one`` connections.
 
 
 .. code-block:: default

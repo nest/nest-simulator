@@ -16,6 +16,7 @@ perturbation). The network consists of recurrent, randomly connected excitatory
 and inhibitory neurons. Its activity is driven by an external Poisson input
 provided to all neurons independently. In order to ensure that the network is
 reset appropriately between the trials, we do the following steps:
+
 - resetting the network
 - resetting the random network generator
 - resetting the internal clock
@@ -24,8 +25,6 @@ reset appropriately between the trials, we do the following steps:
   (in order to avoid that spikes remaining in the NEST memory
   after the first simulation are fed into the second simulation)
 
-
-KEYWORDS:
 
 Importing all necessary modules for simulation, analysis and plotting.
 
@@ -59,7 +58,7 @@ network.
 
 
 Parameters specific for the neurons in the network. The  default values of
-the reset potential `E_L` and the spiking threshold `V_th` are used to set
+the reset potential ``E_L`` and the spiking threshold ``V_th`` are used to set
 the limits of the initial potential of the neurons.
 
 
@@ -75,7 +74,7 @@ the limits of the initial potential of the neurons.
 
 
 Synapse parameters. Changing the weights `J` in the network can lead to
-qualitatively different behaviors. If `J` is small (e.g.`` J = 0.1``), we
+qualitatively different behaviors. If `J` is small (e.g. ``J = 0.1``), we
 are likely to observe a non-chaotic network behavior (after perturbation
 the network returns to its original activity). Increasing `J`
 (e.g ``J = 5.5``) leads to rather chaotic activity. Given that in this
@@ -155,9 +154,9 @@ synapses from the inhibitory population.
                  syn_spec={'weight': -g*J, 'delay': dt})
 
 
-Afterwards we create a `poisson_generator` that provides spikes (the external
+Afterwards we create a ``poisson_generator`` that provides spikes (the external
 input) to the neurons until time `T` is reached.
-Afterwards a `dc_generator`, which is also connected to the whole population,
+Afterwards a ``dc_generator``, which is also connected to the whole population,
 provides a stong hyperpolarisation step for a short time period `fade_out`.
 
 The `fade_out` period has to last at least twice as long as the simulation
@@ -183,8 +182,8 @@ resolution to supress the neurons from firing.
 
 
 
-We then create the `spike_generator`, which provides the extra spike
-`(perturbation).
+We then create the ``spike_generator``, which provides the extra spike
+(perturbation).
 
 
 .. code-block:: default
@@ -209,7 +208,7 @@ sender ids and spiketimes are stored in a list (`senders`, `spiketimes`).
 
 
 We need to reset the network, the random number generator, and the clock of
-the simulation Kernel. In addition, we ensure that there is no spike left in
+the simulation kernel. In addition, we ensure that there is no spike left in
 the spike detector.
 
 In the second trial, we add an extra input spike at time `t_stim` to the

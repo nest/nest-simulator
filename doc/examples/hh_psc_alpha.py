@@ -19,25 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example using hh_psc_alpha
--------------------------------
+"""Example using Hodgkin-Huxley neuron
+----------------------------------------
 
 This example produces a rate-response (FI) curve of the Hodgkin-Huxley
-neuron  in response to a range of different current (DC) stimulations.
+neuron ``hh_psc_alpha`` in response to a range of different current (DC) stimulations.
 The result is plotted using matplotlib.
 
 Since a DC input affetcs only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
-
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-
 """
 
 import nest

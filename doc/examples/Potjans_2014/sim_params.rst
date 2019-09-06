@@ -7,7 +7,7 @@
 .. _sphx_glr_auto_examples_Potjans_2014_sim_params.py:
 
 
-microcircuit simulation parameters
+Microcircuit simulation parameters
 ----------------------------------
 
 Simulation parameters for the microcircuit.

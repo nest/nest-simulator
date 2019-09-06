@@ -7,7 +7,7 @@
 .. _sphx_glr_auto_examples_Potjans_2014_network_params.py:
 
 
-pynest microcircuit parameters
+Pynest microcircuit parameters
 ------------------------------
 
 Network parameters for the microcircuit.

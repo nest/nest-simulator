@@ -6,21 +6,17 @@
 
 .. _sphx_glr_auto_examples_correlospinmatrix_detector_two_neuron.py:
 
-correlospinmatrix_detector example
+Correlospinmatrix detector example
 ----------------------------------------
 
 This scripts simulates two connected binary neurons, similar
-as in [1]. It measures and plots the auto- and cross covariance funcitons
+as in [1]_. It measures and plots the auto- and cross covariance functions
 of the individual neurons and between them, repsectively.
 
 References
 ~~~~~~~~~~~~
-.. [1] Ginzburg & Sompolinsky (1994) PRE, 50(4) p. 3771. Fig. 1.
 
-See Also
-~~~~~~~~~~
-
-:Authors:
+.. [1] Ginzburg & Sompolinsky (1994). Theory of correlations in stochastic neural netoworks. 50(4) p. 3175. Fig. 1.
 
 
 

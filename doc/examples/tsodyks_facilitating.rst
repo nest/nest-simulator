@@ -13,7 +13,7 @@ This scripts simulates two neurons. One is driven with dc-input and
 connected to the other one with a facilitating tsodyks synapse. The
 membrane potential trace of the second neuron is recorded.
 
-This example reproduces figure 1B of [1]
+This example reproduces figure 1B of [1]_
 This example is analog to ``tsodyks_depressing.py``, except that
 different synapse parameters are used. Here, a small facilitation
 parameter ``U`` causes a slow saturation of the synaptic efficacy
@@ -28,11 +28,7 @@ References
 See Also
 ~~~~~~~~~~
 
-tsodyks_depressing.py
-
-:Authors:
-
-KEYWORDS:
+:doc:`tsodyks_depressing`
 
 First, we import all necessary modules for simulation and plotting.
 
@@ -91,7 +87,7 @@ and synapse parameters are stored into a dictionary.
                  "x": 1.0}
 
 
-Third, we reset the kernel and set the resolution using `SetKernelStatus`.
+Third, we reset the kernel and set the resolution using ``SetKernelStatus``.
 
 
 .. code-block:: default
@@ -101,7 +97,7 @@ Third, we reset the kernel and set the resolution using `SetKernelStatus`.
     nest.SetKernelStatus({"resolution": h})
 
 
-Fourth, the nodes are created using `Create`. We store the returned
+Fourth, the nodes are created using ``Create``. We store the returned
 handles in variables for later reference.
 
 
@@ -113,9 +109,9 @@ handles in variables for later reference.
     volts = nest.Create("voltmeter")
 
 
-Fifth, the `iaf_psc_exp`-neurons, the `dc_generator` and the `voltmeter`
-are configured using `SetStatus`, which expects a list of node handles and
- a parameter dictionary or a list of parameter dictionaries.
+Fifth, the ``iaf_psc_exp`` neurons, the ``dc_generator`` and the ``voltmeter``
+are configured using ``SetStatus``, which expects a list of node handles and
+a parameter dictionary or a list of parameter dictionaries.
 
 
 .. code-block:: default
@@ -127,12 +123,12 @@ are configured using `SetStatus`, which expects a list of node handles and
                            "interval": 1.})
 
 
-Sixth, the `dc_generator` is connected to the first neuron
-(``neurons[# 0]``) and the `voltmeter` is connected to the second neuron
-(``neurons[1]``). The command `Connect` has different variants. Plain
-`Connect` just takes the handles of pre- and post-synaptic nodes and
+Sixth, the ``dc_generator`` is connected to the first neuron
+(`neurons[0]`) and the `voltmeter` is connected to the second neuron
+(`neurons[1]`). The command `Connect` has different variants. Plain
+``Connect`` just takes the handles of pre- and post-synaptic nodes and
 uses the default values for weight and delay. Note that the connection
-direction for the `voltmeter` reflects the signal flow in the simulation
+direction for the ``voltmeter`` reflects the signal flow in the simulation
 kernel, because it observes the neuron instead of receiving events from it.
 
 
@@ -143,9 +139,9 @@ kernel, because it observes the neuron instead of receiving events from it.
     nest.Connect(volts, [neurons[1]])
 
 
-Seventh, the first neuron (``neurons[0]``) is connected to the second
-neuron (``neurons[1]``).  The command `CopyModel` copies the
-`tsodyks_synapse` model to the new name ``syn`` with parameters
+Seventh, the first neuron (`neurons[0]`) is connected to the second
+neuron (`neurons[1]`).  The command ``CopyModel`` copies the
+``tsodyks_synapse`` model to the new name ``syn`` with parameters
 ``syn_param``.  The manually defined model ``syn`` is used in the
 connection routine via the ``syn_spec`` parameter.
 
@@ -157,9 +153,9 @@ connection routine via the ``syn_spec`` parameter.
     nest.Connect([neurons[0]], [neurons[1]], syn_spec="syn")
 
 
-Finally, we simulate the configuration using the command `Simulate`,
-where the simulation time ``Tend`` is passed as the argument.  We plot the
- target neuron's membrane potential as function of time.
+Finally, we simulate the configuration using the command ``Simulate``,
+where the simulation time `Tend` is passed as the argument.  We plot the
+target neuron's membrane potential as function of time.
 
 
 .. code-block:: default

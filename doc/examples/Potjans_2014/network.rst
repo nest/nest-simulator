@@ -7,16 +7,20 @@
 .. _sphx_glr_auto_examples_Potjans_2014_network.py:
 
 
-pynest microcircuit network
+Pynest microcircuit network
 ---------------------------
 
 Main file for the microcircuit.
 
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 
 This example uses the function GetNodes, which is deprecated. A deprecation
 warning is therefore issued. For details about deprecated functions, see
 documentation.
+
+Authors
+~~~~~~~~
+
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 
 
 .. code-block:: default

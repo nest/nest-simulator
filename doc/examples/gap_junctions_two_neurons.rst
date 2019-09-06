@@ -9,19 +9,10 @@
 Gap Junctions: Two neuron example
 --------------------------------------
 
-This script simulates two Hodgkin-Huxley neurons of type `hh_psc_alpha_gap`
+This script simulates two Hodgkin-Huxley neurons of type ``hh_psc_alpha_gap``
 connected by a gap junction. Both neurons receive a constant current of
 100.0 pA. The neurons are initialized with different membrane potentials and
 synchronize over time due to the gap-junction connection.
-
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
 
 
 
@@ -36,7 +27,7 @@ See Also
 
 
 First we set the resolution of the simulation, create two neurons and
-create a `voltmeter` for recording.
+create a ``voltmeter`` for recording.
 
 
 .. code-block:: default
@@ -53,7 +44,7 @@ create a `voltmeter` for recording.
 
 
 Then we set the constant current input, modify the inital membrane
-potential of one of the neurons and connect the neurons to the `voltmeter`.
+potential of one of the neurons and connect the neurons to the ``voltmeter``.
 
 
 .. code-block:: default
@@ -65,8 +56,8 @@ potential of one of the neurons and connect the neurons to the `voltmeter`.
     nest.Connect(vm, neuron, 'all_to_all')
 
 
-In order to create the `gap_junction` connection we employ the
-`all_to_all` connection rule: Gap junctions are bidirectional connections,
+In order to create the ``gap_junction`` connection we employ the
+``all_to_all`` connection rule: Gap junctions are bidirectional connections,
 therefore we need to connect `neuron[0]` to `neuron[1]` and `neuron[1]` to
 `neuron[0]`:
 

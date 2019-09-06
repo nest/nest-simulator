@@ -21,14 +21,14 @@ Population dynamics are visualized by raster plot and as average firing rate.
 References
 ~~~~~~~~~~~
 
-.. [1] Schwalger et al. PLoS Comput Biol. 2017
+.. [1] Schwalger T, Degert M, Gerstner W (2017). Towards a theory of cortical columns: From spiking
+       neurons to interacting neural populations of finite size. PLoS Comput Biol.
+       https://doi.org/10.1371/journal.pcbi.1005507
 
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-
+.. [2] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC and
+       Gerstner W (2012). Parameter extraction and classification of
+       three cortical neuron types reveals two distinct adaptation
+       mechanisms. Journal of Neurophysiology. 107(6), pp.1756-1775.
 
 Import all necessary modules for simulation and plotting.
 
@@ -54,15 +54,11 @@ Assigning the simulation parameters to variables.
 
 
 Definition of neural parameters for the GIF model. These parameters are
-extracted by fitting the model to experimental data [1].
-
-.. [1] Mensi, S., Naud, R.,Pozzorini, C., Avermann, M., Petersen, C.C. and
-       Gerstner, W., 2012. Parameter extraction and classification of
-       three cortical neuron types reveals two distinct adaptation
-       mechanisms. Journal of Neurophysiology, 107(6), pp.1756-1775.
+extracted by fitting the model to experimental data [2]_.
 
 
 .. code-block:: default
+
 
 
     neuron_params = {"C_m": 83.1,
@@ -93,7 +89,7 @@ Definition of the parameters for the population of GIF neurons.
 
 
 Definition of the parameters for the Poisson group and its connection with
- GIF neurons population.
+GIF neurons population.
 
 
 .. code-block:: default

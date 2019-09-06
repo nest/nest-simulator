@@ -8,20 +8,24 @@
 
 
 Clopath Rule: Bidirectional connections
-------------------
+-----------------------------------------
+
 This script simulates a small network of ten excitatory and three
-inhibitory aeif_psc_delta_clopath neurons. The neurons are randomly connected
+inhibitory ``aeif_psc_delta_clopath`` neurons. The neurons are randomly connected
 and driven by 500 Poisson generators. The synapses from the Poisson generators
 to the excitatory population and those among the neurons of the network
 are Clopath synapses. The rate of the Poisson generators is modulated with
-a Gaussian profile whose center shifts randomly each 100ms between ten
+a Gaussian profile whose center shifts randomly each 100 ms between ten
 equally spaced positions.
 This setup demonstrates that the Clopath synapse is able to establish
-bidirectional connections. The example is adapted from [1] (cf. fig. 5).
+bidirectional connections. The example is adapted from [1]_ (cf. fig. 5).
 
-References:  [1] Clopath et al. (2010) Connectivity reflects coding:
-                a model of voltage-based STDP with homeostasis.
-                Nature Neuroscience 13:3, 344--352
+References
+~~~~~~~~~~~
+
+.. [1] Clopath et al. (2010) Connectivity reflects coding:
+       a model of voltage-based STDP with homeostasis.
+       Nature Neuroscience 13:3, 344--352
 
 
 .. code-block:: default
@@ -32,7 +36,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
     import matplotlib.pyplot as pl
     import random
 
-    # Set general parameters
+
+Set the parameters
+
+
+.. code-block:: default
+
+
     simulation_time = 1.0e4
     resolution = 0.1
     delay = resolution
@@ -65,17 +75,35 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
 
     pop_exc = nest.Create(nrn_model, 10, nrn_params)
     pop_inh = nest.Create(nrn_model, 3, nrn_params)
-    # We need parrot neurons since Poisson generators can only be connected
-    # with static connections
+
+
+We need parrot neurons since Poisson generators can only be connected
+with static connections
+
+
+.. code-block:: default
+
+
     pop_input = nest.Create('parrot_neuron', 500)  # helper neurons
     pg = nest.Create('poisson_generator', 500)
     wr = nest.Create('weight_recorder', 1)
 
-    # First connect Poisson generators to helper neurons
+
+First connect Poisson generators to helper neurons
+
+
+.. code-block:: default
+
     nest.Connect(pg, pop_input, 'one_to_one', {'model': 'static_synapse',
                                                'weight': 1.0, 'delay': delay})
 
-    # Create input->exc connections
+
+Create all the connections
+
+
+.. code-block:: default
+
+
     nest.CopyModel('clopath_synapse', 'clopath_input_to_exc',
                    {'Wmax': 3.0})
     conn_dict_input_to_exc = {'rule': 'all_to_all'}
@@ -114,14 +142,26 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
     conn_dict_inh_to_exc = {'rule': 'fixed_outdegree', 'outdegree': 6}
     nest.Connect(pop_inh, pop_exc, conn_dict_inh_to_exc, syn_dict_inh_to_exc)
 
-    # Randomize the initial membrane potential
+
+Randomize the initial membrane potential
+
+
+.. code-block:: default
+
+
     for nrn in pop_exc:
         nest.SetStatus([nrn, ], {'V_m': np.random.normal(-60.0, 25.0)})
 
     for nrn in pop_inh:
         nest.SetStatus([nrn, ], {'V_m': np.random.normal(-60.0, 25.0)})
 
-    # Simulation divided into intervals of 100ms for shifting the Gaussian
+
+Simulation divided into intervals of 100ms for shifting the Gaussian
+
+
+.. code-block:: default
+
+
     for i in range(int(simulation_time/100.0)):
         # set rates of poisson generators
         rates = np.empty(500)
@@ -133,7 +173,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
             nest.SetStatus([pg[j]], {'rate': rates[j]*1.75})
         nest.Simulate(100.0)
 
-    # Plot results
+
+Plot results
+
+
+.. code-block:: default
+
+
     fig1, axA = pl.subplots(1, sharex=False)
 
     # Plot synapse weights of the synapses within the excitatory population

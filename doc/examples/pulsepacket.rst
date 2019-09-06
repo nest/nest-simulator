@@ -23,9 +23,9 @@ References
 
 .. [1] Diesmann M. 2002. Dissertation. Conditions for stable propagation of
        synchronous spiking in cortical neural networks: Single neuron dynamics
-       and network properties, http://d-nb.info/968772781/34.
+       and network properties.
+       http://d-nb.info/968772781/34.
 
-KEYWORDS: spike volley, gaussian rate
 
 First, we import all necessary modules for simulation, analysis and
 plotting.
@@ -80,10 +80,12 @@ This function calculates the membrane potential excursion in response
 to a single input spike (the equation is given for example in Diesmann [1]_,
 eq.2.3).
 It expects:
-* Time: a time array or a single time point (in sec)
-* Tau_s and Tau_m: the synaptic and the membrane time constant (in sec)
-* Cm: the membrane capacity (in Farad)
-* Weight: the synaptic weight (in Ampere)
+
+* ``Time``: a time array or a single time point (in sec)
+* ``Tau_s`` and ``Tau_m``: the synaptic and the membrane time constant (in sec)
+* ``Cm``: the membrane capacity (in Farad)
+* ``Weight``: the synaptic weight (in Ampere)
+
 It returns the provoked membrane potential (in mV)
 
 
@@ -102,12 +104,14 @@ It returns the provoked membrane potential (in mV)
 
 This function finds the exact location of the maximum of the PSP caused by a
 single input spike. The location is obtained by setting the first derivative
-of the equation for the PSP (see `make_psp()`) to zero. The resulting
-equation can be expressed in terms of a LambertW function. This function is
+of the equation for the PSP (see ``make_psp()``) to zero. The resulting
+equation can be expressed in terms of a `LambertW function`. This function is
 implemented in nest as a .sli file. In order to access this function in
-PyNEST we called the function `nest.sli_func()`.
+PyNEST we called the function ``nest.sli_func()``.
 This function expects:
-* Tau_s and Tau_m: the synaptic and membrane time constant (in sec)
+
+* ``Tau_s`` and ``Tau_m``: the synaptic and membrane time constant (in sec)
+
 It returns the location of the maximum (in sec)
 
 
@@ -143,7 +147,7 @@ Second, we calculate the PSP of a neuron due to a single spiking input.
 (see Diesmann 2002, eq. 2.3).
 Since we do that in discrete time steps, we first construct an array
 (``t_psp``) that contains the time points we want to consider. Then, the
-function `make_psp()` (that creates the PSP) takes the time array as its
+function ``make_psp()`` (that creates the PSP) takes the time array as its
 first argument.
 
 
@@ -157,9 +161,9 @@ first argument.
 
 Now, we want to normalize the PSP amplitude to one. We therefore have to
 divide the PSP by its maximum ([1]_ sec 6.1). The function
-`find_loc_pspmax()` returns the exact time point (`t_pspmax`) when we
-expect the maximum to occur. The function `make_psp()` calculates the
-corresponding PSP value, which is our PSP amplitude (`psp_amp`).
+``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
+expect the maximum to occur. The function ``make_psp()`` calculates the
+corresponding PSP value, which is our PSP amplitude (``psp_amp``).
 
 
 .. code-block:: default
@@ -172,7 +176,7 @@ corresponding PSP value, which is our PSP amplitude (`psp_amp`).
 
 
 Now we have all ingredients to compute the membrane potential excursion
-(``U``). This calculation implies a convolution of the Gaussian with the
+(`U`). This calculation implies a convolution of the Gaussian with the
 normalized PSP (see [1]_, eq. 6.9). In order to avoid an offset in the
 convolution, we need to add a pad of zeros on the left side of the
 normalized PSP. Later on we want to compare our analytical results with the
@@ -200,7 +204,7 @@ All these neurons receive an individual pulse packet that is drawn from a
 Gaussian distribution.
 
 We reset the Kernel, define the simulation resolution and set the
-verbosity using `set_verbosity()` to suppress info messages.
+verbosity using ``set_verbosity`` to suppress info messages.
 
 
 .. code-block:: default
@@ -251,12 +255,12 @@ for the and pulse-packet-generators and `vm_pars` for the voltmeter).
 Now, we connect each pulse generator to one neuron via static synapses.
 We want to keep all properties of the static synapse constant except the
 synaptic weight. Therefore we change the weight with  the help of the command
-`SetDefaults()`.
-The command `Connect` connects all kinds of nodes/devices. Since multiple
+``SetDefaults``.
+The command ``Connect`` connects all kinds of nodes/devices. Since multiple
 nodes/devices can be connected in different ways e.g., each source connects
 to all targets, each source connects to a subset of targets or each source
 connects to exactly one target, we have to specify the connection. In our
-case we use the ``one-to-one`` connection routine since we connect one pulse
+case we use the ``one_to_one`` connection routine since we connect one pulse
 generator (source) to one neuron (target).
 In addition we also connect the `voltmeter` to the `neurons`.
 
@@ -282,8 +286,8 @@ In the next step we run the simulation for a given duration in ms.
 
 Finally, we record the membrane potential, when it occurred and to which
 neuron it belongs. We obtain this information using the command
-`nest.GetStatus(vm, 'events')[0]`. The sender and the time point of a voltage
-data point at position x in the voltage array (`V_m`), can be found at the
+``nest.GetStatus(vm, 'events')[0]``. The sender and the time point of a voltage
+data point at position x in the voltage array (``V_m``), can be found at the
 same position x in the sender (`senders`) and the time array (`times`).
 
 

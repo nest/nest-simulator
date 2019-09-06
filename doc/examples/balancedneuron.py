@@ -30,7 +30,7 @@ the neuron fire at the same rate as the excitatory population.
 Optimization is performed using the ``bisection`` method from Scipy,
 simulating the network repeatedly.
 
-This example is also shown in the article [1]
+This example is also shown in the article [1]_
 
 References
 ~~~~~~~~~~~~~
@@ -38,12 +38,6 @@ References
 .. [1] Eppler et al. (2009) PyNEST: A convenient interface to the NEST
        simulator, Front. Neuroinform.
        http://dx.doi.org/10.3389/neuro.11.012.2008
-
-See Also
-~~~~~~~~~~~
-
-:Authors:
-
 
 """
 
@@ -57,7 +51,7 @@ import nest
 import nest.voltage_trace
 
 ###############################################################################
-# Additionally, we set the verbosity using `set_verbosity` to
+# Additionally, we set the verbosity using ``set_verbosity`` to
 # suppress info messages.
 
 
@@ -81,7 +75,7 @@ upper = 25.0     # upper bound of the search interval
 prec = 0.01      # how close need the excitatory rates be
 
 ###############################################################################
-# Third, the nodes are created using `Create`. We store the returned
+# Third, the nodes are created using ``Create``. We store the returned
 # handles in variables for later reference.
 
 neuron = nest.Create("iaf_psc_alpha")
@@ -89,9 +83,9 @@ noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
 
-###############################################################################
-# Fourth, the excitatory `poisson_generator` (``noise[0]``) and the `voltmeter`
-# are configured using `SetStatus`, which expects a list of node handles and a
+###################################################################################
+# Fourth, the excitatory ``poisson_generator`` (`noise[0]`) and the ``voltmeter``
+# are configured using ``SetStatus``, which expects a list of node handles and a
 # list of parameter dictionaries. The rate of the inhibitory Poisson generator
 # is set later. Note that we need not set parameters for the neuron and the
 # spike detector, since they have satisfactory defaults.
@@ -100,17 +94,17 @@ nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
-# Fifth, the `iaf_psc_alpha` is connected to the `spike_detector` and the
-# `voltmeter`, as are the two Poisson generators to the neuron. The command
-# `Connect` has different variants. Plain `Connect` just takes the handles of
-#  pre- and post-synaptic nodes and uses the default values for weight and
+# Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the
+# ``voltmeter``, as are the two Poisson generators to the neuron. The command
+# ``Connect`` has different variants. Plain `Connect` just takes the handles of
+# pre- and post-synaptic nodes and uses the default values for weight and
 # delay. It can also be called with a list of weights, as in the connection
 # of the noise below.
-# Note that the connection direction for the `voltmeter` is reversed compared
-# to the `spike_detector`, because it observes the neuron instead of
-# receiving events from it. Thus, `Connect` reflects the direction of signal
+# Note that the connection direction for the ``voltmeter`` is reversed compared
+# to the ``spike_detector``, because it observes the neuron instead of
+# receiving events from it. Thus, ``Connect`` reflects the direction of signal
 # flow in the simulation kernel rather than the physical process of inserting
-#  an electrode into the neuron. The latter semantics is presently not
+# an electrode into the neuron. The latter semantics is presently not
 # available in NEST.
 
 
@@ -122,7 +116,7 @@ nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 # To determine the optimal rate of the neurons in the inhibitory population,
 # the network is simulated several times for different values of the
 # inhibitory rate while measuring the rate of the target neuron. This is done
-# by calling `Simulate` until the rate of the target neuron matches the rate
+# by calling ``Simulate`` until the rate of the target neuron matches the rate
 # of the neurons in the excitatory population with a certain accuracy. The
 # algorithm is implemented in two steps:
 #
@@ -144,11 +138,11 @@ def output_rate(guess):
 ###############################################################################
 # The function takes the firing rate of the inhibitory neurons as an
 # argument. It scales the rate with the size of the inhibitory population and
-# configures the inhibitory Poisson generator (``noise[1]``) accordingly.
-# Then, the spike counter of the `spike_detector` is reset to zero. The
-# network is simulated using `Simulate`, which takes the desired simulation
+# configures the inhibitory Poisson generator (`noise[1]`) accordingly.
+# Then, the spike counter of the ``spike_detector`` is reset to zero. The
+# network is simulated using ``Simulate``, which takes the desired simulation
 # time in milliseconds and advances the network state by this amount of time.
-# During simulation, the `spike_detector` counts the spikes of the target
+# During simulation, the ``spike_detector`` counts the spikes of the target
 # neuron and the total number is read out at the end of the simulation
 # period. The return value of ``output_rate()`` is the firing rate of the
 # target neuron in Hz.
@@ -163,9 +157,9 @@ print("Optimal rate for the inhibitory population: %.2f Hz" % in_rate)
 # The function ``bisect`` takes four arguments: first a function whose
 # zero crossing is to be determined. Here, the firing rate of the target
 # neuron should equal the firing rate of the neurons of the excitatory
-# population. Thus we define an anonymous function (using ``lambda``) that
+# population. Thus we define an anonymous function (using `lambda`) that
 # returns the difference between the actual rate of the target neuron and the
-#  rate of the excitatory Poisson generator, given a rate for the inhibitory
+# rate of the excitatory Poisson generator, given a rate for the inhibitory
 # neurons. The next two arguments are the lower and upper bound of the
 # interval in which to search for the zero crossing. The fourth argument of
 # ``bisect`` is the desired relative precision of the zero crossing.

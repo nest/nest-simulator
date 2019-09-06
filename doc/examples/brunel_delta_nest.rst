@@ -10,7 +10,7 @@ Random balanced network (delta synapses)
 ----------------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
-the basis of the network used in [1]
+the basis of the network used in [1]_
 
 When connecting the network customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
@@ -21,15 +21,9 @@ network are recorded.
 References
 ~~~~~~~~~~~~~~
 
-.. [1] Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
-       Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-       183-208 (2000).
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
+.. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
+       inhibitory spiking neurons. Journal of Computational Neuroscience 8,
+       183-208.
 
 
 Import all necessary modules for simulation, analysis and plotting.
@@ -68,6 +62,7 @@ Assigning the simulation parameters to variables.
     delay = 1.5  # synaptic delay in ms
 
 
+
 Definition of the parameters crucial for asynchronous irregular firing of
 the neurons.
 
@@ -81,7 +76,7 @@ the neurons.
 
 
 Definition of the number of neurons in the network and the number of neuron
- recorded from
+recorded from
 
 
 .. code-block:: default
@@ -141,7 +136,7 @@ converted to Hz by multiplication by 1000.
 
 
 Configuration of the simulation kernel by the previously defined time
-resolution used in the simulation. Setting "print_time" to True prints the
+resolution used in the simulation. Setting ``print_time`` to `True` prints the
 already processed simulation time as well as its percentage of the total
 simulation time.
 
@@ -155,8 +150,8 @@ simulation time.
     print("Building network")
 
 
-Configuration of the model `iaf_psc_delta` and `poisson_generator` using
-SetDefaults(). This function expects the model to be the inserted as a
+Configuration of the model ``iaf_psc_delta`` and ``poisson_generator`` using
+``SetDefaults``. This function expects the model to be the inserted as a
 string and the parameter to be specified in a dictionary. All instances of
 theses models created after this point will have the properties specified
 in the dictionary by default.
@@ -169,7 +164,7 @@ in the dictionary by default.
     nest.SetDefaults("poisson_generator", {"rate": p_rate})
 
 
-Creation of the nodes using `Create`. We store the returned handles in
+Creation of the nodes using ``Create``. We store the returned handles in
 variables for later reference. Here the excitatory and inhibitory, as well
 as the poisson generator and two spike detectors. The spike detectors will
 later be used to record excitatory and inhibitory spikes.
@@ -186,10 +181,10 @@ later be used to record excitatory and inhibitory spikes.
 
 
 Configuration of the spike detectors recording excitatory and inhibitory
-spikes using `SetStatus`, which expects a list of node handles and a list
-of parameter dictionaries. Setting the variable "to_file" to True ensures
+spikes using ``SetStatus``, which expects a list of node handles and a list
+of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
 that the spikes will be recorded in a .gdf file starting with the string
-assigned to label. Setting "withtime" and "withgid" to True ensures that
+assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
 each spike is saved to file by stating the gid of the spiking neuron and
 the spike time in one line.
 
@@ -210,11 +205,11 @@ the spike time in one line.
     print("Connecting devices")
 
 
-Definition of a synapse using `CopyModel`, which expects the model name of
+Definition of a synapse using ``CopyModel``, which expects the model name of
 a pre-defined synapse, the name of the customary synapse and an optional
 parameter dictionary. The parameters defined in the dictionary will be the
 default parameter for the customary synapse. Here we define one synapse for
- the excitatory and one for the inhibitory connections giving the
+the excitatory and one for the inhibitory connections giving the
 previously defined weights and equal delays.
 
 
@@ -230,8 +225,8 @@ previously defined weights and equal delays.
 Connecting the previously defined poisson generator to the excitatory and
 inhibitory neurons using the excitatory synapse. Since the poisson
 generator is connected to all neurons in the population the default rule
-(# 'all_to_all') of Connect() is used. The synaptic properties are inserted
- via syn_spec which expects a dictionary when defining multiple variables
+(# ``all_to_all``) of ``Connect`` is used. The synaptic properties are inserted
+via ``syn_spec`` which expects a dictionary when defining multiple variables
 or a string when simply using a pre-defined synapse.
 
 
@@ -242,7 +237,7 @@ or a string when simply using a pre-defined synapse.
     nest.Connect(noise, nodes_in, syn_spec="excitatory")
 
 
-Connecting the first N_rec nodes of the excitatory and inhibitory
+Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
 population to the associated spike detectors using excitatory synapses.
 Here the same shortcut for the specification of the synapse as defined
 above is used.
@@ -261,10 +256,10 @@ above is used.
 
 Connecting the excitatory population to all neurons using the pre-defined
 excitatory synapse. Beforehand, the connection parameter are defined in a
-dictionary. Here we use the connection rule 'fixed_indegree',
+dictionary. Here we use the connection rule ``fixed_indegree``,
 which requires the definition of the indegree. Since the synapse
 specification is reduced to assigning the pre-defined excitatory synapse it
- suffices to insert a string.
+suffices to insert a string.
 
 
 .. code-block:: default

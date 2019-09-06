@@ -8,9 +8,9 @@
 
 
 Random balanced network HPC benchmark
------------------------------------------
+--------------------------------------
 
-This script produces a balanced random network of scale*11250 neurons in
+This script produces a balanced random network of `scale*11250` neurons in
 which the excitatory-excitatory neurons exhibit STDP with
 multiplicative depression and power-law potentiation. A mutual
 equilibrium is obtained between the activity dynamics (low rate in
@@ -18,16 +18,10 @@ asynchronous irregular regime) and the synaptic weight distribution
 (unimodal). The number of incoming connections per neuron is fixed
 and independent of network size (indegree=11250).
 
-This is the standard network investigated in:
-Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
-  networks. Neural Comput 19(6):1437-67
-Helias et al (2012). Supercomputers ready for use as discovery machines for
-  neuroscience. Front. Neuroinform. 6:26
-Kunkel et al (2014). Spiking network simulation code for petascale
-  computers. Front. Neuroinform. 8:78
+This is the standard network investigated in [1]_, [2]_, [3]_.
 
 A note on scaling
------------------
+~~~~~~~~~~~~~~~~~~
 
 This benchmark was originally developed for very large-scale simulations on
 supercomputers with more than 1 million neurons in the network and
@@ -52,6 +46,17 @@ For meaningful use of this benchmark, you should use a scale > 10 and check
 that the firing rate reported at the end of the benchmark is below 10 spikes
 per second.
 
+References
+~~~~~~~~~~~~
+
+.. [1] Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
+       networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
+       neuroscience. Front. Neuroinform. 6:26
+.. [3] Kunkel et al (2014). Spiking network simulation code for petascale
+       computers. Front. Neuroinform. 8:78
+
+
 
 .. code-block:: default
 
@@ -69,11 +74,15 @@ per second.
     M_ERROR = 30
 
 
-    '''Parameter section
 
-     Define all relevant parameters: changes should be made here
 
-    '''
+Parameter section
+Define all relevant parameters: changes should be made here
+
+
+.. code-block:: default
+
+
 
     params = {
         'nvp': 1,               # total number of virtual processes
@@ -88,17 +97,16 @@ per second.
         'log_file': 'log',      # naming scheme for the log files
     }
 
-    # -----------------------------------------------------------------------------
 
 
     def convert_synapse_weight(tau_m, tau_syn, C_m):
-        '''
+        """
         Computes conversion factor for synapse weight from mV to pA
 
         This function is specific to the leaky integrate-and-fire neuron
         model with alpha-shaped postsynaptic currents.
 
-        '''
+        """
 
         # compute time to maximum of V_m after spike input
         # to neuron at rest
@@ -111,17 +119,21 @@ per second.
             b - t_rise * np.exp(-t_rise / tau_syn))
         return 1. / v_max
 
-    # For compatiblity with earlier benchmarks, we require a rise time of
-    # t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
-    # tau_m. This requires numerical inversion of the expression for t_rise
-    # in convert_synapse_weight(). We computed this value once and hard-code
-    # it here.
+
+For compatiblity with earlier benchmarks, we require a rise time of
+``t_rise = 1.700759 ms`` and we choose ``tau_syn`` to achieve this for given
+``tau_m``. This requires numerical inversion of the expression for ``t_rise``
+in ``convert_synapse_weight``. We computed this value once and hard-code
+it here.
+
+
+.. code-block:: default
+
 
 
     tau_syn = 0.32582722403722841
 
 
-    # -----------------------------------------------------------------------------
 
     brunel_params = {
         'NE': int(9000 * params['scale']),  # number of excitatory neurons
@@ -145,9 +157,15 @@ per second.
             'V_m': 5.7  # mean value of membrane potential
         },
 
-        # Note that Kunkel et al. (2014) report different values. The values
-        # in the paper were used for the benchmarks on K, the values given
-        # here were used for the benchmark on JUQUEEN.
+
+Note that Kunkel et al. (2014) report different values. The values
+in the paper were used for the benchmarks on K, the values given
+here were used for the benchmark on JUQUEEN.
+
+
+.. code-block:: default
+
+
         'randomize_Vm': True,
         'mean_potential': 5.7,
         'sigma_potential': 7.2,
@@ -172,18 +190,20 @@ per second.
         'filestem': params['path_name']
     }
 
-    '''FUNCTION SECTION
 
-    '''
+Function Section
+
+
+.. code-block:: default
 
 
     def build_network(logger):
-        '''Builds the network including setting of simulation and neuron
+        """Builds the network including setting of simulation and neuron
         parameters, creation of neurons and connections
 
         Requires an instance of Logger as argument
 
-        '''
+        """
 
         tic = time.time()  # start timer on construction
 
@@ -322,9 +342,9 @@ per second.
             if len(local_neurons) < brunel_params['Nrec']:
                 nest.message(
                     M_ERROR, 'build_network',
-                    '''Spikes can only be recorded from local neurons, but the
+                    """Spikes can only be recorded from local neurons, but the
                     number of local neurons is smaller than the number of neurons
-                    spikes should be recorded from. Aborting the simulation!''')
+                    spikes should be recorded from. Aborting the simulation!""")
                 exit(1)
 
             nest.message(M_INFO, 'build_network', 'Connecting spike detectors.')
@@ -341,7 +361,7 @@ per second.
 
 
     def run_simulation():
-        '''Performs a simulation, including network construction'''
+        """Performs a simulation, including network construction"""
 
         # open log file
         with Logger(params['log_file']) as logger:
@@ -376,50 +396,42 @@ per second.
 
             print(nest.GetKernelStatus())
 
-    # -----------------------------------------------------------------------------
-
 
     def compute_rate(sdet):
-        '''Compute local approximation of average firing rate
+        """Compute local approximation of average firing rate
 
         This approximation is based on the number of local nodes, number
         of local spikes and total time. Since this also considers devices,
         the actual firing rate is usually underestimated.
 
-        '''
+        """
 
         n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
         n_local_neurons = brunel_params['Nrec']
         simtime = params['simtime']
         return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
 
-    #  ----------------------------------------------------------------------------
-
 
     def memory_thisjob():
-        '''Wrapper to obtain current memory usage'''
+        """Wrapper to obtain current memory usage"""
         nest.ll_api.sr('memory_thisjob')
         return nest.ll_api.spp()
 
-    #  ----------------------------------------------------------------------------
-
 
     def lambertwm1(x):
-        '''Wrapper for LambertWm1 function'''
+        """Wrapper for LambertWm1 function"""
         nest.ll_api.sr('{} LambertWm1'.format(x))
         return nest.ll_api.spp()
 
-    #  ----------------------------------------------------------------------------
-
 
     def get_local_nodes(nodes):
-        '''Generator for efficient looping over local nodes
+        """Generator for efficient looping over local nodes
 
         Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
         returned by Create. Only works for nodes with proxies, i.e.,
         regular neurons.
 
-        '''
+        """
 
         nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
 
@@ -431,14 +443,11 @@ per second.
             else:
                 i += 1
 
-    #  ----------------------------------------------------------------------------
-
-
     class Logger(object):
-        '''Logger context manager used to properly log memory and timing
+        """Logger context manager used to properly log memory and timing
         information from network simulations.
 
-        '''
+        """
 
         def __init__(self, file_name):
             # copy output to cout for ranks 0..max_rank_cout-1
@@ -475,9 +484,6 @@ per second.
         def __exit__(self, exc_type, exc_val, traceback):
             if nest.Rank() < self.max_rank_log:
                 self.f.close()
-
-    # -----------------------------------------------------------------------------
-
 
     if __name__ == '__main__':
         run_simulation()

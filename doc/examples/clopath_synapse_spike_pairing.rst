@@ -8,17 +8,21 @@
 
 
 Clopath Rule: Spike pairing experiment
-------------------
-This script simulates one aeif_psc_delta_clopath neuron that is connected with
-a Clopath connection. The synapse receives pairs of a pre- and a postsynaptic
-spikes that are separated by either 10ms (pre before post) or -10ms (post
+----------------------------------------
+
+This script simulates one ``aeif_psc_delta_clopath`` neuron that is connected with
+a Clopath connection [1]_. The synapse receives pairs of a pre- and a postsynaptic
+spikes that are separated by either 10 ms (pre before post) or -10 ms (post
 before pre). The change of the synaptic weight is measured after five of such
 pairs. This experiment is repeated five times with different rates of the
 sequence of the spike pairs: 10Hz, 20Hz, 30Hz, 40Hz, and 50Hz.
 
-References:  [1] Clopath et al. (2010) Connectivity reflects coding:
-                a model of voltage-based STDP with homeostasis.
-                Nature Neuroscience 13:3, 344--352
+References
+~~~~~~~~~~~
+
+.. [1] Clopath et al. (2010) Connectivity reflects coding:
+       a model of voltage-based STDP with homeostasis.
+       Nature Neuroscience 13:3, 344--352
 
 
 .. code-block:: default
@@ -29,8 +33,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
     import nest
 
 
-    # First we specify the neuron parameters. To enable voltage dependent
-    # prefactor A_LTD(u_bar_bar) add 'A_LTD_const': False to the dictionary.
+First we specify the neuron parameters. To enable voltage dependent
+prefactor ``A_LTD(u_bar_bar)`` add ``A_LTD_const: False`` to the dictionary.
+
+
+.. code-block:: default
+
+
     nrn_params = {'V_m': -70.6,
                   'E_L': -70.6,
                   'C_m': 281.0,
@@ -50,7 +59,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
                   }
 
 
-    # Hardcoded spike times of presynaptic spike generator
+
+Hardcoded spike times of presynaptic spike generator
+
+
+.. code-block:: default
+
+
     spike_times_pre = [
         # Presynaptic spike before the postsynaptic
         [20.,  120.,  220.,  320.,  420.],
@@ -65,7 +80,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
         [45.,   70.,   95.,  120.,  145.,  170.],
         [40.,   60.,   80.,  100.,  120.,  140.]]
 
-    # Hardcoded spike times of postsynaptic spike generator
+
+Hardcoded spike times of postsynaptic spike generator
+
+
+.. code-block:: default
+
+
     spike_times_post = [
         [10.,  110.,  210.,  310.,  410.],
         [10.,   60.,  110.,  160.,  210.],
@@ -81,7 +102,13 @@ References:  [1] Clopath et al. (2010) Connectivity reflects coding:
     syn_weights = []
     resolution = 0.1
 
-    # Loop over pairs of spike trains
+
+Loop over pairs of spike trains
+
+
+.. code-block:: default
+
+
     for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
         nest.ResetKernel()
         nest.SetKernelStatus({"resolution": resolution})

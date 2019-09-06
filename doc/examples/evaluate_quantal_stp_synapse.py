@@ -22,19 +22,19 @@
 """Example for the quantal_stp_synapse
 -----------------------------------------
 
-The quantal_stp_synapse is a stochastic version of the Tsodys-Markram model
+The ``quantal_stp_synapse`` is a stochastic version of the Tsodys-Markram model
 for synaptic short term plasticity (STP).
 This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to the quantal release model described by Fuhrmann et
-al. [1] and Loebel et al. [2].
+al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
 available release sites.  This fraction is binomialy distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
-2002 [3].
+2002 [3]_.
 
 The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
@@ -44,14 +44,13 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-* U          double - Maximal fraction of available resources [0,1],
-                      default=0.5
-* u          double - available fraction of resources [0,1], default=0.5
-* p          double - probability that a vesicle is available, default = 1.0
-* n          long - total number of release sites, default = 1
-* a          long - number of available release sites, default = n
-* tau_rec    double - time constant for depression in ms, default=800 ms
-* tau_rec    double - time constant for facilitation in ms, default=0 (off)
+* U         - Maximal fraction of available resources [0,1], default=0.5
+* u         - available fraction of resources [0,1], default=0.5
+* p         - probability that a vesicle is available, default = 1.0
+* n         - total number of release sites, default = 1
+* a         - number of available release sites, default = n
+* tau_rec   - time constant for depression in ms, default=800 ms
+* tau_rec   - time constant for facilitation in ms, default=0 (off)
 
 
 References
@@ -65,13 +64,6 @@ References
        in Computational Neuroscience, 3:27. doi:10.3389/neuro.10.027.
 .. [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
 
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-
 """
 import nest
 import nest.voltage_trace
@@ -80,8 +72,8 @@ import pylab
 
 nest.ResetKernel()
 
-###############################################################################
-# On average, the quantal_stp_synapse converges to the tsodyks2_synapse,
+################################################################################
+# On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
 #
 # First we define the number of trials as well as the number of release sites.
@@ -130,7 +122,7 @@ nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks2_synapse")
 
 ###############################################################################
 # The connection from neuron 1 to neuron 3 has a stochastic
-# quantal_stp_synapse.
+# ``quantal_stp_synapse``.
 
 nest.Connect([neuron[0]], [neuron[2]], syn_spec="quantal_stp_synapse")
 
@@ -152,13 +144,13 @@ nest.SetStatus([neuron[0]], "I_e", 0.0)
 nest.Simulate(1000.0)
 
 ###############################################################################
-# Only now do we connect the voltmeter to the neurons.
+# Only now do we connect the ``voltmeter`` to the neurons.
 
 nest.Connect([voltmeter[0]], [neuron[1]])
 nest.Connect([voltmeter[1]], [neuron[2]])
 
 ###############################################################################
-# This loop runs over the n_trials trials and performs a standard protocol
+# This loop runs over the `n_trials` trials and performs a standard protocol
 # of a high-rate response, followed by a pause and then a recovery response.
 
 for t in range(n_trials):
@@ -192,6 +184,6 @@ pylab.plot(vm_ref_mean)
 
 ###############################################################################
 # Finally, print the mean-suqared error between the trial-average and the
-# reference trace. The value should be < 10^-9.
+# reference trace. The value should be `< 10^-9`.
 
 print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

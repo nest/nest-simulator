@@ -10,7 +10,7 @@
 Sinusoidal gamma generator example
 ----------------------------------
 
-This script demonstrates the use of the `sinusoidal_gamma_generator` and its
+This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
 different parameters and modes. The source code of the model can be found in
 ``models/sinusoidal_gamma_generator.h``.
 
@@ -21,7 +21,6 @@ underlying gamma process and their resulting PST (Peristiumulus time) and ISI
 of the ``individual_spike_trains`` switch. In Part 2, the effects of
 different settings for rate, phase and frequency are demonstrated.
 
-KEYWORDS:
 
 First, we import all necessary modules to simulate, analyze and
 plot this example.
@@ -51,10 +50,10 @@ We first create a figure for the plot and set the resolution of NEST.
 
 
 
-Then we create two instances of the `sinusoidal_gamma_generator` with two
-different orders of the underlying gamma process using `Create`. Moreover,
-we create devices to record firing rates (`multimeter`) and spikes
-(`spike_detector`) and connect them to the generators using `Connect`.
+Then we create two instances of the ``sinusoidal_gamma_generator`` with two
+different orders of the underlying gamma process using ``Create``. Moreover,
+we create devices to record firing rates (``Multimeter``) and spikes
+(``spike_detector``) and connect them to the generators using ``Connect``.
 
 
 .. code-block:: default
@@ -78,8 +77,8 @@ we create devices to record firing rates (`multimeter`) and spikes
 
 
 
-After simulating, the spikes are extracted from the `spike_detector` using
-`GetStatus` and plots are created with panels for the PST and ISI histograms.
+After simulating, the spikes are extracted from the ``spike_detector`` using
+``GetStatus`` and plots are created with panels for the PST and ISI histograms.
 
 
 .. code-block:: default
@@ -120,8 +119,8 @@ The kernel is reset and the number of threads set to 4.
 
 
 
-First, a `sinusoidal_gamma_generator` with `individual_spike_trains` set to
-``True`` is created and connected to 20 parrot neurons whose spikes are
+First, a ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to
+`True` is created and connected to 20 parrot neurons whose spikes are
 recorded by a spike detector. After simulating, a raster plot of the spikes
 is created.
 
@@ -150,9 +149,9 @@ is created.
 
 
 The kernel is reset again and the whole procedure is repeated for a
-`sinusoidal_gamma_generator` with `individual_spike_trains` set to ``False``.
+``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to `False`.
 The plot shows that in this case, all neurons receive the same spike train
-from the `sinusoidal_gamma_generator`.
+from the ``sinusoidal_gamma_generator``.
 
 
 .. code-block:: default
@@ -235,8 +234,8 @@ This function serves to plot a histogram of the emitted spikes.
 
 
 
-We simulate a `sinusoidal_gamma_generator` with default parameter values,
-i.e. ``ac=0`` and the DC value being changed from 20 to 50 after ``t/2`` and
+We simulate a ``sinusoidal_gamma_generator`` with default parameter values,
+i.e. ``ac=0`` and the DC value being changed from 20 to 50 after `t/2` and
 plot the number of spikes per second over time.
 
 
@@ -259,8 +258,8 @@ plot the number of spikes per second over time.
 
 
 
-We simulate a `sinusoidal_gamma_generator` with the DC value being changed
-from 80 to 40 after ``t/2`` and plot the number of spikes per second over
+We simulate a ``sinusoidal_gamma_generator`` with the DC value being changed
+from 80 to 40 after `t/2` and plot the number of spikes per second over
 time.
 
 
@@ -284,8 +283,8 @@ time.
 
 
 
-Next, we simulate a `sinusoidal_gamma_generator` with the AC value being
-changed from 40 to 20 after ``t/2`` and plot the number of spikes per
+Next, we simulate a ``sinusoidal_gamma_generator`` with the AC value being
+changed from 40 to 20 after `t/2` and plot the number of spikes per
 second over time.
 
 
@@ -314,8 +313,8 @@ second over time.
 
 
 
-Finally, we simulate a `sinusoidal_gamma_generator` with a non-zero AC value
-and the DC value being changed from 80 to 40 after ``t/2`` and plot the
+Finally, we simulate a ``sinusoidal_gamma_generator`` with a non-zero AC value
+and the DC value being changed from 80 to 40 after `t/2` and plot the
 number of spikes per second over time.
 
 
@@ -345,8 +344,8 @@ number of spikes per second over time.
 
 
 
-Simulate a `sinusoidal_gamma_generator` with the AC value being
-changed from 0 to 40 after ``t/2`` and plot the number of spikes per
+Simulate a ``sinusoidal_gamma_generator`` with the AC value being
+changed from 0 to 40 after `t/2` and plot the number of spikes per
 second over time.
 
 
@@ -371,8 +370,8 @@ second over time.
 
 
 
-Simulate a `sinusoidal_gamma_generator` with a phase shift at
-``t/2`` and plot the number of spikes per second over time.
+Simulate a ``sinusoidal_gamma_generator`` with a phase shift at
+`t/2` and plot the number of spikes per second over time.
 
 
 .. code-block:: default

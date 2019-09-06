@@ -10,7 +10,7 @@ Numerical phase-plane analysis of the Hodgkin-Huxley neuron
 ----------------------------------------------------------------
 
 hh_phaseplane makes a numerical phase-plane analysis of the Hodgkin-Huxley
-neuron (iaf_psc_alpha). Dynamics is investigated in the V-n space (see remark
+neuron (``hh_psc_alpha``). Dynamics is investigated in the V-n space (see remark
 below). A constant DC can be specified  and its influence on the nullclines
 can be studied.
 
@@ -19,17 +19,8 @@ Remark
 
 To make the two-dimensional analysis possible, the (four-dimensional)
 Hodgkin-Huxley formalism needs to be artificially reduced to two dimensions,
-in this case by 'clamping' the two other variables, m an h, to
-constant values (m_eq and h_eq).
-
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
+in this case by 'clamping' the two other variables, `m` and `h`, to
+constant values (`m_eq` and `h_eq`).
 
 
 

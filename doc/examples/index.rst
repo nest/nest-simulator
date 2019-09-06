@@ -1,8 +1,8 @@
 
 .. _sphx_glr_auto_examples:
 
-Example Networks
-===================
+NEST Example Networks
+=====================
 
 
 .. toctree::
@@ -119,10 +119,39 @@ input. This can be defined in the file ``stimulus_params.py``.
 
 .. toctree::
 
+   Potjans_2014/example
    Potjans_2014/network
    Potjans_2014/helpers
    Potjans_2014/network_params
    Potjans_2014/stimulus_params
-   Potjans_2014/example
    Potjans_2014/sim_params
+
+.. _sphx_glr_auto_examples_music_cont_out_proxy_example:
+
+MUSIC example
+==============================
+
+Requirements
+------------
+
+-  MUSIC 1.1.15 or higher
+-  NEST 2.14.0 or higher compiled with MPI and MUSIC
+-  NumPy
+
+Instructions
+------------
+
+This example runs 2 NEST instances and one receiver instance. Neurons on
+the NEST instances are observed by the music_cont_out_proxy and their
+values are forwarded through MUSIC to the receiver.
+
+.. code-block:: bash
+
+  mpiexec -np 3 music test.music
+
+.. toctree::
+
+    music_cont_out_proxy_example/nest_script
+    music_cont_out_proxy_example/receiver_script
+
 

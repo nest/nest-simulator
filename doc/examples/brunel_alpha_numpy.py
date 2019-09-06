@@ -23,9 +23,9 @@
 -------------------------------------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
-the basis of the network used in [1]
+the basis of the network used in [1]_.
 
-In contrast to brunel-alpha-nest.py, this variant uses NumPy to draw
+In contrast to ``brunel_alpha_nest.py``, this variant uses NumPy to draw
 the random connections instead of NEST's builtin connection routines.
 
 When connecting the network customary synapse models are used, which
@@ -37,17 +37,14 @@ network are recorded.
 References
 ~~~~~~~~~~~~~~
 
-.. [1] Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
-       Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-       183-208 (2000).
+.. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
+       inhibitory spiking neurons. Journal of Computational Neuroscience 8,
+       183-208.
 
 See Also
 ~~~~~~~~~~
 
-brunel-alpha-nest.py
-
-:Authors:
-
+:doc:`brunel_alpha_nest`
 
 """
 
@@ -66,10 +63,10 @@ from numpy import exp
 import time
 
 ###############################################################################
-# Definition of functions used in this example. First, define the Lambert W
+# Definition of functions used in this example. First, define the `Lambert W`
 # function implemented in SLI. The second function computes the maximum of
 # the postsynaptic potential for a synaptic input current of unit amplitude (
-# 1 pA) using the Lambert W function. Thus function will later be used to
+# 1 pA) using the `Lambert W` function. Thus function will later be used to
 # calibrate the synaptic weights
 
 
@@ -117,7 +114,7 @@ epsilon = 0.1  # connection probability
 
 ###############################################################################
 # Definition of the number of neurons in the network and the number of neuron
-#  recorded from
+# recorded from
 
 order = 2500
 NE = 4 * order  # number of excitatory neurons
@@ -220,11 +217,11 @@ nest.SetStatus(ispikes, [{"label": "brunel-py-in",
 print("Connecting devices")
 
 ###############################################################################
-# Definition of a synapse using `CopyModel`, which expects the model name of
+# Definition of a synapse using ``CopyModel``, which expects the model name of
 # a pre-defined synapse, the name of the customary synapse and an optional
 # parameter dictionary. The parameters defined in the dictionary will be the
 # default parameter for the customary synapse. Here we define one synapse for
-#  the excitatory and one for the inhibitory connections giving the
+# the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
 nest.CopyModel("static_synapse", "excitatory",
@@ -238,7 +235,7 @@ nest.CopyModel("static_synapse", "inhibitory",
 # generator is connected to all neurons in the population the default rule (
 # 'all_to_all') of Connect() is used. The synaptic properties are inserted
 # via syn_spec which expects a dictionary when defining multiple variables or
-#  a string when simply using a pre-defined synapse.
+# a string when simply using a pre-defined synapse.
 
 nest.Connect(noise, nodes_ex, syn_spec="excitatory")
 nest.Connect(noise, nodes_in, syn_spec="excitatory")

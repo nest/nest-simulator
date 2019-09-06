@@ -31,44 +31,56 @@ class TestPgRateChange(unittest.TestCase):
     def test_statistical_rate_change(self):
         """Statistical test of poisson_generator_ps rate change"""
 
-        # Lower limit of acceptable p_value
-        p_value_lim = 0.3
+        p_value_lim = 0.05  # Lower limit of acceptable p_value
+        resolution = 0.25  # Simulation resolution
+        n_parrots = 1000  # Number of parrot neurons
+        sim_time = 100  # Time to simulate
 
-        def kstest_first_spiketimes(sd, start_t):
+        def kstest_first_spiketimes(sd, start_t, rate):
+            scale_parameter = n_parrots/rate
             events = nest.GetStatus(sd)[0]['events']
             senders = events['senders']
             times = events['times']
             min_times = [np.min(times[np.where(senders == s)])
                          for s in np.unique(senders)]
             d, p_val = scipy.stats.kstest(
-                min_times, 'expon', args=(start_t + 0.1, 10.))
+                min_times, 'expon', args=(start_t + resolution, scale_parameter))
             print('p_value =', p_val)
             self.assertGreater(p_val, p_value_lim)
 
         nest.ResetKernel()
-        pg = nest.Create('poisson_generator_ps', params={'rate': 100.})
-        parrots = nest.Create('parrot_neuron_ps', 1000)
-        sd = nest.Create('spike_detector', params={'start': 0., 'stop': 100.})
-        nest.Connect(pg, parrots, syn_spec={'delay': 0.1})
-        nest.Connect(parrots, sd, syn_spec={'delay': 0.1})
+        nest.SetKernelStatus({'resolution': resolution})
+        rate = 100.
+        pg = nest.Create('poisson_generator_ps', params={'rate': rate})
+        parrots = nest.Create('parrot_neuron_ps', n_parrots)
+        sd = nest.Create('spike_detector',
+                         params={'start': 0., 'stop': float(sim_time)})
+        nest.Connect(pg, parrots, syn_spec={'delay': resolution})
+        nest.Connect(parrots, sd, syn_spec={'delay': resolution})
 
         # First simulation
-        nest.Simulate(100)
-        kstest_first_spiketimes(sd, 0.0)
+        nest.Simulate(sim_time)
+        kstest_first_spiketimes(sd, 0., rate)
 
         # Second simulation, with rate = 0
-        nest.SetStatus(pg, {'rate': 0.})
+        rate = 0.
+        nest.SetStatus(pg, {'rate': rate})
         # We need to skip a timestep to not receive the spikes from the
         # previous simulation run that were sent, but not received.
-        nest.SetStatus(sd, {'n_events': 0, 'start': 100.1, 'stop': 200.})
-        nest.Simulate(100)
+        nest.SetStatus(sd, {'n_events': 0,
+                            'start': float(sim_time) + resolution,
+                            'stop': 2.*sim_time})
+        nest.Simulate(sim_time)
         self.assertEqual(nest.GetStatus(sd)[0]['n_events'], 0)
 
         # Third simulation, with rate increased back up to 100
-        nest.SetStatus(pg, {'rate': 100.})
-        nest.SetStatus(sd, {'n_events': 0, 'start': 200., 'stop': 300.})
-        nest.Simulate(100)
-        kstest_first_spiketimes(sd, 200.)
+        rate = 100.
+        nest.SetStatus(pg, {'rate': rate})
+        nest.SetStatus(sd, {'n_events': 0,
+                            'start': 2. * sim_time,
+                            'stop': 3.*sim_time})
+        nest.Simulate(sim_time)
+        kstest_first_spiketimes(sd, 2*sim_time, rate)
 
 
 def suite():

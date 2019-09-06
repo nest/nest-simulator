@@ -136,7 +136,7 @@ before_install:
          # the build summary.
          pip install cython scipy matplotlib terminaltables
          pip install numpy==1.13.3
-      fi
+     fi
 
 install:
    - |

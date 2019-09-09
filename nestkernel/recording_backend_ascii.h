@@ -77,9 +77,12 @@ chosen.
 Data format
 +++++++++++
 
-The first line written to any new file is an informational header
-containing field names for the different data columns. The header
-starts with a `#` character.
+Any file written by the `ascii` recording backend starts with an
+informational header. The first header line contains the NEST version,
+with which the file was created, followed by the version of the
+recording backend in the second. The third line describes the data by
+means of the field names for the different columns. All lines of the
+header start with a `#` character.
 
 The first field of each record written is the global id of the neuron
 the event originated from, i.e. the *source* of the event. This is
@@ -142,6 +145,8 @@ namespace nest
 class RecordingBackendASCII : public RecordingBackend
 {
 public:
+  const static unsigned int ASCII_REC_BACKEND_VERSION;
+
   RecordingBackendASCII();
 
   ~RecordingBackendASCII() throw();

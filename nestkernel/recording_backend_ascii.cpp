@@ -32,6 +32,8 @@
 
 #include "recording_backend_ascii.h"
 
+const unsigned int nest::RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
+
 nest::RecordingBackendASCII::RecordingBackendASCII()
 {
 }
@@ -268,6 +270,9 @@ nest::RecordingBackendASCII::DeviceData::open_file()
     LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
+
+  file_ << "# NEST version: " << NEST_VERSION << std::endl
+	<< "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
   file_ << std::fixed << std::setprecision( precision_ ) << "# sender" << timehead;

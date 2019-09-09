@@ -58,13 +58,13 @@ synapses that fullfill the given criteria.
 
 ::
 
-   wr = nest.Create('weight_recorder')
-   nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
+   >>> wr = nest.Create('weight_recorder')
+   >>> nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
 
-   pre = nest.Create("iaf_psc_alpha", 10)
-   post = nest.Create("iaf_psc_alpha", 10)
+   >>> pre = nest.Create("iaf_psc_alpha", 10)
+   >>> post = nest.Create("iaf_psc_alpha", 10)
 
-   nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+   >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
 
 EndDocumentation */
 

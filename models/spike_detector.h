@@ -52,9 +52,9 @@ rather than that of their arrival.
 
 ::
 
-   neurons = nest.Create('iaf_psc_alpha', 5)
-   sd = nest.Create('spike_detector')
-   nest.Connect(neurons, sd)
+   >>> neurons = nest.Create('iaf_psc_alpha', 5)
+   >>> sd = nest.Create('spike_detector')
+   >>> nest.Connect(neurons, sd)
 
 The call to ``Connect`` in the example above would fail, if the
 *neurons* would not be of a type that sends ``SpikeEvent``s during a

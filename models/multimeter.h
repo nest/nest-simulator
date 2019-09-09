@@ -93,7 +93,7 @@ To learn more about possible connection patterns and additional
 options when using ``Connect``, see the guide on :doc:`connection
 management <connection_management>`.
 
-The abbove call to ``Connect`` would fail if the neurons would not
+The above call to ``Connect`` would fail if the neurons would not
 support the sampling of the values *V_m* and *g_ex*. It would also
 fail if carried out in the wrong direction, i.e. trying to connect the
 *neurons* to *mm*.

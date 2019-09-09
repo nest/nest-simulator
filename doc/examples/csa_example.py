@@ -36,7 +36,7 @@ See Also
 References
 ~~~~~~~~~~~~
 
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014) Efficient generation of
+.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
        connectivity in neuronal networks from simulator-independent
        descriptions, Front. Neuroinform.
        http://dx.doi.org/10.3389/fninf.2014.00043

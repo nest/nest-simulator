@@ -22,7 +22,7 @@ facilitating behavior.
 References
 ~~~~~~~~~~~~
 
-.. [1] Tsodyks et al. (1998) Neural Networks with Dynamic Synapses. Neural
+.. [1] Tsodyks M, Pawelzik K, Markram H (1998). Neural networks with dynamic synapses. Neural
        computation, http://dx.doi.org/10.1162/089976698300017502
 
 See Also

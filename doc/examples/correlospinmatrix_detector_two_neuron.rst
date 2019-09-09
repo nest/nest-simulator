@@ -16,7 +16,7 @@ of the individual neurons and between them, repsectively.
 References
 ~~~~~~~~~~~~
 
-.. [1] Ginzburg & Sompolinsky (1994). Theory of correlations in stochastic neural netoworks. 50(4) p. 3175. Fig. 1.
+.. [1] Ginzburg and Sompolinsky (1994). Theory of correlations in stochastic neural netoworks. 50(4) p. 3175. Fig. 1.
 
 
 

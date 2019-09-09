@@ -22,7 +22,7 @@ This example is also shown in the article [1]_
 References
 ~~~~~~~~~~~~~
 
-.. [1] Eppler et al. (2009) PyNEST: A convenient interface to the NEST
+.. [1] Eppler JM, Helias M, Mulller E, Diesmann M, Gewaltig MO (2009). PyNEST: A convenient interface to the NEST
        simulator, Front. Neuroinform.
        http://dx.doi.org/10.3389/neuro.11.012.2008
 

@@ -63,7 +63,7 @@ per second.
 References
 ~~~~~~~~~~~~
 
-.. [1] Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent plasticity in balanced random
        networks. Neural Comput 19(6):1437-67
 .. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
        neuroscience. Front. Neuroinform. 6:26

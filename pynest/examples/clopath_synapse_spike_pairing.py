@@ -33,7 +33,7 @@ sequence of the spike pairs: 10Hz, 20Hz, 30Hz, 40Hz, and 50Hz.
 References
 ~~~~~~~~~~~
 
-.. [1] Clopath et al. (2010) Connectivity reflects coding:
+.. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
        Nature Neuroscience 13:3, 344--352
 """

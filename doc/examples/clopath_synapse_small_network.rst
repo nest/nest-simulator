@@ -23,7 +23,7 @@ bidirectional connections. The example is adapted from [1]_ (cf. fig. 5).
 References
 ~~~~~~~~~~~
 
-.. [1] Clopath et al. (2010) Connectivity reflects coding:
+.. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
        Nature Neuroscience 13:3, 344--352
 

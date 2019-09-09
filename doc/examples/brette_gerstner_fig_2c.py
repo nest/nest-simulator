@@ -31,7 +31,8 @@ converted to `pA` (pico Ampere).
 References
 ~~~~~~~~~~~
 
-.. [1] Brette and Gerstner (2005) J. Neurophysiology and
+.. [1] Brette R and Gerstner W (2005). Adaptive exponential integrate-and-fire model as an effective
+       description of neuronal activity J. Neurophysiology. https://doi.org/10.1152/jn.00686.2005
 
 """
 

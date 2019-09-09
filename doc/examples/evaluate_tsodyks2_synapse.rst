@@ -47,8 +47,8 @@ References
        neocortical depends on neurotransmitter release probability. PNAS,
        94(2), 719-23.
 .. [2] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
-       information by activity-dependent synapses. Journal of
-       Neurophysiology, 8
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
 .. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2), 155-161.
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7

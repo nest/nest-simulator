@@ -56,13 +56,16 @@ The following parameters can be set in the status dictionary:
 References
 ~~~~~~~~~~~~~
 
-.. [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-       information by activity-dependent synapses. Journal of Neurophysiology.
+.. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
 .. [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
        M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
        the distribution of synaptic efficacies in the neocortex. Frontiers
        in Computational Neuroscience, 3:27. doi:10.3389/neuro.10.027.
-.. [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
+.. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
+       Neural Networks, 15(2), 155-161.
+       http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 
 """
 import nest

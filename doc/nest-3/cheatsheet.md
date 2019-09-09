@@ -198,16 +198,16 @@ sd = nest.Create('spike_detector')
 # Connect
 nest.Connect(ex_nodes, ex_nodes,
              {'rule': 'fixed_indegree', 'indegree': 8},
-             {'model': 'static_synapse', 'weight': 0.1})
+             {'synapse_model': 'static_synapse', 'weight': 0.1})
 nest.Connect(ex_nodes, in_nodes,
              {'rule': 'fixed_indegree', 'indegree': 4},
-             {'model': 'static_synapse', 'weight': 0.1})
+             {'synapse_model': 'static_synapse', 'weight': 0.1})
 nest.Connect(in_nodes, ex_nodes,
              {'rule': 'fixed_indegree', 'indegree': 5},
-             {'model': 'static_synapse', 'weight': -1.0})
+             {'synapse_model': 'static_synapse', 'weight': -1.0})
 nest.Connect(in_nodes, in_nodes,
              {'rule': 'fixed_indegree', 'indegree': 8},
-             {'model': 'static_synapse', 'weight': -1.0})
+             {'synapse_model': 'static_synapse', 'weight': -1.0})
 
 # Connect noise to all the nodes
 nest.Connect(noise, nodes)

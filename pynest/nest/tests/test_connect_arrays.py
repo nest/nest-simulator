@@ -58,9 +58,12 @@ class TestConnectArrays(unittest.TestCase):
         """Connecting arrays with unique GIDs"""
         n = nest.Create('iaf_psc_alpha', 4)
         gids = list(n)
-        with self.assertWarns(UserWarning) as w:
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
             nest.Connect(gids, gids)
-        self.assertTrue('unique' in str(w.warning))
+            assert len(w) == 1
+            assert issubclass(w[-1].category, UserWarning)
+            assert 'unique' in str(w[-1].message)
         conns = nest.GetConnections()
         st_pairs = np.array([(s, t) for s in gids for t in gids])
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.source())))

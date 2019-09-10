@@ -66,7 +66,7 @@ function in the context of :doc:`stepped simulations
 can be set to 0. Other values cannot be set.
 
 If the data is not deleted manually, it is kept for readout until the
-next call to ``Prepare`` or ``Simulate`` and discared before any new
+next call to ``Prepare`` or ``Simulate`` and discarded before any new
 data is recorded.
 
 Parameter summary

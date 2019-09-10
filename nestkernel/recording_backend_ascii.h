@@ -30,6 +30,8 @@
 
 /* BeginDocumentation
 
+.. _ascii_backend:
+
 Write data to plain text files
 ##############################
 
@@ -54,7 +56,7 @@ pattern:
 
 The properties `data_path` and `data_prefix` are global kernel
 properties. They can for example be set during repetitive simulation
-protocols to separate the data originating from indivitual runs. The
+protocols to separate the data originating from individual runs. The
 `label` replaces the model name component if it is set to a non-empty
 string. `gid` and `vp` denote the zero-padded global ID and virtual
 process of the recorder writing the file. The filename ends in a dot
@@ -109,6 +111,8 @@ Parameter summary
 `filenames`
   A list of the filenames where data is recorded to. This list has one
   entry per local thread and is a read-only property.
+
+TODO: Should label really be described here again?
 
 `label`
   A string (default: *""*) that replaces the model name component in

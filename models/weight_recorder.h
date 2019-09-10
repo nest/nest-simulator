@@ -40,7 +40,7 @@ Recording weights from synapses
 ###############################
 
 The temporal evolution of synaptic weights is the key observable in
-studies of plasticity in neurornal network models. To obtain it, the
+studies of plasticity in neuronal network models. To obtain it, the
 ``weight_recorder`` can be used. In contrast to other recording
 devices, which are connected to a specific set of neurons, the weight
 recorder is instead set as a parameter in the synapse model.

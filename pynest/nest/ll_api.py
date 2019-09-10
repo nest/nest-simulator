@@ -351,6 +351,6 @@ def init(argv):
     else:
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
 
-
+# TODO: This got changed in NEST-3. Check if the new variable PYNEST_QUIET is actually needed
 if 'DELAY_PYNEST_INIT' not in os.environ:
     init(sys.argv)

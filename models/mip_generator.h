@@ -166,8 +166,7 @@ private:
    * Store independent parameters of the model.
    * Mother RNG is a parameter since it can be changed. Not entirely in
    * keeping with persistence rules, since it changes state during
-   * updates. But okay in the sense that it thus is not reset on
-   * ResetNetwork. Should go once we have proper global RNG scheme.
+   * updates. Should go once we have proper global RNG scheme.
    */
   struct Parameters_
   {

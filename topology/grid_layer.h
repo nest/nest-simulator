@@ -390,7 +390,7 @@ inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operat
 
 template < int D >
 typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::operator++()
-{ // TODO481 What if gid_collection is a composite?
+{
   do
   {
     ++node_;

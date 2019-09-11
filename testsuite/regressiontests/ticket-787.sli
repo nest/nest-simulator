@@ -80,7 +80,7 @@ systemdict /GNUReadline known not {
 	/JoinTo_ald /JoinTo_cont /JoinTo_d /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
-	/Random_i /RestoreNodes_a /SetDefaults_l_D
+	/Random_i /SetDefaults_l_D
 	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v
 	/Simulate_d /Take_a_a /Take_a_i /TimeCommunicationAlltoall_i_i
 	/TimeCommunicationAlltoallv_i_i /TimeCommunication_i_i_b

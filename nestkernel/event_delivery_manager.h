@@ -164,12 +164,6 @@ public:
   size_t read_toggle() const;
 
   /**
-   * Clear all pending spikes, but do not otherwise manipulate scheduler.
-   * @note This is used by Network::reset_network().
-   */
-  void clear_pending_spikes();
-
-  /**
    * Return (T+d) mod max_delay.
    */
   delay get_modulo( delay d );

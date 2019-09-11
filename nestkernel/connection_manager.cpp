@@ -384,6 +384,38 @@ nest::ConnectionManager::connect( GIDCollectionPTR sources,
 }
 
 void
+nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
+{
+  // Get synapse id
+  size_t syn_id = 0;
+  auto synmodel = syn_spec->lookup( names::model );
+  if ( not synmodel.empty() )
+  {
+    std::string synmodel_name = getValue< std::string >( synmodel );
+    synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+    if ( not synmodel.empty() )
+    {
+      syn_id = static_cast< size_t >( synmodel );
+    }
+    else
+    {
+      throw UnknownModelName( synmodel_name );
+    }
+  }
+  // Connect all sources to all targets
+  for ( auto&& source : sources )
+  {
+    auto source_node = kernel().node_manager.get_node_or_proxy( source );
+    for ( auto&& target : targets )
+    {
+      auto target_node = kernel().node_manager.get_node_or_proxy( target );
+      auto target_thread = target_node->get_thread();
+      connect_( *source_node, *target_node, source, target_thread, syn_id, syn_spec );
+    }
+  }
+}
+
+void
 nest::ConnectionManager::update_delay_extrema_()
 {
   min_delay_ = get_min_delay_time_().get_steps();
@@ -430,77 +462,21 @@ nest::ConnectionManager::connect( const index sgid,
   have_connections_changed_ = true;
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
-  // TODO481: Need to resolve this merge conflict. The subnet free branch use
-  // connection_required, but 5g use different connection calls based on the
-  // properties of source and target.
-  // SubnetFree version:
-  //  if ( connection_required( source, target, target_thread ) )
-  //  {
-  //    connect_(
-  //        *source, *target, sgid, target_thread, syn, parmas, delay, weight );
-  //  }
+  ConnectionType connection_type = connection_required( source, target, target_thread );
 
-  // 5g version:
-
-  const thread tid = kernel().vp_manager.get_thread_id();
-  // normal nodes and devices with proxies -> normal nodes and devices with
-  // proxies
-  if ( source->has_proxies() and target->has_proxies() )
+  switch ( connection_type )
   {
+  case CONNECT:
     connect_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
-  }
-  // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-  {
-    // Connections to nodes with one node per process (MUSIC proxies
-    // or similar devices) have to be established by the thread of the
-    // target if the source is on the local process even though the
-    // source may be a proxy on target_thread.
-    const bool source_is_local = kernel().node_manager.is_local_node( source );
-    if ( target->one_node_per_process() && source_is_local )
-    {
-      connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
-      return;
-    }
-
-    // make sure source is on this MPI rank and on this thread
-    if ( source->is_proxy() or source->get_thread() != tid )
-    {
-      return;
-    }
-
-    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
-  }
-  // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() and target->has_proxies() )
-  {
+    break;
+  case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
-  }
-  // normal devices -> normal devices
-  else if ( not source->has_proxies() and not target->has_proxies() )
-  {
-    // create connection only on suggested thread of target
-    const thread suggested_thread =
-      kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
-    if ( suggested_thread == tid )
-    {
-      connect_from_device_( *source, *target, suggested_thread, syn_id, params, delay, weight );
-    }
-  }
-  // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      return;
-    }
-    target = kernel().node_manager.get_node_or_proxy( target->get_gid(), tid );
-    connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
-  }
-  else
-  {
-    assert( false );
+    break;
+  case CONNECT_TO_DEVICE:
+    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params, delay, weight );
+    break;
+  case NO_CONNECTION:
+    return;
   }
 }
 
@@ -523,80 +499,26 @@ nest::ConnectionManager::connect( const index sgid,
   const thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
-  // TODO481: Need to resolve this merge conflict. The subnet free branch use
-  // connection_required, but 5g use different connection calls based on the
-  // properties of source and target.
-  // SubnetFree version:
-  //  if ( connection_required( source, target, target_thread ) )
-  //  {
-  //    connect_( *source, *target, sgid, target_thread, syn_id, params );
-  //    return true;
-  //  }
-  //  return false;
-  // 5g version:
+  ConnectionType connection_type = connection_required( source, target, target_thread );
+  bool connected = true;
 
-  // normal nodes and devices with proxies -> normal nodes and devices with
-  // proxies
-  if ( source->has_proxies() and target->has_proxies() )
+  switch ( connection_type )
   {
+  case CONNECT:
     connect_( *source, *target, sgid, target_thread, syn_id, params );
-  }
-  // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
-  {
-    // Connections to nodes with one node per process (MUSIC proxies
-    // or similar devices) have to be established by the thread of the
-    // target if the source is on the local process even though the
-    // source may be a proxy on target_thread.
-    const bool source_is_local = kernel().node_manager.is_local_node( source );
-    if ( target->one_node_per_process() && source_is_local )
-    {
-      connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
-      return true;
-    }
-
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() or source->get_thread() != tid )
-    {
-      return false;
-    }
-
-    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
-  }
-  // normal devices -> normal nodes and devices with proxies
-  else if ( not source->has_proxies() and target->has_proxies() )
-  {
+    break;
+  case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params );
-  }
-  // normal devices -> normal devices
-  else if ( not source->has_proxies() and not target->has_proxies() )
-  {
-    // create connection only on suggested thread of target
-    const thread suggested_thread =
-      kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( target->get_gid() ) );
-    if ( suggested_thread == tid )
-    {
-      connect_from_device_( *source, *target, suggested_thread, syn_id, params );
-    }
-  }
-  // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      return false;
-    }
-    target = kernel().node_manager.get_node_or_proxy( tgid, tid );
-    connect_( *source, *target, sgid, tid, syn_id, params );
-  }
-  else
-  {
-    assert( false );
+    break;
+  case CONNECT_TO_DEVICE:
+    connect_to_device_( *source, *target, sgid, target_thread, syn_id, params );
+    break;
+  case NO_CONNECTION:
+    connected = false;
+    break;
   }
 
-  // We did not exit prematurely due to proxies, so we have connected.
-  return true;
+  return connected;
 }
 
 void
@@ -1250,7 +1172,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   }
 }
 
-bool
+nest::ConnectionManager::ConnectionType
 nest::ConnectionManager::connection_required( Node*& source, Node*& target, thread tid )
 {
   // The caller has to check and guarantee that the target is not a
@@ -1266,7 +1188,14 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
   // is.
   if ( target->has_proxies() )
   {
-    return true;
+    if ( source->has_proxies() )
+    {
+      return CONNECT;
+    }
+    else
+    {
+      return CONNECT_FROM_DEVICE;
+    }
   }
 
   // Local receivers are all devices that collect data only from
@@ -1277,10 +1206,9 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     // or similar devices) have to be established by the thread of the
     // target if the source is on the local process even though the
     // source may be a proxy on tid.
-    const bool source_is_local = kernel().node_manager.is_local_node( source );
-    if ( target->one_node_per_process() && source_is_local )
+    if ( target->one_node_per_process() and source->has_proxies() )
     {
-      return true;
+      return CONNECT_TO_DEVICE;
     }
 
     // Connections from nodes with proxies (neurons or devices with
@@ -1290,7 +1218,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     const bool source_is_proxy = source->is_proxy();
     if ( source->has_proxies() and source_thread == tid and not source_is_proxy )
     {
-      return true;
+      return CONNECT_TO_DEVICE;
     }
 
     // Connections from devices to devices are established only on the
@@ -1307,7 +1235,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       {
         const index source_gid = source->get_gid();
         source = kernel().node_manager.get_node_or_proxy( source_gid, target_thread );
-        return true;
+        return CONNECT_FROM_DEVICE;
       }
     }
   }
@@ -1319,7 +1247,8 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
   {
     if ( source->has_proxies() )
     {
-      return true;
+      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), tid );
+      return CONNECT;
     }
 
     std::string msg = String::compose(
@@ -1330,7 +1259,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     throw IllegalConnection( msg );
   }
 
-  return false;
+  return NO_CONNECTION;
 }
 
 void

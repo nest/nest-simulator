@@ -80,28 +80,6 @@ NodeManager::finalize()
   destruct_nodes_();
 }
 
-void
-NodeManager::reinit_nodes()
-{
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
-    SparseNodeArray::const_iterator n;
-    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
-    {
-      // Reinitialize state on all nodes, forcing init_buffers() on
-      // next call to simulate().
-      n->get_node()->init_state();
-      n->get_node()->set_buffers_initialized( false );
-    }
-  }
-}
-
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
@@ -221,27 +199,13 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
       local_nodes_.at( t ).reserve_additional( max_new_per_thread );
       model.reserve_additional( t, max_new_per_thread );
 
-      // TODO480: temporal manual implementation to sort out logic
       // Need to find smallest gid with:
-      //   - gid local to this thread
+      //   - gid local to this vp
       //   - gid >= min_gid
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
       const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
 
-      size_t gid = 0;
-      if ( min_gid_vp == vp )
-      {
-        gid = min_gid;
-      }
-      else
-      {
-        gid = ( min_gid / num_vps ) * num_vps + vp;
-        // bad hack, need to improve ...
-        if ( gid < min_gid )
-        {
-          gid += num_vps;
-        }
-      }
+      size_t gid = min_gid + ( num_vps + vp - min_gid_vp ) % num_vps;
 
       while ( gid <= max_gid )
       {
@@ -345,36 +309,6 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
   }
 }
 
-void
-NodeManager::restore_nodes( const ArrayDatum& node_list )
-{
-  Token* first = node_list.begin();
-  const Token* end = node_list.end();
-  if ( first == end )
-  {
-    return;
-  }
-
-
-  // todo481: why does this not use an iterator? The check above is
-  // also not needed as the loop anyway won't run if first == end.
-  for ( Token* node_t = first; node_t != end; ++node_t )
-  {
-    DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
-    std::string model_name = ( *node_props )[ names::model ];
-    index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
-    GIDCollectionPTR node = add_node( model_id );
-    // todo481: The call below is unsafe. It will most likely not
-    // return the correct pointer, as nodes are allocated round robin.
-    // Actually it is unclear to me how setting the status would work
-    // in a distributed scenario.
-    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
-    // we call directly set_status on the node
-    // to bypass checking of unused dictionary items.
-    node_ptr->set_status_base( node_props );
-  }
-}
-
 GIDCollectionPTR
 NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 {
@@ -475,23 +409,11 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
-// TODO480: I wonder if the need to loop over threads can be a performance
-// bottleneck. BUT: I think we only need to check whether the node is local
-// TO THE THREAD, and then we do not need to loop. Also, if we need to check
-// if a node is local to our MPI process, we can do this just by computation,
-// possibly followed by a test (assertion should suffice)  that the node is
-// really there.
 bool
 NodeManager::is_local_gid( index gid ) const
 {
-  bool is_local = false;
-  thread num_threads = kernel().vp_manager.get_num_threads();
-  for ( thread t = 0; t < num_threads; ++t )
-  {
-    const bool not_a_proxy = local_nodes_[ t ].get_node_by_gid( gid ) != 0;
-    is_local = is_local or not_a_proxy;
-  }
-  return is_local;
+  const thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
+  return kernel().vp_manager.is_local_vp( vp );
 }
 
 index
@@ -734,8 +656,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
+    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch

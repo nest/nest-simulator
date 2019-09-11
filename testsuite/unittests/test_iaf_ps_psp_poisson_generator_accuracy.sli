@@ -69,7 +69,7 @@ M_ERROR setverbosity
 65.0                        /weight Set         % in pA
 -530.0                      /I0  Set            % in pA 
 [-4 min_exponent -2] Range  /hlist Set
-1e-13                       /tolerance Set      % in mV
+1e-12                       /tolerance Set      % in mV
 1e-4                        /tic_tolerance Set  % in mV
 
 100.0                         /T     Set
@@ -88,7 +88,8 @@ M_ERROR setverbosity
   /V_reset     0.0
   /V_th     1000.0      % spike threshold in mV
   /tau_m      10.0      % membrane time constant in ms
-  /tau_syn     0.3      % PSC rise time in ms
+  /tau_syn_ex  0.3      % PSC rise time in ms
+  /tau_syn_in  0.3      % PSC rise time in ms
   /C_m       250.0      % membrane capacity in pF
 >> /params Set
 
@@ -107,8 +108,8 @@ M_ERROR setverbosity
 /psp 
  [/t]
  ( 
-  UnitStep(t)*weight * E/tau_syn * 1/C_m 
-    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+  UnitStep(t)*weight * E/tau_syn_ex * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn_ex))/(1/tau_syn_ex - 1/tau_m)^2 - t*exp(-t/tau_syn_ex)/(1/tau_syn_ex - 1/tau_m) ) 
  )
  Function
 def
@@ -215,7 +216,7 @@ def
 CreateSpikeTrain /s Set
 s potential      /V Set  % potential from closed form expression
 
-[/iaf_psc_alpha_presc /iaf_psc_alpha_canon] /models Set 
+[/iaf_psc_alpha_ps] /models Set 
 
 
 {

@@ -196,10 +196,10 @@ ResetKernel      % clear all existing network elements
 tic % start timer on construction
 
   (Creating excitatory population.) =  % show message
-  /E_neurons /iaf_psc_alpha_ps NE Create def  % create exitatory neurons
+  /E_neurons /iaf_psc_alpha_canon NE Create def  % create exitatory neurons
 
   (Creating inhibitory population.) =  % show message
-  /I_neurons /iaf_psc_alpha_ps NI Create def  % create inhibitory neurons
+  /I_neurons /iaf_psc_alpha_canon NI Create def  % create inhibitory neurons
 
   % all neurons
   /allNeurons E_neurons I_neurons join def

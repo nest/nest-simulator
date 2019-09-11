@@ -274,12 +274,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } getnodes_D_bfunction;
 
-  class RestoreNodes_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } restorenodes_afunction;
-
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
   public:
@@ -292,17 +286,17 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
 
+  class Connect_nonunique_ia_ia_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_nonunique_ia_ia_Dfunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } resetkernelfunction;
-
-  class ResetNetworkFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resetnetworkfunction;
 
   class MemoryInfoFunction : public SLIFunction
   {

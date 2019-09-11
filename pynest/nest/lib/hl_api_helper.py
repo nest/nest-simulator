@@ -65,14 +65,13 @@ __all__ = [
 ]
 
 # These flags are used to print deprecation warnings only once.
-# Only flags for special cases need to be entered here, all flags for
-# deprecated functions will be registered by the @deprecated decorator.
-_deprecation_warning = {'BackwardCompatibilityConnect': True,
-                        'subnet': True,
-                        'aeif_cond_alpha_RK5': True,
-                        'iaf_psc_alpha_canon': True,
-                        'iaf_psc_alpha_presc': True,
-                        'iaf_psc_delta_canon': True}
+# Only flags for special cases need to be entered here, such as special models
+# or function parameters, all flags for deprecated functions will be registered
+# by the @deprecated decorator.
+_deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
+                                             'replacement': 'replacement_mod'},
+                        'iaf_psc_alpha_canon': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_alpha_ps'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
@@ -112,21 +111,20 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
     func_name : str
         Name of the deprecated function
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead. Needed if text=None
     text : str, optional
         Text to display instead of standard text
     """
-    if _deprecation_warning[func_name]:
-        if alt_func_name is None:
-            alt_func_name = 'Connect'
-        if text is None:
-            text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\
-            ".format(func_name, alt_func_name)
-            text = get_wrapped_text(text)
+    if func_name in _deprecation_warning:
+        if not _deprecation_warning[func_name]['deprecation_issued']:
+            if text is None:
+                text = "{0} is deprecated and will be removed in a future \
+                version of NEST.\nPlease use {1} instead!\
+                ".format(func_name, alt_func_name)
+                text = get_wrapped_text(text)
 
-        warnings.warn('\n' + text)   # add LF so text starts on new line
-        _deprecation_warning[func_name] = False
+            warnings.warn('\n' + text)   # add LF so text starts on new line
+            _deprecation_warning[func_name]['deprecation_issued'] = True
 
 
 # Since we need to pass extra arguments to the decorator, we need a
@@ -150,7 +148,7 @@ def deprecated(alt_func_name, text=None):
     """
 
     def deprecated_decorator(func):
-        _deprecation_warning[func.__name__] = True
+        _deprecation_warning[func.__name__] = {'deprecation_issued': False}
 
         @functools.wraps(func)
         def new_func(*args, **kwargs):
@@ -565,16 +563,13 @@ def model_deprecation_warning(model):
         Name of model
     """
 
-    deprecated_models = {'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
-                         'iaf_psc_alpha_canon': 'iaf_psc_alpha_ps',
-                         'iaf_psc_delta_canon': 'iaf_psc_delta_ps'}
-
-    if model in deprecated_models:
-        text = "The {0} model is deprecated and will be removed in a \
-        future version of NEST, use {1} instead.\
-        ".format(model, deprecated_models[model])
-        text = get_wrapped_text(text)
-        show_deprecation_warning(model, text=text)
+    if model in _deprecation_warning:
+        if not _deprecation_warning[model]['deprecation_issued']:
+            text = "The {0} model is deprecated and will be removed in a \
+            future version of NEST, use {1} instead.\
+            ".format(model, _deprecation_warning[model]['replacement'])
+            text = get_wrapped_text(text)
+            show_deprecation_warning(model, text=text)
 
 
 def serializable(data):
@@ -657,7 +652,7 @@ class SuppressedDeprecationWarning(object):
 
         for func_name in self._no_dep_funcs:
             self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
-            _deprecation_warning[func_name] = False
+            _deprecation_warning[func_name]['deprecation_issued'] = True
 
             # Suppress only if verbosity level is deprecated or lower
             if self._verbosity_level <= sli_func('M_DEPRECATED'):
@@ -668,5 +663,6 @@ class SuppressedDeprecationWarning(object):
         # Reset the verbosity level and deprecation warning status
         set_verbosity(self._verbosity_level)
 
-        for func_name, deprec_status in self._deprecation_status.items():
-            _deprecation_warning[func_name] = deprec_status
+        for func_name, deprec_dict in self._deprecation_status.items():
+            _deprecation_warning[func_name]['deprecation_issued'] = (
+                deprec_dict['deprecation_issued'])

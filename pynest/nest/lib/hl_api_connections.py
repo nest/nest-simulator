@@ -24,6 +24,7 @@ Functions for connection handling
 """
 
 import numpy
+import warnings
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
@@ -217,7 +218,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
     allowed_conn_spec_keys = ['mask',
                               'multapses', 'autapses', 'rule', 'indegree',
                               'outdegree', 'p', 'use_on_source']
-    allowed_syn_spec_keys = ['weight', 'delay']
+    allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError(
@@ -246,6 +247,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
             projections['weights'] = syn_spec['weight']
         if 'delay' in syn_spec:
             projections['delays'] = syn_spec['delay']
+        if 'synapse_model' in syn_spec:
+            projections['synapse_model'] = syn_spec['synapse_model']
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
@@ -286,6 +289,7 @@ def _connect_layers_needed(conn_spec):
 
 
 def _connect_spatial(pre, post, projections):
+    # TODO: layers should aldready be on the stack; no need to pass them to sli_func
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
@@ -298,6 +302,11 @@ def _connect_spatial(pre, post, projections):
 
     projections = fixdict(projections)
     sli_func('ConnectLayers', pre, post, projections)
+
+
+def _connect_nonunique(syn_spec):
+    sps({} if syn_spec is None else syn_spec)
+    sli_run('Connect_nonunique')
 
 
 @check_stack
@@ -439,22 +448,39 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
       }
     """
 
-    if not isinstance(pre, GIDCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a "
-                        "GIDCollection")
-    if not isinstance(post, GIDCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a "
-                        "GIDCollection")
-
-    sps(pre)
-    sps(post)
-
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
     processed_syn_spec = _process_syn_spec(
         syn_spec, processed_conn_spec, len(pre), len(post))
+
+    pre_is_array_of_gids = isinstance(pre, (list, tuple, numpy.ndarray))
+    post_is_array_of_gids = isinstance(post, (list, tuple, numpy.ndarray))
+    # If pre and post are arrays of GIDs and no conn_spec is specified,
+    # the GIDs are connected all_to_all. If the arrays contain unique
+    # GIDs, a warning is issued.
+    if pre_is_array_of_gids and post_is_array_of_gids and conn_spec is None:
+        if return_connectome:
+            raise ValueError("Connectome cannot be returned when connecting two arrays of GIDs")
+        if len(numpy.unique(pre)) == len(pre) and len(numpy.unique(post)) == len(post):
+            warnings.warn('Connecting two arrays of GIDs should only be done in cases where one or both the arrays '
+                          'contain non-unique GIDs. Use GIDCollections when connecting two collections of unique GIDs.')
+        # Connect_nonunique doesn't support connecting numpy arrays
+        sps(list(pre))
+        sps(list(post))
+        _connect_nonunique(processed_syn_spec)
+        return
+
+    sps(pre)
+    sps(post)
+
+    if not isinstance(pre, GIDCollection):
+        raise TypeError("Not implemented, presynaptic nodes must be a "
+                        "GIDCollection")
+    if not isinstance(post, GIDCollection):
+        raise TypeError("Not implemented, postsynaptic nodes must be a "
+                        "GIDCollection")
 
     # In some cases we must connect with ConnectLayers instead.
     if _connect_layers_needed(processed_conn_spec):

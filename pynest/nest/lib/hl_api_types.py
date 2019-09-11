@@ -319,7 +319,7 @@ class GIDCollection(object):
             self._datum = gc._datum
 
         # Spatial values for layers.
-        self.spatial = None
+        super(GIDCollection, self).__setattr__('spatial', None)
 
     def __iter__(self):
         return GIDCollectionIterator(self)
@@ -377,7 +377,8 @@ class GIDCollection(object):
         """
         set spatial data to self.spatial
         """
-        self.spatial = sli_func('GetMetadata', self._datum)
+        spatial_metadata = sli_func('GetMetadata', self._datum)
+        super(GIDCollection, self).__setattr__('spatial', spatial_metadata)
 
     def get(self, *params, **kwargs):
         """
@@ -546,6 +547,22 @@ class GIDCollection(object):
 
     def tolist(self):
         return list(self)
+
+    def index(self, gid):
+        """
+        Find the index of a GID in the GIDCollection.
+
+        Parameters
+        ----------
+        gid : int
+            Global ID to be found.
+
+        Raises
+        ------
+        ValueError
+            If the GID is not in the GIDCollection.
+        """
+        return self.tolist().index(gid)
 
 
 class ConnectomeIterator(object):

@@ -352,8 +352,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // This version of the AdEx model does not depend on GSL.
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5",
-    /*private_model*/ false,
-    /*deprecation_info*/ "NEST 3.0" );
+    /*private_model*/ false );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

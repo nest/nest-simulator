@@ -877,7 +877,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
                          cvlit /synmod Set
                          /lyr_target Set
                          /lyr_source Set
-                         oname (w) file lyr_target lyr_source synmod
+                         oname (w) file lyr_source lyr_target synmod
                          DumpLayerConnections close
                          """,
                          source_layer, target_layer, synapse_model,
@@ -1324,7 +1324,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     import matplotlib.pyplot as plt
 
-    if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
+    if not isinstance(src_nrn, nest.GIDCollection) or len(src_nrn) != 1:
         raise ValueError("src_nrn must be a single element GIDCollection.")
     if not isinstance(tgt_layer, nest.GIDCollection):
         raise ValueError("tgt_layer must be a GIDCollection.")

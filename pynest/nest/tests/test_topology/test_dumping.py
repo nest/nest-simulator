@@ -35,6 +35,12 @@ import sys
 import os
 import os.path
 
+try:
+    import numpy as np
+    HAVE_NUMPY = True
+except ImportError:
+    HAVE_NUMPY = False
+
 
 class PlottingTestCase(unittest.TestCase):
     def nest_tmpdir(self):
@@ -55,21 +61,73 @@ class PlottingTestCase(unittest.TestCase):
                                             'test_DumpNodes.out.lyr'))
         self.assertTrue(True)
 
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_DumpConns(self):
         """Test dumping connections."""
-        cdict = {'connection_type': 'divergent',
-                 'mask': {'circular': {'radius': 1.}}}
+        cdict = {'connection_type': 'divergent'}
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(rows=3, columns=3,
+                        positions=nest.spatial.grid(rows=1, columns=2,
                                                     extent=[2., 2.],
                                                     edge_wrap=True))
         nest.ConnectLayers(l, l, cdict)
 
-        nest.DumpLayerConnections(l, l, 'static_synapse',
-                                  os.path.join(self.nest_tmpdir(),
-                                               'test_DumpConns.out.cnn'))
+        filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
+        nest.DumpLayerConnections(l, l, 'static_synapse', filename)
+        npa = np.genfromtxt(filename)
+        reference = np.array([[1.,  1.,  1.,  1.,  0.,  0.],
+                              [1.,  2.,  1.,  1., -1.,  0.],
+                              [2.,  1.,  1.,  1., -1.,  0.],
+                              [2.,  2.,  1.,  1.,  0.,  0.]])
+        print(np.array_equal(npa, reference))
         self.assertTrue(True)
+
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_DumpConns_diff(self):
+        """Test dump connections between different layers."""
+        cdict = {'connection_type': 'divergent'}
+        nest.ResetKernel()
+        pos = nest.spatial.grid(rows=1, columns=1,
+                                extent=[2., 2.],
+                                edge_wrap=True)
+        l1 = nest.Create('iaf_psc_alpha', positions=pos)
+        l2 = nest.Create('iaf_psc_alpha', positions=pos)
+        nest.ConnectLayers(l1, l2, cdict)
+
+        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+
+        filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
+        nest.DumpLayerConnections(l1, l2, 'static_synapse', filename)
+        print('filename:', filename)
+        npa = np.genfromtxt(filename)
+        reference = np.array([1.,  2.,  1.,  1.,  0.,  0.])
+        self.assertTrue(np.array_equal(npa, reference))
+
+    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+    def test_DumpConns_syn(self):
+        """Test dump connections with specific synapse."""
+        cdict = {'connection_type': 'divergent'}
+        nest.ResetKernel()
+        pos = nest.spatial.grid(rows=1, columns=1,
+                                extent=[2., 2.],
+                                edge_wrap=True)
+        l1 = nest.Create('iaf_psc_alpha', positions=pos)
+        l2 = nest.Create('iaf_psc_alpha', positions=pos)
+        l3 = nest.Create('iaf_psc_alpha', positions=pos)
+        nest.ConnectLayers(l1, l2, cdict)
+
+        syn_model = 'stdp_synapse'
+        cdict.update({'synapse_model': syn_model})
+        nest.ConnectLayers(l2, l3, cdict)
+
+        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+
+        filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
+        nest.DumpLayerConnections(l2, l3, syn_model, filename)
+        print('filename:', filename)
+        npa = np.genfromtxt(filename)
+        reference = np.array([2., 3.,  1.,  1.,  0.,  0.])
+        self.assertTrue(np.array_equal(npa, reference))
 
 
 def suite():

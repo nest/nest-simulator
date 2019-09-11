@@ -50,7 +50,6 @@ void fail_exit( int exitcode );
 void install_module( const std::string& module_name );
 
 void reset_kernel();
-void reset_network();
 
 void enable_dryrun_mode( const index n_procs );
 
@@ -128,8 +127,6 @@ void copy_model( const Name& oldmodname, const Name& newmodname, const Dictionar
 
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
-
-void restore_nodes( const ArrayDatum& node_list );
 
 ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
 ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );

@@ -305,36 +305,6 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
   }
 }
 
-void
-NodeManager::restore_nodes( const ArrayDatum& node_list )
-{
-  Token* first = node_list.begin();
-  const Token* end = node_list.end();
-  if ( first == end )
-  {
-    return;
-  }
-
-
-  // todo481: why does this not use an iterator? The check above is
-  // also not needed as the loop anyway won't run if first == end.
-  for ( Token* node_t = first; node_t != end; ++node_t )
-  {
-    DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
-    std::string model_name = ( *node_props )[ names::model ];
-    index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
-    GIDCollectionPTR node = add_node( model_id );
-    // todo481: The call below is unsafe. It will most likely not
-    // return the correct pointer, as nodes are allocated round robin.
-    // Actually it is unclear to me how setting the status would work
-    // in a distributed scenario.
-    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
-    // we call directly set_status on the node
-    // to bypass checking of unused dictionary items.
-    node_ptr->set_status_base( node_props );
-  }
-}
-
 GIDCollectionPTR
 NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 {

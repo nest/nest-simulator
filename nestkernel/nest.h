@@ -127,8 +127,6 @@ void copy_model( const Name& oldmodname, const Name& newmodname, const Dictionar
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
-void restore_nodes( const ArrayDatum& node_list );
-
 ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
 ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
 ParameterDatum add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );

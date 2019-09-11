@@ -1392,17 +1392,6 @@ statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
  /memory_thisjob { :memory_thisjob_bg } def
 } if
 
-/** @BeginDocumentation
-Name - RestoreNodes - Restore nodes from an array of status dictionaries.
-Description:
-RestoreNodes takes an array of status dictionaries and creates nodes with these properties.
-RestoreNodes assumes that the status dictionaries belong to a consecutive range of nodes.
-
-The new nodes are created inside the current subnet and maintain their local subnet structure.
-Thus, RestoreNodes can be used to copy a range of neurons to different locations.
-*/
-
-/RestoreNodes [/arraytype] /RestoreNodes_a load def
 
 /** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.

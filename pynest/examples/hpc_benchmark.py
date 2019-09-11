@@ -85,7 +85,6 @@ M_INFO = 10
 M_ERROR = 30
 
 
-
 ###############################################################################
 # Parameter section
 # Define all relevant parameters: changes should be made here
@@ -103,7 +102,6 @@ params = {
     'path_name': '.',       # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
-
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
@@ -137,7 +135,6 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 tau_syn = 0.32582722403722841
 
 
-
 brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
@@ -160,10 +157,10 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-###############################################################################
-# Note that Kunkel et al. (2014) report different values. The values
-# in the paper were used for the benchmarks on K, the values given
-# here were used for the benchmark on JUQUEEN.
+    ###############################################################################
+    # Note that Kunkel et al. (2014) report different values. The values
+    # in the paper were used for the benchmarks on K, the values given
+    # here were used for the benchmark on JUQUEEN.
 
     'randomize_Vm': True,
     'mean_potential': 5.7,
@@ -191,6 +188,7 @@ brunel_params = {
 
 ###############################################################################
 # Function Section
+
 
 def build_network(logger):
     """Builds the network including setting of simulation and neuron
@@ -442,6 +440,7 @@ def get_local_nodes(nodes):
             i += nvp
         else:
             i += 1
+
 
 class Logger(object):
     """Logger context manager used to properly log memory and timing

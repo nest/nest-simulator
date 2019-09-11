@@ -42,6 +42,7 @@ import numpy
 # First,the function ``build_network`` is defined to build the network and
 # return the handles of two decision units and the ``Multimeter``
 
+
 def build_network(sigma, dt):
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})

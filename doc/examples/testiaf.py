@@ -116,5 +116,3 @@ for dt in [0.1, 0.5, 1.0]:
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")
     pylab.ylabel("V_m (mV)")
-
-

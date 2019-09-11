@@ -158,8 +158,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
-                        if ('N' in conn_spec
-                                and value.shape[0] != conn_spec['N']):
+                        if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
                             raise kernel.NESTError(
                                 "'" + key + "' has to be an array of "
                                 "dimension " + str(conn_spec['N']) + ", a "

@@ -41,7 +41,7 @@ References
 """
 
 ####################################################################################
-#First, we have import all necessary modules.
+# First, we have import all necessary modules.
 
 import nest
 import numpy
@@ -111,7 +111,6 @@ class StructralPlasticityExample:
             'eta': 0.0,  # Ca2+
             'eps': self.growth_curve_i_e['eps']  # Ca2+
         }
-
 
         # Now we specify the neuron model.
 
@@ -250,7 +249,6 @@ class StructralPlasticityExample:
 # ``GetStatus`` function to retrieve the value of `Ca` for every neuron in the
 # network and then store the average.
 
-
     def record_ca(self):
         ca_e = nest.GetStatus(self.nodes_e, 'Ca'),  # Calcium concentration
         self.mean_ca_e.append(numpy.mean(ca_e))
@@ -267,7 +265,6 @@ class StructralPlasticityExample:
 # amount of connected excitatory pre-synaptic elements. The same applies for
 # inhibitory connections.
 
-
     def record_connectivity(self):
         syn_elems_e = nest.GetStatus(self.nodes_e, 'synaptic_elements')
         syn_elems_i = nest.GetStatus(self.nodes_i, 'synaptic_elements')
@@ -280,7 +277,6 @@ class StructralPlasticityExample:
 ####################################################################################
 # We define a function to plot the recorded values
 # at the end of the simulation.
-
 
     def plot_data(self):
         fig, ax1 = pl.subplots()
@@ -313,7 +309,6 @@ class StructralPlasticityExample:
 # simulate in steps. On each step we record the calcium concentration and the
 # connectivity. At the end of the simulation, the plot of connections and
 # calcium concentration through time is generated.
-
 
     def simulate(self):
         if nest.NumProcesses() > 1:

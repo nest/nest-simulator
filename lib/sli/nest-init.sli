@@ -677,23 +677,15 @@ def
     /n Set
     /model Set
 
-    model GetDefaults /element_type get /recorder eq
-    {
-      % For recorders, we can't use the more efficient method of
-      % setting parameters via SetDefaults as used below, because
-      % recording backend properties are only available in instances
-      % after their enrollment
-
-      model n Create_l_i
-      dup params SetStatus
-    }
+    model GetDefaults /element_type get /recorder neq
     {
       % For stimulators and neurons, we store the old parameters that
-      % are given in params. We then set params as defaults, create
+      % are given in params, then set params as model defaults, create
       % the nodes and restore the old parameters.
 
       model GetDefaults /oldparams Set
       /tmp << >> def
+
       % get implicitly checks if params contains 'illegal' keys
       params keys { /key Set tmp key oldparams key get put } forall
       tmp /oldparams Set
@@ -701,6 +693,16 @@ def
       model params SetDefaults
       model n Create_l_i
       model oldparams SetDefaults
+    }
+    {
+      % For recorders, we can't use the more efficient method
+      % above. The reason for this is that recording backend
+      % properties might differ between backends and the backend might
+      % be changed away from the default during the call to Create,
+      % resulting in lookup errors.
+
+      model n Create_l_i
+      dup params SetStatus
     } ifelse
 
   end % local namespace

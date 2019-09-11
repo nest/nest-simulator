@@ -237,7 +237,7 @@ public:
    * should have the same values that they had after the node was
    * created. In practice, they will be initialized to the values
    * of the prototype node (model).
-   * @note If the parameters of the model have been changes since the node
+   * @note If the parameters of the model have been changed since the node
    *       was created, the node will be initialized to the present values
    *       set in the model.
    * @note This function is the public interface to the private function

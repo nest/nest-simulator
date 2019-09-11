@@ -36,6 +36,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
+
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 
 Description:
@@ -48,7 +52,7 @@ The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [][1]. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -88,18 +92,21 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacity of the membrane in pF
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
-tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
-I_e        double - Constant external input current in pA.
-V_min      double - Absolute lower value for the membrane potential.
-
+\verbatim embed:rst
+=========== ======  ==========================================================
+ V_m        mV      Membrane potential
+ E_L        mV      Resting membrane potenial
+ C_m        pF      Capacity of the membrane
+ tau_m      ms      Membrane time constant
+ t_ref      ms      Duration of refractory period
+ V_th       mV      Spike threshold
+ V_reset    mV      Reset potential of the membrane
+ tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
+ I_e        pA      Constant input current
+ V_min      mV      Absolute lower value for the membrane potenial
+=========== ======  ==========================================================
+\endverbatim
 Remarks:
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
@@ -110,15 +117,20 @@ the NEST source code (docs/model_details).
 
 References:
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-    systems with applications to neuronal modeling. Biologial Cybernetics
-    81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-    analysis of synchronous spiking in cortical neural networks.
-    Neurocomputing 38-40:565-571.
-[3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact subthreshold
-    integration with continuous spike times in discrete time neural network
-    simulations. Neural Computation, in press
+\verbatim embed:rst
+.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [3] Morrison A, Straube S, Plesser H E, Diesmann M (2006). Exact
+       subthreshold integration with continuous spike times in discrete time
+       neural network simulations. Neural Computation, in press
+       DOI: https://doi.org/10.1162/neco.2007.19.1.47
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -344,10 +356,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -375,8 +384,7 @@ iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

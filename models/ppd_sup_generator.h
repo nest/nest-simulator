@@ -41,6 +41,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: ppd_sup_generator - simulate the superimposed spike train of a population
 of Poisson processes
 with dead time.
@@ -56,24 +59,28 @@ initialize to equilibrium in this case, initial transients might occur.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-rate                double - mean firing rate of the component processes,
-                             default: 0 s^-1
-dead_time           double - minimal time between two spikes of the component
-                             processes, default: 0 ms
-n_proc              long   - number of superimposed independent component
-                             processes, default: 1
-frequency           double - rate modulation frequency, default: 0 Hz
-relative_amplitude  double - relative rate modulation amplitude, default: 0
+\verbatim embed:rst
+===================  ======== =================================================
+ rate                spikes/s Mean firing rate of the component processes,
+                              default: 0 spikes/s
+ dead_time           ms       Minimal time between two spikes of the component
+                              processes, default: 0 ms
+ n_proc              integer  Number of superimposed independent component
+                              processes, default: 1
+ frequency           Hz       Rate modulation frequency, default: 0 Hz
+ relative_amplitude  real     Relative rate modulation amplitude, default: 0
+===================  ======== =================================================
+\endverbatim
 
 Remarks:
 
-The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-Statistical properties of superimposed stationary spike trains,
-Journal of Computational Neuroscience.
-URL: http://www.springerlink.com/content/u75211r381p08301/
-DOI: 10.1007/s10827-011-0362-8
+References:
 
+\verbatim embed:rst
+.. [1]  Deger M, Helias M, Boucsein C, Rotter S (2011). Statistical properties
+        of superimposed stationary spike trains. Journal of Computational
+        Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+\endverbatim
 Authors:
    June 2009, Moritz Deger, Moritz Helias
 
@@ -170,15 +177,12 @@ private:
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     //! occupation numbers of ages below dead time
     std::vector< unsigned long > occ_refractory_;
-    unsigned long
-      occ_active_;    //!< summed occupation number of ages above dead time
-    size_t activate_; //!< rotating pointer
+    unsigned long occ_active_; //!< summed occupation number of ages above dead time
+    size_t activate_;          //!< rotating pointer
 
   public:
     //! initialize age dist
-    Age_distribution_( size_t num_age_bins,
-      unsigned long ini_occ_ref,
-      unsigned long ini_occ_act );
+    Age_distribution_( size_t num_age_bins, unsigned long ini_occ_ref, unsigned long ini_occ_act );
 
     //! update age dist and generate spikes
     unsigned long update( double hazard_rate, librandom::RngPtr rng );
@@ -227,10 +231,7 @@ private:
 };
 
 inline port
-ppd_sup_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

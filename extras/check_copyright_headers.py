@@ -97,7 +97,6 @@ exclude_files = [
     'nestrc.sli',
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',
-    'rcsinfo.sli',
     'get-pip.py'
 ]
 

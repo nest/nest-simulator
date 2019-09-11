@@ -124,8 +124,7 @@ private:
 };
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const std::string& name,
-  const std::string& deprecation_info )
+GenericModel< ElementT >::GenericModel( const std::string& name, const std::string& deprecation_info )
   : Model( name )
   , proto_()
   , deprecation_info_( deprecation_info )
@@ -135,8 +134,7 @@ GenericModel< ElementT >::GenericModel( const std::string& name,
 }
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const GenericModel& oldmod,
-  const std::string& newname )
+GenericModel< ElementT >::GenericModel( const GenericModel& oldmod, const std::string& newname )
   : Model( newname )
   , proto_( oldmod.proto_ )
   , deprecation_info_( oldmod.deprecation_info_ )
@@ -191,10 +189,7 @@ GenericModel< ElementT >::is_off_grid()
 
 template < typename ElementT >
 inline port
-GenericModel< ElementT >::send_test_event( Node& target,
-  rport receptor,
-  synindex syn_id,
-  bool dummy_target )
+GenericModel< ElementT >::send_test_event( Node& target, rport receptor, synindex syn_id, bool dummy_target )
 {
   return proto_.send_test_event( target, receptor, syn_id, dummy_target );
 }
@@ -208,8 +203,7 @@ GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event(
-  InstantaneousRateConnectionEvent& re )
+GenericModel< ElementT >::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }
@@ -223,8 +217,7 @@ GenericModel< ElementT >::sends_secondary_event( DiffusionConnectionEvent& de )
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event(
-  DelayedRateConnectionEvent& re )
+GenericModel< ElementT >::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }

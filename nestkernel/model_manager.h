@@ -131,9 +131,8 @@ public:
    * register_prototype_connection
    */
   template < class ModelT >
-  index register_node_model( const Name& name,
-    bool private_model = false,
-    std::string deprecation_info = std::string() );
+  index
+  register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
 
   /**
    * Register a pre-configured model prototype with the network.
@@ -278,8 +277,7 @@ public:
 
   void delete_secondary_events_prototypes();
 
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id,
-    const thread tid ) const;
+  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid ) const;
 
 private:
   /**  */
@@ -361,8 +359,7 @@ private:
   std::vector< Event* > event_prototypes_;
 
   std::vector< ConnectorModel* > secondary_connector_models_;
-  std::vector< std::map< synindex, SecondaryEvent* > >
-    secondary_events_prototypes_;
+  std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
   /** @BeginDocumentation
    Name: modeldict - dictionary containing all devices and models of NEST
@@ -503,14 +500,11 @@ ModelManager::has_user_prototypes() const
 inline void
 ModelManager::delete_secondary_events_prototypes()
 {
-  for ( std::vector< std::map< synindex, SecondaryEvent* > >::iterator it =
-          secondary_events_prototypes_.begin();
+  for ( std::vector< std::map< synindex, SecondaryEvent* > >::iterator it = secondary_events_prototypes_.begin();
         it != secondary_events_prototypes_.end();
         ++it )
   {
-    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin();
-          iit != it->end();
-          ++iit )
+    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {
       ( *iit->second ).reset_supported_syn_ids();
       delete iit->second;
@@ -520,8 +514,7 @@ ModelManager::delete_secondary_events_prototypes()
 }
 
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id,
-  const thread tid ) const
+ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid ) const
 {
   assert_valid_syn_id( syn_id );
   // Using .at() because operator[] does not guarantee constness.

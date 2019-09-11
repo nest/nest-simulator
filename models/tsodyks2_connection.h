@@ -33,6 +33,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stp
+
 Name: tsodyks2_synapse - Synapse type with short term plasticity.
 
 Description:
@@ -52,15 +55,19 @@ factor that scales the synaptic weight.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-U          double - probability of release increment (U1) [0,1],
-                    default=0.5
-u          double - Maximum probability of release (U_se) [0,1],
-                    default=0.5
-x          double - current scaling factor of the weight, default=U
-tau_rec    double - time constant for depression in ms, default=800 ms
-tau_fac    double - time constant for facilitation in ms, default=0 (off)
 
-Remarks:
+\verbatim embed:rst
+========  ======  ========================================================
+ U        real    Maximum probability of release (U1) [0,1], default=0.5
+ u        real    Maximum probability of release (U_se) [0,1],
+                  default=0.5
+ x        real    Current scaling factor of the weight, default=U
+ tau_fac  ms      Time constant for facilitation, default = 0(off)
+ tau_rec  ms      Time constant for depression, default = 800ms
+========  ======  ========================================================
+\endverbatim
+
+ Remarks:
 
 Under identical conditions, the tsodyks2_synapse produces
 slightly lower peak amplitudes than the tsodyks_synapse. However,
@@ -71,14 +78,19 @@ models.
 
 References:
 
-[1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical
-    pyramidal neurons depends on neurotransmitter release probability.
-    PNAS, 94(2), 719-23.
-[2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-    temporal information by activity-dependent synapses. Journal of
-    neurophysiology, 87(1), 140-8.
-[3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-    Neural networks, 15(2), 155-61.
+\verbatim embed:rst
+.. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
+       pyramidal neurons depends on neurotransmitter release probability.
+       PNAS, 94(2):719-23.
+       DOI: https://doi.org/10.1073/pnas.94.2.719
+.. [2] Fuhrman, G, Segev I, Markram H, Tsodyks MV (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 87(1):140-8.
+       DOI: https://doi.org/10.1152/jn.00258.2001
+.. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
+       Neural Networks, 15(2):155-61.
+       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
+\endverbatim
 
 Transmits: SpikeEvent
 
@@ -156,10 +168,7 @@ public:
 
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -190,9 +199,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Tsodyks2Connection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
@@ -229,8 +236,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
-  const Tsodyks2Connection& rhs )
+Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -260,8 +266,7 @@ Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

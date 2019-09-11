@@ -54,8 +54,7 @@ const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
-double Time::Range::TICS_PER_STEP_INV =
-  1. / static_cast< double >( Time::Range::TICS_PER_STEP );
+double Time::Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Time::Range::TICS_PER_STEP );
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
 double Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
@@ -106,8 +105,7 @@ Time::set_resolution( double ms_per_step )
 {
   assert( ms_per_step > 0 );
 
-  Range::TICS_PER_STEP =
-    static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
+  Range::TICS_PER_STEP = static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
   Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Range::TICS_PER_STEP );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
@@ -155,8 +153,7 @@ Time::ms::fromtoken( const Token& t )
     return ddat->get();
   }
 
-  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or "
-      + DoubleDatum().gettypename().toString(),
+  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
     t.datum()->gettypename().toString() );
 }
 
@@ -212,8 +209,7 @@ std::ostream& operator<<( std::ostream& strm, const Time& t )
   }
   else
   {
-    strm << t.get_ms() << " ms (= " << t.get_tics()
-         << " tics = " << t.get_steps()
+    strm << t.get_ms() << " ms (= " << t.get_tics() << " tics = " << t.get_steps()
          << ( t.get_steps() != 1 ? " steps)" : " step)" );
   }
 

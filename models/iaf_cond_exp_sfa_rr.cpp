@@ -49,8 +49,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_exp_sfa_rr >
-  nest::iaf_cond_exp_sfa_rr::recordablesMap_;
+nest::RecordablesMap< nest::iaf_cond_exp_sfa_rr > nest::iaf_cond_exp_sfa_rr::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -61,32 +60,23 @@ void
 RecordablesMap< iaf_cond_exp_sfa_rr >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m,
-    &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::V_M > );
-  insert_( names::g_ex,
-    &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_EXC > );
-  insert_( names::g_in,
-    &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_INH > );
-  insert_( names::g_sfa,
-    &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_SFA > );
-  insert_( names::g_rr,
-    &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_RR > );
+  insert_( names::V_m, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::V_M > );
+  insert_( names::g_ex, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_EXC > );
+  insert_( names::g_in, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_INH > );
+  insert_( names::g_sfa, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_SFA > );
+  insert_( names::g_rr, &iaf_cond_exp_sfa_rr::get_y_elem_< iaf_cond_exp_sfa_rr::State_::G_RR > );
 }
 }
 
 extern "C" inline int
-nest::iaf_cond_exp_sfa_rr_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::iaf_cond_exp_sfa_rr::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_exp_sfa_rr& node =
-    *( reinterpret_cast< nest::iaf_cond_exp_sfa_rr* >( pnode ) );
+  const nest::iaf_cond_exp_sfa_rr& node = *( reinterpret_cast< nest::iaf_cond_exp_sfa_rr* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -101,8 +91,7 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double,
   const double I_rr = y[ S::G_RR ] * ( y[ S::V_M ] - node.P_.E_rr );
 
   // V dot
-  f[ S::V_M ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh
-                  - I_sfa - I_rr ) / node.P_.C_m;
+  f[ S::V_M ] = ( -I_L + node.B_.I_stim_ + node.P_.I_e - I_syn_exc - I_syn_inh - I_sfa - I_rr ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
   f[ S::G_INH ] = -y[ S::G_INH ] / node.P_.tau_synI;
@@ -157,8 +146,7 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=(
-  const State_& s )
+nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -251,8 +239,7 @@ nest::iaf_cond_exp_sfa_rr::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -271,8 +258,7 @@ nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
   // init_buffers_().
 }
 
-nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( const Buffers_&,
-  iaf_cond_exp_sfa_rr& n )
+nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp_sfa_rr& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -346,8 +332,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -396,13 +381,10 @@ nest::iaf_cond_exp_sfa_rr::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp_sfa_rr::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -478,14 +460,12 @@ nest::iaf_cond_exp_sfa_rr::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   } // ensure conductance is positive
 }
@@ -499,9 +479,7 @@ nest::iaf_cond_exp_sfa_rr::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

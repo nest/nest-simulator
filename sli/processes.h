@@ -51,8 +51,7 @@ class Processes : public SLIModule
   // The following concernes the new module: -----------------------
 
 public:
-  static const std::string systemerror(
-    SLIInterpreter* ); // This will be used to produce systemerror-messages
+  static const std::string systemerror( SLIInterpreter* ); // This will be used to produce systemerror-messages
 
   static int fd( std::istream* s );
   static int fd( std::ostream* s );

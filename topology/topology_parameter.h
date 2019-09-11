@@ -47,8 +47,7 @@
 namespace nest
 {
 class TopologyParameter;
-typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
-  ParameterDatum;
+typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType > ParameterDatum;
 
 /**
  * Abstract base class for parameters
@@ -161,26 +160,22 @@ public:
    * Create the product of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* multiply_parameter(
-    const TopologyParameter& other ) const;
+  virtual TopologyParameter* multiply_parameter( const TopologyParameter& other ) const;
   /**
    * Create the quotient of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* divide_parameter(
-    const TopologyParameter& other ) const;
+  virtual TopologyParameter* divide_parameter( const TopologyParameter& other ) const;
   /**
    * Create the sum of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* add_parameter(
-    const TopologyParameter& other ) const;
+  virtual TopologyParameter* add_parameter( const TopologyParameter& other ) const;
   /**
    * Create the difference of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual TopologyParameter* subtract_parameter(
-    const TopologyParameter& other ) const;
+  virtual TopologyParameter* subtract_parameter( const TopologyParameter& other ) const;
 
 private:
   double cutoff_;
@@ -389,9 +384,7 @@ public:
   double
   raw_value( double x ) const
   {
-    return c_
-      + p_center_
-      * std::exp( -std::pow( x - mean_, 2 ) / ( 2 * std::pow( sigma_, 2 ) ) );
+    return c_ + p_center_ * std::exp( -std::pow( x - mean_, 2 ) / ( 2 * std::pow( sigma_, 2 ) ) );
   }
 
   TopologyParameter*
@@ -431,14 +424,10 @@ public:
   raw_value( const Position< 2 >& pos, librandom::RngPtr& ) const
   {
     return c_
-      + p_center_
-      * std::exp(
-          -( ( pos[ 0 ] - mean_x_ ) * ( pos[ 0 ] - mean_x_ )
-              / ( sigma_x_ * sigma_x_ )
-            + ( pos[ 1 ] - mean_y_ ) * ( pos[ 1 ] - mean_y_ )
-              / ( sigma_y_ * sigma_y_ )
-            - 2. * rho_ * ( pos[ 0 ] - mean_x_ ) * ( pos[ 1 ] - mean_y_ )
-              / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
+      + p_center_ * std::exp( -( ( pos[ 0 ] - mean_x_ ) * ( pos[ 0 ] - mean_x_ ) / ( sigma_x_ * sigma_x_ )
+                                + ( pos[ 1 ] - mean_y_ ) * ( pos[ 1 ] - mean_y_ ) / ( sigma_y_ * sigma_y_ )
+                                - 2. * rho_ * ( pos[ 0 ] - mean_x_ ) * ( pos[ 1 ] - mean_y_ )
+                                  / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
   }
 
   double
@@ -500,8 +489,7 @@ public:
   double
   raw_value( double x ) const
   {
-    return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x )
-      * delta_;
+    return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
   }
 
   TopologyParameter*
@@ -952,8 +940,7 @@ public:
    * Construct the difference of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  DifferenceParameter( const TopologyParameter& m1,
-    const TopologyParameter& m2 )
+  DifferenceParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
     : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )

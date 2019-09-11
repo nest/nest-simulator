@@ -161,9 +161,7 @@ public:
      * Initialize an iterator to point to the first leaf node inside the
      * mask within the tree below this Ntree.
      */
-    masked_iterator( Ntree& q,
-      const Mask< D >& mask,
-      const Position< D >& anchor );
+    masked_iterator( Ntree& q, const Mask< D >& mask, const Position< D >& anchor );
 
     value_type& operator*()
     {
@@ -287,8 +285,7 @@ public:
    * @param anchor  position to center mask in.
    * @returns member nodes in ntree inside mask.
    */
-  std::vector< value_type > get_nodes( const Mask< D >& mask,
-    const Position< D >& anchor );
+  std::vector< value_type > get_nodes( const Mask< D >& mask, const Position< D >& anchor );
 
   /**
    * This function returns a node iterator which will traverse the
@@ -344,9 +341,7 @@ protected:
   /**
    * Append this ntree's nodes inside the mask to the vector
    */
-  void append_nodes_( std::vector< value_type >&,
-    const Mask< D >&,
-    const Position< D >& );
+  void append_nodes_( std::vector< value_type >&, const Mask< D >&, const Position< D >& );
 
   /**
    * @returns the subquad number for this position
@@ -434,8 +429,7 @@ Ntree< D, T, max_capacity, max_depth >::get_nodes()
 
 template < int D, class T, int max_capacity, int max_depth >
 std::vector< std::pair< Position< D >, T > >
-Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask,
-  const Position< D >& anchor )
+Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask, const Position< D >& anchor )
 {
   std::vector< std::pair< Position< D >, T > > result;
   append_nodes_( result, mask, anchor );
@@ -444,16 +438,14 @@ Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask,
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
-Ntree< D, T, max_capacity, max_depth >::insert(
-  const std::pair< Position< D >, T >& val )
+Ntree< D, T, max_capacity, max_depth >::insert( const std::pair< Position< D >, T >& val )
 {
   return insert( val.first, val.second );
 }
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
-Ntree< D, T, max_capacity, max_depth >::insert( iterator,
-  const std::pair< Position< D >, T >& val )
+Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Position< D >, T >& val )
 {
   return insert( val.first, val.second );
 }

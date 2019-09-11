@@ -68,8 +68,7 @@ class SLIStartup : public SLIModule
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string
-  checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
+  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
   Token targs;
   int verbosity_;
@@ -77,11 +76,8 @@ class SLIStartup : public SLIModule
 
 public:
   Name argv_name;
-  Name prgname_name;
+  Name version_name;
   Name exitcode_name;
-  Name prgmajor_name;
-  Name prgminor_name;
-  Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
   Name prgdatadir_name;

@@ -30,8 +30,8 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
-#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_alpha_multisynapse.h"
+#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
@@ -41,11 +41,11 @@
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
+#include "gif_psc_exp.h"
+#include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
 #include "gif_pop_psc_exp.h"
-#include "gif_psc_exp.h"
-#include "gif_psc_exp_multisynapse.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_beta_gap_traub.h"
 #include "hh_cond_exp_traub.h"
@@ -83,10 +83,10 @@
 #include "ac_generator.h"
 #include "dc_generator.h"
 #include "gamma_sup_generator.h"
-#include "inhomogeneous_poisson_generator.h"
 #include "mip_generator.h"
 #include "noise_generator.h"
 #include "poisson_generator.h"
+#include "inhomogeneous_poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
@@ -103,9 +103,8 @@
 #include "spike_detector.h"
 #include "spin_detector.h"
 #include "voltmeter.h"
-#include "weight_recorder.h"
-
 #include "volume_transmitter.h"
+#include "weight_recorder.h"
 
 // Prototypes for synapses
 #include "bernoulli_connection.h"
@@ -168,8 +167,7 @@ ModelsModule::~ModelsModule()
 const std::string
 ModelsModule::name( void ) const
 {
-  return std::string(
-    "NEST Standard Models Module" ); // Return name of the module
+  return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
 
 const std::string

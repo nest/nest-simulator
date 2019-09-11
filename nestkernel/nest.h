@@ -138,8 +138,7 @@ DictionaryDatum get_kernel_status();
 void set_node_status( const index node_id, const DictionaryDatum& dict );
 DictionaryDatum get_node_status( const index node_id );
 
-void set_connection_status( const ConnectionDatum& conn,
-  const DictionaryDatum& dict );
+void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
 index create( const Name& model_name, const index n );
@@ -194,9 +193,7 @@ void prepare();
  */
 void cleanup();
 
-void copy_model( const Name& oldmodname,
-  const Name& newmodname,
-  const DictionaryDatum& dict );
+void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
@@ -209,13 +206,9 @@ ArrayDatum get_nodes( const index subnet_id,
   const bool include_remotes,
   const bool return_gids_only );
 
-ArrayDatum get_leaves( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes );
+ArrayDatum get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
 
-ArrayDatum get_children( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes );
+ArrayDatum get_children( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
 
 void restore_nodes( const ArrayDatum& node_list );
 }

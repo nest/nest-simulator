@@ -52,7 +52,8 @@ def
 % iaf_psc_alpha_presc is not affected
 /models [
   /iaf_psc_alpha_canon
-  /iaf_psc_delta_canon
+  /iaf_psc_alpha_ps
+  /iaf_psc_delta_ps
   /iaf_psc_exp_ps
 ] def
 
@@ -66,7 +67,8 @@ def
 % For 2.4, when fixing #638 for real, the test labeled "second" below 
 % must be re-activated
 { /iaf_psc_alpha_canon << /t_ref 0.0 >> Create } fail_or_die
-{ /iaf_psc_delta_canon << /t_ref 0.0 >> Create } fail_or_die
+{ /iaf_psc_alpha_ps << /t_ref 0.0 >> Create } fail_or_die
+{ /iaf_psc_delta_ps << /t_ref 0.0 >> Create } fail_or_die
 { /iaf_psc_exp_os << /t_ref 0.0 >> Create } fail_or_die
 
 % second: with t_ref == 0, must also produce > 1 spike

@@ -36,15 +36,8 @@ public:
   ConnectionID()
   {
   }
-  ConnectionID( long source_gid,
-    long target_gid,
-    long target_thread,
-    long synapse_modelid,
-    long port );
-  ConnectionID( long source_gid,
-    long target_thread,
-    long synapse_modelid,
-    long port );
+  ConnectionID( long source_gid, long target_gid, long target_thread, long synapse_modelid, long port );
+  ConnectionID( long source_gid, long target_thread, long synapse_modelid, long port );
   ConnectionID( const ConnectionID& );
 
   DictionaryDatum get_dict() const;

@@ -82,7 +82,7 @@ skip_if_not_threaded
     % gets all connections from the source neuron
     /conn << /source [neuron1] cvgidcollection >> GetConnections def
 
-    /sdict_lst conn GetSynapseStatus def % gets info on synapses
+    /sdict_lst conn GetStatus def % gets info on synapses
 
     /Warr1 0 array def % creates empty weight array
 

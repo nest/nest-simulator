@@ -237,25 +237,25 @@ public:
    * Set the status of the recording backend using the key-value pairs
    * contained in the params dictionary.
    *
-   * @param params_dictionary the status of the recording backend
+   * @param params the status of the recording backend
    *
    * @see get_status()
    *
    * @ingroup NESTio
    */
-  virtual void set_status( const DictionaryDatum& params_dictionary ) = 0;
+  virtual void set_status( const DictionaryDatum& params ) = 0;
 
   /**
    * Return the status of the recording backend by writing it to the given
    * params dictionary.
    *
-   * @param params_dictionary the status of the recording backend
+   * @param params the status of the recording backend
    *
    * @see set_status()
    *
    * @ingroup NESTio
    */
-  virtual void get_status( DictionaryDatum& params_dictionary ) const = 0;
+  virtual void get_status( DictionaryDatum& params ) const = 0;
 
   /**
    * Check if the given per-device properties are valid and usable by

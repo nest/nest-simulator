@@ -30,6 +30,8 @@
 
 /* BeginDocumentation
 
+.. _ascii_backend:
+
 Write data to plain text files
 ##############################
 
@@ -58,7 +60,7 @@ protocols to separate the data originating from individual runs. The
 ``label`` replaces the model name component if it is set to a non-empty
 string. ``gid`` and ``vp`` denote the zero-padded global ID and virtual
 process of the recorder writing the file. The filename ends in a dot
-and the `file_extension`.
+and the ``file_extension``.
 
 The life of a file starts with the call to ``Prepare`` and ends with
 the call to ``Cleanup``. Data that is produced during successive calls

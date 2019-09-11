@@ -25,9 +25,9 @@
 
 This example illustrates a neuron receiving spiking input through
 several different receptors (AMPA, NMDA, GABA_A, GABA_B), provoking
-spike output. The model, `ht_neuron`, also has intrinsic currents
-(I_NaP, I_KNa, I_T, and I_h). It is a slightly simplified implementation of
-neuron model proposed in [1].
+spike output. The model, ``ht_neuron``, also has intrinsic currents
+(``I_NaP``, ``I_KNa``, ``I_T``, and ``I_h``). It is a slightly simplified implementation of
+neuron model proposed in [1]_.
 
 The neuron is bombarded with spike trains from four Poisson generators,
 which are connected to the AMPA, NMDA, GABA_A, and GABA_B receptors,
@@ -36,19 +36,15 @@ respectively.
 References
 ~~~~~~~~~~~
 
-.. [1] Hill and Tononi (2005) Modeling Sleep and Wakefulness in the
-       Thalamocortical System J Neurophysiol 93:1671
+.. [1] Hill and Tononi (2005) Modeling sleep and wakefulness in the
+       thalamocortical system. J Neurophysiol 93:1671
        http://dx.doi.org/10.1152/jn.00915.2004.
 
 See Also
 ~~~~~~~~~~
 
-intrinsic_currents_subthreshold.py
+:doc:`intrinsic_currents_subthreshold`
 
-
-:Authors:
-
-KEYWORDS:
 """
 
 ###############################################################################
@@ -59,7 +55,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ###############################################################################
-# Additionally, we set the verbosity using `set_verbosity` to suppress info
+# Additionally, we set the verbosity using ``set_verbosity`` to suppress info
 # messages. We also reset the kernel to be sure to start with a clean NEST.
 
 nest.set_verbosity("M_WARNING")
@@ -86,12 +82,13 @@ num_recep = len(w_recep)
 # - one neuron instance
 # - one Poisson generator instance for each synapse type
 # - one multimeter to record from the neuron:
+
 #   - membrane potential
 #   - threshold potential
 #   - synaptic conductances
 #   - intrinsic currents
 #
-# See `intrinsic_currents_subthreshold.py` for more details on `multimeter`
+# See :doc:`intrinsic_currents_subthreshold` for more details on ``multimeter``
 # configuration.
 
 nrn = nest.Create('ht_neuron')
@@ -109,14 +106,14 @@ mm = nest.Create('multimeter',
 # receptor type.
 #
 # First, we need to obtain the numerical codes for the receptor types from
-# the model. The `receptor_types` entry of the default dictionary for the
-# `ht_neuron` model is a dictionary mapping receptor names to codes.
+# the model. The ``receptor_types`` entry of the default dictionary for the
+# ``ht_neuron`` model is a dictionary mapping receptor names to codes.
 #
 # In the loop, we use Python's tuple unpacking mechanism to unpack
-# dictionary entries from our w_recep dictionary.
+# dictionary entries from our `w_recep` dictionary.
 #
-# Note that we need to pack the ``pg`` variable into a list before
-# passing it to `Connect`, because iterating over the `p_gens` list
+# Note that we need to pack the `pg` variable into a list before
+# passing it to ``Connect``, because iterating over the `p_gens` list
 # makes `pg` a "naked" GID.
 
 receptors = nest.GetDefaults('ht_neuron')['receptor_types']
@@ -126,7 +123,7 @@ for pg, (rec_name, rec_wgt) in zip(p_gens, w_recep.items()):
                            'weight': rec_wgt})
 
 ###############################################################################
-# We then connnect the multimeter. Note that the multimeter is connected to
+# We then connnect the ``multimeter``. Note that the multimeter is connected to
 # the neuron, not the other way around.
 
 nest.Connect(mm, nrn)
@@ -138,17 +135,17 @@ nest.Simulate(t_sim)
 
 ###############################################################################
 # We now fetch the data recorded by the multimeter. The data are returned as
-# a dictionary with entry ``'times'`` containing timestamps for all
+# a dictionary with entry ``times`` containing timestamps for all
 # recorded data, plus one entry per recorded quantity.
-# All data is contained in the ``'events'`` entry of the status dictionary
+# All data is contained in the ``events`` entry of the status dictionary
 # returned by the multimeter. Because all NEST function return arrays,
-# we need to pick out element ``0`` from the result of `GetStatus`.
+# we need to pick out element `0` from the result of ``GetStatus``.
 
 data = nest.GetStatus(mm)[0]['events']
 t = data['times']
 
 ###############################################################################
-# The following function turns a name such as I_NaP into proper TeX code
+# The following function turns a name such as ``I_NaP`` into proper TeX code
 # :math:`I_{\mathrm{NaP}}` for a pretty label.
 
 

@@ -1251,12 +1251,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       return CONNECT;
     }
 
-    std::string msg = String::compose(
-      "Devices ('%1' in this case) cannot be "
-      "connected to global receivers ('%2' in this case).",
-      source->get_name(),
-      source->get_name() );
-    throw IllegalConnection( msg );
+    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment" );
   }
 
   return NO_CONNECTION;

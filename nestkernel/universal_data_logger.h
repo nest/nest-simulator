@@ -165,8 +165,8 @@ public:
 
 private:
   /**
-   * Single data logger, serving one Multimeter.
-   * For each Multimeter connected to a node, one DataLogger_ instance is
+   * Single data logger, serving one multimeter.
+   * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
    */
@@ -431,8 +431,8 @@ public:
 
 private:
   /**
-   * Single data logger, serving one Multimeter.
-   * For each Multimeter connected to a node, one DataLogger_ instance is
+   * Single data logger, serving one multimeter.
+   * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
    */

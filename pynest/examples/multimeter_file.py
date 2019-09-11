@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Multimeter to file example
+multimeter to file example
 --------------------------
 
 This file demonstrates recording from an `iaf_cond_alpha` neuron using a

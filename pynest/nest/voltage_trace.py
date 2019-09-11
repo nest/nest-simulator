@@ -128,12 +128,12 @@ def from_file(fname, title=None, grayscale=False):
 def from_device(detec, neurons=None, title=None, grayscale=False,
                 timeunit="ms"):
     """Plot the membrane potential of a set of neurons recorded by
-    the given Voltmeter or Multimeter.
+    the given voltmeter or multimeter.
 
     Parameters
     ----------
     detec : list
-        Global id of Voltmeter or Multimeter in a list, e.g. [1]
+        Global id of voltmeter or multimeter in a list, e.g. [1]
     neurons : list, optional
         Indices of of neurons to plot
     title : str, optional
@@ -228,7 +228,7 @@ def _from_memory(detec):
     """Get voltage traces from memory.
     ----------
     detec : list
-        Global id of Voltmeter or Multimeter
+        Global id of voltmeter or multimeter
     """
     import array
 

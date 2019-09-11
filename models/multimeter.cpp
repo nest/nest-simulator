@@ -30,14 +30,14 @@
 
 namespace nest
 {
-Multimeter::Multimeter()
+multimeter::multimeter()
   : RecordingDevice()
   , P_()
   , B_()
 {
 }
 
-Multimeter::Multimeter( const Multimeter& n )
+multimeter::multimeter( const multimeter& n )
   : RecordingDevice( n )
   , P_( n.P_ )
   , B_()
@@ -45,7 +45,7 @@ Multimeter::Multimeter( const Multimeter& n )
 }
 
 port
-Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
@@ -57,14 +57,14 @@ Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   return p;
 }
 
-nest::Multimeter::Parameters_::Parameters_()
+nest::multimeter::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , offset_( Time::ms( 0. ) )
   , record_from_()
 {
 }
 
-nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
+nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , offset_( p.offset_ )
   , record_from_( p.record_from_ )
@@ -72,13 +72,13 @@ nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::Multimeter::Buffers_::Buffers_()
+nest::multimeter::Buffers_::Buffers_()
   : has_targets_( false )
 {
 }
 
 void
-nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
+nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::interval ] = interval_.get_ms();
   ( *d )[ names::offset ] = offset_.get_ms();
@@ -91,7 +91,7 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
     && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
@@ -157,13 +157,13 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-Multimeter::calibrate()
+multimeter::calibrate()
 {
   RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
-Multimeter::update( Time const& origin, const long from, const long )
+multimeter::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice.
      For each subsequent slice, we collect all data generated during the
@@ -187,7 +187,7 @@ Multimeter::update( Time const& origin, const long from, const long )
 }
 
 void
-Multimeter::handle( DataLoggingReply& reply )
+multimeter::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
@@ -219,7 +219,7 @@ Multimeter::handle( DataLoggingReply& reply )
 }
 
 RecordingDevice::Type
-Multimeter::get_type() const
+multimeter::get_type() const
 {
   return RecordingDevice::MULTIMETER;
 }

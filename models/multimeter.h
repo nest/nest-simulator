@@ -42,7 +42,7 @@
 Sampling continuous quantities from neurons
 ###########################################
 
-Most sampling use cases are covered by the ``Multimeter``, which
+Most sampling use cases are covered by the ``multimeter``, which
 allows to record analog values from neurons. Models which have such
 values expose a ``recordables`` property that lists all recordable
 quantities. This property can be inspected using ``GetDefaults`` on
@@ -54,7 +54,7 @@ changed by the user.
    >>> nest.GetDefaults('iaf_cond_alpha')['recordables']
    ['g_ex', 'g_in', 't_ref_remaining', 'V_m']
 
-The ``record_from`` property of a ``Multimeter`` (a list, empty by
+The ``record_from`` property of a ``multimeter`` (a list, empty by
 default) can be set to contain the name(s) of one or more of these
 recordables to have them sampled during simulation.
 
@@ -63,7 +63,7 @@ recordables to have them sampled during simulation.
    mm = nest.Create('multimeter', 1, {'record_from': ['V_m', 'g_ex']})
 
 The sampling interval for recordings (given in ms) can be controlled
-using the ``Multimeter`` parameter `interval`. The default value of
+using the ``multimeter`` parameter `interval`. The default value of
 1.0 ms can be changed by supplying a new value either in the call to
 ``Create`` or by using ``SetStatus`` on the model instance.
 
@@ -78,10 +78,10 @@ The recording interval must be greater than or equal to the
 .. warning::
 
    The set of variables to record from and the recording interval must
-   be set **before** the ``Multimeter`` is connected to any neuron.
+   be set **before** the ``multimeter`` is connected to any neuron.
    These properties cannot be changed afterwards.
 
-After configuration, a ``Multimeter`` can be connected to the neurons
+After configuration, a ``multimeter`` can be connected to the neurons
 it should record from by using the standard ``Connect`` routine.
 
 ::
@@ -100,7 +100,7 @@ fail if carried out in the wrong direction, i.e., trying to connect the
 
 .. note::
 
-   A pre-configured  ``Multimeter`` is available under the name ``voltmeter``.  Its
+   A pre-configured  ``multimeter`` is available under the name ``voltmeter``.  Its
    ``record_from`` property is already set to record the variable ``V_m``
    from the neurons it is connected to.
 
@@ -109,15 +109,15 @@ EndDocumentation */
 namespace nest
 {
 
-class Multimeter : public RecordingDevice
+class multimeter : public RecordingDevice
 {
 
 public:
-  Multimeter();
-  Multimeter( const Multimeter& );
+  multimeter();
+  multimeter( const multimeter& );
 
   /**
-   * @note Multimeters never have proxies, since they must
+   * @note multimeters never have proxies, since they must
    *       sample their targets through local communication.
    */
   bool
@@ -200,7 +200,7 @@ private:
 
 
 inline void
-nest::Multimeter::get_status( DictionaryDatum& d ) const
+nest::multimeter::get_status( DictionaryDatum& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
@@ -224,13 +224,13 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::Multimeter::set_status( const DictionaryDatum& d )
+nest::multimeter::set_status( const DictionaryDatum& d )
 {
-  // protect Multimeter from being frozen
+  // protect multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
   {
-    throw BadProperty( "Multimeter cannot be frozen." );
+    throw BadProperty( "multimeter cannot be frozen." );
   }
 
   Parameters_ ptmp = P_;
@@ -241,7 +241,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
 }
 
 inline SignalType
-nest::Multimeter::sends_signal() const
+nest::multimeter::sends_signal() const
 {
   return ALL;
 }

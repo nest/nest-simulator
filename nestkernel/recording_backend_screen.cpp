@@ -41,7 +41,7 @@ nest::RecordingBackendScreen::finalize()
 }
 
 void
-nest::RecordingBackendScreen::enroll( const RecordingDevice& device )
+nest::RecordingBackendScreen::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   const index gid = device.get_gid();
   const thread t = device.get_thread();
@@ -49,8 +49,11 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device )
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
   if ( device_data == device_data_[ t ].end() )
   {
-    device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    device_data = p.first;
   }
+
+  device_data->second.set_status( params );
 }
 
 void
@@ -65,6 +68,7 @@ nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
     device_data_[ t ].erase( device_data );
   }
 }
+
 void
 nest::RecordingBackendScreen::set_value_names( const RecordingDevice&,
   const std::vector< Name >&,
@@ -103,18 +107,25 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendScreen::get_device_status( nest::RecordingDevice const&,
-  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+nest::RecordingBackendScreen::check_device_status( const DictionaryDatum& params ) const
 {
-  // nothing to do
+  DeviceData dd;
+  dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendScreen::set_device_status( nest::RecordingDevice const&,
-  lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+nest::RecordingBackendScreen::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
-  // nothing to do
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  device_data_map::value_type::const_iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data != device_data_[ t ].end() )
+  {
+    device_data->second.get_status( d );
+  }
 }
+
 
 void
 nest::RecordingBackendScreen::prepare()

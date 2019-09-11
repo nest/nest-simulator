@@ -58,16 +58,8 @@ floating point).
 
 The number of events that have been collected by the ``memory``
 backend can be read out of the *n_events* entry in the status
-dictionary of the recording device.
-
-To delete data from memory between consecutive calls to the ``Run``
-function in the context of :doc:`stepped simulations
-<running_simulations#stepped_simulations>`, the value of *n_events*
-can be set to 0. Other values cannot be set.
-
-If the data is not deleted manually, it is kept for readout until the
-next call to ``Prepare`` or ``Simulate`` and discared before any new
-data is recorded.
+dictionary of the recording device. To delete data from memory,
+*n_events* can be set to 0. Other values cannot be set.
 
 Parameter summary
 +++++++++++++++++
@@ -110,8 +102,6 @@ namespace nest
  * the basic data structure during the call to enroll(), when the
  * exact fields are known.
  *
- * JME: Explain data life span
- *
  */
 class RecordingBackendMemory : public RecordingBackend
 {
@@ -122,7 +112,7 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device ) override;
+  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
@@ -144,7 +134,7 @@ public:
 
   void get_status( DictionaryDatum& ) const override;
 
-  void set_device_status( const RecordingDevice& device, const DictionaryDatum& ) override;
+  void check_device_status( const DictionaryDatum& ) const override;
 
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 

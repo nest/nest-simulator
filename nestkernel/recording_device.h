@@ -45,8 +45,9 @@ namespace nest
 /**
  * Base class for all recording devices.
  *
- * Recording devices collect data and output it to one or more
- * recording backends.
+ * Recording devices collect or sample data and output it to one or
+ * more recording backends selected by setting the device property
+ * `record_to` to the name of the backend.
  *
  * Class RecordingDevice is merely a shallow interface class from
  * which concrete recording devices can inherit in order to use the
@@ -58,6 +59,13 @@ namespace nest
  * is interpreted as (start, stop], i.e., the earliest recorded
  * event will have time stamp start+1, as it was generated during
  * the update step (start, start+1].
+ *
+ * If the device node is not an actual instance used by the user, but
+ * rather a prototype node in a Model class, it will cache
+ * device-specific properties of the recording backend and use them
+ * for enrollment of the device with the backend as the last step
+ * during the creation of instances. This mechanism is implemented in
+ * set_status() and set_initialized_().
  *
  * @ingroup Devices
  *
@@ -104,6 +112,8 @@ private:
     void get( const RecordingDevice&, DictionaryDatum& ) const;
     void set( const RecordingDevice&, const DictionaryDatum& );
   } P_;
+
+  DictionaryDatum backend_params_;
 };
 
 } // namespace

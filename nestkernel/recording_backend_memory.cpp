@@ -47,7 +47,7 @@ nest::RecordingBackendMemory::finalize()
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device )
+nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   thread t = device.get_thread();
   index gid = device.get_gid();
@@ -55,8 +55,11 @@ nest::RecordingBackendMemory::enroll( const RecordingDevice& device )
   device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
   if ( device_data == device_data_[ t ].end() )
   {
-    device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    device_data = p.first;
   }
+
+  device_data->second.set_status( params );
 }
 
 void
@@ -134,16 +137,10 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
 }
 
 void
-nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
+nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
 {
-  const int t = device.get_thread();
-  const int gid = device.get_gid();
-
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
-  if ( device_data != device_data_[ t ].end() )
-  {
-    device_data->second.set_status( d );
-  }
+  DeviceData dd;
+  dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void

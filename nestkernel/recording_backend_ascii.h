@@ -155,7 +155,7 @@ public:
 
   void finalize() override;
 
-  void enroll( const RecordingDevice& device ) override;
+  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
@@ -179,7 +179,8 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;
 
-  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
+  void check_device_status( const DictionaryDatum& ) const override;
+
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
 private:

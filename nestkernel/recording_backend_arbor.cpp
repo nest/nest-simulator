@@ -88,7 +88,7 @@ nest::RecordingBackendArbor::finalize()
 }
 
 void
-nest::RecordingBackendArbor::enroll( const RecordingDevice& device )
+nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
   {
@@ -273,8 +273,7 @@ nest::RecordingBackendArbor::post_run_hook()
 }
 
 void
-nest::RecordingBackendArbor::set_device_status( const nest::RecordingDevice& device,
-  const DictionaryDatum& params_dictionary )
+nest::RecordingBackendArbor::check_device_status( const DictionaryDatum& params ) const
 {
   // nothing to do
 }

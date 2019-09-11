@@ -95,16 +95,16 @@ public:
 
   void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
-  void enroll_recorder( Name, const RecordingDevice& );
+  void enroll_recorder( Name, const RecordingDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( Name backend_name,
     const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+  void check_recording_device_status( Name, const DictionaryDatum& );
 
-  void set_recording_device_status( Name, const RecordingDevice&, const DictionaryDatum& );
+  void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );

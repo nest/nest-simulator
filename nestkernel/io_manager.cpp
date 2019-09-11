@@ -249,13 +249,13 @@ nest::IOManager::write( Name backend_name,
 }
 
 void
-nest::IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device )
+nest::IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device, const DictionaryDatum& params )
 {
   for ( auto& it : recording_backends_ )
   {
     if ( it.first == backend_name )
     {
-      it.second->enroll( device );
+      it.second->enroll( device, params );
     }
     else
     {
@@ -274,17 +274,15 @@ nest::IOManager::set_recording_value_names( Name backend_name,
 }
 
 void
-nest::IOManager::get_recording_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
+nest::IOManager::check_recording_device_status( Name backend_name, const DictionaryDatum& params )
 {
-  recording_backends_[ backend_name ]->get_device_status( device, d );
+  recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-nest::IOManager::set_recording_device_status( Name backend_name,
-  const RecordingDevice& device,
-  const DictionaryDatum& d )
+nest::IOManager::get_recording_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
 {
-  recording_backends_[ backend_name ]->set_device_status( device, d );
+  recording_backends_[ backend_name ]->get_device_status( device, d );
 }
 
 void

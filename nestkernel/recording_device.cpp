@@ -30,6 +30,7 @@ nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
   , P_()
+  , backend_params_( new Dictionary )
 {
 }
 
@@ -37,13 +38,14 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
   , P_( rd.P_ )
+  , backend_params_( rd.backend_params_ )
 {
 }
 
 void
 nest::RecordingDevice::set_initialized_()
 {
-  kernel().io_manager.enroll_recorder( P_.record_to_, *this );
+  kernel().io_manager.enroll_recorder( P_.record_to_, *this, backend_params_ );
 }
 
 void
@@ -107,12 +109,39 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   Device::set_status( d );
 
-  kernel().io_manager.set_recording_device_status( P_.record_to_, *this, d );
+  if ( get_gid() == 0 ) // this is a model prototype, not an actual instance
+  {
+    DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
+
+    // copy all properties from d not previously accessed to backend_params
+    for ( auto kv_pair = d->begin(); kv_pair != d->end(); ++kv_pair )
+    {
+      if ( not kv_pair->second.accessed() )
+      {
+	( *backend_params )[ kv_pair->first ] = kv_pair->second;
+      }
+    }
+
+    kernel().io_manager.check_recording_device_status( P_.record_to_, backend_params );
+
+    // cache all properties accessed by the backend in private member
+    backend_params_->clear();
+    for ( auto kv_pair = backend_params->begin(); kv_pair != backend_params->end(); ++kv_pair )
+    {
+      if ( kv_pair->second.accessed() )
+      {
+	( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
+	d->lookup( kv_pair->first ).set_access_flag();
+      }
+    }
+  }
+  else
+  {
+    kernel().io_manager.enroll_recorder( P_.record_to_, *this, d );
+  }
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
-
-  kernel().io_manager.enroll_recorder( P_.record_to_, *this );
 }
 
 void
@@ -124,7 +153,18 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 
-  kernel().io_manager.get_recording_device_status( P_.record_to_, *this, d );
+  if ( get_gid() == 0 ) // this is a model prototype, not an actual instance
+  {
+    // add cached backend parameters to d instead of actually querying the backend
+    for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
+    {
+      ( *d )[ kv_pair->first ] = kv_pair->second;
+    }
+  }
+  else
+  {
+    kernel().io_manager.get_recording_device_status( P_.record_to_, *this, d );
+  }
 }
 
 bool

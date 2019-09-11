@@ -55,17 +55,20 @@ nest::RecordingBackendASCII::finalize()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device )
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  data_map::value_type::iterator file = device_data_[ t ].find( gid );
-  if ( file == device_data_[ t ].end() )
+  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data == device_data_[ t ].end() )
   {
     std::string basename = build_basename_( device );
-    device_data_[ t ].insert( std::make_pair( gid, DeviceData( basename ) ) );
+    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData( basename ) ) );
+    device_data = p.first;
   }
+
+  device_data->second.set_status( params );
 }
 
 void
@@ -74,10 +77,10 @@ nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
   const thread t = device.get_thread();
   const thread gid = device.get_gid();
 
-  data_map::value_type::iterator file = device_data_[ t ].find( gid );
-  if ( file != device_data_[ t ].end() )
+  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data != device_data_[ t ].end() )
   {
-    device_data_[ t ].erase( file );
+    device_data_[ t ].erase( device_data );
   }
 }
 
@@ -97,6 +100,7 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
 void
 nest::RecordingBackendASCII::pre_run_hook()
 {
+  // nothing to do
 }
 
 void
@@ -132,13 +136,13 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  data_map::value_type::iterator file = device_data_[ t ].find( gid );
-  if ( file == device_data_[ t ].end() )
+  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data == device_data_[ t ].end() )
   {
     return;
   }
 
-  file->second.write( event, double_values, long_values );
+  device_data->second.write( event, double_values, long_values );
 }
 
 const std::string
@@ -187,16 +191,10 @@ nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendASCII::set_device_status( const nest::RecordingDevice& device, const DictionaryDatum& d )
+nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
 {
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
-
-  data_map::value_type::iterator file = device_data_[ t ].find( gid );
-  if ( file != device_data_[ t ].end() )
-  {
-    file->second.set_status( d );
-  }
+  DeviceData dd( "" );
+  dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
@@ -205,10 +203,10 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  data_map::value_type::const_iterator file = device_data_[ t ].find( gid );
-  if ( file != device_data_[ t ].end() )
+  data_map::value_type::const_iterator device_data = device_data_[ t ].find( gid );
+  if ( device_data != device_data_[ t ].end() )
   {
-    file->second.get_status( d );
+    device_data->second.get_status( d );
   }
 }
 

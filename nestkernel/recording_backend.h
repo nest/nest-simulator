@@ -188,6 +188,9 @@ public:
   /**
    * Initialize global backend-specific data structures.
    *
+   * TODO: The following text is misleading. The pre_run_hook is only called
+   * in the very beginning of SimulationManager::run!
+   *
    * This function is called on each backend on simulator startup as well as
    * upon changes in the number of threads. It is also called within Prepare.
    * As the number of threads can change in between calls to this function,

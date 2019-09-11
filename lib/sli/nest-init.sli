@@ -987,6 +987,27 @@ def
 
 def
 
+/** @BeginDocumentation
+   Name: Connect_nonunique - Connect all GIDs in one array to all GIDs in another array.
+
+   Synopsis:
+   sources targets syn_spec     Connect_nonunique
+
+   Parameters:
+   sources    array  - the GIDs of the sources
+   targets    array  - the GIDs of the targets
+   syn_spec   dict   - dictionary with synapse model specification (see Options in Connect)
+
+   Description:
+   Connects all sources to all targets. Source and target arrays may
+   have duplicate GIDs.
+
+   SeeAlso: Connect
+
+   Author: Håkon Mørk
+
+   FirstVersion: September 2019
+*/
 /Connect_nonunique [/arraytype /arraytype /dictionarytype]
 {
   /syn_spec :Connect_complete_dict   % fill in missing defaults

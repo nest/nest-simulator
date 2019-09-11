@@ -61,9 +61,9 @@ class TestConnectArrays(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             nest.Connect(gids, gids)
-            assert len(w) == 1
-            assert issubclass(w[-1].category, UserWarning)
-            assert 'unique' in str(w[-1].message)
+            self.assertEqual(len(w), 1)
+            self.assertTrue(issubclass(w[-1].category, UserWarning))
+            self.assertTrue('unique' in str(w[-1].message))
         conns = nest.GetConnections()
         st_pairs = np.array([(s, t) for s in gids for t in gids])
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.source())))

@@ -343,6 +343,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Connect does not iterate over subnets, it only connects explicitly
     specified nodes.
 
+    It is possible to connect arrays of GIDs with nonunique GIDs by
+    passing the arrays as pre and post, together with a syn_spec dictionary.
+    However this should only be done if you know what you're doing. This will
+    connect all nodes in pre to all nodes in post and apply the specified
+    synapse specifications.
+
     Connectivity specification (conn_spec)
     --------------------------------------
 

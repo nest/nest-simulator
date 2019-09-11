@@ -106,14 +106,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   thread t = device.get_thread();
   index gid = device.get_gid();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
-  if ( device_data != device_data_[ t ].end() )
-  {
-    device_data->second.push_back( event, double_values, long_values );
-  }
-
-  // JME: why is this not working?
-  // device_data_[ t ][ gid ].push_back( event, double_values, long_values );
+  device_data_[ t ][ gid ].push_back( event, double_values, long_values );
 }
 
 void

@@ -38,7 +38,7 @@ namespace nest
  *        FIRST_FLAG = 1 << 0,
  *        SECOND_FLAG = 1 << 1,
  *        THIRD_FLAG = 1 << 2,
- *        FOURTH_FLAG = 1 << 2
+ *        FOURTH_FLAG = 1 << 3
  *    };
  *
  * Then, enable the bitfield operators for this enum class:
@@ -55,7 +55,7 @@ namespace nest
  *
  * .. code-block:: C++
  *
- *    My_Flags my_flags = My_Flags::FIRST_FLAG | My_Flags::FOURTH_FLAGS;
+ *    My_Flags my_flags = My_Flags::FIRST_FLAG | My_Flags::FOURTH_FLAG;
  *    my_flags |= My_Flags::THIRD_FLAG;
  *    if (enumFlagSet(my_flags, My_Flags::FOURTH_FLAG))
  *    {

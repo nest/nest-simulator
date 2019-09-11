@@ -46,7 +46,6 @@
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_beta_multisynapse.h"
-#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
 #include "aeif_psc_exp.h"
@@ -349,10 +348,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
   kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
 #endif
-
-  // This version of the AdEx model does not depend on GSL.
-  kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >( "aeif_cond_alpha_RK5",
-    /*private_model*/ false );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

@@ -191,19 +191,21 @@ brunel_params dup using
   /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
-  
+
+  /iaf_psc_alpha 1 Create  % To get same spike counter as before NEST 3.0
   /E_neurons /iaf_psc_alpha NE Create def
  
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
-  
+
+  /iaf_psc_alpha 1 Create  % To get same spike counter as before NEST 3.0
   /I_neurons /iaf_psc_alpha NI Create def
 
   randomize_Vm
   {
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
-      
+
       GetKernelStatus /rng_seeds get Last 1 add E_neurons 1 Take /vp get add
       rngdict/MT19937 :: exch CreateRNG
       rdevdict/normal :: CreateRDV /normal Set
@@ -211,13 +213,13 @@ brunel_params dup using
       E_neurons LocalOnly
       {
           << /V_m mean_potential sigma_potential normal Random mul add >>
-	        SetStatus
+          SetStatus
       } forall
 
       I_neurons LocalOnly
       { 
           << /V_m mean_potential sigma_potential normal Random mul add >>
-      	  SetStatus
+          SetStatus
       } forall
   } if
 

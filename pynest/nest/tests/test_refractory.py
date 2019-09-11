@@ -42,7 +42,6 @@ trigger immediate spiking
 
 Untested models
 ---------------
-* ``aeif_cond_alpha_RK5``
 * ``gif_pop_psc_exp``
 * ``hh_cond_exp_traub``
 * ``hh_cond_beta_gap_traub``
@@ -80,7 +79,6 @@ neurons_with_clamping = [
 
 # Models that cannot be tested
 ignore_model = [
-     "aeif_cond_alpha_RK5",      # This one is faulty and will be removed
      "gif_pop_psc_exp",          # This one commits spikes at same time
      "hh_cond_exp_traub",        # This one does not support V_reset
      "hh_cond_beta_gap_traub",   # This one does not support V_reset

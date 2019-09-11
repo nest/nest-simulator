@@ -30,15 +30,6 @@ It can be observed how the current charges the membrane, a spike
 is emitted, the neuron becomes absolute refractory, and finally
 starts to recover.
 
-References
-~~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 
 ###############################################################################
@@ -48,22 +39,21 @@ import nest
 import pylab
 
 ###############################################################################
-# Second the Function build_network is defined to build the network and
-# return the handles of the spike detector and the voltmeter
+# Second the function ``build_network`` is defined to build the network and
+# return the handles of the ``spike_detector`` and the ``voltmeter``. The
+# function takes the simulation resolution as argument
 #
-# The function build_network takes the resolution as argument. First the
-# simulation kernel is reset and the number of threads is set to zero as well
-# as the resolution to the specified value dt. The iaf_psc_alpha is created
-# and the handle is stored in the variable neuron. The status of the neuron
-# is changed so it receives an external current. Next the voltmeter is created
-# and the handle stored in vm. Now the spike_detecor is created and its handle
-# is stored in sd.
+# The function first resets the simulation kernel and sets the number of
+# threads and the simulation resolution.  The ``iaf_psc_alpha`` neuron is
+# created and the handle is stored in the variable `neuron`. The status of
+# the neuron is changed so it receives an external current. Next a
+# ``voltmeter`` and a ``spike_detector`` are created and their handles stored
+# in the variables `vm` and `sd` respectively.
 #
-# Voltmeter and spikedetector are then connected to the neuron. The connect
-# function takes the handles as input. The Voltmeter is connected to the
-# neuron and the neuron to the spikedetector because the neuron sends spikes
+# The voltmeter and spike detector are then connected to the neuron. ``Connect``
+# takes the device and neuron handles as input. The voltmeter is connected to the
+# neuron and the neuron to the spike detector because the neuron sends spikes
 # to the detector and the voltmeter 'observes' the neuron.
-
 
 def build_network(dt):
 
@@ -86,41 +76,37 @@ def build_network(dt):
 # The neuron is simulated for three different resolutions and then the
 # voltage trace is plotted
 
-
 for dt in [0.1, 0.5, 1.0]:
     print("Running simulation with dt=%.2f" % dt)
     vm, sd = build_network(dt)
 
-    ###########################################################################
-    # First using build_network the network is build and the handles of the
-    # spike detector and the voltmeter are stored in vm and sd
-
     nest.Simulate(1000.0)
 
-    ###########################################################################
-    # The network is simulated using `Simulate`, which takes the desired
-    # simulation time in milliseconds and advances the network state by this
-    # amount of time. During simulation, the `spike_detector` counts the
-    # spikes of the target neuron and the total number is read out at the
-    # end of the simulation period.
+###########################################################################
+# The network is simulated using ``Simulate``, which takes the desired
+# simulation time in milliseconds and advances the network state by this
+# amount of time. During simulation, the ``spike_detector`` counts the
+# spikes of the target neuron and the total number is read out at the
+# end of the simulation period.
+#
+# The values of the voltage recorded by the voltmeter are read out and
+# the values for the membrane potential are stored in potential and the
+# corresponding times in the times array
 
     potentials = nest.GetStatus(vm, "events")[0]["V_m"]
     times = nest.GetStatus(vm, "events")[0]["times"]
 
-    ###########################################################################
-    # The values of the voltage recorded by the voltmeter are read out and
-    # the values for the membrane potential are stored in potential and the
-    # corresponding times in the times array
+###########################################################################
+# Using the pylab library the voltage trace is plotted over time
 
     pylab.plot(times, potentials, label="dt=%.2f" % dt)
     print("  Number of spikes: {0}".format(nest.GetStatus(sd, "n_events")[0]))
 
-    ###########################################################################
-    # Using the pylab library the voltage trace is plotted over time
+###########################################################################
+# Finally the axis are labelled and a legend is generated
 
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")
     pylab.ylabel("V_m (mV)")
 
-    ###########################################################################
-    # Finally the axis are labelled and a legend is generated
+

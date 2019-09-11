@@ -27,11 +27,11 @@ In traditional time-driven simulations, spikes are constrained to the
 time grid at a user-defined resolution. The precise spiking models
 overcome this by handling spikes in continuous time [1]_ and [2]_.
 
-The precise spiking neuron models in NEST include: iaf_psc_exp_ps,
-iaf_psc_alpha_ps and iaf_psc_delta_ps.
+The precise spiking neuron models in NEST include: ``iaf_psc_exp_ps``,
+``iaf_psc_alpha_ps`` and ``iaf_psc_delta_ps``.
 More detailed information about the precise spiking models can be
 found here:
-  https://www.nest-simulator.org/simulations-with-precise-spike-times/
+https://www.nest-simulator.org/simulations-with-precise-spike-times/
 
 This example compares the conventional grid-constrained model and the
 precise version for an integrate-and-fire neuron model with exponential
@@ -50,12 +50,11 @@ References
        globally time-driven simulations. Froniers in Neuroinformatics. 4:113.
        https://doi.org/10.3389/fninf.2010.00113
 
-KEYWORDS:
 """
 
 
 ###############################################################################
-# First, we import all necessary modules for simulation, analysis and
+# First, we import all necessary modules for simulation, analysis, and
 # plotting.
 
 
@@ -72,13 +71,14 @@ stim_current = 700.0           # pA
 resolutions = [0.1, 0.5, 1.0]  # ms
 
 
-###############################################################################
+###################################################################################
 # Now, we simulate the two versions of the neuron models (i.e. discrete-time:
-# `iaf_psc_exp`; precise: `iaf_psc_exp_ps`) for each of the defined
+# ``iaf_psc_exp``; precise: ``iaf_psc_exp_ps``) for each of the defined
 # resolutions. The neurons use their default parameters and we stimulate them
-# by injecting a current using a `dc_generator` device. The membrane potential
-# is recorded by a `voltmeter`, the spikes are recorded by a `spike_detector`.
-# The data is stored in a dictionary for later use.
+# by injecting a current using a ``dc_generator`` device. The membrane
+# potential is recorded by a ``voltmeter``, the spikes are recorded by
+# a ``spike_detector``.  The data is stored in a dictionary for later
+# use.
 
 
 data = {}

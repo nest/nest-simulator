@@ -25,7 +25,7 @@
 
 This script reproduces the spike synchronization behavior
 of integrate-and-fire neurons in response to a subthreshold
-oscillation. This phenomenon is shown in Fig. 1 of [1]
+oscillation. This phenomenon is shown in Fig. 1 of [1]_
 
 Neurons receive a weak 35 Hz oscillation, a gaussian noise current
 and an increasing DC. The time-locking capability is shown to
@@ -35,20 +35,13 @@ pylab. All parameters are taken from the above paper.
 References
 ~~~~~~~~~~~~~
 
-.. [1] C.D. Brody and J.J. Hopfield (2003) Simple Networks for
-       Spike-Timing-Based Computation, with Application to Olfactory
-       Processing. Neuron 37, 843-852 (2003)
-
-See Also
-~~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
+.. [1] Brody CD and Hopfield JJ (2003). Simple networks for
+       spike-timing-based computation, with application to olfactory
+       processing. Neuron 37, 843-852.
 """
 
-###############################################################################
-# First, we import all necessary modules for simulation, analysis and plotting.
+#################################################################################
+# First, we import all necessary modules for simulation, analysis, and plotting.
 
 import nest
 import nest.raster_plot
@@ -74,7 +67,7 @@ neuronparams = {'tau_m': 20.,  # membrane time constant
                 'V_m': 0.}      # initial membrane potential
 
 ###############################################################################
-# Third, the nodes are created using `Create`. We store the returned handles
+# Third, the nodes are created using ``Create``. We store the returned handles
 # in variables for later reference.
 
 neurons = nest.Create('iaf_psc_alpha', N)
@@ -83,7 +76,7 @@ noise = nest.Create('noise_generator')
 drive = nest.Create('ac_generator')
 
 ###############################################################################
-# Set the parameters specified above for the generators using `SetStatus`.
+# Set the parameters specified above for the generators using ``SetStatus``.
 
 nest.SetStatus(drive, driveparams)
 nest.SetStatus(noise, noiseparams)
@@ -91,7 +84,7 @@ nest.SetStatus(noise, noiseparams)
 ###############################################################################
 # Set the parameters specified above for the neurons. Neurons get an internal
 # current. The first neuron additionally receives the current with amplitude
-# ``bias_begin``, the last neuron with amplitude ``bias_end``.
+# `bias_begin`, the last neuron with amplitude `bias_end`.
 
 nest.SetStatus(neurons, neuronparams)
 nest.SetStatus(neurons, [{'I_e':
@@ -107,7 +100,7 @@ nest.Connect(noise, neurons)
 nest.Connect(neurons, sd)
 
 ###############################################################################
-# Simulate the network for time T.
+# Simulate the network for time `T`.
 
 nest.Simulate(T)
 

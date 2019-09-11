@@ -19,9 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Using evolution strategies to find parameters for a random
-balanced network with alpha synapses
-----------------------------------------------------------------
+"""Use evolution strategies to find parameters for a random balanced network (alpha synapses)
+-----------------------------------------------------------------------------------------------------
 
 This script uses an optimization algorithm to find the appropriate
 parameter values for the external drive "eta" and the relative ratio
@@ -45,18 +44,15 @@ function:
 
     f = - alpha(r - r*)^2 - beta(cv - cv*)^2 - gamma(corr - corr*)^2
 
-where alpha, beta and gamma are weighting factors, and stars indicate
+where `alpha`, `beta` and `gamma` are weighting factors, and stars indicate
 target values.
 
 The network contains an excitatory and an inhibitory population on
-the basis of the network used in [1]
+the basis of the network used in [1]_.
 
 The optimization algorithm (evolution strategies) is described in
+Wierstra et al. [2]_.
 
-Wierstra et al. (2014). Natural evolution strategies. Journal of
-Machine Learning Research, 15(1), 949-980.
-
-Year: 2018
 
 References
 ~~~~~~~~~~~~
@@ -65,15 +61,18 @@ References
        Excitatory and Inhibitory Spiking Neurons. Journal of Computational
        Neuroscience 8, 183-208.
 
+.. [2] Wierstra et al. (2014). Natural evolution strategies. Journal of
+       Machine Learning Research, 15(1), 949-980.
+
 See Also
 ~~~~~~~~~~
 
-brunel_alpha_nest.py
+:doc:`brunel_alpha_nest`
 
-:Authors:
-    Jakob Jordan
+Authors
+~~~~~~~
 
-KEYWORDS:
+Jakob Jordan
 """
 
 from __future__ import print_function

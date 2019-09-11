@@ -64,11 +64,6 @@ def
 [/arraytype] /GetStatus_a load addtotrie
 def
 
-/GetStatus_a
-{
-  { GetStatus_C } Map
-}
-def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1009,6 +1004,27 @@ def
 
 def
 
+/** @BeginDocumentation
+   Name: Connect_nonunique - Connect all GIDs in one array to all GIDs in another array.
+
+   Synopsis:
+   sources targets syn_spec     Connect_nonunique
+
+   Parameters:
+   sources    array  - the GIDs of the sources
+   targets    array  - the GIDs of the targets
+   syn_spec   dict   - dictionary with synapse model specification (see Options in Connect)
+
+   Description:
+   Connects all sources to all targets. Source and target arrays may
+   have duplicate GIDs.
+
+   SeeAlso: Connect
+
+   Author: Håkon Mørk
+
+   FirstVersion: September 2019
+*/
 /Connect_nonunique [/arraytype /arraytype /dictionarytype]
 {
   /syn_spec :Connect_complete_dict   % fill in missing defaults
@@ -1059,9 +1075,9 @@ def
       mainly important for NEST internally.
    4. In OpenMP mode, GetConnections works thread-parallel for better performance.
    5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetSynapseStatus, and GetSynapseStatus
+   6. Connection objects can be passed to SetStatus, and GetStatus
 
-   SeeAlso: SetSynapseStatus, GetSynapseStatus, synapsedict
+   SeeAlso: synapsedict
 */
 /GetConnections [/dictionarytype]
 {
@@ -1086,52 +1102,6 @@ def
 }
 def
 
-
-/** @BeginDocumentation
-   Name: GetSynapseStatus - Return synapse status information
-
-   Synopsis:
-   [ conn1 conn2 ... ] GetSynapseStatus -> [ sdict1 sdict2 ... ]
-
-   Parameters:
-   An list of connection objects as returned by GetConnections.
-
-   Description:
-   Returns a list of synapse status dictionaries, one for each connection
-   in the parameter list.
-
-   Remarks:
-   Status information is only available for connections with targets on
-   the MPI process executing the command.
-
-   See also: GetConnections, SetSynapseStatus
-*/
-/GetSynapseStatus [/arraytype] /GetStatus_a load def
-
-/** @BeginDocumentation
-   Name: SetSynapseStatus - Return synapse status information
-
-   Synopsis:
-   [ conn1 conn2 ... ] [ sdict1 sdict2 ... ] SetSynapseStatus -> -
-
-   Parameters:
-   An list of connection objects as returned by GetConnections and a list
-   of synapse properties dictionaries.
-
-   Description:
-   Sets the given properties on the given connections. If the list of
-   dictionaries contains more than one dictionary, there must be one
-   dictionary per connection. Otherwise, the single dictionary is used
-   for all connections.
-
-   Remarks:
-   Only some connection properties can be changed. Properties can only
-   be changed for connections with targets on the MPI process executing
-   SetSynapseStatus.
-
-   See also: GetConnections, GetSynapseStatus
-*/
-/SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

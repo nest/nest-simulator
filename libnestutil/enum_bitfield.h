@@ -26,6 +26,43 @@
 namespace nest
 {
 
+/**
+ * These methods support type-safe bitfields using C++'s enum classes.
+ *
+ * Define the bitfield flags as follows:
+ *
+ * .. code-block:: C++
+ *
+ *    enum class My_Flags : unsigned
+ *    {
+ *        FIRST_FLAG = 1 << 0,
+ *        SECOND_FLAG = 1 << 1,
+ *        THIRD_FLAG = 1 << 2,
+ *        FOURTH_FLAG = 1 << 2
+ *    };
+ *
+ * Then, enable the bitfield operators for this enum class:
+ *
+ * .. code-block:: C++
+ *
+ *    template <>
+ *    struct EnableBitMaskOperators< My_Flags >
+ *    {
+ *        static const bool enable = true;
+ *    };
+ *
+ * Finally, instantiate a bitfield and do some operations on it, for example:
+ *
+ * .. code-block:: C++
+ *
+ *    My_Flags my_flags = My_Flags::FIRST_FLAG | My_Flags::FOURTH_FLAGS;
+ *    my_flags |= My_Flags::THIRD_FLAG;
+ *    if (enumFlagSet(my_flags, My_Flags::FOURTH_FLAG))
+ *    {
+ *        std::cout << "Fourth flag is set!" << std::endl;
+ *    }
+*/
+
 template < typename Enum >
 struct EnableBitMaskOperators
 {

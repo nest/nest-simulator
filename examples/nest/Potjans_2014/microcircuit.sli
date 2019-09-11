@@ -299,7 +299,7 @@
         save_thalamic_spikes {
             /spike_detector Create <<
 	       /label th_spike_detector_label
-	       /to_file thalamic_spikes_record_to
+	       /record_to thalamic_spikes_record_to
 	    >> /th_spike_detector_GID Set
         } if
     } if

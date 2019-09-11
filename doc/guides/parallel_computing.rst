@@ -96,7 +96,7 @@ minimize their interaction. Devices thus do not have proxies on remote virtual
 processes.
 
 For recording devices configured to record to a file (property
-`to_file` set to `true`), the distribution results in multiple
+`record_to` set to `ascii`), the distribution results in multiple
 data files, each containing the data from one thread. The files names
 are composed according to the following scheme
 

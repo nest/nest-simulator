@@ -23,7 +23,6 @@
 #ifndef VECTOR_UTIL_H
 #define VECTOR_UTIL_H
 
-#include <deque>
 #include <vector>
 #include <cstddef>
 
@@ -46,12 +45,6 @@ grow( std::vector< T >& v )
   {
     v.reserve( v.size() < max_block_size ? 2 * v.size() : ( v.size() + max_block_size ) );
   }
-}
-
-template < typename T >
-inline void
-grow( std::deque< T >& v )
-{
 }
 
 } // namespace vector_util

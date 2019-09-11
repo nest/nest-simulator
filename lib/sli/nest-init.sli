@@ -64,11 +64,6 @@ def
 [/arraytype] /GetStatus_a load addtotrie
 def
 
-/GetStatus_a
-{
-  { GetStatus_C } Map
-}
-def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

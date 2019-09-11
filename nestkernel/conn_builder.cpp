@@ -600,10 +600,6 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // todo481: Iterate over local nodes only using GIDCollection's
-        // local_begin(). Also find a way to only iterate the sources
-        // and parameters using the same start and step. This probably
-        // also applies to other ConnBuilders below.
         GIDCollection::const_iterator target_it = targets_->begin();
         GIDCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )

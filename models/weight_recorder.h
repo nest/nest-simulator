@@ -39,22 +39,22 @@
 Recording weights from synapses
 ###############################
 
-The temporal evolution of synaptic weights is the key observable in
-studies of plasticity in neurornal network models. To obtain it, the
+The change in synaptic weights over time is a key observable property in
+studies of plasticity in neuronal network models. To access this information, the
 ``weight_recorder`` can be used. In contrast to other recording
 devices, which are connected to a specific set of neurons, the weight
 recorder is instead set as a parameter in the synapse model.
 
 After assigning an instance of a weight recorder to the synapse model
-by means of setting its *weight_recorder* property, the weight
+by setting its ``weight_recorder`` property, the weight
 recorder collects the global IDs of source and target neurons together
 with the weight for each spike event that travels through the observed
 synapses.
 
-In order to only record from a subset of connected synapses, the
-weight recorder accepts GIDCollections in the parameters *senders* and
-*targets*. If set, they restrict the recording of data to only
-synapses that fullfill the given criteria.
+To only record from a subset of connected synapses, the
+weight recorder accepts GIDCollections in the parameters ``senders`` and
+``targets``. If set, they restrict the recording of data to only
+synapses that fulfill the given criteria.
 
 ::
 
@@ -65,6 +65,7 @@ synapses that fullfill the given criteria.
    >>> post = nest.Create("iaf_psc_alpha", 10)
 
    >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+
 
 EndDocumentation */
 

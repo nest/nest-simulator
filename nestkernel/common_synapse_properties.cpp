@@ -40,7 +40,7 @@ namespace nest
 
 CommonSynapseProperties::CommonSynapseProperties()
   : weight_recorder_()
-  , wr_gid_( -1 )
+  , wr_gid_( 0 )
 {
 }
 

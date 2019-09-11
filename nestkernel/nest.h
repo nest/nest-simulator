@@ -27,6 +27,7 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from librandom:
@@ -67,42 +68,10 @@ enum class Register_Connection_Model_Flags : unsigned
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6
 };
 
-
-template < typename Enum >
-struct EnableBitMaskOperators
-{
-  static const bool enable = false;
-};
-
 template <>
 struct EnableBitMaskOperators< Register_Connection_Model_Flags >
 {
   static const bool enable = true;
-};
-
-template < typename Enum >
-typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
-operator|( Enum lhs, Enum rhs )
-{
-  using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< Enum >(
-    static_cast< underlying >( lhs ) | static_cast< underlying >( rhs ) );
-}
-template < typename Enum >
-typename std::enable_if< EnableBitMaskOperators< Enum >::enable, Enum >::type
-operator&( Enum lhs, Enum rhs )
-{
-  using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< Enum >(
-    static_cast< underlying >( lhs ) & static_cast< underlying >( rhs ) );
-}
-
-template < typename Enum >
-bool
-enumFlagSet( const Enum en, const Enum flag )
-{
-  using underlying = typename std::underlying_type< Enum >::type;
-  return static_cast< underlying >( en & flag ) != 0;
 };
 
 const Register_Connection_Model_Flags default_connection_model_flags =
@@ -114,7 +83,6 @@ const Register_Connection_Model_Flags default_connection_model_flags =
 const Register_Connection_Model_Flags default_secondary_connection_model_flags =
   Register_Connection_Model_Flags::SUPPORTS_WFR
   | Register_Connection_Model_Flags::HAS_DELAY;
-
 
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name,

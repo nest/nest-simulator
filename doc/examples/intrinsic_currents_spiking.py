@@ -118,8 +118,9 @@ mm = nest.Create('multimeter',
 
 receptors = nest.GetDefaults('ht_neuron')['receptor_types']
 for pg, (rec_name, rec_wgt) in zip(p_gens, w_recep.items()):
-    nest.Connect([pg], nrn, syn_spec={'receptor_type': receptors[rec_name],
-                                      'weight': rec_wgt})
+    nest.Connect(nest.GIDCollection([pg]), nrn,
+                 syn_spec={'receptor_type': receptors[rec_name],
+                           'weight': rec_wgt})
 
 ###############################################################################
 # We then connnect the ``multimeter``. Note that the multimeter is connected to

@@ -66,9 +66,8 @@ g = nest.Create('sinusoidal_poisson_generator', n=2,
                          'frequency': 5.0,
                          'phase': 90.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                           'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2, params={'withgid': False})
+m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -85,11 +84,11 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus([m[j]])[0]['events']
+    ev = nest.GetStatus(m[j])[0]['events']
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus([s[j]])[0]['events']['times']
+    sp = nest.GetStatus(s[j])[0]['events']['times']
     plt.subplot(221)
     h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])

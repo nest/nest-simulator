@@ -199,7 +199,8 @@ add the delay in the connection between DC generator and neuron:
 .. code-block:: default
 
 
-    delay = nest.GetStatus(nest.GetConnections(dc, nrn))[0]['delay']
+    conns = nest.GetConnections(dc, nrn)
+    delay = conns.get('delay')[0]
     dt = nest.GetKernelStatus('resolution')
 
     t_dc, I_dc = [0], [0]
@@ -232,6 +233,7 @@ that axis.
 
 
 .. code-block:: default
+
 
 
     Iax = Vax.twinx()

@@ -240,18 +240,8 @@ Network simulation
         nodes_ex = nest.Create('iaf_psc_alpha', NE)
         nodes_in = nest.Create('iaf_psc_alpha', NI)
         noise = nest.Create('poisson_generator')
-        espikes = nest.Create('spike_detector')
-        ispikes = nest.Create('spike_detector')
-
-        nest.SetStatus(espikes, [{'label': 'brunel-py-ex',
-                                  'withtime': True,
-                                  'withgid': True,
-                                  'to_file': False}])
-
-        nest.SetStatus(ispikes, [{'label': 'brunel-py-in',
-                                  'withtime': True,
-                                  'withgid': True,
-                                  'to_file': False}])
+        espikes = nest.Create('spike_detector', params={'label': 'brunel-py-ex'})
+        ispikes = nest.Create('spike_detector', params={'label': 'brunel-py-in'})
 
         nest.CopyModel('static_synapse', 'excitatory',
                        {'weight': J_ex, 'delay': parameters['delay']})

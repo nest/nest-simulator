@@ -29,11 +29,23 @@ First, we import all necessary modules for simulation and plotting
 
 
 Second the function ``build_network`` is defined to build the network and
-return the handles of the ``spike_detector`` and the ``voltmeter``
+return the handles of the ``spike_detector`` and the ``voltmeter``. The
+function takes the simulation resolution as argument
+
+The function first resets the simulation kernel and sets the number of
+threads and the simulation resolution.  The ``iaf_psc_alpha`` neuron is
+created and the handle is stored in the variable `neuron`. The status of
+the neuron is changed so it receives an external current. Next a
+``voltmeter`` and a ``spike_detector`` are created and their handles stored
+in the variables `vm` and `sd` respectively.
+
+The voltmeter and spike detector are then connected to the neuron. ``Connect``
+takes the device and neuron handles as input. The voltmeter is connected to the
+neuron and the neuron to the spike detector because the neuron sends spikes
+to the detector and the voltmeter 'observes' the neuron.
 
 
 .. code-block:: default
-
 
 
     def build_network(dt):
@@ -45,8 +57,6 @@ return the handles of the ``spike_detector`` and the ``voltmeter``
         nest.SetStatus(neuron, "I_e", 376.0)
 
         vm = nest.Create('voltmeter')
-        nest.SetStatus(vm, "withtime", True)
-
         sd = nest.Create('spike_detector')
 
         nest.Connect(vm, neuron)
@@ -55,25 +65,9 @@ return the handles of the ``spike_detector`` and the ``voltmeter``
         return vm, sd
 
 
-The function ``build_network`` takes the resolution as argument.
-First the Kernel is reset and the number of threads is set to zero as well
-as the resolution to the specified value dt.  The ``iaf_psc_alpha`` is
-created and the handle is stored in the variable neuron The status of the
-neuron is changed so it receives an external current.  Next the ``voltmeter``
-is created and the handle stored in `vm` and the option ``withtime`` is set,
-therefore, times are given in the times vector in events. Now the
-``spike_detector`` is created and its handle is stored in sd.
-
-Voltmeter and spikedetector are then connected to the neuron. The ``Connect``
-function takes the handles as input.  The voltmeter is connected to the
-neuron and the neuron to the spikedetector because the neuron sends spikes
-to the detector and the voltmeter 'observes' the neuron.
 
 The neuron is simulated for three different resolutions and then the
 voltage trace is plotted
-
-First using ``build_network`` the network is build and the handles of the
-``spike_detector`` and the ``voltmeter`` are stored in `vm` and `sd`
 
 
 .. code-block:: default

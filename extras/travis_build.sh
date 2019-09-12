@@ -222,9 +222,6 @@ else
 fi
 
 if [ "$xRUN_BUILD_AND_TESTSUITE" == "1" ]; then
-
-    # do a full build
-
     cd "$NEST_VPATH"
     cp ../examples/sli/nestrc.sli ~/.nestrc
     # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.

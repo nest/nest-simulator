@@ -53,8 +53,8 @@ fi
 if [ "$xPYTHON" = "1" ] ; then
    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
       CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" = "3.4.4" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
+   elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.7/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
    fi
    if [[ $OSTYPE = darwin* ]]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
@@ -276,7 +276,7 @@ if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
     if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
         export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" = "3.4.4" ]; then
+    elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
         export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
     fi

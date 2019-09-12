@@ -1438,6 +1438,95 @@ Description:
 } bind def
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     Functions relating to spatial positions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/ConnectLayers [/gidcollectiontype /gidcollectiontype /dictionarytype]
+  /ConnectLayers_g_g_D load
+def
+
+/CreateLayerParams [/dictionarytype /dictionarytype]
+  /CreateLayer_D_D load
+def
+
+/CreateLayer [/dictionarytype]
+{
+  << >> CreateLayerParams
+} def
+
+/GetPosition [/gidcollectiontype]
+  /GetPosition_g load
+def
+
+% gc_from, gc_to
+/Displacement [/gidcollectiontype /gidcollectiontype]
+  /Displacement_g_g load
+def
+
+/Displacement [/arraytype /gidcollectiontype]
+  /Displacement_a_g load
+def
+
+% gc_from, gc_to
+/Distance [/gidcollectiontype /gidcollectiontype]
+  /Distance_g_g load
+def
+
+/Distance [/arraytype /gidcollectiontype]
+    /Distance_a_g load
+def
+
+/GetLayerStatus [/gidcollectiontype]
+    /GetLayerStatus_g load
+def
+
+/DumpLayerNodes [/ostreamtype /gidcollectiontype]
+  { DumpLayerNodes_os_g } bind
+def
+
+/DumpLayerConnections [/ostreamtype /gidcollectiontype /gidcollectiontype /literaltype]
+  /DumpLayerConnections_os_g_g_l load
+def
+
+/CreateMask [/dictionarytype]
+  /CreateMask_D load
+def
+
+/Inside [/arraytype /masktype]
+  /Inside_a_M load
+def
+
+/Inside [/arraytype /dictionarytype]
+  { CreateMask Inside_M_a } bind
+def
+
+/and [/masktype /masktype]
+  /and_M_M load
+def
+
+/or [/masktype /masktype]
+  /or_M_M load
+def
+
+/sub [/masktype /masktype]
+  /sub_M_M load
+def
+
+/cvdict [/masktype]
+  /cvdict_M load
+def
+
+/get [/masktype /literaltype] {exch cvdict_M exch get} def
+/get [/masktype /arraytype] {exch cvdict_M exch get} def
+
+/SelectNodesByMask [/gidcollectiontype /arraytype /masktype]
+  /SelectNodesByMask_g_a_M load
+def
+
+
 % Install modules in environment variable NEST_MODULES. Modules have
 % to be separated by colon.
 (NEST_MODULES) getenv { (:) breakup { Install } forall } if

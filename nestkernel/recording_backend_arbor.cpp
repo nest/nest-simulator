@@ -273,6 +273,12 @@ nest::RecordingBackendArbor::post_run_hook()
 }
 
 void
+nest::RecordingBackendArbor::post_step_hook()
+{
+  // nothing to do
+}
+
+void
 nest::RecordingBackendArbor::check_device_status( const DictionaryDatum& params ) const
 {
   // nothing to do

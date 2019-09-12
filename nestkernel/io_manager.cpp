@@ -213,6 +213,15 @@ nest::IOManager::post_run_hook()
 }
 
 void
+nest::IOManager::post_step_hook()
+{
+  for ( auto& it : recording_backends_ )
+  {
+    it.second->post_step_hook();
+  }
+}
+
+void
 nest::IOManager::prepare()
 {
   for ( auto& it : recording_backends_ )

@@ -140,6 +140,12 @@ nest::RecordingBackendScreen::post_run_hook()
 }
 
 void
+nest::RecordingBackendScreen::post_step_hook()
+{
+  // nothing to do
+}
+
+void
 nest::RecordingBackendScreen::set_status( const DictionaryDatum& d )
 {
   // nothing to do

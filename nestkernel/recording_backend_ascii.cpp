@@ -116,6 +116,11 @@ nest::RecordingBackendASCII::post_run_hook()
 }
 
 void
+nest::RecordingBackendASCII::post_step_hook()
+{
+}
+
+void
 nest::RecordingBackendASCII::cleanup()
 {
   for ( auto& inner : device_data_ )

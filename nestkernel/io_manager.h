@@ -75,10 +75,16 @@ public:
 
   /**
    * Clean up in all registered recording backends after a single call to run by
-   * calling the backends' post_run_cleanup() functions
+   * calling the backends' post_run_hook() functions
    */
   void post_run_hook();
   void pre_run_hook();
+
+  /**
+   * Clean up in all registered recording backends after a single simulation
+   * step by calling the backends' post_step_hook() functions
+   */
+  void post_step_hook();
 
   /**
    * Finalize all registered recording backends after a call to

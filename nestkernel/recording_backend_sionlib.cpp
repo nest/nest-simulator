@@ -656,6 +656,11 @@ nest::RecordingBackendSIONlib::prepare()
 void
 nest::RecordingBackendSIONlib::post_run_hook()
 {
+}
+
+void
+nest::RecordingBackendSIONlib::post_step_hook()
+{
   if ( not files_opened_ or not P_.sion_collective_ )
   {
     return;

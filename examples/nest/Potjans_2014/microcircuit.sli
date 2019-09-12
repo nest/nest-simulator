@@ -56,6 +56,28 @@
             message  % this is written to the output file
         } if 
     } if
+
+    /vm0_type_options <(original) (optimized)> def
+    Vm0_type (original) eq not
+    {
+        Vm0_type (optimized) eq not
+        {
+
+           M_WARNING (CheckParameters)
+           (') Vm0_type join
+           (' is not a valid option, replacing it with ') join
+           vm0_type_options 0 get join
+           ('; Valid options are ') join
+           vm0_type_options 0 get join
+           (' and ') join
+           vm0_type_options 1 get join
+           (') join
+           message
+
+           % reset variable to (original)
+           /Vm0_type vm0_type_options 0 get def
+        } if
+    } if
  
     % number of layers
     /n_layers full_scale_n_neurons length def
@@ -248,8 +270,20 @@
             neuron_subnet GetLocalNodes
             {
                dup /vp get /node_vp Set
-	        << /V_m normal_rdvs node_vp get Random Vm0_std mul Vm0_mean add
-                >> SetStatus
+               Vm0_type (optimized) eq
+               {
+                   <<
+                      /V_m normal_rdvs node_vp get Random
+                      Vm0_std layer_index get population_index get mul
+                      Vm0_mean layer_index get population_index get add
+                   >>
+               }{
+                   <<
+                      /V_m normal_rdvs node_vp get Random
+                      Vm0_std mul Vm0_mean add
+                   >>
+               } ifelse
+               SetStatus
 	    } forall
 	    
 	    population_subnet ChangeSubnet

@@ -7,17 +7,51 @@
 .. _sphx_glr_auto_examples_sinusoidal_poisson_generator.py:
 
 
-Sinusoidal poisson generator example
-------------------------------------
+SyntaxError
+===========
 
-This script demonstrates the use of the ``sinusoidal_poisson_generator``
-and its different parameters and modes. The source code of the model
-can be found in ``models/sinusoidal_poisson_generator.h``.
+Example script with invalid Python syntax
 
-The script is structured into two parts and creates one common figure.
-In Part 1, two instances of the ``sinusoidal_poisson_generator`` are
-created with different parameters. Part 2 illustrates the effect of
-the ``individual_spike_trains`` switch.
+
+.. code-block:: default
+
+    # -*- coding: utf-8 -*-
+    #
+    # sinusoidal_poisson_generator.py
+    #
+    # This file is part of NEST.
+    #
+    # Copyright (C) 2004 The NEST Initiative
+    #
+    # NEST is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 2 of the License, or
+    # (at your option) any later version.
+    #
+    # NEST is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+    #
+    # You should have received a copy of the GNU General Public License
+    # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+    #
+
+    """
+    Sinusoidal poisson generator example
+    ------------------------------------
+
+    This script demonstrates the use of the ``sinusoidal_poisson_generator``
+    and its different parameters and modes. The source code of the model
+    can be found in ``models/sinusoidal_poisson_generator.h``.
+
+    The script is structured into two parts and creates one common figure.
+    In Part 1, two instances of the ``sinusoidal_poisson_generator`` are
+    created with different parameters. Part 2 illustrates the effect of
+    the ``individual_spike_trains`` switch.
+
+    """
+
 
 
 We import the modules required to simulate, analyze and plot this example.
@@ -57,9 +91,8 @@ them to the generators using ``Connect``.
                              'frequency': 5.0,
                              'phase': 90.0}])
 
-    m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                               'record_from': ['rate']})
-    s = nest.Create('spike_detector', n=2, params={'withgid': False})
+    m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+    s = nest.Create('spike_detector', n=2)
 
     nest.Connect(m, g, 'one_to_one')
     nest.Connect(g, s, 'one_to_one')
@@ -80,11 +113,11 @@ After simulating, the spikes are extracted from the ``spike_detector`` using
 
     for j in range(2):
 
-        ev = nest.GetStatus([m[j]])[0]['events']
+        ev = nest.GetStatus(m[j])[0]['events']
         t = ev['times']
         r = ev['rate']
 
-        sp = nest.GetStatus([s[j]])[0]['events']['times']
+        sp = nest.GetStatus(s[j])[0]['events']['times']
         plt.subplot(221)
         h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
         plt.plot(t, r, color=colors[j])

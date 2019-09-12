@@ -58,22 +58,56 @@ synaptic connections exist (EE, EI, IE, II).
         W_II = np.zeros([len(I_neurons), len(I_neurons)])
 
         a_EE = nest.GetConnections(E_neurons, E_neurons)
-        c_EE = nest.GetStatus(a_EE, keys='weight')
-        a_EI = nest.GetConnections(I_neurons, E_neurons)
-        c_EI = nest.GetStatus(a_EI, keys='weight')
-        a_IE = nest.GetConnections(E_neurons, I_neurons)
-        c_IE = nest.GetStatus(a_IE, keys='weight')
-        a_II = nest.GetConnections(I_neurons, I_neurons)
-        c_II = nest.GetStatus(a_II, keys='weight')
 
-        for idx, n in enumerate(a_EE):
-            W_EE[n[0] - min(E_neurons), n[1] - min(E_neurons)] += c_EE[idx]
-        for idx, n in enumerate(a_EI):
-            W_EI[n[0] - min(I_neurons), n[1] - min(E_neurons)] += c_EI[idx]
-        for idx, n in enumerate(a_IE):
-            W_IE[n[0] - min(E_neurons), n[1] - min(I_neurons)] += c_IE[idx]
-        for idx, n in enumerate(a_II):
-            W_II[n[0] - min(I_neurons), n[1] - min(I_neurons)] += c_II[idx]
+        '''
+        Using `get`, we can extract the value of the connection weight,
+        for all the connections between these populations
+        '''
+        c_EE = a_EE.get('weight')
+
+        '''
+        Repeat the two previous steps for all other connection types
+        '''
+        a_EI = nest.GetConnections(I_neurons, E_neurons)
+        c_EI = a_EI.get('weight')
+        a_IE = nest.GetConnections(E_neurons, I_neurons)
+        c_IE = a_IE.get('weight')
+        a_II = nest.GetConnections(I_neurons, I_neurons)
+        c_II = a_II.get('weight')
+
+        '''
+        We now iterate through the range of all connections of each type.
+        To populate the corresponding weight matrix, we begin by identifying
+        the source-gid (by using .get('source')) and the target-gid.
+        For each gid, we subtract the minimum gid within the corresponding
+        population, to assure the matrix indices range from 0 to the size of
+        the population.
+
+        After determining the matrix indices [i, j], for each connection
+        object, the corresponding weight is added to the entry W[i,j].
+        The procedure is then repeated for all the different connection types.
+        '''
+        a_EE_src = a_EE.get('source')
+        a_EE_trg = a_EE.get('target')
+        a_EI_src = a_EI.get('source')
+        a_EI_trg = a_EI.get('target')
+        a_IE_src = a_IE.get('source')
+        a_IE_trg = a_IE.get('target')
+        a_II_src = a_II.get('source')
+        a_II_trg = a_II.get('target')
+
+        for idx in range(len(a_EE)):
+            W_EE[a_EE_src[idx] - min(E_neurons),
+                 a_EE_trg[idx] - min(E_neurons)] += c_EE[idx]
+        for idx in range(len(a_EI)):
+            W_EI[a_EI_src[idx] - min(I_neurons),
+                 a_EI_trg[idx] - min(E_neurons)] += c_EI[idx]
+        for idx in range(len(a_IE)):
+            W_IE[a_IE_src[idx] - min(E_neurons),
+                 a_IE_trg[idx] - min(I_neurons)] += c_IE[idx]
+        for idx in range(len(a_II)):
+            W_II[a_II_src[idx] - min(I_neurons),
+                 a_II_trg[idx] - min(I_neurons)] += c_II[idx]
 
         fig = pylab.figure()
         fig.subtitle('Weight matrices', fontsize=14)
@@ -149,7 +183,7 @@ Finally, the last three steps are repeated for each synapse type.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.416 seconds)
+   **Total running time of the script:** ( 0 minutes  0.043 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_weight_matrices.py:

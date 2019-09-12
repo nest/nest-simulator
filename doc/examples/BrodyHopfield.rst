@@ -46,7 +46,7 @@ Second, the simulation parameters are assigned to variables.
     bias_end = 200.    # maximal value for the bias current injection [pA]
     T = 600            # simulation time (ms)
 
-    # parameters for the alternative-current generator
+    # parameters for the alternating-current generator
     driveparams = {'amplitude': 50., 'frequency': 35.}
     # parameters for the noise generator
     noiseparams = {'mean': 0.0, 'std': 200.}
@@ -96,19 +96,8 @@ current. The first neuron additionally receives the current with amplitude
                              for n in neurons])
 
 
-Set the parameters for the ``spike_detector``: recorded data should include
-the information about global IDs of spiking neurons and the time of
-individual spikes.
-
-
-.. code-block:: default
-
-
-    nest.SetStatus(sd, {"withgid": True, "withtime": True})
-
-
-Connect alternative current and noise generators as well as
-spike detectors to neurons
+Connect alternating current and noise generators as well as
+`spike_detector`s. to neurons
 
 
 .. code-block:: default

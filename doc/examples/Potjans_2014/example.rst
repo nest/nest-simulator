@@ -12,10 +12,14 @@ Pynest microcircuit example
 
 Example file to run the microcircuit.
 
+<<<<<<< HEAD
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
+=======
 
 This example uses the function ``GetNodes``, which is deprecated. A deprecation
 warning is therefore issued. For details about deprecated functions, see
 documentation.
+>>>>>>> refs/remotes/nest-simulator/master
 
 Import the necessary modules
 

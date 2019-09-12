@@ -211,7 +211,7 @@ verbosity using ``set_verbosity`` to suppress info messages.
 
 
     nest.ResetKernel()
-    nest.SetStatus([0], [{'resolution': simulation_resolution}])
+    nest.SetKernelStatus({'resolution': simulation_resolution})
     nest.set_verbosity("M_WARNING")
 
 
@@ -234,20 +234,15 @@ for the and pulse-packet-generators and `vm_pars` for the voltmeter).
         'E_L': V0,
         'V_reset': V0,
         'V_m': V0
-        }
+    }
     neurons = nest.Create('iaf_psc_alpha', n_neurons, neuron_pars)
     ppg_pars = {
         'pulse_times': [pulsetime],
         'activity': a,
         'sdev': sdev
-        }
+    }
     ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
-    vm_pars = {
-        'record_to': ['memory'],
-        'withtime': True,
-        'withgid': True,
-        'interval': sampling_resolution
-        }
+    vm_pars = {'interval': sampling_resolution}
     vm = nest.Create('voltmeter', 1, vm_pars)
 
 

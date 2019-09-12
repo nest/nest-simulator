@@ -21,7 +21,7 @@ sections of this primer:
 - :doc:`Part 3: Connecting networks with synapses <part_3_connecting_networks_with_synapses>`
 
 More advanced examples can be found at :doc:`Example
-Networks <../../auto_examples/index>`, or
+Networks <../../examples/index>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 

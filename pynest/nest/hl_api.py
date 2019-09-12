@@ -54,7 +54,6 @@ __all__ = [
     'ConnectionRules',
     'Connectome',
     'CopyModel',
-    'ConnectLayers',
     'Create',
     'CreateMask',
     'CreateParameter',

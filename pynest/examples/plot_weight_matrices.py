@@ -30,7 +30,6 @@ these values in weight matrices for further analysis and visualization.
 All connection types between these populations are considered, i.e.,
 four weight matrices are created and plotted.
 
-KEYWORDS:
 """
 
 ###############################################################################
@@ -45,7 +44,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 ###############################################################################
 # We now specify a function to extract and plot weight matrices for all
-# connections among E_neurons and I_neurons.
+# connections among `E_neurons` and `I_neurons`.
 #
 # We initialize all the matrices, whose dimensionality is determined by the
 # number of elements in each population.
@@ -153,26 +152,26 @@ def plot_weight_matrices(E_neurons, I_neurons):
     ax4.set_title('W_{II}')
     pylab.tight_layout()
 
-###############################################################################
+#################################################################################
 # The script iterates through the list of all connections of each type.
 # To populate the corresponding weight matrix, we identify the source-gid
-# (first element of each connection object, n[0]) and the target-gid (second
-# element of each connection object, n[1]).
-# For each gid, we subtract the minimum gid within the corresponding
+# (first element of each connection object, `n[0]`) and the target-gid (second
+# element of each connection object, `n[1]`).
+# For each `gid`, we subtract the minimum `gid` within the corresponding
 # population, to assure the matrix indices range from 0 to the size of the
 # population.
 #
-# After determining the matrix indices [i, j], for each connection object, the
-# corresponding weight is added to the entry W[i,j]. The procedure is then
+# After determining the matrix indices `[i, j]`, for each connection object, the
+# corresponding weight is added to the entry `W[i,j]`. The procedure is then
 # repeated for all the different connection types.
 #
 # We then plot the figure, specifying the properties we want. For example, we
 # can display all the weight matrices in a single figure, which requires us to
-# use `GridSpec` to specify the spatial arrangement of the axes.
-# A subplot is subsequently created for each connection type. Using `imshow`,
+# use ``GridSpec`` to specify the spatial arrangement of the axes.
+# A subplot is subsequently created for each connection type. Using ``imshow``,
 # we can visualize the weight matrix in the corresponding axis. We can also
 # specify the colormap for this image.
-# Using the `axis_divider` module from `mpl_toolkits`, we can allocate a small
+# Using the ``axis_divider`` module from ``mpl_toolkits``, we can allocate a small
 # extra space on the right of the current axis, which we reserve for a
 # colorbar.
 # We can set the title of each axis and adjust the axis subplot parameters.

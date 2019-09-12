@@ -49,7 +49,7 @@ except ImportError:
 
 @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
 class RandomParameterTestCase(unittest.TestCase):
-    def kolmogorov_smirnov(self, weight_dict, expected_cdf_func):
+    def kolmogorov_smirnov(self, weight_param, expected_cdf_func):
         """
         Create connections with given distribution of weights and test that it
         fits the given expected cumulative distribution using K-S.
@@ -66,9 +66,9 @@ class RandomParameterTestCase(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(rows=rows,
                                                         columns=cols))
-        nest.ConnectLayers(layer, layer, {'connection_type': 'convergent',
-                                          'number_of_connections': Nconn,
-                                          'weights': weight_dict})
+        nest.Connect(layer, layer,
+                     {'rule': 'fixed_indegree', 'indegree': Nconn},
+                     {'weight': weight_param})
 
         # Get connection weights and sort
         connectome = nest.GetConnections()
@@ -98,13 +98,13 @@ class RandomParameterTestCase(unittest.TestCase):
         w_min = -1.3
         w_max = 2.7
 
-        weight_dict = {'uniform': {'min': w_min, 'max': w_max}}
+        weight_param = nest.random.uniform(min=w_min, max=w_max)
 
         def uniform_cdf_func(w):
             return ((w > w_min) * (w < w_max) *
                     ((w - w_min) / (w_max - w_min)) + (w >= w_max) * 1.0)
 
-        self.kolmogorov_smirnov(weight_dict, uniform_cdf_func)
+        self.kolmogorov_smirnov(weight_param, uniform_cdf_func)
 
     @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_normal(self):
@@ -113,14 +113,14 @@ class RandomParameterTestCase(unittest.TestCase):
         mean = 2.3
         sigma = 1.7
 
-        weight_dict = {'normal': {'mean': mean, 'sigma': sigma}}
+        weight_param = nest.random.normal(loc=mean, scale=sigma)
 
         numpy_erf = numpy.vectorize(erf)
 
         def normal_cdf_func(w):
             return 0.5 * (1.0 + numpy_erf((w - mean) / sqrt(2) / sigma))
 
-        self.kolmogorov_smirnov(weight_dict, normal_cdf_func)
+        self.kolmogorov_smirnov(weight_param, normal_cdf_func)
 
     @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_lognormal(self):
@@ -129,7 +129,7 @@ class RandomParameterTestCase(unittest.TestCase):
         mu = 1.7
         sigma = 0.9
 
-        weight_dict = {'lognormal': {'mu': mu, 'sigma': sigma}}
+        weight_param = nest.random.lognormal(mean=mu, sigma=sigma)
 
         numpy_erf = numpy.vectorize(erf)
 
@@ -137,7 +137,7 @@ class RandomParameterTestCase(unittest.TestCase):
             return 0.5 * (1.0 +
                           numpy_erf((numpy.log(w) - mu) / sqrt(2) / sigma))
 
-        self.kolmogorov_smirnov(weight_dict, lognormal_cdf_func)
+        self.kolmogorov_smirnov(weight_param, lognormal_cdf_func)
 
 
 def suite():

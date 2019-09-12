@@ -24,12 +24,12 @@
 
 This script performs a mean-field analysis of the spiking network of
 excitatory and an inhibitory population of leaky-integrate-and-fire neurons
-simulated in brunel_delta_nest.py. We refer to this spiking network of LIF
+simulated in ``brunel_delta_nest.py``. We refer to this spiking network of LIF
 neurons with 'SLIFN'.
 
 The self-consistent equation for the population-averaged firing rates
-(eq.27 in [1], [2]) is solved by integrating a pseudo-time dynamics
-(eq.30 in [1]). The latter constitutes a network of rate neurons, which is
+(eq.27 in [1]_, [2]_) is solved by integrating a pseudo-time dynamics
+(eq.30 in [1]_). The latter constitutes a network of rate neurons, which is
 simulated here. The asymptotic rates, i.e., the fixed points of the
 dynamics (eq.30), are the prediction for the population and
 time-averaged from the spiking simulation.
@@ -37,24 +37,17 @@ time-averaged from the spiking simulation.
 References
 ~~~~~~~~~~~~~~
 
-.. [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A., Bolten, M.,
-       Helias, M. and Diesmann, M. (2017).  Integration of Continuous-Time
-       Dynamics in a Spiking Neural Network Simulator.  Front. Neuroinform.
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M,
+       Helias M and Diesmann M. (2017).  Integration of continuous-time
+       dynamics in a spiking neural network simulator. Front. Neuroinform.
        11:34. doi: 10.3389/fninf.2017.00034
 
-.. [2] Schuecker, J., Schmidt, M., van Albada, S.J., Diesmann, M.
-       and Helias, M. (2017). Fundamental Activity Constraints Lead
-       to Specific Interpretations of the Connectome.
+.. [2] Schuecker J, Schmidt M, van Albada SJ, Diesmann M.
+       and Helias, M. (2017). Fundamental activity constraints lead
+       to specific interpretations of the connectome.
        PLOS Computational Biology 13(2): e1005179.
        https://doi.org/10.1371/journal.pcbi.1005179
 
-See Also
-~~~~~~~~~~
-
-
-:Authors:
-
-KEYWORDS:
 """
 
 import nest
@@ -122,7 +115,7 @@ p_rate = 1000.0 * nu_ex * CE
 
 ###############################################################################
 # Configuration of the simulation kernel by the previously defined time
-# resolution used in the simulation. Setting "print_time" to True prints the
+# resolution used in the simulation. Setting ``print_time`` to `True` prints the
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
@@ -132,12 +125,12 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model `siegert_neuron` using SetDefaults().
+# Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
 
 nest.SetDefaults("siegert_neuron", neuron_params)
 
 ###############################################################################
-# Creation of the nodes using `Create`. One rate neuron represents the
+# Creation of the nodes using ``Create``. One rate neuron represents the
 # excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 # population assuming homogeneity of the populations.
 
@@ -147,21 +140,21 @@ siegert_in = nest.Create("siegert_neuron", 1)
 ###############################################################################
 # The Poisson drive in the SLIFN is replaced by a driving rate neuron,
 # which does not receive input from other neurons. The activity of the rate
-# neuron is controlled by setting `mean` to the rate of the corresponding
+# neuron is controlled by setting ``mean`` to the rate of the corresponding
 # poisson generator in the SLIFN.
 
 siegert_drive = nest.Create('siegert_neuron', 1, params={'mean': p_rate})
 
 ###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter
-# `record_from` is set to `'rate'` as well as the recording interval to `dt`
+# ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
 multimeter = nest.Create(
     'multimeter', params={'record_from': ['rate'], 'interval': dt})
 
 ###############################################################################
-# Connections between `siegert neurons` are realized with the synapse model
-# 'diffusion_connection'. These two parameters reflect the prefactors in
+# Connections between ``siegert neurons`` are realized with the synapse model
+# ``diffusion_connection``. These two parameters reflect the prefactors in
 # front of the rate variable in eq. 27-29 in [1].
 
 ###############################################################################
@@ -196,11 +189,11 @@ nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
 nest.Simulate(simtime)
 
-###############################################################################
+###################################################################################
 # Analyze the activity data. The asymptotic rate of the siegert neuron
 # corresponds to the population- and time-averaged activity in the SLIFN.
 # For the symmetric network setup used here, the excitatory and inhibitory
-# rates are identical. For comparison execute the example brunel_delta_nest.py.
+# rates are identical. For comparison execute the example ``brunel_delta_nest.py``.
 
 data = nest.GetStatus(multimeter)[0]['events']
 rates_ex = data['rate'][

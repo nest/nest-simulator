@@ -20,6 +20,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Music example
+--------------
+
+This example runs 2 NEST instances and one receiver instance. Neurons on
+the NEST instances are observed by the music_cont_out_proxy and their
+values are forwarded through MUSIC to the receiver.
+
+"""
 import nest
 import music
 import numpy

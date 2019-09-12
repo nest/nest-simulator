@@ -379,12 +379,13 @@ class RotatedRectangularMask(unittest.TestCase):
                                                          columns=5,
                                                          extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'rectangular': {'lower_left': [-1.5, -0.5],
                                              'upper_right': [1.5, 0.5],
                                              'azimuth_angle': 45.}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [2, 27], [2, 31], [3, 28], [3, 32], [4, 29], [4, 33],
                [5, 30], [5, 34], [6, 27], [6, 31], [7, 28], [7, 32], [7, 36],

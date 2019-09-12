@@ -96,7 +96,7 @@ public:
    * A backend needs to be able to cope with multiple calls to this
    * function, as multiple calls to set_status() may occur on the @p
    * device. For already enrolled devices this usually means that only
-   * the parameters in @p params have to be set, but no furhter
+   * the parameters in @p params have to be set, but no further
    * actions are needed.
    *
    * Each recording backend must ensure that enrollment (including all

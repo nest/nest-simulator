@@ -215,7 +215,7 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
   }
 }
 
-/* ******************* Device meta data class DeviceInfo ******************* */
+/* ******************* Device meta data class DeviceData ******************* */
 
 nest::RecordingBackendASCII::DeviceData::DeviceData( std::string file_basename )
   : precision_( 3 )

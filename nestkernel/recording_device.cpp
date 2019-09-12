@@ -122,7 +122,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
       }
     }
 
-    kernel().io_manager.check_recording_device_status( P_.record_to_, backend_params );
+    kernel().io_manager.check_recording_device_status( ptmp.record_to_, backend_params );
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
@@ -137,7 +137,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   }
   else
   {
-    kernel().io_manager.enroll_recorder( P_.record_to_, *this, d );
+    kernel().io_manager.enroll_recorder( ptmp.record_to_, *this, d );
   }
 
   // if we get here, temporary contains consistent set of properties

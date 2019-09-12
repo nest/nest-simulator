@@ -833,35 +833,10 @@ GIDCollectionComposite::size() const
   return size_;
 }
 
-inline bool
-GIDCollectionComposite::contains( index gid ) const
-{
-  long lower = 0;
-  long upper = parts_.size() - 1;
-  while ( lower <= upper )
-  {
-    size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
-    {
-      lower = middle + 1;
-    }
-    else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
-    {
-      upper = middle - 1;
-    }
-    else
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
 inline void
 GIDCollectionComposite::set_metadata( GIDCollectionMetadataPTR meta )
 {
-  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin(); gc != parts_.end();
-        ++gc ) // iterate over GIDCollections
+  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin(); gc != parts_.end(); ++gc )
   {
     ( *gc ).set_metadata( meta );
   }

@@ -88,21 +88,13 @@ def GetConnections(source=None, target=None, synapse_model=None,
         if isinstance(source, GIDCollection):
             params['source'] = source
         else:
-            try:
-                params['source'] = GIDCollection(source)
-            except kernel.NESTError:
-                raise TypeError("source must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("source must be GIDCollection.")
 
     if target is not None:
         if isinstance(target, GIDCollection):
             params['target'] = target
         else:
-            try:
-                params['target'] = GIDCollection(target)
-            except kernel.NESTError:
-                raise TypeError("target must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("target must be GIDCollection.")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -214,7 +206,6 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                             "only be used in conjunction with rules "
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
-        # sps(syn_spec)
         return syn_spec
     else:
         raise TypeError("syn_spec must be a string or dict")

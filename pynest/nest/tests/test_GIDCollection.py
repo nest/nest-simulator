@@ -398,21 +398,21 @@ class TestGIDCollection(unittest.TestCase):
 
         get_conn = nest.GetConnections()
         get_conn_all = nest.GetConnections(n, n)
-        get_conn_list = nest.GetConnections([3, 1]).get()
+        get_conn_some = nest.GetConnections(n[::2])
 
         self.assertEqual(get_conn_all, get_conn)
 
         compare_source = [1, 1, 1, 3, 3, 3]
         compare_target = [1, 2, 3, 1, 2, 3]
-        self.assertEqual(get_conn_list.get('source'), compare_source)
-        self.assertEqual(get_conn_list.get('target'), compare_target)
+        self.assertEqual(get_conn_some.get('source'), compare_source)
+        self.assertEqual(get_conn_some.get('target'), compare_target)
 
         compare_list = [3, 1, 0, 0, 6]
-        conn = [get_conn_list['source'][3],
-                get_conn_list['target'][3],
-                get_conn_list['target_thread'][3],
-                get_conn_list['synapse_id'][3],
-                get_conn_list['port'][3]]
+        conn = [get_conn_some.get('source')[3],
+                get_conn_some.get('target')[3],
+                get_conn_some.get('target_thread')[3],
+                get_conn_some.get('synapse_id')[3],
+                get_conn_some.get('port')[3]]
         self.assertEqual(conn, compare_list)
 
         conns = nest.GetConnections(n[0]).get()
@@ -427,6 +427,20 @@ class TestGIDCollection(unittest.TestCase):
         ref = [[1, 1, 0, 0, 0], [1, 2, 0, 0, 1], [1, 3, 0, 0, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
+
+    def test_GetConnections_with_slice(self):
+        """
+        GetConnection with sliced works GIDCollections
+        """
+
+        nodes = nest.Create('iaf_psc_alpha', 11)
+        nest.Connect(nodes, nodes)
+
+        conns = nest.GetConnections(nodes[1:9:3])
+        source = conns.get('source')
+        source_ref = [2] * 11 + [5] * 11 + [8] * 11
+
+        self.assertEqual(source_ref, source)
 
     def test_GetConnections_bad_source(self):
         """

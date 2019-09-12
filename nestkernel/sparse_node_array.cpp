@@ -43,13 +43,6 @@ nest::SparseNodeArray::SparseNodeArray()
 }
 
 void
-nest::SparseNodeArray::reserve_additional( size_t n_elements )
-{
-  size_t old_size = nodes_.size();
-  nodes_.reserve( old_size + n_elements );
-}
-
-void
 nest::SparseNodeArray::add_local_node( Node& node )
 {
   const index gid = node.get_gid();
@@ -58,7 +51,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
   assert( gid > 0 );
 
   // local_min_gid_ can only be 0 if no node has been stored
-  assert( local_min_gid_ > 0 or nodes_.empty() );
+  assert( local_min_gid_ > 0 or nodes_.size() == 0 );
 
   // local_min_gid_ cannot be larger than local_max_gid_
   assert( local_min_gid_ <= local_max_gid_ );

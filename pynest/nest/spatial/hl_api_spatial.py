@@ -79,11 +79,8 @@ class target_pos(object):
 
 
 class grid(object):
-    def __init__(self, rows, columns, depth=None, center=None, extent=None,
-                 edge_wrap=False):
-        self.rows = rows
-        self.columns = columns
-        self.depth = depth
+    def __init__(self, shape, center=None, extent=None, edge_wrap=False):
+        self.shape = shape
         self.center = center
         self.extent = extent
         self.edge_wrap = edge_wrap

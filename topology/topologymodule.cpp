@@ -135,9 +135,8 @@ TopologyModule::create_mask( const Token& t )
     if ( has_anchor )
     {
 
-      // The anchor may be an array of doubles (a spatial position), or a
-      // dictionary containing the keys 'column' and 'row' (for grid
-      // masks only)
+      // The anchor may be an array of doubles (a spatial position).
+      // For grid layers only, it is also possible to provide an array of longs.
       try
       {
 
@@ -161,20 +160,15 @@ TopologyModule::create_mask( const Token& t )
       }
       catch ( TypeMismatch& e )
       {
+        std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
-        DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
-
-        std::vector< long > anchor_offset = getValue< std::vector< long > >( ad, names::offset );
-
-        int dim = anchor_offset.size();
-
-        switch ( dim )
+        switch ( anchor.size() )
         {
         case 2:
           try
           {
             GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
-            grid_mask_2d.set_anchor( Position< 2, int >( anchor_offset[ 0 ], anchor_offset[ 1 ] ) );
+            grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
           }
           catch ( std::bad_cast& e )
           {
@@ -185,7 +179,7 @@ TopologyModule::create_mask( const Token& t )
           try
           {
             GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
-            grid_mask_3d.set_anchor( Position< 3, int >( anchor_offset[ 0 ], anchor_offset[ 1 ], anchor_offset[ 2 ] ) );
+            grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           }
           catch ( std::bad_cast& e )
           {

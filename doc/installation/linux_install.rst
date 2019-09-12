@@ -53,8 +53,12 @@ The following are the basic steps to compile and install NEST from source code:
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
+.. note::
+    If you want to use Python 3, add the configuration option
+    ``cmake -Dwith-python=3 -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>``
 
 .. note::  ``/install/path`` should be an absolute path
+
 
 
 * Compile and install NEST:

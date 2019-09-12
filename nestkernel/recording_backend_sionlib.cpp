@@ -177,6 +177,13 @@ nest::RecordingBackendSIONlib::open_files_()
       t_start_ = kernel().simulation_manager.get_time().get_ms();
     }
 
+    // set n_rec counters to zero in every device on every thread
+    device_map::value_type::iterator it;
+    for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
+    {
+      it->second.info.n_rec = 0;
+    }
+
     try
     {
 #pragma omp critical

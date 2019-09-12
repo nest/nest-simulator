@@ -130,8 +130,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     int num_dimensions = shape.size();
     length = std::accumulate(std::begin( shape ), std::end( shape ), 1, std::multiplies< long >());
 
-    std::cout << num_dimensions << length;
-
     if ( num_dimensions == 2)
     {
       layer_local = new GridLayer< 2 >();

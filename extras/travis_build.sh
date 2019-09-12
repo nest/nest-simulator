@@ -51,12 +51,12 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+   if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
       CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+   elif [ "$TRAVIS_PYTHON_VERSION" = "3.4.4" ]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
    fi
-   if [[ $OSTYPE == darwin* ]]; then
+   if [[ $OSTYPE = darwin* ]]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
    fi
 else
@@ -97,7 +97,7 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-if [[ $OSTYPE == darwin* ]]; then
+if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
     CONFIGURE_BOOST="-Dwith-boost=OFF"
@@ -117,7 +117,7 @@ echo $NEST_VPATH
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
-if [ "$xSTATIC_ANALYSIS" == "1" ]; then
+if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -221,12 +221,12 @@ else
     echo "MSGBLD0225: Static code analysis skipped due to build configuration."
 fi
 
-if [ "$xRUN_BUILD_AND_TESTSUITE" == "1" ]; then
+if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
     cd "$NEST_VPATH"
     cp ../examples/sli/nestrc.sli ~/.nestrc
     # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
     # Not having this in place leads to a "not enough slots available" error.
-    if [[ "$OSTYPE" == "darwin"* ]] ; then
+    if [[ "$OSTYPE" = "darwin"* ]] ; then
         sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
     fi
 
@@ -273,10 +273,10 @@ if [ "$xRUN_BUILD_AND_TESTSUITE" == "1" ]; then
     echo "+               R U N   N E S T   T E S T S U I T E                           +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
         export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+    elif [ "$TRAVIS_PYTHON_VERSION" = "3.4.4" ]; then
         export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
     fi

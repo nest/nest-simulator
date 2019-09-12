@@ -157,14 +157,14 @@ protected:
   GIDCollectionPTR gid_collection_;
 
   /**
-   * GID for the single layer for which we cache global position information
+   * Metadata for the layer for which we cache global position information
    */
-  static GIDCollectionMetadataPTR cached_ntree_gc_;
+  static GIDCollectionMetadataPTR cached_ntree_md_;
 
   /**
-   * GID for the single layer for which we cache global position information
+   * Metadata for the layer for which we cache global position information
    */
-  static GIDCollectionMetadataPTR cached_vector_gc_;
+  static GIDCollectionMetadataPTR cached_vector_md_;
 
   /**
    * Clear the cache for global position information
@@ -177,8 +177,7 @@ protected:
   virtual void clear_vector_cache_() const = 0;
 
   /**
-   * Gets a std::shared_ptr to the metadata to the GIDCollection to which this layer
-   * belongs.
+   * Gets metadata of the GIDCollection to which this layer belongs.
    */
   GIDCollectionMetadataPTR get_metadata() const;
 };
@@ -530,12 +529,12 @@ inline Layer< D >::Layer( const Layer& other_layer )
 template < int D >
 inline Layer< D >::~Layer()
 {
-  if ( cached_ntree_gc_ == get_metadata() )
+  if ( cached_ntree_md_ == get_metadata() )
   {
     clear_ntree_cache_();
   }
 
-  if ( cached_vector_gc_ == get_metadata() )
+  if ( cached_vector_md_ == get_metadata() )
   {
     clear_vector_cache_();
   }
@@ -589,7 +588,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
-  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
 }
 
 template < int D >
@@ -601,7 +600,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
+  cached_vector_md_ = GIDCollectionMetadataPTR( 0 );
 }
 
 } // namespace nest

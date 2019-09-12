@@ -44,8 +44,8 @@
 namespace nest
 {
 
-GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
-GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_vector_md_ = GIDCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -86,8 +86,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
-      // To avoid nasty segfaults, we check that the parameter is indeed a
-      // DimensionParameter.
+      // To avoid nasty segfaults, we check that the parameter is indeed a DimensionParameter.
       if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
       {
         throw KernelException( "When 'positions' is a Parameter, it must be a DimensionParameter." );
@@ -145,7 +144,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   assert( layer_local );
   std::shared_ptr< AbstractLayer > layer_safe( layer_local );
-  // auto layer_safe = std::make_shared< AbstractLayer >( layer_local );
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it

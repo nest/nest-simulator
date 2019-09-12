@@ -149,101 +149,103 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
 
-  local_comm_ = MPI_COMM_NULL;
-#ifdef BG_MULTIFILE
-// MPIX calls not thread-safe; use only master thread here
-// (omp single may be problematic as well)
-#pragma omp master
+#pragma omp parallel
   {
-    MPIX_Pset_same_comm_create( &local_comm_ );
-  }
+    local_comm_ = MPI_COMM_NULL;
+#ifdef BG_MULTIFILE
+  // MPIX calls not thread-safe; use only master thread here
+  // (omp single may be problematic as well)
+#pragma omp master
+    {
+      MPIX_Pset_same_comm_create( &local_comm_ );
+    }
 #pragma omp barrier
 #endif // BG_MULTIFILE
-  // use additional local variable for local communicator to
-  // avoid problems when calling sion_paropen_ompi(..)
-  MPI_Comm local_comm = local_comm_;
+    // use additional local variable for local communicator to
+    // avoid problems when calling sion_paropen_ompi(..)
+    MPI_Comm local_comm = local_comm_;
 
-  // we need to delay the throwing of exceptions to the end of the parallel
-  // section
-  WrappedThreadException* we = NULL;
+    // we need to delay the throwing of exceptions to the end of the parallel
+    // section
+    WrappedThreadException* we = NULL;
 
-  // This code is executed in a parallel region (opened in
-  // NodeManager::prepare_nodes())!
-  const thread t = kernel().vp_manager.get_thread_id();
-  const thread task = kernel().vp_manager.thread_to_vp( t );
-  if ( not task )
-  {
-    t_start_ = kernel().simulation_manager.get_time().get_ms();
-  }
-
-  try
-  {
-#pragma omp critical
+    // This code is executed in a parallel region (opened above)!
+    const thread t = kernel().vp_manager.get_thread_id();
+    const thread task = kernel().vp_manager.thread_to_vp( t );
+    if ( not task )
     {
-      if ( files_.find( task ) == files_.end() )
+      t_start_ = kernel().simulation_manager.get_time().get_ms();
+    }
+
+    try
+    {
+#pragma omp critical
       {
-        files_.insert( std::make_pair( task, FileEntry() ) );
+        if ( files_.find( task ) == files_.end() )
+        {
+          files_.insert( std::make_pair( task, FileEntry() ) );
+        }
+      }
+#pragma omp barrier
+
+      FileEntry& file = files_[ task ];
+      std::string filename = build_filename_();
+
+      std::ifstream test( filename.c_str() );
+      if ( test.good() & not kernel().io_manager.overwrite_files() )
+      {
+        std::string msg = String::compose(
+          "The device file '%1' exists already and will not be overwritten. "
+          "Please change data_path, or data_prefix, or set /overwrite_files "
+          "to true in the root node.",
+          filename );
+        LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
+        throw IOError();
+      }
+      test.close();
+
+#ifdef BG_MULTIFILE
+      int n_files = -1;
+#else
+      int n_files = P_.sion_n_files_;
+#endif // BG_MULTIFILE
+      sion_int32 fs_block_size = -1;
+      sion_int64 sion_chunksize = P_.sion_chunksize_;
+      int rank = kernel().mpi_manager.get_rank();
+
+      file.sid = sion_paropen_ompi( filename.c_str(),
+        P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
+        &n_files,
+        kernel().mpi_manager.get_communicator(),
+        &local_comm,
+        &sion_chunksize,
+        &fs_block_size,
+        &rank,
+        NULL,
+        NULL );
+
+      file.buffer.reserve( P_.buffer_size_ );
+      file.buffer.clear();
+
+      filename_ = filename;
+    }
+    catch ( std::exception& e )
+    {
+#pragma omp critical
+      if ( not we )
+      {
+        we = new WrappedThreadException( e );
       }
     }
-#pragma omp barrier
 
-    FileEntry& file = files_[ task ];
-    std::string filename = build_filename_();
-
-    std::ifstream test( filename.c_str() );
-    if ( test.good() & not kernel().io_manager.overwrite_files() )
+    // check if any exceptions have been raised
+    if ( we )
     {
-      std::string msg = String::compose(
-        "The device file '%1' exists already and will not be overwritten. "
-        "Please change data_path, or data_prefix, or set /overwrite_files "
-        "to true in the root node.",
-        filename );
-      LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
-      throw IOError();
+      WrappedThreadException wec( *we );
+      delete we;
+      throw wec;
     }
-    test.close();
-
-#ifdef BG_MULTIFILE
-    int n_files = -1;
-#else
-    int n_files = P_.sion_n_files_;
-#endif // BG_MULTIFILE
-    sion_int32 fs_block_size = -1;
-    sion_int64 sion_chunksize = P_.sion_chunksize_;
-    int rank = kernel().mpi_manager.get_rank();
-
-    file.sid = sion_paropen_ompi( filename.c_str(),
-      P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
-      &n_files,
-      kernel().mpi_manager.get_communicator(),
-      &local_comm,
-      &sion_chunksize,
-      &fs_block_size,
-      &rank,
-      NULL,
-      NULL );
-
-    file.buffer.reserve( P_.buffer_size_ );
-    file.buffer.clear();
-
-    filename_ = filename;
-  }
-  catch ( std::exception& e )
-  {
-#pragma omp critical
-    if ( not we )
-    {
-      we = new WrappedThreadException( e );
-    }
-  }
-
-  // check if any exceptions have been raised
-  if ( we )
-  {
-    WrappedThreadException wec( *we );
-    delete we;
-    throw wec;
-  }
+  } // parallel region
 
   files_opened_ = true;
 }

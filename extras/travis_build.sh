@@ -219,8 +219,11 @@ if [ "$xSTATIC_ANALYSIS" == "1" ]; then
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
 else
     echo "MSGBLD0225: Static code analysis skipped due to build configuration."
+fi
 
-    # static code analysis disabled: do a full build
+if [ "$xRUN_BUILD_AND_TESTSUITE" == "1" ]; then
+
+    # do a full build
 
     cd "$NEST_VPATH"
     cp ../examples/sli/nestrc.sli ~/.nestrc
@@ -268,24 +271,20 @@ else
     make install
     echo "MSGBLD0280: Make install completed."
 
-    if [ "$xRUN_TESTSUITE" == "1" ]; then
-        echo
-        echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        echo "+               R U N   N E S T   T E S T S U I T E                           +"
-        echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-        echo "MSGBLD0290: Running make installcheck."
-        if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
-            export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
-            export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-        elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-            export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-            export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-        fi
-        make installcheck
-        echo "MSGBLD0300: Make installcheck completed."
-    else
-        echo "MSGBLD0305: Skip installcheck."
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               R U N   N E S T   T E S T S U I T E                           +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0290: Running make installcheck."
+    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+        export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+        export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
     fi
+    make installcheck
+    echo "MSGBLD0300: Make installcheck completed."
 
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
         echo "MSGBLD0310: This build was triggered by a pull request."

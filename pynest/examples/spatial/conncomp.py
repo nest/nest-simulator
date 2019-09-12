@@ -20,49 +20,41 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create two 30x30 layers with nodes composed of one pyramidal cell
-and one interneuron. Connect with two projections, one pyr->pyr, one
-pyr->in, and visualize.
+Create two populations of pyramidal cells and two populations of interneurons
+on a 30x30 grid. Connect with two projections, one pyr->pyr, one pyr->in, and
+visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 '''
 
 import nest
-import nest.topology as topo
 import pylab
-
 
 nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
 
-# create four test layers
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
-a_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                          'elements': 'pyr'})
-a_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                         'elements': 'in'})
+# same positions for all populations
+pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 
-b_pyr = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                          'elements': 'pyr'})
-b_in = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                         'elements': 'in'})
+a_pyr = nest.Create('pyr', positions=pos)
+a_in = nest.Create('in', positions=pos)
 
+b_pyr = nest.Create('pyr', positions=pos)
+b_in = nest.Create('in', positions=pos)
 
-topo.ConnectLayers(a_pyr, b_pyr, {'connection_type': 'divergent',
-                                  'mask': {'circular': {'radius': 0.5}},
-                                  'kernel': 0.5,
-                                  'weights': 1.0,
-                                  'delays': 1.0})
-topo.ConnectLayers(a_pyr, b_in, {'connection_type': 'divergent',
-                                 'mask': {'circular': {'radius': 1.0}},
-                                 'kernel': 0.2,
-                                 'weights': 1.0,
-                                 'delays': 1.0})
+nest.Connect(a_pyr, b_pyr, {'rule': 'pairwise_bernoulli',
+                            'p': 0.5,
+                            'mask': {'circular': {'radius': 0.5}}})
+
+nest.Connect(a_pyr, b_in, {'rule': 'pairwise_bernoulli',
+                            'p': 0.2,
+                            'mask': {'circular': {'radius': 1.}}})
 
 pylab.clf()
 
@@ -76,8 +68,8 @@ ctr_id = a_pyr[ctr_index:ctr_index + 1]
 conn = nest.GetConnections(ctr_id)
 tgts = conn.get('target')
 
-tpyr = topo.GetTargetPositions(ctr_id, b_pyr)[0]
-tin = topo.GetTargetPositions(ctr_id, b_in)[0]
+tpyr = nest.GetTargetPositions(ctr_id, b_pyr)[0]
+tin = nest.GetTargetPositions(ctr_id, b_in)[0]
 
 tpyr_x = pylab.array([x for x, y in tpyr])
 tpyr_y = pylab.array([y for x, y in tpyr])
@@ -95,7 +87,7 @@ pylab.plot(tin_x, tin_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
            markersize=10, markeredgewidth=0, zorder=1, label='_nolegend_')
 
 # mark sender position with transparent red circle
-ctrpos = topo.GetPosition(ctr_id)
+ctrpos = nest.GetPosition(ctr_id)
 pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.15, zorder=99,
                                    fc='r', alpha=0.4, ec='none'))
 

@@ -624,7 +624,10 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   if ( primitive_collection_ )
   {
     element_idx_ += step_;
-    element_idx_ = std::max( element_idx_, primitive_collection_->size() );
+    if ( element_idx_ >= primitive_collection_->size() )
+    {
+      element_idx_ = primitive_collection_->size();
+    }
   }
   else
   {

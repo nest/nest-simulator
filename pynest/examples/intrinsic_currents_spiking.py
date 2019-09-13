@@ -92,8 +92,7 @@ num_recep = len(w_recep)
 # configuration.
 
 nrn = nest.Create('ht_neuron')
-p_gens = nest.Create('poisson_generator', 4,
-                     params={'rate': rate_in})
+p_gens = nest.Create('poisson_generator', 4, params={'rate': rate_in})
 mm = nest.Create('multimeter',
                  params={'interval': 0.1,
                          'record_from': ['V_m', 'theta',
@@ -117,10 +116,8 @@ mm = nest.Create('multimeter',
 # makes `pg` a "naked" GID.
 
 receptors = nest.GetDefaults('ht_neuron')['receptor_types']
-for pg, (rec_name, rec_wgt) in zip(p_gens, w_recep.items()):
-    nest.Connect(nest.GIDCollection([pg]), nrn,
-                 syn_spec={'receptor_type': receptors[rec_name],
-                           'weight': rec_wgt})
+for index, (rec_name, rec_wgt) in enumerate(w_recep.items()):
+    nest.Connect(p_gens[index], nrn, syn_spec={'receptor_type': receptors[rec_name], 'weight': rec_wgt})
 
 ###############################################################################
 # We then connnect the ``multimeter``. Note that the multimeter is connected to

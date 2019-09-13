@@ -316,7 +316,7 @@ class TestGrowthCurve(unittest.TestCase):
         spikes_all = tmp['times']
         senders_all = tmp['senders']
         for n_i, n in enumerate(self.pop):
-            spikes = spikes_all[senders_all == n]
+            spikes = spikes_all[senders_all == n.get('global_id')]
             [sei.reset() for sei in self.se_integrator]
             spike_i = 0
             for t_i, t in enumerate(self.sim_steps):

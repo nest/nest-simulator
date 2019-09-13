@@ -566,6 +566,8 @@ def
   /MemberQ_g_i load
 def
 
+/eq [/gidcollectiontype /gidcollectiontype] /eq_g load def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % typeinit.sli already defines size functions for other types

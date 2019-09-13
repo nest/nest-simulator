@@ -57,7 +57,7 @@ class TestConnectArrays(unittest.TestCase):
     def test_connect_arrays_unique_gids(self):
         """Connecting arrays with unique GIDs"""
         n = nest.Create('iaf_psc_alpha', 4)
-        gids = list(n)
+        gids = n.tolist()
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             nest.Connect(gids, gids)

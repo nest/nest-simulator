@@ -998,8 +998,8 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of the source neuron with GID 5
             nest.GetTargetNodes([5], l)
     """
-    if not nest.hl_api.is_sequence_of_gids(sources):
-        raise TypeError("sources must be a sequence of GIDs")
+    if not isinstance(sources, nest.GIDCollection):
+        raise ValueError("sources must be a GIDCollection.")
 
     if not isinstance(tgt_layer, nest.GIDCollection):
         raise nest.kernel.NESTError("tgt_layer must be a GIDCollection")
@@ -1007,12 +1007,12 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
     # Re-organize conns into one list per source, containing only target GIDs.
-    src_tgt_map = dict((sgid, []) for sgid in sources)
+    src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
     for src, tgt in zip(conns.source(), conns.target()):
         src_tgt_map[src].append(tgt)
 
     # convert dict to nested list in same order as sources
-    return tuple(src_tgt_map[sgid] for sgid in sources)
+    return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
 
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
@@ -1094,13 +1094,13 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Make dictionary where the keys are the source gids, which is mapped to a
     # list with the positions of the targets connected to the source.
-    src_tgt_pos_map = dict((sgid, []) for sgid in sources)
+    src_tgt_pos_map = dict((sgid, []) for sgid in sources.tolist())
     for i in range(len(connections)):
         tgt_indx = tgts[i] - first_tgt_gid
         src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])
 
     # Turn dict into list in same order as sources
-    return [src_tgt_pos_map[sgid] for sgid in sources]
+    return [src_tgt_pos_map[sgid] for sgid in sources.tolist()]
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

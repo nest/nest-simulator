@@ -275,8 +275,8 @@ class SpatialTester(object):
         # both to see if they match, and put the correct distance in a list
         # containig target distances if true.
         counter = 0
-        for indx, gid in enumerate(self._lt):
-            if gid == target_nodes[counter]:
+        for indx, gc in enumerate(self._lt):
+            if gc.get('global_id') == target_nodes[counter]:
                 target_dist.append(dist[indx])
                 counter += 1
                 # target_nodes might be shorter than lt

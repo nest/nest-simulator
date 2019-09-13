@@ -96,7 +96,7 @@ public:
    * A backend needs to be able to cope with multiple calls to this
    * function, as multiple calls to set_status() may occur on the @p
    * device. For already enrolled devices this usually means that only
-   * the parameters in @p params have to be set, but no furhter
+   * the parameters in @p params have to be set, but no further
    * actions are needed.
    *
    * Each recording backend must ensure that enrollment (including all
@@ -188,13 +188,10 @@ public:
   /**
    * Initialize global backend-specific data structures.
    *
-   * TODO: The following text is misleading. The pre_run_hook is only called
-   * in the very beginning of SimulationManager::run!
-   *
-   * This function is called on each backend on simulator startup as well as
-   * upon changes in the number of threads. It is also called within Prepare.
-   * As the number of threads can change in between calls to this function,
-   * the backend can also re-structure its global data-structures accordingly.
+   * This function is called on each backend right at the very beginning of
+   * `SimulationManager::run()`. It can be used for initializations which have
+   * to be repeated at the beginning of every single call to run in a
+   * prepare-run-run-...-run-run-cleanup sequence.
    *
    * @see post_run_hook()
    *
@@ -203,18 +200,31 @@ public:
   virtual void pre_run_hook() = 0;
 
   /**
-  * Clean up the backend at the end of a Run.
-  *
-  * This is called right before `SimulationManager::run()` terminates. It
-  * allows the backend to flush open files, write remaining data to the
-  * screen, or perform similar operations that make sure that the user
-  * has access to all data from the previous simulation run.
-  *
-  * @see pre_run_hook()
-  *
-  * @ingroup NESTio
-  */
+   * Clean up the backend at the end of a Run.
+   *
+   * This is called right before `SimulationManager::run()` terminates. It
+   * allows the backend to flush open files, write remaining data to the
+   * screen, or perform similar operations that make sure that the user
+   * has access to all data from the previous simulation run.
+   *
+   * @see pre_run_hook()
+   *
+   * @ingroup NESTio
+   */
   virtual void post_run_hook() = 0;
+
+  /**
+   * Do work required at the end of each simulation step.
+   *
+   * This is called at the very end of each simulation step. It can for example
+   * be used to carry out writing to files in a synchronized way, all threads
+   * on all MPI processes performing it at the same time.
+   *
+   * @see pre_run_hook()
+   *
+   * @ingroup NESTio
+   */
+  virtual void post_step_hook() = 0;
 
   /**
    * Write the data from the event to the backend specific channel together

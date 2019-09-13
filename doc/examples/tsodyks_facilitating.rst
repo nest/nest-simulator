@@ -119,8 +119,7 @@ a parameter dictionary or a list of parameter dictionaries.
 
     nest.SetStatus(neurons, neuron_param)
     nest.SetStatus(dc_gen, {"amplitude": I0, "start": TIstart, "stop": TIend})
-    nest.SetStatus(volts, {"label": "voltmeter", "withtime": True, "withgid": True,
-                           "interval": 1.})
+    nest.SetStatus(volts, {"label": "voltmeter", "interval": 1.})
 
 
 Sixth, the ``dc_generator`` is connected to the first neuron
@@ -135,8 +134,8 @@ kernel, because it observes the neuron instead of receiving events from it.
 .. code-block:: default
 
 
-    nest.Connect(dc_gen, [neurons[0]])
-    nest.Connect(volts, [neurons[1]])
+    nest.Connect(dc_gen, neurons[0])
+    nest.Connect(volts, neurons[1])
 
 
 Seventh, the first neuron (`neurons[0]`) is connected to the second
@@ -150,7 +149,7 @@ connection routine via the ``syn_spec`` parameter.
 
 
     nest.CopyModel("tsodyks_synapse", "syn", syn_param)
-    nest.Connect([neurons[0]], [neurons[1]], syn_spec="syn")
+    nest.Connect(neurons[0], neurons[1], syn_spec="syn")
 
 
 Finally, we simulate the configuration using the command ``Simulate``,

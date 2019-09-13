@@ -71,9 +71,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                           'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2, params={'withgid': False})
+m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -89,11 +88,11 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus([m[j]])[0]['events']
+    ev = nest.GetStatus(m[j])[0]['events']
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus([s[j]])[0]['events']['times']
+    sp = nest.GetStatus(s[j])[0]['events']['times']
     plt.subplot(221)
     h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])
@@ -178,9 +177,8 @@ plt.title('One spike train for all targets')
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
-    nest.SetStatus([0], [{"resolution": dt}])
-    nest.SetStatus([0], [{"grng_seed": 256 * seed + 1}])
-    nest.SetStatus([0], [{"rng_seeds": [256 * seed + 2]}])
+    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
+                          "rng_seeds": [256 * seed + 2]})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')
@@ -199,6 +197,7 @@ def plot_hist(spikes):
     plt.hist(spikes['times'],
              bins=np.arange(0., max(spikes['times']) + 1.5, 1.),
              histtype='step')
+
 
 t = 1000
 n = 1000
@@ -226,7 +225,7 @@ spikes = step(t, n,
               {'rate': 50.0, },
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 20
 exp[int(steps / 2):] *= 50
 plt.plot(exp, 'r')
@@ -248,7 +247,7 @@ spikes = step(t, n,
                'frequency': 0., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 80
 exp[int(steps / 2):] *= 40
 plt.plot(exp, 'r')
@@ -321,7 +320,7 @@ spikes = step(t, n,
               seed=123, dt=1.)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = 40. * np.ones(steps / 2)
+exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
 exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
                                                      t / 1000. * np.pi * 20. /
                                                      (steps / 2))))

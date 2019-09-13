@@ -15,7 +15,7 @@ time grid at a user-defined resolution. The precise spiking models
 overcome this by handling spikes in continuous time [1]_ and [2]_.
 
 The precise spiking neuron models in NEST include: ``iaf_psc_exp_ps``,
-``iaf_psc_alpha_ps``, ``iaf_psc_alpha_presc`` and ``iaf_psc_delta_ps``.
+``iaf_psc_alpha_ps`` and ``iaf_psc_delta_ps``.
 More detailed information about the precise spiking models can be
 found here:
 https://www.nest-simulator.org/simulations-with-precise-spike-times/
@@ -67,10 +67,10 @@ Second, we assign the simulation parameters to variables.
 Now, we simulate the two versions of the neuron models (i.e. discrete-time:
 ``iaf_psc_exp``; precise: ``iaf_psc_exp_ps``) for each of the defined
 resolutions. The neurons use their default parameters and we stimulate them
-by injecting a current using a ``dc_generator`` device. The membrane potential
-is recorded by a ``voltmeter``, the spikes are recorded by a ``spike_detector``,
-whose property ``precise_times`` is set to `True`. The data is stored in a
-dictionary for later use.
+by injecting a current using a ``dc_generator`` device. The membrane
+potential is recorded by a ``voltmeter``, the spikes are recorded by
+a ``spike_detector``.  The data is stored in a dictionary for later
+use.
 
 
 .. code-block:: default
@@ -88,7 +88,7 @@ dictionary for later use.
             neuron = nest.Create(model)
             voltmeter = nest.Create("voltmeter", params={"interval": h})
             dc = nest.Create("dc_generator", params={"amplitude": stim_current})
-            sd = nest.Create("spike_detector", params={"precise_times": True})
+            sd = nest.Create("spike_detector")
 
             nest.Connect(voltmeter, neuron)
             nest.Connect(dc, neuron)

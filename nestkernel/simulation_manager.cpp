@@ -939,7 +939,9 @@ nest::SimulationManager::update_()
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
-
+      kernel().io_manager.post_step_hook();
+// enforce synchronization after post-step activities of the recording backends
+#pragma omp barrier
     } while ( to_do_ > 0 and not exit_on_user_signal_ and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements

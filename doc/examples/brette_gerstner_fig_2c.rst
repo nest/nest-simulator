@@ -96,7 +96,7 @@ voltmeter to the neuron.
 .. code-block:: default
 
 
-    nest.SetStatus(voltmeter, {'interval': 0.1, "withgid": True, "withtime": True})
+    nest.SetStatus(voltmeter, {'interval': 0.1})
 
     nest.Connect(voltmeter, neuron)
 

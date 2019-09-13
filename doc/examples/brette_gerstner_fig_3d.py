@@ -77,7 +77,7 @@ voltmeter = nest.Create("voltmeter")
 # We set the voltmeter to record in small intervals of 0.1 ms and connect the
 # voltmeter to the neuron.
 
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True, 'interval': 0.1})
+nest.SetStatus(voltmeter, {'interval': 0.1})
 
 nest.Connect(voltmeter, neuron)
 

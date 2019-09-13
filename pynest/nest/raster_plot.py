@@ -185,7 +185,7 @@ def from_device(detec, **kwargs):
     """
 
     type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
-    if not type_id.name == "spike_detector":
+    if not type_id == "spike_detector":
         raise nest.kernel.NESTError("Please provide a spike_detector.")
 
     if nest.GetStatus(detec, "record_to")[0] == "memory":

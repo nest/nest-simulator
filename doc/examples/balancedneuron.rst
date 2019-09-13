@@ -96,7 +96,6 @@ spike detector, since they have satisfactory defaults.
 
 
     nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
-    nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 
 Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the
@@ -140,7 +139,7 @@ of the target neuron for a given rate of the inhibitory neurons.
     def output_rate(guess):
         print("Inhibitory rate estimate: %5.2f Hz" % guess)
         rate = float(abs(n_in * guess))
-        nest.SetStatus([noise[1]], "rate", rate)
+        nest.SetStatus(noise[1], "rate", rate)
         nest.SetStatus(spikedetector, "n_events", 0)
         nest.Simulate(t_sim)
         out = nest.GetStatus(spikedetector, "n_events")[0] * 1000.0 / t_sim

@@ -196,7 +196,7 @@ Connections originating from the driving neuron
 
     syn_dict = {'drift_factor': drift_factor_ext,
                 'diffusion_factor': diffusion_factor_ext,
-                'model': 'diffusion_connection'}
+                'synapse_model': 'diffusion_connection'}
 
     nest.Connect(
         siegert_drive, siegert_ex + siegert_in, 'all_to_all', syn_dict)
@@ -211,7 +211,7 @@ Connections originating from the excitatory neuron
 
 
     syn_dict = {'drift_factor': drift_factor_ex, 'diffusion_factor':
-                diffusion_factor_ex, 'model': 'diffusion_connection'}
+                diffusion_factor_ex, 'synapse_model': 'diffusion_connection'}
     nest.Connect(siegert_ex, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
 
@@ -222,7 +222,7 @@ Connections originating from the inhibitory neuron
 
 
     syn_dict = {'drift_factor': drift_factor_in, 'diffusion_factor':
-                diffusion_factor_in, 'model': 'diffusion_connection'}
+                diffusion_factor_in, 'synapse_model': 'diffusion_connection'}
     nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 
 
@@ -245,9 +245,12 @@ rates are identical. For comparison execute the example ``brunel_delta_nest.py``
 
 
     data = nest.GetStatus(multimeter)[0]['events']
-    rates_ex = data['rate'][numpy.where(data['senders'] == siegert_ex)]
-    rates_in = data['rate'][numpy.where(data['senders'] == siegert_in)]
-    times = data['times'][numpy.where(data['senders'] == siegert_in)]
+    rates_ex = data['rate'][
+        numpy.where(data['senders'] == nest.GetStatus(siegert_ex, 'global_id')[0])]
+    rates_in = data['rate'][
+        numpy.where(data['senders'] == nest.GetStatus(siegert_in, 'global_id')[0])]
+    times = data['times'][
+        numpy.where(data['senders'] == nest.GetStatus(siegert_in, 'global_id')[0])]
     print("Excitatory rate   : %.2f Hz" % rates_ex[-1])
     print("Inhibitory rate   : %.2f Hz" % rates_in[-1])
 

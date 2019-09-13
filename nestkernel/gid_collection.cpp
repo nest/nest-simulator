@@ -761,7 +761,7 @@ GIDCollectionComposite::contains( index gid ) const
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  std::string metadata = get_metadata().get() ? get_metadata()->get_type() : "None";
+  std::string metadata = "None";
   std::string gc = "GIDCollection(";
   std::string space( gc.size(), ' ' );
 

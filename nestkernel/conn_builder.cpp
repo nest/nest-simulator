@@ -600,10 +600,9 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // todo481: Iterate over local nodes only using GIDCollection's
-        // local_begin(). Also find a way to only iterate the sources
-        // and parameters using the same start and step. This probably
-        // also applies to other ConnBuilders below.
+        // A more efficient way of doing this might be to use GIDCollection's local_begin(). For this to work we would need
+        // to change some of the logic, sources and targets might not be on the same process etc., so therefore we are not
+        // doing it at the moment. This also applies to other ConnBuilders below.
         GIDCollection::const_iterator target_it = targets_->begin();
         GIDCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
@@ -1087,9 +1086,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
     const long value = ( *conn_spec )[ names::indegree ];
     indegree_ = new ConstantParameter( value );
 
-    // verify that indegree is not larger than source population if multapses
-    // are
-    // disabled
+    // verify that indegree is not larger than source population if multapses are disabled
     if ( not multapses_ )
     {
       if ( value > n_sources )

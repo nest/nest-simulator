@@ -115,8 +115,6 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
   index source_lid = source->get_gid() - source_meta->get_first_gid();
-  // std::vector< double > pos = source_layer->get_position_vector( source_lid
-  // );
 
   // Target
 

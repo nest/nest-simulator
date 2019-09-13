@@ -337,8 +337,6 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 
   Examples:
 
-  topology using
-
   %%Create layer
   << /rows 5
      /columns 4
@@ -402,7 +400,6 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
   << /rows 5
      /columns 4
      /elements /iaf_psc_alpha
@@ -410,7 +407,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   /layer Set
 
   layer [4] Take layer [5] Take Displacement
-  layer [0.2 0.3] 5 Displacement
+  [[0.2 0.3]] layer [5] Take Displacement
 
   Author: Håkon Enger, Hans E Plesser, Kittel Austvoll
 
@@ -481,14 +478,14 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
+  /layer
   << /rows 5
      /columns 4
      /elements /iaf_psc_alpha
-  >> CreateLayer ;
+  >> CreateLayer def
 
-  layer 4 5         Distance
-  layer [0.2 0.3] 5 Distance
+  layer [4] Take layer [5] Take Distance
+  [[ 0.2 0.3 ]] layer [5] Take Distance
 
   Author: Hans E Plesser, Kittel Austvoll
 
@@ -775,8 +772,6 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
-
   %Create source layer with CreateLayer
   << /rows 15
      /columns 43
@@ -791,7 +786,7 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   << /rows 34
      /columns 71
      /extent [3.0 1.0]
-     /elements {/iaf_psc_alpha Create ; /iaf_psc_alpha Create ;}
+     /elements /iaf_psc_alpha
   >> /tgt_dictionary Set
 
   tgt_dictionary CreateLayer /tgt Set
@@ -802,10 +797,6 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
       /weights 2.3
       /delays [2.3 1.2 3.2 1.3 2.3 1.2]
       /kernel << /gaussian << /sigma 1.2 /p_center 1.41 >> >>
-      /sources << /model /iaf_psc_alpha
-                  /lid 1 >>
-      /targets << /model /iaf_psc_alpha
-                  /lid 2 >>
       /synapse_model /stdp_synapse
 
   >> /parameters Set
@@ -831,7 +822,7 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 
   Name: topology::GetLayerStatus - return information about layer
 

@@ -224,8 +224,8 @@ class Network:
                     )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
-                nest.GetStatus(population[0], 'global_id')[0],
-                nest.GetStatus(population[-1], 'global_id')[0]))
+                population[0].get('global_id')[0],
+                population[-1].get('global_id')[0]))
         pop_file.close()
 
         if self.net_dict['V0_type'] == 'original':

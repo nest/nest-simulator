@@ -72,7 +72,6 @@ References
 
 """
 
-from __future__ import print_function  # for Python 2
 import numpy as np
 import os
 import sys
@@ -228,13 +227,13 @@ def build_network(logger):
             'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
-        for node in get_local_nodes(E_neurons):
+        for node in nest.GetLocalGIDCollection(E_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
-        for node in get_local_nodes(I_neurons):
+        for node in nest.GetLocalGIDCollection(I_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
@@ -331,9 +330,7 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_gids = [x.get('global_id')
-                          for x in get_local_nodes(E_neurons)]
-            local_neurons = nest.GIDCollection(local_gids)
+            local_neurons = nest.GetLocalGIDCollection(E_neurons))
         else:
             local_neurons = E_neurons
 
@@ -420,26 +417,6 @@ def lambertwm1(x):
     """Wrapper for LambertWm1 function"""
     nest.ll_api.sr('{} LambertWm1'.format(x))
     return nest.ll_api.spp()
-
-
-def get_local_nodes(nodes):
-    """Generator for efficient looping over local nodes
-
-    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
-    returned by Create. Only works for nodes with proxies, i.e.,
-    regular neurons.
-
-    """
-
-    nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
-
-    i = 0
-    while i < len(nodes):
-        if nest.GetStatus(nodes[i], 'local')[0]:
-            yield nodes[i]
-            i += nvp
-        else:
-            i += 1
 
 
 class Logger(object):

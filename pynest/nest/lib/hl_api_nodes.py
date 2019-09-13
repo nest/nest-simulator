@@ -158,7 +158,7 @@ def GetNodes(properties={}, local_only=False):
     Returns
     -------
     GIDCollection:
-        GIDcollection of nodes
+        GIDCollection of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)

@@ -306,9 +306,10 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetTargetNodes(self):
         """Interface check for finding targets."""
 
-        cdict = {'connection_type': 'divergent',
-                 'synapse_model': 'stdp_synapse',
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.,
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
+        sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
@@ -318,7 +319,7 @@ class BasicsTestCase(unittest.TestCase):
                                                     edge_wrap=True))
 
         # connect l -> l
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         t = nest.GetTargetNodes(l[:1], l)
         self.assertEqual(len(t), 1)
@@ -350,8 +351,9 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
 
-        cdict = {'connection_type': 'divergent',
-                 'synapse_model': 'stdp_synapse'}
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.}
+        sdict = {'synapse_model': 'stdp_synapse'}
 
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
@@ -359,7 +361,7 @@ class BasicsTestCase(unittest.TestCase):
                         positions=nest.spatial.grid(1, 1,
                                                     extent=(1., 1.),
                                                     edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         # Simple test with one gid in the layer, should be placed in the origin
         p = nest.GetTargetPositions(l, l)
@@ -379,7 +381,7 @@ class BasicsTestCase(unittest.TestCase):
                             no_rows, no_cols,
                             extent=[x_extent, y_extent],
                             edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         p = nest.GetTargetPositions(l[:1], l)
         self.assertEqual(len(p), 1)
@@ -412,7 +414,7 @@ class BasicsTestCase(unittest.TestCase):
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.free(positions,
                                                     edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         p = nest.GetTargetPositions(l[:1], l)
 

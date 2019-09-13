@@ -72,12 +72,6 @@ TopologyModule::name( void ) const
   return std::string( "TopologyModule" ); // Return name of the module
 }
 
-const std::string
-TopologyModule::commandstring( void ) const
-{
-  return std::string( "(topology-interface) run" );
-}
-
 GenericFactory< AbstractMask >&
 TopologyModule::mask_factory_( void )
 {

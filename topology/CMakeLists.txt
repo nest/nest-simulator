@@ -59,9 +59,6 @@ install( TARGETS topology
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-install( FILES sli/topology-interface.sli
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
-
 file( GLOB topo_unittests "testsuite/unittests/*" )
 install( FILES ${topo_unittests}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests

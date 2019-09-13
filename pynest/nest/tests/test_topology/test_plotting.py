@@ -55,9 +55,9 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotTargets(self):
         """Test plotting targets."""
-        cdict = {'connection_type': 'divergent',
-                 'synapse_model': 'stdp_synapse',
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.,
                  'mask': {'grid': {'rows': 2, 'columns': 2}}}
+        sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(rows=3,
@@ -66,7 +66,7 @@ class PlottingTestCase(unittest.TestCase):
                                                     edge_wrap=True))
 
         # connect l -> l
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         ctr = nest.FindCenterElement(l)
         fig = nest.PlotTargets(l[ctr-1:ctr], l)

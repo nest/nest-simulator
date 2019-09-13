@@ -192,12 +192,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get()
-        self.assertEqual(len(values.keys()), 37)
+        self.assertEqual(len(values.keys()), 36)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get()
-        self.assertEqual(len(values.keys()), 37)
+        self.assertEqual(len(values.keys()), 36)
         self.assertEqual(values['start'],
                          tuple(0.0 for i in range(len(multi_sd))))
 
@@ -273,12 +273,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
-        self.assertEqual(values.shape, (1, 37))
+        self.assertEqual(values.shape, (1, 36))
         self.assertEqual(values['start'][tuple(single_sd.tolist())[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get(output='pandas')
-        self.assertEqual(values.shape, (len(multi_sd), 37))
+        self.assertEqual(values.shape, (len(multi_sd), 36))
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
                                               for key in tuple(multi_sd.tolist())},
@@ -366,12 +366,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = json.loads(single_sd.get(output='json'))
-        self.assertEqual(len(values), 37)
+        self.assertEqual(len(values), 36)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = json.loads(multi_sd.get(output='json'))
-        self.assertEqual(len(values), 37)
+        self.assertEqual(len(values), 36)
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
         # With data in events

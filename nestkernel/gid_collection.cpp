@@ -747,7 +747,7 @@ GIDCollectionComposite::contains( index gid ) const
       if ( step_ > 1 )
       {
         index start_gid = ( *( parts_[ middle ].begin() + start_offset_ ) ).gid;
-        index end_gid = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 )  ) ).gid;
+        index end_gid = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid;
         index stop_gid = stop_part_ != middle ? end_gid : ( *( parts_[ middle ].begin() + stop_offset_ ) ).gid;
 
         return gid >= start_gid and ( ( gid - start_gid ) % step_ ) == 0 and gid <= stop_gid;

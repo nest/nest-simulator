@@ -600,9 +600,9 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // A more efficient way of doing this might be to use GIDCollection's local_begin(). For this to work we would need
-        // to change some of the logic, sources and targets might not be on the same process etc., so therefore we are not
-        // doing it at the moment. This also applies to other ConnBuilders below.
+        // A more efficient way of doing this might be to use GIDCollection's local_begin(). For this to work we would
+        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+        // we are not doing it at the moment. This also applies to other ConnBuilders below.
         GIDCollection::const_iterator target_it = targets_->begin();
         GIDCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )

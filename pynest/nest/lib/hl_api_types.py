@@ -249,7 +249,7 @@ class GIDCollectionIterator(object):
     def __next__(self):
         if self._increment > len(self._gc) - 1:
             raise StopIteration
-    
+
         val = sli_func('Take', self._gc._datum, [self._increment + (self._increment >= 0)])
         self._increment += 1
         return val
@@ -367,7 +367,7 @@ class GIDCollection(object):
 
     def __str__(self):
         return sli_func('pcvs', self._datum)
-    
+
     def __repr__(self):
         return sli_func('pcvs', self._datum)
 
@@ -544,7 +544,7 @@ class GIDCollection(object):
         sli_func('SetStatus', self._datum, params)
 
     def tolist(self):
-        return list(self.get('global_id')) if self.__len__() > 1 else [ self.get('global_id') ]
+        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
     def index(self, gid):
         """

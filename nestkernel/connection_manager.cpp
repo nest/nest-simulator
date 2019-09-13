@@ -968,7 +968,8 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
             {
               // Passing target_gid = 0 ignores target_gid while getting
               // connections.
-              connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );;
+              connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
+              ;
             }
             else
             {

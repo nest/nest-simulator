@@ -330,7 +330,7 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_neurons = nest.GetLocalGIDCollection(E_neurons))
+            local_neurons = nest.GetLocalGIDCollection(E_neurons)
         else:
             local_neurons = E_neurons
 

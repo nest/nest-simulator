@@ -102,9 +102,9 @@ public:
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void check_recording_device_status( Name, const DictionaryDatum& );
-
-  void get_recording_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+  void check_recording_backend_device_status( Name, const DictionaryDatum& );
+  void get_recording_backend_device_defaults( Name, DictionaryDatum& );
+  void get_recording_backend_device_status( Name, const RecordingDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );

@@ -114,6 +114,13 @@ nest::RecordingBackendScreen::check_device_status( const DictionaryDatum& params
 }
 
 void
+nest::RecordingBackendScreen::get_device_defaults( DictionaryDatum& params ) const
+{
+  DeviceData dd;
+  dd.get_status( params );
+}
+
+void
 nest::RecordingBackendScreen::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();

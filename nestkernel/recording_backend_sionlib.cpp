@@ -678,6 +678,12 @@ nest::RecordingBackendSIONlib::check_device_status( const DictionaryDatum& ) con
 }
 
 void
+nest::RecordingBackendSIONlib::get_device_defaults( DictionaryDatum& ) const
+{
+  // nothing to do
+}
+
+void
 nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, DictionaryDatum& ) const
 {
   // nothing to do

@@ -113,6 +113,20 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 }
 
 void
+nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
+{
+  DeviceData dd;
+  dd.set_status( params ); // throws if params contains invalid entries
+}
+
+void
+nest::RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) const
+{
+  DeviceData dd;
+  dd.get_status( params );
+}
+
+void
 nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
@@ -134,13 +148,6 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
     }
   }
   ( *d )[ names::n_events ] = n_events;
-}
-
-void
-nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
-{
-  DeviceData dd;
-  dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void

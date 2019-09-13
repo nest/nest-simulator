@@ -273,11 +273,23 @@ public:
    *
    * @param params the parameter dictionary to validate
    *
-   * @see enroll(), get_device_status()
+   * @see get_device_defaults(), get_device_status()
    *
    * @ingroup NESTio
    */
   virtual void check_device_status( const DictionaryDatum& params ) const = 0;
+
+  /**
+   * Return the per-device defaults by writing it to the given params
+   * dictionary.
+   *
+   * @param params the dictionary to add device-specific backend parameters to
+   *
+   * @see check_device_status(), get_device_status()
+   *
+   * @ingroup NESTio
+   */
+  virtual void get_device_defaults( DictionaryDatum& params ) const = 0;
 
   /**
    * Return the per-device status of the given recording device by
@@ -290,7 +302,7 @@ public:
    * @param device the recording device for which the status is returned
    * @param params the dictionary to add device-specific backend parameters to
    *
-   * @see enroll()
+   * @see enroll(), check_device_status(), get_device_defaults()
    *
    * @ingroup NESTio
    */

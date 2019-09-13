@@ -274,13 +274,19 @@ nest::IOManager::set_recording_value_names( Name backend_name,
 }
 
 void
-nest::IOManager::check_recording_device_status( Name backend_name, const DictionaryDatum& params )
+nest::IOManager::check_recording_backend_device_status( Name backend_name, const DictionaryDatum& params )
 {
   recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-nest::IOManager::get_recording_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
+nest::IOManager::get_recording_backend_device_defaults( Name backend_name, DictionaryDatum& params )
+{
+  recording_backends_[ backend_name ]->get_device_defaults( params );
+}
+
+void
+nest::IOManager::get_recording_backend_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }

@@ -122,7 +122,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
       }
     }
 
-    kernel().io_manager.check_recording_device_status( P_.record_to_, backend_params );
+    kernel().io_manager.check_recording_backend_device_status( P_.record_to_, backend_params );
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
@@ -155,7 +155,10 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
 
   if ( get_gid() == 0 ) // this is a model prototype, not an actual instance
   {
-    // add cached backend parameters to d instead of actually querying the backend
+    // first get the defaults from the backend
+    kernel().io_manager.get_recording_backend_device_defaults( P_.record_to_, d );
+
+    // then overwrite with cached parameters
     for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
     {
       ( *d )[ kv_pair->first ] = kv_pair->second;
@@ -163,7 +166,7 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    kernel().io_manager.get_recording_device_status( P_.record_to_, *this, d );
+    kernel().io_manager.get_recording_backend_device_status( P_.record_to_, *this, d );
   }
 }
 

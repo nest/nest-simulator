@@ -198,6 +198,13 @@ nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params 
 }
 
 void
+nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
+{
+  DeviceData dd( "" );
+  dd.get_status( params );
+}
+
+void
 nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();

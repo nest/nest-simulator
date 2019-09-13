@@ -164,7 +164,7 @@ public:
   void post_run_hook() override;
 
   void check_device_status( const DictionaryDatum& ) const override;
-
+  void get_device_defaults( DictionaryDatum& ) const override;
   void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
 
 private:

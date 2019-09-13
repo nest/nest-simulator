@@ -279,6 +279,12 @@ nest::RecordingBackendArbor::check_device_status( const DictionaryDatum& params 
 }
 
 void
+nest::RecordingBackendArbor::get_device_defaults( DictionaryDatum& params ) const
+{
+  // nothing to do
+}
+
+void
 nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice& device,
   DictionaryDatum& params_dictionary ) const
 {

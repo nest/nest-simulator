@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create layer of 4x3 iaf_psc_alpha neurons, visualize
+Create a population of iaf_psc_alpha neurons on a 4x3 grid, visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -30,17 +30,15 @@ Hans Ekkehard Plesser, UMB
 
 import nest
 import pylab
-import nest.topology as topo
 
 nest.ResetKernel()
 
-l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
-                       'extent': [2.0, 1.5],
-                       'elements': 'iaf_psc_alpha'})
+l1 = nest.Create('iaf_psc_alpha',
+                 positions=nest.spatial.grid(shape=[4,3], extent=[2., 1.5]))
 
 nest.PrintNodes()
 
-topo.PlotLayer(l1, nodesize=50)
+nest.PlotLayer(l1, nodesize=50)
 
 # beautify
 pylab.axis([-1.0, 1.0, -0.75, 0.75])

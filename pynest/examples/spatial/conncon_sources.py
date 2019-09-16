@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create two 30x30 layers of iaf_psc_alpha neurons,
+Create two populations of iaf_psc_alpha neurons on a 30x30 grid,
 connect with convergent projection and rectangular mask,
 visualize connection from target perspective.
 
@@ -31,26 +31,24 @@ Hans Ekkehard Plesser, UMB
 '''
 
 import nest
-import nest.topology as topo
 import pylab
-
 
 nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
 
-# create two test layers
-a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
-b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
+pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 
-topo.ConnectLayers(a, b, {'connection_type': 'convergent',
-                          'mask': {'rectangular': {'lower_left': [-0.2, -0.5],
-                                                   'upper_right': [0.2, 0.5]}},
-                          'kernel': 0.5,
-                          'weights': {'uniform': {'min': 0.5, 'max': 2.0}},
-                          'delays': 1.0})
+# create and connect two populations
+a = nest.Create('iaf_psc_alpha', positions=pos)
+b = nest.Create('iaf_psc_alpha', positions=pos)
 
+nest.Connect(a, b,
+             conn_spec={'rule': 'pairwise_bernoulli',
+                        'p': 0.5,
+                        'use_on_source': True,
+                        'mask': {'rectangular': {'lower_left': [-0.2, -0.5],
+                                                 'upper_right': [0.2, 0.5]}}},
+             syn_spec={'weight': nest.random.uniform(0.5, 2.)})
 pylab.clf()
 
 # plot sources of neurons in different grid locations
@@ -59,7 +57,7 @@ for tgt_index in [30 * 15 + 15, 0]:
     tgt = a[tgt_index:tgt_index + 1]
 
     # obtain list of outgoing connections for ctr
-    spos = topo.GetTargetPositions(tgt, b)[0]
+    spos = nest.GetTargetPositions(tgt, b)[0]
 
     spos_x = pylab.array([x for x, y in spos])
     spos_y = pylab.array([y for x, y in spos])
@@ -71,7 +69,7 @@ for tgt_index in [30 * 15 + 15, 0]:
     pylab.scatter(spos_x, spos_y, 20, zorder=10)
 
     # mark sender position with transparent red circle
-    ctrpos = pylab.array(topo.GetPosition(tgt))
+    ctrpos = pylab.array(nest.GetPosition(tgt))
     pylab.gca().add_patch(pylab.Circle(ctrpos, radius=0.1, zorder=99,
                                        fc='r', alpha=0.4, ec='none'))
 

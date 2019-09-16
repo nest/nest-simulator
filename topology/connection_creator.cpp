@@ -91,11 +91,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
       synapse_model_ = static_cast< index >( synmodel );
     }
-    else if ( dit->first == names::weights )
+    else if ( dit->first == names::weight )
     {
       weight_ = NestModule::create_parameter( dit->second );
     }
-    else if ( dit->first == names::delays )
+    else if ( dit->first == names::delay )
     {
       delay_ = NestModule::create_parameter( dit->second );
     }

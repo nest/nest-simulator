@@ -239,11 +239,10 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 raise ValueError(
                     "'{}' is not allowed in syn_spec when ".format(key) +
                     "connecting with mask or kernel".format(key))
-        # TODO: change topology names of weights, delays to be consistent
         if 'weight' in syn_spec:
-            projections['weights'] = syn_spec['weight']
+            projections['weight'] = syn_spec['weight']
         if 'delay' in syn_spec:
-            projections['delays'] = syn_spec['delay']
+            projections['delay'] = syn_spec['delay']
         if 'synapse_model' in syn_spec:
             projections['synapse_model'] = syn_spec['synapse_model']
 

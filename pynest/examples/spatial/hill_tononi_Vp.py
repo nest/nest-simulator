@@ -350,8 +350,7 @@ nest.CopyModel('multimeter', 'RecordingNode',
 # !
 # ! We first define a spatial grid defining common positions and
 # ! parameters for all populations
-layerGrid = nest.spatial.grid(rows=Params['N'],
-                              columns=Params['N'],
+layerGrid = nest.spatial.grid(shape=[Params['N'], Params['N']],
                               extent=[Params['visSize'], Params['visSize']],
                               edge_wrap=Params['edge_wrap'])
 # ! We can pass this object to the ``positions`` argument in ``Create``

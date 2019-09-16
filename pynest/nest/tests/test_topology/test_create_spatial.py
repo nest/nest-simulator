@@ -183,6 +183,25 @@ class CreateLayer(unittest.TestCase):
         self.assertEqual(len(layer.spatial['positions']), 7)
         self.assertEqual(len(layer.spatial['positions'][0]), 3)
 
+    def test_Create_2D_free_layer_from_Parameter_list(self):
+        """Test Create 2D free layer from list of Parameters."""
+        layer = nest.Create('iaf_psc_alpha', 10,
+                            positions=nest.spatial.free([nest.random.exponential(),
+                                                         nest.random.normal()]))
+
+        self.assertEqual(len(layer.spatial['positions']), 10)
+        self.assertEqual(len(layer.spatial['positions'][0]), 2)
+
+    def test_Create_3D_free_layer_from_Parameter_list(self):
+        """Test Create 3D free layer from list of Parameters."""
+        layer = nest.Create('iaf_psc_alpha', 10,
+                            positions=nest.spatial.free([nest.random.exponential(),
+                                                         nest.random.lognormal(),
+                                                         nest.random.normal()]))
+
+        self.assertEqual(len(layer.spatial['positions']), 10)
+        self.assertEqual(len(layer.spatial['positions'][0]), 3)
+
 
 def suite():
     suite = unittest.makeSuite(CreateLayer, 'test')

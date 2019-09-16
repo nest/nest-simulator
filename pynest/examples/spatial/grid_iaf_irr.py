@@ -30,13 +30,10 @@ Hans Ekkehard Plesser, UMB
 
 import nest
 import pylab
-import random
 
 nest.ResetKernel()
 
-pos = nest.spatial.free([[random.uniform(-0.75, 0.75), random.uniform(-0.5, 0.5)]
-                         for j in range(12)],
-                        extent=[2., 1.5])
+pos = nest.spatial.free([nest.random.uniform(-0.75, 0.75), nest.random.uniform(-0.5, 0.5)], extent=[2., 1.5])
 
 l1 = nest.Create('iaf_psc_alpha', 12, positions=pos)
 

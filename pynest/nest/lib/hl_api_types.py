@@ -544,6 +544,8 @@ class GIDCollection(object):
         sli_func('SetStatus', self._datum, params)
 
     def tolist(self):
+        if self.__len__() == 0:
+            return []
         return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
     def index(self, gid):

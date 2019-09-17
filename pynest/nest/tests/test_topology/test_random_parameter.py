@@ -55,17 +55,15 @@ class RandomParameterTestCase(unittest.TestCase):
         fits the given expected cumulative distribution using K-S.
         """
 
-        # n = rows * cols * Nconn
-        rows = 10
-        cols = 10
+        # n = shape[0] * shape[1] * Nconn
+        shape = [10, 10]
         Nconn = 100
 
         nest.ResetKernel()
 
         # Create layer and connect with given weight distribution
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=rows,
-                                                        columns=cols))
+                            positions=nest.spatial.grid(shape=shape))
         nest.Connect(layer, layer,
                      {'rule': 'fixed_indegree', 'indegree': Nconn},
                      {'weight': weight_param})

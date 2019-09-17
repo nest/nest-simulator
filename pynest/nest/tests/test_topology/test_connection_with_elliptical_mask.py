@@ -63,11 +63,11 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create('iaf_psc_alpha',
                              positions=nest.spatial.grid(
-                                 5, 5, extent=[5., 5.]))
+                                 [5, 5], extent=[5., 5.]))
 
         target = nest.Create('iaf_psc_alpha',
                              positions=nest.spatial.grid(
-                                 5, 5, extent=[5., 5.]))
+                                 [5, 5], extent=[5., 5.]))
 
         conndict = {'rule': 'pairwise_bernoulli',
                     'p': 1.,
@@ -131,10 +131,10 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
 
         conndict = {'rule': 'pairwise_bernoulli',
                     'p': 1.,
@@ -192,10 +192,10 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
 
         conndict = {'rule': 'pairwise_bernoulli',
                     'p': 1.,
@@ -261,10 +261,10 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.], edge_wrap=True))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.], edge_wrap=True))
 
         conndict = {'rule': 'pairwise_bernoulli',
                     'p': 1.,

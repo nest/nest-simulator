@@ -35,15 +35,15 @@ class CreateLayer(unittest.TestCase):
     def test_Create_grid(self):
         """Test Create simple grid."""
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=3, columns=3))
+                            positions=nest.spatial.grid(shape=[3, 3]))
 
         self.assertEqual(len(layer), 9)
-        self.assertEqual(layer.spatial['rows'], 3)
+        self.assertEqual(layer.spatial['shape'][1], 3)
 
     def test_Create_grid_with_extent(self):
         """Test Create simple grid with extent."""
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=3, columns=3,
+                            positions=nest.spatial.grid(shape=[3, 3],
                                                         extent=[2., 2.]))
 
         self.assertEqual(layer.spatial['extent'], (2., 2.))
@@ -51,7 +51,7 @@ class CreateLayer(unittest.TestCase):
     def test_Create_grid_with_nodeParams(self):
         """Test Create grid layer with node parameters."""
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=3, columns=3),
+                            positions=nest.spatial.grid(shape=[3, 3]),
                             params={'V_m': nest.random.uniform(),
                                     'C_m': 200.})
 

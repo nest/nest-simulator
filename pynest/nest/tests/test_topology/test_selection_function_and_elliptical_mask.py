@@ -36,7 +36,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         """Test SelectNodesByMask for rectangular mask in 2D layer"""
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11, columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
         maskdict = {'lower_left': [-2., -1.], 'upper_right': [2., 1.]}
         mask = nest.CreateMask('rectangular', maskdict)
@@ -55,8 +55,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         cntr = [3., 3.]
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=5,
-                                                        columns=5,
+                            positions=nest.spatial.grid(shape=[5, 5],
                                                         extent=[11., 11.],
                                                         center=cntr))
         maskdict = {'lower_left': [1., 1.], 'upper_right': [5., 5.]}
@@ -95,8 +94,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         """Simple elliptical mask contains the correct GIDs"""
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11,
-                                                        columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
         maskdict = {'major_axis': 2.0, 'minor_axis': 1.0}
         mask = nest.CreateMask('elliptical', maskdict)
@@ -121,8 +119,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         """Anchored elliptical mask contains the correct GIDs"""
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11,
-                                                        columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
         maskdict = {'major_axis': 6.0, 'minor_axis': 3.0, 'anchor': [-2., -2.]}
         mask = nest.CreateMask('elliptical', maskdict)
@@ -139,8 +136,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         """Tilted and anchored elliptical mask contains the correct GIDs"""
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11,
-                                                        columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
                     'anchor': [3., 3.], 'azimuth_angle': 45.}
@@ -181,8 +177,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         cntr = [5.0, 5.0]
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=5,
-                                                        columns=5,
+                            positions=nest.spatial.grid(shape=[5, 5],
                                                         extent=[5., 5.],
                                                         center=cntr))
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0}
@@ -355,6 +350,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 def suite():
     suite = unittest.makeSuite(SelectionFunctionAndEllipticalMask, 'test')
     return suite
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)

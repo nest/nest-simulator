@@ -145,10 +145,10 @@ def
 
 /good_layers
 [
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha >>
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha >>
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap true >>
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap false >>
   << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_psc_alpha
      /extent [2. .5] /edge_wrap true >>
@@ -159,9 +159,9 @@ def
 
 /bad_layers
 [
-  << /rows 2 /elements /iaf_psc_alpha >>    % mandatory missing
-  << /rows 2 /columns 2 /elementsss /iaf_psc_alpha >>  % misspelling
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 1 ] /elements /iaf_psc_alpha >>    % too few elements in shape
+  << /shape [ 2 2 ] /elementsss /iaf_psc_alpha >>  % misspelling
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
   << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
      /extent [2. .5] /edge_wrap true >>
@@ -181,7 +181,7 @@ def
   << /connection_type /convergent /allow_oversized_mask true >>
   << /connection_type /convergent /number_of_connections 2 >>
   << /connection_type /divergent /number_of_connections 2 >>
-  << /connection_type /convergent /delays 2.0 >>
+  << /connection_type /convergent /delay 2.0 >>
 ]
 def
 
@@ -198,7 +198,7 @@ def
   /conndict Set
 
   ResetKernel
-  << /elements /iaf_psc_alpha  /rows 1 /columns 1 >> CreateLayer
+  << /elements /iaf_psc_alpha  /shape [ 1 1 ] >> CreateLayer
   dup
   conndict ConnectLayers
 } def
@@ -307,7 +307,7 @@ good_parameters [ 0.5 1.0 ] join
   /wspec Set
   (Test 9: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weights wspec >>
+  { << /connection_type /convergent /weight wspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -319,7 +319,7 @@ bad_parameters
   /wspec Set
   (Test 10: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weights wspec >>
+  { << /connection_type /convergent /weight wspec >>
     conn_layers_test_2d
   } fail_or_die
   clear

@@ -777,8 +777,8 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   <<  /connection_type (convergent)
       /mask << /grid << /rows 2 /columns 3 >>
                /anchor << /row 4 /column 2 >> >>
-      /weights 2.3
-      /delays [2.3 1.2 3.2 1.3 2.3 1.2]
+      /weight 2.3
+      /delay [2.3 1.2 3.2 1.3 2.3 1.2]
       /kernel << /gaussian << /sigma 1.2 /p_center 1.41 >> >>
       /synapse_model /stdp_synapse
 

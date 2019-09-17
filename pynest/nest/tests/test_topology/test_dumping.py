@@ -54,7 +54,7 @@ class PlottingTestCase(unittest.TestCase):
         """Test dumping nodes."""
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(rows=3, columns=3,
+                        positions=nest.spatial.grid(shape=[3, 3],
                                                     extent=[2., 2.],
                                                     edge_wrap=True))
         nest.DumpLayerNodes(l, os.path.join(self.nest_tmpdir(),
@@ -67,7 +67,7 @@ class PlottingTestCase(unittest.TestCase):
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(rows=1, columns=2,
+                        positions=nest.spatial.grid(shape=[2, 1],
                                                     extent=[2., 2.],
                                                     edge_wrap=True))
         nest.Connect(l, l, cdict)
@@ -87,7 +87,7 @@ class PlottingTestCase(unittest.TestCase):
         """Test dump connections between different layers."""
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        pos = nest.spatial.grid(rows=1, columns=1,
+        pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
                                 edge_wrap=True)
         l1 = nest.Create('iaf_psc_alpha', positions=pos)
@@ -108,7 +108,7 @@ class PlottingTestCase(unittest.TestCase):
         """Test dump connections with specific synapse."""
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        pos = nest.spatial.grid(rows=1, columns=1,
+        pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
                                 edge_wrap=True)
         l1 = nest.Create('iaf_psc_alpha', positions=pos)

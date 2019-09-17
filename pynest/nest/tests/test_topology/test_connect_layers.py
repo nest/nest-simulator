@@ -34,7 +34,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({'grng_seed': 123, 'rng_seeds': [456]})
         self.layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(*dim, extent=extent))
+            'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
 
     def _check_connections(self, conn_spec, expected_num_connections):
         nest.Connect(self.layer, self.layer, conn_spec)

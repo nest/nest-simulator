@@ -47,8 +47,8 @@ mul add /linear_parameter Set
 
 /conns << /connection_type (divergent)
           /mask    << /rectangular << /lower_left [ -0.5 -0.5 ] /upper_right [ 9.5 0.5 ] >> >>
-          /weights linear_parameter
-          /delays  linear_parameter
+          /weight linear_parameter
+          /delay  linear_parameter
        >> def
 
 % required to make sure that resolution goes into userdict

@@ -30,10 +30,10 @@ Description:
  ht_neuron accepted incoming connections with invalid receptor type, leading to
  unpredictable errors. Additionally, the topology library did not seem to pass
  on the receptor_type when making connections.
- 
+
  Reported by Jonathan Williford.
 
-Author: Hans Ekkehard Plesser, 2010-06-28 
+Author: Hans Ekkehard Plesser, 2010-06-28
  */
 
 (unittest) run
@@ -54,7 +54,7 @@ M_INFO setverbosity
 % Connection function using topology library
 % receptor_type erroneously placed in dictionary
 /connect_topo
-{ 
+{
   retina
   Tp
   << /connection_type (divergent)
@@ -69,7 +69,7 @@ bind def
 % Connection function using topology library
 % receptor_type correctly placed in synapse
 /connect_topo_syn
-{ 
+{
   /ht_synapse /ht_syn_ampa << /receptor_type ampa >> CopyModel
 
   retina
@@ -85,17 +85,17 @@ bind def
 % Connection function using explicit receptor type --- passes
 /connect_explicit_rt
 {
-  retina_gen 100 Take Tp 100 Take 
+  retina_gen 100 Take Tp 100 Take
   << /rule /one_to_one >> << /receptor_type ampa >>
   Connect
-} 
+}
 bind def
 
 % Connection function not giving receptor type --- fails
 /connect_implicit_rt
 {
   retina_gen 100 Take Tp 100 Take /one_to_one Connect
-} 
+}
 bind def
 
 % Actual test function, expects connection function as input
@@ -109,8 +109,8 @@ bind def
   /parrot_neuron /RetinaNode CopyModel
 
   /ampa /ht_neuron GetDefaults /receptor_types get /AMPA get def
-  
-  /layerProps << /rows 10 /columns 10 /extent [8.0 8.0] >> def
+
+  /layerProps << /shape [ 10 10 ] /extent [8.0 8.0] >> def
 
   layerProps << /elements /RetinaGen >> join
   /retina_gen layerProps CreateLayer def
@@ -122,7 +122,7 @@ bind def
   /Tp layerProps CreateLayer def
 
   retina_gen retina /one_to_one Connect
-  
+
   connfun load exec
 
   10. Simulate
@@ -131,7 +131,7 @@ bind def
 
 % first test: explicit receptor type, should pass
 {
-  /connect_explicit_rt 
+  /connect_explicit_rt
   test_connect
 }
  pass_or_die
@@ -139,7 +139,7 @@ bind def
 % second test: implicit receptor type
 % this must raise an error, otherwise lacking receptor_type is not detected
 {
-  /connect_implicit_rt 
+  /connect_implicit_rt
   test_connect
 }
 fail_or_die
@@ -152,7 +152,7 @@ fail_or_die
 }
 fail_or_die
 
-% fourth test: connect using ConnectLayers, but with 
+% fourth test: connect using ConnectLayers, but with
 % properly configured synapse model
 {
   /connect_topo_syn
@@ -164,23 +164,23 @@ fail_or_die
 % connections with plain static_synapse
 {
   ResetKernel % need clean modeldict
-  modeldict keys 
-  { 
-    /mod Set 
+  modeldict keys
+  {
+    /mod Set
     mod GetDefaults /dflts Set
-    dflts /receptor_types known 
-    { 
+    dflts /receptor_types known
+    {
       % next condition avoids models with auto-generated
       % ports, such as iaf_cond_alpha_multisynapse
       % might be eliminated if #434 removes 0-port.
       dflts /receptor_types get cva length 0 geq
       {
-        { ResetKernel 
+        { ResetKernel
           mod Create mod Create
-          << >> /static_synapse Connect 
-        } fail_or_die 
+          << >> /static_synapse Connect
+        } fail_or_die
       } if
-    } if 
+    } if
   } forall
 }  pass_or_die % overall wrapper
 

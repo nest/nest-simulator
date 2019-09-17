@@ -150,6 +150,7 @@ install:
    - cmake --version
    - echo ${CC}
    - echo ${CXX}
+   - echo "Debugging PEP8 failures"
   
 before_script:
    # Change directory back to the NEST source code directory.

@@ -41,6 +41,37 @@ class ConnectLayersTestCase(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
 
+    def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
+        conn_spec = {
+            'rule': 'pairwise_bernoulli',
+            'p': 1.0,
+            'autapses': autapses,
+        }
+        nest.Connect(self.layer, self.layer, conn_spec)
+        conns = nest.GetConnections()
+        n_autapses = 0
+        for s, t in zip(conns.source(), conns.target()):
+            if s == t:
+                n_autapses += 1
+        self.assertEqual(n_autapses, expected_num_autapses)
+
+    def _assert_connect_layers_multapses(self, multapses):
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': 10,
+            'p': 1.0,
+            'autapses': False,
+            'multapses': multapses,
+        }
+        nest.Connect(self.layer, self.layer, conn_spec)
+        conns = nest.GetConnections()
+        conn_pairs = np.array([list(conns.source()), list(conns.target())]).T
+        num_nonunique_conns = len(conn_pairs) - len(np.unique(conn_pairs, axis=0))
+        if multapses:
+            self.assertGreater(num_nonunique_conns, 0)
+        else:
+            self.assertEqual(num_nonunique_conns, 0)
+
     def test_connect_layers_indegree(self):
         """Connecting layers with fixed_indegree."""
         conn_spec = {'rule': 'fixed_indegree', 'indegree': 2, 'p': 1.}
@@ -244,7 +275,22 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertTrue(len(np.unique(conn_delays)) > 1)
         self.assertTrue((conn_delays >= 0.5).all())
         self.assertTrue((conn_delays <= 1.0).all())
-        # TODO: Check delays agains a ref
+
+    def test_connect_layers_autapses_possible(self):
+        """Connecting layers with autapses possible"""
+        self._assert_connect_layers_autapses(True, 20)
+
+    def test_connect_layers_autapses_impossible(self):
+        """Connecting layers with autapses impossible"""
+        self._assert_connect_layers_autapses(False, 0)
+
+    def test_connect_layers_multapses_possible(self):
+        """Connecting layers with multapses possible"""
+        self._assert_connect_layers_multapses(True)
+
+    def test_connect_layers_multapses_impossible(self):
+        """Connecting layers with multapses impossible"""
+        self._assert_connect_layers_multapses(False)
 
 
 def suite():

@@ -43,17 +43,22 @@ class ConnectLayersTestCase(unittest.TestCase):
 
     def test_connect_layers_indegree(self):
         """Connecting layers with fixed_indegree."""
-        conn_spec = {'rule': 'fixed_indegree', 'indegree': 2}
+        conn_spec = {'rule': 'fixed_indegree', 'indegree': 2, 'p': 1.}
         self._check_connections(conn_spec, 40)
 
     def test_connect_layers_outdegree(self):
         """Connecting layers with fixed_outdegree."""
-        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': 2}
+        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': 2, 'p': 1.}
         self._check_connections(conn_spec, 40)
 
     def test_connect_layers_bernoulli(self):
         """Connecting layers with pairwise_bernoulli."""
-        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0}
+        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'use_on_source': False}
+        self._check_connections(conn_spec, 400)
+
+    def test_connect_layers_bernoulli_source(self):
+        """Connecting layers with pairwise_bernoulli."""
+        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'use_on_source': True}
         self._check_connections(conn_spec, 400)
 
     def test_connect_layers_indegree_mask(self):
@@ -137,14 +142,6 @@ class ConnectLayersTestCase(unittest.TestCase):
             }
         }
         self._check_connections(conn_spec, 108)
-
-    def test_connect_layers_bernoulli_kernel(self):
-        """Connecting layers with pairwise_bernoulli and kernel"""
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 0.5,
-        }
-        self._check_connections(conn_spec, 215)
 
     def test_connect_layers_bernoulli_kernel_mask(self):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""

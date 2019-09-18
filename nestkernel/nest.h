@@ -131,11 +131,9 @@ void change_subnet( const index node_gid );
 index current_subnet();
 
 ArrayDatum get_nodes( const index subnet_id,
-  const
-
- DictionaryDatum& params,
+  const DictionaryDatum& params,
   const bool include_remotes,
-  const bool                                                                                                                                          return_gids_only );
+  const bool return_gids_only );
 
 ArrayDatum get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
 

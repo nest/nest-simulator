@@ -21,13 +21,12 @@
 
 """
 Tests for basic topology hl_api functions.
-
-NOTE: These tests only test whether the code runs, it does not check
-      whether the results produced are correct.
 """
 
 import unittest
 import nest
+import numpy as np
+import matplotlib as mpl
 
 try:
     import matplotlib.pyplot as plt
@@ -50,7 +49,9 @@ class PlottingTestCase(unittest.TestCase):
                                                     edge_wrap=True))
         nest.PlotLayer(l)
 
-        self.assertTrue(True)
+        plotted_datapoints = plt.gca().collections[-1].get_offsets().data
+        reference_datapoints = nest.GetPosition(l)
+        self.assertTrue(np.allclose(plotted_datapoints, reference_datapoints))
 
     def test_PlotTargets(self):
         """Test plotting targets."""
@@ -70,7 +71,12 @@ class PlottingTestCase(unittest.TestCase):
         fig = nest.PlotTargets(l[ctr-1:ctr], l)
         fig.gca().set_title('Plain call')
 
-        self.assertTrue(True)
+        plotted_datapoints = plt.gca().collections[0].get_offsets().data
+        eps = 0.01
+        pos = np.array(nest.GetPosition(l))
+        pos_xmask = pos[np.where(pos[:, 0] > -eps)]
+        reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] < eps)][::-1]
+        self.assertTrue(np.array_equal(np.sort(plotted_datapoints, axis=0), np.sort(reference_datapoints, axis=0)))
 
     def test_PlotKernel(self):
         """Test plotting kernels."""
@@ -85,16 +91,27 @@ class PlottingTestCase(unittest.TestCase):
         nest.PlotKernel(a1, l[ctr-1], {'circular': {'radius': 1.}},
                         {'gaussian': {'sigma': 0.2}})
 
+        # This test has a more fuzzy testing criteria: Instead of checking
+        # values against a reference it checks that each of the axes
+        # contains some of the expected plotting elements.
+
+        num_circle_elements_a1 = sum([type(p) == mpl.patches.Circle for p in a1.patches])
+        self.assertGreater(num_circle_elements_a1, 2)
+
         a2 = f.add_subplot(222)
         nest.PlotKernel(a2, l[ctr-1], {'doughnut': {'inner_radius': 0.5,
                                                     'outer_radius': 0.75}})
+
+        num_circle_elements_a2 = sum([type(p) == mpl.patches.Circle for p in a2.patches])
+        self.assertGreater(num_circle_elements_a2, 2)
 
         a3 = f.add_subplot(223)
         nest.PlotKernel(a3, l[ctr-1], {'rectangular':
                                        {'lower_left': [-.5, -.5],
                                         'upper_right': [0.5, 0.5]}})
 
-        self.assertTrue(True)
+        num_circle_elements_a3 = sum([type(p) == mpl.patches.Rectangle for p in a3.patches])
+        self.assertGreater(num_circle_elements_a3, 2)
 
 
 def suite():

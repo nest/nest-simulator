@@ -47,123 +47,6 @@ __all__ = [
 ]
 
 
-def _restructure_data(result, keys):
-    """
-    Restructure output data for Connectome in get.
-
-    Parameters
-    ----------
-    result: list
-        list of status dictionaries or list (of lists) of parameter values.
-    keys: string or list of strings
-        name(s) of properties
-
-    Returns
-    -------
-    int, list or dict
-    """
-    if is_literal(keys):
-        final_result = result[0] if len(result) == 1 else list(result)
-
-    elif is_iterable(keys):
-        final_result = ({key: [val[i] for val in result]
-                         for i, key in enumerate(keys)} if len(result) != 1
-                        else {key: val[i] for val in result
-                              for i, key in enumerate(keys)})
-
-    elif keys is None:
-        final_result = ({key: [result_dict[key] for result_dict in result]
-                         for key in result[0]} if len(result) != 1
-                        else {key: result_dict[key] for result_dict in result
-                              for key in result[0]})
-    return final_result
-
-
-def _get_params_is_strings(gc, param):
-    """
-    Get parameters from nodes.
-
-    Used by GIDCollection.get()
-
-    Parameters
-    ----------
-    gc: GIDCollection
-        nodes to get values from
-    param: string or list of strings
-        string or list of string naming model properties.
-
-    Returns
-    -------
-    int, list:
-        param is a string so the value(s) is returned
-    dict:
-        param is a list of string so a dictionary is returned
-    """
-    # Single literal case
-    if is_literal(param):
-        cmd = '/{} get'.format(param)
-        sps(gc._datum)
-        try:
-            sr(cmd)
-            result = spp()
-        except kernel.NESTError:
-            result = gc.get()[param]  # If the GIDCollection is a composite.
-
-    # Array param case
-    elif is_iterable(param):
-        result = {param_name: gc.get(param_name) for param_name in param}
-
-    else:
-        raise TypeError("Params should be either a string or an iterable")
-
-    return result
-
-
-def _get_hierarchical_addressing(gc, params):
-    """
-    Get parameters from nodes, hierarchical case.
-
-    Used by GIDCollection.get()
-
-    Parameters
-    ----------
-    gc: GIDCollection
-        nodes to get values from
-    params: tuple
-        first value in the tuple should be a string, second can be a string
-        or a list of string.
-        The first value corresponds to the path into the hierarchical structure
-        while the second value corresponds to the name(s) of the desired
-        properties.
-
-    Returns
-    -------
-    int, list:
-        params[-1] is a string so the value(s) is returned
-    dict:
-        params[-1] is a list of string so a dictionary is returned
-    """
-
-    # Right now, NEST only allows get(arg0, arg1) for hierarchical
-    # addressing, where arg0 must be a string and arg1 can be string
-    # or list of strings.
-    if is_literal(params[0]):
-        value_list = gc.get(params[0])
-        if type(value_list) != tuple:
-            value_list = (value_list,)
-    else:
-        raise TypeError('First argument must be a string, specifying' +
-                        ' path into hierarchical dictionary')
-
-    result = _restructure_data(value_list, None)
-
-    if is_literal(params[-1]):
-        result = result[params[-1]]
-    else:
-        result = {key: result[key] for key in params[-1]}
-    return result
-
-
 def CreateParameter(parametertype, specs):
     """
     Create a parameter.
@@ -463,10 +346,10 @@ class GIDCollection(object):
             result = sli_func('get', self._datum)
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
-            result = _get_params_is_strings(self, params[0])
+            result = get_parameters(self, params[0])
         else:
             # Hierarchical addressing
-            result = _get_hierarchical_addressing(self, params)
+            result = get_parameters_hierarchical_addressing(self, params)
 
         if pandas_output:
             index = self.get('global_id')
@@ -757,7 +640,7 @@ class Connectome(object):
         result = spp()
 
         # Need to restructure the data.
-        final_result = _restructure_data(result, keys)
+        final_result = restructure_data(result, keys)
 
         if pandas_output:
             index = (self.get('source') if self.__len__() > 1 else

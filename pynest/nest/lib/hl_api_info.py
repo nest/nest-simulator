@@ -35,10 +35,12 @@ __all__ = [
     'authors',
     'get_argv',
     'GetStatus',
+    'get_verbosity',
     'help',
     'helpdesk',
     'message',
     'SetStatus',
+    'set_verbosity',
     'sysinfo',
     'version',
 ]
@@ -201,6 +203,48 @@ def message(level, sender, text):
     sps(sender)
     sps(text)
     sr('message')
+
+
+@check_stack
+def get_verbosity():
+    """Return verbosity level of NEST's messages.
+
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
+
+    Returns
+    -------
+    int:
+        The current verbosity level
+    """
+
+    sr('verbosity')
+    return spp()
+
+
+@check_stack
+def set_verbosity(level):
+    """Change verbosity level for NEST's messages.
+
+    M_ALL=0,  display all messages
+    M_INFO=10, display information messages and above
+    M_DEPRECATED=18, display deprecation warnings and above
+    M_WARNING=20, display warning messages and above
+    M_ERROR=30, display error messages and above
+    M_FATAL=40, display failure messages and above
+
+    Parameters
+    ----------
+    level : str
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
+        'M_INFO' or 'M_ALL'.
+    """
+
+    sr("{} setverbosity".format(level))
 
 
 @check_stack

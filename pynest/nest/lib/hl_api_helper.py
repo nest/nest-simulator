@@ -45,7 +45,6 @@ __all__ = [
     'deprecated',
     'get_help_filepath',
     'get_unistring_type',
-    'get_verbosity',
     'get_wrapped_text',
     'is_coercible_to_sli_array',
     'is_iterable',
@@ -56,7 +55,6 @@ __all__ = [
     'load_help',
     'model_deprecation_warning',
     'serializable',
-    'set_verbosity',
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
@@ -507,52 +505,6 @@ def show_help_with_pager(hlpobj, pager=None):
               'in your home directory.'.format(pager))
 
 
-@check_stack
-def get_verbosity():
-    """Return verbosity level of NEST's messages.
-
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
-
-    Returns
-    -------
-    int:
-        The current verbosity level
-    """
-
-    # Defined in hl_api_helper to avoid circular inclusion problem with
-    # hl_api_info.py
-    sr('verbosity')
-    return spp()
-
-
-@check_stack
-def set_verbosity(level):
-    """Change verbosity level for NEST's messages.
-
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
-
-    Parameters
-    ----------
-    level : str
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
-        'M_INFO' or 'M_ALL'.
-    """
-
-    # Defined in hl_api_helper to avoid circular inclusion problem with
-    # hl_api_info.py
-    sr("{} setverbosity".format(level))
-
-
 def model_deprecation_warning(model):
     """Checks whether the model is to be removed in a future verstion of NEST.
     If so, a deprecation warning is issued.
@@ -646,7 +598,8 @@ class SuppressedDeprecationWarning(object):
         self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
                               else (no_dep_funcs, ))
         self._deprecation_status = {}
-        self._verbosity_level = get_verbosity()
+        sr('verbosity') # Use sli-version as we cannon import from info because of cirular inclusion problem
+        self._verbosity_level = spp()
 
     def __enter__(self):
 
@@ -656,12 +609,13 @@ class SuppressedDeprecationWarning(object):
 
             # Suppress only if verbosity level is deprecated or lower
             if self._verbosity_level <= sli_func('M_DEPRECATED'):
-                set_verbosity(sli_func('M_WARNING'))
+                # Use sli-version as we cannon import from info because of cirular inclusion problem
+                sr("{} setverbosity".format(sli_func('M_WARNING')))
 
     def __exit__(self, *args):
 
         # Reset the verbosity level and deprecation warning status
-        set_verbosity(self._verbosity_level)
+        sr("{} setverbosity".format((self._verbosity_level)))
 
         for func_name, deprec_dict in self._deprecation_status.items():
             _deprecation_warning[func_name]['deprecation_issued'] = (

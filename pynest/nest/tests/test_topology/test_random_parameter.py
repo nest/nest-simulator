@@ -20,122 +20,77 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for random topology parameter distributions. This is an implementation
-of the Kolmogorov-Smirnov test [1] to check that the distribution of weights
-fits the expected distribution to level alpha=0.05 when using random
-parameters. Also serves as a regression test for ticket #687.
-
-[1] http://www.itl.nist.gov/div898/handbook/eda/section3/eda35g.htm
+Tests of random Parameter distributions, using the Kolmogorov-Smirnov test.
 """
 
 import unittest
 import nest
-
-from math import sqrt
+import numpy as np
 
 try:
-    import numpy
-
-    HAVE_NUMPY = True
+    import scipy.stats
+    HAVE_SCIPY = True
 except ImportError:
-    HAVE_NUMPY = False
-try:
-    from math import erf
-
-    HAVE_ERF = True
-except ImportError:
-    HAVE_ERF = False
+    HAVE_SCIPY = False
 
 
-@unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
+@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
 class RandomParameterTestCase(unittest.TestCase):
-    def kolmogorov_smirnov(self, weight_param, expected_cdf_func):
+    def ks_assert(self, param, cdf, cdf_args):
         """
-        Create connections with given distribution of weights and test that it
-        fits the given expected cumulative distribution using K-S.
+        Test that the given Parameter distribution fits with the expected
+        cumulative distribution using K-S.
         """
-
-        # n = shape[0] * shape[1] * Nconn
-        shape = [10, 10]
-        Nconn = 100
-
-        nest.ResetKernel()
-
-        # Create layer and connect with given weight distribution
-        layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(shape=shape))
-        nest.Connect(layer, layer,
-                     {'rule': 'fixed_indegree', 'indegree': Nconn},
-                     {'weight': weight_param})
-
-        # Get connection weights and sort
-        connectome = nest.GetConnections()
-        weights = numpy.array(connectome.get('weight'))
-        weights.sort()
-        n = len(weights)
-
-        # The observed (empirical) cdf is simply i/n for weights[i]
-        observed_cdf = numpy.arange(n + 1, dtype=float) / n
-        expected_cdf = expected_cdf_func(weights)
-
-        D = max(numpy.abs(expected_cdf - observed_cdf[:-1]).max(),
-                numpy.abs(expected_cdf - observed_cdf[1:]).max())
-
-        # Code to find Kalpha corresponding to level alpha:
-        # alpha = 0.05
-        # import scipy.optimize,scipy.stats
-        # Kalpha = scipy.optimize.fmin(lambda x:
-        #                              abs(alpha-scipy.stats.ksprob(x)), 1)[0]
-        Kalpha = 1.3581054687500012
-
-        self.assertTrue(sqrt(n) * D < Kalpha)
+        p_val_lim = 0.1
+        param_values = [param.GetValue() for _ in range(100)]
+        d, p_val = scipy.stats.kstest(param_values, cdf, args=cdf_args)
+        self.assertGreater(p_val, p_val_lim)
 
     def test_uniform(self):
-        """Test uniform distribution of weights."""
-
+        """Test uniform distribution Parameter"""
         w_min = -1.3
         w_max = 2.7
 
-        weight_param = nest.random.uniform(min=w_min, max=w_max)
+        cdf = 'uniform'
+        cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
+        param = nest.random.uniform(min=w_min, max=w_max)
 
-        def uniform_cdf_func(w):
-            return ((w > w_min) * (w < w_max) *
-                    ((w - w_min) / (w_max - w_min)) + (w >= w_max) * 1.0)
+        self.ks_assert(param, cdf, cdf_args)
 
-        self.kolmogorov_smirnov(weight_param, uniform_cdf_func)
-
-    @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_normal(self):
-        """Test normal distribution of weights."""
-
+        """Test normal distribution Parameter"""
         mean = 2.3
         sigma = 1.7
 
-        weight_param = nest.random.normal(loc=mean, scale=sigma)
+        cdf = 'norm'
+        cdf_args = (mean, sigma)
+        param = nest.random.normal(loc=mean, scale=sigma)
 
-        numpy_erf = numpy.vectorize(erf)
+        self.ks_assert(param, cdf, cdf_args)
 
-        def normal_cdf_func(w):
-            return 0.5 * (1.0 + numpy_erf((w - mean) / sqrt(2) / sigma))
-
-        self.kolmogorov_smirnov(weight_param, normal_cdf_func)
-
-    @unittest.skipIf(not HAVE_ERF, 'Python function math.erf is not available')
     def test_lognormal(self):
-        """Test lognormal distribution of weights."""
-
-        mu = 1.7
+        """Test lognormal distribution Parameter"""
+        loc = 0.  # Only for SciPy distribution
         sigma = 0.9
+        mu = 1.7
+        scale = np.exp(mu)
 
-        weight_param = nest.random.lognormal(mean=mu, sigma=sigma)
+        cdf = 'lognorm'
+        cdf_args = (sigma, loc, scale)
+        param = nest.random.lognormal(mu=mu, sigma=sigma)
 
-        numpy_erf = numpy.vectorize(erf)
+        self.ks_assert(param, cdf, cdf_args)
 
-        def lognormal_cdf_func(w):
-            return 0.5 * (1.0 +
-                          numpy_erf((numpy.log(w) - mu) / sqrt(2) / sigma))
+    def test_exponential(self):
+        """Test exponential distribution Parameter"""
+        loc = 0.0  # Only for SciPy distribution
+        scale = 1.0
 
-        self.kolmogorov_smirnov(weight_param, lognormal_cdf_func)
+        cdf = 'expon'
+        cdf_args = (loc, scale)
+        param = nest.random.exponential(scale=scale)
+
+        self.ks_assert(param, cdf, cdf_args)
 
 
 def suite():

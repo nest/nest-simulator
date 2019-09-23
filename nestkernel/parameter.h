@@ -437,43 +437,37 @@ public:
    * Parameters:
    * dimension - Dimension from which to get the position value of the node.
    *             0: x, 1: y, 2: z.
-   * type_id - If specified, specifies if the position should be taken from the
-   *           presynaptic or postsynaptic node in a connection.
-   *           0: unspecified, 1: presynaptic, 2: postsynaptic.
+   * synaptic_endpoint - If specified, specifies if the position should be taken
+   *                     from the presynaptic or postsynaptic node in a connection.
+   *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
   NodePosParameter( const DictionaryDatum& d )
     : Parameter( d )
     , dimension_( 0 )
-    , node_location_( 0 )
+    , synaptic_endpoint_( 0 )
   {
     bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
     if ( not dimension_specified )
     {
-      throw BadParameterValue(
-        "Dimension must be specified when creating a node position "
-        "parameter." );
+      throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
     }
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    updateValue< long >( d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
-    if ( node_location_ < 0 or 2 < node_location_ )
+    updateValue< long >( d, names::synaptic_endpoint, synaptic_endpoint_ );
+    if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
-      throw BadParameterValue(
-        "Node location must either be unspecified (0), source (1) or target "
-        "(2)" );
+      throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* node ) const
   {
-    if ( node_location_ != 0 )
+    if ( synaptic_endpoint_ != 0 )
     {
-      throw BadParameterValue(
-        "Source or target position parameter can only be used when "
-        "connecting." );
+      throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
     }
     return get_node_pos_( rng, node );
   }
@@ -481,7 +475,7 @@ public:
   double
   value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
-    switch ( node_location_ )
+    switch ( synaptic_endpoint_ )
     {
     case 0:
       throw BadParameterValue( "Node position parameter cannot be used when connecting." );
@@ -493,8 +487,7 @@ public:
     case 2:
       return get_node_pos_( rng, target );
     }
-    // TODO: assert that we don't get here
-    throw KernelException( "Wrong node_location_." );
+    throw KernelException( "Wrong synaptic_endpoint_." );
   }
 
   double
@@ -503,7 +496,7 @@ public:
     const std::vector< double >& target_pos,
     const std::vector< double >& displacement ) const
   {
-    switch ( node_location_ )
+    switch ( synaptic_endpoint_ )
     {
     case 0:
       throw BadParameterValue( "Node position parameter cannot be used when connecting." );
@@ -514,7 +507,7 @@ public:
     case 2:
       return target_pos[ dimension_ ];
     }
-    throw KernelException( "Wrong node_location_." );
+    throw KernelException( "Wrong synaptic_endpoint_." );
   }
 
   Parameter*
@@ -525,7 +518,7 @@ public:
 
 private:
   int dimension_;
-  int node_location_;
+  int synaptic_endpoint_;
 
   double get_node_pos_( librandom::RngPtr& rng, Node* node ) const;
 };
@@ -1570,15 +1563,17 @@ protected:
 };
 
 
-/** TODO: doc
- * Parameter class representing .
+/**
+ * Position generating Parameter class. One Parameter per dimension is
+ * stored. When getting a position vector, a value for each dimension is
+ * generated from their respective Parameters.
  */
 class DimensionParameter : public Parameter
 {
 public:
   /**
-   * Construct the exponential of the given parameter. A copy is made of the
-   * supplied Parameter object.
+   * Construct the Parameter with one given Parameter per dimension. A
+   * copy is made of the supplied Parameter objects.
    */
   DimensionParameter( const Parameter& px, const Parameter& py )
     : num_dimensions_( 2 )
@@ -1618,7 +1613,7 @@ public:
   }
 
   /**
-   * @returns the value of the parameter.
+   * The DimensionParameter has no double value, so this method will always throw.
    */
   double
   value( librandom::RngPtr& rng, Node* node ) const
@@ -1632,6 +1627,9 @@ public:
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
+  /**
+   * @returns The position, given as an array.
+   */
   std::vector< double >
   get_values( librandom::RngPtr& rng )
   {

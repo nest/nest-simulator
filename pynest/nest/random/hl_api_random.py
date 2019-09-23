@@ -51,9 +51,8 @@ def exponential(scale=1.0):
     return CreateParameter('exponential', {'scale': scale})
 
 
-def lognormal(mean=0.0, sigma=1.0, min=None, max=None):
-    # TODO: mean not the same as mu?
-    parameters = {'mu': mean, 'sigma': sigma}
+def lognormal(mu=0.0, sigma=1.0, min=None, max=None):
+    parameters = {'mu': mu, 'sigma': sigma}
     if min:
         parameters.update({'min': min})
     if max:

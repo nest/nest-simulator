@@ -102,7 +102,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with random.lognormal as parameter"""
         nodes = nest.Create('iaf_psc_alpha', 3,
                             {'V_m': nest.random.lognormal(
-                                mean=10., sigma=20.)})
+                                mu=10., sigma=20.)})
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, 0.)
 

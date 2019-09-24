@@ -237,8 +237,13 @@ double
 RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
 {
   double value;
+  size_t num_redraws = 0;
   do
   {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
     value = p_->value( rng, sgid, target, target_thread );
   } while ( value < min_ or value > max_ );
   return value;
@@ -251,8 +256,13 @@ RedrawParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& displacement ) const
 {
   double value;
+  size_t num_redraws = 0;
   do
   {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
     value = p_->value( rng, source_pos, target_pos, displacement );
   } while ( value < min_ or value > max_ );
 

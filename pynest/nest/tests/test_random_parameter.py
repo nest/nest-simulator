@@ -41,7 +41,7 @@ class RandomParameterTestCase(unittest.TestCase):
         Test that the given Parameter distribution fits with the expected
         cumulative distribution using K-S.
         """
-        p_val_lim = 0.1
+        p_val_lim = 0.05
         param_values = [param.GetValue() for _ in range(100)]
         d, p_val = scipy.stats.kstest(param_values, cdf, args=cdf_args)
         self.assertGreater(p_val, p_val_lim)

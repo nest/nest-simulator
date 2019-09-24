@@ -43,21 +43,20 @@ namespace nest
 {
 
 /**
- * Abstract base class for parameters
+ * Abstract base class for parameters.
  */
 class Parameter
 {
 public:
   /**
-   * Default constructor
+   * Creates an Parameter with default values.
    */
   Parameter()
   {
   }
 
   /**
-   * Constructor
-   * Parameter that can be set in the Dictionary:
+   * Creates a Parameter with values specified in a dictionary.
    * @param d dictionary with parameter values
    */
   Parameter( const DictionaryDatum& d )
@@ -72,6 +71,8 @@ public:
   }
 
   /**
+   * Generates a value based on parameter specifications and arguments.
+   * Note that not all parameters support all overloaded versions.
    * @returns the value of the parameter.
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
@@ -91,7 +92,7 @@ public:
   }
 
   /**
-   * Clone method.
+   * Create a copy of the parameter.
    * @returns dynamically allocated copy of parameter object
    */
   virtual Parameter* clone() const = 0;
@@ -166,7 +167,7 @@ public:
   virtual Parameter* pow( const double exponent ) const;
 
   /**
-   * Create TODO
+   * Create a parameter that can generate position vectors from a given set of parameters.
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
@@ -223,7 +224,7 @@ private:
 
 
 /**
- * Random parameter with uniform distribution in [min,max)
+ * Random parameter with uniform distribution in [min,max).
  */
 class UniformParameter : public Parameter
 {
@@ -394,7 +395,7 @@ private:
 
 
 /**
- * Exponential parameter.
+ * Random parameter with exponential distribution.
  */
 class ExponentialParameter : public Parameter
 {
@@ -525,7 +526,7 @@ private:
 
 
 /**
- * Node distance parameter.
+ * Parameter representing the spatial distance between two nodes, optionally in a specific dimension.
  */
 class SpatialDistanceParameter : public Parameter
 {
@@ -567,7 +568,7 @@ private:
 
 
 /**
- * Parameter class representing the product of two parameters
+ * Parameter class representing the product of two parameters.
  */
 class ProductParameter : public Parameter
 {
@@ -636,13 +637,13 @@ protected:
 };
 
 /**
- * Parameter class representing the quotient of two parameters
+ * Parameter class representing the quotient of two parameters.
  */
 class QuotientParameter : public Parameter
 {
 public:
   /**
-   * Construct the quotient of the two given parameters. Copies are made
+   * Construct the quotient of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   QuotientParameter( const Parameter& m1, const Parameter& m2 )
@@ -711,7 +712,7 @@ class SumParameter : public Parameter
 {
 public:
   /**
-   * Construct the sum of the two given parameters. Copies are made
+   * Construct the sum of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   SumParameter( const Parameter& m1, const Parameter& m2 )
@@ -780,7 +781,7 @@ class DifferenceParameter : public Parameter
 {
 public:
   /**
-   * Construct the difference of the two given parameters. Copies are made
+   * Construct the difference of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   DifferenceParameter( const Parameter& m1, const Parameter& m2 )
@@ -1564,7 +1565,7 @@ protected:
 
 
 /**
- * Position generating Parameter class. One Parameter per dimension is
+ * Position-generating Parameter class. One Parameter per dimension is
  * stored. When getting a position vector, a value for each dimension is
  * generated from their respective Parameters.
  */
@@ -1628,6 +1629,7 @@ public:
   }
 
   /**
+   * Generates a position with values for each dimension generated from their respective parameters.
    * @returns The position, given as an array.
    */
   std::vector< double >

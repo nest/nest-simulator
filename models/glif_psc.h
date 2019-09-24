@@ -34,29 +34,31 @@
 
 /* BeginDocumentation
 Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF)
-models
+model
 
 Description:
 
-glif_psc is implementations of five generalized leaky integrate and
-fire (GLIF) models [1] with alpha-function shaped synaptic currents.
+glif_psc provides five generalized leaky integrate-and-fire
+(GLIF) models [1] with alpha-function shaped synaptic currents.
 Incoming spike events induce a post-synaptic change of current modeled
 by an alpha function. The alpha function is normalized such that an event of
-weight 1.0 results in a peak current of 1 pA at t = tau_syn. On the postsynapic
-side, there can be arbitrarily many synaptic time constants. This can be reached
-by specifying separate receptor ports, each for a different time constant.
-The port number has to match the respective "receptor_type" in the connectors.
+weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
+glif_psc has a single synapse that is accessible through receptor_port 1.
+An arbitrary number of synapses with different time constants can be
+configured by setting the desired time constants as tau_syn array.
+The resulting synapses are addressed through receptor_port 1, 2, 3, ....
 
 The five GLIF models are
 
-GLIF model 1 - Traditional leaky integrate and fire (LIF) model,
-GLIF model 2 - Leaky integrate and fire with biologically defined reset rules
-               model,
-GLIF model 3 - Leaky integrate and fire with after-spike currents model,
-GLIF model 4 - Leaky integrate and fire with biologically defined reset rules
-               and after-spike currents model,
-GLIF model 5 - Leaky integrate and fire with biologically defined reset rules,
-               after-spike currents and a voltage dependent threshold model.
+GLIF Model 1 - Traditional leaky integrate and fire (LIF) model,
+GLIF Model 2 - Leaky integrate and fire with biologically defined reset rules
+               (LIF_R) model,
+GLIF Model 3 - Leaky integrate and fire with after-spike currents (LIF_ASC) model,
+GLIF Model 4 - Leaky integrate and fire with biologically defined reset rules
+               and after-spike currents (LIF_R_ASC) model,
+GLIF Model 5 - Leaky integrate and fire with biologically defined reset rules,
+               after-spike currents and a voltage dependent threshold
+               (LIF_R_ASC_A) model.
 
 Parameters:
 
@@ -69,31 +71,63 @@ E_L        double - Resting membrane potential in mV.
 C_m        double - Capacitance of the membrane in pF.
 t_ref      double - Duration of refractory time in ms.
 V_reset    double - Reset potential of the membrane in mV (glif 1-3).
-a_spike    double - Threshold addition following spike in mV.
-b_spike    double - Spike-induced threshold time constant in 1/ms.
-a_reset    double - Voltage fraction coefficient following spike.
-b_reset    double - Voltage addition following spike in mV.
-asc_init   double vector - Initial values of after-spike currents in pA.
-k          double vector - After-spike current time constants in 1/ms
-                           (kj in Equation (3) in [1]).
-asc_amps   double vector - After-spike current amplitudes in pA
-                           (deltaIj in Equation (7) in [1]).
-r          double vector - Current fraction following spike coefficients
-                           (fj in Equation (7) in [1]).
-a_voltage  double - Adaptation index of threshold - A 'leak-conductance'
-                    for the voltage-dependent component of the threshold
-                    in 1/ms (av in Equation (4) in [1]).
-b_voltage  double - Voltage-induced threshold time constant - Inverse of which
-                    is the time constant of the voltage-dependent component
-                    of the threshold in 1/ms (bv in Equation (4) in [1]).
-tau_syn    double vector - Rise time constants of the synaptic alpha function
-                           in ms.
-glif_model string - glif model type:
-                    "lif"/"glif_lif"/"1" - GLIF model 1,
-                    "lif_r"/"glif_lif_r"/"2" - GLIF model 2,
-                    "lif_asc"/"glif_lif_asc"/"3" - GLIF model 3,
-                    "lif_r_asc"/"glif_lif_r_asc"/"4" - GLIF model 4, or
-                    "lif_r_asc_a"/"glif_lif_r_asc_a"/"5" - GLIF model 5.
+th_spike_add           double - Threshold addition following spike in mV
+                                (delta_theta_s in Equation (6) in [1]).
+th_spike_decay         double - Spike-induced threshold time constant in 1/ms
+                                (bs in Equation (2) in [1]).
+voltage_reset_fraction double - Voltage fraction coefficient following spike
+                                (fv in Equation (5) in [1]).
+voltage_reset_add      double - Voltage addition following spike in mV.
+                                (-delta_V (sign flipped) in Equation (5) in [1])
+asc_init         double vector - Initial values of after-spike currents in pA.
+asc_decay        double vector - After-spike current time constants in 1/ms
+                                 (kj in Equation (3) in [1]).
+asc_amps         double vector - After-spike current amplitudes in pA
+                                 (deltaIj in Equation (7) in [1]).
+asc_r            double vector - Current fraction following spike coefficients
+                                 for fj in Equation (7) in [1].
+th_voltage_index double - Adaptation index of threshold - A 'leak-conductance'
+                          for the voltage-dependent component of the threshold
+                          in 1/ms (av in Equation (4) in [1]).
+th_voltage_decay double - Voltage-induced threshold time constant - Inverse of which
+                          is the time constant of the voltage-dependent component
+                          of the threshold in 1/ms (bv in Equation (4) in [1]).
+tau_syn          double vector - Rise time constants of the synaptic alpha function
+                                 in ms.
+spike_dependent_threshold bool - flag whether the neuron has biologically defined
+                                 reset rules with a spike dependent threshold component.
+after_spike_currents      bool - flag whether the neuron has after spike currents.
+adapting_threshold        bool - flag whether the neuron has a voltage dependent
+                                 threshold component.
+
+Remarks:
+
+GLIF model mechanism setting is based on three parameters
+(spike_dependent_threshold, after_spike_currents, adapting_threshold).
+The settings of these three parameters for the five GLIF models are list below.
+Other combinations of these parameters will not be supported.
+GLIF Model 1 - (False, False, False),
+GLIF Model 2 - (True, False, False),
+GLIF Model 3 - (False, True, False),
+GLIF Model 4 - (True, True, False),
+GLIF Model 5 - (True, True, True).
+
+Typical parameter setting of different levels of GLIF models for different cells
+can be found and downloaded in the Allen Cell Type Database (celltypes.brain-map.org).
+For example, the default parameter setting of glif_psc neuron model was from
+the parameter values of GLIF Model 5 of Cell 490626718, which can be retrieved from
+<https://celltypes.brain-map.org/mouse/experiment/electrophysiology/490626718>,
+with units being converted from SI units (i.e., V, S (1/Ohm), F, s, A) to
+NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values being rounded to
+appropriate digits for simplification.
+
+For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
+parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the
+situation that voltage is bigger than threshold after reset. In this case, the neuron
+will continue spike until the end of the simulation regardless the stimulated inputs.
+We recommend the setting of the parameters of these three models to follow the
+condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
+< (V_th + th_spike_add).
 
 References:
 [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
@@ -130,23 +164,6 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  typedef std::string model_type;
-  std::map< std::string, long > model_type_lu = { { "lif", 1 },
-    { "glif_lif", 1 },
-    { "1", 1 },
-    { "lif_r", 2 },
-    { "glif_lif_r", 2 },
-    { "2", 2 },
-    { "lif_asc", 3 },
-    { "glif_lif_asc", 3 },
-    { "3", 3 },
-    { "lif_r_asc", 4 },
-    { "glif_lif_r_asc", 4 },
-    { "4", 4 },
-    { "lif_r_asc_a", 5 },
-    { "glif_lif_r_asc_a", 5 },
-    { "5", 5 } };
-
 private:
   //! Reset parameters and state of neuron.
 
@@ -166,33 +183,39 @@ private:
   friend class nest::RecordablesMap< glif_psc >;
   friend class nest::UniversalDataLogger< glif_psc >;
 
-
   struct Parameters_
   {
-    double G_;               // membrane conductance in nS
-    double E_L_;             // resting potential in mV
-    double th_inf_;          // infinity threshold in mV
-    double C_m_;             // capacitance in pF
-    double t_ref_;           // refractory time in ms
-    double V_reset_;         // Membrane voltage following spike in mV
-    double a_spike_;         // threshold additive constant following reset in mV
-    double b_spike_;         // spike induced threshold in 1/ms
-    double voltage_reset_a_; // voltage fraction following reset coefficient
-    double voltage_reset_b_; // voltage additive constant following reset in mV
-    double a_voltage_;       // a 'leak-conductance' for the voltage-dependent
-                             // component of the threshold in 1/ms
-    double b_voltage_;       // inverse of which is the time constant of the
-    // voltage-dependent component of the threshold in 1/ms
-    std::vector< double > asc_init_; // initial values of ASCurrents_ in pA
-    std::vector< double > k_;        // predefined time scale in 1/ms
-    std::vector< double > asc_amps_; // in pA
-    std::vector< double > r_;        // coefficient
-    std::vector< double > tau_syn_;  // synaptic port time constants in ms
+    double G_;                        //!< membrane conductance in nS
+    double E_L_;                      //!< resting potential in mV
+    double th_inf_;                   //!< infinity threshold in mV
+    double C_m_;                      //!< capacitance in pF
+    double t_ref_;                    //!< refractory time in ms
+    double V_reset_;                  //!< Membrane voltage following spike in mV
+    double th_spike_add_;             //!< threshold additive constant following reset in mV
+    double th_spike_decay_;           //!< spike induced threshold in 1/ms
+    double voltage_reset_fraction_;   //!< voltage fraction following reset coefficient
+    double voltage_reset_add_;        //!< voltage additive constant following reset in mV
+    double th_voltage_index_;         //!< a 'leak-conductance' for the voltage-dependent
+                                      //!< component of the threshold in 1/ms
+    double th_voltage_decay_;         //!< inverse of which is the time constant of the
+                                      //!< voltage-dependent component of the threshold in 1/ms
+    std::vector< double > asc_init_;  //!< initial values of ASCurrents_ in pA
+    std::vector< double > asc_decay_; //!< predefined time scale in 1/ms
+    std::vector< double > asc_amps_;  //!< in pA
+    std::vector< double > asc_r_;     //!< coefficient
+    std::vector< double > tau_syn_;   //!< synaptic port time constants in ms
 
-    // boolean flag which indicates whether the neuron has connections
+    //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    model_type glif_model_;
+    //! boolean flag which indicates whether the neuron has spike dependent threshold component
+    bool has_theta_spike_;
+
+    //! boolean flag which indicates whether the neuron has after spike currents
+    bool has_asc_;
+
+    //! boolean flag which indicates whether the neuron has voltage dependent threshold component
+    bool has_theta_voltage_;
 
     size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
@@ -202,18 +225,19 @@ private:
     double set( const DictionaryDatum& );
   };
 
-
   struct State_
   {
-    double U_;                         // relative membrane potential in mV
-    std::vector< double > ASCurrents_; // after-spike currents in pA
-    double ASCurrents_sum_;            // in pA
-    double threshold_;                 // voltage threshold in mV
-
-    double I_;                 // external current in pA
-    double I_syn_;             // post synaptic current in pA
-    std::vector< double > y1_; // synapse current evolution state 1 in pA
-    std::vector< double > y2_; // synapse current evolution state 2 in pA
+    double U_;                         //!< relative membrane potential in mV
+    double ASCurrents_sum_;            //!< in pA
+    double threshold_;                 //!< total threshold in mV
+    double threshold_spike_;           //!< spike component of threshold in mV
+    double threshold_voltage_;         //!< voltage component of threshold in mV
+    double I_;                         //!< external current in pA
+    double I_syn_;                     //!< post synaptic current in pA
+    std::vector< double > ASCurrents_; //!< after-spike currents in pA
+    std::vector< double > y1_;         //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_;         //!< synapse current evolution state 2 in pA
+    int refractory_steps_;             //!< Number of refractory steps remaining
 
     State_( const Parameters_& );
 
@@ -236,26 +260,29 @@ private:
 
   struct Variables_
   {
-    double t_ref_remaining_; // counter during refractory period, in ms
-    double t_ref_total_;     // total time of refractory period, in ms
-    double last_spike_;      // threshold spike component in mV
-    double last_voltage_;    // threshold voltage component in mV
+    int RefractoryCounts_;                             //!< counter during refractory period
+    double theta_spike_decay_rate_;                    //!< threshold spike component decay rate
+    double theta_spike_refractory_decay_rate_;         //!< threshold spike component decay rate during refractory
+    double theta_voltage_decay_rate_inverse_;          //!< inverse of threshold voltage component decay rate
+    double potential_decay_rate_;                      //!< membrane potential decay rate
+    double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
+    std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
+    std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
+    double phi;                                        //!< threshold voltage component coefficient
 
-    std::vector< double > P11_; // synaptic current evolution parameter
-    std::vector< double > P21_; // synaptic current evolution parameter
-    std::vector< double > P22_; // synaptic current evolution parameter
-    double P30_;                // membrane current/voltage evolution parameter
-    double P33_;                // membrane voltage evolution parameter
-    std::vector< double > P31_; // synaptic/membrane current evolution parameter
-    std::vector< double > P32_; // synaptic/membrane current evolution parameter
+    std::vector< double > P11_; //!< synaptic current evolution parameter
+    std::vector< double > P21_; //!< synaptic current evolution parameter
+    std::vector< double > P22_; //!< synaptic current evolution parameter
+    double P30_;                //!< membrane current/voltage evolution parameter
+    double P33_;                //!< membrane voltage evolution parameter
+    std::vector< double > P31_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_; //!< synaptic/membrane current evolution parameter
 
     /** Amplitude of the synaptic current.
               This value is chosen such that a post-synaptic current with
               weight one has an amplitude of 1 pA.
     */
     std::vector< double > PSCInitialValues_;
-
-    unsigned int receptor_types_size_;
   };
 
   double
@@ -267,8 +294,13 @@ private:
   double
   get_ASCurrents_sum_() const
   {
-    // return S_.ASCurrents_[ 0 ];
     return S_.ASCurrents_sum_;
+  }
+
+  double
+  get_I_() const
+  {
+    return S_.I_;
   }
 
   double
@@ -277,12 +309,30 @@ private:
     return S_.I_syn_;
   }
 
+  double
+  get_threshold_() const
+  {
+    return S_.threshold_ + P_.E_L_;
+  }
+
+  double
+  get_threshold_spike_() const
+  {
+    return S_.threshold_spike_;
+  }
+
+  double
+  get_threshold_voltage_() const
+  {
+    return S_.threshold_voltage_;
+  }
+
   Parameters_ P_;
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
 
-  // Mapping of recordables names to access functions
+  //! Mapping of recordables names to access functions
   static nest::RecordablesMap< glif_psc > recordablesMap_;
 };
 

@@ -23,8 +23,8 @@
 #include "glif_psc.h"
 
 // C++ includes:
-#include <limits>
 #include <iostream>
+#include <limits>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -33,8 +33,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "universal_data_logger_impl.h"
 #include "name.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -57,7 +57,11 @@ RecordablesMap< nest::glif_psc >::create()
 {
   insert_( names::V_m, &nest::glif_psc::get_V_m_ );
   insert_( names::ASCurrents_sum, &nest::glif_psc::get_ASCurrents_sum_ );
+  insert_( names::I, &nest::glif_psc::get_I_ );
   insert_( names::I_syn, &nest::glif_psc::get_I_syn_ );
+  insert_( names::threshold, &nest::glif_psc::get_threshold_ );
+  insert_( names::threshold_spike, &nest::glif_psc::get_threshold_spike_ );
+  insert_( names::threshold_voltage, &nest::glif_psc::get_threshold_voltage_ );
 }
 }
 
@@ -66,33 +70,38 @@ RecordablesMap< nest::glif_psc >::create()
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::Parameters_::Parameters_()
-  : G_( 9.43 )                                           // in nS
-  , E_L_( -78.85 )                                       // in mV
-  , th_inf_( 27.17 )                                     // in mv, rel to E_L_, 51.68 - E_L_
-  , C_m_( 58.72 )                                        // in pF
-  , t_ref_( 3.75 )                                       // in ms
-  , V_reset_( 0.0 )                                      // in mV, rel to E_L_, -78.85 - E_L_
-  , a_spike_( 0.37 )                                     // in mV
-  , b_spike_( 0.009 )                                    // in 1/ms
-  , voltage_reset_a_( 0.20 )                             // deterministic
-  , voltage_reset_b_( 18.51 )                            // in mV
-  , a_voltage_( 0.005 )                                  // in 1/ms
-  , b_voltage_( 0.09 )                                   // in 1/ms
+  : G_( 9.43 )               // in nS
+  , E_L_( -78.85 )           // in mV
+  , th_inf_( -51.68 - E_L_ ) // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
+  , C_m_( 58.72 )            // in pF
+  , t_ref_( 3.75 )           // in ms
+  , V_reset_( 0.0 )          // in mV, rel to E_L_, -78.85 - E_L_
+  , th_spike_add_( 0.37 )    // in mV
+  , th_spike_decay_( 0.009 ) // in 1/ms
+  , voltage_reset_fraction_( 0.20 )
+  , voltage_reset_add_( 18.51 )                          // in mV
+  , th_voltage_index_( 0.005 )                           // in 1/ms
+  , th_voltage_decay_( 0.09 )                            // in 1/ms
   , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
-  , k_( std::vector< double >{ 0.003, 0.1 } )            // in 1/ms
+  , asc_decay_( std::vector< double >{ 0.003, 0.1 } )    // in 1/ms
   , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
-  , r_( std::vector< double >( 2, 1.0 ) )                // deterministic
-  , tau_syn_( 1, 2.0 )                                   // ms
+  , asc_r_( std::vector< double >( 2, 1.0 ) )
+  , tau_syn_( 1, 2.0 ) // in ms
   , has_connections_( false )
-  , glif_model_( "lif" )
+  , has_theta_spike_( false )
+  , has_asc_( false )
+  , has_theta_voltage_( false )
 {
 }
 
 nest::glif_psc::State_::State_( const Parameters_& p )
   : U_( 0.0 )                     // in mV
   , threshold_( -51.68 - p.E_L_ ) // in mV
+  , threshold_spike_( 0.0 )       // in mV
+  , threshold_voltage_( 0.0 )     // in mV
   , ASCurrents_( p.asc_init_ )    // in pA
   , I_( 0.0 )                     // in pA
+  , refractory_steps_( 0 )
 {
   y1_.clear();
   y2_.clear();
@@ -112,22 +121,24 @@ nest::glif_psc::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::V_reset, V_reset_ + E_L_ );
 
-  def< double >( d, names::a_spike, a_spike_ );
-  def< double >( d, names::b_spike, b_spike_ );
-  def< double >( d, names::a_reset, voltage_reset_a_ );
-  def< double >( d, names::b_reset, voltage_reset_b_ );
+  def< double >( d, names::th_spike_add, th_spike_add_ );
+  def< double >( d, names::th_spike_decay, th_spike_decay_ );
+  def< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
+  def< double >( d, names::voltage_reset_add, voltage_reset_add_ );
 
-  def< double >( d, names::a_voltage, a_voltage_ );
-  def< double >( d, names::b_voltage, b_voltage_ );
+  def< double >( d, names::th_voltage_index, th_voltage_index_ );
+  def< double >( d, names::th_voltage_decay, th_voltage_decay_ );
 
   def< std::vector< double > >( d, names::asc_init, asc_init_ );
-  def< std::vector< double > >( d, names::k, k_ );
+  def< std::vector< double > >( d, names::asc_decay, asc_decay_ );
   def< std::vector< double > >( d, names::asc_amps, asc_amps_ );
-  def< std::vector< double > >( d, names::r, r_ );
+  def< std::vector< double > >( d, names::asc_r, asc_r_ );
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
   def< bool >( d, names::has_connections, has_connections_ );
-  def< model_type >( d, names::glif_model, glif_model_ );
+  def< bool >( d, names::spike_dependent_threshold, has_theta_spike_ );
+  def< bool >( d, names::after_spike_currents, has_asc_ );
+  def< bool >( d, names::adapting_threshold, has_theta_voltage_ );
 }
 
 double
@@ -161,29 +172,64 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, C_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
 
-  updateValue< double >( d, names::a_spike, a_spike_ );
-  updateValue< double >( d, names::b_spike, b_spike_ );
-  updateValue< double >( d, names::a_reset, voltage_reset_a_ );
-  updateValue< double >( d, names::b_reset, voltage_reset_b_ );
+  updateValue< double >( d, names::th_spike_add, th_spike_add_ );
+  updateValue< double >( d, names::th_spike_decay, th_spike_decay_ );
+  updateValue< double >( d, names::voltage_reset_fraction, voltage_reset_fraction_ );
+  updateValue< double >( d, names::voltage_reset_add, voltage_reset_add_ );
 
-  updateValue< double >( d, names::a_voltage, a_voltage_ );
-  updateValue< double >( d, names::b_voltage, b_voltage_ );
+  updateValue< double >( d, names::th_voltage_index, th_voltage_index_ );
+  updateValue< double >( d, names::th_voltage_decay, th_voltage_decay_ );
 
   updateValue< std::vector< double > >( d, names::asc_init, asc_init_ );
-  updateValue< std::vector< double > >( d, names::k, k_ );
+  updateValue< std::vector< double > >( d, names::asc_decay, asc_decay_ );
   updateValue< std::vector< double > >( d, names::asc_amps, asc_amps_ );
-  updateValue< std::vector< double > >( d, names::r, r_ );
+  updateValue< std::vector< double > >( d, names::asc_r, asc_r_ );
 
-  updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ );
-  updateValue< model_type >( d, names::glif_model, glif_model_ );
+  // set model mechanisms
+  updateValue< bool >( d, names::spike_dependent_threshold, has_theta_spike_ );
+  updateValue< bool >( d, names::after_spike_currents, has_asc_ );
+  updateValue< bool >( d, names::adapting_threshold, has_theta_voltage_ );
 
-  // check after ASC parameters size
-  if ( not(
-         ( asc_init_.size() == k_.size() ) && ( k_.size() == asc_amps_.size() ) && ( asc_amps_.size() == r_.size() ) ) )
+  // check model mechanisms parameter
+  if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
+         ( has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or        // glif2
+         ( not has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or        // glif3
+         ( has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or            // glif4
+         ( has_theta_spike_ and has_asc_ and has_theta_voltage_ )                   // glif5
+         ) )
   {
     throw BadProperty(
-      "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
-      "must have the same size." );
+      "Incorrect model mechanism combination setting."
+      "See documents for setting of model mechanism parameters:"
+      "spike_dependent_threshold, after_spike_currents, adapting_threshold." );
+  }
+
+  // check after ASC parameters' sizes and values
+  if ( has_asc_ )
+  {
+    // check size
+    const size_t asc_size = asc_decay_.size();
+    if ( not(
+           ( asc_init_.size() == asc_size ) and ( asc_amps_.size() == asc_size ) and ( asc_r_.size() == asc_size ) ) )
+    {
+      throw BadProperty(
+        "All after spike current parameters (i.e., asc_init, k, asc_amps, r) "
+        "must have the same size." );
+    }
+
+    // check values
+    for ( std::size_t a = 0; a < asc_decay_.size(); ++a )
+    {
+      if ( asc_decay_[ a ] <= 0.0 )
+      {
+        throw BadProperty( "After-spike current time constant must be strictly positive." );
+      }
+
+      if ( asc_r_[ a ] < 0.0 or asc_r_[ a ] > 1.0 )
+      {
+        throw BadProperty( "After spike current fraction following spike coefficients r must be within [0.0, 1.0]." );
+      }
+    }
   }
 
   if ( V_reset_ >= th_inf_ )
@@ -206,21 +252,25 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Refractory time constant must be strictly positive." );
   }
 
-  if ( b_voltage_ <= 0.0 )
+  if ( has_theta_voltage_ )
   {
-    throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
-  }
-
-  if ( b_spike_ <= 0.0 )
-  {
-    throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
-  }
-
-  for ( std::size_t a = 0; a < k_.size(); ++a )
-  {
-    if ( k_[ a ] <= 0.0 )
+    if ( th_voltage_decay_ <= 0.0 )
     {
-      throw BadProperty( "After-spike current time constant must be strictly positive." );
+      throw BadProperty( "Voltage-induced threshold time constant must be strictly positive." );
+    }
+  }
+
+  // check spike component parameters
+  if ( has_theta_spike_ )
+  {
+    if ( th_spike_decay_ <= 0.0 )
+    {
+      throw BadProperty( "Spike induced threshold time constant must be strictly positive." );
+    }
+
+    if ( voltage_reset_fraction_ < 0.0 or voltage_reset_fraction_ > 1.0 )
+    {
+      throw BadProperty( "Voltage fraction coefficient following spike must be within [0.0, 1.0]." );
     }
   }
 
@@ -241,6 +291,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
       }
     }
   }
+
   return delta_EL;
 }
 
@@ -249,6 +300,8 @@ nest::glif_psc::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ );
   def< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
+  def< double >( d, names::threshold_spike, threshold_spike_ );
+  def< double >( d, names::threshold_voltage, threshold_voltage_ );
 }
 
 void
@@ -263,7 +316,31 @@ nest::glif_psc::State_::set( const DictionaryDatum& d, const Parameters_& p, dou
     U_ -= delta_EL;
   }
 
-  updateValue< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
+  bool asc_flag = updateValue< std::vector< double > >( d, names::ASCurrents, ASCurrents_ );
+  if ( asc_flag and not p.has_asc_ )
+  {
+    throw BadProperty( "After spike currents are not supported or settable in the current model mechanisms." );
+  }
+
+  const size_t asc_size = p.asc_decay_.size();
+  if ( asc_flag )
+  {
+    if ( ASCurrents_.size() != asc_size )
+    {
+      throw BadProperty( "After spike current values must have have the same size (" + std::to_string( asc_size )
+        + ") of its parameters (i.e., asc_init, k, asc_amps, r)." );
+    }
+  }
+
+  if ( updateValue< double >( d, names::threshold_spike, threshold_spike_ ) and not p.has_theta_spike_ )
+  {
+    throw BadProperty( "Threshold spike component is not supported or settable in the current model mechanisms." );
+  }
+
+  if ( updateValue< double >( d, names::threshold_voltage, threshold_voltage_ ) and not p.has_theta_voltage_ )
+  {
+    throw BadProperty( "Threshold voltage component is not supported or settable in the current model mechanisms." );
+  }
 }
 
 nest::glif_psc::Buffers_::Buffers_( glif_psc& n )
@@ -321,14 +398,35 @@ nest::glif_psc::calibrate()
 {
   B_.logger_.init();
 
-  V_.t_ref_remaining_ = 0.0;
-  V_.t_ref_total_ = P_.t_ref_;
-  V_.last_spike_ = 0.0;
-  V_.last_voltage_ = 0.0;
-
-  // post synapse currents
   const double h = Time::get_resolution().get_ms(); // in ms
 
+  // pre-computing of decay parameters
+  if ( P_.has_theta_spike_ )
+  {
+    V_.theta_spike_decay_rate_ = std::exp( -P_.th_spike_decay_ * h );
+    V_.theta_spike_refractory_decay_rate_ = std::exp( -P_.th_spike_decay_ * P_.t_ref_ );
+  }
+
+  if ( P_.has_asc_ )
+  {
+    V_.asc_decay_rates_.resize( P_.asc_decay_.size() );
+    V_.asc_refractory_decay_rates_.resize( P_.asc_decay_.size() );
+    for ( std::size_t a = 0; a < P_.asc_decay_.size(); ++a )
+    {
+      V_.asc_decay_rates_[ a ] = std::exp( -P_.asc_decay_[ a ] * h );
+      V_.asc_refractory_decay_rates_[ a ] = P_.asc_r_[ a ] * std::exp( -P_.asc_decay_[ a ] * P_.t_ref_ );
+    }
+  }
+
+  if ( P_.has_theta_voltage_ )
+  {
+    V_.potential_decay_rate_ = std::exp( -P_.G_ * h / P_.C_m_ );
+    V_.theta_voltage_decay_rate_inverse_ = 1 / ( std::exp( P_.th_voltage_decay_ * h ) );
+    V_.phi = P_.th_voltage_index_ / ( P_.th_voltage_decay_ - P_.G_ / P_.C_m_ );
+    V_.abpara_ratio_voltage_ = P_.th_voltage_index_ / P_.th_voltage_decay_;
+  }
+
+  // post synapse currents
   V_.P11_.resize( P_.n_receptors_() );
   V_.P21_.resize( P_.n_receptors_() );
   V_.P22_.resize( P_.n_receptors_() );
@@ -360,6 +458,8 @@ nest::glif_psc::calibrate()
     V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
   }
+
+  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 }
 
 /* ----------------------------------------------------------------
@@ -369,108 +469,36 @@ nest::glif_psc::calibrate()
 void
 nest::glif_psc::update( Time const& origin, const long from, const long to )
 {
-  // glif_lif_r_asc_a
-  const double dt = Time::get_resolution().get_ms();
-
-  // get model type
-  std::string model_str = P_.glif_model_;
-  std::transform( model_str.begin(), model_str.end(), model_str.begin(), ::tolower );
-  if ( nest::glif_psc::model_type_lu.find( model_str ) == nest::glif_psc::model_type_lu.end() )
-  {
-    throw BadProperty( "Bad glif model type string." );
-  }
-  long model_type = nest::glif_psc::model_type_lu[ model_str ];
 
   double v_old = S_.U_;
-  double spike_component = 0.0;
-  double voltage_component = 0.0;
-  double th_old = S_.threshold_;
 
   for ( long lag = from; lag < to; ++lag )
   {
 
-    // update threshold via exact solution of dynamics of spike component of
-    // threshold
-    // exact solution of dynamics of spike component of threshold for glif2/4/5
-    // models with "R"
-    if ( model_type == 2 || model_type == 4 || model_type == 5 )
+    if ( S_.refractory_steps_ == 0 )
     {
-      spike_component = V_.last_spike_ * std::exp( -P_.b_spike_ * dt );
-    }
-    V_.last_spike_ = spike_component;
+      // neuron not refractory, integrate voltage and currents
 
-    if ( V_.t_ref_remaining_ > 0.0 )
-    {
-      // While neuron is in refractory period count-down in time steps (since dt
-      // may change while in refractory) while holding the voltage at last peak.
-      V_.t_ref_remaining_ -= dt;
-      if ( V_.t_ref_remaining_ <= 0.0 )
+      // update threshold via exact solution of dynamics of spike component of
+      // threshold for glif2/4/5 models with "R"
+      if ( P_.has_theta_spike_ )
       {
-        // Neuron has left refractory period, reset voltage and after-spike
-        // current
-
-        // Reset ASC_currentsfor glif3/4/5 models with "ASC"
-        if ( model_type == 3 || model_type == 4 || model_type == 5 )
-        {
-          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
-          {
-            S_.ASCurrents_[ a ] =
-              P_.asc_amps_[ a ] + S_.ASCurrents_[ a ] * P_.r_[ a ] * std::exp( -P_.k_[ a ] * V_.t_ref_total_ );
-          }
-        }
-
-        // Reset voltage
-        if ( model_type == 1 || model_type == 3 )
-        {
-          // Reset voltage for glif1/3 models without "R"
-          S_.U_ = P_.V_reset_;
-        }
-        else
-        {
-          // Reset voltage for glif2/4/5 models with "R"
-          S_.U_ = P_.voltage_reset_a_ * S_.U_ + P_.voltage_reset_b_;
-
-          // reset spike component of threshold
-          V_.last_spike_ = V_.last_spike_ + P_.a_spike_;
-
-          // rest the global threshold (voltage component of threshold: stay the
-          // same)
-          S_.threshold_ = V_.last_spike_ + V_.last_voltage_ + P_.th_inf_;
-        }
-        // Check if bad reset
-        // TODO: Better way to handle?
-        if ( S_.U_ > S_.threshold_ )
-        {
-          printf(
-            "Simulation Terminated: Voltage (%f) reset above threshold "
-            "(%f)!!\n",
-            S_.U_,
-            S_.threshold_ );
-        }
-        assert( S_.U_ <= S_.threshold_ );
+        S_.threshold_spike_ = S_.threshold_spike_ * V_.theta_spike_decay_rate_;
       }
-      else
-      {
-        S_.U_ = v_old;
-      }
-    }
-    else
-    {
-      // Integrate voltage and currents
 
-      // Calculate new ASCurrents value using expoential methods
+      // Calculate new ASCurrents value using exponential methods
       S_.ASCurrents_sum_ = 0.0;
       // for glif3/4/5 models with "ASC"
-      if ( model_type == 3 || model_type == 4 || model_type == 5 )
+      if ( P_.has_asc_ )
       {
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
           S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
-          S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * std::exp( -P_.k_[ a ] * dt );
+          S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * V_.asc_decay_rates_[ a ];
         }
       }
-      // voltage dynamics of membranes
-      // Linear Exact to find next V_m value
+
+      // voltage dynamics of membranes, linear exact to find next V_m value
       S_.U_ = v_old * V_.P33_ + ( S_.I_ + S_.ASCurrents_sum_ ) * V_.P30_;
 
       // add synapse component for voltage dynamics
@@ -483,31 +511,66 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
 
       // Calculate exact voltage component of the threshold for glif5 model with
       // "A"
-      if ( model_type == 5 )
+      if ( P_.has_theta_voltage_ )
       {
-        double beta = ( S_.I_ + S_.ASCurrents_sum_ ) / P_.G_;
-        double phi = P_.a_voltage_ / ( P_.b_voltage_ - P_.G_ / P_.C_m_ );
-        voltage_component = phi * ( v_old - beta ) * std::exp( -P_.G_ * dt / P_.C_m_ )
-          + 1 / ( std::exp( P_.b_voltage_ * dt ) )
-            * ( V_.last_voltage_ - phi * ( v_old - beta ) - ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta ) )
-          + ( P_.a_voltage_ / P_.b_voltage_ ) * ( beta );
+        const double beta = ( S_.I_ + S_.ASCurrents_sum_ ) / P_.G_;
+        S_.threshold_voltage_ = V_.phi * ( v_old - beta ) * V_.potential_decay_rate_
+          + V_.theta_voltage_decay_rate_inverse_
+            * ( S_.threshold_voltage_ - V_.phi * ( v_old - beta ) - V_.abpara_ratio_voltage_ * beta )
+          + V_.abpara_ratio_voltage_ * beta;
       }
 
-      S_.threshold_ = V_.last_spike_ + voltage_component + P_.th_inf_;
-      V_.last_voltage_ = voltage_component;
+      S_.threshold_ = S_.threshold_spike_ + S_.threshold_voltage_ + P_.th_inf_;
 
-      // Check if their is an action potential
+      // Check if there is an action potential
       if ( S_.U_ > S_.threshold_ )
       {
         // Marks that the neuron is in a refractory period
-        V_.t_ref_remaining_ = V_.t_ref_total_;
+        S_.refractory_steps_ = V_.RefractoryCounts_;
 
-        // Find the exact time during this step that the neuron crossed the
-        // threshold and record it
+        // Reset ASC_currents for glif3/4/5 models with "ASC"
+        if ( P_.has_asc_ )
+        {
+          for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
+          {
+            S_.ASCurrents_[ a ] = P_.asc_amps_[ a ] + S_.ASCurrents_[ a ] * V_.asc_refractory_decay_rates_[ a ];
+          }
+        }
+
+        // Reset voltage
+        if ( not P_.has_theta_spike_ )
+        {
+          // Reset voltage for glif1/3 models without "R"
+          S_.U_ = P_.V_reset_;
+        }
+        else
+        {
+          // Reset voltage for glif2/4/5 models with "R"
+          S_.U_ = P_.voltage_reset_fraction_ * v_old + P_.voltage_reset_add_;
+
+          // reset spike component of threshold
+          // (decay for refractory period and then add additive constant)
+          S_.threshold_spike_ = S_.threshold_spike_ * V_.theta_spike_refractory_decay_rate_ + P_.th_spike_add_;
+
+          // rest the global threshold (voltage component of threshold: stay the
+          // same)
+          S_.threshold_ = S_.threshold_spike_ + S_.threshold_voltage_ + P_.th_inf_;
+        }
+
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
+    }
+    else
+    {
+      // neuron is absolute refractory
+      --S_.refractory_steps_;
+
+      // While neuron is in refractory period count-down in time steps (since dt
+      // may change while in refractory) while holding the voltage at last peak.
+      S_.U_ = v_old;
+      S_.threshold_ = S_.threshold_spike_ + S_.threshold_voltage_ + P_.th_inf_;
     }
 
     // alpha shape PSCs
@@ -521,21 +584,12 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
       S_.y1_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
-    double cursum = 0.0;
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      cursum += S_.y1_[ i ];
-    }
-
     // Update any external currents
     S_.I_ = B_.currents_.get_value( lag );
 
     // Save voltage
     B_.logger_.record_data( origin.get_steps() + lag );
-
     v_old = S_.U_;
-
-    th_old = S_.threshold_;
   }
 }
 

@@ -87,9 +87,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with random.normal as parameter"""
         nodes = nest.Create('iaf_psc_alpha', 3,
                             {'V_m': nest.random.normal(
-                                loc=10.0, scale=5.0, min=0.5)})
-        for vm in nodes.get('V_m'):
-            self.assertGreaterEqual(vm, 0.5)
+                                loc=10.0, scale=5.0)})
 
     def test_create_exponential(self):
         """Test Create with random.exonential as parameter"""

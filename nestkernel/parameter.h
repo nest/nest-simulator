@@ -269,8 +269,7 @@ private:
 
 
 /**
- * Random parameter with normal distribution, optionally truncated to [min,max).
- * Truncation is implemented by rejection.
+ * Random parameter with normal distribution.
  */
 class NormalParameter : public Parameter
 {
@@ -279,44 +278,27 @@ public:
    * Parameters:
    * mean  - mean value
    * sigma - standard distribution
-   * min   - minimum value
-   * max   - maximum value
    */
   NormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mean_( 0.0 )
     , sigma_( 1.0 )
-    , min_( -std::numeric_limits< double >::infinity() )
-    , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
     updateValue< double >( d, names::mean, mean_ );
     updateValue< double >( d, names::sigma, sigma_ );
-    updateValue< double >( d, names::min, min_ );
-    updateValue< double >( d, names::max, max_ );
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
         "nest::NormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
-      throw BadProperty(
-        "nest::NormalParameter: "
-        "min < max required." );
-    }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
-    double val;
-    do
-    {
-      val = mean_ + rdev( rng ) * sigma_;
-    } while ( ( val < min_ ) or ( val >= max_ ) );
-    return val;
+    return mean_ + rdev( rng ) * sigma_;
   }
 
   Parameter*
@@ -326,14 +308,13 @@ public:
   }
 
 private:
-  double mean_, sigma_, min_, max_;
+  double mean_, sigma_;
   librandom::NormalRandomDev rdev;
 };
 
 
 /**
- * Random parameter with lognormal distribution, optionally truncated to
- * [min,max). Truncation is implemented by rejection.
+ * Random parameter with lognormal distribution.
  */
 class LognormalParameter : public Parameter
 {
@@ -342,44 +323,27 @@ public:
    * Parameters:
    * mu    - mean value of logarithm
    * sigma - standard distribution of logarithm
-   * min   - minimum value
-   * max   - maximum value
    */
   LognormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mu_( 0.0 )
     , sigma_( 1.0 )
-    , min_( -std::numeric_limits< double >::infinity() )
-    , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
     updateValue< double >( d, names::mu, mu_ );
     updateValue< double >( d, names::sigma, sigma_ );
-    updateValue< double >( d, names::min, min_ );
-    updateValue< double >( d, names::max, max_ );
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
         "nest::LognormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
-      throw BadProperty(
-        "nest::LognormalParameter: "
-        "min < max required." );
-    }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
-    double val;
-    do
-    {
-      val = std::exp( mu_ + rdev( rng ) * sigma_ );
-    } while ( ( val < min_ ) or ( val >= max_ ) );
-    return val;
+    return std::exp( mu_ + rdev( rng ) * sigma_ );
   }
 
   Parameter*
@@ -389,7 +353,7 @@ public:
   }
 
 private:
-  double mu_, sigma_, min_, max_;
+  double mu_, sigma_;
   librandom::NormalRandomDev rdev;
 };
 

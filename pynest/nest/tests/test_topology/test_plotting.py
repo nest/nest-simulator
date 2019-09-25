@@ -68,7 +68,7 @@ class PlottingTestCase(unittest.TestCase):
         nest.Connect(l, l, cdict, sdict)
 
         ctr = nest.FindCenterElement(l)
-        fig = nest.PlotTargets(l[ctr-1:ctr], l)
+        fig = nest.PlotTargets(ctr, l)
         fig.gca().set_title('Plain call')
 
         plotted_datapoints = plt.gca().collections[0].get_offsets().data
@@ -88,7 +88,7 @@ class PlottingTestCase(unittest.TestCase):
         f = plt.figure()
         a1 = f.add_subplot(221)
         ctr = nest.FindCenterElement(l)
-        nest.PlotKernel(a1, l[ctr-1], {'circular': {'radius': 1.}},
+        nest.PlotKernel(a1, ctr, {'circular': {'radius': 1.}},
                         {'gaussian': {'sigma': 0.2}})
 
         # This test has a more fuzzy testing criteria: Instead of checking
@@ -99,16 +99,16 @@ class PlottingTestCase(unittest.TestCase):
         self.assertGreater(num_circle_elements_a1, 2)
 
         a2 = f.add_subplot(222)
-        nest.PlotKernel(a2, l[ctr-1], {'doughnut': {'inner_radius': 0.5,
-                                                    'outer_radius': 0.75}})
+        nest.PlotKernel(a2, ctr, {'doughnut': {'inner_radius': 0.5,
+                                               'outer_radius': 0.75}})
 
         num_circle_elements_a2 = sum([type(p) == mpl.patches.Circle for p in a2.patches])
         self.assertGreater(num_circle_elements_a2, 2)
 
         a3 = f.add_subplot(223)
-        nest.PlotKernel(a3, l[ctr-1], {'rectangular':
-                                       {'lower_left': [-.5, -.5],
-                                        'upper_right': [0.5, 0.5]}})
+        nest.PlotKernel(a3, ctr, {'rectangular':
+                                  {'lower_left': [-.5, -.5],
+                                   'upper_right': [0.5, 0.5]}})
 
         num_circle_elements_a3 = sum([type(p) == mpl.patches.Rectangle for p in a3.patches])
         self.assertGreater(num_circle_elements_a3, 2)

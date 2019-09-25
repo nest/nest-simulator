@@ -246,9 +246,7 @@ class SpatialTester(object):
                                    positions=nest.spatial.free(
                                        pos, [self._L] * self._dimensions,
                                        edge_wrap=True))
-            cntr = nest.FindCenterElement(self._ls)
-            indx = cntr - self._ls[0].get('global_id')
-            self._driver = self._ls[indx]
+            self._driver = nest.FindCenterElement(self._ls)
 
     def _connect(self):
         '''Connect populations.'''

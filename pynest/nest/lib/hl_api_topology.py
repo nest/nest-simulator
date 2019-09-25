@@ -24,6 +24,7 @@ Functions relating to spatial properties of nodes
 """
 
 import nest
+import numpy as np
 
 __all__ = [
     'CreateMask',
@@ -63,7 +64,7 @@ def CreateMask(masktype, specs, anchor=None):
     Parameters
     ----------
     masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
-        for 2D masks, \ ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
+        for 2D masks, ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
         ['grid'] only for grid-based layers in 2D
         The mask name corresponds to the geometrical shape of the mask. There
         are different types for 2- and 3-dimensional layers.
@@ -493,9 +494,9 @@ def FindNearestElement(layer, locations, find_all=False):
                     minval = d[idx]
                 elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
                     mingids.append(layer[idx].get('global_id'))
-            result.append(tuple(mingids))
+            result.append(nest.GIDCollection(mingids))
 
-    return tuple(result)
+    return nest.GIDCollection(result) if not find_all else result
 
 
 def _rank_specific_filename(basename):
@@ -710,8 +711,9 @@ def FindCenterElement(layer):
 
     if not isinstance(layer, nest.GIDCollection):
         raise nest.kernel.NESTError("layer must be a GIDCollection")
-
-    return FindNearestElement(layer, layer.spatial['center'])[0]
+    nearest_to_center = FindNearestElement(layer, layer.spatial['center'])[0]
+    index = layer.index(nearest_to_center.get('global_id'))
+    return layer[index:index+1]
 
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
@@ -789,6 +791,9 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
     for src, tgt in zip(conns.source(), conns.target()):
         src_tgt_map[src].append(tgt)
+
+    for src in src_tgt_map.keys():
+        src_tgt_map[src] = nest.GIDCollection(list(np.unique(src_tgt_map[src])))
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
@@ -1371,8 +1376,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                                                 ec=kernel_color, lw=3,
                                                 ls='dashed'))
         else:
-            raise ValueError('Kernel type cannot be plotted with this ' +
-                             'version of PyTopology')
+            raise ValueError('Kernel type cannot be plotted with this version of PyTopology')
 
     plt.draw()
 
@@ -1409,4 +1413,4 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     gid_list = nest.ll_api.sli_func('SelectNodesByMask',
                                     layer, anchor, mask_datum)
 
-    return gid_list
+    return nest.GIDCollection(gid_list)

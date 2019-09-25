@@ -23,6 +23,7 @@ import unittest
 import numpy as np
 import nest
 
+
 class GLIFPSCTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -33,13 +34,16 @@ class GLIFPSCTestCase(unittest.TestCase):
         self.resol = 0.01
         nest.ResetKernel()
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
-        nest.SetKernelStatus({'resolution': self.resol, 'grng_seed': msd + N_vp,
-                              'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+        pyrngs = [np.random.RandomState(s)
+                  for s in range(msd, msd + N_vp)]
+        nest.SetKernelStatus({'resolution': self.resol,
+                              'grng_seed': msd + N_vp,
+                              'rng_seeds': range(msd + N_vp + 1,
+                                                 msd + 2 * N_vp + 1)})
 
     def simulate_w_stim(self, model_params):
-        """ 
-        Runs a one second simulation with different types of input stimulation. 
+        """
+        Runs a one second simulation with different types of input stimulation.
         Returns the time-steps, voltages, and collected spike times.
         """
 
@@ -47,17 +51,23 @@ class GLIFPSCTestCase(unittest.TestCase):
         nrn = nest.Create("glif_psc", params=model_params)
 
         # Create and connect inputs to
-        espikes = nest.Create("spike_generator", params={"spike_times": [10.0, 100.0, 400.0, 600.0],
-                                                         "spike_weights": [20.0]*4})
-        ispikes = nest.Create("spike_generator", params={"spike_times": [15.0, 99.0, 200.0, 700.0],
-                                                         "spike_weights": [-20.]*4})
+        espikes = nest.Create("spike_generator",
+                              params={"spike_times": [10.0, 100.0,
+                                                      400.0, 600.0],
+                                      "spike_weights": [20.0]*4})
+        ispikes = nest.Create("spike_generator",
+                              params={"spike_times": [15.0, 99.0,
+                                                      200.0, 700.0],
+                                      "spike_weights": [-20.]*4})
 
-        cg = nest.Create("step_current_generator", params={"amplitude_values":[100.0, ], "amplitude_times":[500.0, ],
-                                                           "start": 500.0, "stop": 800.0})
+        cg = nest.Create("step_current_generator",
+                         params={"amplitude_values": [100.0, ],
+                                 "amplitude_times": [500.0, ],
+                                 "start": 500.0, "stop": 800.0})
 
-        nest.Connect(espikes, nrn, syn_spec = {"receptor_type": 1})
-        nest.Connect(ispikes, nrn, syn_spec = {"receptor_type": 1})
-        nest.Connect(cg, nrn, syn_spec = {"weight": 3.0})
+        nest.Connect(espikes, nrn, syn_spec={"receptor_type": 1})
+        nest.Connect(ispikes, nrn, syn_spec={"receptor_type": 1})
+        nest.Connect(cg, nrn, syn_spec={"weight": 3.0})
 
         # For recording spikes and voltage traces
         sd = nest.Create('spike_detector')
@@ -65,9 +75,9 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_from": ["V_m"]})
         nest.Connect(mm, nrn)
-        
+
         nest.Simulate(1000.0)
-        
+
         times = nest.GetStatus(mm, 'events')[0]['times']
         V_m = nest.GetStatus(mm, 'events')[0]['V_m']
         spikes = nest.GetStatus(sd, 'events')[0]['times']
@@ -86,8 +96,10 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_params)
-        spikes_expected = [512.99, 528.73, 544.47, 560.21, 575.95, 591.69, 606.30, 622.0, 637.74, 653.48, 669.22,
-                           684.96, 700.7, 716.72, 732.46, 748.2, 763.94, 779.68, 795.42]
+        spikes_expected = [512.99, 528.73, 544.47, 560.21, 575.95,
+                           591.69, 606.30, 622.0, 637.74, 653.48,
+                           669.22, 684.96, 700.7, 716.72, 732.46,
+                           748.2, 763.94, 779.68, 795.42]
         assert(np.allclose(spikes, spikes_expected, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 
@@ -102,9 +114,12 @@ class GLIFPSCTestCase(unittest.TestCase):
             "V_m": -78.85
         }
         times, V_m, spikes = self.simulate_w_stim(lif_r_params)
-        expected_spikes = [512.99, 520.53, 528.51, 536.94, 545.81, 555.12, 564.85, 574.98, 585.49, 596.35, 605.56,
-                           616.96, 628.79, 640.84, 653.07, 665.46, 677.99, 690.63, 707.36, 719.97, 732.61, 745.34,
-                           758.15, 771.03, 783.96, 796.94]
+        expected_spikes = [512.99, 520.53, 528.51, 536.94, 545.81,
+                           555.12, 564.85, 574.98, 585.49, 596.35,
+                           605.56, 616.96, 628.79, 640.84, 653.07,
+                           665.46, 677.99, 690.63, 707.36, 719.97,
+                           732.61, 745.34, 758.15, 771.03, 783.96,
+                           796.94]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 
@@ -120,7 +135,8 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
-        expected_spikes = [512.99, 542.87, 575.83, 608.16, 647.63, 690.98, 739.12, 792.39]
+        expected_spikes = [512.99, 542.87, 575.83, 608.16, 647.63,
+                           690.98, 739.12, 792.39]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 
@@ -136,7 +152,8 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
-        expected_spikes = [512.99, 542.64, 576.80, 612.05, 656.34, 715.03, 770.36]
+        expected_spikes = [512.99, 542.64, 576.80, 612.05, 656.34,
+                           715.03, 770.36]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 
@@ -155,7 +172,7 @@ class GLIFPSCTestCase(unittest.TestCase):
         expected_spikes = [514.18, 549.57, 592.71, 648.15, 729.95]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
 
-    
+
 def suite():
     return unittest.makeSuite(GLIFPSCTestCase, "test")
 

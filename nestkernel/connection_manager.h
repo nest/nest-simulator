@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <string>
-#include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"

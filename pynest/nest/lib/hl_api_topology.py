@@ -20,63 +20,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-**High-level API of PyNEST Topology Module**
-
-This file defines the user-level functions of NEST's Python interface to the
-Topology module. The basic approach is the same as for the PyNEST interface to
-NEST:
-
-1.  Function names are the same as in SLI.
-2.  Nodes are identified by their GIDs.
-3.  GIDs are given as GIDCollection.
-4.  Commands returning GIDs return them as tuples or GIDCollection.
-5.  Other arguments can be
-
-    * single items that are applied to all entries in a GID list
-    * a list of the same length as the given GIDCollection where each item is
-      matched with the pertaining GID.
-
-    **Example**
-        ::
-
-            layer = CreateLayer({...})
-
-    creates a layer and returns a GIDCollection with the GIDs in the layer.
-        ::
-
-            ConnectLayers(layer, layer, {...})
-
-    connects `layer` to `layer` using a dictionary to specify the connections.
-
-Functions in the Topology module:
-  - CreateMask(masktype, specs, anchor=None)
-  - CreateLayer(specs)
-  - ConnectLayers(pre, post, projections)
-  - Distance(from_arg, to_arg)
-  - Displacement(from_arg, to_arg)
-  - FindNearestElement(layers, locations, find_all=False)
-  - DumpLayerNodes(layers, outname)
-  - DumpLayerConnections(source_layer, target_layer, synapse_model, outname)
-  - FindCenterElement(layers)
-  - GetTargetNodes(sources, tgt_layer, syn_model=None)
-  - GetTargetPositions(sources, tgt_layer, syn_model=None)
-  - PlotLayer(layer, fig=None, nodecolor='b', nodesize=20)
-  - PlotTargets(src_nrn, tgt_layer, ...)
-  - PlotKernel(ax, src_nrn, mask,...')
-  - SelectNodesByMask(layer, anchor, mask_obj)
-
-
-:Authors:
-    Kittel Austvoll,
-    Hans Ekkehard Plesser,
-    Hakon Enger
+Functions relating to spatial properties of nodes
 """
 
 import nest
 
-# With '__all__' we provide an explicit index of this submodule.
 __all__ = [
-    'ConnectLayers',
     'CreateMask',
     'Displacement',
     'Distance',
@@ -98,17 +47,16 @@ def CreateMask(masktype, specs, anchor=None):
     """
     Create a spatial mask for connections.
 
-    Masks are used when creating connections in the Topology module. A mask
-    describes the area of the pool layer that is searched for nodes to
-    connect for any given node in the driver layer. Several mask types
-    are available. Examples are the grid region, the rectangular, circular or
-    doughnut region.
+    Masks are used when creating connections. A mask describes the area of
+    the pool layer that is searched for nodes to connect for any given
+    node in the driver layer. Several mask types are available. Examples
+    are the grid region, the rectangular, circular or doughnut region.
 
     The command ``CreateMask`` creates a Mask object which may be combined
     with other ``Mask`` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    ``Mask`` objects can be passed to ``ConnectLayers`` in a
+    ``Mask`` objects can be passed to ``Connect`` in a
     connection dictionary with the key `'mask'`.
 
 
@@ -136,9 +84,7 @@ def CreateMask(masktype, specs, anchor=None):
 
     See also
     --------
-    ConnectLayers: Connect two layers pairwise according to specified
-        projections. ``Mask`` objects can be passed in a connection
-        dictionary with the key `'mask'`.
+    Connect
 
 
     Notes
@@ -237,173 +183,6 @@ def CreateMask(masktype, specs, anchor=None):
     else:
         return nest.ll_api.sli_func('CreateMask',
                                     {masktype: specs, 'anchor': anchor})
-
-
-def ConnectLayers(pre, post, projections):
-    """
-    Pairwise connect of pre- and postsynaptic layers.
-
-    `pre` and `post` must be GIDCollections. The GIDs
-    must refer to layers created with ``CreateLayers``. Layers in `pre`
-    and `post` are connected pairwise.
-
-    `projections` is a single dictionary, and applies to all pre-post pairs.
-
-    A minimal call of ``ConnectLayers`` expects a source layer `pre`, a
-    target layer `post` and a connection dictionary `projections`
-    containing at least the entry `'connection_type'` (either
-    `'convergent'` or `'divergent'`).
-
-    When connecting two layers, the driver layer is the one in which each node
-    is considered in turn. The pool layer is the one from which nodes are
-    chosen for each node in the driver layer.
-
-
-    Parameters
-    ----------
-    pre : GIDCollection
-        GIDCollection with GIDs of presynaptic layers (sources)
-    post : GIDCollection
-       GIDCollection with GIDs of postsynaptic layers (targets)
-    projections : dict
-        Dictionary specifying projection properties
-
-
-    Returns
-    -------
-    out : None
-        ConnectLayers returns `None`
-
-
-    See also
-    --------
-    CreateLayer : Create a Topology layer(s).
-    CreateMask : Create a ``Mask`` object. Documentation on available spatial
-        masks. Masks can be used to specify the key `'mask'` of the
-        connection dictionary.
-    CreateParameter : Create a ``Parameter`` object.
-        Documentation on available parameters for distance dependency and
-        randomization. Parameters can be used to specify the parameters
-        `'kernel'`, `'weights'` and `'delays'` of the connection dictionary.
-    nest.GetConnections : Retrieve connections.
-
-
-    Other parameters
-    ----------------
-    Available keys for the layer-specifying dictionary `projections`
-    allow_autapses : bool, optional, default: True
-        An autapse is a synapse (connection) from a node onto itself.
-        It is used together with the `'number_of_connections'` option.
-    allow_multapses : bool, optional, default: True
-        Node A is connected to node B by a multapse if there are synapses
-        (connections) from A to B.
-        It is used together with the `'number_of_connections'` option.
-    connection_type : str
-        The type of connections can be either `'convergent'` or
-        `'divergent'`. In case of convergent connections, the target
-        layer is considered as driver layer and the source layer as pool
-        layer - and vice versa for divergent connections.
-    delays : [float | dict | Parameter object], optional, default: 1.0
-        Delays can be constant, randomized or distance-dependent according
-        to a provided function.
-        Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
-    kernel : [float | dict | Parameter object], optional, default: 1.0
-        A kernel is a function mapping the distance (or displacement)
-        between a driver and a pool node to a connection probability. The
-        default kernel is 1.0, i.e., connections are created with
-        certainty.
-        Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
-    mask : [dict | Mask object], optional
-        The mask defines which pool nodes are considered as potential
-        targets for each driver node. Parameters of the different
-        available masks in 2 and 3 dimensions are also defined in
-        dictionaries.
-        If no mask is specified, all neurons from the pool layer are
-        possible targets for each driver node.
-        Information on available masks can be found in the documentation on
-        the function ``CreateMask``.
-    number_of_connections : int, optional
-        Prescribed number of connections for each driver node. The actual
-        connections being created are picked at random from all the
-        candidate connections.
-    synapse_model : str, optional
-        The default synapse model in NEST is used if not specified
-        otherwise.
-    weights : [float | dict | Parameter object], optional, default: 1.0
-        Weights can be constant, randomized or distance-dependent according
-        to a provided function.
-        Information on available functions can be found in the
-        documentation on the function ``CreateParameter``.
-
-
-    Notes
-    -----
-
-    * In the case of free probabilistic connections (in contrast to
-      prescribing the number of connections), each possible driver-pool
-      pair is inspected exactly once so that there will be at most one
-      connection between each driver-pool pair.
-    * Periodic boundary conditions are always applied in the pool layer.
-      It is irrelevant whether the driver layer has periodic boundary
-      conditions or not.
-    * By default, Topology does not accept masks that are wider than the
-      pool layer when using periodic boundary conditions.
-      Kernel, weight and delay functions always consider the shortest
-      distance (displacement) between driver and pool node.
-
-
-    **Example**
-        ::
-
-            import nest
-
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # connectivity specifications with a mask
-            conndict1 = {'connection_type': 'divergent',
-                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                                  'upper_right' : [2.0, 1.0]}}}
-
-            # connect layer l with itself according to the given
-            # specifications
-            nest.ConnectLayers(l, l, conndict1)
-
-
-            # connection dictionary with distance-dependent kernel
-            # (given as Parameter object) and randomized weights
-            # (given as a dictionary)
-            gauss_kernel = nest.CreateTopologyParameter(
-                'gaussian', {'p_center': 1.0, 'sigma': 1.0})
-            conndict2 = {'connection_type': 'divergent',
-                         'mask': {'circular': {'radius': 2.0}},
-                         'kernel': gauss_kernel,
-                         'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
-    """
-    if not isinstance(pre, nest.GIDCollection):
-        raise TypeError("pre must be a GIDCollection")
-
-    if not isinstance(post, nest.GIDCollection):
-        raise TypeError("post must be a GIDCollection")
-
-    # Replace python classes with SLI datums
-    def fixdict(d):
-        d = d.copy()
-        for k, v in d.items():
-            if isinstance(v, dict):
-                d[k] = fixdict(v)
-            elif isinstance(v, nest.Mask) or isinstance(v, nest.Parameter):
-                d[k] = v._datum
-        return d
-
-    projections = fixdict(projections)
-
-    nest.ll_api.sli_func('ConnectLayers', pre, post, projections)
 
 
 def GetPosition(nodes):
@@ -998,8 +777,8 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of the source neuron with GID 5
             nest.GetTargetNodes([5], l)
     """
-    if not nest.hl_api.is_sequence_of_gids(sources):
-        raise TypeError("sources must be a sequence of GIDs")
+    if not isinstance(sources, nest.GIDCollection):
+        raise ValueError("sources must be a GIDCollection.")
 
     if not isinstance(tgt_layer, nest.GIDCollection):
         raise nest.kernel.NESTError("tgt_layer must be a GIDCollection")
@@ -1007,12 +786,12 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
     # Re-organize conns into one list per source, containing only target GIDs.
-    src_tgt_map = dict((sgid, []) for sgid in sources)
+    src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
     for src, tgt in zip(conns.source(), conns.target()):
         src_tgt_map[src].append(tgt)
 
     # convert dict to nested list in same order as sources
-    return tuple(src_tgt_map[sgid] for sgid in sources)
+    return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
 
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
@@ -1094,13 +873,13 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Make dictionary where the keys are the source gids, which is mapped to a
     # list with the positions of the targets connected to the source.
-    src_tgt_pos_map = dict((sgid, []) for sgid in sources)
+    src_tgt_pos_map = dict((sgid, []) for sgid in sources.tolist())
     for i in range(len(connections)):
         tgt_indx = tgts[i] - first_tgt_gid
         src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])
 
     # Turn dict into list in same order as sources
-    return [src_tgt_pos_map[sgid] for sgid in sources]
+    return [src_tgt_pos_map[sgid] for sgid in sources.tolist()]
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

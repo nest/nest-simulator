@@ -54,7 +54,7 @@ class PlottingTestCase(unittest.TestCase):
         """Test dumping nodes."""
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(rows=3, columns=3,
+                        positions=nest.spatial.grid(shape=[3, 3],
                                                     extent=[2., 2.],
                                                     edge_wrap=True))
         nest.DumpLayerNodes(l, os.path.join(self.nest_tmpdir(),
@@ -64,13 +64,13 @@ class PlottingTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_DumpConns(self):
         """Test dumping connections."""
-        cdict = {'connection_type': 'divergent'}
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(rows=1, columns=2,
+                        positions=nest.spatial.grid(shape=[2, 1],
                                                     extent=[2., 2.],
                                                     edge_wrap=True))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(l, l, 'static_synapse', filename)
@@ -85,14 +85,14 @@ class PlottingTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_DumpConns_diff(self):
         """Test dump connections between different layers."""
-        cdict = {'connection_type': 'divergent'}
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        pos = nest.spatial.grid(rows=1, columns=1,
+        pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
                                 edge_wrap=True)
         l1 = nest.Create('iaf_psc_alpha', positions=pos)
         l2 = nest.Create('iaf_psc_alpha', positions=pos)
-        nest.ConnectLayers(l1, l2, cdict)
+        nest.Connect(l1, l2, cdict)
 
         print('Num. connections: ', nest.GetKernelStatus('num_connections'))
 
@@ -106,19 +106,18 @@ class PlottingTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_DumpConns_syn(self):
         """Test dump connections with specific synapse."""
-        cdict = {'connection_type': 'divergent'}
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        pos = nest.spatial.grid(rows=1, columns=1,
+        pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
                                 edge_wrap=True)
         l1 = nest.Create('iaf_psc_alpha', positions=pos)
         l2 = nest.Create('iaf_psc_alpha', positions=pos)
         l3 = nest.Create('iaf_psc_alpha', positions=pos)
-        nest.ConnectLayers(l1, l2, cdict)
+        nest.Connect(l1, l2, cdict)
 
         syn_model = 'stdp_synapse'
-        cdict.update({'synapse_model': syn_model})
-        nest.ConnectLayers(l2, l3, cdict)
+        nest.Connect(l2, l3, cdict, {'synapse_model': syn_model})
 
         print('Num. connections: ', nest.GetKernelStatus('num_connections'))
 

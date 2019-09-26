@@ -215,7 +215,6 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    //
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms

@@ -100,9 +100,9 @@ def get_connectivity_matrix(pop1, pop2):
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node] = count
+        index_dic[node.get('global_id')] = count
     for count, node in enumerate(pop2):
-        index_dic[node] = count
+        index_dic[node.get('global_id')] = count
     for source, target in zip(connections.source(), connections.target()):
         M[index_dic[target]][index_dic[source]] += 1
     return M
@@ -122,9 +122,9 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
     weights = connections.get(label)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node] = count
+        index_dic[node.get('global_id')] = count
     for count, node in enumerate(pop2):
-        index_dic[node] = count
+        index_dic[node.get('global_id')] = count
     for counter, weight in enumerate(weights):
         source_id = sources[counter]
         target_id = targets[counter]

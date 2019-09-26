@@ -85,12 +85,9 @@ def Create(model, n=1, params=None, positions=None):
             if n > 1:
                 raise kernel.NESTError(
                     'Cannot specify number of nodes with grid positions')
-            layer_specs['rows'] = positions.rows
-            layer_specs['columns'] = positions.columns
+            layer_specs['shape'] = positions.shape
             if positions.center is not None:
                 layer_specs['center'] = positions.center
-            if positions.depth is not None:
-                layer_specs['depth'] = positions.depth
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
         if params is None:
@@ -158,7 +155,7 @@ def GetNodes(properties={}, local_only=False):
     Returns
     -------
     GIDCollection:
-        GIDcollection of nodes
+        GIDCollection of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)

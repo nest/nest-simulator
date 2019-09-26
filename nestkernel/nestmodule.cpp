@@ -712,18 +712,6 @@ NestModule::GetNodes_D_b::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-void
-NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  ArrayDatum node_list = getValue< ArrayDatum >( i->OStack.top() );
-
-  restore_nodes( node_list );
-
-  i->OStack.pop();
-  i->EStack.pop();
-}
-
 /** @BeginDocumentation
    Name: ResetKernel - Put the simulation kernel back to its initial state.
    Description:
@@ -1292,6 +1280,19 @@ NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
   const long gid = getValue< long >( i->OStack.pick( 0 ) );
 
   const bool res = gidcoll->contains( gid );
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
+NestModule::eq_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll_other = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+
+  const bool res = gidcoll->operator==( gidcoll_other );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1877,7 +1878,6 @@ NestModule::init( SLIInterpreter* i )
   ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
-  i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 
   i->createcommand( "SetStatus_id", &setstatus_idfunction );
   i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
@@ -1966,6 +1966,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( "eq_g", &eq_gfunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
   i->createcommand( ":enditerator_g", &enditerator_gfunction );
   i->createcommand( ":getgid_q", &getgid_qfunction );

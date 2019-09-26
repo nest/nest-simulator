@@ -408,6 +408,7 @@ extern const Name synapse_modelid;
 extern const Name synapses_per_driver;
 extern const Name synaptic_elements;
 extern const Name synaptic_elements_param;
+extern const Name synaptic_endpoint;
 
 extern const Name t_clamp;
 extern const Name t_lag;

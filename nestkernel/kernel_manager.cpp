@@ -106,7 +106,7 @@ nest::KernelManager::initialize()
   //   - vp_manager for number of threads
   node_manager.initialize(); // must come last
 
-  fingerprint_ = std::clock();
+  ++fingerprint_;
 
   initialized_ = true;
 }

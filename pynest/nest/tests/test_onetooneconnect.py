@@ -41,7 +41,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.Connect(pre, post, "one_to_one")
         connections = nest.GetConnections(pre)
         targets = connections.get("target")
-        self.assertEqual(list(targets), list(post))
+        self.assertEqual(list(targets), post.tolist())
 
     def test_ConnectPrePostParams(self):
         """Connect pre to post with a params dict"""

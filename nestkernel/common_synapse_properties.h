@@ -91,7 +91,7 @@ public:
   /**
    * get gid of weight_recorder
    */
-  long get_wr_gid() const;
+  index get_wr_gid() const;
 
   /**
    * get weight_recorder
@@ -110,7 +110,7 @@ CommonSynapseProperties::get_vt_gid() const
   return -1;
 }
 
-inline long
+inline index
 CommonSynapseProperties::get_wr_gid() const
 {
   return wr_gid_;

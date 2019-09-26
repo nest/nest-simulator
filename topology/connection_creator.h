@@ -90,8 +90,8 @@ public:
    * - "synapse_model": The synapse model to use.
    * - "targets": Which targets (model or lid) to select (dictionary).
    * - "sources": Which targets (model or lid) to select (dictionary).
-   * - "weights": Synaptic weight (dictionary, parametertype, or double).
-   * - "delays": Synaptic delays (dictionary, parametertype, or double).
+   * - "weight": Synaptic weight (dictionary, parametertype, or double).
+   * - "delay": Synaptic delays (dictionary, parametertype, or double).
    * - other parameters are interpreted as synapse parameters, and may
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.

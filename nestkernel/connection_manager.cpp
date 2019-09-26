@@ -969,6 +969,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
               // Passing target_gid = 0 ignores target_gid while getting
               // connections.
               connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
+              ;
             }
             else
             {
@@ -980,7 +981,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       }
 
       GIDCollection::const_iterator s_id = source->begin();
-      for ( ; s_id != source->end(); ++s_id )
+      for ( ; s_id < source->end(); ++s_id )
       {
         const index source_gid = ( *s_id ).gid;
         if ( not target.get() )
@@ -1251,12 +1252,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       return CONNECT;
     }
 
-    std::string msg = String::compose(
-      "Devices ('%1' in this case) cannot be "
-      "connected to global receivers ('%2' in this case).",
-      source->get_name(),
-      source->get_name() );
-    throw IllegalConnection( msg );
+    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment" );
   }
 
   return NO_CONNECTION;

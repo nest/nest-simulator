@@ -20,10 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-pynest microcircuit network
+Pynest microcircuit network
 ---------------------------
 
 Main file for the microcircuit.
+
+Authors
+~~~~~~~~
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
@@ -156,6 +159,17 @@ class Network:
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
+        v0_type_options = ['original', 'optimized']
+        if self.net_dict['V0_type'] not in v0_type_options:
+            print(
+                '''
+                '{0}' is not a valid option, replacing it with '{1}'
+                Valid options are {2}
+                '''.format(self.net_dict['V0_type'],
+                           v0_type_options[0],
+                           v0_type_options)
+                )
+            self.net_dict['V0_type'] = v0_type_options[0]
         if nest.Rank() == 0:
             print(
                 'The number of neurons is scaled by a factor of: %.2f'
@@ -195,32 +209,46 @@ class Network:
                     'I_e': self.DC_amp_e[i]
                     }
                 )
+            if self.net_dict['V0_type'] == 'optimized':
+                for thread in \
+                        np.arange(nest.GetKernelStatus('local_num_threads')):
+                    local_nodes = nest.GetLocalGIDCollection(pop)
+                    vp = nest.GetStatus(local_nodes)[0]['vp']
+                    nest.SetStatus(
+                        local_nodes, 'V_m', self.pyrngs[vp].normal(
+                            self.net_dict
+                            ['neuron_params']['V0_mean']['optimized'][i],
+                            self.net_dict
+                            ['neuron_params']['V0_sd']['optimized'][i],
+                            len(local_pop))
+                    )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
-                nest.GetStatus(population[0], 'global_id')[0],
-                nest.GetStatus(population[-1], 'global_id')[0]))
+                population[0].get('global_id')[0],
+                population[-1].get('global_id')[0]))
         pop_file.close()
 
-        # Set random membrane potential
-        no_vps = nest.GetKernelStatus('local_num_threads')
-        # Create nested list where the elements in the outer list represents
-        # the vp's, and each vp will have a list of the GIDs in that vp.
-        vp_lists = [[] for x in range(no_vps)]
-        # Go through all populations
-        for gids in self.pops:
-            node_info = nest.GetStatus(gids)
-            for info in node_info:
-                if info['local']:
-                    # Find the vp for the GID and place the GID in correct list
-                    vp = info['vp']
-                    vp_lists[vp].append(info['global_id'])
+        if self.net_dict['V0_type'] == 'original':
+            # Set random membrane potential
+            no_vps = nest.GetKernelStatus('local_num_threads')
+            # Create nested list where the elements in the outer list represents
+            # the vp's, and each vp will have a list of the GIDs in that vp.
+            vp_lists = [[] for x in range(no_vps)]
+            # Go through all populations
+            for gids in self.pops:
+                node_info = nest.GetStatus(gids)
+                for info in node_info:
+                    if info['local']:
+                        # Find the vp for the GID and place the GID in correct list
+                        vp = info['vp']
+                        vp_lists[vp].append(info['global_id'])
 
-        for vp, vps_gids in enumerate(vp_lists):
-            # Set random membrane portential
-            nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(
-                    self.net_dict['neuron_params']['V0_mean'],
-                    self.net_dict['neuron_params']['V0_sd'],
-                    len(vps_gids)))
+            for vp, vps_gids in enumerate(vp_lists):
+                # Set random membrane portential
+                nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(
+                        self.net_dict['neuron_params']['V0_mean']['original'],
+                        self.net_dict['neuron_params']['V0_sd']['original'],
+                        len(vps_gids)))
 
     def create_devices(self):
         """ Creates the recording devices.

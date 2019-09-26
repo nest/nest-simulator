@@ -272,12 +272,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } getnodes_D_bfunction;
 
-  class RestoreNodes_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } restorenodes_afunction;
-
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
   public:
@@ -418,6 +412,11 @@ public:
   {
     void execute( SLIInterpreter* ) const;
   } memberq_g_ifunction;
+
+  class eq_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_gfunction;
 
   class BeginIterator_gFunction : public SLIFunction
   {

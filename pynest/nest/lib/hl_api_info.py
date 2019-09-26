@@ -215,20 +215,19 @@ def SetStatus(nodes, params, val=None):
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
-        connection handles as returned by `GetConnections()`.
+        Either a ``GIDCollection`` representing nodes, or a ``Connectome`` of connection handles as returned by
+        ``GetConnections()``.
     params : str or dict or list
-        Dictionary of parameters or ``list`` of dictionaries of parameters of
-        same length as `nodes`. If `val` is given, this has to be the name of
-        a model property as a str.
+        Dictionary of parameters or ``list`` of dictionaries of parameters of same length as `nodes`. If `val` is
+        given, this has to be the name of a model property as a str.
     val : int, list, optional
         If given, params has to be the name of a model property.
 
     Raises
     ------
     TypeError
-        If `nodes` is not a list of nodes or synapses, or if the number of
-        parameters don't match the number of nodes or synapses.
+        If `nodes` is not a list of nodes or synapses, or if the number of parameters don't match the number of nodes
+        or synapses.
 
     See Also
     -------
@@ -239,25 +238,16 @@ def SetStatus(nodes, params, val=None):
 
     if not (isinstance(nodes, nest.GIDCollection) or
             isinstance(nodes, nest.Connectome)):
-        try:
-            nodes = nest.GIDCollection(nodes)
-        except nest.kernel.NESTError:
-            raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a Connectome "
-                            "with connection handles ")
+        raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
 
-    # This was added to ensure that the function is a nop (instead of,
-    # for instance, raising an exception) when applied to an empty list,
-    # which is an artifact of the API operating on lists, rather than
-    # relying on language idioms, such as comprehensions
+    # This was added to ensure that the function is a nop (instead of, for instance, raising an exception) when applied
+    # to an empty list, which is an artifact of the API operating on lists, rather than relying on language idioms,
+    # such as comprehensions
     if len(nodes) == 0:
         return
 
-    if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and
-            nodes[0].get('local')):
-
-        contains_list = [is_iterable(vals) and not
-                         is_iterable(nest.GetStatus(nodes[0], key)[0])
+    if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and nodes[0].get('local')):
+        contains_list = [is_iterable(vals) and not is_iterable(nest.GetStatus(nodes[0], key)[0])
                          for key, vals in params.items()]
 
         if any(contains_list):
@@ -306,7 +296,7 @@ def GetStatus(nodes, keys=None, output=''):
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a ``GIDCollection`` representing nodes, or a ``tuple`` of
+        Either a ``GIDCollection`` representing nodes, or a ``Connectome`` of
         connection handles as returned by `GetConnections()`.
     keys : str or list, optional
         ``string`` or a ``list`` of strings naming model properties.
@@ -321,11 +311,9 @@ def GetStatus(nodes, keys=None, output=''):
     dict :
         All parameters
     type :
-        If `keys` is a ``string``, the corrsponding default parameter is
-        returned.
+        If `keys` is a ``string``, the corrsponding default parameter is returned.
     list :
-        If keys is a ``list`` of strings, a ``list`` of corrsponding default
-        parameters is returned.
+        If keys is a ``list`` of strings, a ``list`` of corrsponding default parameters is returned.
     str :
         If `output` is `json`, returns parameters in JSON format.
 
@@ -343,12 +331,7 @@ def GetStatus(nodes, keys=None, output=''):
 
     if not (isinstance(nodes, nest.GIDCollection) or
             isinstance(nodes, nest.Connectome)):
-        try:
-            nodes = nest.GIDCollection(nodes)
-        except nest.kernel.NESTError:
-            raise TypeError("The first input (nodes) must be GIDCollection, "
-                            "convertible to GIDCollection or a Connectome "
-                            "with connection handles ")
+        raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
 
     if len(nodes) == 0:
         return nodes
@@ -370,9 +353,8 @@ def GetStatus(nodes, keys=None, output=''):
     result = spp()
 
     if isinstance(result, dict):
-        # We have taken GetStatus on a layer object, or another GIDCollection
-        # with metadata, which returns a dictionary from C++, so we need to
-        # turn it into a tuple for consistency.
+        # We have taken GetStatus on a layer object, or another GIDCollection with metadata, which returns a
+        # dictionary from C++, so we need to turn it into a tuple for consistency.
         result = (result,)
 
     if output == 'json':

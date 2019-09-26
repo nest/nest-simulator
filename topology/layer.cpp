@@ -44,8 +44,8 @@
 namespace nest
 {
 
-GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
-GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_vector_md_ = GIDCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -68,9 +68,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   if ( layer_dict->known( names::positions ) )
   {
-    if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns ) or layer_dict->known( names::depth ) )
+    if ( layer_dict->known( names::shape ) )
     {
-      throw BadProperty( "Can not specify both positions and rows or columns." );
+      throw BadProperty( "Cannot specify both positions and shape." );
     }
     int num_dimensions = 0;
 
@@ -86,8 +86,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
-      // To avoid nasty segfaults, we check that the parameter is indeed a
-      // DimensionParameter.
+      // To avoid nasty segfaults, we check that the parameter is indeed a DimensionParameter.
       if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
       {
         throw KernelException( "When 'positions' is a Parameter, it must be a DimensionParameter." );
@@ -118,24 +117,29 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
     }
   }
-  else if ( layer_dict->known( names::columns ) )
+  else if ( layer_dict->known( names::shape ) )
   {
+    std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
 
-    if ( not layer_dict->known( names::rows ) )
+    if ( ! std::all_of( shape.begin(), shape.end(), []( long x ) { return x>0; }) )
     {
-      throw BadProperty( "Both columns and rows must be given." );
+      throw BadProperty( "All shape entries must be positive." );
     }
 
-    length = getValue< long >( layer_dict, names::columns ) * getValue< long >( layer_dict, names::rows );
+    int num_dimensions = shape.size();
+    length = std::accumulate(std::begin( shape ), std::end( shape ), 1, std::multiplies< long >());
 
-    if ( layer_dict->known( names::depth ) )
+    if ( num_dimensions == 2)
+    {
+      layer_local = new GridLayer< 2 >();
+    }
+    else if ( num_dimensions == 3 )
     {
       layer_local = new GridLayer< 3 >();
-      length *= getValue< long >( layer_dict, names::depth );
     }
     else
     {
-      layer_local = new GridLayer< 2 >();
+      throw BadProperty( "Shape must be of length 2 or 3." );
     }
   }
   else
@@ -145,7 +149,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   assert( layer_local );
   std::shared_ptr< AbstractLayer > layer_safe( layer_local );
-  // auto layer_safe = std::make_shared< AbstractLayer >( layer_local );
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it

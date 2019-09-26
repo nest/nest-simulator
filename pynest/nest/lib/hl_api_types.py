@@ -239,19 +239,19 @@ class GIDCollectionIterator(object):
     consisting of the respective gid and modelID.
     """
 
-    def __init__(self, gc, iterpairs=False):
-        self._gciter = sli_func(':beginiterator_g', gc)
-        self._deref_and_increment = 'dup {} exch :next_q pop'.format(
-            ':getgidmodelid_q' if iterpairs else ':getgid_q')
+    def __init__(self, gc):
+        self._gc = gc
+        self._increment = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        try:
-            val = sli_func(self._deref_and_increment, self._gciter)
-        except kernel.NESTError:
+        if self._increment > len(self._gc) - 1:
             raise StopIteration
+
+        val = sli_func('Take', self._gc._datum, [self._increment + (self._increment >= 0)])
+        self._increment += 1
         return val
 
     next = __next__  # Python2.x
@@ -324,15 +324,13 @@ class GIDCollection(object):
     def __iter__(self):
         return GIDCollectionIterator(self)
 
-    def items(self):
-        return GIDCollectionIterator(self, True)
-
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
             raise NotImplementedError()
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
+
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
@@ -357,10 +355,7 @@ class GIDCollection(object):
 
         if self.__len__() != other.__len__():
             return False
-        for selfpair, otherpair in zip(self.items(), other.items()):
-            if selfpair != otherpair:
-                return False
-        return True
+        return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):
@@ -371,6 +366,9 @@ class GIDCollection(object):
         return sli_func('size', self._datum)
 
     def __str__(self):
+        return sli_func('pcvs', self._datum)
+
+    def __repr__(self):
         return sli_func('pcvs', self._datum)
 
     def set_spatial(self):
@@ -546,7 +544,9 @@ class GIDCollection(object):
         sli_func('SetStatus', self._datum, params)
 
     def tolist(self):
-        return list(self)
+        if self.__len__() == 0:
+            return []
+        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
     def index(self, gid):
         """

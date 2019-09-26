@@ -70,7 +70,7 @@ class ThreadTestCase(unittest.TestCase):
         targets = list(conn.get("target"))
         targets.sort()
 
-        self.assertEqual(targets, list(post))
+        self.assertEqual(targets, post.tolist())
 
     def test_ThreadsGetEvents(self):
         """ Gathering events across threads """

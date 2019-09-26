@@ -63,17 +63,18 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create('iaf_psc_alpha',
                              positions=nest.spatial.grid(
-                                 5, 5, extent=[5., 5.]))
+                                 [5, 5], extent=[5., 5.]))
 
         target = nest.Create('iaf_psc_alpha',
                              positions=nest.spatial.grid(
-                                 5, 5, extent=[5., 5.]))
+                                 [5, 5], extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'elliptical': {'major_axis': 3.0,
                                             'minor_axis': 2.0}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [1, 27], [1, 31], [2, 26], [2, 27], [2, 28], [2, 32],
                [3, 27], [3, 28], [3, 29], [3, 33], [4, 28], [4, 29], [4, 30],
@@ -130,17 +131,18 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'elliptical': {'major_axis': 3.0,
                                             'minor_axis': 1.0,
                                             'azimuth_angle': 45.}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [2, 27], [2, 31], [3, 28], [3, 32], [4, 29], [4, 33],
                [5, 30], [5, 34], [6, 27], [6, 31], [7, 28], [7, 32], [7, 36],
@@ -190,17 +192,18 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.]))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'elliptical': {'major_axis': 3.,
                                             'minor_axis': 2.,
                                             'anchor': [1., 0.]}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [1, 31], [1, 32], [1, 36], [2, 27], [2, 31], [2, 32],
                [2, 33], [2, 37], [3, 28], [3, 32], [3, 33], [3, 34], [3, 38],
@@ -258,16 +261,17 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         """
         source = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.], edge_wrap=True))
         target = nest.Create(
             'iaf_psc_alpha',
-            positions=nest.spatial.grid(5, 5, extent=[5., 5.], edge_wrap=True))
+            positions=nest.spatial.grid([5, 5], extent=[5., 5.], edge_wrap=True))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'elliptical': {'major_axis': 3.,
                                             'minor_axis': 2.}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [1, 27], [1, 30], [1, 31], [1, 46], [2, 26], [2, 27],
                [2, 28], [2, 32], [2, 47], [3, 27], [3, 28], [3, 29], [3, 33],

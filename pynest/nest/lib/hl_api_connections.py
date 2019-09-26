@@ -88,21 +88,13 @@ def GetConnections(source=None, target=None, synapse_model=None,
         if isinstance(source, GIDCollection):
             params['source'] = source
         else:
-            try:
-                params['source'] = GIDCollection(source)
-            except kernel.NESTError:
-                raise TypeError("source must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("source must be GIDCollection.")
 
     if target is not None:
         if isinstance(target, GIDCollection):
             params['target'] = target
         else:
-            try:
-                params['target'] = GIDCollection(target)
-            except kernel.NESTError:
-                raise TypeError("target must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("target must be GIDCollection.")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -157,12 +149,18 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                                 "scalar or a dictionary.")
                         else:
                             syn_spec[key] = value
+                    elif rule == 'fixed_total_number':
+                        if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
+                            raise kernel.NESTError(
+                                "'" + key + "' has to be an array of "
+                                "dimension " + str(conn_spec['N']) + ", a "
+                                "scalar or a dictionary.")
                     else:
                         raise kernel.NESTError(
                             "'" + key + "' has the wrong type. "
                             "One-dimensional parameter arrays can "
                             "only be used in conjunction with rule "
-                            "'one_to_one'.")
+                            "'one_to_one' or 'fixed_total_number'.")
 
                 elif len(value.shape) == 2:
                     if rule == 'all_to_all':
@@ -208,7 +206,6 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                             "only be used in conjunction with rules "
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
-        # sps(syn_spec)
         return syn_spec
     else:
         raise TypeError("syn_spec must be a string or dict")
@@ -242,11 +239,10 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 raise ValueError(
                     "'{}' is not allowed in syn_spec when ".format(key) +
                     "connecting with mask or kernel".format(key))
-        # TODO: change topology names of weights, delays to be consistent
         if 'weight' in syn_spec:
-            projections['weights'] = syn_spec['weight']
+            projections['weight'] = syn_spec['weight']
         if 'delay' in syn_spec:
-            projections['delays'] = syn_spec['delay']
+            projections['delay'] = syn_spec['delay']
         if 'synapse_model' in syn_spec:
             projections['synapse_model'] = syn_spec['synapse_model']
 
@@ -343,6 +339,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Connect does not iterate over subnets, it only connects explicitly
     specified nodes.
 
+    It is possible to connect arrays of GIDs with nonunique GIDs by
+    passing the arrays as pre and post, together with a syn_spec dictionary.
+    However this should only be done if you know what you're doing. This will
+    connect all nodes in pre to all nodes in post and apply the specified
+    synapse specifications.
+
     Connectivity specification (conn_spec)
     --------------------------------------
 
@@ -399,12 +401,16 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     except for 'receptor_type' which must be initialised with an integer.
 
     Parameter arrays are available for the rules 'one_to_one',
-    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
+    'all_to_all', 'fixed_total_number', 'fixed_indegree' and
+    'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_total_number' the array has to be a one-dimensional
+      NumPy array with length len(N), where N is the number of connections
+      specified.
     - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
       with shape (len(post), indegree), where indegree is the number of
       incoming connections per target neuron, therefore the rows describe the

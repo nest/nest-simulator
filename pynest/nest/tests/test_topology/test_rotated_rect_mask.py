@@ -55,8 +55,7 @@ class RotatedRectangularMask(unittest.TestCase):
 
         # Test 2D layer
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=5,
-                                                        columns=5,
+                            positions=nest.spatial.grid(shape=[5, 5],
                                                         extent=[5., 5.]))
 
         # First test without rotation.
@@ -264,8 +263,7 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11,
-                                                        columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
 
         # First test that we get the correct GIDs when our mask does not
@@ -371,20 +369,19 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         source = nest.Create('iaf_psc_alpha',
-                             positions=nest.spatial.grid(rows=5,
-                                                         columns=5,
+                             positions=nest.spatial.grid(shape=[5, 5],
                                                          extent=[5., 5.]))
         target = nest.Create('iaf_psc_alpha',
-                             positions=nest.spatial.grid(rows=5,
-                                                         columns=5,
+                             positions=nest.spatial.grid(shape=[5, 5],
                                                          extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'rectangular': {'lower_left': [-1.5, -0.5],
                                              'upper_right': [1.5, 0.5],
                                              'azimuth_angle': 45.}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [2, 27], [2, 31], [3, 28], [3, 32], [4, 29], [4, 33],
                [5, 30], [5, 34], [6, 27], [6, 31], [7, 28], [7, 32], [7, 36],

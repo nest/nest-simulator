@@ -451,7 +451,7 @@ inline Position< D, T >::Position( const Position< D, U >& other )
 template < int D, class T >
 Position< D, T >::operator std::vector< T >() const
 {
-  std::vector< double > result;
+  std::vector< T > result;
   for ( int i = 0; i < D; ++i )
   {
     result.push_back( x_[ i ] );

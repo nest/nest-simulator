@@ -55,7 +55,6 @@ public:
   void init( SLIInterpreter* );
 
   const std::string name( void ) const;
-  const std::string commandstring( void ) const;
 
   static SLIType MaskType; ///< SLI type for masks
 

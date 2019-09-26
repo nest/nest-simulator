@@ -84,18 +84,6 @@ public:
    */
   GIDCollectionPTR add_node( index m, long n = 1 );
 
-
-  /**
-   * Restore nodes from an array of status dictionaries.
-   * The following entries must be present in each dictionary:
-   * /model - with the name or index of a neuron mode.
-   *
-   * Restore nodes uses the current working node as root. Thus, all
-   * GIDs in the status dictionaties are offset by the GID of the current
-   * working node.
-   */
-  void restore_nodes( const ArrayDatum& );
-
   /**
    * Get global id's of all nodes with the given properties.
    *

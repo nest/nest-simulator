@@ -113,7 +113,7 @@ NodeManager::add_node( index model_id, long n )
 
   const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
   const index max_gid = min_gid + n - 1;
-  if ( max_gid >= local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
+  if ( max_gid < min_gid )
   {
     LOG( M_ERROR,
       "NodeManager::add_node",
@@ -190,13 +190,6 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
 
     try
     {
-      // TODO480: We should move more of the reservation logic into the
-      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the
-      // model
-      // needs local replicas or not. Then SNA can manage memory. This can
-      // reduce
-      // bloat due to round-up when using many Create calls for >1 thread
-      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
       model.reserve_additional( t, max_new_per_thread );
 
       // Need to find smallest gid with:
@@ -240,7 +233,6 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
     const index t = kernel().vp_manager.get_thread_id();
     try
     {
-      local_nodes_[ t ].reserve_additional( n_per_thread );
       model.reserve_additional( t, n_per_thread );
 
       for ( index gid = min_gid; gid <= max_gid; ++gid )
@@ -302,36 +294,6 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
-}
-
-void
-NodeManager::restore_nodes( const ArrayDatum& node_list )
-{
-  Token* first = node_list.begin();
-  const Token* end = node_list.end();
-  if ( first == end )
-  {
-    return;
-  }
-
-
-  // todo481: why does this not use an iterator? The check above is
-  // also not needed as the loop anyway won't run if first == end.
-  for ( Token* node_t = first; node_t != end; ++node_t )
-  {
-    DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
-    std::string model_name = ( *node_props )[ names::model ];
-    index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
-    GIDCollectionPTR node = add_node( model_id );
-    // todo481: The call below is unsafe. It will most likely not
-    // return the correct pointer, as nodes are allocated round robin.
-    // Actually it is unclear to me how setting the status would work
-    // in a distributed scenario.
-    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
-    // we call directly set_status on the node
-    // to bypass checking of unused dictionary items.
-    node_ptr->set_status_base( node_props );
   }
 }
 

@@ -23,8 +23,6 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-#include <ctime>
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
@@ -124,7 +122,7 @@ private:
   KernelManager();
   ~KernelManager();
 
-  std::clock_t fingerprint_;
+  unsigned long fingerprint_;
 
   static KernelManager* kernel_manager_instance_;
 
@@ -184,7 +182,7 @@ public:
   //! Returns true if kernel is initialized
   bool is_initialized() const;
 
-  std::clock_t get_fingerprint() const;
+  unsigned long get_fingerprint() const;
 
   LoggingManager logging_manager;
   IOManager io_manager;
@@ -227,7 +225,7 @@ nest::KernelManager::is_initialized() const
   return initialized_;
 }
 
-inline std::clock_t
+inline unsigned long
 nest::KernelManager::get_fingerprint() const
 {
   return fingerprint_;

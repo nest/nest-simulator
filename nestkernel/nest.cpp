@@ -300,13 +300,6 @@ get_model_defaults( const Name& modelname )
   return dict;
 }
 
-void
-restore_nodes( const ArrayDatum& node_list )
-{
-  kernel().node_manager.restore_nodes( node_list );
-}
-
-
 ParameterDatum
 multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 {

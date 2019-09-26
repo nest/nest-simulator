@@ -387,6 +387,7 @@ const Name synapse_modelid( "synapse_modelid" );
 const Name synapses_per_driver( "synapses_per_driver" );
 const Name synaptic_elements( "synaptic_elements" );
 const Name synaptic_elements_param( "synaptic_elements_param" );
+const Name synaptic_endpoint( "synaptic_endpoint" );
 
 const Name t_clamp( "t_clamp" );
 const Name t_lag( "t_lag" );

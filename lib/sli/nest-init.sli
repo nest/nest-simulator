@@ -64,11 +64,6 @@ def
 [/arraytype] /GetStatus_a load addtotrie
 def
 
-/GetStatus_a
-{
-  { GetStatus_C } Map
-}
-def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -571,6 +566,8 @@ def
   /MemberQ_g_i load
 def
 
+/eq [/gidcollectiontype /gidcollectiontype] /eq_g load def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % typeinit.sli already defines size functions for other types
@@ -992,6 +989,27 @@ def
 
 def
 
+/** @BeginDocumentation
+   Name: Connect_nonunique - Connect all GIDs in one array to all GIDs in another array.
+
+   Synopsis:
+   sources targets syn_spec     Connect_nonunique
+
+   Parameters:
+   sources    array  - the GIDs of the sources
+   targets    array  - the GIDs of the targets
+   syn_spec   dict   - dictionary with synapse model specification (see Options in Connect)
+
+   Description:
+   Connects all sources to all targets. Source and target arrays may
+   have duplicate GIDs.
+
+   SeeAlso: Connect
+
+   Author: Håkon Mørk
+
+   FirstVersion: September 2019
+*/
 /Connect_nonunique [/arraytype /arraytype /dictionarytype]
 {
   /syn_spec :Connect_complete_dict   % fill in missing defaults
@@ -1042,9 +1060,9 @@ def
       mainly important for NEST internally.
    4. In OpenMP mode, GetConnections works thread-parallel for better performance.
    5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetSynapseStatus, and GetSynapseStatus
+   6. Connection objects can be passed to SetStatus, and GetStatus
 
-   SeeAlso: SetSynapseStatus, GetSynapseStatus, synapsedict
+   SeeAlso: synapsedict
 */
 /GetConnections [/dictionarytype]
 {
@@ -1069,52 +1087,6 @@ def
 }
 def
 
-
-/** @BeginDocumentation
-   Name: GetSynapseStatus - Return synapse status information
-
-   Synopsis:
-   [ conn1 conn2 ... ] GetSynapseStatus -> [ sdict1 sdict2 ... ]
-
-   Parameters:
-   An list of connection objects as returned by GetConnections.
-
-   Description:
-   Returns a list of synapse status dictionaries, one for each connection
-   in the parameter list.
-
-   Remarks:
-   Status information is only available for connections with targets on
-   the MPI process executing the command.
-
-   See also: GetConnections, SetSynapseStatus
-*/
-/GetSynapseStatus [/arraytype] /GetStatus_a load def
-
-/** @BeginDocumentation
-   Name: SetSynapseStatus - Return synapse status information
-
-   Synopsis:
-   [ conn1 conn2 ... ] [ sdict1 sdict2 ... ] SetSynapseStatus -> -
-
-   Parameters:
-   An list of connection objects as returned by GetConnections and a list
-   of synapse properties dictionaries.
-
-   Description:
-   Sets the given properties on the given connections. If the list of
-   dictionaries contains more than one dictionary, there must be one
-   dictionary per connection. Otherwise, the single dictionary is used
-   for all connections.
-
-   Remarks:
-   Only some connection properties can be changed. Properties can only
-   be changed for connections with targets on the MPI process executing
-   SetSynapseStatus.
-
-   See also: GetConnections, GetSynapseStatus
-*/
-/SetSynapseStatus [/arraytype /arraytype] /SetStatus_aa load def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1392,17 +1364,6 @@ statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
  /memory_thisjob { :memory_thisjob_bg } def
 } if
 
-/** @BeginDocumentation
-Name - RestoreNodes - Restore nodes from an array of status dictionaries.
-Description:
-RestoreNodes takes an array of status dictionaries and creates nodes with these properties.
-RestoreNodes assumes that the status dictionaries belong to a consecutive range of nodes.
-
-The new nodes are created inside the current subnet and maintain their local subnet structure.
-Thus, RestoreNodes can be used to copy a range of neurons to different locations.
-*/
-
-/RestoreNodes [/arraytype] /RestoreNodes_a load def
 
 /** @BeginDocumentation
 Name: SaveModels - Retrieve the state of all models.
@@ -1477,6 +1438,95 @@ Description:
   statusdict /exitcodes get /userabort get
   statusdict /is_mpi get { MPI_Abort }{ quit_i } ifelse
 } bind def
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     Functions relating to spatial positions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/ConnectLayers [/gidcollectiontype /gidcollectiontype /dictionarytype]
+  /ConnectLayers_g_g_D load
+def
+
+/CreateLayerParams [/dictionarytype /dictionarytype]
+  /CreateLayer_D_D load
+def
+
+/CreateLayer [/dictionarytype]
+{
+  << >> CreateLayerParams
+} def
+
+/GetPosition [/gidcollectiontype]
+  /GetPosition_g load
+def
+
+% gc_from, gc_to
+/Displacement [/gidcollectiontype /gidcollectiontype]
+  /Displacement_g_g load
+def
+
+/Displacement [/arraytype /gidcollectiontype]
+  /Displacement_a_g load
+def
+
+% gc_from, gc_to
+/Distance [/gidcollectiontype /gidcollectiontype]
+  /Distance_g_g load
+def
+
+/Distance [/arraytype /gidcollectiontype]
+    /Distance_a_g load
+def
+
+/GetLayerStatus [/gidcollectiontype]
+    /GetLayerStatus_g load
+def
+
+/DumpLayerNodes [/ostreamtype /gidcollectiontype]
+  { DumpLayerNodes_os_g } bind
+def
+
+/DumpLayerConnections [/ostreamtype /gidcollectiontype /gidcollectiontype /literaltype]
+  /DumpLayerConnections_os_g_g_l load
+def
+
+/CreateMask [/dictionarytype]
+  /CreateMask_D load
+def
+
+/Inside [/arraytype /masktype]
+  /Inside_a_M load
+def
+
+/Inside [/arraytype /dictionarytype]
+  { CreateMask Inside_M_a } bind
+def
+
+/and [/masktype /masktype]
+  /and_M_M load
+def
+
+/or [/masktype /masktype]
+  /or_M_M load
+def
+
+/sub [/masktype /masktype]
+  /sub_M_M load
+def
+
+/cvdict [/masktype]
+  /cvdict_M load
+def
+
+/get [/masktype /literaltype] {exch cvdict_M exch get} def
+/get [/masktype /arraytype] {exch cvdict_M exch get} def
+
+/SelectNodesByMask [/gidcollectiontype /arraytype /masktype]
+  /SelectNodesByMask_g_a_M load
+def
 
 
 % Install modules in environment variable NEST_MODULES. Modules have

@@ -43,21 +43,20 @@ namespace nest
 {
 
 /**
- * Abstract base class for parameters
+ * Abstract base class for parameters.
  */
 class Parameter
 {
 public:
   /**
-   * Default constructor
+   * Creates an Parameter with default values.
    */
   Parameter()
   {
   }
 
   /**
-   * Constructor
-   * Parameter that can be set in the Dictionary:
+   * Creates a Parameter with values specified in a dictionary.
    * @param d dictionary with parameter values
    */
   Parameter( const DictionaryDatum& d )
@@ -72,6 +71,8 @@ public:
   }
 
   /**
+   * Generates a value based on parameter specifications and arguments.
+   * Note that not all parameters support all overloaded versions.
    * @returns the value of the parameter.
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
@@ -91,7 +92,7 @@ public:
   }
 
   /**
-   * Clone method.
+   * Create a copy of the parameter.
    * @returns dynamically allocated copy of parameter object
    */
   virtual Parameter* clone() const = 0;
@@ -166,7 +167,7 @@ public:
   virtual Parameter* pow( const double exponent ) const;
 
   /**
-   * Create TODO
+   * Create a parameter that can generate position vectors from a given set of parameters.
    * @returns a new dynamically allocated parameter.
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
@@ -223,7 +224,7 @@ private:
 
 
 /**
- * Random parameter with uniform distribution in [min,max)
+ * Random parameter with uniform distribution in [min,max).
  */
 class UniformParameter : public Parameter
 {
@@ -268,8 +269,7 @@ private:
 
 
 /**
- * Random parameter with normal distribution, optionally truncated to [min,max).
- * Truncation is implemented by rejection.
+ * Random parameter with normal distribution.
  */
 class NormalParameter : public Parameter
 {
@@ -278,44 +278,27 @@ public:
    * Parameters:
    * mean  - mean value
    * sigma - standard distribution
-   * min   - minimum value
-   * max   - maximum value
    */
   NormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mean_( 0.0 )
     , sigma_( 1.0 )
-    , min_( -std::numeric_limits< double >::infinity() )
-    , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
     updateValue< double >( d, names::mean, mean_ );
     updateValue< double >( d, names::sigma, sigma_ );
-    updateValue< double >( d, names::min, min_ );
-    updateValue< double >( d, names::max, max_ );
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
         "nest::NormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
-      throw BadProperty(
-        "nest::NormalParameter: "
-        "min < max required." );
-    }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
-    double val;
-    do
-    {
-      val = mean_ + rdev( rng ) * sigma_;
-    } while ( ( val < min_ ) or ( val >= max_ ) );
-    return val;
+    return mean_ + rdev( rng ) * sigma_;
   }
 
   Parameter*
@@ -325,14 +308,13 @@ public:
   }
 
 private:
-  double mean_, sigma_, min_, max_;
+  double mean_, sigma_;
   librandom::NormalRandomDev rdev;
 };
 
 
 /**
- * Random parameter with lognormal distribution, optionally truncated to
- * [min,max). Truncation is implemented by rejection.
+ * Random parameter with lognormal distribution.
  */
 class LognormalParameter : public Parameter
 {
@@ -341,44 +323,27 @@ public:
    * Parameters:
    * mu    - mean value of logarithm
    * sigma - standard distribution of logarithm
-   * min   - minimum value
-   * max   - maximum value
    */
   LognormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mu_( 0.0 )
     , sigma_( 1.0 )
-    , min_( -std::numeric_limits< double >::infinity() )
-    , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
     updateValue< double >( d, names::mu, mu_ );
     updateValue< double >( d, names::sigma, sigma_ );
-    updateValue< double >( d, names::min, min_ );
-    updateValue< double >( d, names::max, max_ );
     if ( sigma_ <= 0 )
     {
       throw BadProperty(
         "nest::LognormalParameter: "
         "sigma > 0 required." );
     }
-    if ( min_ >= max_ )
-    {
-      throw BadProperty(
-        "nest::LognormalParameter: "
-        "min < max required." );
-    }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
-    double val;
-    do
-    {
-      val = std::exp( mu_ + rdev( rng ) * sigma_ );
-    } while ( ( val < min_ ) or ( val >= max_ ) );
-    return val;
+    return std::exp( mu_ + rdev( rng ) * sigma_ );
   }
 
   Parameter*
@@ -388,13 +353,13 @@ public:
   }
 
 private:
-  double mu_, sigma_, min_, max_;
+  double mu_, sigma_;
   librandom::NormalRandomDev rdev;
 };
 
 
 /**
- * Exponential parameter.
+ * Random parameter with exponential distribution.
  */
 class ExponentialParameter : public Parameter
 {
@@ -437,43 +402,37 @@ public:
    * Parameters:
    * dimension - Dimension from which to get the position value of the node.
    *             0: x, 1: y, 2: z.
-   * type_id - If specified, specifies if the position should be taken from the
-   *           presynaptic or postsynaptic node in a connection.
-   *           0: unspecified, 1: presynaptic, 2: postsynaptic.
+   * synaptic_endpoint - If specified, specifies if the position should be taken
+   *                     from the presynaptic or postsynaptic node in a connection.
+   *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
   NodePosParameter( const DictionaryDatum& d )
     : Parameter( d )
     , dimension_( 0 )
-    , node_location_( 0 )
+    , synaptic_endpoint_( 0 )
   {
     bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
     if ( not dimension_specified )
     {
-      throw BadParameterValue(
-        "Dimension must be specified when creating a node position "
-        "parameter." );
+      throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
     }
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    updateValue< long >( d, names::type_id, node_location_ ); // TODO: Better name than "type_id"?
-    if ( node_location_ < 0 or 2 < node_location_ )
+    updateValue< long >( d, names::synaptic_endpoint, synaptic_endpoint_ );
+    if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
-      throw BadParameterValue(
-        "Node location must either be unspecified (0), source (1) or target "
-        "(2)" );
+      throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* node ) const
   {
-    if ( node_location_ != 0 )
+    if ( synaptic_endpoint_ != 0 )
     {
-      throw BadParameterValue(
-        "Source or target position parameter can only be used when "
-        "connecting." );
+      throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
     }
     return get_node_pos_( rng, node );
   }
@@ -481,7 +440,7 @@ public:
   double
   value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
   {
-    switch ( node_location_ )
+    switch ( synaptic_endpoint_ )
     {
     case 0:
       throw BadParameterValue( "Node position parameter cannot be used when connecting." );
@@ -493,8 +452,7 @@ public:
     case 2:
       return get_node_pos_( rng, target );
     }
-    // TODO: assert that we don't get here
-    throw KernelException( "Wrong node_location_." );
+    throw KernelException( "Wrong synaptic_endpoint_." );
   }
 
   double
@@ -503,7 +461,7 @@ public:
     const std::vector< double >& target_pos,
     const std::vector< double >& displacement ) const
   {
-    switch ( node_location_ )
+    switch ( synaptic_endpoint_ )
     {
     case 0:
       throw BadParameterValue( "Node position parameter cannot be used when connecting." );
@@ -514,7 +472,7 @@ public:
     case 2:
       return target_pos[ dimension_ ];
     }
-    throw KernelException( "Wrong node_location_." );
+    throw KernelException( "Wrong synaptic_endpoint_." );
   }
 
   Parameter*
@@ -525,14 +483,14 @@ public:
 
 private:
   int dimension_;
-  int node_location_;
+  int synaptic_endpoint_;
 
   double get_node_pos_( librandom::RngPtr& rng, Node* node ) const;
 };
 
 
 /**
- * Node distance parameter.
+ * Parameter representing the spatial distance between two nodes, optionally in a specific dimension.
  */
 class SpatialDistanceParameter : public Parameter
 {
@@ -574,7 +532,7 @@ private:
 
 
 /**
- * Parameter class representing the product of two parameters
+ * Parameter class representing the product of two parameters.
  */
 class ProductParameter : public Parameter
 {
@@ -643,13 +601,13 @@ protected:
 };
 
 /**
- * Parameter class representing the quotient of two parameters
+ * Parameter class representing the quotient of two parameters.
  */
 class QuotientParameter : public Parameter
 {
 public:
   /**
-   * Construct the quotient of the two given parameters. Copies are made
+   * Construct the quotient of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   QuotientParameter( const Parameter& m1, const Parameter& m2 )
@@ -718,7 +676,7 @@ class SumParameter : public Parameter
 {
 public:
   /**
-   * Construct the sum of the two given parameters. Copies are made
+   * Construct the sum of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   SumParameter( const Parameter& m1, const Parameter& m2 )
@@ -787,7 +745,7 @@ class DifferenceParameter : public Parameter
 {
 public:
   /**
-   * Construct the difference of the two given parameters. Copies are made
+   * Construct the difference of two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
   DifferenceParameter( const Parameter& m1, const Parameter& m2 )
@@ -1570,15 +1528,17 @@ protected:
 };
 
 
-/** TODO: doc
- * Parameter class representing .
+/**
+ * Position-generating Parameter class. One Parameter per dimension is
+ * stored. When getting a position vector, a value for each dimension is
+ * generated from their respective Parameters.
  */
 class DimensionParameter : public Parameter
 {
 public:
   /**
-   * Construct the exponential of the given parameter. A copy is made of the
-   * supplied Parameter object.
+   * Construct the Parameter with one given Parameter per dimension. A
+   * copy is made of the supplied Parameter objects.
    */
   DimensionParameter( const Parameter& px, const Parameter& py )
     : num_dimensions_( 2 )
@@ -1618,7 +1578,7 @@ public:
   }
 
   /**
-   * @returns the value of the parameter.
+   * The DimensionParameter has no double value, so this method will always throw.
    */
   double
   value( librandom::RngPtr& rng, Node* node ) const
@@ -1632,6 +1592,10 @@ public:
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
+  /**
+   * Generates a position with values for each dimension generated from their respective parameters.
+   * @returns The position, given as an array.
+   */
   std::vector< double >
   get_values( librandom::RngPtr& rng )
   {

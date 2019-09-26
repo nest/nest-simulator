@@ -163,29 +163,22 @@ template < int D >
 void
 GridLayer< D >::set_status( const DictionaryDatum& d )
 {
-  Position< D, index > new_dims = dims_;
-  updateValue< long >( d, names::columns, new_dims[ 0 ] );
-  if ( D >= 2 )
-  {
-    updateValue< long >( d, names::rows, new_dims[ 1 ] );
-  }
-  if ( D >= 3 )
-  {
-    updateValue< long >( d, names::depth, new_dims[ 2 ] );
-  }
+  std::vector< long > new_dims( D );
+
+  updateValue< std::vector< long > >( d, names::shape, new_dims );
 
   index new_size = 1;
   for ( int i = 0; i < D; ++i )
   {
     new_size *= new_dims[ i ];
+
+    this->dims_[ i ] = ( index )new_dims[ i ];
   }
 
   if ( new_size != this->gid_collection_->size() )
   {
     throw BadProperty( "Total size of layer must be unchanged." );
   }
-
-  this->dims_ = new_dims;
 
   if ( d->known( names::extent ) )
   {
@@ -208,15 +201,7 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  ( *d )[ names::columns ] = dims_[ 0 ];
-  if ( D >= 2 )
-  {
-    ( *d )[ names::rows ] = dims_[ 1 ];
-  }
-  if ( D >= 3 )
-  {
-    ( *d )[ names::depth ] = dims_[ 2 ];
-  }
+  ( *d )[ names::shape ] = std::vector< index >( dims_ );
 }
 
 template < int D >

@@ -39,9 +39,9 @@ stages:
 
 jobs:
   include:
-    - stage: Staticcheck
-      python: 3.4.4
-      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis and build
+    # - stage: Staticcheck
+    #   python: 3.4.4
+    #   env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis and build
     - stage: MPI-Threading-Python
       python: 3.4.4
       env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only MPI

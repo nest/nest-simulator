@@ -111,7 +111,9 @@ code.descclassname {
 .rst-content .admonition {
     background: #e0e0e0;
 
+}
 /* override table width restrictions */
+
 @media screen and (min-width: 767px) {
 
    .wy-table-responsive table td {
@@ -122,5 +124,83 @@ code.descclassname {
 
    .wy-table-responsive {
       overflow: visible !important;
+      word-wrap: break-word;
    }
+/*html body div.wy-table-responsive {
+  margin-bottom: 0;
 }
+
+html body div.wy-table-responsive .footnote td {
+  padding-top: 1px;
+  padding-bottom: 4px;
+}*/
+
+
+.maroon {
+    color: maroon;
+}
+
+.red {
+    color: red;
+}
+
+.magenta {
+    color: magenta;
+}
+
+.pink {
+    color: pink;
+}
+
+.orange {
+    color: #f63;
+}
+
+.lime {
+    color: lime;
+}
+
+.green {
+    color: green;
+}
+
+.teal {
+    color: teal;
+}
+
+.cyan {
+    color: cyan;
+}
+
+.aqua {
+    color: aqua;
+}
+
+.blue {
+    color: blue;
+}
+
+.navy {
+    color: navy;
+}
+
+.purple {
+    color: purple;
+}
+
+.under {
+    text-decoration: underline;
+}
+
+.over {
+    text-decoration: overline;
+}
+
+.blink {
+    text-decoration: blink;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+

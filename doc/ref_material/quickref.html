@@ -354,10 +354,6 @@ facilities.</p>
       <td>Simulate n milliseconds.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/ResumeSimulation.html">ResumeSimulation</a></td>
-      <td>Resume an interrupted simulation.</td>
-    </tr>
-    <tr>
       <td width="25%"><a href="help/cc/ResetKernel.html">ResetKernel</a></td>
       <td>Put the simulation kernel back to its initial state.</td>
     </tr>
@@ -440,10 +436,6 @@ properties.</p>
       <td width="25%"><a href="help/cc/Create.html">Create</a></td>
       <td>Create network elements in the current subnet.</td>
     </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/LayoutNetwork.html">LayoutNetwork</a></td>
-      <td>Create a nested multi-dimensional network structure in the current subnet.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -452,15 +444,12 @@ properties.</p>
 <table class="commands">
   <tbody>
     <tr>
-      <td width="25%">
-        <a href="help/cc/iaf_neuron.html">iaf_neuron</a>,
-        <a href="help/cc/iaf_psc_alpha.html">iaf_psc_alpha</a>
-      </td>
-      <td>Leaky integrate-and-fire neuron model.</td>
+      <td width="25%"><a href="help/cc/iaf_psc_alpha.html">iaf_psc_alpha</a></td>
+      <td>Leaky integrate-and-fire neuron model with alpha shaped PSCs.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/iaf_psc_delta.html">iaf_psc_delta</a></td>
-      <td>Leaky integrate-and-fire neuron model.</td>
+      <td>Leaky integrate-and-fire neuron model with delta shaped PSCs.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/iaf_psc_exp.html">iaf_psc_exp</a></td>
@@ -484,15 +473,15 @@ properties.</p>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_psc_alpha.html">hh_psc_alpha</a></td>
-      <td>Hodgkin Huxley neuron model.</td>
+      <td>Hodgkin-Huxley neuron model.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_psc_alpha_gap.html">hh_psc_alpha_gap</a></td>
-      <td>Hodgkin Huxley neuron model with gap-junction support.</td>
+      <td>Hodgkin-Huxley neuron model with gap-junction support.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_cond_exp_traub.html">hh_cond_exp_traub</a></td>
-      <td>Hodgin Huxley based model, Traub modified.</td>
+      <td>Hodgkin-Huxley model for Brette et al (2007) review.</td>
     </tr>
   </tbody>
 </table>
@@ -625,10 +614,6 @@ connected to their targets like a neuron.</p>
       <td>Connect two layers.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/topology::GetElement.html">topology::GetElement</a></td>
-      <td>Return node GID at specified layer position.</td>
-    </tr>
-    <tr>
       <td width="25%"><a href="help/cc/topology::GetPosition.html">topology::GetPosition</a></td>
       <td>Retrieve position of input node.</td>
     </tr>
@@ -658,44 +643,8 @@ connected to their targets like a neuron.</p>
 <table class="commands">
   <tbody>
     <tr>
-      <td width="25%"><a href="help/cc/CurrentSubnet.html">CurrentSubnet</a></td>
-      <td>Return the GID of the current network node.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/ChangeSubnet.html">ChangeSubnet</a></td>
-      <td>Change the curent working subnet to a specified position.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/PrintNetwork.html">PrintNetwork</a></td>
-      <td>Print network tree in readable form.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/NetworkDimensions.html">NetworkDimensions</a></td>
-      <td>Returns an array with the dimensions of a structured subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalNodes.html">GetGlobalNodes</a></td>
-      <td>Return IDs of all nodes of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalLeaves.html">GetGlobalLeaves</a></td>
-      <td>Return IDs of all leaves of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalChildren.html">GetGlobalChildren</a></td>
-      <td>Return IDs of all immediate child nodes of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalNodes.html">GetLocalNodes</a></td>
-      <td>Return IDs of all nodes of a subnet local to the MPI process executing the command.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalLeaves.html">GetLocalLeaves</a></td>
-      <td>Return IDs of all leaves of a subnet local to the MPI process executing the command.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalChildren.html">GetLocalChildren</a></td>
-      <td>Return IDs of all immediate child nodes of a subnet local to the MPI process executing the command.</td>
+      <td width="25%"><a href="help/cc/PrintNodes.html">PrintNodes</a></td>
+      <td>Print GID ranges and model names of the nodes in the network.</td>
     </tr>
   </tbody>
 </table>

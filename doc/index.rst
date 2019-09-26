@@ -2,6 +2,21 @@
 Welcome to the NEST simulator documentation!
 ***********************************************
 
+:orange:`Introducing NEST 3!`
+------------------------------
+
+We have made major improvements to NEST ... introducing a more powerful way to
+More functionality
+
+What does this mean for you?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- If you  have a script that includes subnets or topology module, changes will be necessary
+  - test it somehow?
+
+- We have provided an :doc:`overview with examples <nest-3/nest3_overview>` of the changes introduced in NEST 3
+
+- Also checkout our :doc:`nest-3/nest2_vs_3`
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |
@@ -18,8 +33,6 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     balanced random networks,
 
 3.  Models of learning and plasticity.
-
-
 
 **New to NEST?**
     Start here at our :doc:`Getting Started <getting_started>` page

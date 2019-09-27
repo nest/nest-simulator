@@ -75,7 +75,7 @@ librandom::GSL_BinomialRandomDev::ldev( RngPtr rng ) const
 }
 
 void
-librandom::GSL_BinomialRandomDev::set_p_n( double p_s, unsigned n_s )
+librandom::GSL_BinomialRandomDev::set_p_n( double p_s, size_t n_s )
 {
   set_p( p_s );
   set_n( n_s );
@@ -89,8 +89,19 @@ librandom::GSL_BinomialRandomDev::set_p( double p_s )
 }
 
 void
-librandom::GSL_BinomialRandomDev::set_n( unsigned int n_s )
+librandom::GSL_BinomialRandomDev::set_n( size_t n_s )
 {
+  // gsl_ran_binomial() takes n as an unsigned int, so it cannot be
+  // greater than what an unsigned int can hold.
+  const auto N_MAX = std::numeric_limits< unsigned int >::max();
+  if ( n_s >= N_MAX )
+  {
+    throw BadParameterValue( String::compose( "Gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
+  }
+  if ( n_s < 1 )
+  {
+    throw BadParameterValue( "gsl_binomial RDV: n >= 1 required." );
+  }
   n_ = n_s;
 }
 
@@ -112,13 +123,6 @@ librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
     throw BadParameterValue( "gsl_binomial RDV: n >= 1 required." );
   }
 
-  // gsl_ran_binomial() returns unsigned int. To be on the safe side,
-  // we limit here to within ints.
-  const long N_MAX = static_cast< long >( 0.9 * std::numeric_limits< int >::max() );
-  if ( n_new > N_MAX )
-  {
-    throw BadParameterValue( String::compose( "Gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
-  }
   if ( n_updated || p_updated )
   {
     set_p_n( p_new, n_new );

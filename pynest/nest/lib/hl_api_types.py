@@ -988,3 +988,18 @@ class Parameter(object):
 
         """
         return sli_func("GetValue", self._datum)
+
+    def apply(self, spatial_gc, positions=None):
+        if positions is None:
+            return sli_func('Apply', self._datum, spatial_gc)
+        else:
+            if len(spatial_gc) != 1:
+                raise ValueError('The GIDCollection must contain a single GID only')
+            if not isinstance(positions, (list, tuple)):
+                raise TypeError('Positions must be a list or tuple of positions')
+            for pos in positions:
+                if not isinstance(pos, (list, tuple, numpy.ndarray)):
+                    raise TypeError('Each position must be a list or tuple')
+                if len(pos) != len(positions[0]):
+                    raise ValueError('All positions must have the same number of dimensions')
+            return sli_func('Apply', self._datum, {'source': spatial_gc, 'targets': positions})

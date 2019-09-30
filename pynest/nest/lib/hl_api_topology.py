@@ -26,6 +26,15 @@ Functions relating to spatial properties of nodes
 import nest
 import numpy as np
 
+try:
+    import matplotlib as mpl
+    import matplotlib.path as mpath
+    import matplotlib.patches as mpatches
+    import matplotlib.pyplot as plt
+    HAVE_MPL = True
+except ImportError:
+    HAVE_MPL = False
+
 __all__ = [
     'CreateMask',
     'Displacement',
@@ -37,7 +46,7 @@ __all__ = [
     'GetPosition',
     'GetTargetNodes',
     'GetTargetPositions',
-    'PlotKernel',
+    'plot_probability_parameter',
     'PlotLayer',
     'PlotTargets',
     'SelectNodesByMask',
@@ -946,7 +955,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     See also
     --------
-    PlotKernel : Add indication of mask and kernel to axes.
+    plot_probability_parameter : Create a plot of the connection probability and/or mask.
     PlotTargets : Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
 
@@ -1024,7 +1033,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
 
 def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
-                mask=None, kernel=None,
+                mask=None, probability_parameter=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
                 mask_color='red', kernel_color='red'):
     """
@@ -1042,9 +1051,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is created.
     mask : [None | dict], optional, default: None
-        Draw topology mask with targets; see ``PlotKernel`` for details.
-    kernel : [None | dict], optional, default: None
-        Draw topology kernel with targets; see ``PlotKernel`` for details.
+        Draw mask with targets; see ``plot_probability_parameter`` for details.
+    probability_parameter : [None | Parameter], optional, default: None
+        Draw connection probability with targets; see ``plot_probability_parameter`` for details.
     src_color : [None | any matplotlib color], optional, default: 'red'
         Color used to mark source node position
     src_size : float, optional, default: 50
@@ -1070,7 +1079,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         layer.
     GetTargetPositions : Obtain positions of targets of a list of sources in a
         given target layer.
-    PlotKernel : Add indication of mask and kernel to axes.
+    probability_parameter : Add indication of connection probability and mask to axes.
     PlotLayer : Plot all nodes in a layer.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
 
@@ -1143,10 +1152,11 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
                    edgecolor='none',
                    alpha=0.4, zorder=-10)
 
-        _draw_extent(ax, xctr, yctr, xext, yext)
+        if mask is not None or probability_parameter is not None:
+            edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
+            plot_probability_parameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax)
 
-        if mask is not None or kernel is not None:
-            PlotKernel(ax, src_nrn, mask, kernel, mask_color, kernel_color)
+        _draw_extent(ax, xctr, yctr, xext, yext)
 
     else:
         # 3D layer
@@ -1172,213 +1182,6 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     plt.draw_if_interactive()
 
     return fig
-
-
-def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
-               kernel_color='red'):
-    """
-    Add indication of mask and kernel to axes.
-
-    Adds solid red line for mask. For doughnut mask show inner and outer line.
-    If kern is Gaussian, add blue dashed lines marking 1, 2, 3 sigma.
-    Usually, this function is invoked by ``PlotTargets``.
-
-
-    Parameters
-    ----------
-    ax : matplotlib.axes.AxesSubplot,
-        subplot reference returned by PlotTargets
-    src_nrn : GIDCollection
-        GIDCollection of source neuron (as single-element GIDCollection), mask
-        and kernel plotted relative to it
-    mask : dict
-        Mask used in creating connections.
-    kern : [None | dict], optional, default: None
-        Kernel used in creating connections
-    mask_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for line marking mask
-    kernel_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for lines marking kernel
-
-
-    Returns
-    -------
-    out : None
-
-
-    See also
-    --------
-    CreateMask : Create a ``Mask`` object. Documentation on available spatial
-        masks.
-    CreateParameter : Create a ``Parameter`` object.
-        Documentation on available parameters for distance dependency and
-        randomization.
-    PlotLayer : Plot all nodes in a layer.
-
-
-    Notes
-    -----
-    * Do not use this function in distributed simulations.
-
-
-    **Example**
-        ::
-
-            import nest
-            import matplotlib.pyplot as plt
-
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
-
-            # connectivity specifications
-            mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                         'upper_right' : [2.0, 1.0]}}
-            kernel_dict = {'gaussian': {'p_center' : 1.0,
-                                        'sigma'    : 1.0}}
-            conndict = {'connection_type': 'divergent',
-                        'mask'   : mask_dict,
-                        'kernel' : kernel_dict}
-
-            # connect layer l with itself according to the given
-            # specifications
-            nest.ConnectLayers(l, l, conndict)
-
-            # set up figure
-            fig, ax = plt.subplots()
-
-            # plot layer nodes
-            nest.PlotLayer(l, fig)
-
-            # choose center element of the layer as source node
-            ctr_elem = nest.FindCenterElement(l)
-
-            # plot mask and kernel of the center element
-            nest.PlotKernel(ax,
-                l[ctr_elem],
-                mask=mask_dict,
-                kern=kernel_dict)
-    """
-
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import numpy as np
-
-    if not isinstance(src_nrn, nest.GIDCollection) and len(src_nrn) != 1:
-        raise ValueError("src_nrn must be a single element GIDCollection.")
-
-    # minimal checks for ax having been created by PlotKernel
-    if ax and not isinstance(ax, matplotlib.axes.Axes):
-        raise ValueError('ax must be matplotlib.axes.Axes instance.')
-
-    srcpos = np.array(GetPosition(src_nrn))
-
-    if 'anchor' in mask:
-        offs = np.array(mask['anchor'])
-    else:
-        offs = np.array([0., 0.])
-
-    src_nrn.set_spatial()
-    periodic = src_nrn.spatial['edge_wrap']
-    extent = src_nrn.spatial['extent']
-
-    if 'circular' in mask:
-        r = mask['circular']['radius']
-
-        ax.add_patch(plt.Circle(srcpos + offs, radius=r, zorder=-1000,
-                                fc='none', ec=mask_color, lw=3))
-
-        if periodic:
-            for pos in _shifted_positions(srcpos + offs, extent):
-                ax.add_patch(plt.Circle(pos, radius=r, zorder=-1000,
-                                        fc='none', ec=mask_color, lw=3))
-    elif 'doughnut' in mask:
-        r_in = mask['doughnut']['inner_radius']
-        r_out = mask['doughnut']['outer_radius']
-        ax.add_patch(plt.Circle(srcpos + offs, radius=r_in, zorder=-1000,
-                                fc='none', ec=mask_color, lw=3))
-        ax.add_patch(plt.Circle(srcpos + offs, radius=r_out, zorder=-1000,
-                                fc='none', ec=mask_color, lw=3))
-
-        if periodic:
-            for pos in _shifted_positions(srcpos + offs, extent):
-                ax.add_patch(plt.Circle(pos, radius=r_in, zorder=-1000,
-                                        fc='none', ec=mask_color, lw=3))
-                ax.add_patch(plt.Circle(pos, radius=r_out, zorder=-1000,
-                                        fc='none', ec=mask_color, lw=3))
-    elif 'rectangular' in mask:
-        ll = mask['rectangular']['lower_left']
-        ur = mask['rectangular']['upper_right']
-        pos = srcpos + ll + offs
-
-        if 'azimuth_angle' in mask['rectangular']:
-            angle = mask['rectangular']['azimuth_angle']
-            angle_rad = angle * np.pi / 180
-            cs = np.cos([angle_rad])[0]
-            sn = np.sin([angle_rad])[0]
-            pos = [pos[0] * cs - pos[1] * sn,
-                   pos[0] * sn + pos[1] * cs]
-        else:
-            angle = 0.0
-
-        ax.add_patch(
-            plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
-                          zorder=-1000, fc='none', ec=mask_color, lw=3))
-
-        if periodic:
-            for pos in _shifted_positions(srcpos + ll + offs, extent):
-                ax.add_patch(
-                    plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
-                                  angle=angle, zorder=-1000, fc='none',
-                                  ec=mask_color, lw=3))
-    elif 'elliptical' in mask:
-        width = mask['elliptical']['major_axis']
-        height = mask['elliptical']['minor_axis']
-        if 'azimuth_angle' in mask['elliptical']:
-            angle = mask['elliptical']['azimuth_angle']
-        else:
-            angle = 0.0
-        if 'anchor' in mask['elliptical']:
-            anchor = mask['elliptical']['anchor']
-        else:
-            anchor = [0., 0.]
-        ax.add_patch(
-            matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
-                                       angle=angle, zorder=-1000, fc='none',
-                                       ec=mask_color, lw=3))
-
-        if periodic:
-            for pos in _shifted_positions(srcpos + offs + anchor, extent):
-                ax.add_patch(
-                    matplotlib.patches.Ellipse(pos, width, height, angle=angle,
-                                               zorder=-1000, fc='none',
-                                               ec=mask_color, lw=3))
-    else:
-        raise ValueError(
-            'Mask type cannot be plotted with this version of PyTopology.')
-
-    if kern is not None and isinstance(kern, dict):
-        if 'gaussian' in kern:
-            sigma = kern['gaussian']['sigma']
-            for r in range(3):
-                ax.add_patch(plt.Circle(srcpos + offs, radius=(r + 1) * sigma,
-                                        zorder=-1000,
-                                        fc='none', ec=kernel_color, lw=3,
-                                        ls='dashed'))
-
-            if periodic:
-                for pos in _shifted_positions(srcpos + offs, extent):
-                    for r in range(3):
-                        ax.add_patch(plt.Circle(pos, radius=(r + 1) * sigma,
-                                                zorder=-1000, fc='none',
-                                                ec=kernel_color, lw=3,
-                                                ls='dashed'))
-        else:
-            raise ValueError('Kernel type cannot be plotted with this version of PyTopology')
-
-    plt.draw()
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
@@ -1414,3 +1217,164 @@ def SelectNodesByMask(layer, anchor, mask_obj):
                                     layer, anchor, mask_datum)
 
     return nest.GIDCollection(gid_list)
+
+
+def _create_mask_patches(mask, periodic, extent, source_pos):
+    edge_color = 'black'
+    face_color = 'yellow'
+    alpha = 0.2
+    line_width = 2
+    mask_patches = []
+    if 'anchor' in mask:
+        offs = np.array(mask['anchor'])
+    else:
+        offs = np.array([0., 0.])
+
+    if 'circular' in mask:
+        r = mask['circular']['radius']
+
+        patch = plt.Circle(source_pos + offs, radius=r,
+                           fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+        mask_patches.append(patch)
+
+        if periodic:
+            for pos in _shifted_positions(source_pos + offs, extent):
+                patch = plt.Circle(pos, radius=r,
+                                   fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+                mask_patches.append(patch)
+    elif 'doughnut' in mask:
+        # Mmm... doughnut
+        def make_doughnut_patch(pos, r_out, r_in, ec, fc, alpha):
+            def make_circle(r):
+                t = np.arange(0, np.pi * 2.0, 0.01)
+                t = t.reshape((len(t), 1))
+                x = r * np.cos(t)
+                y = r * np.sin(t)
+                return np.hstack((x, y))
+            outside_verts = make_circle(r_out)[::-1]
+            inside_verts = make_circle(r_in)
+            codes = np.ones(len(inside_verts), dtype=mpath.Path.code_type) * mpath.Path.LINETO
+            codes[0] = mpath.Path.MOVETO
+            vertices = np.concatenate([outside_verts, inside_verts])
+            vertices += pos
+            all_codes = np.concatenate((codes, codes))
+            path = mpath.Path(vertices, all_codes)
+            return mpatches.PathPatch(path, fc=fc, ec=ec, alpha=alpha, lw=line_width)
+
+        r_in = mask['doughnut']['inner_radius']
+        r_out = mask['doughnut']['outer_radius']
+        pos = source_pos + offs
+        patch = make_doughnut_patch(pos, r_in, r_out, edge_color, face_color, alpha)
+        mask_patches.append(patch)
+        if periodic:
+            for pos in _shifted_positions(source_pos + offs, extent):
+                patch = make_doughnut_patch(pos, r_in, r_out, edge_color, face_color, alpha)
+                mask_patches.append(patch)
+    elif 'rectangular' in mask:
+        ll = np.array(mask['rectangular']['lower_left'])
+        ur = np.array(mask['rectangular']['upper_right'])
+        pos = source_pos + ll + offs
+
+        if 'azimuth_angle' in mask['rectangular']:
+            angle = mask['rectangular']['azimuth_angle']
+            angle_rad = angle * np.pi / 180
+            cs = np.cos([angle_rad])[0]
+            sn = np.sin([angle_rad])[0]
+            pos = [pos[0] * cs - pos[1] * sn,
+                   pos[0] * sn + pos[1] * cs]
+        else:
+            angle = 0.0
+
+        patch = plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
+                              fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+        mask_patches.append(patch)
+
+        if periodic:
+            for pos in _shifted_positions(source_pos + ll + offs, extent):
+                patch = plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
+                                      angle=angle, fc=face_color,
+                                      ec=edge_color, alpha=alpha, lw=line_width)
+                mask_patches.append(patch)
+    elif 'elliptical' in mask:
+        width = mask['elliptical']['major_axis']
+        height = mask['elliptical']['minor_axis']
+        if 'azimuth_angle' in mask['elliptical']:
+            angle = mask['elliptical']['azimuth_angle']
+        else:
+            angle = 0.0
+        if 'anchor' in mask['elliptical']:
+            anchor = mask['elliptical']['anchor']
+        else:
+            anchor = np.array([0., 0.])
+        patch = mpl.patches.Ellipse(source_pos + offs + anchor, width, height,
+                                    angle=angle, fc=face_color,
+                                    ec=edge_color, alpha=alpha, lw=line_width)
+        mask_patches.append(patch)
+
+        if periodic:
+            for pos in _shifted_positions(source_pos + offs + anchor, extent):
+                patch = mpl.patches.Ellipse(pos, width, height, angle=angle, fc=face_color,
+                                            ec=edge_color, alpha=alpha, lw=line_width)
+                mask_patches.append(patch)
+    else:
+        raise ValueError('Mask type cannot be plotted with this version of PyTopology.')
+    return mask_patches
+
+
+def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0.5, -0.5, 0.5], shape=[100, 100],
+                               ax=None):
+    """
+    Create a plot of the connection probability and/or mask.
+
+    A probability plot is created based on a Parameter and a source. The
+    Parameter should have a distance dependency. The source must be given
+    as a GIDCollection with a single GID. Optionally a mask can also be
+    plotted.
+
+    Parameters
+    ----------
+    source : GIDCollection
+        Single GID GIDCollection to use as source.
+    parameter : Parameter object
+        Parameter the probability is based on.
+    mask : Dictionary
+        Optional specification of a connection mask. Connections will only
+        be made to nodes inside the mask. See CreateMask for options on
+        how to specify the mask.
+    edges : list/tuple
+        List of four edges of the region to plot. The values are given as
+        [x_min, x_max, y_min, y_max].
+    shape : list/tuple
+        Number of Parameter values to calculate in each direction.
+    ax : matplotlib.axes.AxesSubplot,
+        A matplotlib axes instance to plot in. If none is given,
+        a new one is created.
+    """
+    if not HAVE_MPL:
+        raise ImportError('Matplotlib could not be imported')
+    if parameter is None and mask is None:
+        raise ValueError('At least one of parameter or mask must be specified')
+    if ax is None:
+        fig, ax = plt.subplots()
+    ax.set_xlim(*edges[:2])
+    ax.set_ylim(*edges[2:])
+
+    if parameter is not None:
+        z = np.zeros(shape[::-1])
+        for i, x in enumerate(np.linspace(*edges[:2], shape[0])):
+            positions = [[x, y] for y in np.linspace(*edges[2:], shape[1])]
+            values = parameter.apply(source, positions)
+            z[:, i] = np.array(values)
+        img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
+                        origin='lower', cmap='Greens', vmin=0., vmax=1.)
+        plt.colorbar(img, ax=ax)
+
+    if mask is not None:
+        source.set_spatial()
+        periodic = source.spatial['edge_wrap']
+        extent = source.spatial['extent']
+        source_pos = GetPosition(source)
+        patches = _create_mask_patches(mask, periodic, extent, source_pos)
+        for patch in patches:
+            patch.set_zorder(0.5)
+            ax.add_patch(patch)

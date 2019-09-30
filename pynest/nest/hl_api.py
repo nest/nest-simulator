@@ -82,7 +82,7 @@ __all__ = [
     'Models',
     'NumProcesses',
     'Parameter',
-    'PlotKernel',
+    'plot_probability_parameter',
     'PlotLayer',
     'PlotTargets',
     'Prepare',

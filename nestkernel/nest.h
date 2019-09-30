@@ -147,6 +147,8 @@ ParameterDatum
 dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
+std::vector< double > apply( const ParameterDatum& param, const GIDCollectionDatum& gc );
+std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
 }
 
 

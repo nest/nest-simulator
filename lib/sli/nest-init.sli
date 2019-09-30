@@ -380,6 +380,14 @@ def
   /GetValue_P load
 def
 
+/Apply [/parametertype /dictionarytype]
+  /Apply_P_D load
+def
+
+/Apply [/parametertype /gidcollectiontype]
+  /Apply_P_g load
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /Simulate trie

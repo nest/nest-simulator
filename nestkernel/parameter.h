@@ -35,6 +35,7 @@
 #include "nest_names.h"
 #include "nest_types.h"
 #include "nestmodule.h"
+#include "gid_collection.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -172,6 +173,8 @@ public:
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
   virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
+
+  std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
 
 protected:
   Node* gid_to_node_ptr_( const index, const thread ) const;

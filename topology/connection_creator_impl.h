@@ -285,9 +285,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection(
-      "Topology Divergent connections"
-      " to devices are not possible." );
+    throw IllegalConnection( "Topology Connect with pairwise_bernoulli to devices are not possible." );
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
@@ -360,9 +358,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection(
-      "Topology Convergent connections"
-      " to devices are not possible." );
+    throw IllegalConnection( "Topology Connect with fixed_indegree to devices are not possible." );
   }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
@@ -631,9 +627,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection(
-      "Topology Divergent connections"
-      " to devices are not possible." );
+    throw IllegalConnection( "Topology pairwise_bernoulli to devices are not possible." );
   }
 
   GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();

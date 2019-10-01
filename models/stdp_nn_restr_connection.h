@@ -265,7 +265,6 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   // before the current pre-synaptic spike t_spike
   if ( start != finish )
   {
-    --finish;
     double nearest_neighbor_Kminus;
     double value_to_throw_away; // discard Kminus and triplet_Kminus here
     target->get_K_values( t_spike - dendritic_delay,

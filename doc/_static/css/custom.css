@@ -100,7 +100,6 @@ code.descclassname {
 }
 
 .rst-content dl:not(.docutils) dt {
-   float: left;
    border-top: None;
    background: None;
 }

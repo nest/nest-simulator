@@ -133,6 +133,11 @@ Connectome
 -  :ref:`get_param` parameters
 -  :ref:`set_param` parameters
 
+.. seealso::
+
+    You can find a :doc:`full example <examples/connectome>` in our example network page
+
+
 Examples
 ^^^^^^^^
 

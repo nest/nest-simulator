@@ -48,16 +48,15 @@ def CreateMask(masktype, specs, anchor=None):
     Create a spatial mask for connections.
 
     Masks are used when creating connections. A mask describes the area of
-    the pool layer that is searched for nodes to connect for any given
-    node in the driver layer. Several mask types are available. Examples
+    the pool population that is searched for to connect for any given
+    node in the driver population. Several mask types are available. Examples
     are the grid region, the rectangular, circular or doughnut region.
 
     The command ``CreateMask`` creates a Mask object which may be combined
     with other ``Mask`` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    ``Mask`` objects can be passed to ``Connect`` in a
-    connection dictionary with the key `'mask'`.
+    ``Mask`` objects can be passed to ``Connect`` in a connection dictionary with the key `'mask'`.
 
 
     Parameters
@@ -163,19 +162,18 @@ def CreateMask(masktype, specs, anchor=None):
             import nest
 
             # create a grid-based layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # create a circular mask
             m = nest.CreateMask('circular', {'radius': 0.2})
 
             # connectivity specifications
-            conndict = {'connection_type': 'divergent',
-                        'mask'           : m}
+            conndict = {'rule': 'pairwise_bernoulli',
+                        'p': 1.0,
+                        'mask': m}
 
             # connect layer l with itself according to the specifications
-            nest.ConnectLayers(l, l, conndict)
+            nest.Connect(l, l, conndict)
 
     """
     if anchor is None:
@@ -226,21 +224,19 @@ def GetPosition(nodes):
             nest.ResetKernel
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # retrieve positions of all (local) nodes belonging to the layer
-            pos = GetPosition(l)
+            pos = nest.GetPosition(l)
 
             # retrieve positions of the first node in the layer
-            pos = GetPosition(l[0])
+            pos = nest.GetPosition(l[0])
 
             # retrieve positions of node 4
-            pos = GetPosition(l[4:5])
+            pos = nest.GetPosition(l[4:5])
 
             # retrieve positions of a subset of nodes in the layer
-            pos = GetPosition(l[2:18])
+            pos = nest.GetPosition(l[2:18])
     """
     if not isinstance(nodes, nest.GIDCollection):
         raise TypeError("nodes must be a layer GIDCollection")
@@ -299,15 +295,13 @@ def Displacement(from_arg, to_arg):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # displacement between node 2 and 3
-            print(Displacement(l[1], l[2]))
+            print(nest.Displacement(l[1], l[2]))
 
             # displacment between the position (0.0., 0.0) and node 2
-            print(Displacement([(0.0, 0.0)], l[1:2]))
+            print(nest.Displacement([(0.0, 0.0)], l[1:2]))
     """
     if not isinstance(to_arg, nest.GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
@@ -376,15 +370,13 @@ def Distance(from_arg, to_arg):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # distance between node 2 and 3
-            print(Distance(l[1], l[2]))
+            print(nest.Distance(l[1], l[2]))
 
             # distance between the position (0.0., 0.0) and node 2
-            print(Distance([(0.0, 0.0)], l[1:2]))
+            print(nest.Distance([(0.0, 0.0)], l[1:2]))
 
     """
     if not isinstance(to_arg, nest.GIDCollection):
@@ -452,9 +444,7 @@ def FindNearestElement(layer, locations, find_all=False):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # get GID of element closest to some location
             nest.FindNearestElement(l, [3.0, 4.0], True)
@@ -562,9 +552,7 @@ def DumpLayerNodes(layer, outname):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'     : 5,
-                                'columns'  : 5,
-                                'elements' : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # write layer node positions to file
             nest.DumpLayerNodes(l, 'positions.txt')
@@ -637,11 +625,9 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
-            nest.ConnectLayers(l,l, {'connection_type': 'divergent',
-                                   'synapse_model': 'static_synapse'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+
+            nest.ConnectLayers(l,l, {'rule': 'pairwise_bernoulli', 'p': 1.0}, {'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
             nest.DumpLayerConnections(l, l, 'static_synapse', 'conns.txt')
@@ -700,9 +686,7 @@ def FindCenterElement(layer):
             import nest
 
             # create a layer
-            l = nest.CreateLayer({'rows'      : 5,
-                                'columns'   : 5,
-                                'elements'  : 'iaf_psc_alpha'})
+            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # get GID of the element closest to the center of the layer
             nest.FindCenterElement(l)

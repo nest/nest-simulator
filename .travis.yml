@@ -169,12 +169,15 @@ script:
      fi
 
 before_deploy:
-   - cd $TRAVIS_BUILD_DIR/build
-   - tar -zcvf reports.tar.gz ./reports
-   - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
-   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-   - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - |
+     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+         cd $TRAVIS_BUILD_DIR/build
+         tar -zcvf reports.tar.gz ./reports
+         tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
+         mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
+         mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+         mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+     fi
 
 # S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
 deploy:

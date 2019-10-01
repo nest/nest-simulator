@@ -99,7 +99,7 @@ librandom::GSL_BinomialRandomDev::set_n( size_t n_s )
   const auto N_MAX = std::numeric_limits< unsigned int >::max();
   if ( n_s >= N_MAX )
   {
-    throw BadParameterValue( String::compose( "Gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
+    throw BadParameterValue( String::compose( "gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
   }
   if ( n_s < 1 )
   {

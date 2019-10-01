@@ -212,9 +212,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
-    allowed_conn_spec_keys = ['mask',
-                              'multapses', 'autapses', 'rule', 'indegree',
-                              'outdegree', 'p', 'use_on_source']
+    allowed_conn_spec_keys = ['mask', 'multapses', 'autapses', 'rule', 'indegree', 'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
@@ -223,28 +221,21 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 " connecting with mask or kernel")
 
     projections = {}
-    for key in ['mask']:
-        if key in conn_spec:
-            projections[key] = conn_spec[key]
+    projections.update(conn_spec)
     if 'p' in conn_spec:
-        projections['kernel'] = conn_spec['p']
+        projections['kernel'] = projections.pop('p')
     # TODO: change topology names of {mul,aut}apses to be consistent
     if 'multapses' in conn_spec:
-        projections['allow_multapses'] = conn_spec['multapses']
+        projections['allow_multapses'] = projections.pop('multapses')
     if 'autapses' in conn_spec:
-        projections['allow_autapses'] = conn_spec['autapses']
+        projections['allow_autapses'] = projections.pop('autapses')
     if syn_spec is not None:
         for key in syn_spec.keys():
             if key not in allowed_syn_spec_keys:
                 raise ValueError(
                     "'{}' is not allowed in syn_spec when ".format(key) +
                     "connecting with mask or kernel".format(key))
-        if 'weight' in syn_spec:
-            projections['weight'] = syn_spec['weight']
-        if 'delay' in syn_spec:
-            projections['delay'] = syn_spec['delay']
-        if 'synapse_model' in syn_spec:
-            projections['synapse_model'] = syn_spec['synapse_model']
+        projections.update(syn_spec)
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
@@ -252,26 +243,26 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
         projections['connection_type'] = 'convergent'
-        projections['number_of_connections'] = conn_spec['indegree']
-
+        projections['number_of_connections'] = projections.pop('indegree')
     elif conn_spec['rule'] == 'fixed_outdegree':
         if 'use_on_source' in conn_spec:
             raise ValueError(
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
         projections['connection_type'] = 'divergent'
-        projections['number_of_connections'] = conn_spec['outdegree']
-
+        projections['number_of_connections'] = projections.pop('outdegree')
     elif conn_spec['rule'] == 'pairwise_bernoulli':
         if ('use_on_source' in conn_spec and
                 conn_spec['use_on_source']):
             projections['connection_type'] = 'convergent'
+            projections.pop('use_on_source')
         else:
             projections['connection_type'] = 'divergent'
     else:
         raise kernel.NESTError("When using kernel or mask, the only possible "
                                "connection rules are 'pairwise_bernoulli', "
                                "'fixed_indegree', or 'fixed_outdegree'")
+    projections.pop('rule')
     return projections
 
 

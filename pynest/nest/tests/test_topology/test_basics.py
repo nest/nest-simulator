@@ -313,9 +313,6 @@ class BasicsTestCase(unittest.TestCase):
                                                     edge_wrap=True))
 
         # connect l -> l
-        print(l.spatial)
-        print(cdict)
-        print(sdict)
         nest.Connect(l, l, cdict, sdict)
 
         t = nest.GetTargetNodes(l[:1], l)

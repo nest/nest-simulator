@@ -1,5 +1,24 @@
 #!/usr/bin/env python
-# encoding: utf8
+# -*- coding: utf-8 -*-
+#
+# insert.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 '''
 Usage: insert [options] <file>
 
@@ -71,7 +90,8 @@ def snippet(filename, startID, stopID, indent='', **kwargs):
 
 
 def insert(filename, keyword="", fences=None):
-    regex = r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>.+?)\s+lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$' % keyword
+    regex = (r'(?P<indent>\s*)(?P<text>.*%s.*)\s+file:\s+(?P<filename>.+?)\s+'
+             r'lines\s+(?P<startID>.+?)-(?P<stopID>.*?)\s*$') % keyword
 
     log.debug("looking for %s", repr(regex))
     insert_re = re.compile(regex)
@@ -96,10 +116,9 @@ if __name__ == '__main__':
         log.setLevel(logging.DEBUG)
     log.debug(pformat(args))
 
-    for line in insert(
-            args['<file>'],
-            keyword = args['--keyword'],
-            fences = args.get('--fences', None),
-        ):
-        print(line.rstrip("\n"))
+    lines = insert(args['<file>'],
+                   keyword=args['--keyword'],
+                   fences=args.get('--fences', None))
 
+    for line in lines:
+        print(line.rstrip("\n"))

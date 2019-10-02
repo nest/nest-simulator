@@ -57,25 +57,25 @@ class pos(object):
 
 
 class source_pos(object):
-    x = CreateParameter('position', {'dimension': 0, 'type_id': 1})
-    y = CreateParameter('position', {'dimension': 1, 'type_id': 1})
-    z = CreateParameter('position', {'dimension': 2, 'type_id': 1})
+    x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 1})
+    y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 1})
+    z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 1})
 
     @staticmethod
     def n(dimension):
         return CreateParameter('position',
-                               {'dimension': dimension, 'type_id': 1})
+                               {'dimension': dimension, 'synaptic_endpoint': 1})
 
 
 class target_pos(object):
-    x = CreateParameter('position', {'dimension': 0, 'type_id': 2})
-    y = CreateParameter('position', {'dimension': 1, 'type_id': 2})
-    z = CreateParameter('position', {'dimension': 2, 'type_id': 2})
+    x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 2})
+    y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 2})
+    z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 2})
 
     @staticmethod
     def n(dimension):
         return CreateParameter('position',
-                               {'dimension': dimension, 'type_id': 2})
+                               {'dimension': dimension, 'synaptic_endpoint': 2})
 
 
 class grid(object):

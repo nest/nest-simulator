@@ -74,31 +74,26 @@ struct EnableBitMaskOperators< Register_Connection_Model_Flags >
   static const bool enable = true;
 };
 
-const Register_Connection_Model_Flags default_connection_model_flags =
-  Register_Connection_Model_Flags::REGISTER_HPC
-  | Register_Connection_Model_Flags::REGISTER_LBL
-  | Register_Connection_Model_Flags::IS_PRIMARY
+const Register_Connection_Model_Flags default_connection_model_flags = Register_Connection_Model_Flags::REGISTER_HPC
+  | Register_Connection_Model_Flags::REGISTER_LBL | Register_Connection_Model_Flags::IS_PRIMARY
   | Register_Connection_Model_Flags::HAS_DELAY;
 
 const Register_Connection_Model_Flags default_secondary_connection_model_flags =
-  Register_Connection_Model_Flags::SUPPORTS_WFR
-  | Register_Connection_Model_Flags::HAS_DELAY;
+  Register_Connection_Model_Flags::SUPPORTS_WFR | Register_Connection_Model_Flags::HAS_DELAY;
 
 /**
  * Register connection model (i.e. an instance of a class inheriting from `Connection`).
  */
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name,
-  const Register_Connection_Model_Flags flags =
-    default_connection_model_flags );
+  const Register_Connection_Model_Flags flags = default_connection_model_flags );
 
 /**
  * Register secondary connection models (e.g. gap junctions, rate-based models).
  */
 template < template < typename > class ConnectorModelT >
 void register_secondary_connection_model( const std::string& name,
-  const Register_Connection_Model_Flags flags =
-    default_secondary_connection_model_flags );
+  const Register_Connection_Model_Flags flags = default_secondary_connection_model_flags );
 
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 

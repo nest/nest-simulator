@@ -85,33 +85,27 @@ ModelManager::register_preconf_node_model( const Name& name,
 // BernoulliConnection< targetidentifierT >
 template < template < typename targetidentifierT > class ConnectionT >
 void
-ModelManager::register_connection_model( const std::string& name,
-  const Register_Connection_Model_Flags flags )
+ModelManager::register_connection_model( const std::string& name, const Register_Connection_Model_Flags flags )
 {
   // register normal version of the synapse
-  ConnectorModel* cf =
-    new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >(
-      name,
-      enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ),
-      enumFlagSet(
-        flags, Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
+  ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name,
+    enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
   register_connection_model_( cf );
 
   // register the "hpc" version with the same parameters but a different target
   // identifier
   if ( enumFlagSet( flags, Register_Connection_Model_Flags::REGISTER_HPC ) )
   {
-    cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >(
-      name + "_hpc",
+    cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc",
       enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
       enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
       enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
       enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ),
-      enumFlagSet(
-        flags, Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
+      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
     register_connection_model_( cf );
   }
 
@@ -119,16 +113,12 @@ ModelManager::register_connection_model( const std::string& name,
   // different connection type
   if ( enumFlagSet( flags, Register_Connection_Model_Flags::REGISTER_LBL ) )
   {
-    cf =
-      new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >(
-        name + "_lbl",
-        enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
-        enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
-        enumFlagSet(
-          flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
-        enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ),
-        enumFlagSet( flags,
-          Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
+    cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
+      enumFlagSet( flags, Register_Connection_Model_Flags::IS_PRIMARY ),
+      enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
+      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
+      enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ),
+      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING ) );
     register_connection_model_( cf );
   }
 }
@@ -141,12 +131,10 @@ void
 ModelManager::register_secondary_connection_model( const std::string& name,
   const Register_Connection_Model_Flags flags )
 {
-  ConnectorModel* cm =
-    new GenericSecondaryConnectorModel< ConnectionT< TargetIdentifierPtrRport > >(
-      name,
-      enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ) );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name,
+    enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ) );
 
   synindex syn_id = register_connection_model_( cm );
 
@@ -163,12 +151,10 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
 
   // create labeled secondary event connection model
-  cm =
-    new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >(
-      name + "_lbl",
-      enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
-      enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ) );
+  cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",
+    enumFlagSet( flags, Register_Connection_Model_Flags::HAS_DELAY ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::REQUIRES_SYMMETRIC ),
+    enumFlagSet( flags, Register_Connection_Model_Flags::SUPPORTS_WFR ) );
 
   syn_id = register_connection_model_( cm );
 
@@ -188,8 +174,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 inline Node*
 ModelManager::get_proxy_node( thread tid, index gid )
 {
-  return proxy_nodes_[ tid ].at(
-    kernel().modelrange_manager.get_model_id( gid ) );
+  return proxy_nodes_[ tid ].at( kernel().modelrange_manager.get_model_id( gid ) );
 }
 
 

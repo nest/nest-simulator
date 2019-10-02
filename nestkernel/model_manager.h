@@ -192,13 +192,11 @@ public:
    */
   template < template < typename targetidentifierT > class ConnectionT >
   void register_connection_model( const std::string& name,
-    const Register_Connection_Model_Flags flags =
-      default_connection_model_flags );
+    const Register_Connection_Model_Flags flags = default_connection_model_flags );
 
   template < template < typename targetidentifierT > class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    const Register_Connection_Model_Flags flags =
-      default_secondary_connection_model_flags );
+    const Register_Connection_Model_Flags flags = default_secondary_connection_model_flags );
 
   /**
    * @return The model id of a given model name

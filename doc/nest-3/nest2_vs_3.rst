@@ -72,7 +72,7 @@ Connection
 Subnets
 ~~~~~~~
 
-**The subnets module is deprecated!**
+**The subnets module is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |
@@ -238,7 +238,7 @@ Connection rules
 ^^^^^^^^^^^^^^^^
 
 ====================================== =================================================
-NEST 2.x                               NEST 3
+NEST 2.x                               NEST 3.0
 ====================================== =================================================
 convergent                             pairwise_bernoulli *and* use_on_source=True
 convergent *and* num_connections       fixed_indegree
@@ -336,13 +336,16 @@ Parameters can now be used to set node and connection parameters.
 :green:`math`
 ^^^^^^^^^^^^^
 
-+---------+--------------------------------+
-| NEST 2.x| NEST 3.0                       |
-+=========+================================+
-|         |  nest.math.exp(nest.Parameter) |
-|         |  nest.math.sin(nest.Parameter) |
-|         |  nest.math.cos(nest.Parameter) |
-+---------+--------------------------------+
++----------+-------------------------------+
+| NEST 2.X | NEST 3.0                      |
++==========+===============================+
+|          | nest.math.exp(nest.Parameter) |
++----------+-------------------------------+
+|          | nest.math.sin(nest.Parameter) |
++----------+-------------------------------+
+|          | nest.math.cos(nest.Parameter) |
++----------+-------------------------------+
+
 
 .. _logic_param:
 

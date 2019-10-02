@@ -1035,7 +1035,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
                 mask=None, probability_parameter=None,
                 src_color='red', src_size=50, tgt_color='blue', tgt_size=20,
-                mask_color='red', kernel_color='red'):
+                mask_color='yellow', probability_cmap='Greens'):
     """
     Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
 
@@ -1154,7 +1154,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
         if mask is not None or probability_parameter is not None:
             edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
-            plot_probability_parameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax)
+            plot_probability_parameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax,
+                                       prob_cmap=probability_cmap, mask_color=mask_color)
 
         _draw_extent(ax, xctr, yctr, xext, yext)
 
@@ -1219,9 +1220,8 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     return nest.GIDCollection(gid_list)
 
 
-def _create_mask_patches(mask, periodic, extent, source_pos):
+def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
     edge_color = 'black'
-    face_color = 'yellow'
     alpha = 0.2
     line_width = 2
     mask_patches = []
@@ -1322,7 +1322,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos):
 
 
 def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0.5, -0.5, 0.5], shape=[100, 100],
-                               ax=None):
+                               ax=None, prob_cmap='Greens', mask_color='yellow'):
     """
     Create a plot of the connection probability and/or mask.
 
@@ -1366,7 +1366,7 @@ def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0
             values = parameter.apply(source, positions)
             z[:, i] = np.array(values)
         img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
-                        origin='lower', cmap='Greens', vmin=0., vmax=1.)
+                        origin='lower', cmap=prob_cmap, vmin=0., vmax=1.)
         plt.colorbar(img, ax=ax)
 
     if mask is not None:
@@ -1374,7 +1374,7 @@ def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0
         periodic = source.spatial['edge_wrap']
         extent = source.spatial['extent']
         source_pos = GetPosition(source)
-        patches = _create_mask_patches(mask, periodic, extent, source_pos)
+        patches = _create_mask_patches(mask, periodic, extent, source_pos, face_color=mask_color)
         for patch in patches:
             patch.set_zorder(0.5)
             ax.add_patch(patch)

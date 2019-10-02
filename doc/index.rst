@@ -2,21 +2,17 @@
 Welcome to the NEST simulator documentation!
 ***********************************************
 
-:orange:`Introducing NEST 3!`
-------------------------------
+:orange:`Introducing NEST 3.0!`
+-------------------------------
 
-We have made major improvements to NEST ... introducing a more powerful way to
-More functionality
+Our aim with NEST 3.0 is to provide a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
 
-What does this mean for you?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- If you  have a script that includes subnets or topology module, changes will be necessary
-  - test it somehow?
+- We have provided an :doc:`overview with examples <nest-3/nest3_overview>` of the changes introduced in NEST 3.0
 
-- We have provided an :doc:`overview with examples <nest-3/nest3_overview>` of the changes introduced in NEST 3
+- Checkout our :doc:`nest-3/nest2_vs_3`
 
-- Also checkout our :doc:`nest-3/nest2_vs_3`
+----
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |

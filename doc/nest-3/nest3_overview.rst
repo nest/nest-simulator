@@ -1,5 +1,5 @@
-An overview of NEST 3
-======================
+An overview of NEST 3.0
+=======================
 
 .. contents:: Here you'll find
    :local:

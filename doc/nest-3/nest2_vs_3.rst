@@ -1,16 +1,16 @@
-NEST 2.X vs. NEST 3 conversion reference guide
+NEST 2.X vs. NEST 3.0 conversion reference guide
 ==================================================
 
-* This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3
+* This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3.0
 
 * Functions not mentioned are unchanged
 
-* The new terms for NEST 3 are marked in :green:`green`.
+* Terms that changed for NEST 3.0 are marked in :green:`green`.
 
 
 .. seealso::
 
-  You can find code examples of changes in NEST 3 :doc:`in our NEST-3 overview <nest3_overview>`
+  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <nest3_overview>`
 
 .. _node_ref:
 

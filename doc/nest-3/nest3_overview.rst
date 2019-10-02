@@ -20,40 +20,48 @@ GIDCollections
 
 - Functions, such as ``Create`` and ``Connect``,  now take or return ``GIDcollections`` instead of lists
 
-The GIDcollections are very powerful; they replace subnets and will simplify scripts.
+The GIDcollections provide more efficient and versatile handling of nodes.
 
 ``GIDCollections`` support:
 
 -  Iteration
 -  Slicing
 -  Indexing
--  Conversion to and from lists
+-  Conversion to and from lists >> EXAMPLE ?
 -  Concatenation of two non-overlapping ``GIDCollection``\ s
 -  Testing whether one ``GIDCollection`` is equal to another (contains the
-   same GIDs)
--  Testing of membership
--  ``len``
+   same GIDs) EXAMPLE?
+-  Testing of membership EXAMPLE?
 -  :ref:`get_param` parameters
 -  :ref:`set_param` parameters
--  spatial parameters on GIDCollections with spatial metadata
-   with :ref:`spatial_ex`
+-  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
 
 Examples:
 ^^^^^^^^^^
 
+Create our first GIDCollection with 10 nodes (neurons).
+
 >>> nodes_alpha = nest.Create('iaf_psc_alpha', 10)
 >>> print(nodes_alpha)
     GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
+You can also use len() to get the size of GIDCollection
+
+>>> len(nodes_alpha)
+    10
+
+We can slice the GIDcollection, in this case from index 2 to index 8. This gives us a GIDCollection of 6 neurons.
 
 >>> print(nodes_alpha[2:8])
     GIDCollection(metadata=None, model=iaf_psc_alpha, size=6, first=3, last=8)
 
+We can also step through the GIDcollection; here we use a step of 2.
 
 >>> print(nodes_alpha[::2])
     GIDCollection(metadata=None, model=iaf_psc_alpha, size=5, first=1, last=9, step=2)
 
+We create a second GIDCollection, and concatenate the two together.
 
 >>>    nodes_exp = nest.Create('iaf_psc_exp', 5)
 >>>    nodes = nodes_alpha + nodes_exp
@@ -62,8 +70,44 @@ Examples:
                   model=iaf_psc_alpha, size=10, first=1, last=10;
                   model=iaf_psc_exp, size=5, first=11, last=15)
 
+We can iterate over our GIDCollection using a for loop. Here we want to get the individual index and model ids. Each node is represented
+by a unique gid, and each model has its own id.
+
+
+>>>    for gid, modelid in nodes.items():
+>>>         print(gid, modelid)
+       1 18
+       2 18
+       3 18
+       4 18
+       5 18
+       6 18
+       7 18
+       8 18
+       9 18
+       10 18
+       11 21
+       12 21
+       13 21
+       14 21
+       15 21
+
+We can use set() to set a randomly distributed membrane potential between values of 65 and 85 millivolts.
+
+>>>  nodes_alpha.set({'V_m': nest.random.uniform(65., 85.)})
+
+We can then use get() to get the parameter information. Note that if you run
+this command the output will be different because of the random distribution.
+
+>>>  print(nodes_alpha.get('V_m'))
+     (70.60706149786711, 67.25391609594226, 70.27867006137967, 81.89947947859764, 80.59828691184521,
+     70.81260945647955, 80.2961784042418, 69.44914896041155, 70.30639264732599, 70.33385021612048)
+
+Here is an entire example script with some of these features in action:
 
 .. code:: python
+
+   import nest
 
    nest.ResetKernel()
 
@@ -123,6 +167,8 @@ For more information regarding GIDCollections see the document on :doc:`GIDColle
 Connectome
 ~~~~~~~~~~
 
+Similar to GIDCollections, we can manipulate the connections (synapses) we create with the ``Connectome``.
+
 -  ``nest.GetConnections`` returns a ``Connectome`` object  instead of a numpy array
 
 ``Connectome`` supports:
@@ -140,6 +186,33 @@ Connectome
 
 Examples
 ^^^^^^^^
+
+We can connect two GIDCollections, with a connection rule. In this case, we use 'one_to_one'.
+
+>>> nest.Connect(nodes_alpha, nodes_alpha, 'one_to_one')
+>>> conns = nest.GetConnections()
+>>> print(conns)
+    *--------*--------------------------------*
+    | source | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, |
+    *--------*--------------------------------*
+    | target | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, |
+    *--------*--------------------------------*
+
+You can use the len() function to return the number of connections
+
+.. code-block:: ipython
+
+    nest.ResetKernel()
+
+    positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+    layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
+
+    nest.Connect(layer, layer)
+
+>>>    len(nest.GetConnections())
+       100
+
+We can also set synapse specifications, such as weight and use the get() function to store the weights of the connections.
 
 .. code-block:: ipython
 
@@ -180,9 +253,10 @@ Examples
 get()
 ~~~~~~
 
-``nodes.get`` Returns all parameters in the collection in a dictionary
+``get`` Returns all parameters in the collection in a dictionary
 with lists.
 
+Get the parameters of the first 3 nodes
 
 >>>    nodes_exp = nest.Create('iaf_psc_exp', 5)
 >>>    nodes_exp[:3].get()
@@ -228,6 +302,8 @@ with lists.
 
 * ``nodes.get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``
 
+Get the parameters `V_m` and `V_reset` of all nodes
+
 >>>    nodes = nest.Create('iaf_psc_alpha', 10, {'V_m': -55.})
 >>>    nodes.get(['V_m', 'V_reset'])
        {'V_m': (-55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0),
@@ -242,10 +318,6 @@ with lists.
          -57.0,
          -56.0)}
 
->>>    grid_layer.get('V_m')
-       (-70.0, -70.0, -70.0, -70.0)
-
-
 
 
 You can also specify the output format (pandas, JSON currently
@@ -257,29 +329,6 @@ implemented):
 * ``nodes.get(parameter_name, property_name, output)``
 * ``nodes.get(parameter_name, [property_name_1, ... , property_name_n], output)``
 
-Definitions
-^^^^^^^^^^^^
-
-.. glossary::
-
- nodes.get
-     Returns all parameters in the collection in a dictionary with lists.
-
- nodes.get(parameter_name)
-     Returns the parameter given by ``parameter_name`` as list or int/float.
-
- nodes.get([parameter_name_1, parameter_name_2, ... , parameter_name_n])
-     Returns the parameters in the collection given by the parameter names as a dictionary with lists.
-
- nodes.get(parameter_name, property_name)
-     Hierarchical addressing.
-     Returns the parameter of ``parameter_name`` given by ``property_name``
-     as list or int/float.
-
- nodes.get(parameter_name, [property_name_1, ... , property_name_n])
-     Hierarchical addressing. Returns the parameters of ``parameter_name``
-     given by property names as a dictionary with list.
-
 .. _set_param:
 
 set()
@@ -289,6 +338,8 @@ set()
 * ``nodes.set(parameter_name, [parameter_val_1, parameter_val_2, ... , parameter_val_n])``
 * ``nodes.set(parameter_dict)``
 * ``nodes.set([parameter_dict_1, parameter_dict_2, ... , parameter_dict_n])``
+
+We can set the the values of a parameter by iterating over each node
 
 Examples
 ^^^^^^^^
@@ -312,9 +363,11 @@ Examples
 Parametrization
 ~~~~~~~~~~~~~~~~~
 
+We have expanded the functionality of parameters, using a simpler and more intuitive syntax.
+
 .. _random_ex:
 
-random
+Random
 ^^^^^^^
 
 -  ``nest.random.exponential``
@@ -372,8 +425,10 @@ random
 
 .. _spatial_ex:
 
-spatial
+Spatial
 ^^^^^^^^
+
+Spatial parameters allow you to organize networks in two or three dimensions
 
 -  ``nest.spatial.dimension_distance.x``
 -  ``nest.spatial.dimension_distance.y``
@@ -387,31 +442,48 @@ spatial
 
 .. code-block:: ipython
 
-    nest.ResetKernel()
+    grid_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=10, columns=8))
+    nest.PlotLayer(grid_layer);
 
-    positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
-    parameter = nest.spatial.distance
-    nest.Connect(layer, layer, conn_spec={'rule': 'pairwise_bernoulli',
-                                          'p': parameter})
->>>    print('Num. connections:', len(nest.GetConnections()))
-       Num. connections: 51
+
+.. image:: NEST3_23_0.png
+
+
+.. code-block:: ipython
+
+    free_layer = nest.Create('iaf_psc_alpha', 100, positions=nest.spatial.free(nest.random.uniform(min=0., max=10.), num_dimensions=2))
+    nest.PlotLayer(free_layer);
+
+
+.. image:: NEST3_24_0.png
+
 
 .. code-block:: ipython
 
     nest.ResetKernel()
 
-    positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
+    positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 10000)])
+    layer = nest.Create('iaf_psc_alpha', positions=positions)
 
-    nest.Connect(layer, layer)
+    parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
+    layer.set({'V_m': parameter})
 
->>>    len(nest.GetConnections())
-       100
+    node_pos = np.array(nest.GetPosition(layer))
+    node_pos[:,1]
+    v_m = layer.get('V_m');
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(node_pos[:,0], v_m, '.', ms=3.5)
+    ax.set_xlabel('Node position on x-axis')
+    ax.set_ylabel('V_m');
+
+
+
+.. image:: NEST3_25_0.png
 
 .. _math_ex:
 
-math
+Math
 ^^^^^^
 
 -  ``nest.math.exp``
@@ -447,7 +519,7 @@ math
 
 .. _logic_ex:
 
-logic
+Logic
 ^^^^^^
 
 -  ``nest.logic.conditional``
@@ -478,7 +550,7 @@ logic
 
 .. _distr_ex:
 
-distributions
+Distributions
 ^^^^^^^^^^^^^
 
 -  ``nest.distributions.exponential``
@@ -528,6 +600,8 @@ Topology module
 
 -  All topology functions are now part of ``nest`` and not
    ``nest.topology``
+-  You can use the ``Create`` and ``Connect`` functions for structured?? networks, same as you would for a "regular"
+   network
 -  ``nest.GetPosition`` -> now takes a GIDCollection instead of a list of GIDs
 -  ``nest.FindCenterElement`` -> now returns ``int`` instead of
    ``tuple``
@@ -560,17 +634,6 @@ Examples
        'extent': (3.2, 3.2),
        'positions': ((1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0))}
 
-.. code-block:: ipython
-
-    nest.ResetKernel()
-
-    positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
-
-    nest.Connect(layer, layer)
-
->>>    len(nest.GetConnections())
-       100
 
 .. code-block:: ipython
 
@@ -597,7 +660,10 @@ Examples
 .. _conn_changes:
 
 Connection rules
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
+
+Previously, topoloogy had its own naming conventions for connection rules. Now that topology is integrated into ``nest``, we use the same
+terms for both "regular" networks and  spatially organized networks
 
 ====================================== =================================================
 NEST 2.x                                NEST 3.0
@@ -628,8 +694,7 @@ What's removed?
 Subnets module
 ~~~~~~~~~~~~~~~~~~
 
-SiblingContainers
-~~~~~~~~~~~~~~~~~
+The subnets module is now removed in favor of GIDCollections.
 
 .. seealso::
 
@@ -637,5 +702,29 @@ SiblingContainers
 
 
 
+Add to dictionary?
+
+Definitions
+------------
+
+.. glossary::
+
+ nodes.get
+     Returns all parameters in the collection in a dictionary with lists.
+
+ nodes.get(parameter_name)
+     Returns the parameter given by ``parameter_name`` as list or int/float.
+
+ nodes.get([parameter_name_1, parameter_name_2, ... , parameter_name_n])
+     Returns the parameters in the collection given by the parameter names as a dictionary with lists.
+
+ nodes.get(parameter_name, property_name)
+     Hierarchical addressing.
+     Returns the parameter of ``parameter_name`` given by ``property_name``
+     as list or int/float.
+
+ nodes.get(parameter_name, [property_name_1, ... , property_name_n])
+     Hierarchical addressing. Returns the parameters of ``parameter_name``
+     given by property names as a dictionary with list.
 
 

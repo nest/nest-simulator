@@ -221,7 +221,7 @@ for f in $FILE_NAMES; do
       fi
 
       # Add the file to the list of files with format errors.
-      if $vera_failed || $cppcheck_failed || $clang_format_failed; then
+      if (! $IGNORE_MSG_VERA && $vera_failed) || (! $IGNORE_MSG_CPPCHECK && $cppcheck_failed) || (! $IGNORE_MSG_CLANG_FORMAT && $clang_format_failed); then
         c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;

@@ -27,11 +27,11 @@ The GIDcollections provide more efficient and versatile handling of nodes.
 -  Iteration
 -  Slicing
 -  Indexing
--  Conversion to and from lists >> EXAMPLE ?
+-  Conversion to and from lists
 -  Concatenation of two non-overlapping ``GIDCollection``\ s
 -  Testing whether one ``GIDCollection`` is equal to another (contains the
-   same GIDs) EXAMPLE?
--  Testing of membership EXAMPLE?
+   same GIDs)
+-  Testing of membership
 -  :ref:`get_param` parameters
 -  :ref:`set_param` parameters
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
@@ -51,6 +51,11 @@ You can also use len() to get the size of GIDCollection
 >>> len(nodes_alpha)
     10
 
+We can test the membership, to see if a specific gid belongs to the GIDCollection
+
+>>> 9 in nodes_alpha
+    True
+
 We can slice the GIDcollection, in this case from index 2 to index 8. This gives us a GIDCollection of 6 neurons.
 
 >>> print(nodes_alpha[2:8])
@@ -60,6 +65,21 @@ We can also step through the GIDcollection; here we use a step of 2.
 
 >>> print(nodes_alpha[::2])
     GIDCollection(metadata=None, model=iaf_psc_alpha, size=5, first=1, last=9, step=2)
+
+We can create a composite GIDCollection (i.e., a non-contiguous or non-homogenous GIDCollection) from a list
+
+>>> gc = nest.GIDCollection([1, 3, 7])
+>>> print(gc)
+    GIDCollection(metadata=None,
+              model=iaf_psc_alpha, size=1, first=1;
+              model=iaf_psc_alpha, size=1, first=3;
+              model=iaf_psc_alpha, size=1, first=7)
+
+We can convert a GIDCollection to a Python list
+
+>>> pylist = list(gc)
+>>> print(pylist)
+    [1, 3, 7]
 
 We create a second GIDCollection, and concatenate the two together.
 
@@ -181,7 +201,7 @@ Similar to GIDCollections, we can manipulate the connections (synapses) we creat
 
 .. seealso::
 
-    You can find a :doc:`full example <examples/connectome>` in our example network page
+    You can find a :doc:`full example <../examples/connectome>` in our example network page
 
 
 Examples
@@ -662,16 +682,16 @@ Examples
 Connection rules
 ^^^^^^^^^^^^^^^^^
 
-Previously, topoloogy had its own naming conventions for connection rules. Now that topology is integrated into ``nest``, we use the same
+Previously, topology had its own naming conventions for connection rules. Now that topology is integrated into ``nest``, we use the same
 terms for both "regular" networks and  spatially organized networks
 
 ====================================== =================================================
 NEST 2.x                                NEST 3.0
 ====================================== =================================================
-`convergent`                           `pairwise_bernoulli` and `use_on_source=True`
-`convergent` and `num_connections`     `fixed_indegree`
-`divergent`                            `pairwise_bernoulli`
-`divergent` and `num_connections`      `fixed_outdegree`
+convergent                             pairwise_bernoulli *and* use_on_source=True
+convergent *and* num_connections       fixed_indegree
+divergent                              pairwise_bernoulli
+divergent *and* num_connections        fixed_outdegree
 ====================================== =================================================
 
 .. code-block:: ipython

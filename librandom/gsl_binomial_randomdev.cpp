@@ -94,8 +94,8 @@ librandom::GSL_BinomialRandomDev::set_p( double p_s )
 void
 librandom::GSL_BinomialRandomDev::set_n( size_t n_s )
 {
-  // gsl_ran_binomial() takes n as an unsigned int, so it cannot be
-  // greater than what an unsigned int can hold.
+  // gsl_ran_binomial() takes n as an unsigned int, so it cannot be greater
+  // than what an unsigned int can hold.
   const auto N_MAX = std::numeric_limits< unsigned int >::max();
   if ( n_s >= N_MAX )
   {

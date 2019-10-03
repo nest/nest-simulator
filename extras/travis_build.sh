@@ -135,11 +135,11 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
     echo "MSGBLD0020: VERA++ initialization completed."
     if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
-        echo "MSGBLD0030: Installing CPPCHECK version 1.69."
-        # Build cppcheck version 1.69
+        echo "MSGBLD0030: Installing CPPCHECK version 1.80."
+        # Build cppcheck version 1.80
         git clone https://github.com/danmar/cppcheck.git
         cd cppcheck
-        git checkout tags/1.69
+        git checkout tags/1.80
         mkdir -p install
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd ..

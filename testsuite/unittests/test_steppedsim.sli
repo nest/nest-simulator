@@ -46,7 +46,7 @@ M_ERROR setverbosity
 
  ResetKernel
 
-  /iaf_psc_delta_canon Create  /nrn Set   
+  /iaf_psc_delta_ps Create  /nrn Set   
  
   /spike_generator  << /precise_times false /spike_times [ 0.4 ] >> Create /sg Set
 

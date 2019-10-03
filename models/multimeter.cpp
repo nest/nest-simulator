@@ -94,12 +94,10 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
-  const Buffers_& b )
+nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
 {
   if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset )
-         || d->known( names::record_from ) ) )
+    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -220,8 +218,7 @@ Multimeter::update( Time const& origin, const long from, const long )
   // following Reply data is then added.
   //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ =
-    B_.has_targets_ && not P_.record_from_.empty(); // no targets, no request
+  V_.new_request_ = B_.has_targets_ && not P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }
@@ -287,15 +284,12 @@ Multimeter::handle( DataLoggingReply& reply )
       { // add data; offset j from current_request_data_start_, but inactive
         // skipped entries subtracted
         assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped
-          < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j
-                     - inactive_skipped ].size() == info[ j ].data.size() );
+        assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
+        assert( S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ].size() == info[ j ].data.size() );
 
         for ( size_t k = 0; k < info[ j ].data.size(); ++k )
         {
-          S_.data_[ V_.current_request_data_start_ + j
-            - inactive_skipped ][ k ] += info[ j ].data[ k ];
+          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ][ k ] += info[ j ].data[ k ];
         }
       }
     }

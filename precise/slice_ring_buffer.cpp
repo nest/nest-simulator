@@ -36,8 +36,7 @@ void
 nest::SliceRingBuffer::resize()
 {
   long newsize = static_cast< long >( std::ceil(
-    static_cast< double >( kernel().connection_manager.get_min_delay()
-      + kernel().connection_manager.get_max_delay() )
+    static_cast< double >( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() )
     / kernel().connection_manager.get_min_delay() ) );
   if ( queue_.size() != static_cast< unsigned long >( newsize ) )
   {
@@ -67,8 +66,7 @@ void
 nest::SliceRingBuffer::prepare_delivery()
 {
   // vector to deliver from in this slice
-  deliver_ =
-    &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
 
   // sort events, first event last
   std::sort( deliver_->begin(), deliver_->end(), std::greater< SpikeInfo >() );
@@ -78,8 +76,7 @@ void
 nest::SliceRingBuffer::discard_events()
 {
   // vector to deliver from in this slice
-  deliver_ =
-    &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
 
   deliver_->clear();
 }

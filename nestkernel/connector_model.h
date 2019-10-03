@@ -177,18 +177,12 @@ public:
     bool requires_symmetric,
     bool supports_wfr,
     bool requires_clopath_archiving )
-    : ConnectorModel( name,
-        is_primary,
-        has_delay,
-        requires_symmetric,
-        supports_wfr,
-        requires_clopath_archiving )
+    : ConnectorModel( name, is_primary, has_delay, requires_symmetric, supports_wfr, requires_clopath_archiving )
     , receptor_type_( 0 )
   {
   }
 
-  GenericConnectorModel( const GenericConnectorModel& cm,
-    const std::string name )
+  GenericConnectorModel( const GenericConnectorModel& cm, const std::string name )
     : ConnectorModel( cm, name )
     , cp_( cm.cp_ )
     , pev_( cm.pev_ )
@@ -261,8 +255,7 @@ private:
 }; // GenericConnectorModel
 
 template < typename ConnectionT >
-class GenericSecondaryConnectorModel
-  : public GenericConnectorModel< ConnectionT >
+class GenericSecondaryConnectorModel : public GenericConnectorModel< ConnectionT >
 {
 private:
   //! used to create secondary events that belong to secondary connections
@@ -284,8 +277,7 @@ public:
     pev_ = new typename ConnectionT::EventType();
   }
 
-  GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm,
-    const std::string name )
+  GenericSecondaryConnectorModel( const GenericSecondaryConnectorModel& cm, const std::string name )
     : GenericConnectorModel< ConnectionT >( cm, name )
   {
     pev_ = new typename ConnectionT::EventType( *cm.pev_ );
@@ -295,8 +287,7 @@ public:
   ConnectorModel*
   clone( std::string name ) const
   {
-    return new GenericSecondaryConnectorModel(
-      *this, name ); // calls copy construtor
+    return new GenericSecondaryConnectorModel( *this, name ); // calls copy construtor
   }
 
   std::vector< SecondaryEvent* >

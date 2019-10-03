@@ -57,6 +57,10 @@ namespace nest
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup cond
+
 Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
                       used in Casti et al 2008.
 
@@ -67,32 +71,39 @@ conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
 addition of after hyper-polarization current instead of a membrane potential
 reset. Incoming spike events induce a post-synaptic change of conductance
 modeled by an alpha function. The alpha function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.
+event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_{syn} \f$.
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Leak reversal potential in mV.
-C_m        double - Capacity of the membrane in pF
-V_th       double - Spike threshold in mV.
-E_ex       double - Excitatory reversal potential in mV.
-E_in       double - Inhibitory reversal potential in mV.
-g_L        double - Leak conductance in nS.
-tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
-tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
-I_e        double - Constant input current in pA.
-tau_ahp    double - Afterhyperpolarization (AHP) time constant in ms.
-E_ahp      double - AHP potential in mV.
-g_ahp      double - AHP conductance in nS.
-ahp_bug    bool   - Defaults to false. If true, behaves like original
-                    model implementation.
+\verbatim embed:rst
+========  ======= ===========================================================
+ V_m      mV      Membrane potential
+ E_L      mV      Leak reversal potential
+ C_m      pF      Capacity of the membrane
+ V_th     mV      Spike threshold
+ E_ex     mV      Excitatory reversal potential
+ E_in     mV      Inhibitory reversal potential
+ g_L      nS      Leak conductance
+ tau_ex   ms      Rise time of the excitatory synaptic alpha function
+ tau_in   ms      Rise time of the inhibitory synaptic alpha function
+ I_e      pA      Constant input current
+ tau_ahp  ms      Afterhyperpolarization (AHP) time constant
+ E_ahp    mV      AHP potential
+ g_ahp    nS      AHP conductance
+ ahp_bug  boolean Defaults to false. If true, behaves like original
+                  model implementation
+========  ======= ===========================================================
+\endverbatim
 
 References:
 
-[1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN
-transmission. J Comput Neurosci 24:235-252.
+\verbatim embed:rst
+.. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
+       transmission. Journal of Computational Neuroscience 24:235-252.
+       DOI: https://doi.org/10.1007/s10827-007-0053-7
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -162,12 +173,12 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th; //!< Threshold Potential in mV
-    double g_L;  //!< Leak Conductance in nS
-    double C_m;  //!< Membrane Capacitance in pF
-    double E_ex; //!< Excitatory reversal Potential in mV
-    double E_in; //!< Inhibitory reversal Potential in mV
-    double E_L;  //!< Leak reversal Potential (a.k.a. resting potential) in mV
+    double V_th;     //!< Threshold Potential in mV
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_ex;     //!< Excitatory reversal Potential in mV
+    double E_in;     //!< Inhibitory reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (a.k.a. resting potential) in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
@@ -352,10 +363,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_chxk_2008::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -384,8 +392,7 @@ iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

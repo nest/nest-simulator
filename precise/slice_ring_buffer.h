@@ -69,10 +69,7 @@ public:
    * @param  ps_offset  Precise timing offset of spike time
    * @param  weight     Weight of spike.
    */
-  void add_spike( const delay rel_delivery,
-    const long stamp,
-    const double ps_offset,
-    const double weight );
+  void add_spike( const delay rel_delivery, const long stamp, const double ps_offset, const double weight );
 
   /**
    * Add refractory event to queue.
@@ -154,13 +151,9 @@ private:
 };
 
 inline void
-SliceRingBuffer::add_spike( const delay rel_delivery,
-  const long stamp,
-  const double ps_offset,
-  const double weight )
+SliceRingBuffer::add_spike( const delay rel_delivery, const long stamp, const double ps_offset, const double weight )
 {
-  const delay idx =
-    kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
+  const delay idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
   assert( ( size_t ) idx < queue_.size() );
   assert( ps_offset >= 0 );
 
@@ -216,8 +209,8 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
     if ( accumulate_simultaneous )
     {
       // add weights of all spikes with same stamp and offset
-      while ( not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset
-        and deliver_->back().stamp_ == req_stamp )
+      while (
+        not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset and deliver_->back().stamp_ == req_stamp )
       {
         weight += deliver_->back().weight_;
         deliver_->pop_back();
@@ -234,9 +227,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   }
 }
 
-inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp,
-  double ps_offset,
-  double weight )
+inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, double weight )
   : stamp_( stamp )
   , ps_offset_( ps_offset )
   , weight_( weight )

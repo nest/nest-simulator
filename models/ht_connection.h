@@ -30,6 +30,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup ht_synapse
+
 Name: ht_synapse - Synapse with depression after Hill & Tononi (2005).
 
 Description:
@@ -39,23 +42,33 @@ See docs/model_details/HillTononi.ipynb for details.
 
 Synaptic dynamics are given by
 
-P'(t) = ( 1 - P ) / tau_P
-P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
+@f[
+P'(t) = ( 1 - P ) / \tau_P
+P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
 P(t=0) = 1
-
-w(t) = w_max * P(t)  is the resulting synaptic weight
+@f]
+@f[
+w(t) = w_{max} * P(t)  @f] is the resulting synaptic weight
 
 Parameters:
 
 The following parameters can be set in the status dictionary:
-tau_P    double - synaptic vesicle pool recovery time constant [ms]
-delta_P  double - fractional change in vesicle pool on incoming spikes
-                  [unitless]
-P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
+\verbatim embed:rst
+========  ======  =========================================================
+ tau_P    ms      Synaptic vesicle pool recovery time constant
+ delta_P  real    Fractional change in vesicle pool on incoming spikes
+                  (unitless)
+ P        real    Current size of the vesicle pool [unitless, 0 <= P <= 1]
+========  ======  =========================================================
+\endverbatim
 
 References:
 
-[1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
+\verbatim embed:rst
+.. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
+       thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
+       DOI: https://doi.org/10.1152/jn.00915.2004
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -131,10 +144,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -166,9 +176,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-HTConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+HTConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   const double t_spike = e.get_stamp().get_ms();
@@ -224,8 +232,7 @@ HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 

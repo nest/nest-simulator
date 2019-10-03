@@ -1,0 +1,150 @@
+
+rule done:
+    '''
+    produce all output formats
+    '''
+    input:
+        expand('rendered/Topology_UserManual.{fmt}', fmt='html pdf rst'.split()),
+        'rendered/README.md',
+
+#SRCFMT = "markdown+yaml_metadata_block+smart+implicit_figures+implicit_header_references+simple_tables"
+SRCFMT = "rst"
+BASEFILE = 'rendered/Topology_UserManual.rst'
+
+rule expand_listings:
+    '''
+    This rule takes the Markdown source file and fills all the missing code
+    snippets.
+
+    The original latex sources used lstlistings commands that Markdown can not
+    emulate. Therefore, this step is necessary to avoid duplication and
+    subsequent disagreement when example scripts are modified.
+
+    In the markdown version you find lines with "MISSING CODE BLOCK", that
+    point at the right source snippet to insert and `insert.py` does exactly
+    that.
+    '''
+    input:
+        'source/Topology_UserManual.md',
+    output:
+        BASEFILE,
+    shell:
+        '''
+        ./insert.py '{input}' >'{output}'
+        '''
+
+rule copyRST:
+    input:
+        'source/Topology_UserManual.rst',
+    output:
+        BASEFILE,
+    shell:
+        '''
+        cp {input} {output}
+        '''
+
+ruleorder: copyRST > expand_listings
+
+rule bib2yml:
+    '''
+    This rule converts the bibtex bibliography to yaml.
+    '''
+    input:
+        '../../extras/bibliography/nest.bib',
+    output:
+        temporary('nest_bib.yaml'),
+    shell:
+        '''
+        pandoc-citeproc --bib2yaml '{input}' > '{output}'
+        '''
+
+rule md2html:
+    '''
+    final conversion to HTML output format
+    '''
+    input:
+        file = BASEFILE,
+        css = 'source/Topology_UserManual.css',
+        csl = 'source/nest_style.csl',
+        meta = 'source/metadata.yaml',
+        bib ='nest_bib.yaml',
+    output:
+        'rendered/Topology_UserManual.html',
+    shell:
+        '''
+        cp -fv "{input.css}" "$(dirname {output})"
+        pandoc -f {SRCFMT} -t html \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos  \
+               --number-sections \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
+               --standalone \
+               --toc \
+               --mathjax \
+               --css "$(basename '{input.css}')" \
+               '{input.file}' '{input.meta}' -o '{output}'
+        '''
+
+rule md2pdf:
+    '''
+    final conversion to PDF output format
+    '''
+    input:
+        file = BASEFILE,
+        css = 'source/Topology_UserManual.css',
+        csl = 'source/nest_style.csl',
+        meta = 'source/metadata.yaml',
+        bib ='nest_bib.yaml',
+    output:
+        'rendered/Topology_UserManual.pdf'
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t latex \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --number-sections \
+               --pdf-engine=$(command -v xelatex) \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
+               --listings --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
+        '''
+
+rule md2rst:
+    '''
+    final conversion to RST output format
+    '''
+    input:
+        file = BASEFILE,
+        meta = 'source/metadata.yaml',
+        csl = 'source/nest_style.csl',
+        bib ='nest_bib.yaml',
+    output:
+        'rendered/Topology_UserManual.rst',
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t rst \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib} \
+               --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
+        '''
+
+rule md2github:
+    '''
+    final conversion to GitHub-flavoured Markdown (GFM) output format
+    '''
+    input:
+        file = BASEFILE,
+        meta = 'source/metadata.yaml',
+        csl = 'source/nest_style.csl',
+        bib ='nest_bib.yaml',
+    output:
+        'rendered/README.md',
+    shell:
+        '''
+        pandoc -f {SRCFMT} -t gfm \
+               --filter pandoc-fignos --filter pandoc-eqnos --filter pandoc-tablenos \
+               --number-sections \
+               --filter pandoc-citeproc --csl {input.csl} --bibliography {input.bib}\
+               --listings --toc \
+               '{input.file}' '{input.meta}' -o '{output}'
+        '''
+

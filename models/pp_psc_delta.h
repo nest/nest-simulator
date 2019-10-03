@@ -39,6 +39,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup pp
+@ingroup psc
+
 Name: pp_psc_delta - Point process neuron with leaky integration of
                      delta-shaped PSCs.
 
@@ -56,12 +60,12 @@ true will reset the membrane potential after each spike.
 The transfer function can be chosen to be linear, exponential or a sum of
 both by adjusting three parameters:
 
-    rate = Rect[ c_1 * V' + c_2 * exp(c_3 * V') ],
+@f[  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ], @f]
 
-where the effective potential V' = V_m - E_sfa and E_sfa is called
-the adaptive threshold. Here Rect means rectifier:
-Rect(x) = {x if x>=0, 0 else} (this is necessary because negative rates are
-not possible).
+where the effective potential \f$ V' = V_m - E_{sfa} \f$ and \f$ E_{sfa} \f$
+is called the adaptive threshold. Here Rect means rectifier:
+\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary because
+negative rates are not possible).
 
 By setting c_3 = 0, c_2 can be used as an offset spike rate for an otherwise
 linear rate model.
@@ -69,7 +73,7 @@ linear rate model.
 The dead time enables to include refractoriness. If dead time is 0, the
 number of spikes in one time step might exceed one and is drawn from the
 Poisson distribution accordingly. Otherwise, the probability for a spike
-is given by 1 - exp(-rate*h), where h is the simulation time step. If
+is given by \f$ 1 - \exp(-rate*h) \f$, where h is the simulation time step. If
 dead_time is smaller than the simulation resolution (time step), it is
 internally set to the resolution.
 
@@ -114,56 +118,60 @@ recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and conciously.
 
 
-References:
-
-[1] Multiplicatively interacting point processes and applications to neural
-modeling (2010) Stefano Cardanobile and Stefan Rotter, Journal of
-Computational Neuroscience
-
-[2] Predicting spike timing of neocortical pyramidal neurons by simple
-threshold models (2006) Jolivet R, Rauch A, Luescher H-R, Gerstner W.
-J Comput Neurosci 21:35-49
-
-[3] Pozzorini C, Naud R, Mensi S, Gerstner W (2013) Temporal whitening by
-power-law adaptation in neocortical neurons. Nat Neurosci 16: 942-948.
-(uses a similar model of multi-timescale adaptation)
-
-[4] Grytskyy D, Tetzlaff T, Diesmann M and Helias M (2013) A unified view
-on weakly correlated recurrent networks. Front. Comput. Neurosci. 7:131.
-
-[5] Deger M, Schwalger T, Naud R, Gerstner W (2014) Fluctuations and
-information filtering in coupled populations of spiking neurons with
-adaptation. Physical Review E 90:6, 062704.
-
-[6] Gerstner W, Kistler WM, Naud R, Paninski L (2014) Neuronal Dynamics:
-From single neurons to networks and models of cognition.
-Cambridge University Press
-
-
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m               double - Membrane potential in mV.
-C_m               double - Capacitance of the membrane in pF.
-tau_m             double - Membrane time constant in ms.
-q_sfa             double - Adaptive threshold jump in mV.
-tau_sfa           double - Adaptive threshold time constant in ms.
-dead_time         double - Duration of the dead time in ms.
-dead_time_random  bool   - Should a random dead time be drawn after each
+\verbatim embed:rst
+=================  ======= ===================================================
+ V_m               mV      Membrane potential
+ C_m               pF      Capacitance of the membrane
+ tau_m             ms      Membrane time constant
+ q_sfa             mV      Adaptive threshold jump
+ tau_sfa           ms      Adaptive threshold time constant
+ dead_time         ms      Duration of the dead time
+ dead_time_random  boolean Should a random dead time be drawn after each
                            spike?
-dead_time_shape   int    - Shape parameter of dead time gamma distribution.
-t_ref_remaining   double - Remaining dead time at simulation start.
-with_reset        bool   - Should the membrane potential be reset after a
+ dead_time_shape   integer Shape parameter of dead time gamma distribution
+ t_ref_remaining   ms      Remaining dead time at simulation start
+ with_reset        boolean Should the membrane potential be reset after a
                            spike?
-I_e               double - Constant input current in pA.
-c_1               double - Slope of linear part of transfer function in
-                           Hz/mV.
-c_2               double - Prefactor of exponential part of transfer function
-                           in Hz.
-c_3               double - Coefficient of exponential non-linearity of
-                           transfer function in 1/mV.
+ I_e               pA      Constant input current
+ c_1               Hz/mV   Slope of linear part of transfer function in
+                           Hz/mV
+ c_2               Hz      Prefactor of exponential part of transfer function
+ c_3               1/mV    Coefficient of exponential non-linearity of
+                           transfer function
+=================  ======= ===================================================
+\endverbatim
 
+References:
+
+\verbatim embed:rst
+.. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
+       processes and applications to neural modeling. Journal of
+       Computational Neuroscience 28(2):267-284
+       DOI: https://doi.org/10.1007/s10827-009-0204-0
+.. [2] Jolivet R, Rauch A, Luescher H-R, Gerstner W. (2006). Predicting spike
+       timing of neocortical pyramidal neurons by simple threshold models.
+       Journal of Computational Neuroscience 21:35-49.
+       DOI: https://doi.org/10.1007/s10827-006-7074-5
+.. [3] Pozzorini C, Naud R, Mensi S, Gerstner W (2013). Temporal whitening by
+       power-law adaptation in neocortical neurons. Nature Neuroscience
+       16:942-948. (Uses a similar model of multi-timescale adaptation)
+       DOI: https://doi.org/10.1038/nn.3431
+.. [4] Grytskyy D, Tetzlaff T, Diesmann M, Helias M (2013). A unified view
+       on weakly correlated recurrent networks. Frontiers in Computational
+       Neuroscience, 7:131.
+       DOI: https://doi.org/10.3389/fncom.2013.00131
+.. [5] Deger M, Schwalger T, Naud R, Gerstner W (2014). Fluctuations and
+       information filtering in coupled populations of spiking neurons with
+       adaptation. Physical Review E 90:6, 062704.
+       DOI: https://doi.org/10.1103/PhysRevE.90.062704
+.. [6] Gerstner W, Kistler WM, Naud R, Paninski L (2014). Neuronal Dynamics:
+       From single neurons to networks and models of cognition.
+       Cambridge University Press
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -172,7 +180,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 
 SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
-iaf_psc_delta_canon
+iaf_psc_delta_ps
 */
 class pp_psc_delta : public Archiving_Node
 {
@@ -330,7 +338,7 @@ private:
     double h_;       //!< simulation time step in ms
     double dt_rate_; //!< rate parameter of dead time distribution
 
-    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::RngPtr rng_;                   //!< random number generator of my own thread
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     librandom::GammaRandomDev gamma_dev_;     //!< random deviate generator
 
@@ -373,10 +381,7 @@ private:
 };
 
 inline port
-pp_psc_delta::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+pp_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

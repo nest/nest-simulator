@@ -41,6 +41,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup music
+
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:
@@ -60,11 +63,15 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC input port to listen to (default:
-                 event_in)
-music_channel  - The MUSIC global index on the input port to listen to
-registered     - A bool indicating if the port has been already registered
-                 with the corresponding MUSIC event handler
+\verbatim embed:rst
+============== ======== =======================================================
+ port_name     string   The name of the MUSIC input port to listen to (default:
+                        event_in)
+ music_channel integer  The MUSIC global index on the input port to listen to
+ registered    boolean  A bool indicating if the port has been already
+                        registered with the corresponding MUSIC event handler
+============== ======== =======================================================
+\endverbatim
 
 The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
@@ -72,11 +79,11 @@ command SetAcceptableLatency.
 
 Examples:
 
-/music_event_in_proxy Create /meip Set
-meip << /music_channel 2 >> SetStatus
-/iaf_psc_alpha Create /n Set
-(event_in) 0.2 SetAcceptableLatency
-meip n Connect
+    /music_event_in_proxy Create /meip Set
+    meip << /music_channel 2 >> SetStatus
+    /iaf_psc_alpha Create /n Set
+    (event_in) 0.2 SetAcceptableLatency
+    meip n Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
 
@@ -169,10 +176,7 @@ private:
 };
 
 inline port
-music_event_in_proxy::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

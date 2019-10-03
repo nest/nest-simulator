@@ -46,6 +46,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
                                    spike trains.
 
@@ -57,20 +60,24 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-    f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )
+@f[ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 ) @f]
 
 Parameters:
 
 The following parameters can be set in the status dictionary:
+\verbatim embed:rst
+======================== ======== ==============================================
+ rate                    spikes/s Mean firing rate,
+                                  default: 0 spikes/s
+ amplitude               spikes/s Firing rate modulation amplitude,
+                                  default: 0 s^-1
+ frequency               Hz       Modulation frequency, default: 0 Hz
+ phase                   real     Modulation phase in degree [0-360], default: 0
+ order                   real     Gamma order (>= 1), default: 1
+ individual_spike_trains boolean  See note below, default: true
+======================== ======== ==============================================
+\endverbatim
 
-rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-amplitude  double - Firing rate modulation amplitude in spikes/second,
-                    default: 0 s^-1
-frequency  double - Modulation frequency in Hz, default: 0 Hz
-phase      double - Modulation phase in degree [0-360], default: 0
-order      double - Gamma order (>= 1), default: 1
-
-individual_spike_trains   bool - See note below, default: true
 
 Remarks:
 
@@ -91,7 +98,14 @@ Receives: DataLoggingRequest
 
 Sends: SpikeEvent
 
-References: Barbieri et al, J Neurosci Methods 105:25-37 (2001)
+References:
+
+\verbatim embed:rst
+.. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
+       stimulus-response models of neural spiking activity. Journal of
+       Neuroscience Methods, 105:25-3.
+       DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
+\endverbatim
 
 FirstVersion: October 2007, May 2013
 
@@ -107,25 +121,26 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * performance at all.
  * @note  The simulator works by calculating the hazard h(t) for each time step
  * and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
- * $[
+ * @f[
  *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
  *                                                                  \Lambda(t))}
- * $]
+ * @f]
  * with
- * $[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) $]
- * $[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds $]
- * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the
- * gamma function and $t_0$ the time of the most recent spike.
+ * @f[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) @f]
+ * @f[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds @f]
+ * and the incomplete Gamma function \f$ Gamma(a,z) \f$; \f$ a \f$ is the order
+ * of the gamma function and \f$t_0\f$ the time of the most recent spike.
  *
- * @note This implementation includes an additional $a$ factor in the
- * calculation of $\Lambda(t)$ and $h(t)$ in order to keep the mean rate
- * constant with varying $a$
+ * @note This implementation includes an additional \f$ a \f$ factor in the
+ * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
+ * constant with varying \f$a\f$
  *
- * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters
+ * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus parameters
  * are changed at
- *       $t_c > t_0$, then $\Lambda(t)$ is integrated piecewise for $t>t_c$ as
- *       $[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds $]
+ *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
+ *       \f$t>t_c\f$ as
+ *       @f[ \Lambda(t) = a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                      + a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds @f]
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *
@@ -306,10 +321,7 @@ private:
 };
 
 inline port
-sinusoidal_gamma_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -346,8 +358,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

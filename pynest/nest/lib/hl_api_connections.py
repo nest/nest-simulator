@@ -194,12 +194,16 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     except for 'receptor_type' which must be initialised with an integer.
 
     Parameter arrays are available for the rules 'one_to_one',
-    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
+    'all_to_all', 'fixed_total_number', 'fixed_indegree' and
+    'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_total_number' the array has to be a one-dimensional
+      NumPy array with length len(N), where N is the number of connections
+      specified.
     - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
       with shape (len(post), indegree), where indegree is the number of
       incoming connections per target neuron, therefore the rows describe the
@@ -303,12 +307,21 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value
+                        elif rule == 'fixed_total_number':
+                            if ('N' in conn_spec
+                                    and value.shape[0] != conn_spec['N']):
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(conn_spec['N']) + ", a "
+                                    "scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "One-dimensional parameter arrays can "
                                 "only be used in conjunction with rule "
-                                "'one_to_one'.")
+                                "'one_to_one' or 'fixed_total_number'.")
 
                     elif len(value.shape) == 2:
                         if rule == 'all_to_all':

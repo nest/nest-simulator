@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE( test_enum_bitfield_ops )
   My_Flags my_flags = My_Flags::FIRST_FLAG | My_Flags::FOURTH_FLAG;
 
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::FIRST_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
 
   my_flags ^= My_Flags::FIRST_FLAG;
@@ -57,10 +57,10 @@ BOOST_AUTO_TEST_CASE( test_enum_bitfield_ops )
   my_flags ^= My_Flags::THIRD_FLAG;
   my_flags ^= My_Flags::FOURTH_FLAG;
 
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::FIRST_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::FIRST_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
 
   my_flags |= My_Flags::FIRST_FLAG;
   my_flags |= My_Flags::FOURTH_FLAG;
@@ -74,24 +74,24 @@ BOOST_AUTO_TEST_CASE( test_enum_bitfield_ops )
 
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::FIRST_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
 
   my_flags = My_Flags::FIRST_FLAG;
 
   BOOST_REQUIRE( enumFlagSet( my_flags, My_Flags::FIRST_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::SECOND_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::THIRD_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags, My_Flags::FOURTH_FLAG ) );
 
-  BOOST_REQUIRE( !enumFlagSet( my_flags ^ My_Flags::FIRST_FLAG, My_Flags::FIRST_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags ^ My_Flags::FIRST_FLAG, My_Flags::FIRST_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags ^ My_Flags::SECOND_FLAG, My_Flags::SECOND_FLAG ) );
 
   BOOST_REQUIRE( enumFlagSet( my_flags | My_Flags::FIRST_FLAG, My_Flags::FIRST_FLAG ) );
   BOOST_REQUIRE( enumFlagSet( my_flags | My_Flags::SECOND_FLAG, My_Flags::SECOND_FLAG ) );
 
   BOOST_REQUIRE( enumFlagSet( my_flags & My_Flags::FIRST_FLAG, My_Flags::FIRST_FLAG ) );
-  BOOST_REQUIRE( !enumFlagSet( my_flags & My_Flags::SECOND_FLAG, My_Flags::FIRST_FLAG ) );
+  BOOST_REQUIRE( not enumFlagSet( my_flags & My_Flags::SECOND_FLAG, My_Flags::FIRST_FLAG ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

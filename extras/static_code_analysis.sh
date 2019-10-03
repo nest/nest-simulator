@@ -174,7 +174,7 @@ for f in $FILE_NAMES; do
       # CPPCHECK
       if $PERFORM_CPPCHECK; then
         print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
-        $CPPCHECK --enable=all --std=c++11 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
+        $CPPCHECK --enable=all --language=c++ --std=c++11 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
         # Remove the header, the first line.
         tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
         if [ -s "${f_base}_cppcheck.txt" ]; then

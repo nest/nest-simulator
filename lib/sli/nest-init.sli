@@ -778,10 +778,10 @@ def
                 The following options may be given for all connection rules;
                 not all rules support all options and many rules add rule-specific options.
 
-                autapses      bool  - allow self-connections (default: true)
-                multapses     bool  - allow multiple connections between pairs
-                                      of neurons (default: true)
-                symmetric     bool  - also create connection in opposite direction to
+                allow_autapses  bool  - allow self-connections (default: true)
+                allow_multapses bool  - allow multiple connections between pairs
+                                        of neurons (default: true)
+                symmetric       bool  - also create connection in opposite direction to
                                       obtain symmetric connections (default: false)
 
    /syn_spec  - dictionary with synapse specification, must at least contain /model

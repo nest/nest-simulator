@@ -50,7 +50,7 @@ nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
               'p': nest.distributions.exponential(nest.spatial.distance,
                                                   tau=0.25),
-              'autapses': False,
+              'allow_autapses': False,
               'mask': {'volume': {'lower_left': [-0.75, -0.75, -0.75],
                                   'upper_right': [0.75, 0.75, 0.75]}}})
 

@@ -816,8 +816,8 @@ probability and delay, and random weights from a normal distribution:
   |     conn_dict = {'connection_type': 'divergent',                 |                  'p': 1. - 0.5*nest.spatial.distance,                         |
   |                  'number_of_connections': 50,                    |                  'weight': nest.random.normal(min=-1., max=1.),               |
   |                  'kernel': {'linear':                            |                  'delay': 1.5*nest.spatial.distance,                          |
-  |                             {'a': -0.5, 'c': 1.}},               |                  'multapses': True,                                           |
-  |                  'weights': {'normal':                           |                  'autapses': False}                                           |
+  |                             {'a': -0.5, 'c': 1.}},               |                  'allow_multapses': True,                                           |
+  |                  'weights': {'normal':                           |                  'allow_autapses': False}                                           |
   |                              {'min': -1.0, 'max': 1.0}},         |     nest.Connect(l, l, conn_dict)                                             |
   |                  'delays': {'linear': {'a': 1.5, 'c': 0.}},      |                                                                               |
   |                  'allow_multapses': True,                        |                                                                               |

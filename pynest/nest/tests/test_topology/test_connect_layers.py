@@ -45,7 +45,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
-            'autapses': autapses,
+            'allow_autapses': autapses,
         }
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
@@ -60,8 +60,8 @@ class ConnectLayersTestCase(unittest.TestCase):
             'rule': 'fixed_indegree',
             'indegree': 10,
             'p': 1.0,
-            'autapses': False,
-            'multapses': multapses,
+            'allow_autapses': False,
+            'allow_multapses': multapses,
         }
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()

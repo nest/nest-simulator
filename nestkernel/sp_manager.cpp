@@ -134,13 +134,13 @@ SPManager::set_status( const DictionaryDatum& d )
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
 
-  if ( d->known( names::autapses ) )
+  if ( d->known( names::allow_autapses ) )
   {
-    def< bool >( conn_spec, names::autapses, getValue< bool >( d, names::autapses ) );
+    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( d, names::allow_autapses ) );
   }
-  if ( d->known( names::multapses ) )
+  if ( d->known( names::allow_multapses ) )
   {
-    def< bool >( conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
+    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
   }
   GIDCollectionPTR sources( new GIDCollectionPrimitive() );
   GIDCollectionPTR targets( new GIDCollectionPrimitive() );

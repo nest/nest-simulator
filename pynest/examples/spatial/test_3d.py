@@ -49,7 +49,7 @@ ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
               'p': 1.,
-              'autapses': False,
+              'allow_autapses': False,
               'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
                                   'upper_right': [0.2, 0.2, 0.2]}}})
 

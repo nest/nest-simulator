@@ -121,7 +121,7 @@ nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
                {'Wmax': 0.75, 'weight_recorder': wr[0]})
 syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
                        'delay': delay}
-conn_dict_exc_to_exc = {'rule': 'all_to_all', 'autapses': False}
+conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
 nest.Connect(pop_exc, pop_exc, conn_dict_exc_to_exc, syn_dict_exc_to_exc)
 
 # Create exc->inh connections

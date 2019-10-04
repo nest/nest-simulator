@@ -212,7 +212,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
-    allowed_conn_spec_keys = ['mask', 'multapses', 'autapses', 'rule', 'indegree', 'outdegree', 'p', 'use_on_source']
+    allowed_conn_spec_keys = ['mask', 'allow_multapses', 'allow_autapses', 'rule',
+                              'indegree', 'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
@@ -224,11 +225,6 @@ def _process_spatial_projections(conn_spec, syn_spec):
     projections.update(conn_spec)
     if 'p' in conn_spec:
         projections['kernel'] = projections.pop('p')
-    # TODO: change topology names of {mul,aut}apses to be consistent
-    if 'multapses' in conn_spec:
-        projections['allow_multapses'] = projections.pop('multapses')
-    if 'autapses' in conn_spec:
-        projections['allow_autapses'] = projections.pop('autapses')
     if syn_spec is not None:
         for key in syn_spec.keys():
             if key not in allowed_syn_spec_keys:
@@ -346,8 +342,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     the rule and any mandatory rule-specific parameters (e.g. 'indegree').
 
     In addition, switches setting permission for establishing
-    self-connections ('autapses', default: True) and multiple connections
-    between a pair of nodes ('multapses', default: True) can be contained
+    self-connections ('allow_autapses', default: True) and multiple connections
+    between a pair of nodes ('allow_multapses', default: True) can be contained
     in the dictionary. Another switch enables the creation of symmetric
     connections ('symmetric', default: False) by also creating connections
     in the opposite direction.
@@ -364,7 +360,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Example conn-spec choices
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     - 'one_to_one'
-    - {'rule': 'fixed_indegree', 'indegree': 2500, 'autapses': False}
+    - {'rule': 'fixed_indegree', 'indegree': 2500, 'allow_autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
 
     Synapse specification (syn_spec)

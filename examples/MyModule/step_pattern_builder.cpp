@@ -116,7 +116,7 @@ mynest::StepPatternBuilder::connect_()
         for ( nest::GIDCollection::const_iterator sgid = sources_->begin(); sgid < sources_->end();
               sgid = advance_( sgid, sources_->end(), source_step_ ) )
         {
-          if ( not autapses_ and *sgid == *tgid )
+          if ( not allow_autapses_ and *sgid == *tgid )
           {
             skip_conn_parameter_( tid );
             continue;

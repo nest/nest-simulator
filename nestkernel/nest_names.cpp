@@ -45,6 +45,8 @@ const Name activity( "activity" );
 const Name adaptive_spike_buffers( "adaptive_spike_buffers" );
 const Name adaptive_target_buffers( "adaptive_target_buffers" );
 const Name ahp_bug( "ahp_bug" );
+const Name allow_autapses( "allow_autapses" );
+const Name allow_multapses( "allow_multapses" );
 const Name allow_offgrid_times( "allow_offgrid_times" );
 const Name alpha( "alpha" );
 const Name alpha_1( "alpha_1" );
@@ -58,7 +60,6 @@ const Name amplitude_values( "amplitude_values" );
 const Name Aplus( "Aplus" );
 const Name Aplus_triplet( "Aplus_triplet" );
 const Name archiver_length( "archiver_length" );
-const Name autapses( "autapses" );
 const Name available( "available" );
 
 const Name b( "b" );
@@ -270,7 +271,6 @@ const Name mu( "mu" );
 const Name mu_minus( "mu_minus" );
 const Name mu_plus( "mu_plus" );
 const Name mult_coupling( "mult_coupling" );
-const Name multapses( "multapses" );
 const Name music_channel( "music_channel" );
 
 const Name n( "n" );

@@ -534,8 +534,8 @@ Connectivity is either specified as a string containing the name of a
 connectivity rule (default: ``"one_to_one"``) or as a dictionary
 specifying the rule and rule-specific parameters (e.g. ``"indegree"``),
 which must be given. In addition switches allowing self-connections
-(``"autapses"``, default: ``True``) and multiple connections between a
-pair of neurons (``"multapses"``, default: ``True``) can be contained in
+(``"allow_autapses"``, default: ``True``) and multiple connections between a
+pair of neurons (``"allow_multapses"``, default: ``True``) can be contained in
 the dictionary.
 
 Synapse

@@ -66,6 +66,8 @@ extern const Name activity;
 extern const Name adaptive_spike_buffers;
 extern const Name adaptive_target_buffers;
 extern const Name ahp_bug;
+extern const Name allow_autapses;
+extern const Name allow_multapses;
 extern const Name allow_offgrid_times;
 extern const Name alpha;
 extern const Name alpha_1;
@@ -79,7 +81,6 @@ extern const Name amplitude_values;
 extern const Name Aplus;
 extern const Name Aplus_triplet;
 extern const Name archiver_length;
-extern const Name autapses;
 extern const Name available;
 
 extern const Name b;
@@ -291,7 +292,6 @@ extern const Name mu;
 extern const Name mu_minus;
 extern const Name mu_plus;
 extern const Name mult_coupling;
-extern const Name multapses;
 extern const Name music_channel;
 
 extern const Name n;

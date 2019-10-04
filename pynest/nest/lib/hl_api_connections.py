@@ -258,6 +258,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
             projections.pop('use_on_source')
         else:
             projections['connection_type'] = 'divergent'
+            if 'use_on_source' in projections:
+                projections.pop('use_on_source')
     else:
         raise kernel.NESTError("When using kernel or mask, the only possible "
                                "connection rules are 'pairwise_bernoulli', "

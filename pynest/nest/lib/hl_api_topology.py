@@ -1361,8 +1361,8 @@ def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0
 
     if parameter is not None:
         z = np.zeros(shape[::-1])
-        for i, x in enumerate(np.linspace(*edges[:2], shape[0])):
-            positions = [[x, y] for y in np.linspace(*edges[2:], shape[1])]
+        for i, x in enumerate(np.linspace(edges[0], edges[1], shape[0])):
+            positions = [[x, y] for y in np.linspace(edges[2], edges[3], shape[1])]
             values = parameter.apply(source, positions)
             z[:, i] = np.array(values)
         img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,

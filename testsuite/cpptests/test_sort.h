@@ -41,7 +41,7 @@ nest_quicksort( BlockVector< size_t >& bv0, BlockVector< size_t >& bv1 )
   nest::quicksort3way( bv0, bv1, 0, bv0.size() - 1 );
 }
 
-const bool
+bool
 is_sorted( BlockVector< size_t >::const_iterator begin, BlockVector< size_t >::const_iterator end )
 {
   for ( BlockVector< size_t >::const_iterator it = begin; it < --end; )

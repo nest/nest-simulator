@@ -32,7 +32,7 @@ __all__ = [
     'from_device',
     'from_file',
     'from_file_numpy',
-    'frim_file_pandas',
+    'from_file_pandas',
     'show',
     'savefig',
 ]
@@ -141,7 +141,7 @@ def from_file_pandas(fname, **kwargs):
     data = None
     for f in fname:
         dataFrame = pandas.read_csv(
-            f, sep='\s+', lineterminator='\n',
+            f, sep=r'\s+', lineterminator='\n',
             header=None, index_col=None,
             skipinitialspace=True)
         newdata = dataFrame.values
@@ -184,8 +184,8 @@ def from_device(detec, **kwargs):
     nest.kernel.NESTError
     """
 
-    type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
-    if not type_id.name == "spike_detector":
+    type_id = nest.GetDefaults(detec.get('model'), 'type_id')
+    if not type_id == "spike_detector":
         raise nest.kernel.NESTError("Please provide a spike_detector.")
 
     if nest.GetStatus(detec, "to_memory")[0]:

@@ -188,7 +188,7 @@ def from_device(detec, **kwargs):
     if not type_id == "spike_detector":
         raise nest.kernel.NESTError("Please provide a spike_detector.")
 
-    if nest.GetStatus(detec, "to_memory")[0]:
+    if detec.get('to_memory'):
 
         ts, gids = _from_memory(detec)
 
@@ -196,18 +196,17 @@ def from_device(detec, **kwargs):
             raise nest.kernel.NESTError("No events recorded!")
 
         if "title" not in kwargs:
-            kwargs["title"] = "Raster plot from device '%i'" % nest.GetStatus(
-                detec[0], 'global_id')[0]
+            kwargs["title"] = "Raster plot from device '%i'" % detec.get('global_id')
 
-        if nest.GetStatus(detec)[0]["time_in_steps"]:
+        if detec.get('time_in_steps'):
             xlabel = "Steps"
         else:
             xlabel = "Time (ms)"
 
         return _make_plot(ts, ts, gids, gids, xlabel=xlabel, **kwargs)
 
-    elif nest.GetStatus(detec, "to_file")[0]:
-        fname = nest.GetStatus(detec, "filenames")[0]
+    elif detec.get("to_file"):
+        fname = detec.get("filenames")
         return from_file(fname, **kwargs)
 
     else:
@@ -216,7 +215,7 @@ def from_device(detec, **kwargs):
 
 
 def _from_memory(detec):
-    ev = nest.GetStatus(detec, "events")[0]
+    ev = detec.get("events")
     return ev["times"], ev["senders"]
 
 

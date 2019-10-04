@@ -50,7 +50,7 @@ def from_file(fname, title=None, grayscale=False):
     ------
     ValueError
     """
-    if nest.hl_api.is_iterable(fname):
+    if isinstance(fname, (list, tuple)):
         data = None
         for f in fname:
             if data is None:
@@ -152,11 +152,11 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
     if len(detec) > 1:
         raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
-    type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
-    if type_id.name not in ('voltmeter', 'multimeter'):
+    type_id = nest.GetDefaults(detec.get('model'), 'type_id')
+    if type_id not in ('voltmeter', 'multimeter'):
         raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
-    elif type_id.name == 'multimeter':
+    elif type_id == 'multimeter':
         if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")

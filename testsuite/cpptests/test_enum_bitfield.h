@@ -26,9 +26,10 @@
 // Includes from libnestutil:
 #include "enum_bitfield.h"
 
-BOOST_AUTO_TEST_SUITE( test_enum_bitfield )
+namespace nest
+{
 
-using namespace nest;
+BOOST_AUTO_TEST_SUITE( test_enum_bitfield )
 
 enum class My_Flags : unsigned
 {
@@ -97,5 +98,7 @@ BOOST_AUTO_TEST_CASE( test_enum_bitfield_ops )
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+}
 
 #endif /* TEST_SORT_H */

@@ -28,6 +28,8 @@
 
 BOOST_AUTO_TEST_SUITE( test_enum_bitfield )
 
+using namespace nest;
+
 enum class My_Flags : unsigned
 {
   FIRST_FLAG = 1 << 0,

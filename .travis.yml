@@ -116,6 +116,9 @@ cache:
 
 before_install:
    - export SOURCEDIR=$PWD
+   - cmake --version
+   - echo ${CC}
+   - echo ${CXX}
    - g++ --version
    - /usr/bin/c++ --version
    - ls -lh /usr/bin/g++*
@@ -130,7 +133,8 @@ before_install:
    - sudo update-alternatives --auto gcc 
    - sudo update-alternatives --list gcc
    - sudo update-alternatives --list c++ 
-   - sudo update-alternatives --auto c++ 
+   - sudo update-alternatives --auto c++
+   - echo $CC 
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

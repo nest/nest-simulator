@@ -124,11 +124,12 @@ before_install:
    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20
    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 10
    - sudo update-alternatives --auto g++ 
+   - sudo update-alternatives --list g++
    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20
    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
    - sudo update-alternatives --auto gcc 
-   - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/c++-8 20
-   - sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/c++-5 10
+   - sudo update-alternatives --list gcc
+   - sudo update-alternatives --list c++ 
    - sudo update-alternatives --auto c++ 
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then

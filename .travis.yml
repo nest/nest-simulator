@@ -116,6 +116,10 @@ cache:
 
 before_install:
    - export SOURCEDIR=$PWD
+   - g++ --version
+   - /usr/bin/c++ --version
+   - ll -lh /usr/bin/g++*
+   - ll -lh /usr/bin/gcc*
    - sudo update-alternatives --config gcc
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then

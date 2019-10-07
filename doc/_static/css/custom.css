@@ -219,18 +219,28 @@ html body div.wy-table-responsive .footnote td {
      position: fixed;
      margin-left: 0px;
      overflow-y: auto;
-     padding-left: 5px;
-     border-left: 1px #767677;
-         border-left-color: rgb(118, 118, 119);
-         border-left-style: none;
+     padding-left: 15px;
+     border-left: 1px solid #e1e4e5;
+         border-left-color: #e1e4e5;
+         border-left-style: solid;
          border-left-width: 1px;
+     border-right: 1px, #e0e0e0, solid;
+         border-right-width: 1px;
+         border-right-color: #e0e0e0;
+         border-right-style: solid;
      height: 100%;
+     width: 250px;
      top: 0px;
      left: 1100px;
      padding-right: 10px;
-     background: linear-gradient(90deg, #fff, #eee);
+     background: linear-gradient(90deg, #fcfcfc, rgba(0, 0, 0, 0));
      padding-top: 70px;
     }
+    }
+    .rst-content .section ul p {
+        margin-bottom: 0px;
+    }
+}
 
  /*   div.wy-side-scroll li.toctree-l1.current a {
         border-right: none;

@@ -1,6 +1,10 @@
 NEST 2.X vs. NEST 3.0 conversion reference guide
 ==================================================
 
+.. contents:: Here you'll find
+   :local:
+   :depth: 2
+
 * This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3.0
 
 * Functions not mentioned are unchanged

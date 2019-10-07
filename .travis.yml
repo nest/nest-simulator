@@ -116,6 +116,7 @@ cache:
 
 before_install:
    - export SOURCEDIR=$PWD
+   - sudo update-alternatives --config gcc
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

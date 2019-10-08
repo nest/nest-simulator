@@ -878,6 +878,41 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     return [src_tgt_pos_map[sgid] for sgid in sources.tolist()]
 
 
+def SelectNodesByMask(layer, anchor, mask_obj):
+    """
+    Obtain the GIDs inside a masked area of a topology layer.
+
+    The function finds and returns all the GIDs inside a given mask of a single
+    layer. It works on both 2-dimensional and 3-dimensional masks and layers.
+    All mask types are allowed, including combined masks.
+
+    Parameters
+    ----------
+    layer : GIDCollection
+        GIDCollection with GIDs of the layer to select nodes from.
+    anchor : tuple/list of double
+        List containing center position of the layer. This is the point from
+        where we start to search.
+    mask_obj: object
+        Mask object specifying chosen area.
+
+    Returns
+    -------
+    out : list of int(s)
+        GID(s) of nodes/elements inside the mask.
+    """
+
+    if not isinstance(layer, GIDCollection):
+        raise TypeError("layer must be a GIDCollection.")
+
+    mask_datum = mask_obj._datum
+
+    gid_list = sli_func('SelectNodesByMask',
+                        layer, anchor, mask_datum)
+
+    return GIDCollection(gid_list)
+
+
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
 
@@ -1165,41 +1200,6 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     plt.draw_if_interactive()
 
     return fig
-
-
-def SelectNodesByMask(layer, anchor, mask_obj):
-    """
-    Obtain the GIDs inside a masked area of a topology layer.
-
-    The function finds and returns all the GIDs inside a given mask of a single
-    layer. It works on both 2-dimensional and 3-dimensional masks and layers.
-    All mask types are allowed, including combined masks.
-
-    Parameters
-    ----------
-    layer : GIDCollection
-        GIDCollection with GIDs of the layer to select nodes from.
-    anchor : tuple/list of double
-        List containing center position of the layer. This is the point from
-        where we start to search.
-    mask_obj: object
-        Mask object specifying chosen area.
-
-    Returns
-    -------
-    out : list of int(s)
-        GID(s) of nodes/elements inside the mask.
-    """
-
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection.")
-
-    mask_datum = mask_obj._datum
-
-    gid_list = sli_func('SelectNodesByMask',
-                        layer, anchor, mask_datum)
-
-    return GIDCollection(gid_list)
 
 
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):

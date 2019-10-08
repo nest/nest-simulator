@@ -53,8 +53,8 @@ __all__ = [
     'GetPosition',
     'GetTargetNodes',
     'GetTargetPositions',
-    'plot_probability_parameter',
     'PlotLayer',
+    'PlotProbabilityParameter',
     'PlotTargets',
     'SelectNodesByMask',
 ]
@@ -935,7 +935,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     See also
     --------
-    plot_probability_parameter : Create a plot of the connection probability and/or mask.
+    PlotProbabilityParameter : Create a plot of the connection probability and/or mask.
     PlotTargets : Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
 
@@ -1032,9 +1032,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is created.
     mask : [None | dict], optional, default: None
-        Draw mask with targets; see ``plot_probability_parameter`` for details.
+        Draw mask with targets; see ``PlotProbabilityParameter`` for details.
     probability_parameter : [None | Parameter], optional, default: None
-        Draw connection probability with targets; see ``plot_probability_parameter`` for details.
+        Draw connection probability with targets; see ``PlotProbabilityParameter`` for details.
     src_color : [None | any matplotlib color], optional, default: 'red'
         Color used to mark source node position
     src_size : float, optional, default: 50
@@ -1136,8 +1136,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
         if mask is not None or probability_parameter is not None:
             edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
-            plot_probability_parameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax,
-                                       prob_cmap=probability_cmap, mask_color=mask_color)
+            PlotProbabilityParameter(src_nrn, probability_parameter, mask=mask, edges=edges, ax=ax,
+                                     prob_cmap=probability_cmap, mask_color=mask_color)
 
         _draw_extent(ax, xctr, yctr, xext, yext)
 
@@ -1304,8 +1304,8 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
     return mask_patches
 
 
-def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0.5, -0.5, 0.5], shape=[100, 100],
-                               ax=None, prob_cmap='Greens', mask_color='yellow'):
+def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5, -0.5, 0.5], shape=[100, 100],
+                             ax=None, prob_cmap='Greens', mask_color='yellow'):
     """
     Create a plot of the connection probability and/or mask.
 

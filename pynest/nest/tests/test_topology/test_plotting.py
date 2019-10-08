@@ -111,7 +111,7 @@ class PlottingTestCase(unittest.TestCase):
         parameter = probability_calculation(nest.spatial.distance)
 
         fig, ax = plt.subplots()
-        nest.plot_probability_parameter(source, parameter, ax=ax, shape=plot_shape, edges=plot_edges)
+        nest.PlotProbabilityParameter(source, parameter, ax=ax, shape=plot_shape, edges=plot_edges)
 
         self.assertEqual(len(ax.images), 1)
         img = ax.images[0]
@@ -134,7 +134,7 @@ class PlottingTestCase(unittest.TestCase):
                  {'elliptical': {'major_axis': 0.8, 'minor_axis': 0.4}}]
         fig, axs = plt.subplots(2, 2)
         for mask, ax in zip(masks, axs.flatten()):
-            nest.plot_probability_parameter(source, parameter, mask=mask, ax=ax, shape=plot_shape, edges=plot_edges)
+            nest.PlotProbabilityParameter(source, parameter, mask=mask, ax=ax, shape=plot_shape, edges=plot_edges)
             self.assertEqual(len(ax.images), 1)
             self.assertGreaterEqual(len(ax.patches), 1)
 

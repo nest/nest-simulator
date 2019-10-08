@@ -27,7 +27,7 @@ import unittest
 import nest
 
 try:
-    import numpy
+    import numpy as np
 
     HAVE_NUMPY = True
 except ImportError:
@@ -138,7 +138,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(ValueError):
             d = nest.Displacement(l[1:3], l[2:7])
 
         # position -> gids
@@ -146,15 +146,13 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        from numpy import array
-
         # position -> gids
-        d = nest.Displacement(array([0.0, 0.0]), l)
+        d = nest.Displacement(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # positions -> gids
-        d = nest.Displacement([array([0.0, 0.0])] * len(l), l)
+        d = nest.Displacement([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
@@ -223,7 +221,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(ValueError):
             d = nest.Distance(l[1:3], l[2:7])
 
         # position -> gids
@@ -232,16 +230,14 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        from numpy import array
-
         # position -> gids
-        d = nest.Distance(array([0.0, 0.0]), l)
+        d = nest.Distance(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
         # positions -> gids
-        d = nest.Distance([array([0.0, 0.0])] * len(l), l)
+        d = nest.Distance([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
@@ -406,8 +402,8 @@ class BasicsTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
-        positions = [(numpy.random.uniform(-0.5, 0.5),
-                      numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
+        positions = [(np.random.uniform(-0.5, 0.5),
+                      np.random.uniform(-0.5, 0.5)) for _ in range(50)]
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.free(positions,
                                                     edge_wrap=False))

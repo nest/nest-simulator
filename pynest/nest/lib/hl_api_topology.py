@@ -23,8 +23,15 @@
 Functions relating to spatial properties of nodes
 """
 
-import nest
+
 import numpy as np
+
+from ..ll_api import *
+from .. import pynestkernel as kernel
+from .hl_api_helper import *
+from .hl_api_connections import GetConnections
+from .hl_api_parallel_computing import NumProcesses, Rank
+from .hl_api_types import GIDCollection
 
 try:
     import matplotlib as mpl
@@ -187,10 +194,10 @@ def CreateMask(masktype, specs, anchor=None):
 
     """
     if anchor is None:
-        return nest.ll_api.sli_func('CreateMask', {masktype: specs})
+        return sli_func('CreateMask', {masktype: specs})
     else:
-        return nest.ll_api.sli_func('CreateMask',
-                                    {masktype: specs, 'anchor': anchor})
+        return sli_func('CreateMask',
+                        {masktype: specs, 'anchor': anchor})
 
 
 def GetPosition(nodes):
@@ -248,10 +255,10 @@ def GetPosition(nodes):
             # retrieve positions of a subset of nodes in the layer
             pos = nest.GetPosition(l[2:18])
     """
-    if not isinstance(nodes, nest.GIDCollection):
+    if not isinstance(nodes, GIDCollection):
         raise TypeError("nodes must be a layer GIDCollection")
 
-    return nest.ll_api.sli_func('GetPosition', nodes)
+    return sli_func('GetPosition', nodes)
 
 
 def Displacement(from_arg, to_arg):
@@ -313,20 +320,17 @@ def Displacement(from_arg, to_arg):
             # displacment between the position (0.0., 0.0) and node 2
             print(nest.Displacement([(0.0, 0.0)], l[1:2]))
     """
-    if not isinstance(to_arg, nest.GIDCollection):
+    if not isinstance(to_arg, GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
 
-    import numpy
-
-    if isinstance(from_arg, numpy.ndarray):
+    if isinstance(from_arg, np.ndarray):
         from_arg = (from_arg, )
 
     if (len(from_arg) > 1 and len(to_arg) > 1 and not
             len(from_arg) == len(to_arg)):
-        raise nest.kernel.NESTError(
-            "to_arg and from_arg must have same size unless one have size 1.")
+        raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return nest.ll_api.sli_func('Displacement', from_arg, to_arg)
+    return sli_func('Displacement', from_arg, to_arg)
 
 
 def Distance(from_arg, to_arg):
@@ -389,20 +393,17 @@ def Distance(from_arg, to_arg):
             print(nest.Distance([(0.0, 0.0)], l[1:2]))
 
     """
-    if not isinstance(to_arg, nest.GIDCollection):
+    if not isinstance(to_arg, GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
 
-    import numpy
-
-    if isinstance(from_arg, numpy.ndarray):
+    if isinstance(from_arg, np.ndarray):
         from_arg = (from_arg, )
 
     if (len(from_arg) > 1 and len(to_arg) > 1 and not
             len(from_arg) == len(to_arg)):
-        raise nest.kernel.NESTError(
-            "to_arg and from_arg must have same size unless one have size 1.")
+        raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return nest.ll_api.sli_func('Distance', from_arg, to_arg)
+    return sli_func('Distance', from_arg, to_arg)
 
 
 def FindNearestElement(layer, locations, find_all=False):
@@ -460,29 +461,26 @@ def FindNearestElement(layer, locations, find_all=False):
             nest.FindNearestElement(l, [3.0, 4.0], True)
     """
 
-    import numpy
-
-    if not isinstance(layer, nest.GIDCollection):
+    if not isinstance(layer, GIDCollection):
         raise TypeError("layer must be a GIDCollection")
 
     if not len(layer) > 0:
-        raise nest.kernel.NESTError("layer cannot be empty")
+        raise ValueError("layer cannot be empty")
 
-    if not nest.hl_api.is_iterable(locations):
-        raise TypeError(
-            "locations must be coordinate array or list of coordinate arrays")
+    if not is_iterable(locations):
+        raise TypeError("locations must be coordinate array or list of coordinate arrays")
 
     # Ensure locations is sequence, keeps code below simpler
-    if not nest.hl_api.is_iterable(locations[0]):
+    if not is_iterable(locations[0]):
         locations = (locations, )
 
     result = []
 
     for loc in locations:
-        d = Distance(numpy.array(loc), layer)
+        d = Distance(np.array(loc), layer)
 
         if not find_all:
-            dx = numpy.argmin(d)  # finds location of one minimum
+            dx = np.argmin(d)  # finds location of one minimum
             result.append(layer[dx].get('global_id'))
         else:
             mingids = list(layer[:1])
@@ -491,22 +489,22 @@ def FindNearestElement(layer, locations, find_all=False):
                 if d[idx] < minval:
                     mingids = [layer[idx].get('global_id')]
                     minval = d[idx]
-                elif numpy.abs(d[idx] - minval) <= 1e-14 * minval:
+                elif np.abs(d[idx] - minval) <= 1e-14 * minval:
                     mingids.append(layer[idx].get('global_id'))
-            result.append(nest.GIDCollection(mingids))
+            result.append(GIDCollection(mingids))
 
-    return nest.GIDCollection(result) if not find_all else result
+    return GIDCollection(result) if not find_all else result
 
 
 def _rank_specific_filename(basename):
     """Returns file name decorated with rank."""
 
-    if nest.NumProcesses() == 1:
+    if NumProcesses() == 1:
         return basename
     else:
-        np = nest.NumProcesses()
+        np = NumProcesses()
         np_digs = len(str(np - 1))  # for pretty formatting
-        rk = nest.Rank()
+        rk = Rank()
         dot = basename.find('.')
         if dot < 0:
             return '%s-%0*d' % (basename, np_digs, rk)
@@ -568,13 +566,13 @@ def DumpLayerNodes(layer, outname):
             nest.DumpLayerNodes(l, 'positions.txt')
 
     """
-    if not isinstance(layer, nest.GIDCollection):
+    if not isinstance(layer, GIDCollection):
         raise TypeError("layer must be a GIDCollection")
 
-    nest.ll_api.sli_func("""
-                         (w) file exch DumpLayerNodes close
-                         """,
-                         layer, _rank_specific_filename(outname))
+    sli_func("""
+             (w) file exch DumpLayerNodes close
+             """,
+             layer, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -642,21 +640,21 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             # write connectivity information to file
             nest.DumpLayerConnections(l, l, 'static_synapse', 'conns.txt')
     """
-    if not isinstance(source_layer, nest.GIDCollection):
-        raise nest.kernel.NESTError("source_layer must be a GIDCollection")
-    if not isinstance(target_layer, nest.GIDCollection):
-        raise nest.kernel.NESTError("target_layer must be a GIDCollection")
+    if not isinstance(source_layer, GIDCollection):
+        raise TypeError("source_layer must be a GIDCollection")
+    if not isinstance(target_layer, GIDCollection):
+        raise TypeError("target_layer must be a GIDCollection")
 
-    nest.ll_api.sli_func("""
-                         /oname  Set
-                         cvlit /synmod Set
-                         /lyr_target Set
-                         /lyr_source Set
-                         oname (w) file lyr_source lyr_target synmod
-                         DumpLayerConnections close
-                         """,
-                         source_layer, target_layer, synapse_model,
-                         _rank_specific_filename(outname))
+    sli_func("""
+             /oname  Set
+             cvlit /synmod Set
+             /lyr_target Set
+             /lyr_source Set
+             oname (w) file lyr_source lyr_target synmod
+             DumpLayerConnections close
+             """,
+             source_layer, target_layer, synapse_model,
+             _rank_specific_filename(outname))
 
 
 def FindCenterElement(layer):
@@ -702,8 +700,8 @@ def FindCenterElement(layer):
             nest.FindCenterElement(l)
     """
 
-    if not isinstance(layer, nest.GIDCollection):
-        raise nest.kernel.NESTError("layer must be a GIDCollection")
+    if not isinstance(layer, GIDCollection):
+        raise TypeError("layer must be a GIDCollection")
     nearest_to_center = FindNearestElement(layer, layer.spatial['center'])[0]
     index = layer.index(nearest_to_center.get('global_id'))
     return layer[index:index+1]
@@ -772,13 +770,13 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of the source neuron with GID 5
             nest.GetTargetNodes([5], l)
     """
-    if not isinstance(sources, nest.GIDCollection):
-        raise ValueError("sources must be a GIDCollection.")
+    if not isinstance(sources, GIDCollection):
+        raise TypeError("sources must be a GIDCollection.")
 
-    if not isinstance(tgt_layer, nest.GIDCollection):
-        raise nest.kernel.NESTError("tgt_layer must be a GIDCollection")
+    if not isinstance(tgt_layer, GIDCollection):
+        raise TypeError("tgt_layer must be a GIDCollection")
 
-    conns = nest.GetConnections(sources, tgt_layer, synapse_model=syn_model)
+    conns = GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
     # Re-organize conns into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
@@ -786,7 +784,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
         src_tgt_map[src].append(tgt)
 
     for src in src_tgt_map.keys():
-        src_tgt_map[src] = nest.GIDCollection(list(np.unique(src_tgt_map[src])))
+        src_tgt_map[src] = GIDCollection(list(np.unique(src_tgt_map[src])))
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
@@ -853,15 +851,15 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
             # get the positions of the targets of the source neuron with GID 5
             nest.GetTargetPositions(l[5:6], l)
     """
-    if not isinstance(sources, nest.GIDCollection):
-        raise ValueError("sources must be a GIDCollection.")
+    if not isinstance(sources, GIDCollection):
+        raise TypeError("sources must be a GIDCollection.")
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
     first_tgt_gid = tgt_layer[0].get('global_id')
 
-    connections = nest.GetConnections(sources, tgt_layer,
-                                      synapse_model=syn_model)
+    connections = GetConnections(sources, tgt_layer,
+                                 synapse_model=syn_model)
     srcs = connections.get('source')
     tgts = connections.get('target')
     if isinstance(srcs, int):
@@ -882,8 +880,6 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
-
-    import matplotlib.pyplot as plt
 
     # thin gray line indicating extent
     llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
@@ -966,10 +962,11 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             plt.show()
     """
 
-    import matplotlib.pyplot as plt
+    if not HAVE_MPL:
+        raise ImportError('Matplotlib could not be imported')
 
-    if not isinstance(layer, nest.GIDCollection):
-        raise ValueError("layer must be a GIDCollection.")
+    if not isinstance(layer, GIDCollection):
+        raise TypeError("layer must be a GIDCollection.")
 
     # get layer extent
     ext = layer.spatial['extent']
@@ -1011,7 +1008,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         plt.draw_if_interactive()
 
     else:
-        raise nest.kernel.NESTError("unexpected dimension of layer")
+        raise ValueError("unexpected dimension of layer")
 
     return fig
 
@@ -1099,12 +1096,13 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             plt.show()
     """
 
-    import matplotlib.pyplot as plt
+    if not HAVE_MPL:
+        raise ImportError('Matplotlib could not be imported')
 
-    if not isinstance(src_nrn, nest.GIDCollection) or len(src_nrn) != 1:
-        raise ValueError("src_nrn must be a single element GIDCollection.")
-    if not isinstance(tgt_layer, nest.GIDCollection):
-        raise ValueError("tgt_layer must be a GIDCollection.")
+    if not isinstance(src_nrn, GIDCollection) or len(src_nrn) != 1:
+        raise TypeError("src_nrn must be a single element GIDCollection.")
+    if not isinstance(tgt_layer, GIDCollection):
+        raise TypeError("tgt_layer must be a GIDCollection.")
 
     # get position of source
     srcpos = GetPosition(src_nrn)
@@ -1193,18 +1191,19 @@ def SelectNodesByMask(layer, anchor, mask_obj):
         GID(s) of nodes/elements inside the mask.
     """
 
-    if not isinstance(layer, nest.GIDCollection):
-        raise ValueError("layer must be a GIDCollection.")
+    if not isinstance(layer, GIDCollection):
+        raise TypeError("layer must be a GIDCollection.")
 
     mask_datum = mask_obj._datum
 
-    gid_list = nest.ll_api.sli_func('SelectNodesByMask',
-                                    layer, anchor, mask_datum)
+    gid_list = sli_func('SelectNodesByMask',
+                        layer, anchor, mask_datum)
 
-    return nest.GIDCollection(gid_list)
+    return GIDCollection(gid_list)
 
 
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
+
     edge_color = 'black'
     alpha = 0.2
     line_width = 2
@@ -1336,6 +1335,7 @@ def plot_probability_parameter(source, parameter=None, mask=None, edges=[-0.5, 0
     """
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
+
     if parameter is None and mask is None:
         raise ValueError('At least one of parameter or mask must be specified')
     if ax is None:

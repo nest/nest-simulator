@@ -35,6 +35,7 @@
 #include "nest_names.h"
 #include "nest_types.h"
 #include "nestmodule.h"
+#include "gid_collection.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -172,6 +173,12 @@ public:
    */
   virtual Parameter* dimension_parameter( const Parameter& y_parameter ) const;
   virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
+
+  /**
+   * Applies a parameter on a single-GID GIDCollection and given array of positions.
+   * @returns array of result values, one per position in the TokenArray.
+   */
+  std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
 
 protected:
   Node* gid_to_node_ptr_( const index, const thread ) const;
@@ -509,7 +516,6 @@ public:
   double
   value( librandom::RngPtr& rng, Node* ) const
   {
-    assert( false );
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
 

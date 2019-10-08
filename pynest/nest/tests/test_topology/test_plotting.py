@@ -26,12 +26,12 @@ Tests for basic topology hl_api functions.
 import unittest
 import nest
 import numpy as np
-import matplotlib as mpl
 
 try:
     import matplotlib.pyplot as plt
 
-    plt.figure()  # make sure we can open a window; DISPLAY may not be set
+    tmp_fig = plt.figure()  # make sure we can open a window; DISPLAY may not be set
+    plt.close(tmp_fig)
     PLOTTING_POSSIBLE = True
 except:
     PLOTTING_POSSIBLE = False
@@ -55,8 +55,10 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotTargets(self):
         """Test plotting targets."""
+        delta = 0.05
+        mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.,
-                 'mask': {'grid': {'shape': [2, 2]}}}
+                 'mask': mask}
         sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
@@ -68,7 +70,7 @@ class PlottingTestCase(unittest.TestCase):
         nest.Connect(l, l, cdict, sdict)
 
         ctr = nest.FindCenterElement(l)
-        fig = nest.PlotTargets(l[ctr-1:ctr], l)
+        fig = nest.PlotTargets(ctr, l)
         fig.gca().set_title('Plain call')
 
         plotted_datapoints = plt.gca().collections[0].get_offsets().data
@@ -78,40 +80,63 @@ class PlottingTestCase(unittest.TestCase):
         reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] < eps)][::-1]
         self.assertTrue(np.array_equal(np.sort(plotted_datapoints, axis=0), np.sort(reference_datapoints, axis=0)))
 
-    def test_PlotKernel(self):
-        """Test plotting kernels."""
+        fig = nest.PlotTargets(ctr, l, mask=mask)
+        ax = fig.gca()
+        ax.set_title('Call with mask')
+        self.assertGreaterEqual(len(ax.patches), 1)
+
+    def test_plot_probability_kernel(self):
+        """Plot parameter probability"""
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[3, 3],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
-        f = plt.figure()
-        a1 = f.add_subplot(221)
-        ctr = nest.FindCenterElement(l)
-        nest.PlotKernel(a1, l[ctr-1], {'circular': {'radius': 1.}},
-                        {'gaussian': {'sigma': 0.2}})
+        plot_shape = [10, 10]
+        plot_edges = [-0.5, 0.5, -0.5, 0.5]
 
-        # This test has a more fuzzy testing criteria: Instead of checking
-        # values against a reference it checks that each of the axes
-        # contains some of the expected plotting elements.
+        def probability_calculation(distance):
+            return 1 - 1.5*distance
 
-        num_circle_elements_a1 = sum([type(p) == mpl.patches.Circle for p in a1.patches])
-        self.assertGreater(num_circle_elements_a1, 2)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
+        source = l[25]
+        source_pos = np.array(nest.GetPosition(source))
+        source_x, source_y = source_pos
 
-        a2 = f.add_subplot(222)
-        nest.PlotKernel(a2, l[ctr-1], {'doughnut': {'inner_radius': 0.5,
-                                                    'outer_radius': 0.75}})
+        # Calculate reference values
+        ref_probability = np.zeros(plot_shape[::-1])
+        for i, x in enumerate(np.linspace(*plot_edges[:2], plot_shape[0])):
+            positions = np.array([[x, y] for y in np.linspace(*plot_edges[2:], plot_shape[1])])
+            ref_distances = np.sqrt((positions[:, 0] - source_x)**2 + (positions[:, 1] - source_y)**2)
+            values = probability_calculation(ref_distances)
+            ref_probability[:, i] = np.maximum(np.minimum(np.array(values), 1.0), 0.0)
 
-        num_circle_elements_a2 = sum([type(p) == mpl.patches.Circle for p in a2.patches])
-        self.assertGreater(num_circle_elements_a2, 2)
+        # Create the parameter
+        parameter = probability_calculation(nest.spatial.distance)
 
-        a3 = f.add_subplot(223)
-        nest.PlotKernel(a3, l[ctr-1], {'rectangular':
-                                       {'lower_left': [-.5, -.5],
-                                        'upper_right': [0.5, 0.5]}})
+        fig, ax = plt.subplots()
+        nest.plot_probability_parameter(source, parameter, ax=ax, shape=plot_shape, edges=plot_edges)
 
-        num_circle_elements_a3 = sum([type(p) == mpl.patches.Rectangle for p in a3.patches])
-        self.assertGreater(num_circle_elements_a3, 2)
+        self.assertEqual(len(ax.images), 1)
+        img = ax.images[0]
+        img_data = img.get_array().data
+        self.assertTrue(np.array_equal(img_data, ref_probability))
+
+    def test_plot_probability_kernel_with_mask(self):
+        """Plot parameter probability with mask"""
+        nest.ResetKernel()
+        plot_shape = [10, 10]
+        plot_edges = [-0.5, 0.5, -0.5, 0.5]
+
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
+        parameter = 1 - 1.5*nest.spatial.distance
+
+        source = l[25]
+        masks = [{'circular': {'radius': 0.4}},
+                 {'doughnut': {'inner_radius': 0.2, 'outer_radius': 0.45}},
+                 {'rectangular': {'lower_left': [-.3, -.3], 'upper_right': [0.3, 0.3]}},
+                 {'elliptical': {'major_axis': 0.8, 'minor_axis': 0.4}}]
+        fig, axs = plt.subplots(2, 2)
+        for mask, ax in zip(masks, axs.flatten()):
+            nest.plot_probability_parameter(source, parameter, mask=mask, ax=ax, shape=plot_shape, edges=plot_edges)
+            self.assertEqual(len(ax.images), 1)
+            self.assertGreaterEqual(len(ax.patches), 1)
 
 
 def suite():
@@ -122,7 +147,5 @@ def suite():
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-
-    import matplotlib.pyplot as plt
 
     plt.show()

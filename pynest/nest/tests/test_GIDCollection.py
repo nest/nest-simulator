@@ -463,6 +463,54 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(gss.tolist(), [2, 6])
         self.assertEqual(gst.tolist(), [8, 9])
 
+    def test_apply(self):
+        """
+        GIDCollection apply
+        """
+        n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        param = nest.spatial.pos.x
+        ref_positions = np.array(nest.GetPosition(n))
+        self.assertEqual(param.apply(n), tuple(ref_positions[:, 0]))
+        self.assertEqual(param.apply(n[0]), (ref_positions[0, 0],))
+        self.assertEqual(param.apply(n[::2]), tuple(ref_positions[::2, 0]))
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.spatial.pos.z.apply(n)
+
+    def test_apply_positions(self):
+        """
+        GIDCollection apply with positions
+        """
+        n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        param = nest.spatial.distance
+        # Single target position
+        target = [[1., 2.], ]
+        for source in n:
+            source_x, source_y = nest.GetPosition(source)
+            target_x, target_y = (target[0][0], target[0][1])
+            ref_distance = np.sqrt((target_x - source_x)**2 + (target_y - source_y)**2)
+            self.assertEqual(param.apply(source, target), ref_distance)
+
+        # Multiple target positions
+        targets = np.array(nest.GetPosition(n))
+        for source in n:
+            source_x, source_y = nest.GetPosition(source)
+            ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
+            self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))
+
+        # Raises when passing source with multiple GIDs
+        with self.assertRaises(ValueError):
+            param.apply(n, target)
+
+        # Erroneous position specification
+        source = n[0]
+        with self.assertRaises(nest.kernel.NESTError):
+            param.apply(source, [[1., 2., 3.], ])  # Too many dimensions
+        with self.assertRaises(TypeError):
+            param.apply(source, [1., 2.])  # Not a list of lists
+        with self.assertRaises(ValueError):
+            param.apply(source, [[1., 2.], [1., 2., 3.]])  # Not consistent dimensions
+
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

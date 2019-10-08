@@ -55,9 +55,7 @@ nest.Connect(l1, l1,
 
 # show connections from center element
 # sender shown in red, targets in green
-ctr_gid = nest.FindCenterElement(l1)
-ctr_index = ctr_gid - 1
-ctr = l1[ctr_index:ctr_index + 1]
+ctr = nest.FindCenterElement(l1)
 xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
 xctr, yctr, zctr = nest.GetPosition(ctr)
 ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')

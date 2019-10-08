@@ -607,6 +607,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } getvalue_Pfunction;
 
+  class Apply_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_Dfunction;
+
+  class Apply_P_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_gfunction;
+
 private:
   static ParameterFactory& parameter_factory_();
 

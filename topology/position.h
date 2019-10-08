@@ -113,6 +113,8 @@ public:
    */
   Token getToken() const;
 
+  const std::vector< T >& get_vector() const;
+
   /**
    * Elementwise addition.
    * @returns elementwise sum of coordinates.
@@ -286,7 +288,7 @@ public:
   friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
-  T x_[ D ];
+  std::vector< T > x_;
 };
 
 /**
@@ -386,6 +388,7 @@ private:
 
 template < int D, class T >
 inline Position< D, T >::Position()
+  : x_( D, 0 )
 {
   for ( int i = 0; i < D; ++i )
   {
@@ -395,6 +398,7 @@ inline Position< D, T >::Position()
 
 template < int D, class T >
 inline Position< D, T >::Position( const T& x, const T& y )
+  : x_( D, 0 )
 {
   assert( D == 2 );
   x_[ 0 ] = x;
@@ -403,6 +407,7 @@ inline Position< D, T >::Position( const T& x, const T& y )
 
 template < int D, class T >
 inline Position< D, T >::Position( const T& x, const T& y, const T& z )
+  : x_( D, 0 )
 {
   assert( D == 3 );
   x_[ 0 ] = x;
@@ -412,6 +417,7 @@ inline Position< D, T >::Position( const T& x, const T& y, const T& z )
 
 template < int D, class T >
 inline Position< D, T >::Position( const T* const y )
+  : x_( D, 0 )
 {
   for ( int i = 0; i < D; ++i )
   {
@@ -421,26 +427,24 @@ inline Position< D, T >::Position( const T* const y )
 
 template < int D, class T >
 inline Position< D, T >::Position( const std::vector< T >& y )
+  : x_( y )
 {
   if ( y.size() != D )
   {
     throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
   }
-  std::copy( y.begin(), y.end(), x_ );
 }
 
 template < int D, class T >
 inline Position< D, T >::Position( const Position< D, T >& other )
+  : x_( other.x_ )
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = other.x_[ i ];
-  }
 }
 
 template < int D, class T >
 template < class U >
 inline Position< D, T >::Position( const Position< D, U >& other )
+  : x_( D, 0 )
 {
   for ( int i = 0; i < D; ++i )
   {
@@ -451,13 +455,7 @@ inline Position< D, T >::Position( const Position< D, U >& other )
 template < int D, class T >
 Position< D, T >::operator std::vector< T >() const
 {
-  std::vector< T > result;
-  for ( int i = 0; i < D; ++i )
-  {
-    result.push_back( x_[ i ] );
-  }
-
-  return result;
+  return x_;
 }
 
 template < int D, class T >
@@ -480,6 +478,15 @@ Position< D, T >::getToken() const
 
   return Token( result );
 }
+
+
+template < int D, class T >
+const std::vector< T >&
+Position< D, T >::get_vector() const
+{
+  return x_;
+}
+
 
 template < int D, class T >
 template < class OT >

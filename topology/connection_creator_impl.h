@@ -104,7 +104,8 @@ ConnectionCreator::connect_to_target_( Iterator from,
 
     if ( without_kernel
       or rng->drand()
-        < kernel_->value( rng, iter->first, tgt_pos, source.compute_displacement( tgt_pos, iter->first ) ) )
+        < kernel_->value(
+            rng, iter->first.get_vector(), tgt_pos.get_vector(), source.compute_displacement( tgt_pos, iter->first ) ) )
     {
       const auto disp = source.compute_displacement( tgt_pos, iter->first );
       kernel().connection_manager.connect( iter->second,
@@ -112,8 +113,8 @@ ConnectionCreator::connect_to_target_( Iterator from,
         tgt_thread,
         synapse_model_,
         dummy_param_,
-        delay_->value( rng, iter->first, tgt_pos, disp ),
-        weight_->value( rng, iter->first, tgt_pos, disp ) );
+        delay_->value( rng, iter->first.get_vector(), tgt_pos.get_vector(), disp ),
+        weight_->value( rng, iter->first.get_vector(), tgt_pos.get_vector(), disp ) );
     }
   }
 }

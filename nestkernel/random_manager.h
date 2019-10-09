@@ -42,6 +42,9 @@
 #include "dictdatum.h"
 #include "name.h"
 
+
+// JME: Maybe caching numbers can help
+
 namespace nest
 {
 

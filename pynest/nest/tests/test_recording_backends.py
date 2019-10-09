@@ -19,45 +19,152 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import subprocess as sp
 import unittest
 import nest
 
 HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
 
-class TestRecordingBackendstes(unittest.TestCase):
 
-    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
-    def testWithMPI(self):
-        # Check that we can import mpi4py
-        try:
-            from mpi4py import MPI
-        except ImportError:
-            raise unittest.SkipTest("mpi4py required")
-        directory = os.path.dirname(os.path.realpath(__file__))
-        scripts = ["test_connect_all_to_all.py",
-                   "test_connect_one_to_one.py",
-                   "test_connect_fixed_indegree.py",
-                   "test_connect_fixed_outdegree.py",
-                   "test_connect_fixed_total_number.py",
-                   "test_connect_pairwise_bernoulli.py"
-                   ]
-        failing_tests = []
-        for script in scripts:
-            test_script = os.path.join(directory, script)
-            command = nest.ll_api.sli_func(
-                "mpirun", 2, "nosetests", test_script)
-            command = command.split()
-            process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
-            stdout, stderr = process.communicate()
-            retcode = process.returncode
-            if retcode != 0:
-                failing_tests.append(script)
-        self.assertTrue(not failing_tests, 'The following tests failed when ' +
-                        'executing with "mpirun -np 2 nosetests [script]": ' +
-                        ", ".join(failing_tests))
+class TestRecordingBackends(unittest.TestCase):
+
+
+    def testAAAResetKernel(self):
+        """Test proper reset of backend defaults by ResetKernel.
+
+        As ResetKernel is used by many of the tests in this file to
+        ensure a consistent initial state, this test has to be run
+        before all others. This is ensured by prefix "AAA" in front of
+        the name. See https://docs.python.org/3/library/unittest.html
+        for details on test execution order.
+
+        """
+
+        mm_defaults = nest.GetDefaults("multimeter")
+        rb_properties = ["record_to", "time_in_steps"]
+        rb_defaults_initial = [mm_defaults[k] for k in rb_properties]
+
+        self.assertEqual(rb_defaults_initial, ["memory", False])
+
+        mm_defaults = {"record_to": "ascii", "time_in_steps": True}
+        nest.SetDefaults("multimeter", mm_defaults)
+
+        mm_defaults = nest.GetDefaults("multimeter")
+        rb_properties = ["record_to", "time_in_steps"]
+        rb_defaults = [mm_defaults[k] for k in rb_properties]
+
+        self.assertEqual(rb_defaults, ["ascii", True])
+
+        nest.ResetKernel()
+
+        mm_defaults = nest.GetDefaults("multimeter")
+        rb_properties = ["record_to", "time_in_steps"]
+
+        self.assertEqual(rb_defaults_initial, rb_defaults)
+
+
+    def testDefaultBackendsAvailable(self):
+        """Test availability of default backends.
+
+        """
+
+        nest.ResetKernel()
+
+        backends = nest.GetKernelStatus("recording_backends")
+        expected_backends = ("ascii", "memory", "screen")
+
+        self.assertTrue(all([b in backends for b in expected_backends]))
+
+        if HAVE_SIONLIB:
+            self.assertTrue("sionlib" in registered_backends)
+
+
+    def testGlobalRecordingBackendProperties(self):
+        """
+        If compiled with SIONlib, set and get global backend properties on the
+        corresponding backend, as that is the only backend which has them.
+        """
+
+        nest.ResetKernel()
+
+        if HAVE_SIONLIB:
+            # sl_params = {"sionlib": {"sion_chunksize": 512 }}
+            # nest.SetKernelStatus({"recording_backends": sl_params})
+            pass
+
+
+    def testSetDefaultRecordingBackend(self):
+        """
+        Test if setting another default recording backend for a recording
+        device as works and does not influence the default backend of all
+        other recording devices.
+        """
+
+        nest.ResetKernel()
+
+        nest.SetDefaults("multimeter", {"record_to": "ascii"})
+        rb_defaults_mm = nest.GetDefaults("multimeter")["record_to"]
+        rb_defaults_sd = nest.GetDefaults("spike_detector")["record_to"]
+
+        self.assertEqual(rb_defaults_mm, "ascii")
+        self.assertEqual(rb_defaults_sd, "memory")
+
+
+    def testSetDefaultsRecordingBackendProperties(self):
+        """
+        Test if setting recording backend default properties works.
+        """
+
+        nest.ResetKernel()
+
+        sd_defaults = {"record_to": "ascii", "file_extension": "nest"}
+        nest.SetDefaults("spike_detector", sd_defaults)
+        sd_defaults = nest.GetDefaults("spike_detector")
+
+        self.assertEqual(sd_defaults["record_to"], "ascii")
+        self.assertEqual(sd_defaults["file_extension"], "nest")
+
+
+    def testRecordingBackendDefaultsToInstances(self):
+        """
+        Make sure that backend defaults end up in instances and don't
+        influence other instances even though they use the same backend
+        """
+
+        nest.ResetKernel()
+
+        mm_defaults = {"record_to": "ascii", "file_extension": "multimeter"}
+        nest.SetDefaults("multimeter", mm_defaults)
+
+        mm_status = nest.Create("multimeter").get()
+        self.assertEqual(mm_status["record_to"], "ascii")
+        self.assertEqual(mm_status["file_extension"], "multimeter")
+
+        nest.SetDefaults("spike_detector", {"record_to": "ascii"})
+        sd_status = nest.Create("spike_detector").get()
+        self.assertEqual(sd_status["record_to"], "ascii")
+        self.assertEqual(sd_status["file_extension"], "dat")
+
+
+    def testRecordingBackendMemory(self):
+        """
+        - Check if the event dict is there from the start
+        - Check if the n_events is set correctly
+        - Check if the events dict is cleared when setting n_events to 0
+          and that an error is thrown if it is set to another number
+        - Check if time_in_steps works properly
+        - Check it ResetKernel deletes data from memory backend
+        """
+        pass
+
+
+    def testRecordingBackendASCII(self):
+        """
+        - Check if data_prefix and data_path end up in the filenames list
+        - Check if setting the file extension works
+        - Check if time_in_steps works properly
+        """
+        pass
 
 
 def suite():
@@ -67,110 +174,3 @@ def suite():
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-
-
-
-
-# 
-# (=============================================) =
-# 
-# 0 GetStatus /recording_backends get ==
-# 0 GetStatus /recording_backend get =
-# 0 GetStatus /recording_backend_status get info
-# 
-# (=============================================) =
-# 
-# 0 << /recording_backend /ascii >> SetStatus
-# 0 GetStatus /recording_backend get =
-# 0 GetStatus /recording_backend_status get info
-# 
-# (=============================================) =
-# 
-# 0 << /recording_backend /screen >> SetStatus
-# 0 GetStatus /recording_backend get =
-# 0 GetStatus /recording_backend_status get info
-# 
-# (=============================================) =
-# 
-# 0 << /recording_backend /sionlib >> SetStatus
-# 0 GetStatus /recording_backend get =
-# 0 GetStatus /recording_backend_status get info
-# 
-# (=============================================) =
-# 
-# 0 << /recording_backend /memory >> SetStatus
-# /iaf_psc_alpha << /I_e 1800.0 >> Create /n Set
-# /spike_detector Create /sd Set
-# n sd Connect
-# 
-# sd GetStatus info
-# 
-# 100 Simulate
-# 
-# 2 GetStatus info
-# 2 GetStatus /events get dup
-#   /senders get size == ==
-#   /times get ==
-# 
-# (=============================================) =
-# 
-# 
-# % Check if n_events works and if it can be set to 0 to delete the data
-# 2 << /n_events 0 >> SetStatus
-# 
-# 2 GetStatus info
-# 2 GetStatus /events get dup
-#   /senders get size == ==
-#   /times get ==
-# 
-# 
-# % threading and MPI
-# 
-# 
-# %
-# % 0 GetStatus /recording_backends get
-# % -> [/ascii /memory /screen /sionlib]
-# %
-# % 0 GetStatus /recording_backend_status get
-# %
-# %  <<
-# %     /file_extension    /dat
-# %     /name              /ascii
-# %     /precision         3
-# %  >>
-# %
-# %  <<
-# %     /name              /memory
-# %  >>
-# %
-# %  <<
-# %     /name              /screen
-# %     /precision         3
-# %  >>
-# %
-# %  <<
-# %     /buffer_size       1024
-# %     /file_extension    (sion)
-# %     /name              /sionlib
-# %     /precision         3
-# %     /sion_chunksize    1 << 48
-# %     /sion_collective   false
-# %  >>
-# %
-# % << /recording_backend /memory >> SetKernelStatus
-# %
-# 
-# 
-# % Conversion guide:
-# 
-# 
-# % Lost properties in nestio:
-# %   /close_after_simulate    always true
-# %   /fbuffer_size            always OS default
-# %   /flush_after_simulate    always true
-# 
-# 
-# 
-# %
-# %   /time_in_steps           always in ms
-# %

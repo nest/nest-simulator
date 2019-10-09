@@ -155,9 +155,6 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         empty_array_float = np.array([], dtype=np.float64)
         empty_array_int = np.array([], dtype=np.int64)
 
-        nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
-        nest.Simulate(10.0)
-
         # Single node, literal parameter
         self.assertEqual(single_sd.get('start'), 0.0)
 
@@ -212,9 +209,6 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
         empty_array_float = np.array([], dtype=np.float64)
-
-        nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
-        nest.Simulate(10.0)
 
         # Single node, literal parameter
         pt.assert_frame_equal(single_sd.get('start', output='pandas'),
@@ -292,15 +286,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                              name='start'))
 
         # With data in events
-        nest.ResetKernel()
-        single_sd = nest.Create('spike_detector', 1)
-        multi_sd = nest.Create('spike_detector', 10)
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(39.0)
+        nest.Simulate(39)
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
@@ -325,9 +316,6 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         """
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
-
-        nest.SetKernelStatus({"min_delay": 0.1, "max_delay": 1.0})
-        nest.Simulate(10.0)
 
         # Single node, literal parameter
         self.assertEqual(json.loads(
@@ -387,15 +375,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
         # With data in events
-        nest.ResetKernel()
-        single_sd = nest.Create('spike_detector', 1)
-        multi_sd = nest.Create('spike_detector', 10)
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(39.0)
+        nest.Simulate(39)
 
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}

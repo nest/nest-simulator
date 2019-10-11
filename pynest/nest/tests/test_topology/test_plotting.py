@@ -101,8 +101,8 @@ class PlottingTestCase(unittest.TestCase):
 
         # Calculate reference values
         ref_probability = np.zeros(plot_shape[::-1])
-        for i, x in enumerate(np.linspace(*plot_edges[:2], plot_shape[0])):
-            positions = np.array([[x, y] for y in np.linspace(*plot_edges[2:], plot_shape[1])])
+        for i, x in enumerate(np.linspace(plot_edges[0], plot_edges[1], plot_shape[0])):
+            positions = np.array([[x, y] for y in np.linspace(plot_edges[2], plot_edges[3], plot_shape[1])])
             ref_distances = np.sqrt((positions[:, 0] - source_x)**2 + (positions[:, 1] - source_y)**2)
             values = probability_calculation(ref_distances)
             ref_probability[:, i] = np.maximum(np.minimum(np.array(values), 1.0), 0.0)

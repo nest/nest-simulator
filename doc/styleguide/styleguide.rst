@@ -1,4 +1,4 @@
-NEST Style Guide
+e theEST Style Guide
 ==================
 
 .. contents::
@@ -246,7 +246,7 @@ A brief look into reStructuredText markup
 .. note::
 
    reStructuredText is sensitive to indentation. A single space should be always be between between text and headings,
-   tables, reference labels, and directives  Some characters have assigned special meanings. Use the '\' to 'escape' and use the literal
+   tables, reference labels, and directives  Some characters have assigned special meanings. Use the '\\' to use the literal
    character.
 
 How to write code or code snippets in reStructuredText
@@ -507,7 +507,7 @@ For models to link to cpp model info
 
 ::
 
-   :cpp:class:`Model_name <nest::Model_name>`
+   :cpp:class:`Model_name <nest::aeif_cond_alpha>`
 
 Rendered as
 

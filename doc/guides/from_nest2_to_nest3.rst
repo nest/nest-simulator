@@ -7,7 +7,7 @@ From NEST 2.x to NEST 3.0
 
 .. seealso::
 
-  See the :doc:`nest2_vs_3` to see a full list of functions that have changed
+  See the :doc:`../nest-3/nest2_vs_3` to see a full list of functions that have changed
 
 NEST 3 introduces a number of new features and concepts, and some changes
 to the user interface that are not backwards compatible. One big change is

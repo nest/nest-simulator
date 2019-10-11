@@ -1,5 +1,5 @@
-e theEST Style Guide
-==================
+The NEST style guide
+=====================
 
 .. contents::
   :local:
@@ -125,8 +125,8 @@ to use active voice.
 
 Mix it up! Use both styles.
 
-Writing people
-~~~~~~~~~~~~~~~
+When Writing about people
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Avoid gendered terms (NOT police man BUT police officer).
 

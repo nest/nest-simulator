@@ -47,14 +47,14 @@ __all__ = [
 @check_stack
 def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
-    """Return an array of connection identifiers.
+    """Return a `Connectome` representing the connection identifiers.
 
     Any combination of source, target, synapse_model and
     synapse_label parameters is permitted.
 
     Parameters
     ----------
-    source : GIDCOllection or list, optional
+    source : GIDCollection or list, optional
         Source GIDs, only connections from these
         pre-synaptic neurons are returned
     target : GIDCollection or list, optional
@@ -67,9 +67,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Returns
     -------
-    array:
-        Connections as 5-tuples with entries
-        (source-gid, target-gid, target-thread, synapse-id, port)
+    Connectome:
+        Object representing the source-gid, target-gid, target-thread, synapse-id, port of connections
 
     Notes
     -----
@@ -317,7 +316,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     model : str or dict, optional
         alias for syn_spec for backward compatibility
     return_connectome: bool
-        Specifies whether or not we should return a connectome of pre and post
+        Specifies whether or not we should return a Connectome of pre and post connections
 
     Raises
     ------

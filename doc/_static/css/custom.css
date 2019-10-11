@@ -128,7 +128,7 @@ code.descclassname {
    }
 
    .wy-table-responsive {
-      overflow: visible !important;
+      overflow: scroll;
       word-wrap: break-word;
    }
 

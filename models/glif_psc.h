@@ -106,11 +106,11 @@ GLIF model mechanism setting is based on three parameters
 (spike_dependent_threshold, after_spike_currents, adapting_threshold).
 The settings of these three parameters for the five GLIF models are list below.
 Other combinations of these parameters will not be supported.
-GLIF Model 1 - (False, False, False),
-GLIF Model 2 - (True, False, False),
-GLIF Model 3 - (False, True, False),
-GLIF Model 4 - (True, True, False),
-GLIF Model 5 - (True, True, True).
+GLIF Model 1 (LIF) - (False, False, False),
+GLIF Model 2 (LIF_R) - (True, False, False),
+GLIF Model 3 (LIF_ASC) - (False, True, False),
+GLIF Model 4 (LIF_R_ASC) - (True, True, False),
+GLIF Model 5 (LIF_R_ASC-A) - (True, True, True).
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the Allen Cell Type Database (celltypes.brain-map.org).
@@ -267,6 +267,7 @@ private:
     double potential_decay_rate_;                      //!< membrane potential decay rate
     double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
     std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
+    std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
     std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
     double phi;                                        //!< threshold voltage component coefficient
 

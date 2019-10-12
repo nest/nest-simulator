@@ -200,7 +200,7 @@ nest::glif_psc::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty(
       "Incorrect model mechanism combination setting."
-      "See documents for setting of model mechanism parameters:"
+      "See documentation for setting of model mechanism parameters:"
       "spike_dependent_threshold, after_spike_currents, adapting_threshold." );
   }
 
@@ -410,10 +410,12 @@ nest::glif_psc::calibrate()
   if ( P_.has_asc_ )
   {
     V_.asc_decay_rates_.resize( P_.asc_decay_.size() );
+    V_.asc_stable_coeff_.resize( P_.asc_decay_.size() );
     V_.asc_refractory_decay_rates_.resize( P_.asc_decay_.size() );
     for ( std::size_t a = 0; a < P_.asc_decay_.size(); ++a )
     {
       V_.asc_decay_rates_[ a ] = std::exp( -P_.asc_decay_[ a ] * h );
+      V_.asc_stable_coeff_[ a ] = ( ( 1.0 / P_.asc_decay_[ a ] ) / h ) * ( 1.0 - V_.asc_decay_rates_[ a ] );
       V_.asc_refractory_decay_rates_[ a ] = P_.asc_r_[ a ] * std::exp( -P_.asc_decay_[ a ] * P_.t_ref_ );
     }
   }
@@ -489,11 +491,15 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
       // Calculate new ASCurrents value using exponential methods
       S_.ASCurrents_sum_ = 0.0;
       // for glif3/4/5 models with "ASC"
+      // take after spike current value at the beginning of the time to compute
+      // the exact mean ASC for the time step and sum the exact mean ASCs;
+      // and then update the current values to the value at the end of the time
+      // step, ready for the next time step
       if ( P_.has_asc_ )
       {
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
-          S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+          S_.ASCurrents_sum_ += ( V_.asc_stable_coeff_[ a ] * S_.ASCurrents_[ a ] );
           S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * V_.asc_decay_rates_[ a ];
         }
       }

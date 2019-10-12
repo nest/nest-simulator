@@ -147,7 +147,7 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
         expected_spikes = [270.15, 347.67, 378.24, 615.03, 648.82,
-                           686.13, 726.60, 771.86, 823.80, 878.96]
+                           686.12, 726.58, 771.84, 823.78, 878.94]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 
@@ -163,8 +163,8 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
-        expected_spikes = [270.15, 347.81, 378.32, 615.22, 649.76,
-                           689.63, 735.19, 787.99, 848.22]
+        expected_spikes = [270.15, 347.81, 378.32, 615.22, 649.75,
+                           689.61, 735.16, 787.96, 848.19]
         assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
         assert(np.isclose(V_m[0], -78.85))
 

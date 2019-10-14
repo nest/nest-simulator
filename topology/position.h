@@ -93,6 +93,21 @@ public:
   Position( const Position< D, U >& other );
 
   /**
+   * Move constructor.
+   */
+  Position( Position&& other );
+
+  /**
+   * Assignment constructor.
+   */
+  Position& operator=( const Position& other ) = default;
+
+  /**
+   * Move assignment constructor.
+   */
+  Position& operator=( const Position&& other );
+
+  /**
    * @returns the Position as a std::vector
    */
   operator std::vector< T >() const;
@@ -390,10 +405,6 @@ template < int D, class T >
 inline Position< D, T >::Position()
   : x_( D, 0 )
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = 0;
-  }
 }
 
 template < int D, class T >
@@ -451,6 +462,25 @@ inline Position< D, T >::Position( const Position< D, U >& other )
     x_[ i ] = other.x_[ i ];
   }
 }
+
+
+template < int D, class T >
+inline Position< D, T >::Position( Position&& other )
+  : x_( D, 0 )
+{
+  x_ = std::move( other.x_ );
+}
+
+template < int D, class T >
+inline Position< D, T >& Position< D, T >::operator=( const Position&& other )
+{
+  if ( this != &other )
+  {
+    x_ = std::move( other.x_ );
+  }
+  return *this;
+}
+
 
 template < int D, class T >
 Position< D, T >::operator std::vector< T >() const

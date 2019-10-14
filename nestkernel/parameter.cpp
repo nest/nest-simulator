@@ -71,8 +71,7 @@ Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) co
   for ( auto&& token : token_array )
   {
     std::vector< double > target_pos = getValue< std::vector< double > >( token );
-    auto displacement = source_layer->compute_displacement( target_pos, source_lid );
-    auto value = this->value( rng, source_pos, target_pos, displacement );
+    auto value = this->value( rng, source_pos, target_pos, *source_layer.get() );
     result.push_back( value );
   }
   return result;
@@ -154,6 +153,8 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
   index source_lid = source->get_gid() - source_meta->get_first_gid();
+  std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
+
 
   // Target
 
@@ -183,7 +184,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   switch ( dimension_ )
   {
   case 0:
-    return source_layer->compute_distance( target_pos, source_lid );
+    return source_layer->compute_distance( target_pos, source_pos );
   case 1:
   case 2:
   case 3:
@@ -207,29 +208,24 @@ double
 SpatialDistanceParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const std::vector< double >& displacement ) const
+  const AbstractLayer& layer ) const
 {
   switch ( dimension_ )
   {
   case 0:
   {
-    double sq_sum = 0;
-    for ( auto&& disp_n : displacement )
-    {
-      sq_sum += disp_n * disp_n;
-    }
-    return std::sqrt( sq_sum );
+    return layer.compute_distance( source_pos, target_pos );
   }
   case 1:
   case 2:
   case 3:
-    if ( ( unsigned int ) dimension_ > displacement.size() )
+    if ( ( uint ) dimension_ > layer.get_num_dimensions() )
     {
       throw KernelException(
         "Spatial distance dimension must be within the defined number of "
         "dimensions for the nodes." );
     }
-    return std::abs( displacement[ dimension_ - 1 ] );
+    return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
     throw KernelException( String::compose(
       "SpatialDistanceParameter dimension must be either 0 for unspecified,"
@@ -292,7 +288,7 @@ double
 RedrawParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const std::vector< double >& displacement ) const
+  const AbstractLayer& layer ) const
 {
   double value;
   size_t num_redraws = 0;
@@ -302,7 +298,7 @@ RedrawParameter::value( librandom::RngPtr& rng,
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, source_pos, target_pos, displacement );
+    value = p_->value( rng, source_pos, target_pos, layer );
   } while ( value < min_ or value > max_ );
 
   return value;

@@ -68,21 +68,6 @@ ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectio
   }
 }
 
-template < int D >
-void
-ConnectionCreator::get_parameters_( librandom::RngPtr rng,
-  const Position< D >& source_pos,
-  const Position< D >& target_pos,
-  const Position< D >& displacement,
-  double& weight,
-  double& delay )
-{
-  // keeping this function temporarily until all connection variants are cleaned
-  // up
-  weight = weight_->value( rng, source_pos, target_pos, displacement );
-  delay = delay_->value( rng, source_pos, target_pos, displacement );
-}
-
 template < typename Iterator, int D >
 void
 ConnectionCreator::connect_to_target_( Iterator from,
@@ -94,6 +79,8 @@ ConnectionCreator::connect_to_target_( Iterator from,
 {
   librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
+  const std::vector< double > target_pos = tgt_pos.get_vector();
+
   const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
@@ -102,19 +89,15 @@ ConnectionCreator::connect_to_target_( Iterator from,
       continue;
     }
 
-    if ( without_kernel
-      or rng->drand()
-        < kernel_->value(
-            rng, iter->first.get_vector(), tgt_pos.get_vector(), source.compute_displacement( tgt_pos, iter->first ) ) )
+    if ( without_kernel or rng->drand() < kernel_->value( rng, iter->first.get_vector(), target_pos, source ) )
     {
-      const auto disp = source.compute_displacement( tgt_pos, iter->first );
       kernel().connection_manager.connect( iter->second,
         tgt_ptr,
         tgt_thread,
         synapse_model_,
         dummy_param_,
-        delay_->value( rng, iter->first.get_vector(), tgt_pos.get_vector(), disp ),
-        weight_->value( rng, iter->first.get_vector(), tgt_pos.get_vector(), disp ) );
+        delay_->value( rng, iter->first.get_vector(), target_pos, source ),
+        weight_->value( rng, iter->first.get_vector(), target_pos, source ) );
     }
   }
 }
@@ -382,6 +365,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   if ( mask_.get() )
   {
     MaskedLayer< D > masked_source( source, mask_, allow_oversized_ );
+    const auto masked_source_end = masked_source.end();
+
+    std::vector< std::pair< Position< D >, index > > positions;
 
     for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
@@ -394,13 +380,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
       // Get (position,GID) pairs for sources inside mask
       const Position< D > anchor = target.get_position( ( *tgt_it ).lid );
-      std::vector< std::pair< Position< D >, index > > positions;
-      for ( typename Ntree< D, index >::masked_iterator iter = masked_source.begin( anchor );
-            iter != masked_source.end();
-            ++iter )
-      {
-        positions.push_back( *iter );
-      }
+
+      positions.resize( std::distance( masked_source.begin( anchor ), masked_source_end ) );
+      std::copy( masked_source.begin( anchor ), masked_source_end, positions.begin() );
 
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
@@ -410,15 +392,14 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       {
 
         std::vector< double > probabilities;
+        probabilities.reserve( positions.size() );
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions.begin();
               iter != positions.end();
               ++iter )
         {
-
-          probabilities.push_back(
-            kernel_->value( rng, iter->first, target_pos, source.compute_displacement( target_pos, iter->first ) ) );
+          probabilities.push_back( kernel_->value( rng, iter->first.get_vector(), target_pos.get_vector(), source ) );
         }
 
         if ( positions.empty()
@@ -453,13 +434,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
             --i;
             continue;
           }
-          double w, d;
-          get_parameters_( rng,
-            positions[ random_id ].first,
-            target_pos,
-            source.compute_displacement( target_pos, positions[ random_id ].first ),
-            w,
-            d );
+          const double w =
+            weight_->value( rng, positions[ random_id ].first.get_vector(), target_pos.get_vector(), source );
+          const double d =
+            delay_->value( rng, positions[ random_id ].first.get_vector(), target_pos.get_vector(), source );
           kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
         }
@@ -491,13 +469,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
             continue;
           }
           index source_id = positions[ random_id ].second;
-          double w, d;
-          get_parameters_( rng,
-            positions[ random_id ].first,
-            target_pos,
-            source.compute_displacement( target_pos, positions[ random_id ].first ),
-            w,
-            d );
+          const double w =
+            weight_->value( rng, positions[ random_id ].first.get_vector(), target_pos.get_vector(), source );
+          const double d =
+            delay_->value( rng, positions[ random_id ].first.get_vector(), target_pos.get_vector(), source );
           kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
         }
@@ -535,14 +510,14 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       {
 
         std::vector< double > probabilities;
+        probabilities.reserve( positions->size() );
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
               iter != positions->end();
               ++iter )
         {
-          probabilities.push_back(
-            kernel_->value( rng, iter->first, target_pos, source.compute_displacement( target_pos, iter->first ) ) );
+          probabilities.push_back( kernel_->value( rng, iter->first.get_vector(), target_pos.get_vector(), source ) );
         }
 
         // A Vose object draws random integers with a non-uniform
@@ -571,8 +546,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
           }
 
           Position< D > source_pos = ( *positions )[ random_id ].first;
-          double w, d;
-          get_parameters_( rng, source_pos, target_pos, source.compute_displacement( target_pos, source_pos ), w, d );
+          const double w =
+            weight_->value( rng, ( *positions )[ random_id ].first.get_vector(), target_pos.get_vector(), source );
+          const double d =
+            delay_->value( rng, ( *positions )[ random_id ].first.get_vector(), target_pos.get_vector(), source );
           kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
         }
@@ -603,9 +580,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
             continue;
           }
 
-          Position< D > source_pos = ( *positions )[ random_id ].first;
-          double w, d;
-          get_parameters_( rng, source_pos, target_pos, source.compute_displacement( target_pos, source_pos ), w, d );
+          const double w =
+            weight_->value( rng, ( *positions )[ random_id ].first.get_vector(), target_pos.get_vector(), source );
+          const double d =
+            delay_->value( rng, ( *positions )[ random_id ].first.get_vector(), target_pos.get_vector(), source );
           kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
           is_selected[ random_id ] = true;
         }
@@ -655,6 +633,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
   // 3. Draw connections to make using global rng
 
   MaskedLayer< D > masked_target( target, mask_, allow_oversized_ );
+  const auto masked_target_end = masked_target.end();
 
   std::vector< std::pair< Position< D >, index > >* sources = source.get_global_positions_vector();
 
@@ -665,6 +644,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
     Position< D > source_pos = src_it->first;
     index source_id = src_it->second;
+    std::vector< double > source_pos_vector = source_pos.get_vector();
     std::vector< index > targets;
     std::vector< std::pair< double, double > > weight_delay_pairs;
     std::vector< double > probabilities;
@@ -672,7 +652,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
     // Find potential targets and probabilities
 
     for ( typename Ntree< D, index >::masked_iterator tgt_it = masked_target.begin( source_pos );
-          tgt_it != masked_target.end();
+          tgt_it != masked_target_end;
           ++tgt_it )
     {
 
@@ -681,23 +661,16 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
         continue;
       }
 
-      std::pair< double, double > target_weight_delay;
       librandom::RngPtr rng = get_global_rng();
 
-      get_parameters_( rng,
-        source_pos,
-        tgt_it->first,
-        target.compute_displacement( source_pos, tgt_it->first ),
-        target_weight_delay.first,
-        target_weight_delay.second );
-
       targets.push_back( tgt_it->second );
-      weight_delay_pairs.push_back( target_weight_delay );
+      weight_delay_pairs.emplace_back( weight_->value( rng, source_pos_vector, tgt_it->first.get_vector(), target ),
+        delay_->value( rng, source_pos_vector, tgt_it->first.get_vector(), target ) );
 
       if ( kernel_.get() )
       {
-        probabilities.push_back(
-          kernel_->value( rng, source_pos, tgt_it->first, source.compute_displacement( tgt_it->first, source_pos ) ) );
+        // TODO: Why do we switch source and target for this displacement?
+        probabilities.push_back( kernel_->value( rng, source_pos_vector, tgt_it->first.get_vector(), source ) );
       }
       else
       {

@@ -27,6 +27,7 @@
 #include <bitset>
 #include <utility>
 #include <vector>
+#include <iterator>
 
 // Includes from topology:
 #include "position.h"
@@ -145,6 +146,11 @@ public:
   class masked_iterator
   {
   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< Position< D >, T >;
+    using pointer = value_type*;
+    using reference = value_type&;
+    using difference_type = long int;
     /**
      * Initialize an invalid iterator.
      */

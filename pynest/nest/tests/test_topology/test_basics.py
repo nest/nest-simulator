@@ -27,7 +27,7 @@ import unittest
 import nest
 
 try:
-    import numpy
+    import numpy as np
 
     HAVE_NUMPY = True
 except ImportError:
@@ -37,20 +37,18 @@ except ImportError:
 class BasicsTestCase(unittest.TestCase):
     def test_create_layer(self):
         """Creating a single layer."""
-        nr = 4
-        nc = 5
+        shape = [5, 4]
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(nr, nc))
-        self.assertEqual(len(l), nr * nc)
+        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=shape))
+        self.assertEqual(len(l), shape[0]*shape[1])
 
     def test_create_layer_with_param(self):
         """Creating a layer with parameters."""
-        nr = 4
-        nc = 5
+        shape = [5, 4]
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
                         params={'V_m': -55.0},
-                        positions=nest.spatial.grid(nr, nc))
+                        positions=nest.spatial.grid(shape=shape))
         layer_vm = l.get('V_m')
         for vm in layer_vm:
             self.assertEqual(vm, -55.0)
@@ -86,11 +84,10 @@ class BasicsTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Displacement(self):
         """Interface check on displacement calculations."""
-        ldict = {'rows': 4, 'columns': 5}
+        lshape = [5, 4]
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(
-                            ldict['rows'], ldict['columns']))
+                        positions=nest.spatial.grid(shape=lshape))
 
         # gids -> gids, all displacements must be zero here
         d = nest.Displacement(l, l)
@@ -112,7 +109,7 @@ class BasicsTestCase(unittest.TestCase):
         # x-axis should be approximately -dx, while the displacement on the
         # y-axis should be 0.
         d = nest.Displacement(l[:1], l[4:5])
-        dx = 1. / ldict['columns']
+        dx = 1. / lshape[0]
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
 
@@ -121,28 +118,27 @@ class BasicsTestCase(unittest.TestCase):
         # x-axis should be 0, while the displacement on the y-axis should be
         # approximately dy.
         d = nest.Displacement(l[:1], l[1:2])
-        dy = 1. / ldict['rows']
+        dy = 1. / lshape[1]
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
 
         # Test that we get correct results if to_arg and from_arg are from two
         # different layers
         l2 = nest.Create('iaf_psc_alpha',
-                         positions=nest.spatial.grid(
-                             ldict['rows'], ldict['columns']))
+                         positions=nest.spatial.grid(shape=lshape))
         d = nest.Displacement(l[:1], l2[4:5])
-        dx = 1. / ldict['columns']
+        dx = 1. / lshape[0]
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
 
         d = nest.Displacement(l[:1], l2[1:2])
-        dy = 1. / ldict['rows']
+        dy = 1. / lshape[1]
         self.assertEqual(d[0][0], 0.0)
         self.assertAlmostEqual(d[0][1], dy, 3)
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(ValueError):
             d = nest.Displacement(l[1:3], l[2:7])
 
         # position -> gids
@@ -150,26 +146,23 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        from numpy import array
-
         # position -> gids
-        d = nest.Displacement(array([0.0, 0.0]), l)
+        d = nest.Displacement(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
         # positions -> gids
-        d = nest.Displacement([array([0.0, 0.0])] * len(l), l)
+        d = nest.Displacement([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_Distance(self):
         """Interface check on distance calculations."""
-        ldict = {'rows': 4, 'columns': 5}
+        lshape = [5, 4]
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(
-                            ldict['rows'], ldict['columns']))
+                        positions=nest.spatial.grid(shape=lshape))
 
         # gids -> gids, all displacements must be zero here
         d = nest.Distance(l, l)
@@ -192,7 +185,7 @@ class BasicsTestCase(unittest.TestCase):
         # directly next to each other on the x-axis, so the distance should be
         # approximately dx. The same is true for distance between gid 6 and 1.
         d = nest.Distance(l[:1], l[4:5])
-        dx = 1. / ldict['columns']
+        dx = 1. / lshape[0]
         self.assertAlmostEqual(d[0], dx, 3)
 
         d = nest.Distance(l[4:5], l[:1])
@@ -202,7 +195,7 @@ class BasicsTestCase(unittest.TestCase):
         # directly next to each other on the y-axis, so the distance should be
         # approximately dy. The same is true for distance between gid 2 and 1.
         d = nest.Distance(l[:1], l[1:2])
-        dy = 1. / ldict['rows']
+        dy = 1. / lshape[1]
         self.assertAlmostEqual(d[0], dy, 3)
 
         d = nest.Distance(l[1:2], l[:1])
@@ -211,17 +204,16 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct results if to_arg and from_arg are from two
         # different layers
         l2 = nest.Create('iaf_psc_alpha',
-                         positions=nest.spatial.grid(
-                             ldict['rows'], ldict['columns']))
+                         positions=nest.spatial.grid(shape=lshape))
         d = nest.Distance(l[:1], l2[4:5])
-        dx = 1. / ldict['columns']
+        dx = 1. / lshape[0]
         self.assertAlmostEqual(d[0], dx, 3)
 
         d = nest.Distance(l[4:5], l2[:1])
         self.assertAlmostEqual(d[0], dx, 3)
 
         d = nest.Distance(l[:1], l2[1:2])
-        dy = 1. / ldict['rows']
+        dy = 1. / lshape[1]
         self.assertAlmostEqual(d[0], dy, 3)
 
         d = nest.Distance(l[1:2], l2[:1])
@@ -229,7 +221,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test that an error is thrown if to_arg and from_arg have different
         # size.
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(ValueError):
             d = nest.Distance(l[1:3], l[2:7])
 
         # position -> gids
@@ -238,16 +230,14 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        from numpy import array
-
         # position -> gids
-        d = nest.Distance(array([0.0, 0.0]), l)
+        d = nest.Distance(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
         # positions -> gids
-        d = nest.Distance([array([0.0, 0.0])] * len(l), l)
+        d = nest.Distance([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
@@ -259,30 +249,32 @@ class BasicsTestCase(unittest.TestCase):
         # nodes at [-1,0,1]x[-1,0,1], column-wise
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(3, 3, extent=(3., 3.)))
+                        positions=nest.spatial.grid(shape=[3, 3], extent=(3., 3.)))
 
         # single location at center
         n = nest.FindNearestElement(l, (0., 0.))
-        self.assertEqual(n, (5,))
+        self.assertEqual(n, nest.GIDCollection((5,)))
 
         # two locations, one layer
         n = nest.FindNearestElement(l, ((0., 0.), (1., 1.)))
-        self.assertEqual(n, (5, 7))
+        self.assertEqual(n, nest.GIDCollection((5, 7)))
 
         # several closest locations, not all
         n = nest.FindNearestElement(l, (0.5, 0.5))
         self.assertEqual(len(n), 1)
-        self.assertEqual(1, sum(n[0] == k for k in (4, 5, 7, 8)))
+        self.assertTrue(n.get('global_id') in nest.GIDCollection((4, 5, 7, 8)))
 
         # several closest locations, all
         n = nest.FindNearestElement(l, (0.5, 0.5), find_all=True)
         self.assertEqual(len(n), 1)
-        self.assertEqual(n, ((4, 5, 7, 8),))
+        self.assertEqual(n[0], nest.GIDCollection((4, 5, 7, 8)))
 
         # complex case
         n = nest.FindNearestElement(l, ((0., 0.), (0.5, 0.5)),
                                     find_all=True)
-        self.assertEqual(n, ((5,), (4, 5, 7, 8)))
+        self.assertEqual(len(n), 2)
+        self.assertEqual(n[0], nest.GIDCollection((5,)))
+        self.assertEqual(n[1], nest.GIDCollection((4, 5, 7, 8)))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):
@@ -291,36 +283,37 @@ class BasicsTestCase(unittest.TestCase):
         # nodes at [-1,0,1]x[-1,0,1], column-wise
         nest.ResetKernel()
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(3, 3, extent=(2., 2.)))
+                        positions=nest.spatial.grid(shape=[3, 3], extent=(2., 2.)))
 
         # single layer
         n = nest.FindCenterElement(l)
-        self.assertEqual(n, 5)
+        self.assertEqual(n, l[4:5])
 
         # new layer
         l2 = nest.Create('iaf_psc_alpha',
-                         positions=nest.spatial.grid(3, 3, extent=(2., 2.)))
+                         positions=nest.spatial.grid(shape=[3, 3], extent=(2., 2.)))
         n = nest.FindCenterElement(l2)
-        self.assertEqual(n, 14)
+        self.assertEqual(n, l2[4:5])
 
     def test_GetTargetNodes(self):
         """Interface check for finding targets."""
 
-        cdict = {'connection_type': 'divergent',
-                 'synapse_model': 'stdp_synapse',
-                 'mask': {'grid': {'rows': 2, 'columns': 2}}}
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.,
+                 'mask': {'grid': {'shape': [2, 2]}}}
+        sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(3, 3,
+                        positions=nest.spatial.grid(shape=[3, 3],
                                                     extent=(2., 2.),
                                                     edge_wrap=True))
 
         # connect l -> l
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
-        t = nest.GetTargetNodes(l[:1], l)
+        t = nest.GetTargetNodes(l[0], l)
         self.assertEqual(len(t), 1)
 
         t = nest.GetTargetNodes(l, l)
@@ -337,29 +330,33 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
 
-        t = nest.GetTargetNodes(l[:1], l)
-        self.assertEqual(t, ([1, 2, 4, 5],))
+        t = nest.GetTargetNodes(l[0], l)
+        self.assertEqual(len(t), 1)
+        self.assertEqual(t[0], nest.GIDCollection([1, 2, 4, 5]))
 
-        t = nest.GetTargetNodes(l[4:5], l)
-        self.assertEqual(t, ([5, 6, 8, 9],))
+        t = nest.GetTargetNodes(l[4], l)
+        self.assertEqual(len(t), 1)
+        self.assertEqual(t[0], nest.GIDCollection([5, 6, 8, 9]))
 
-        t = nest.GetTargetNodes(l[8:9], l)
-        self.assertEqual(t, ([1, 3, 7, 9],))
+        t = nest.GetTargetNodes(l[8], l)
+        self.assertEqual(len(t), 1)
+        self.assertEqual(t[0], nest.GIDCollection([1, 3, 7, 9]))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
 
-        cdict = {'connection_type': 'divergent',
-                 'synapse_model': 'stdp_synapse'}
+        cdict = {'rule': 'pairwise_bernoulli',
+                 'p': 1.}
+        sdict = {'synapse_model': 'stdp_synapse'}
 
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(1, 1,
+                        positions=nest.spatial.grid(shape=[1, 1],
                                                     extent=(1., 1.),
                                                     edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         # Simple test with one gid in the layer, should be placed in the origin
         p = nest.GetTargetPositions(l, l)
@@ -371,15 +368,13 @@ class BasicsTestCase(unittest.TestCase):
 
         x_extent = 1.
         y_extent = 1.
-        no_rows = 3
-        no_cols = 3
+        shape = [3, 3]
 
         l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(
-                            no_rows, no_cols,
-                            extent=[x_extent, y_extent],
-                            edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+                        positions=nest.spatial.grid(shape=shape,
+                                                    extent=[x_extent, y_extent],
+                                                    edge_wrap=False))
+        nest.Connect(l, l, cdict, sdict)
 
         p = nest.GetTargetPositions(l[:1], l)
         self.assertEqual(len(p), 1)
@@ -388,8 +383,8 @@ class BasicsTestCase(unittest.TestCase):
         p = nest.GetTargetPositions(l, l)
         self.assertEqual(len(p), len(l))
 
-        dx = x_extent / no_cols
-        dy = y_extent / no_rows
+        dx = x_extent / shape[0]
+        dy = y_extent / shape[1]
 
         x = [-dx, -dx, -dx, 0.0, 0.0, 0.0, dx, dx, dx]
         y = [dy, 0.0, -dy, dy, 0.0, -dy, dy, 0.0, -dy]
@@ -407,12 +402,12 @@ class BasicsTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False})
 
-        positions = [(numpy.random.uniform(-0.5, 0.5),
-                      numpy.random.uniform(-0.5, 0.5)) for _ in range(50)]
+        positions = [(np.random.uniform(-0.5, 0.5),
+                      np.random.uniform(-0.5, 0.5)) for _ in range(50)]
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.free(positions,
                                                     edge_wrap=False))
-        nest.ConnectLayers(l, l, cdict)
+        nest.Connect(l, l, cdict, sdict)
 
         p = nest.GetTargetPositions(l[:1], l)
 

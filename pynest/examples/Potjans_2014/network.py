@@ -224,8 +224,8 @@ class Network:
                     )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
-                nest.GetStatus(population[0], 'global_id')[0],
-                nest.GetStatus(population[-1], 'global_id')[0]))
+                population[0].get('global_id')[0],
+                population[-1].get('global_id')[0]))
         pop_file.close()
 
         if self.net_dict['V0_type'] == 'original':
@@ -242,14 +242,13 @@ class Network:
                         # Find the vp for the GID and place the GID in correct list
                         vp = info['vp']
                         vp_lists[vp].append(info['global_id'])
-    
+
             for vp, vps_gids in enumerate(vp_lists):
                 # Set random membrane portential
                 nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(
                         self.net_dict['neuron_params']['V0_mean']['original'],
                         self.net_dict['neuron_params']['V0_sd']['original'],
                         len(vps_gids)))
-
 
     def create_devices(self):
         """ Creates the recording devices.

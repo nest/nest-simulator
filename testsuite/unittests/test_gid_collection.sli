@@ -236,8 +236,8 @@ pop  % remove argument to failing command above
   (Illegal join with different metadata) M_PROGRESS message
   ResetKernel
 
-  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
-  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
   join
 
   end

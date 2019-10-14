@@ -20,64 +20,49 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module
+NEST Spatial Example
 
-EXPERIMENTAL example of 3d layer.
-
-3d layers are currently not supported, use at your own risk!
+A spatial network in 3D.
 
 Hans Ekkehard Plesser, UMB
-
-This example uses the function GetChildren, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
 '''
 
 import nest
-import random
-import nest.topology as topo
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 nest.ResetKernel()
 
-# generate list of 1000 (x,y,z) triplets
-pos = [[random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5),
-        random.uniform(-0.5, 0.5)]
-       for j in range(1000)]
+pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), extent=[1.5, 1.5, 1.5])
 
-l1 = topo.CreateLayer(
-    {'extent': [1.5, 1.5, 1.5],  # must specify 3d extent AND center
-     'center': [0., 0., 0.],
-     'positions': pos,
-     'elements': 'iaf_psc_alpha'})
+l1 = nest.Create('iaf_psc_alpha', 1000, positions=pos)
 
 # visualize
 
 # extract position information, transpose to list of x, y and z positions
-xpos, ypos, zpos = zip(*topo.GetPosition(l1))
+xpos, ypos, zpos = zip(*nest.GetPosition(l1))
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 
 # full connections in volume [-0.2,0.2]**3
-topo.ConnectLayers(l1, l1,
-                   {'connection_type': 'divergent', 'allow_autapses': False,
-                    'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
-                                        'upper_right': [0.2, 0.2, 0.2]}}})
+nest.Connect(l1, l1,
+             {'rule': 'pairwise_bernoulli',
+              'p': 1.,
+              'allow_autapses': False,
+              'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
+                                  'upper_right': [0.2, 0.2, 0.2]}}})
 
 # show connections from center element
 # sender shown in red, targets in green
-ctr_gid = topo.FindCenterElement(l1)
-ctr_index = ctr_gid - 1
-ctr = l1[ctr_index:ctr_index + 1]
-xtgt, ytgt, ztgt = zip(*topo.GetTargetPositions(ctr, l1)[0])
-xctr, yctr, zctr = topo.GetPosition(ctr)
+ctr = nest.FindCenterElement(l1)
+xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
+xctr, yctr, zctr = nest.GetPosition(ctr)
 ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')
 ax.scatter(xtgt, ytgt, ztgt, s=40, facecolor='g', edgecolor='g')
 
-tgts = topo.GetTargetNodes(ctr, l1)[0]
-distances = topo.Distance(ctr, l1)
+tgts = nest.GetTargetNodes(ctr, l1)[0]
+distances = nest.Distance(ctr, l1)
 tgt_distances = [d for i, d in enumerate(distances) if i + 1 in tgts]
 
 plt.figure()

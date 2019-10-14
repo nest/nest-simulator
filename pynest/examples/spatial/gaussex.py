@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create two layers of 30x30 elements and connect
-them using a Gaussian probabilistic kernel, visualize.
+Create two populations on a 30x30 grid and connect them using a Gaussian
+probabilistic kernel, visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -31,23 +31,22 @@ Hans Ekkehard Plesser, UMB
 
 import pylab
 import nest
-import nest.topology as topo
-
 
 nest.ResetKernel()
 
 # create two test layers
-a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha'})
-b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha'})
+pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 
-conndict = {'connection_type': 'divergent',
-            'mask': {'circular': {'radius': 3.0}},
-            'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 0.5}},
-            'weights': 1.0,
-            'delays': 1.0}
-topo.ConnectLayers(a, b, conndict)
+# create and connect two populations
+a = nest.Create('iaf_psc_alpha', positions=pos)
+b = nest.Create('iaf_psc_alpha', positions=pos)
+
+cdict = {'rule': 'pairwise_bernoulli',
+         'p': nest.distributions.gaussian(nest.spatial.distance,
+                                          std_deviation=0.5),
+         'mask': {'circular': {'radius': 3.0}}}
+
+nest.Connect(a, b, cdict)
 
 # plot targets of neurons in different grid locations
 
@@ -60,7 +59,7 @@ fig = pylab.gcf()
 for src_index, color in [(30 * 15 + 15, 'blue'), (0, 'green')]:
     # obtain node id for center
     src = a[src_index:src_index + 1]
-    topo.PlotTargets(src, b, mask=conndict['mask'], kernel=conndict['kernel'],
+    nest.PlotTargets(src, b, mask=cdict['mask'], kernel=cdict['p'],
                      src_color=color, tgt_color=color, mask_color=color,
                      kernel_color=color, src_size=100,
                      fig=fig)

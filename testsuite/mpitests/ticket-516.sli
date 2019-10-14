@@ -30,7 +30,7 @@
 {
   M_ERROR setverbosity
   ResetKernel
-  
+
   /conn_type Set
 
   /n_vp GetKernelStatus /total_num_virtual_procs get def
@@ -41,14 +41,14 @@
      /rng_seeds [master_seed n_vp add 1 add
                  master_seed n_vp 2 mul add] Range
   >> SetKernelStatus
-  
-  /layer << /rows 10 /columns 10 /edge_wrap false /elements /iaf_psc_delta >> CreateLayer def
+
+  /layer << /shape [ 10 10 ] /edge_wrap false /elements /iaf_psc_delta >> CreateLayer def
 
   /conn_spec << /connection_type conn_type
-                /mask << /circular << /radius 0.5 >> >> 
-                /kernel 1.0 
-                /weights << /uniform << /min 1.0 /max 1.5 >> >> 
-                /delays 1.0 
+                /mask << /circular << /radius 0.5 >> >>
+                /kernel 1.0
+                /weight << /uniform << /min 1.0 /max 1.5 >> >>
+                /delay 1.0
              >> def
   layer layer conn_spec ConnectLayers
 } def

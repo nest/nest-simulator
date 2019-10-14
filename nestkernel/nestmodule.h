@@ -415,6 +415,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } memberq_g_ifunction;
 
+  class eq_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_gfunction;
+
   class BeginIterator_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -603,6 +608,18 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } getvalue_Pfunction;
+
+  class Apply_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_Dfunction;
+
+  class Apply_P_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_gfunction;
 
 private:
   static ParameterFactory& parameter_factory_();

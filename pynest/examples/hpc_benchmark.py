@@ -72,7 +72,6 @@ References
 
 """
 
-from __future__ import print_function  # for Python 2
 import numpy as np
 import os
 import sys
@@ -83,7 +82,6 @@ import nest.raster_plot
 
 M_INFO = 10
 M_ERROR = 30
-
 
 
 ###############################################################################
@@ -103,7 +101,6 @@ params = {
     'path_name': '.',       # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
-
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
@@ -137,7 +134,6 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 tau_syn = 0.32582722403722841
 
 
-
 brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
@@ -160,10 +156,10 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-###############################################################################
-# Note that Kunkel et al. (2014) report different values. The values
-# in the paper were used for the benchmarks on K, the values given
-# here were used for the benchmark on JUQUEEN.
+    ###############################################################################
+    # Note that Kunkel et al. (2014) report different values. The values
+    # in the paper were used for the benchmarks on K, the values given
+    # here were used for the benchmark on JUQUEEN.
 
     'randomize_Vm': True,
     'mean_potential': 5.7,
@@ -191,6 +187,7 @@ brunel_params = {
 
 ###############################################################################
 # Function Section
+
 
 def build_network(logger):
     """Builds the network including setting of simulation and neuron
@@ -230,13 +227,13 @@ def build_network(logger):
             'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
-        for node in get_local_nodes(E_neurons):
+        for node in nest.GetLocalGIDCollection(E_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
-        for node in get_local_nodes(I_neurons):
+        for node in nest.GetLocalGIDCollection(I_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
@@ -306,7 +303,7 @@ def build_network(logger):
 
     nest.Connect(E_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
+                  'allow_autapses': False, 'allow_multapses': True},
                  {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
 
     nest.message(M_INFO, 'build_network',
@@ -314,7 +311,7 @@ def build_network(logger):
 
     nest.Connect(I_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
+                  'allow_autapses': False, 'allow_multapses': True},
                  {'synapse_model': 'syn_in'})
 
     nest.message(M_INFO, 'build_network',
@@ -322,7 +319,7 @@ def build_network(logger):
 
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
+                  'allow_autapses': False, 'allow_multapses': True},
                  {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
@@ -330,14 +327,12 @@ def build_network(logger):
 
     nest.Connect(I_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
+                  'allow_autapses': False, 'allow_multapses': True},
                  {'synapse_model': 'syn_in'})
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_gids = [x.get('global_id')
-                          for x in get_local_nodes(E_neurons)]
-            local_neurons = nest.GIDCollection(local_gids)
+            local_neurons = nest.GetLocalGIDCollection(E_neurons)
         else:
             local_neurons = E_neurons
 
@@ -425,25 +420,6 @@ def lambertwm1(x):
     nest.ll_api.sr('{} LambertWm1'.format(x))
     return nest.ll_api.spp()
 
-
-def get_local_nodes(nodes):
-    """Generator for efficient looping over local nodes
-
-    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
-    returned by Create. Only works for nodes with proxies, i.e.,
-    regular neurons.
-
-    """
-
-    nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
-
-    i = 0
-    while i < len(nodes):
-        if nest.GetStatus(nodes[i], 'local')[0]:
-            yield nodes[i]
-            i += nvp
-        else:
-            i += 1
 
 class Logger(object):
     """Logger context manager used to properly log memory and timing

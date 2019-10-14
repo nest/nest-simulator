@@ -171,7 +171,6 @@ Node::get_status_base()
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread_local_id ] = get_thread_lid();
     ( *dict )[ names::thread ] = get_thread();
-    ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
   }
 
   // now call the child class' hook

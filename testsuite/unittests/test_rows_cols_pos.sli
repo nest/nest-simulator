@@ -20,16 +20,16 @@
  *
  */
 
-% this test ensures that one can specify either rows&cols or positions,
+% this test ensures that one can specify either shape or positions,
 % but not both
 
 (unittest) run
 /unittest using
 
-% correct, rows & columns
+% correct, shape
 {
   ResetKernel
-  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
 } pass_or_die
 
 % correct, positions
@@ -38,22 +38,16 @@
   << /positions [[0. 0.]] /elements /iaf_psc_alpha >> CreateLayer
 } pass_or_die
 
-% incorrect, rows, columns, and positions
+% incorrect, shape and positions
 {
   ResetKernel
-  << /rows 1 /columns 1 /positions [[0. 0.]] /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 1 ] /positions [[0. 0.]] /elements /iaf_psc_alpha >> CreateLayer
 } fail_or_die
 
-% incorrect, only rows
+% incorrect, single element shape
 {
   ResetKernel
-  << /rows 1 /elements /iaf_psc_alpha >> CreateLayer
-} fail_or_die
-
-% incorrect, only columns
-{
-  ResetKernel
-  << /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 ] /elements /iaf_psc_alpha >> CreateLayer
 } fail_or_die
 
 endusing

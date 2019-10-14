@@ -26,10 +26,13 @@
 // C++ includes:
 #include <cassert>
 #include <map>
-#include <vector>
 
 // Includes from nestkernel:
 #include "nest_types.h"
+
+// Includes from libnestutil
+#include "block_vector.h"
+
 
 namespace nest
 {
@@ -57,6 +60,7 @@ class SparseNodeArray
 public:
   struct NodeEntry
   {
+    NodeEntry() = default;
     NodeEntry( Node&, index );
 
     // Accessor functions here are mostly in place to make things "look nice".
@@ -70,7 +74,7 @@ public:
     index gid_; //!< store gid locally for faster searching
   };
 
-  typedef std::vector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
+  typedef BlockVector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
 
   //! Create empty spare node array
   SparseNodeArray();
@@ -81,14 +85,8 @@ public:
    */
   size_t size() const;
 
-  //! Reserve additional space for the given number of elements
-  void reserve_additional( size_t );
-
   //! Clear the array
   void clear();
-
-  //! Return maximum size of underlying vector
-  size_t max_size() const;
 
   /**
    * Add single local node.
@@ -137,7 +135,7 @@ public:
   index get_max_gid() const;
 
 private:
-  std::vector< NodeEntry > nodes_; //!< stores local node information
+  BlockVector< NodeEntry > nodes_; //!< stores local node information
   index max_gid_;                  //!< largest GID in network
   index local_min_gid_;            //!< smallest local GID
   index local_max_gid_;            //!< largest local GID
@@ -172,12 +170,6 @@ nest::SparseNodeArray::clear()
   local_min_gid_ = 0;
   local_max_gid_ = 0;
   gid_idx_scale_ = 1.;
-}
-
-inline size_t
-nest::SparseNodeArray::max_size() const
-{
-  return nodes_.max_size();
 }
 
 inline nest::Node*

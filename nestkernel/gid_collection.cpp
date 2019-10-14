@@ -725,10 +725,43 @@ GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& part
   }
 }
 
+bool
+GIDCollectionComposite::contains( index gid ) const
+{
+  long lower = 0;
+  long upper = parts_.size() - 1;
+  while ( lower <= upper )
+  {
+    size_t middle = floor( ( lower + upper ) / 2.0 );
+
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
+    {
+      lower = middle + 1;
+    }
+    else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
+    {
+      upper = middle - 1;
+    }
+    else
+    {
+      if ( step_ > 1 )
+      {
+        index start_gid = ( *( parts_[ middle ].begin() + start_offset_ ) ).gid;
+        index end_gid = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid;
+        index stop_gid = stop_part_ != middle ? end_gid : ( *( parts_[ middle ].begin() + stop_offset_ ) ).gid;
+
+        return gid >= start_gid and ( ( gid - start_gid ) % step_ ) == 0 and gid <= stop_gid;
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  std::string metadata = get_metadata().get() ? get_metadata()->get_type() : "None";
+  std::string metadata = "None";
   std::string gc = "GIDCollection(";
   std::string space( gc.size(), ' ' );
 

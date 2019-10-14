@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# grid_iaf.py
+# grid_iaf_irr.py
 #
 # This file is part of NEST.
 #
@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create layer of 4x3 iaf_psc_alpha neurons, visualize
+Create 12 freely placed iaf_psc_alpha neurons, visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -30,17 +30,16 @@ Hans Ekkehard Plesser, UMB
 
 import nest
 import pylab
-import nest.topology as topo
 
 nest.ResetKernel()
 
-l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
-                       'extent': [2.0, 1.5],
-                       'elements': 'iaf_psc_alpha'})
+pos = nest.spatial.free([nest.random.uniform(-0.75, 0.75), nest.random.uniform(-0.5, 0.5)], extent=[2., 1.5])
+
+l1 = nest.Create('iaf_psc_alpha', 12, positions=pos)
 
 nest.PrintNodes()
 
-topo.PlotLayer(l1, nodesize=50)
+nest.PlotLayer(l1, nodesize=50)
 
 # beautify
 pylab.axis([-1.0, 1.0, -0.75, 0.75])
@@ -48,9 +47,9 @@ pylab.axes().set_aspect('equal', 'box')
 pylab.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
 pylab.axes().set_yticks((-0.5, 0, 0.5))
 pylab.grid(True)
-pylab.xlabel('4 Columns, Extent: 1.5')
-pylab.ylabel('2 Rows, Extent: 1.0')
+pylab.xlabel('Extent: 2.0')
+pylab.ylabel('Extent: 1.5')
 
 pylab.show()
 
-# plt.savefig('grid_iaf.png')
+# pylab.savefig('grid_iaf_irr.png')

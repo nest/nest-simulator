@@ -174,8 +174,8 @@ protected:
   GIDCollectionPTR sources_;
   GIDCollectionPTR targets_;
 
-  bool autapses_;
-  bool multapses_;
+  bool allow_autapses_;
+  bool allow_multapses_;
   bool make_symmetric_;
   bool creates_symmetric_connections_;
 

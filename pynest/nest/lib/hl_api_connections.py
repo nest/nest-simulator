@@ -88,21 +88,13 @@ def GetConnections(source=None, target=None, synapse_model=None,
         if isinstance(source, GIDCollection):
             params['source'] = source
         else:
-            try:
-                params['source'] = GIDCollection(source)
-            except kernel.NESTError:
-                raise TypeError("source must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("source must be GIDCollection.")
 
     if target is not None:
         if isinstance(target, GIDCollection):
             params['target'] = target
         else:
-            try:
-                params['target'] = GIDCollection(target)
-            except kernel.NESTError:
-                raise TypeError("target must be GIDCollection or convertible"
-                                " to GIDCollection")
+            raise TypeError("target must be GIDCollection.")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -158,8 +150,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
-                        if ('N' in conn_spec
-                                and value.shape[0] != conn_spec['N']):
+                        if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
                             raise kernel.NESTError(
                                 "'" + key + "' has to be an array of "
                                 "dimension " + str(conn_spec['N']) + ", a "
@@ -215,16 +206,14 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                             "only be used in conjunction with rules "
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
-        # sps(syn_spec)
         return syn_spec
     else:
         raise TypeError("syn_spec must be a string or dict")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
-    allowed_conn_spec_keys = ['mask',
-                              'multapses', 'autapses', 'rule', 'indegree',
-                              'outdegree', 'p', 'use_on_source']
+    allowed_conn_spec_keys = ['mask', 'allow_multapses', 'allow_autapses', 'rule',
+                              'indegree', 'outdegree', 'p', 'use_on_source']
     allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
@@ -233,29 +222,16 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 " connecting with mask or kernel")
 
     projections = {}
-    for key in ['mask']:
-        if key in conn_spec:
-            projections[key] = conn_spec[key]
+    projections.update(conn_spec)
     if 'p' in conn_spec:
-        projections['kernel'] = conn_spec['p']
-    # TODO: change topology names of {mul,aut}apses to be consistent
-    if 'multapses' in conn_spec:
-        projections['allow_multapses'] = conn_spec['multapses']
-    if 'autapses' in conn_spec:
-        projections['allow_autapses'] = conn_spec['autapses']
+        projections['kernel'] = projections.pop('p')
     if syn_spec is not None:
         for key in syn_spec.keys():
             if key not in allowed_syn_spec_keys:
                 raise ValueError(
                     "'{}' is not allowed in syn_spec when ".format(key) +
                     "connecting with mask or kernel".format(key))
-        # TODO: change topology names of weights, delays to be consistent
-        if 'weight' in syn_spec:
-            projections['weights'] = syn_spec['weight']
-        if 'delay' in syn_spec:
-            projections['delays'] = syn_spec['delay']
-        if 'synapse_model' in syn_spec:
-            projections['synapse_model'] = syn_spec['synapse_model']
+        projections.update(syn_spec)
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
@@ -263,26 +239,28 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
         projections['connection_type'] = 'convergent'
-        projections['number_of_connections'] = conn_spec['indegree']
-
+        projections['number_of_connections'] = projections.pop('indegree')
     elif conn_spec['rule'] == 'fixed_outdegree':
         if 'use_on_source' in conn_spec:
             raise ValueError(
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
         projections['connection_type'] = 'divergent'
-        projections['number_of_connections'] = conn_spec['outdegree']
-
+        projections['number_of_connections'] = projections.pop('outdegree')
     elif conn_spec['rule'] == 'pairwise_bernoulli':
         if ('use_on_source' in conn_spec and
                 conn_spec['use_on_source']):
             projections['connection_type'] = 'convergent'
+            projections.pop('use_on_source')
         else:
             projections['connection_type'] = 'divergent'
+            if 'use_on_source' in projections:
+                projections.pop('use_on_source')
     else:
         raise kernel.NESTError("When using kernel or mask, the only possible "
                                "connection rules are 'pairwise_bernoulli', "
                                "'fixed_indegree', or 'fixed_outdegree'")
+    projections.pop('rule')
     return projections
 
 
@@ -364,8 +342,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     the rule and any mandatory rule-specific parameters (e.g. 'indegree').
 
     In addition, switches setting permission for establishing
-    self-connections ('autapses', default: True) and multiple connections
-    between a pair of nodes ('multapses', default: True) can be contained
+    self-connections ('allow_autapses', default: True) and multiple connections
+    between a pair of nodes ('allow_multapses', default: True) can be contained
     in the dictionary. Another switch enables the creation of symmetric
     connections ('symmetric', default: False) by also creating connections
     in the opposite direction.
@@ -382,7 +360,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Example conn-spec choices
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     - 'one_to_one'
-    - {'rule': 'fixed_indegree', 'indegree': 2500, 'autapses': False}
+    - {'rule': 'fixed_indegree', 'indegree': 2500, 'allow_autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
 
     Synapse specification (syn_spec)

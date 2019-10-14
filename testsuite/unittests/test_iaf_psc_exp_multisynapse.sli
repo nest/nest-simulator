@@ -27,9 +27,9 @@
 
    Description:
    This test creates a multisynapse neuron and first checks if time constants
-   can be set correctly. 
-   Afterwards a neuron with four synaptic time constants with different weights and delays 
-   is simulated and the resulting membrane potential values after the income of one spike  
+   can be set correctly.
+   Afterwards a neuron with four synaptic time constants with different weights and delays
+   is simulated and the resulting membrane potential values after the income of one spike
    are checked against analytically obtained values.
   
    SeeAlso: testsuite::test_iaf_psc_alpha_multisynapse, iaf_psc_exp_multisynapse
@@ -46,8 +46,8 @@
 
 ResetKernel
 
-<< 
-      /local_num_threads 1 
+<<
+      /local_num_threads 1
       /resolution h
   >> SetKernelStatus
 
@@ -84,8 +84,8 @@ vm npost 1.0 h Connect
 
 
 {                                            % reference data
- dup Transpose First /test_times Set         % times of reference 
-                               
+ dup Transpose First /test_times Set         % times of reference
+
  vm [/events [/times /V_m]] get cva   % array of recorded data
   6 ToUnitTestPrecision                      % to precision of reference
   Transpose                                  % all recorded tuples
@@ -93,14 +93,14 @@ vm npost 1.0 h Connect
  eq                                          % compare
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Expected output of this program: 
+% Expected output of this program:
 %
 % time (in steps)  voltage (in mV)
 [
 [ 1       -70      ] % <----- Spike time
-[ 2       -70      ] 
+[ 2       -70      ]
 [ 3       -70      ]
 [ 4       -70      ]
 [ 5       -70      ]
@@ -141,8 +141,8 @@ vm npost 1.0 h Connect
 [ 73      -69.1159 ] %  |
 [ 74      -69.0854 ] %   --- the effect of the four synaptic currents is visible in the membrane potential
 [ 75      -69.0557 ] %
-]                       
-%                         
+]
+%
 %
 
 exch assert_or_die
@@ -157,7 +157,7 @@ exch assert_or_die
 {
   << >> begin
   ResetKernel
-  
+
   /nrn /iaf_psc_exp_multisynapse Create def
   
   /mm /multimeter << /time_in_steps true
@@ -166,7 +166,7 @@ exch assert_or_die
 		  >> Create def
   
   mm nrn Connect
-  
+
   /len nrn /recordables get length def
   len 3 eq
   end
@@ -177,20 +177,20 @@ assert_or_die
 {
   << >> begin
   ResetKernel
-  
+
   /tau_syn1  [5.0  1.0  25.0] def
   /tau_syn2  [5.0  1.0] def
   /tau_syn3  [5.0  1.0  25.0 50.] def
-  
+
   /nrn /iaf_psc_exp_multisynapse << /tau_syn tau_syn1 >> Create def
   /len1 nrn /recordables get length def
-  
+
   nrn << /tau_syn tau_syn2 >> SetStatus
   /len2 nrn /recordables get length def
-  
+
   nrn << /tau_syn tau_syn3 >> SetStatus
   /len3 nrn /recordables get length def
-  
+
   len1 5 eq len2 4 eq and len3 6 eq and
   end
 }
@@ -201,7 +201,7 @@ assert_or_die
   << >> begin
   ResetKernel
   /tau_syn     [40.0 20.0  30.0 25.] def % synaptic time constants
-  /weights     [1.0  0.5   2.0  1.0] def % synaptic weights
+  /weight     [1.0  0.5   2.0  1.0] def % synaptic weights
   /delays      [1.0  3.0   10.0 10.] def % ms - synaptic delays
   /spike_time  10.  def    % time at which the single spike occurs
   /dt          0.1  def    % time step
@@ -217,7 +217,7 @@ assert_or_die
       /tau exch def
       /W exch def
       /t0 exch def
-      
+
       t
       {
         /tt exch def
@@ -241,10 +241,10 @@ assert_or_die
   sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
   % Create the multisynapse neuron
-  /nrn /iaf_psc_exp_multisynapse 
+  /nrn /iaf_psc_exp_multisynapse
     <<  /I_e 0. /tau_syn tau_syn  >> Create def
 
-  % Create an array of synaptic indexes to loop through 
+  % Create an array of synaptic indexes to loop through
   delays length 1 arraystore Range /synapses_idx exch def
   [delays weights synapses_idx] % loop on synaptic receptor ports
   {

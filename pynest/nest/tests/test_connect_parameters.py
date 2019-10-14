@@ -136,7 +136,7 @@ class TestParams(unittest.TestCase):
         conn_params = self.conn_dict.copy()
 
         # test that autapses exist
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
         self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist
@@ -147,7 +147,7 @@ class TestParams(unittest.TestCase):
         conn_params = self.conn_dict.copy()
 
         # test that autapses were excluded
-        conn_params['autapses'] = False
+        conn_params['allow_autapses'] = False
         self.pop1 = hf.nest.Create('iaf_psc_alpha', self.N1)
         hf.nest.Connect(self.pop1, self.pop1, conn_params)
         # make sure all connections do exist

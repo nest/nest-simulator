@@ -19,9 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..lib.hl_api_types import Parameter, CreateParameter
-from ..ll_api import sli_func
-import numpy as np
+from ..lib.hl_api_types import CreateParameter
 
 __all__ = [
     'exponential',
@@ -35,27 +33,13 @@ def uniform(min=0.0, max=1.0):
     return CreateParameter('uniform', {'min': min, 'max': max})
 
 
-def normal(loc=0.0, scale=1.0, min=None, max=None,
-           redraw=False):
-    if redraw:
-        raise NotImplementedError('Redraw is not supported yet')
-    parameters = {'mean': loc, 'sigma': scale}
-    if min:
-        parameters.update({'min': min})
-    if max:
-        parameters.update({'max': max})
-    return CreateParameter('normal', parameters)
+def normal(loc=0.0, scale=1.0):
+    return CreateParameter('normal', {'mean': loc, 'sigma': scale})
 
 
 def exponential(scale=1.0):
     return CreateParameter('exponential', {'scale': scale})
 
 
-def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
-    # TODO: mean not the same as mu?
-    parameters = {'mu': mean, 'sigma': sigma}
-    if min:
-        parameters.update({'min': min})
-    if max:
-        parameters.update({'max': max})
-    return CreateParameter('lognormal', parameters)
+def lognormal(mu=0.0, sigma=1.0):
+    return CreateParameter('lognormal', {'mu': mu, 'sigma': sigma})

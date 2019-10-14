@@ -393,4 +393,30 @@ get_value( const ParameterDatum& param )
   librandom::RngPtr rng = get_global_rng();
   return param->value( rng, nullptr );
 }
+
+std::vector< double >
+apply( const ParameterDatum& param, const GIDCollectionDatum& gc )
+{
+  std::vector< double > result;
+  result.reserve( gc->size() );
+  librandom::RngPtr rng = get_global_rng();
+  for ( auto it = gc->begin(); it < gc->end(); ++it )
+  {
+    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).gid );
+    result.push_back( param->value( rng, node ) );
+  }
+  return result;
+}
+
+std::vector< double >
+apply( const ParameterDatum& param, const DictionaryDatum& positions )
+{
+  auto source_tkn = positions->lookup( names::source );
+  auto source_gc = getValue< GIDCollectionPTR >( source_tkn );
+
+  auto targets_tkn = positions->lookup( names::targets );
+  TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
+  return param->apply( source_gc, target_tkns );
+}
+
 } // namespace nest

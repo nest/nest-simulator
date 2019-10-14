@@ -20,40 +20,33 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create layer of 4x3 elements compose of one
-pyramidal cell and one interneuron, visualize
+Create a 4x3 grid with one pyramidal cell and one interneuron at each position,
+visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-
-This example uses the function GetLeaves, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
 '''
 
 import nest
-import nest.topology as topo
 import pylab
-
 
 nest.ResetKernel()
 
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
-ctx_pyr = topo.CreateLayer({'columns': 4, 'rows': 3,
-                            'extent': [2.0, 1.5],
-                            'elements': 'pyr'})
-ctx_in = topo.CreateLayer({'columns': 4, 'rows': 3,
-                           'extent': [2.0, 1.5],
-                           'elements': 'in'})
+pos = nest.spatial.grid(shape=[4,3], extent=[2., 1.5])
+
+ctx_pyr = nest.Create('pyr', positions=pos)
+ctx_in = nest.Create('in', positions=pos)
+
 nest.PrintNodes()
 
 # extract position information
-ppyr = topo.GetPosition(ctx_pyr)
-pin = topo.GetPosition(ctx_in)
+ppyr = nest.GetPosition(ctx_pyr)
+pin = nest.GetPosition(ctx_in)
 
 ppyr_x = pylab.array([x for x, y in ppyr])
 ppyr_y = pylab.array([y for x, y in ppyr])

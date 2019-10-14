@@ -55,8 +55,8 @@ class TestDists(unittest.TestCase):
         pass
 
     def setUpNetwork(self, conn_params=None, syn_dict=None):
-        conn_params['autapses'] = False
-        conn_params['multapses'] = False
+        conn_params['allow_autapses'] = False
+        conn_params['allow_multapses'] = False
         self.pop1 = nest.Create('iaf_psc_alpha', self.Ndist1)
         self.pop2 = nest.Create('iaf_psc_alpha', self.Ndist2)
         nest.Connect(self.pop1, self.pop2, conn_params, syn_dict)

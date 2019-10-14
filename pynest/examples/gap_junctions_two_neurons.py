@@ -61,7 +61,7 @@ nest.Connect(vm, neuron, 'all_to_all')
 # `neuron[0]`:
 
 nest.Connect(neuron, neuron,
-             {'rule': 'all_to_all', 'autapses': False},
+             {'rule': 'all_to_all', 'allow_autapses': False},
              {'synapse_model': 'gap_junction', 'weight': 0.5})
 
 ###############################################################################

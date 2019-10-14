@@ -39,6 +39,45 @@ Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
   return kernel().node_manager.get_node_or_proxy( gid, t );
 }
 
+std::vector< double >
+Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) const
+{
+  std::vector< double > result;
+  result.reserve( token_array.size() );
+  librandom::RngPtr rng = get_global_rng();
+
+  // Get source layer from the GIDCollection
+  auto source_metadata = gc->get_metadata();
+  if ( not source_metadata.get() )
+  {
+    throw KernelException( "apply: not meta" );
+  }
+  LayerMetadata const* const source_layer_metadata = dynamic_cast< LayerMetadata const* >( source_metadata.get() );
+  if ( not source_layer_metadata )
+  {
+    throw KernelException( "apply: not layer_meta" );
+  }
+  AbstractLayerPTR source_layer = source_layer_metadata->get_layer();
+  if ( not source_layer.get() )
+  {
+    throw KernelException( "apply: not valid layer" );
+  }
+
+  assert( gc->size() == 1 );
+  const index source_lid = gc->operator[]( 0 ) - source_metadata->get_first_gid();
+  std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
+
+  // For each position, calculate the displacement, then calculate the parameter value
+  for ( auto&& token : token_array )
+  {
+    std::vector< double > target_pos = getValue< std::vector< double > >( token );
+    auto displacement = source_layer->compute_displacement( target_pos, source_lid );
+    auto value = this->value( rng, source_pos, target_pos, displacement );
+    result.push_back( value );
+  }
+  return result;
+}
+
 
 double
 NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
@@ -115,8 +154,6 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
     throw KernelException( "SpatialDistanceParameter: not valid source layer" );
   }
   index source_lid = source->get_gid() - source_meta->get_first_gid();
-  // std::vector< double > pos = source_layer->get_position_vector( source_lid
-  // );
 
   // Target
 
@@ -239,8 +276,13 @@ double
 RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
 {
   double value;
+  size_t num_redraws = 0;
   do
   {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
     value = p_->value( rng, sgid, target, target_thread );
   } while ( value < min_ or value > max_ );
   return value;
@@ -253,8 +295,13 @@ RedrawParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& displacement ) const
 {
   double value;
+  size_t num_redraws = 0;
   do
   {
+    if ( num_redraws++ == max_redraws_ )
+    {
+      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
+    }
     value = p_->value( rng, source_pos, target_pos, displacement );
   } while ( value < min_ or value > max_ );
 

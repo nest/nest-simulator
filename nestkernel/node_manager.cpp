@@ -113,7 +113,7 @@ NodeManager::add_node( index model_id, long n )
 
   const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
   const index max_gid = min_gid + n - 1;
-  if ( max_gid >= local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
+  if ( max_gid < min_gid )
   {
     LOG( M_ERROR,
       "NodeManager::add_node",
@@ -190,13 +190,6 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
 
     try
     {
-      // TODO480: We should move more of the reservation logic into the
-      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the
-      // model
-      // needs local replicas or not. Then SNA can manage memory. This can
-      // reduce
-      // bloat due to round-up when using many Create calls for >1 thread
-      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
       model.reserve_additional( t, max_new_per_thread );
 
       // Need to find smallest gid with:
@@ -241,7 +234,6 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
     const index t = kernel().vp_manager.get_thread_id();
     try
     {
-      local_nodes_[ t ].reserve_additional( n_per_thread );
       model.reserve_additional( t, n_per_thread );
 
       for ( index gid = min_gid; gid <= max_gid; ++gid )

@@ -1286,6 +1286,19 @@ NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::eq_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum gidcoll_other = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+
+  const bool res = gidcoll->operator==( gidcoll_other );
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
 NestModule::BeginIterator_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
@@ -1849,6 +1862,39 @@ NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/** @BeginDocumentation
+  Name: Apply
+*/
+void
+NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+
+  auto result = apply( param, positions );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
+NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+
+  auto result = apply( param, gc );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -1917,6 +1963,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
   i->createcommand( "GetValue_P", &getvalue_Pfunction );
+  i->createcommand( "Apply_P_D", &apply_P_Dfunction );
+  i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
@@ -1953,6 +2001,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( "eq_g", &eq_gfunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
   i->createcommand( ":enditerator_g", &enditerator_gfunction );
   i->createcommand( ":getgid_q", &getgid_qfunction );

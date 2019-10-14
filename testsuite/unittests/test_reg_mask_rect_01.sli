@@ -47,8 +47,7 @@
 %
 %      6 -> 32          21 -> 37 42 47   26 -> 42 47 52
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false

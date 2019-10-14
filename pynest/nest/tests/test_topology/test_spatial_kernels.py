@@ -184,8 +184,9 @@ class SpatialTester(object):
                 alpha=self._params['kappa'],
                 theta=self._params['theta'])
 
-        self._conndict = {'connection_type': 'divergent',
-                          'mask': maskdict, 'kernel': kernel}
+        self._conndict = {'rule': 'pairwise_bernoulli',
+                          'p': kernel,
+                          'mask': maskdict}
 
     def _create_distance_data(self):
 
@@ -245,14 +246,12 @@ class SpatialTester(object):
                                    positions=nest.spatial.free(
                                        pos, [self._L] * self._dimensions,
                                        edge_wrap=True))
-            cntr = nest.FindCenterElement(self._ls)
-            indx = cntr - self._ls[0].get('global_id')
-            self._driver = self._ls[indx]
+            self._driver = nest.FindCenterElement(self._ls)
 
     def _connect(self):
         '''Connect populations.'''
 
-        nest.ConnectLayers(self._ls, self._lt, self._conndict)
+        nest.Connect(self._ls, self._lt, self._conndict)
 
     def _all_distances(self):
         '''Return distances to all nodes in target population.'''
@@ -275,8 +274,8 @@ class SpatialTester(object):
         # both to see if they match, and put the correct distance in a list
         # containig target distances if true.
         counter = 0
-        for indx, gid in enumerate(self._lt):
-            if gid == target_nodes[counter]:
+        for indx, gc in enumerate(self._lt):
+            if gc.get('global_id') == target_nodes[counter]:
                 target_dist.append(dist[indx])
                 counter += 1
                 # target_nodes might be shorter than lt
@@ -357,7 +356,7 @@ class SpatialTester(object):
                             return D * (math.pi - beta - delta -
                                         2 * gamma) * kofD
                         if ((D >= math.sqrt(b ** 2 + c ** 2)) and
-                           (D < math.sqrt(d ** 2 + c ** 2))):
+                                (D < math.sqrt(d ** 2 + c ** 2))):
                             return D * (math.pi / 2. - delta - gamma) * kofD
 
                     if (c < math.sqrt(a ** 2 + d ** 2)):
@@ -368,11 +367,11 @@ class SpatialTester(object):
                             return D * (3 * math.pi / 2. - alpha - beta -
                                         2 * (delta + gamma)) * kofD
                         if ((D >= math.sqrt(a ** 2 + d ** 2)) and
-                           (D < math.sqrt(b ** 2 + c ** 2))):
+                                (D < math.sqrt(b ** 2 + c ** 2))):
                             return D * (math.pi - beta - delta -
                                         2 * gamma) * kofD
                         if ((D >= math.sqrt(b ** 2 + c ** 2)) and
-                           (D < math.sqrt(d ** 2 + c ** 2))):
+                                (D < math.sqrt(d ** 2 + c ** 2))):
                             return D * (math.pi / 2. - delta - gamma) * kofD
                     if (D >= math.sqrt(d ** 2 + c ** 2)):
                         return 0.
@@ -396,15 +395,15 @@ class SpatialTester(object):
                             return 2 * D * (math.pi - alpha - beta -
                                             delta - gamma) * kofD
                         if ((D >= math.sqrt(a ** 2 + b ** 2)) and
-                           (D < math.sqrt(a ** 2 + d ** 2))):
+                                (D < math.sqrt(a ** 2 + d ** 2))):
                             return D * (3 * math.pi / 2. - alpha - beta -
                                         2 * (delta + gamma)) * kofD
                         if ((D >= math.sqrt(a ** 2 + d ** 2)) and
-                           (D < math.sqrt(b ** 2 + c ** 2))):
+                                (D < math.sqrt(b ** 2 + c ** 2))):
                             return D * (math.pi - beta - delta -
                                         2 * gamma) * kofD
                         if ((D >= math.sqrt(b ** 2 + c ** 2)) and
-                           (D < math.sqrt(d ** 2 + c ** 2))):
+                                (D < math.sqrt(d ** 2 + c ** 2))):
                             return D * (math.pi / 2. - delta - gamma) * kofD
 
                     if (((math.sqrt(a ** 2 + b ** 2) <= c) and
@@ -413,7 +412,7 @@ class SpatialTester(object):
                             return 2 * D * (math.pi -
                                             (alpha + beta + delta)) * kofD
                         if ((D >= math.sqrt(a ** 2 + b ** 2)) and
-                           (D < math.sqrt(a ** 2 + d ** 2))):
+                                (D < math.sqrt(a ** 2 + d ** 2))):
                             return D * (3 * math.pi / 2. - alpha - beta -
                                         2 * delta) * kofD
                         if (D < c) and (D >= math.sqrt(a ** 2 + d ** 2)):
@@ -422,7 +421,7 @@ class SpatialTester(object):
                             return D * (math.pi - beta - delta -
                                         2 * gamma) * kofD
                         if ((D >= math.sqrt(b ** 2 + c ** 2)) and
-                           (D < math.sqrt(d ** 2 + c ** 2))):
+                                (D < math.sqrt(d ** 2 + c ** 2))):
                             return D * (math.pi / 2. - delta - gamma) * kofD
 
                     if (((math.sqrt(a ** 2 + b ** 2) < c) and
@@ -437,11 +436,11 @@ class SpatialTester(object):
                             return D * (3 * math.pi / 2. - alpha - beta -
                                         2 * (delta + gamma)) * kofD
                         if ((D >= math.sqrt(a ** 2 + d ** 2)) and
-                           (D < math.sqrt(b ** 2 + c ** 2))):
+                                (D < math.sqrt(b ** 2 + c ** 2))):
                             return D * (math.pi - beta - delta -
                                         2 * gamma) * kofD
                         if ((D >= math.sqrt(b ** 2 + c ** 2)) and
-                           (D < math.sqrt(d ** 2 + c ** 2))):
+                                (D < math.sqrt(d ** 2 + c ** 2))):
                             return D * (math.pi / 2. - delta - gamma) * kofD
                     if (D >= math.sqrt(d ** 2 + c ** 2)):
                         return 0.
@@ -797,7 +796,7 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(TestSpatial2D),
         unittest.TestLoader().loadTestsFromTestCase(TestSpatial2DOBC),
         unittest.TestLoader().loadTestsFromTestCase(TestSpatial3D),
-        ])
+    ])
     return suite
 
 

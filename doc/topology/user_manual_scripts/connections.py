@@ -568,7 +568,7 @@ cdict = {'rule': 'fixed_outdegree',
          'p': nest.math.max(1. - 2 * nest.spatial.distance, 0.),
          'mask': {'circular': {'radius': 1.0}},
          'outdegree': 50,
-         'multapses': True, 'autapses': False}
+         'allow_multapses': True, 'allow_autapses': False}
 #{ end #}
 pn_fig(fig, 111, l, cdict)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# connex_ew.py
+# conncon_targets.py
 #
 # This file is part of NEST.
 #
@@ -20,11 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-NEST Topology Module Example
+NEST Spatial Example
 
-Create two 30x30 layers of iaf_psc_alpha neurons with edge_wrap,
-connect with circular mask, flat probability,
-visualize.
+Create two populations of iaf_psc_alpha neurons on a 30x30 grid,
+connect with convergent projection and rectangular mask,
+visualize connections from source perspective.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -32,27 +32,24 @@ Hans Ekkehard Plesser, UMB
 
 import pylab
 import nest
-import nest.topology as topo
-
 
 nest.ResetKernel()
 
-# create two test layers
-a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha'})
-b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
+pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 
-conndict = {'connection_type': 'divergent',
-            'mask': {'circular': {'radius': 0.5}},
-            'kernel': 0.5,
-            'weights': {'uniform': {'min': 0.5, 'max': 2.0}},
-            'delays': 1.0}
-topo.ConnectLayers(a, b, conndict)
+# create and connect two populations
+a = nest.Create('iaf_psc_alpha', positions=pos)
+b = nest.Create('iaf_psc_alpha', positions=pos)
 
-pylab.clf()
+cdict = {'rule': 'pairwise_bernoulli',
+         'p': 0.5,
+         'use_on_source': True,
+         'mask': {'rectangular': {'lower_left': [-0.2, -0.5],
+                                  'upper_right': [0.2, 0.5]}}}
 
-# plot targets of neurons in different grid locations
+nest.Connect(a, b,
+             conn_spec=cdict,
+             syn_spec={'weight': nest.random.uniform(0.5, 2.)})
 
 # first, clear existing figure, get current figure
 pylab.clf()
@@ -62,7 +59,7 @@ fig = pylab.gcf()
 for src_index in [30 * 15 + 15, 0]:
     # obtain node id for center
     src = a[src_index:src_index + 1]
-    topo.PlotTargets(src, b, mask=conndict['mask'], fig=fig)
+    nest.PlotTargets(src, b, mask=cdict['mask'], fig=fig)
 
 # beautify
 pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
@@ -74,4 +71,4 @@ pylab.title('Connection targets')
 
 pylab.show()
 
-# pylab.savefig('connex_ew.pdf')
+# pylab.savefig('conncon_targets.pdf')

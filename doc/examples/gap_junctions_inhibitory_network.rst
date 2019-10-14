@@ -93,8 +93,8 @@ The desired connections are created with the following commands:
 
     conn_dict = {'rule': 'fixed_indegree',
                  'indegree': inh_per_neuron,
-                 'autapses': False,
-                 'multapses': True}
+                 'allow_autapses': False,
+                 'allow_multapses': True}
 
     syn_dict = {'synapse_model': 'static_synapse',
                 'weight': j_inh,

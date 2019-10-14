@@ -22,7 +22,7 @@
 
 
 % expectation:
-%   /anchor << /row -1 /column 0 >> : fictional point above upper left corner of mask aligned with source
+%   /anchor [ 0 -1 ] : fictional point above upper left corner of mask aligned with source
 %
 %    Sources                      Targets
 %     2  7 12 17 22    	          28 33 38 43 48
@@ -40,8 +40,7 @@
 %      6 ->    	        21 ->  	       26 ->
 
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
@@ -52,7 +51,7 @@
 /tgt_layer layer def
 
 /conns << /connection_type (divergent)
-          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row -1 /column 0 >> >>
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ 0 -1 ] >>
        >> def
 
 /source_layer_ref

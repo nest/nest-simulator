@@ -116,7 +116,7 @@ template < int D >
 std::shared_ptr< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree()
 {
-  if ( cached_ntree_gc_ == get_metadata() )
+  if ( cached_ntree_md_ == get_metadata() )
   {
     assert( cached_ntree_.get() );
     return cached_ntree_;
@@ -152,7 +152,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
   do_get_global_positions_ntree_();
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
 
   return cached_ntree_;
 }
@@ -161,7 +161,7 @@ template < int D >
 std::shared_ptr< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_()
 {
-  if ( cached_vector_gc_ == get_metadata() )
+  if ( cached_vector_md_ == get_metadata() )
   {
     // Convert from vector to Ntree
 
@@ -182,7 +182,7 @@ Layer< D >::do_get_global_positions_ntree_()
 
   clear_vector_cache_();
 
-  cached_ntree_gc_ = get_metadata();
+  cached_ntree_md_ = get_metadata();
 
   return cached_ntree_;
 }
@@ -191,7 +191,7 @@ template < int D >
 std::vector< std::pair< Position< D >, index > >*
 Layer< D >::get_global_positions_vector()
 {
-  if ( cached_vector_gc_ == get_metadata() )
+  if ( cached_vector_md_ == get_metadata() )
   {
     assert( cached_vector_ );
     return cached_vector_;
@@ -201,7 +201,7 @@ Layer< D >::get_global_positions_vector()
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( cached_ntree_gc_ == get_metadata() )
+  if ( cached_ntree_md_ == get_metadata() )
   {
     // Convert from NTree to vector
 
@@ -220,7 +220,7 @@ Layer< D >::get_global_positions_vector()
 
   clear_ntree_cache_();
 
-  cached_vector_gc_ = get_metadata();
+  cached_vector_md_ = get_metadata();
 
   return cached_vector_;
 }

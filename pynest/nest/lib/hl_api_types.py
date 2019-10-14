@@ -47,123 +47,6 @@ __all__ = [
 ]
 
 
-def _restructure_data(result, keys):
-    """
-    Restructure output data for Connectome in get.
-
-    Parameters
-    ----------
-    result: list
-        list of status dictionaries or list (of lists) of parameter values.
-    keys: string or list of strings
-        name(s) of properties
-
-    Returns
-    -------
-    int, list or dict
-    """
-    if is_literal(keys):
-        final_result = result[0] if len(result) == 1 else list(result)
-
-    elif is_iterable(keys):
-        final_result = ({key: [val[i] for val in result]
-                         for i, key in enumerate(keys)} if len(result) != 1
-                        else {key: val[i] for val in result
-                              for i, key in enumerate(keys)})
-
-    elif keys is None:
-        final_result = ({key: [result_dict[key] for result_dict in result]
-                         for key in result[0]} if len(result) != 1
-                        else {key: result_dict[key] for result_dict in result
-                              for key in result[0]})
-    return final_result
-
-
-def _get_params_is_strings(gc, param):
-    """
-    Get parameters from nodes.
-
-    Used by GIDCollection.get()
-
-    Parameters
-    ----------
-    gc: GIDCollection
-        nodes to get values from
-    param: string or list of strings
-        string or list of string naming model properties.
-
-    Returns
-    -------
-    int, list:
-        param is a string so the value(s) is returned
-    dict:
-        param is a list of string so a dictionary is returned
-    """
-    # Single literal case
-    if is_literal(param):
-        cmd = '/{} get'.format(param)
-        sps(gc._datum)
-        try:
-            sr(cmd)
-            result = spp()
-        except kernel.NESTError:
-            result = gc.get()[param]  # If the GIDCollection is a composite.
-
-    # Array param case
-    elif is_iterable(param):
-        result = {param_name: gc.get(param_name) for param_name in param}
-
-    else:
-        raise TypeError("Params should be either a string or an iterable")
-
-    return result
-
-
-def _get_hierarchical_addressing(gc, params):
-    """
-    Get parameters from nodes, hierarchical case.
-
-    Used by GIDCollection.get()
-
-    Parameters
-    ----------
-    gc: GIDCollection
-        nodes to get values from
-    params: tuple
-        first value in the tuple should be a string, second can be a string
-        or a list of string.
-        The first value corresponds to the path into the hierarchical structure
-        while the second value corresponds to the name(s) of the desired
-        properties.
-
-    Returns
-    -------
-    int, list:
-        params[-1] is a string so the value(s) is returned
-    dict:
-        params[-1] is a list of string so a dictionary is returned
-    """
-
-    # Right now, NEST only allows get(arg0, arg1) for hierarchical
-    # addressing, where arg0 must be a string and arg1 can be string
-    # or list of strings.
-    if is_literal(params[0]):
-        value_list = gc.get(params[0])
-        if type(value_list) != tuple:
-            value_list = (value_list,)
-    else:
-        raise TypeError('First argument must be a string, specifying' +
-                        ' path into hierarchical dictionary')
-
-    result = _restructure_data(value_list, None)
-
-    if is_literal(params[-1]):
-        result = result[params[-1]]
-    else:
-        result = {key: result[key] for key in params[-1]}
-    return result
-
-
 def CreateParameter(parametertype, specs):
     """
     Create a parameter.
@@ -239,19 +122,19 @@ class GIDCollectionIterator(object):
     consisting of the respective gid and modelID.
     """
 
-    def __init__(self, gc, iterpairs=False):
-        self._gciter = sli_func(':beginiterator_g', gc)
-        self._deref_and_increment = 'dup {} exch :next_q pop'.format(
-            ':getgidmodelid_q' if iterpairs else ':getgid_q')
+    def __init__(self, gc):
+        self._gc = gc
+        self._increment = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        try:
-            val = sli_func(self._deref_and_increment, self._gciter)
-        except kernel.NESTError:
+        if self._increment > len(self._gc) - 1:
             raise StopIteration
+
+        val = sli_func('Take', self._gc._datum, [self._increment + (self._increment >= 0)])
+        self._increment += 1
         return val
 
     next = __next__  # Python2.x
@@ -324,15 +207,13 @@ class GIDCollection(object):
     def __iter__(self):
         return GIDCollectionIterator(self)
 
-    def items(self):
-        return GIDCollectionIterator(self, True)
-
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
             raise NotImplementedError()
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
+
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
@@ -357,10 +238,7 @@ class GIDCollection(object):
 
         if self.__len__() != other.__len__():
             return False
-        for selfpair, otherpair in zip(self.items(), other.items()):
-            if selfpair != otherpair:
-                return False
-        return True
+        return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):
@@ -371,6 +249,9 @@ class GIDCollection(object):
         return sli_func('size', self._datum)
 
     def __str__(self):
+        return sli_func('pcvs', self._datum)
+
+    def __repr__(self):
         return sli_func('pcvs', self._datum)
 
     def set_spatial(self):
@@ -465,10 +346,10 @@ class GIDCollection(object):
             result = sli_func('get', self._datum)
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
-            result = _get_params_is_strings(self, params[0])
+            result = get_parameters(self, params[0])
         else:
             # Hierarchical addressing
-            result = _get_hierarchical_addressing(self, params)
+            result = get_parameters_hierarchical_addressing(self, params)
 
         if pandas_output:
             index = self.get('global_id')
@@ -546,7 +427,9 @@ class GIDCollection(object):
         sli_func('SetStatus', self._datum, params)
 
     def tolist(self):
-        return list(self)
+        if self.__len__() == 0:
+            return []
+        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
     def index(self, gid):
         """
@@ -757,7 +640,7 @@ class Connectome(object):
         result = spp()
 
         # Need to restructure the data.
-        final_result = _restructure_data(result, keys)
+        final_result = restructure_data(result, keys)
 
         if pandas_output:
             index = (self.get('source') if self.__len__() > 1 else
@@ -988,3 +871,18 @@ class Parameter(object):
 
         """
         return sli_func("GetValue", self._datum)
+
+    def apply(self, spatial_gc, positions=None):
+        if positions is None:
+            return sli_func('Apply', self._datum, spatial_gc)
+        else:
+            if len(spatial_gc) != 1:
+                raise ValueError('The GIDCollection must contain a single GID only')
+            if not isinstance(positions, (list, tuple)):
+                raise TypeError('Positions must be a list or tuple of positions')
+            for pos in positions:
+                if not isinstance(pos, (list, tuple, numpy.ndarray)):
+                    raise TypeError('Each position must be a list or tuple')
+                if len(pos) != len(positions[0]):
+                    raise ValueError('All positions must have the same number of dimensions')
+            return sli_func('Apply', self._datum, {'source': spatial_gc, 'targets': positions})

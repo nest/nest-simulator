@@ -19,7 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
  /** @BeginDocumentation
    Name: testsuite::test_aeif_cond_alpha_multisynapse - sli script for the aeif multisynapse model
 
@@ -27,26 +27,26 @@
 
    Description:
    This test creates a multisynapse neuron and first checks if time constants
-   can be set correctly. 
-   Afterwards, it simulates the mutisynapse neuron with n (n=4) different time 
-   constants and records the neuron's synaptic current. At the same time, it simulates 
+   can be set correctly.
+   Afterwards, it simulates the mutisynapse neuron with n (n=4) different time
+   constants and records the neuron's synaptic current. At the same time, it simulates
    n (n=4) single synapse neurons with according parameters.
-   At the end, it compares the multisynapse neuron currents with each according single 
+   At the end, it compares the multisynapse neuron currents with each according single
    synapse current.
-   
+
    SeeAlso:
 
    FirstVersion: January 2014
    Author: Daniel Peppicelli, revised Hans Ekkehard Plesser
  */
- 
+
 (unittest) run
 /unittest using
 
 % This test should only run if we have GSL
 skip_if_without_gsl
 
-<< 
+<<
     /overwrite_files true
 >> SetKernelStatus
 
@@ -55,9 +55,9 @@ skip_if_without_gsl
 /V_peak			0. def
 /a 				4. def
 /b 				80.5 def
-/tau_syn_ex		[0.2 2. 3. 3.] def 
+/tau_syn_ex		[0.2 2. 3. 3.] def
 /tau_syn_in		[0.2 2. 3. 3.] def
-/weights		[1. 1. 1. -1.] def
+/weight		[1. 1. 1. -1.] def
 /spike_time 	100. def
 /delays     	[1. 250. 500. 1000. ] def % ms - The delays have to be ordered and needs enough space between them to avoid noise
 /dt         	0.1 def
@@ -66,13 +66,13 @@ skip_if_without_gsl
 /iaf_cond_alpha GetDefaults dup
 /E_ex get /E_ex Set
 /E_in get /E_in Set
-/E_rev weights { 0. geq { E_ex } { E_in } ifelse } Map def 
+/E_rev weight { 0. geq { E_ex } { E_in } ifelse } Map def
 
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
 
 % Create the several aeif_conf_alpha (one for each synapses of the previous neuron)
-[tau_syn_in tau_syn_ex delays weights] 
+[tau_syn_in tau_syn_ex delays weight]
 {
 	/weight_var exch def
 	/delay_var exch def
@@ -92,7 +92,7 @@ sg << /spike_times [spike_time] >> SetStatus
  
 	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  	vm_for_single_synapse_neuron
-  
+
 } MapThread /vms_for_single_synapse_neuron Set
 
 % Create one voltmeter for the multi synapse neuron
@@ -107,10 +107,10 @@ multisynapse_neuron << /a a >> SetStatus
 multisynapse_neuron << /b b >> SetStatus
 %multisynapse_neuron GetStatus ShowStatus
 
-% create and array [1 .. n] 
+% create and array [1 .. n]
 delays length 1 arraystore Range /synapses_indices exch def
 
-[delays weights synapses_indices]
+[delays weight synapses_indices]
 {
 	/synapses_indice_var exch def
 	abs /weight_var exch def
@@ -130,7 +130,7 @@ d /V_m get cva /currents Set
 % The new array will be used to determine the ranges of comparison between the single neurons and the multisynapse neurons.
 delays reverse arrayload pop pop
 delays length 1 sub
-arraystore reverse 
+arraystore reverse
 simulation_t spike_time sub 1 dt div sub
 append
 /delays_shifted exch def
@@ -147,19 +147,19 @@ append
 
 	% Get the currents of the single synapse model
 	voltmeter_var /events get /V_m get cva
-	
+
 	% black voodoo magic - compare values at the same position in multisynapse currents and according single synapse currents
-	current_pos 1 delay_var spike_time add dt div 
+	current_pos 1 delay_var spike_time add dt div
 	{
-		rot dup rot exch dup rot cvi get rot rot currents exch cvi get sub 
-		tolerance lt true eq assert_or_die 
+		rot dup rot exch dup rot cvi get rot rot currents exch cvi get sub
+		tolerance lt true eq assert_or_die
 	} for
 
 	% Update the current position. In the next loop, we will start from here
 	/current_pos delay_var spike_time add 10 mul def
 
 	pop
-	
+
 } ScanThread
 
 % --------------------------------------
@@ -172,7 +172,7 @@ append
 {
   << >> begin
   ResetKernel
-  
+
   /nrn /aeif_cond_alpha_multisynapse Create def
   
   /mm /multimeter << /time_in_steps true
@@ -181,7 +181,7 @@ append
 		  >> Create def
   
   mm nrn Connect
-  
+
   /len nrn /recordables get length def
   len 3 eq
   end
@@ -192,25 +192,25 @@ assert_or_die
 {
   << >> begin
   ResetKernel
-  
+
   /E_rev1    [0.0  0.0  -85.0] def
   /E_rev2    [0.0  0.0] def
   /E_rev3    [0.0  0.0  -85.0 0.] def
   /tau_syn1  [5.0  1.0  25.0] def
   /tau_syn2  [5.0  1.0] def
   /tau_syn3  [5.0  1.0  25.0 50.] def
-  
-  /nrn /aeif_cond_alpha_multisynapse <<  
+
+  /nrn /aeif_cond_alpha_multisynapse <<
     /E_rev E_rev1 /tau_syn tau_syn1
       >> Create def
   /len1 nrn /recordables get length def
-  
+
   nrn << /E_rev E_rev2 /tau_syn tau_syn2 >> SetStatus
   /len2 nrn /recordables get length def
-  
+
   nrn << /E_rev E_rev3 /tau_syn tau_syn3 >> SetStatus
   /len3 nrn /recordables get length def
-  
+
   len1 5 eq len2 4 eq and len3 6 eq and
   end
 }
@@ -220,9 +220,9 @@ assert_or_die
 {
   << >> begin
   ResetKernel
-  /E_rev       [0.0  0.0  -85.0 20.] def % synaptic reversal potentials  
+  /E_rev       [0.0  0.0  -85.0 20.] def % synaptic reversal potentials
   /tau_syn     [40.0 20.0  30.0 25.] def % synaptic time constants
-  /weights     [1.0  0.5   2.0  1.0] def % synaptic weights
+  /weight     [1.0  0.5   2.0  1.0] def % synaptic weights
   /delays      [1.0  3.0   10.0 10.] def % ms - synaptic delays
   /spike_time  10.  def    % time at which the single spike occurs
   /dt          0.1  def    % time step
@@ -238,7 +238,7 @@ assert_or_die
       /tau exch def
       /W exch def
       /t0 exch def
-      
+
       t
       {
         /tt exch def
@@ -262,14 +262,14 @@ assert_or_die
   sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
   % Create the multisynapse neuron
-  /nrn /aeif_cond_alpha_multisynapse 
+  /nrn /aeif_cond_alpha_multisynapse
     <<  /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 0.
         /E_rev E_rev /tau_syn tau_syn
     >> Create def
 
-  % Create an array of synaptic indexes to loop through 
+  % Create an array of synaptic indexes to loop through
   delays length 1 arraystore Range /synapses_idx exch def
-  [delays weights synapses_idx] % loop on synaptic receptor ports
+  [delays weight synapses_idx] % loop on synaptic receptor ports
   {
     /syn_id exch def
     /W exch def
@@ -303,7 +303,7 @@ assert_or_die
   /sim_gs [sim_g_1 sim_g_2 sim_g_3 sim_g_4] def
 
   true
-  [delays weights tau_syn sim_gs]
+  [delays weight tau_syn sim_gs]
   {
     /sim_g  exch def
     /tau    exch def

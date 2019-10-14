@@ -55,6 +55,7 @@ from . import test_parrot_neuron
 from . import test_pp_psc_delta
 from . import test_pp_psc_delta_stdp
 from . import test_quantal_stp_synapse
+from . import test_random_parameter
 from . import test_rate_copy_model
 from . import test_rate_instantaneous_and_delayed
 from . import test_rate_neuron
@@ -107,6 +108,7 @@ def suite():
     suite.addTest(test_pp_psc_delta.suite())
     suite.addTest(test_pp_psc_delta_stdp.suite())
     suite.addTest(test_quantal_stp_synapse.suite())
+    suite.addTest(test_random_parameter.suite())
     suite.addTest(test_rate_copy_model.suite())
     suite.addTest(test_rate_instantaneous_and_delayed.suite())
     suite.addTest(test_rate_neuron.suite())

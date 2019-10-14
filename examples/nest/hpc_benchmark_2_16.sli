@@ -291,22 +291,22 @@ brunel_params dup using
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
 
-  E_neurons E_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >> << /synapse_model /stdp_pl_synapse_hom_hpc >> Connect
+  E_neurons E_neurons << /rule (fixed_indegree) /indegree CE /allow_autapses false /allow_multapses true >> << /synapse_model /stdp_pl_synapse_hom_hpc >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> excitatory population.) message
 
-  I_neurons E_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >> << /synapse_model /syn_in >> Connect
+  I_neurons E_neurons << /rule (fixed_indegree) /indegree CI /allow_autapses false /allow_multapses true >> << /synapse_model /syn_in >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> inhibitory population.) message
 
-  E_neurons I_neurons << /rule (fixed_indegree) /indegree CE /autapses false /multapses true >> << /synapse_model /syn_ex >> Connect
+  E_neurons I_neurons << /rule (fixed_indegree) /indegree CE /allow_autapses false /allow_multapses true >> << /synapse_model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> inhibitory population.) message
 
-  I_neurons I_neurons << /rule (fixed_indegree) /indegree CI /autapses false /multapses true >> << /synapse_model /syn_in >> Connect
+  I_neurons I_neurons << /rule (fixed_indegree) /indegree CI /allow_autapses false /allow_multapses true >> << /synapse_model /syn_in >> Connect
 
 
   record_spikes true eq

@@ -168,7 +168,7 @@ modeldict begin
 
   % connect neurons all to all
   /autapses_bool true def         % Change to false to avoid self connections
-  neurons neurons << /rule /all_to_all /autapses autapses_bool >> << /weight strength /delay delay >> Connect
+  neurons neurons << /rule /all_to_all /allow_autapses autapses_bool >> << /weight strength /delay delay >> Connect
 
   /*                                    % uncomment to verify connections
   %% Readout if everything works

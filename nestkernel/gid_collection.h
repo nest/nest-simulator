@@ -335,8 +335,7 @@ public:
   virtual long find( const index ) const = 0;
 
 private:
-  std::clock_t fingerprint_; //!< Unique identity of the kernel that created the
-                             //!< GIDCollection
+  unsigned long fingerprint_; //!< Unique identity of the kernel that created the //!< GIDCollection
   static GIDCollectionPTR create_();
   static GIDCollectionPTR create_( const std::vector< index >& );
 };
@@ -578,7 +577,7 @@ inline GIDTriple gc_const_iterator::operator*() const
     gt.gid = primitive_collection_->first_ + element_idx_;
     if ( gt.gid > primitive_collection_->last_ )
     {
-      throw KernelException( "Invalid GIDCollection iterator" );
+      throw KernelException( "Invalid GIDCollection iterator (primitive element beyond last element)" );
     }
     gt.model_id = primitive_collection_->model_id_;
     gt.lid = element_idx_;
@@ -593,13 +592,13 @@ inline GIDTriple gc_const_iterator::operator*() const
              or ( part_idx_ == composite_collection_->stop_part_
                   and element_idx_ < composite_collection_->stop_offset_ ) ) )
       {
-        throw KernelException( "Invalid GIDCollection iterator" );
+        throw KernelException( "Invalid GIDCollection iterator (composite element beyond specified stop element)" );
       }
     }
     else if ( part_idx_ >= composite_collection_->parts_.size()
       or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {
-      throw KernelException( "Invalid GIDCollection iterator" );
+      throw KernelException( "Invalid GIDCollection iterator (composite element beyond last composite element)" );
     }
 
     // Add to local placement from GIDCollectionPrimitives that comes before the
@@ -628,6 +627,10 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   if ( primitive_collection_ )
   {
     element_idx_ += step_;
+    if ( element_idx_ >= primitive_collection_->size() )
+    {
+      element_idx_ = primitive_collection_->size();
+    }
   }
   else
   {
@@ -643,6 +646,22 @@ inline gc_const_iterator& gc_const_iterator::operator++()
       {
         primitive_size = composite_collection_->parts_[ part_idx_ ].size();
       }
+    }
+    // If we went past the end of the composite, we need to adjust the
+    // position of the iterator.
+    if ( composite_collection_->stop_offset_ != 0 or composite_collection_->stop_part_ != 0 )
+    {
+      if ( part_idx_ >= composite_collection_->stop_part_ and element_idx_ >= composite_collection_->stop_offset_ )
+      {
+        part_idx_ = composite_collection_->stop_part_;
+        element_idx_ = composite_collection_->stop_offset_;
+      }
+    }
+    else if ( part_idx_ >= composite_collection_->parts_.size() )
+    {
+      auto end_of_composite = composite_collection_->end();
+      part_idx_ = end_of_composite.part_idx_;
+      element_idx_ = end_of_composite.element_idx_;
     }
   }
   return *this;
@@ -837,35 +856,10 @@ GIDCollectionComposite::size() const
   return size_;
 }
 
-inline bool
-GIDCollectionComposite::contains( index gid ) const
-{
-  long lower = 0;
-  long upper = parts_.size() - 1;
-  while ( lower <= upper )
-  {
-    size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
-    {
-      lower = middle + 1;
-    }
-    else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
-    {
-      upper = middle - 1;
-    }
-    else
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
 inline void
 GIDCollectionComposite::set_metadata( GIDCollectionMetadataPTR meta )
 {
-  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin(); gc != parts_.end();
-        ++gc ) // iterate over GIDCollections
+  for ( std::vector< GIDCollectionPrimitive >::iterator gc = parts_.begin(); gc != parts_.end(); ++gc )
   {
     ( *gc ).set_metadata( meta );
   }

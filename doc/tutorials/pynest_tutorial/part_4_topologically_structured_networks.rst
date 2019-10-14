@@ -240,7 +240,7 @@ that can be used.
     conn1 = {'rule': 'pairwise_bernoulli',
              'p': nest.distributions.gaussian(nest.spatial.distance, std_deviation=0.2),
              'mask': {'circular': {'radius': 0.75}},
-             'autapses': False
+             'allow_autapses': False
              }
 
     # Rectangular mask with non-centered anchor, constant connection probability
@@ -248,7 +248,7 @@ that can be used.
              'p': 0.75,
              'mask': {'rectangular': {'lower_left': [-0.5, -0.5], 'upper_right': [0.5, 0.5]},
                      'anchor': [0.5, 0.5]},
-             'autapses': False
+             'allow_autapses': False
              }
 
     # Donut mask, linear distance-dependent connection probability
@@ -265,7 +265,7 @@ that can be used.
              'weight': nest.distributions.gaussian(
                  nest.spatial.distance, p_center=J, std_deviation=0.25),
              'delay': 0.1 + 0.2 * nest.spatial.distance,
-             'autapses': False
+             'allow_autapses': False
              }
 
 +-------------------------+--------------------------------------------------+---------------------------------------+

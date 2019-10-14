@@ -71,6 +71,7 @@ public:
     return layer_;
   }
 
+  // Using string as enum would make stuff more complicated
   std::string
   get_type() const
   {

@@ -76,35 +76,47 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with random.uniform as parameter"""
         min_val = -75.
         max_val = -55.
-        nodes = nest.Create('iaf_psc_alpha', 3,
+        N = 3
+        nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.uniform(
                                 min=min_val, max=max_val)})
+        self.assertEqual(len(nodes.get('V_m')), N)
+        self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
+                         'Values from random distribution are not unique')
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, min_val)
             self.assertLessEqual(vm, max_val)
 
     def test_create_normal(self):
         """Test Create with random.normal as parameter"""
-        nodes = nest.Create('iaf_psc_alpha', 3,
+        N = 3
+        nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.normal(
-                                loc=10.0, scale=5.0, min=0.5)})
-        for vm in nodes.get('V_m'):
-            self.assertGreaterEqual(vm, 0.5)
+                                loc=10.0, scale=5.0)})
+        self.assertEqual(len(nodes.get('V_m')), N)
+        self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
+                         'Values from random distribution are not unique')
 
     def test_create_exponential(self):
         """Test Create with random.exonential as parameter"""
-        nodes = nest.Create('iaf_psc_alpha', 3,
+        N = 3
+        nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.exponential(scale=1.0)})
+        self.assertEqual(len(nodes.get('V_m')), N)
+        self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
+                         'Values from random distribution are not unique')
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, 0.)
 
     def test_create_lognormal(self):
         """Test Create with random.lognormal as parameter"""
-        nodes = nest.Create('iaf_psc_alpha', 3,
+        N = 3
+        nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.lognormal(
-                                mean=10., sigma=20.)})
-        for vm in nodes.get('V_m'):
-            self.assertGreaterEqual(vm, 0.)
+                                mu=10., sigma=20.)})
+        self.assertEqual(len(nodes.get('V_m')), N)
+        self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
+                         'Values from random distribution are not unique')
 
     def test_create_adding(self):
         """Test Create with different parameters added"""
@@ -606,16 +618,18 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
+        vm_low_x = -50
+        vm_high_x = -42
         layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x > 0.3,
-                                                 -42,
-                                                 -50)})
+                                                 vm_high_x,
+                                                 vm_low_x)})
         status = layer.get()
 
         for pos, vm in zip(positions, status['V_m']):
             x_pos = pos[0]
             # Almost equal because of roundoff errors.
             self.assertAlmostEqual(vm,
-                                   -42 if x_pos > 0.3 else -50,
+                                   vm_high_x if x_pos > 0.3 else vm_low_x,
                                    places=12)
 
     def test_parameter_pos(self):

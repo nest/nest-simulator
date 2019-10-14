@@ -55,44 +55,43 @@ class RotatedRectangularMask(unittest.TestCase):
 
         # Test 2D layer
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=5,
-                                                        columns=5,
+                            positions=nest.spatial.grid(shape=[5, 5],
                                                         extent=[5., 5.]))
 
         # First test without rotation.
         maskdict = {'lower_left': [-1., -0.5], 'upper_right': [1., 0.5]}
         mask = nest.CreateMask('rectangular', maskdict)
         cntr = [0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (8, 13, 18,))
+        self.assertEqual(gids, nest.GIDCollection((8, 13, 18,)))
 
         # Test if we get correct GIDs when rotating 90 degrees.
         maskdict = {'lower_left': [-1., -0.5],
                     'upper_right': [1., 0.5],
                     'azimuth_angle': 90.0}
         mask = nest.CreateMask('rectangular', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (12, 13, 14,))
+        self.assertEqual(gids, nest.GIDCollection((12, 13, 14,)))
 
         # Test rotation with an azimuth angle of 45 degrees.
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'azimuth_angle': 45.0}
         mask = nest.CreateMask('rectangular', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (9, 13, 17,))
+        self.assertEqual(gids, nest.GIDCollection((9, 13, 17,)))
 
         # Test rotation with an azimuth angle of 135 degrees.
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'azimuth_angle': 135.0}
         mask = nest.CreateMask('rectangular', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (7, 13, 19,))
+        self.assertEqual(gids, nest.GIDCollection((7, 13, 19,)))
 
         # Test that an error is raised if we send in a polar angle to a 2D
         # mask.
@@ -117,18 +116,16 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [1., 0.5, 0.5]}
         mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (38, 63, 88,))
+        self.assertEqual(gids, nest.GIDCollection((38, 63, 88,)))
 
         # Test with a larger box mask.
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.]}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [37, 38, 39, 62, 63, 64, 87, 88, 89])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([37, 38, 39, 62, 63, 64, 87, 88, 89]))
 
         # Test the smaller box mask with a rotation of 90 degrees. Only test
         # the azimuth angle, not the polar angle.
@@ -136,19 +133,17 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [1., 0.5, 0.5],
                     'azimuth_angle': 90.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (58, 63, 68,))
+        self.assertEqual(gids, nest.GIDCollection((58, 63, 68,)))
 
         # Test rotation of the larger box with an azimuth angle of 90 degrees.
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.],
                     'azimuth_angle': 90.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([57, 58, 59, 62, 63, 64, 67, 68, 69]))
 
     def test_RotatedBoxMaskByPolarAngle(self):
         """Test rotated box mask with polar angle."""
@@ -164,20 +159,16 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [0.5, 1.0, 1.0]}
         mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([57, 58, 59, 62, 63, 64, 67, 68, 69]))
 
         # Test with a polar angle of 90 degrees.
         maskdict = {'lower_left': [-0.5, -1.0, -1.0],
                     'upper_right': [0.5, 1.0, 1.0],
                     'polar_angle': 90.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [33, 38, 43, 58, 63, 68, 83, 88, 93])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([33, 38, 43, 58, 63, 68, 83, 88, 93]))
 
         # Test with a polar angle of 180 degrees, should be the same as the
         # one without a polar angle.
@@ -185,20 +176,16 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [0.5, 1.0, 1.0],
                     'polar_angle': 180.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [57, 58, 59, 62, 63, 64, 67, 68, 69])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([57, 58, 59, 62, 63, 64, 67, 68, 69]))
 
         # Test with a polar angle of 45 degrees.
         maskdict = {'lower_left': [-0.5, -1.5, -1.5],
                     'upper_right': [0.5, 1.5, 1.5],
                     'polar_angle': 45.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list, [32, 37, 42, 58, 63, 68, 84, 89, 94])
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([32, 37, 42, 58, 63, 68, 84, 89, 94]))
 
         # Test with a polar angle of 135 degrees. The GIDs should be
         # perpendicular to the ones obtained by a polar angle of 45 degrees.
@@ -206,10 +193,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [0.5, 1.5, 1.5],
                     'polar_angle': 135.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(sorted_gid_list, [34, 39, 44, 58, 63, 68, 82, 87, 92])
+        self.assertEqual(gids, nest.GIDCollection([34, 39, 44, 58, 63, 68, 82, 87, 92]))
 
         # Test two symmetric masks in x and z direction. One with no polar
         # angle and one with a polar angle of 90 degrees. As the masks are
@@ -218,22 +204,18 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.]}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list_1 = sorted(gid_list)
+        gids_2 = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(sorted_gid_list_1,
-                         [37, 38, 39, 62, 63, 64, 87, 88, 89])
+        self.assertEqual(gids_2, nest.GIDCollection([37, 38, 39, 62, 63, 64, 87, 88, 89]))
 
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.],
                     'polar_angle': 90.}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
+        self.assertEqual(gids, nest.GIDCollection([37, 38, 39, 62, 63, 64, 87, 88, 89]))
 
-        self.assertEqual(sorted_gid_list, [37, 38, 39, 62, 63, 64, 87, 88, 89])
-
-        self.assertEqual(sorted_gid_list_1, sorted_gid_list)
+        self.assertEqual(gids_2, gids)
 
     def test_RotatedBoxMaskByAzimuthAndPolarAngle(self):
         """Test rotated box mask with azimuth and polar angle."""
@@ -251,12 +233,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'polar_angle': 45.}
         mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        sorted_gid_list = sorted(gid_list)
-
-        self.assertEqual(sorted_gid_list,
-                         [37, 38, 43, 57, 58, 63, 68, 69, 83, 88, 89])
+        self.assertEqual(gids, nest.GIDCollection([37, 38, 43, 57, 58, 63, 68, 69, 83, 88, 89]))
 
     def test_RotatedRectangleOutsideOrigin(self):
         """
@@ -264,8 +243,7 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         layer = nest.Create('iaf_psc_alpha',
-                            positions=nest.spatial.grid(rows=11,
-                                                        columns=11,
+                            positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[11., 11.]))
 
         # First test that we get the correct GIDs when our mask does not
@@ -273,9 +251,9 @@ class RotatedRectangularMask(unittest.TestCase):
         maskdict = {'lower_left': [1., 1.], 'upper_right': [4., 2.]}
         mask = nest.CreateMask('rectangular', maskdict)
         cntr = [0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (70, 71, 81, 82, 92, 93, 103, 104,))
+        self.assertEqual(gids, nest.GIDCollection((70, 71, 81, 82, 92, 93, 103, 104,)))
 
         # Then test that we get the correct GIDs with a azimuth rotation angle
         # of 45 degrees when the mask does not contain the origin.
@@ -283,9 +261,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [4.5, 2.5],
                     'azimuth_angle': 45.0}
         mask = nest.CreateMask('rectangular', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (71, 81, 82, 83, 91, 92, 93, 103,))
+        self.assertEqual(gids, nest.GIDCollection((71, 81, 82, 83, 91, 92, 93, 103,)))
 
         # Test that we get the correct GIDs with a azimuth rotation angle
         # of 90 degrees when the mask does not contain the origin.
@@ -293,9 +271,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [4.0, 2.0],
                     'azimuth_angle': 90.0}
         mask = nest.CreateMask('rectangular', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (80, 81, 82, 83, 91, 92, 93, 94,))
+        self.assertEqual(gids, nest.GIDCollection((80, 81, 82, 83, 91, 92, 93, 94,)))
 
     def test_RotatedBoxOutsideOrigin(self):
         """Test rotated box where the mask does not contain the origin."""
@@ -312,9 +290,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [-0.5, -0.5, 2.0]}
         mask = nest.CreateMask('box', maskdict)
         cntr = [0., 0., 0.]
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (9, 10, 34, 35,))
+        self.assertEqual(gids, nest.GIDCollection((9, 10, 34, 35,)))
 
         # Test that we get the correct GIDs with a azimuth rotation angle of 45
         # degrees when the mask does not contain the origin.
@@ -322,9 +300,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [-0.5, -0.5, 2.5],
                     'azimuth_angle': 45.0}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (9, 10, 39, 40,))
+        self.assertEqual(gids, nest.GIDCollection((9, 10, 39, 40,)))
 
         # Test that we get the correct GIDs with a polar rotation angle of 45
         # degrees when the mask does not contain the origin.
@@ -332,9 +310,9 @@ class RotatedRectangularMask(unittest.TestCase):
                     'upper_right': [-1.0, -0.5, 2.5],
                     'polar_angle': 45.0}
         mask = nest.CreateMask('box', maskdict)
-        gid_list = nest.SelectNodesByMask(layer, cntr, mask)
+        gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gid_list, (4, 9, 30, 35,))
+        self.assertEqual(gids, nest.GIDCollection((4, 9, 30, 35,)))
 
     def test_ConnectWithRotatedRectangleMask(self):
         """Test connection with rotated rectangle mask.
@@ -371,20 +349,19 @@ class RotatedRectangularMask(unittest.TestCase):
         """
 
         source = nest.Create('iaf_psc_alpha',
-                             positions=nest.spatial.grid(rows=5,
-                                                         columns=5,
+                             positions=nest.spatial.grid(shape=[5, 5],
                                                          extent=[5., 5.]))
         target = nest.Create('iaf_psc_alpha',
-                             positions=nest.spatial.grid(rows=5,
-                                                         columns=5,
+                             positions=nest.spatial.grid(shape=[5, 5],
                                                          extent=[5., 5.]))
 
-        conndict = {'connection_type': 'divergent',
+        conndict = {'rule': 'pairwise_bernoulli',
+                    'p': 1.,
                     'mask': {'rectangular': {'lower_left': [-1.5, -0.5],
                                              'upper_right': [1.5, 0.5],
                                              'azimuth_angle': 45.}}}
 
-        nest.ConnectLayers(source, target, conndict)
+        nest.Connect(source, target, conndict)
 
         ref = [[1, 26], [2, 27], [2, 31], [3, 28], [3, 32], [4, 29], [4, 33],
                [5, 30], [5, 34], [6, 27], [6, 31], [7, 28], [7, 32], [7, 36],

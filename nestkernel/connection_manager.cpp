@@ -969,6 +969,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
               // Passing target_gid = 0 ignores target_gid while getting
               // connections.
               connections->get_connection( source_gid, 0, tid, lcid, synapse_label, conns_in_thread );
+              ;
             }
             else
             {
@@ -980,7 +981,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       }
 
       GIDCollection::const_iterator s_id = source->begin();
-      for ( ; s_id != source->end(); ++s_id )
+      for ( ; s_id < source->end(); ++s_id )
       {
         const index source_gid = ( *s_id ).gid;
         if ( not target.get() )

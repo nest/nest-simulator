@@ -44,8 +44,7 @@
 %      6 -> 31 36 41    21 -> 46 51 31    26 -> 51 31 36
 %           32 37 42          47 52 32          52 32 37
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap true
@@ -56,7 +55,7 @@
 /tgt_layer layer def
 
 /conns << /connection_type (divergent)
-          /mask << /rectangular << /lower_left [-0.001 -0.001] /upper_right [0.6 0.3] >> 
+          /mask << /rectangular << /lower_left [-0.001 -0.001] /upper_right [0.6 0.3] >>
                 >>
        >> def
 

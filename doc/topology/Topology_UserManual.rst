@@ -544,12 +544,12 @@ Connection probability or ``p``
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
    Autapses are permitted by default, but can be disabled by adding
-   ``'autapses': False`` to the connection dictionary.
+   ``'allow_autapses': False`` to the connection dictionary.
 
 Multapse
    Node A is connected to node B by a *multapse* if there are synapses
    (connections) from A to B. Multapses are permitted by default, but
-   can be disabled by adding ``'multapses': False`` to the
+   can be disabled by adding ``'allow_multapses': False`` to the
    connection dictionary.
 
 .. _sec:minimalcall:

@@ -57,8 +57,8 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
   const DictionaryDatum& syn_spec )
   : sources_( sources )
   , targets_( targets )
-  , autapses_( true )
-  , multapses_( true )
+  , allow_autapses_( true )
+  , allow_multapses_( true )
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
@@ -71,8 +71,8 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
   //  - rule-specific params are handled by subclass c'tor
-  updateValue< bool >( conn_spec, names::autapses, autapses_ );
-  updateValue< bool >( conn_spec, names::multapses, multapses_ );
+  updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
+  updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
@@ -600,10 +600,9 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // todo481: Iterate over local nodes only using GIDCollection's
-        // local_begin(). Also find a way to only iterate the sources
-        // and parameters using the same start and step. This probably
-        // also applies to other ConnBuilders below.
+        // A more efficient way of doing this might be to use GIDCollection's local_begin(). For this to work we would
+        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+        // we are not doing it at the moment. This also applies to other ConnBuilders below.
         GIDCollection::const_iterator target_it = targets_->begin();
         GIDCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
@@ -613,7 +612,7 @@ nest::OneToOneBuilder::connect_()
           const index sgid = ( *source_it ).gid;
           const index tgid = ( *target_it ).gid;
 
-          if ( sgid == tgid and not autapses_ )
+          if ( sgid == tgid and not allow_autapses_ )
           {
             continue;
           }
@@ -646,7 +645,7 @@ nest::OneToOneBuilder::connect_()
 
           // one-to-one, thus we can use target idx for source as well
           const index sgid = ( *sources_ )[ idx ];
-          if ( not autapses_ and sgid == tgid )
+          if ( not allow_autapses_ and sgid == tgid )
           {
             // no skipping required / possible,
             // as we iterate only over local nodes
@@ -747,7 +746,7 @@ nest::OneToOneBuilder::sp_connect_()
         const index sgid = ( *source_it ).gid;
         const index tgid = ( *target_it ).gid;
 
-        if ( sgid == tgid and not autapses_ )
+        if ( sgid == tgid and not allow_autapses_ )
         {
           continue;
         }
@@ -895,7 +894,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, No
   {
     const index sgid = ( *source_it ).gid;
 
-    if ( not autapses_ and sgid == tgid )
+    if ( not allow_autapses_ and sgid == tgid )
     {
       if ( skip )
       {
@@ -936,7 +935,7 @@ nest::AllToAllBuilder::sp_connect_()
         {
           const index sgid = ( *source_it ).gid;
 
-          if ( not autapses_ and sgid == tgid )
+          if ( not allow_autapses_ and sgid == tgid )
           {
             skip_conn_parameter_( tid );
             continue;
@@ -1087,16 +1086,14 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
     const long value = ( *conn_spec )[ names::indegree ];
     indegree_ = new ConstantParameter( value );
 
-    // verify that indegree is not larger than source population if multapses
-    // are
-    // disabled
-    if ( not multapses_ )
+    // verify that indegree is not larger than source population if multapses are disabled
+    if ( not allow_multapses_ )
     {
       if ( value > n_sources )
       {
         throw BadProperty( "Indegree cannot be larger than population size." );
       }
-      else if ( value == n_sources and not autapses_ )
+      else if ( value == n_sources and not allow_autapses_ )
       {
         LOG( M_WARNING,
           "FixedInDegreeBuilder::connect",
@@ -1114,7 +1111,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
           "connectivity. "
           "Expect long connecting times!" );
       }
-    } // if (not multapses_ )
+    } // if (not allow_multapses_ )
 
     if ( value < 0 )
     {
@@ -1218,9 +1215,9 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
     {
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
-    } while ( ( not autapses_ and sgid == tgid ) or ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+    } while ( ( not allow_autapses_ and sgid == tgid ) or ( not allow_multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
-    if ( not multapses_ )
+    if ( not allow_multapses_ )
     {
       ch_ids.insert( s_id );
     }
@@ -1256,13 +1253,13 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
 
     // verify that outdegree is not larger than target population if multapses
     // are disabled
-    if ( not multapses_ )
+    if ( not allow_multapses_ )
     {
       if ( value > n_targets )
       {
         throw BadProperty( "Outdegree cannot be larger than population size." );
       }
-      else if ( value == n_targets and not autapses_ )
+      else if ( value == n_targets and not allow_autapses_ )
       {
         LOG( M_WARNING,
           "FixedOutDegreeBuilder::connect",
@@ -1314,9 +1311,9 @@ nest::FixedOutDegreeBuilder::connect_()
       {
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
-      } while ( ( not autapses_ and tgid == sgid ) or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
+      } while ( ( not allow_autapses_ and tgid == sgid ) or ( not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
 
-      if ( not multapses_ )
+      if ( not allow_multapses_ )
       {
         ch_ids.insert( t_id );
       }
@@ -1370,7 +1367,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( GIDCollectionPTR sources
 
   // verify that total number of connections is not larger than
   // N_sources*N_targets
-  if ( not multapses_ )
+  if ( not allow_multapses_ )
   {
     if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
     {
@@ -1389,7 +1386,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( GIDCollectionPTR sources
   // TODO: Implement option for multapses_ = False, where already existing
   // connections are stored in
   // a bitmap
-  if ( not multapses_ )
+  if ( not allow_multapses_ )
   {
     throw NotImplemented(
       "Connect doesn't support the suppression of multapses in the "
@@ -1516,7 +1513,7 @@ nest::FixedTotalNumberBuilder::connect_()
           Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
           const thread target_thread = target->get_thread();
 
-          if ( autapses_ or sgid != tgid )
+          if ( allow_autapses_ or sgid != tgid )
           {
             single_connect_( sgid, *target, target_thread, rng );
             num_conns_on_vp[ vp_id ]--;
@@ -1638,7 +1635,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
   {
     const index sgid = ( *source_it ).gid;
 
-    if ( not autapses_ and sgid == tgid )
+    if ( not allow_autapses_ and sgid == tgid )
     {
       continue;
     }
@@ -1667,12 +1664,12 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( GIDCollectionPTR sou
     throw BadProperty( "Connection probability 0 <= p < 1 required." );
   }
 
-  if ( not multapses_ )
+  if ( not allow_multapses_ )
   {
     throw BadProperty( "Multapses must be enabled." );
   }
 
-  if ( autapses_ )
+  if ( allow_autapses_ )
   {
     throw BadProperty( "Autapses must be disabled." );
   }
@@ -1895,7 +1892,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
       {
         assert( sgid_it != sources.end() );
 
-        if ( *sgid_it == *tgid_it and not autapses_ )
+        if ( *sgid_it == *tgid_it and not allow_autapses_ )
         {
           continue;
         }

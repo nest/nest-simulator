@@ -311,32 +311,32 @@ Function Section
 
         nest.Connect(E_neurons, E_neurons,
                      {'rule': 'fixed_indegree', 'indegree': CE,
-                         'autapses': False, 'multapses': True},
-                     {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
+                     'allow_autapses': False, 'allow_multapses': True},
+                     {'model': 'stdp_pl_synapse_hom_hpc'})
 
         nest.message(M_INFO, 'build_network',
                      'Connecting inhibitory -> excitatory population.')
 
         nest.Connect(I_neurons, E_neurons,
                      {'rule': 'fixed_indegree', 'indegree': CI,
-                         'autapses': False, 'multapses': True},
-                     {'synapse_model': 'syn_in'})
+                     'allow_autapses': False, 'allow_multapses': True},
+                     {'model': 'syn_in'})
 
         nest.message(M_INFO, 'build_network',
                      'Connecting excitatory -> inhibitory population.')
 
         nest.Connect(E_neurons, I_neurons,
                      {'rule': 'fixed_indegree', 'indegree': CE,
-                         'autapses': False, 'multapses': True},
-                     {'synapse_model': 'syn_ex'})
+                     'allow_autapses': False, 'allow_multapses': True},
+                     {'model': 'syn_ex'})
 
         nest.message(M_INFO, 'build_network',
                      'Connecting inhibitory -> inhibitory population.')
 
         nest.Connect(I_neurons, I_neurons,
                      {'rule': 'fixed_indegree', 'indegree': CI,
-                         'autapses': False, 'multapses': True},
-                     {'synapse_model': 'syn_in'})
+                     'allow_autapses': False, 'allow_multapses': True},
+                     {'model': 'syn_in'})
 
         if params['record_spikes']:
             if params['nvp'] != 1:

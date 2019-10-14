@@ -316,6 +316,12 @@ def set_communicator(comm):
 def init(argv):
     """Initializes NEST.
 
+    If the environment variable PYNEST_QUIET is set, NEST will not print
+    welcome text containing the version and other information. Likewise,
+    if the environment variable PYNEST_DEBUG is set, NEST starts in debug
+    mode. Note that the same effect can be achieved by using the
+    commandline arguments --quiet and --debug respectively.
+
     Parameters
     ----------
     argv : list

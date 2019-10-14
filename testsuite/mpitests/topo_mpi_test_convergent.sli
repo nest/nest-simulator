@@ -28,7 +28,7 @@
 {
   ResetKernel
   << /total_num_virtual_procs 4 >> SetKernelStatus
-  /layer_specs << /rows 4 /columns 4 /elements /iaf_psc_alpha /edge_wrap true >> def
+  /layer_specs << /shape [ 4 4 ] /elements /iaf_psc_alpha /edge_wrap true >> def
   /l1 layer_specs CreateLayer def
   /l2 layer_specs CreateLayer def
 
@@ -39,7 +39,7 @@
 
   /conns << /connection_type (convergent)
             /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
-            /weights linear_parameter
+            /weight linear_parameter
          >> def
   l1 l2 conns ConnectLayers
 

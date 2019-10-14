@@ -38,7 +38,7 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
   Event& e,
   const CommonSynapseProperties& cp )
 {
-  if ( cp.get_wr_gid() != -1 )
+  if ( cp.get_wr_gid() != 0 )
   {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;

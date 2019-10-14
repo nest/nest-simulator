@@ -30,12 +30,12 @@
   ResetKernel
 
   % nodes at [-1,0,1]x[-1,0,1]
-  /l << /elements /iaf_psc_alpha /rows 3 /columns 3 /extent [3. 3.] >> CreateLayer def
+  /l << /elements /iaf_psc_alpha /shape [ 3 3 ] /extent [3. 3.] >> CreateLayer def
   % nodes placed downward columnwise
   l [1] Take l Distance
-  [0. 1. 2.            % first column 
+  [0. 1. 2.            % first column
    1. 2. sqrt 5. sqrt  % second column
-   2. 5. sqrt 8. sqrt] % third column 
+   2. 5. sqrt 8. sqrt] % third column
   eq
 } assert_or_die
 
@@ -44,29 +44,29 @@
   ResetKernel
 
   % nodes at [-1,0,1]x[-1,0,1]
-  /l << /elements /iaf_psc_alpha /rows 3 /columns 3 /extent [3. 3.] /edge_wrap true >> CreateLayer def
+  /l << /elements /iaf_psc_alpha /shape [ 3 3 ] /extent [3. 3.] /edge_wrap true >> CreateLayer def
   % nodes placed downward columnwise
   l [1] Take l Distance
-  [0. 1. 1.            % first column 
+  [0. 1. 1.            % first column
    1. 2. sqrt 2. sqrt  % second column
-   1. 2. sqrt 2. sqrt] % third column 
-  eq 
+   1. 2. sqrt 2. sqrt] % third column
+  eq
 } assert_or_die
 
 % fixed grid, distance from location
 {
   ResetKernel
-  
+
   ('THIRD test') ==
 
   % nodes at [-1,0,1]x[-1,0,1]
-  /l << /elements /iaf_psc_alpha /rows 3 /columns 3 /extent [3. 3.] >> CreateLayer def
+  /l << /elements /iaf_psc_alpha /shape [ 3 3 ] /extent [3. 3.] >> CreateLayer def
   % nodes placed downward columnwise
   [[0. 0.]] l Distance
-  [2. sqrt 1. 2. sqrt   % first column 
+  [2. sqrt 1. 2. sqrt   % first column
    1.      0. 1.        % second column
-   2. sqrt 1. 2. sqrt ] % third column 
-  eq 
+   2. sqrt 1. 2. sqrt ] % third column
+  eq
 } assert_or_die
 
 % fixed grid with periodic BC, distance from location
@@ -74,13 +74,13 @@
   ResetKernel
 
   % nodes at [-1,0,1]x[-1,0,1]
-  /l << /elements /iaf_psc_alpha /rows 3 /columns 3 /extent [3. 3.] /edge_wrap true >> CreateLayer def
+  /l << /elements /iaf_psc_alpha /shape [ 3 3 ] /extent [3. 3.] /edge_wrap true >> CreateLayer def
   % nodes placed downward columnwise
   [[1. 0.]] l Distance
-  [2. sqrt 1. 2. sqrt   % first column 
+  [2. sqrt 1. 2. sqrt   % first column
    2. sqrt 1. 2. sqrt   % second column
-      1.   0.    1. ] % third column 
-  eq 
+      1.   0.    1. ] % third column
+  eq
 } assert_or_die
 
 
@@ -91,8 +91,8 @@
   /l << /elements /iaf_psc_alpha /positions [ [-0.75 0.5] [0.75 0.] ] /extent [2. 2.] >> CreateLayer def
   % nodes placed downward columnwise
   l [1 2] Take l [1] Take Distance
-  [0. 1.5 sqr 0.5 sqr add sqrt ] 
-  eq 
+  [0. 1.5 sqr 0.5 sqr add sqrt ]
+  eq
 } assert_or_die
 
 % free grid, periodic bc, distance from node
@@ -102,8 +102,8 @@
   /l << /elements /iaf_psc_alpha /positions [ [-0.75 0.5] [0.75 0.] ] /extent [2. 2.] /edge_wrap true >> CreateLayer def
   % nodes placed downward columnwise
   l [1 2] Take l [1] Take Distance
-  [0. 0.5 sqr 0.5 sqr add sqrt ] 
-  eq 
+  [0. 0.5 sqr 0.5 sqr add sqrt ]
+  eq
 } assert_or_die
 
 endusing

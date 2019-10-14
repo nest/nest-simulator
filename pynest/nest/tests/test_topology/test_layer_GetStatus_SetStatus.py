@@ -37,7 +37,7 @@ class GetSetTestCase(unittest.TestCase):
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(
-                                rows=3, columns=3,
+                                shape=[3, 3],
                                 extent=[2., 2.],
                                 edge_wrap=True))
 
@@ -54,21 +54,21 @@ class GetSetTestCase(unittest.TestCase):
         """Test spatial parameter on layer GIDCollection."""
 
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
-            rows=3, columns=3, extent=[2., 2.], edge_wrap=True))
+            shape=[3, 3], extent=[2., 2.], edge_wrap=True))
 
         center = layer.spatial['center']
-        columns = layer.spatial['columns']
+        shape_x = layer.spatial['shape'][0]
         edge_wrap = layer.spatial['edge_wrap']
         extent = layer.spatial['extent']
         network_size = layer.spatial['network_size']
-        rows = layer.spatial['rows']
+        shape_y = layer.spatial['shape'][1]
 
         self.assertEqual(center, (0.0, 0.0))
-        self.assertEqual(columns, 3)
+        self.assertEqual(shape_x, 3)
         self.assertTrue(edge_wrap)
         self.assertEqual(extent, (2., 2.))
         self.assertEqual(network_size, 9)
-        self.assertEqual(rows, 3)
+        self.assertEqual(shape_y, 3)
 
         self.assertEqual(layer.get('V_m'),
                          (-70., -70., -70., -70., -70.,
@@ -76,23 +76,23 @@ class GetSetTestCase(unittest.TestCase):
 
         # Test get all values
         all_values = layer.spatial
-        self.assertEqual(len(all_values.keys()), 6)
+        self.assertEqual(len(all_values.keys()), 5)
         self.assertEqual(all_values['center'], (0.0, 0.0))
-        self.assertEqual(all_values['columns'], 3)
+        self.assertEqual(all_values['shape'][0], 3)
         self.assertTrue(all_values['edge_wrap'])
         self.assertEqual(all_values['extent'], (2., 2.))
         self.assertEqual(all_values['network_size'], 9)
-        self.assertEqual(all_values['rows'], 3)
+        self.assertEqual(all_values['shape'][1], 3)
 
     def test_SingleElementLayerSpatial(self):
         """Test spatial parameter on single element layer."""
 
         layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(rows=1, columns=1))
+            'iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 1]))
 
         self.assertEqual(len(layer), 1)
         center = layer.spatial['center']
-        columns = layer.spatial['columns']
+        columns = layer.spatial['shape'][0]
         all_values = layer.spatial
 
         self.assertEqual(center, (0., 0.))
@@ -103,7 +103,7 @@ class GetSetTestCase(unittest.TestCase):
         """Test get function on layer GIDCollection"""
 
         layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(rows=2, columns=2))
+            'iaf_psc_alpha', positions=nest.spatial.grid(shape=[2, 2]))
 
         self.assertEqual(layer.get('V_m'), (-70., -70., -70., -70.))
 
@@ -111,7 +111,7 @@ class GetSetTestCase(unittest.TestCase):
         """Test set function on layer GIDCollection."""
 
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
-            rows=3, columns=3, extent=[2., 2.], edge_wrap=True))
+            shape=[3, 3], extent=[2., 2.], edge_wrap=True))
 
         with self.assertRaises(KeyError):
             layer.set({'center': [1., 1.]})

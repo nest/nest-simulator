@@ -72,12 +72,6 @@ TopologyModule::name( void ) const
   return std::string( "TopologyModule" ); // Return name of the module
 }
 
-const std::string
-TopologyModule::commandstring( void ) const
-{
-  return std::string( "(topology-interface) run" );
-}
-
 GenericFactory< AbstractMask >&
 TopologyModule::mask_factory_( void )
 {
@@ -135,9 +129,8 @@ TopologyModule::create_mask( const Token& t )
     if ( has_anchor )
     {
 
-      // The anchor may be an array of doubles (a spatial position), or a
-      // dictionary containing the keys 'column' and 'row' (for grid
-      // masks only)
+      // The anchor may be an array of doubles (a spatial position).
+      // For grid layers only, it is also possible to provide an array of longs.
       try
       {
 
@@ -161,25 +154,15 @@ TopologyModule::create_mask( const Token& t )
       }
       catch ( TypeMismatch& e )
       {
+        std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
-        DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
-
-        int dim = 2;
-        int column = getValue< long >( ad, names::column );
-        int row = getValue< long >( ad, names::row );
-        int layer;
-        if ( ad->known( names::layer ) )
-        {
-          layer = getValue< long >( ad, names::layer );
-          dim = 3;
-        }
-        switch ( dim )
+        switch ( anchor.size() )
         {
         case 2:
           try
           {
             GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
-            grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
+            grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
           }
           catch ( std::bad_cast& e )
           {
@@ -190,7 +173,7 @@ TopologyModule::create_mask( const Token& t )
           try
           {
             GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
-            grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
+            grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           }
           catch ( std::bad_cast& e )
           {
@@ -337,8 +320,6 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 
   Examples:
 
-  topology using
-
   %%Create layer
   << /rows 5
      /columns 4
@@ -402,7 +383,6 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
   << /rows 5
      /columns 4
      /elements /iaf_psc_alpha
@@ -410,7 +390,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   /layer Set
 
   layer [4] Take layer [5] Take Displacement
-  layer [0.2 0.3] 5 Displacement
+  [[0.2 0.3]] layer [5] Take Displacement
 
   Author: Håkon Enger, Hans E Plesser, Kittel Austvoll
 
@@ -481,14 +461,14 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
+  /layer
   << /rows 5
      /columns 4
      /elements /iaf_psc_alpha
-  >> CreateLayer ;
+  >> CreateLayer def
 
-  layer 4 5         Distance
-  layer [0.2 0.3] 5 Distance
+  layer [4] Take layer [5] Take Distance
+  [[ 0.2 0.3 ]] layer [5] Take Distance
 
   Author: Hans E Plesser, Kittel Austvoll
 
@@ -775,8 +755,6 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 
   Example:
 
-  topology using
-
   %Create source layer with CreateLayer
   << /rows 15
      /columns 43
@@ -791,7 +769,7 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   << /rows 34
      /columns 71
      /extent [3.0 1.0]
-     /elements {/iaf_psc_alpha Create ; /iaf_psc_alpha Create ;}
+     /elements /iaf_psc_alpha
   >> /tgt_dictionary Set
 
   tgt_dictionary CreateLayer /tgt Set
@@ -799,13 +777,9 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   <<  /connection_type (convergent)
       /mask << /grid << /rows 2 /columns 3 >>
                /anchor << /row 4 /column 2 >> >>
-      /weights 2.3
-      /delays [2.3 1.2 3.2 1.3 2.3 1.2]
+      /weight 2.3
+      /delay [2.3 1.2 3.2 1.3 2.3 1.2]
       /kernel << /gaussian << /sigma 1.2 /p_center 1.41 >> >>
-      /sources << /model /iaf_psc_alpha
-                  /lid 1 >>
-      /targets << /model /iaf_psc_alpha
-                  /lid 2 >>
       /synapse_model /stdp_synapse
 
   >> /parameters Set
@@ -831,7 +805,7 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 
   Name: topology::GetLayerStatus - return information about layer
 

@@ -72,12 +72,7 @@ Layer< D >::compute_displacement( const std::vector< double >& from_pos,
   double displacement = to_pos[ dimension ] - from_pos[ dimension ];
   if ( periodic_[ dimension ] )
   {
-    displacement =
-      -0.5 * extent_[ dimension ] + std::fmod( displacement + 0.5 * extent_[ dimension ], extent_[ dimension ] );
-    if ( displacement < -0.5 * extent_[ dimension ] )
-    {
-      displacement += extent_[ dimension ];
-    }
+    displacement -= extent_[ dimension ] * std::round( displacement * ( 1 / extent_[ dimension ] ) );
   }
   return displacement;
 }

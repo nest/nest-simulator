@@ -236,12 +236,22 @@ public:
      */
     void next_anchor_();
 
+    bool
+    anchored_position_inside_mask( const Position< D >& position )
+    {
+      // Create anchored position in two steps to avoid creating a new Position object.
+      anchored_position_ = position;
+      anchored_position_ -= anchor_;
+      return mask_->inside( anchored_position_ );
+    }
+
     Ntree* ntree_;
     Ntree* top_;
     Ntree* allin_top_;
     index node_;
     const Mask< D >* mask_;
     Position< D > anchor_;
+    Position< D > anchored_position_;
     std::vector< Position< D > > anchors_;
     index current_anchor_;
   };

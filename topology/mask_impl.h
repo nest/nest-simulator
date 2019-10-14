@@ -145,6 +145,25 @@ template < int D >
 bool
 BallMask< D >::inside( const Position< D >& p ) const
 {
+  // Optimizing by trying to avoid expensive calculations.
+  double dim_sum = 0;
+  // First check each dimension
+  for ( int i = 0; i < D; ++i )
+  {
+    const double di = std::abs( p[ i ] - center_[ i ] );
+    if ( di > radius_ )
+    {
+      return false;
+    }
+    dim_sum += di;
+  }
+  // Next, check if we are inside a diamond (rotated square), which fits inside the ball.
+  if ( dim_sum <= radius_ )
+  {
+    return true;
+  }
+  // Point must be somewhere between the ball mask edge and the diamond edge,
+  // revert to expensive calculation in this case.
   return ( p - center_ ).length() <= radius_;
 }
 

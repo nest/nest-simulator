@@ -212,8 +212,8 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
 
   while ( start != finish )
   {
-    double const PSP_ = ( tau_L_trace_ * exp( -dt * integral_counter / tau_L ) 
-        - tau_s_trace_ * exp( -dt * integral_counter / tau_s ) );
+    double const PSP_ =
+      ( tau_L_trace_ * exp( -dt * integral_counter / tau_L ) - tau_s_trace_ * exp( -dt * integral_counter / tau_s ) );
     dw += ( exp( -( Delta_T - dt * integral_counter ) / tau_Delta_ ) - 1 ) * start->dw_ * PSP_;
     start++;
     integral_counter++;

@@ -169,6 +169,8 @@ private:
   double eta_;
   double Wmin_;
   double Wmax_;
+  double tau_L_trace_;
+  double tau_s_trace_;
 
   double t_lastspike_;
 };
@@ -201,7 +203,7 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
 
   double Delta_T = t_spike - t_lastspike_;
   double dw = 0.0;
-  double int_time = t_lastspike_ < 0.0 ? 1000.0 : 0.0;
+  int integral_counter = t_lastspike_ < 0.0 ? 10000.0 : 0.0;
   double const g_L = target->get_g_L( comp );
   double const tau_L = target->get_tau_L( comp );
   double const C_m = target->get_C_m( comp );
@@ -210,10 +212,11 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
 
   while ( start != finish )
   {
-    double const PSP_ = exp( -int_time / tau_L ) - exp( -int_time / tau_s );
-    dw += ( exp( -( Delta_T - int_time ) / tau_Delta_ ) - 1 ) * start->dw_ * PSP_;
+    double const PSP_ = ( tau_L_trace_ * exp( -dt * integral_counter / tau_L ) 
+        - tau_s_trace_ * exp( -dt * integral_counter / tau_s ) );
+    dw += ( exp( -( Delta_T - dt * integral_counter ) / tau_Delta_ ) - 1 ) * start->dw_ * PSP_;
     start++;
-    int_time += dt;
+    integral_counter++;
   }
   dw *= -15.0 * C_m * tau_s * eta_ / ( g_L * ( tau_L - tau_s ) );
 
@@ -235,6 +238,10 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
   e.set_rport( get_rport() );
   e();
 
+  // compute the trace of the presynaptic spike train
+  tau_L_trace_ = tau_L_trace_ * std::exp( ( t_lastspike_ - t_spike ) / tau_L ) + 1.0;
+  tau_s_trace_ = tau_s_trace_ * std::exp( ( t_lastspike_ - t_spike ) / tau_s ) + 1.0;
+
   t_lastspike_ = t_spike;
 }
 
@@ -247,6 +254,8 @@ UrbanczikConnection< targetidentifierT >::UrbanczikConnection()
   , eta_( 0.07 )
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
+  , tau_L_trace_( 0.0 )
+  , tau_s_trace_( 0.0 )
   , t_lastspike_( -1.0 )
 {
 }
@@ -259,6 +268,8 @@ UrbanczikConnection< targetidentifierT >::UrbanczikConnection( const UrbanczikCo
   , eta_( rhs.eta_ )
   , Wmin_( rhs.Wmin_ )
   , Wmax_( rhs.Wmax_ )
+  , tau_L_trace_( rhs.tau_L_trace_ )
+  , tau_s_trace_( rhs.tau_s_trace_ )
   , t_lastspike_( rhs.t_lastspike_ )
 {
 }

@@ -140,7 +140,7 @@ before_install:
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools
-         if [ $TRAVIS_BUILD_STAGE_NAME = "clang7" ]; then 
+         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then 
            pyenv install --list
            pyenv global 3.6.7
          fi

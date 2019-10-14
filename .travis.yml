@@ -140,7 +140,6 @@ before_install:
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools
-         if [ $TRAVIS_BUILD_STAGE_NAME = "clang7" ]; then pyenv global 3.6.7; fi
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
          pip install -U pip
          pip install -U setuptools

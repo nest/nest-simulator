@@ -76,7 +76,7 @@ class TestRecordingBackends(unittest.TestCase):
         self.assertTrue(all([b in backends for b in expected_backends]))
 
         if HAVE_SIONLIB:
-            self.assertTrue("sionlib" in registered_backends)
+            self.assertTrue("sionlib" in backends)
 
 
     def testGlobalRecordingBackendProperties(self):

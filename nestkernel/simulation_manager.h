@@ -23,6 +23,9 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
+// C includes:
+#include <sys/time.h>
+
 // C++ includes:
 #include <vector>
 

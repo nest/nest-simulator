@@ -138,6 +138,9 @@
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
 #include "stdp_connection.h"
+#include "stdp_nn_restr_connection.h"
+#include "stdp_nn_symm_connection.h"
+#include "stdp_nn_pre-centered_connection.h"
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
@@ -451,6 +454,14 @@ ModelsModule::init( SLIInterpreter* )
     /*requires_clopath_archiving=*/false,
     /*requires_urbanczik_archiving=*/true );
 
+  kernel().model_manager.register_connection_model< STDPNNRestrConnection< TargetIdentifierPtrRport > >(
+    "stdp_nn_restr_synapse" );
+
+  kernel().model_manager.register_connection_model< STDPNNSymmConnection< TargetIdentifierPtrRport > >(
+    "stdp_nn_symm_synapse" );
+
+  kernel().model_manager.register_connection_model< STDPNNPreCenteredConnection< TargetIdentifierPtrRport > >(
+    "stdp_nn_pre-centered_synapse" );
 
   /** @BeginDocumentation
      Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low

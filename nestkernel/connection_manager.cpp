@@ -464,6 +464,17 @@ nest::ConnectionManager::connect( const index sgid,
   {
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
   }
+  // globally receiving devices, e.g. volume transmitter
+  else if ( not target->has_proxies() and not target->local_receiver() )
+  {
+    // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
+      throw IllegalConnection( "We do not allow to connect a device to a global receiver at the moment" );
+    }
+    target = kernel().node_manager.get_node( target->get_gid(), tid );
+    connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
+  }
   // normal devices -> normal devices
   else if ( not source->has_proxies() and not target->has_proxies() )
   {
@@ -475,17 +486,6 @@ nest::ConnectionManager::connect( const index sgid,
     {
       connect_from_device_( *source, *target, suggested_thread, syn_id, params, delay, weight );
     }
-  }
-  // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      return;
-    }
-    target = kernel().node_manager.get_node( target->get_gid(), tid );
-    connect_( *source, *target, sgid, tid, syn_id, params, delay, weight );
   }
   else
   {
@@ -547,6 +547,17 @@ nest::ConnectionManager::connect( const index sgid,
   {
     connect_from_device_( *source, *target, target_thread, syn_id, params );
   }
+  // globally receiving devices, e.g. volume transmitter
+  else if ( not target->has_proxies() and not target->local_receiver() )
+  {
+    // we do not allow to connect a device to a global receiver at the moment
+    if ( not source->has_proxies() )
+    {
+      throw IllegalConnection( "We do not allow to connect a device to a global receiver at the moment" );
+    }
+    target = kernel().node_manager.get_node( tgid, tid );
+    connect_( *source, *target, sgid, tid, syn_id, params );
+  }
   // normal devices -> normal devices
   else if ( not source->has_proxies() and not target->has_proxies() )
   {
@@ -557,17 +568,6 @@ nest::ConnectionManager::connect( const index sgid,
     {
       connect_from_device_( *source, *target, suggested_thread, syn_id, params );
     }
-  }
-  // globally receiving devices, e.g. volume transmitter
-  else if ( not target->has_proxies() and not target->local_receiver() )
-  {
-    // we do not allow to connect a device to a global receiver at the moment
-    if ( not source->has_proxies() )
-    {
-      return false;
-    }
-    target = kernel().node_manager.get_node( tgid, tid );
-    connect_( *source, *target, sgid, tid, syn_id, params );
   }
   else
   {

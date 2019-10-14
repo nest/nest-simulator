@@ -518,6 +518,6 @@ check with ``diff``:
     diff 41 44
 
 These commands should not generate any output. Obviously, this test
-checks only a necessary, by no means a sufficient condition for a
-correct simulation (Oh yes, do make sure that these directories contain
-data! Nothing easier that to pass a diff-test on empty dirs.)
+checks only a necessary, but by no means sufficient condition for a
+correct simulation. (Oh yes, do make sure that these directories contain
+data! Nothing easier than to pass a diff-test on empty dirs.)

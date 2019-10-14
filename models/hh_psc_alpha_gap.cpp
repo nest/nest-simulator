@@ -61,8 +61,8 @@ RecordablesMap< hh_psc_alpha_gap >::create()
   insert_( names::I_syn_ex, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_EXC > );
   insert_( names::I_syn_in, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::I_INH > );
   insert_( names::Act_m, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_M > );
-  insert_( names::Act_h, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_H > );
-  insert_( names::Inact_n, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_N > );
+  insert_( names::Inact_h, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_H > );
+  insert_( names::Act_n, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_N > );
   insert_( names::Inact_p, &hh_psc_alpha_gap::get_y_elem_< hh_psc_alpha_gap::State_::HH_P > );
 }
 
@@ -177,8 +177,8 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   : r_( 0 )
 {
   y_[ 0 ] = -69.60401191631222; // p.E_L;
-  //'Inact_n': 0.0005741576228359798, 'Inact_p': 0.00025113182271506364
-  //'Act_h': 0.8684620412943986,
+  //'Act_n': 0.0005741576228359798, 'Inact_p': 0.00025113182271506364
+  //'Inact_h': 0.8684620412943986,
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = 0;
@@ -281,8 +281,8 @@ nest::hh_psc_alpha_gap::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Act_h, y_[ HH_H ] );
-  def< double >( d, names::Inact_n, y_[ HH_N ] );
+  def< double >( d, names::Inact_h, y_[ HH_H ] );
+  def< double >( d, names::Act_n, y_[ HH_N ] );
   def< double >( d, names::Inact_p, y_[ HH_P ] );
 }
 
@@ -291,8 +291,8 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
-  updateValue< double >( d, names::Act_h, y_[ HH_H ] );
-  updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
+  updateValue< double >( d, names::Inact_h, y_[ HH_H ] );
+  updateValue< double >( d, names::Act_n, y_[ HH_N ] );
   updateValue< double >( d, names::Inact_p, y_[ HH_P ] );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
   {

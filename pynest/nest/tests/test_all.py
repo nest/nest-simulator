@@ -68,6 +68,7 @@ from . import test_split_simulation
 from . import test_stack
 from . import test_status
 from . import test_stdp_multiplicity
+from . import test_stdp_nn_synapses
 from . import test_stdp_triplet_synapse
 from . import test_threads
 from . import test_use_gid_in_filename
@@ -118,6 +119,7 @@ def suite():
     suite.addTest(test_rate_neuron_communication.suite())
     suite.addTest(test_refractory.suite())
     suite.addTest(test_siegert_neuron.suite())
+    suite.addTest(test_stdp_nn_synapses.suite())
     suite.addTest(test_sp.suite())
     suite.addTest(test_split_simulation.suite())
     suite.addTest(test_stack.suite())

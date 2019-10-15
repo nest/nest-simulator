@@ -68,7 +68,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Returns
     -------
     Connectome:
-        Object representing the source-gid, target-gid, target-thread, synapse-id, port of connections
+        Object representing the source-gid, target-gid, target-thread, synapse-id, port of connections, see
+        :py:class:`Connectome`.
 
     Notes
     -----
@@ -313,8 +314,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
         Specifies synapse model, see below
-    model : str or dict, optional
-        alias for syn_spec for backward compatibility
     return_connectome: bool
         Specifies whether or not we should return a Connectome of pre and post connections
 
@@ -324,9 +323,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Notes
     -----
-    Connect does not iterate over subnets, it only connects explicitly
-    specified nodes.
-
     It is possible to connect arrays of GIDs with nonunique GIDs by
     passing the arrays as pre and post, together with a syn_spec dictionary.
     However this should only be done if you know what you're doing. This will
@@ -344,8 +340,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     self-connections ('allow_autapses', default: True) and multiple connections
     between a pair of nodes ('allow_multapses', default: True) can be contained
     in the dictionary. Another switch enables the creation of symmetric
-    connections ('symmetric', default: False) by also creating connections
+    connections ('make_symmetric', default: False) by also creating connections
     in the opposite direction.
+
+    If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
+    nodes are considered as potential targets for each source node. Connection with spatial nodes can also
+    use nest.distribution as parameters, for instance for the probability `p`.
 
     Available rules and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -355,12 +355,16 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     - 'fixed_outdegree', 'outdegree'
     - 'fixed_total_number', 'N'
     - 'pairwise_bernoulli', 'p'
+    - 'symmetric_pairwise_bernoulli', 'p'
 
     Example conn-spec choices
     ~~~~~~~~~~~~~~~~~~~~~~~~~
     - 'one_to_one'
     - {'rule': 'fixed_indegree', 'indegree': 2500, 'allow_autapses': False}
     - {'rule': 'pairwise_bernoulli', 'p': 0.1}
+    - {'rule': 'pairwise_bernoulli', 'p': nest.distribution.exponential(nest.spatial.distance),
+       'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
+                                'upper_right' : [ 2.0,  1.0]}}}
 
     Synapse specification (syn_spec)
     --------------------------------------
@@ -370,21 +374,21 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     as a dictionary specifying the synapse model and its parameters.
 
     Available keys in the synapse specification dictionary are:
-    - 'model'
+    - 'synapse_model'
     - 'weight'
     - 'delay'
     - 'receptor_type'
     - any parameters specific to the selected synapse model.
 
     All parameters are optional and if not specified, the default values
-    of the synapse model will be used. The key 'model' identifies the
+    of the synapse model will be used. The key 'synapse_model' identifies the
     synapse model, this can be one of NEST's built-in synapse models
     or a user-defined model created via CopyModel().
 
-    If 'model' is not specified the default model 'static_synapse'
+    If 'synapse_model' is not specified the default model 'static_synapse'
     will be used.
 
-    All other parameters can be scalars, arrays or distributions.
+    All other parameters can be scalars, arrays, nest.Parameter or distributions.
     In the case of scalar parameters, all keys must be doubles
     except for 'receptor_type' which must be initialised with an integer.
 
@@ -410,12 +414,27 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
       source and the columns the connections starting from the source neuron
       regardless of the identity of the target neuron.
 
-    Any distributed parameter must be initialised with a further dictionary
+    Distributed parameters can be defined through NEST's different parametertypes. NEST has various
+    random parameters, spatial parameters and distributions (only accesseable for nodes with spatial positions),
+    logical expressions and mathematical expressions, which can be used to define node and connection parameters.
+
+    To see all available parameters, see documentation defined in distributions, logic, math,
+    random and spatial modules.
+
+    Example NEST parametertypes
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    - nest.random.uniform(min, max)
+    - nest.random.normal(loc, scale)
+    - nest.math.cos(nest.Parameter)
+    - nest.spatial.distance
+    - nest.distribution.exponential(nest.Parameter, a, tau)
+
+    Distributed parameters can also be initialised with a dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun('rdevdict info')
+    nest.ll_api.sli_run('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
     nest.help('rdevdict::binomial')
@@ -435,10 +454,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     - {'weight': 2.4, 'receptor_type': 1}
     - {'synapse_model': 'stdp_synapse',
        'weight': 2.5,
-       'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
-       'alpha': {
-           'distribution': 'normal_clipped', 'low': 0.5,
-           'mu': 5.0, 'sigma': 1.0}
+       'delay': nest.random.uniform(0.8, 2.5),
+       'alpha': nest.random.normal(5.0, 1.0)
       }
     """
 
@@ -526,10 +543,10 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     Parameters
     ----------
-    pre : list or numpy.array
-        must contain a list of GIDs
-    post : list or numpy.array
-        must contain a list of GIDs
+    pre : GIDCollection
+        GIDs of presynaptic nodes
+    post : GIDCollection
+        GIDs of postsynaptic nodes
     cg : connection generator
         libneurosim connection generator to use
     parameter_map : dict, optional
@@ -626,9 +643,9 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Parameters
     ----------
     pre : GIDCollection
-        Presynaptic nodes, given as list of GIDs
+        Presynaptic nodes, given as GIDCollection
     post : GIDCollection
-        Postsynaptic nodes, given as list of GIDs
+        Postsynaptic nodes, given as GIDCollection
     conn_spec : str or dict
         Disconnection rule, see below
     syn_spec : str or dict
@@ -649,23 +666,22 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     synapsedict) or as a dictionary as described below.
 
     Note that only the synapse type is checked when we disconnect and that if
-    syn_spec is given as a non-empty dictionary, the 'model' parameter must be
+    syn_spec is given as a non-empty dictionary, the 'synapse_model' parameter must be
     present.
 
-    If no synapse model is specified the default model 'static_synapse'
-    will be used.
+    If no syn_spec is specified the default model 'static_synapse' will be used.
 
     Available keys in the synapse dictionary are:
-    - 'model'
+    - 'synapse_model'
     - 'weight'
     - 'delay',
     - 'receptor_type'
     - parameters specific to the synapse model chosen
 
-    All parameters are optional and if not specified will use the default
+    All parameters except synapse_model are optional and if not specified will use the default
     values determined by the current synapse model.
 
-    'model' determines the synapse type, taken from pre-defined synapse
+    'synapse_model' determines the synapse type, taken from pre-defined synapse
     types in NEST or manually specified synapses created via CopyModel().
 
     All other parameters are not currently implemented.

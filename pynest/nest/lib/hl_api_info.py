@@ -252,17 +252,17 @@ def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
 
     Parameters of nodes or connections, given in `nodes`, is set as specified
-    by `params`. If `val` is given, `params` has to be a ``string`` with the
+    by `params`. If `val` is given, `params` has to be a string with the
     name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a ``GIDCollection`` representing nodes, or a ``Connectome`` of connection handles as returned by
-        ``GetConnections()``.
+        Either a `GIDCollection` representing nodes, or a `Connectome` of connection handles as returned by
+        :py:func:`.GetConnections()`.
     params : str or dict or list
-        Dictionary of parameters or ``list`` of dictionaries of parameters of same length as `nodes`. If `val` is
+        Dictionary of parameters or list of dictionaries of parameters of same length as `nodes`. If `val` is
         given, this has to be the name of a model property as a str.
     val : int, list, optional
         If given, params has to be the name of a model property.
@@ -275,9 +275,7 @@ def SetStatus(nodes, params, val=None):
 
     See Also
     -------
-    GetStatus
-
-    KEYWORDS:
+    :py:func:`.GetStatus`
     """
 
     if not (isinstance(nodes, nest.GIDCollection) or
@@ -291,8 +289,7 @@ def SetStatus(nodes, params, val=None):
         return
 
     if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and nodes[0].get('local')):
-        contains_list = [is_iterable(vals) and not is_iterable(nest.GetStatus(nodes[0], key)[0])
-                         for key, vals in params.items()]
+        contains_list = [is_iterable(vals) and not is_iterable(nodes[0].get(key)) for key, vals in params.items()]
 
         if any(contains_list):
             temp_param = [{} for _ in range(len(nodes))]
@@ -333,33 +330,33 @@ def SetStatus(nodes, params, val=None):
 def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.
 
-    If `keys` is given, a ``list`` of values is returned instead. `keys` may
-    also be a ``list``, in which case the returned ``list`` contains lists of
+    If `keys` is given, a list of values is returned instead. `keys` may
+    also be a list, in which case the returned list contains lists of
     values.
 
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a ``GIDCollection`` representing nodes, or a ``Connectome`` of
-        connection handles as returned by `GetConnections()`.
+        Either a `GIDCollection` representing nodes, or a `Connectome` of
+        connection handles as returned by :py:func:`.GetConnections()`.
     keys : str or list, optional
-        ``string`` or a ``list`` of strings naming model properties.
-        `GetStatus` then returns a single value or a ``list`` of values
+        string or a list of strings naming model properties.
+        `GetStatus` then returns a single value or a list of values
         belonging to the keys given.
     output : str, optional
         Whether the returned data should be in a selected format
-        (``output='json'``). Default is ''.
+        (``output='json'``).
 
     Returns
     -------
     dict :
         All parameters
     type :
-        If `keys` is a ``string``, the corrsponding default parameter is returned.
+        If `keys` is a string, the corrsponding default parameter is returned.
     list :
-        If keys is a ``list`` of strings, a ``list`` of corrsponding default parameters is returned.
+        If keys is a list of strings, a list of corrsponding default parameters is returned.
     str :
-        If `output` is `json`, returns parameters in JSON format.
+        If `output` is `json`, parameters is returned in JSON format.
 
     Raises
     ------
@@ -368,13 +365,10 @@ def GetStatus(nodes, keys=None, output=''):
 
     See Also
     -------
-    SetStatus
-
-    KEYWORDS:
+    :py:func:`.SetStatus`
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or
-            isinstance(nodes, nest.Connectome)):
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, nest.Connectome)):
         raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
 
     if len(nodes) == 0:

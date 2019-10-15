@@ -54,24 +54,22 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict, list or nest.Parameter, optional
+    params : dict, list or `Parameter`, optional
         Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n or a nest.Parameter. If omitted, the model's defaults are used.
-    positions: nest.spatial.grid or nest.spatial.free object, optional
+        dictionaries with size n or a `Parameter`. If omitted, the model's defaults are used.
+    positions: :py:class:`spatial.grid` or :py:class:`spatial.free` object, optional
         Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
 
     Returns
     -------
     GIDCollection:
-        Object representing global IDs of created nodes
+        Object representing global IDs of created nodes, see :py:class:`GIDCollection` for more.
 
     Raises
     ------
     NESTError
         If setting node parameters fail. However, the nodes will still have
         been created.
-
-    KEYWORDS:
     """
 
     model_deprecation_warning(model)
@@ -157,7 +155,7 @@ def GetNodes(properties={}, local_only=False):
     Returns
     -------
     GIDCollection:
-        GIDCollection of nodes
+        `GIDCollection` of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)
@@ -172,13 +170,13 @@ def GetLocalGIDCollection(gc):
 
     Parameters:
     -----------
-    gc: GIDCollection
-        GIDCollection for which to get local nodes
+    gc: `GIDCollection`
+        `GIDCollection` for which to get local nodes
 
     Returns
     -------
     GIDCollection:
-        Object representing the local nodes of the given GIDCollection
+        Object representing the local nodes of the given `GIDCollection`
     """
     if not isinstance(gc, GIDCollection):
         raise TypeError("GetLocalGIDCollection requires a GIDCollection in order to run")

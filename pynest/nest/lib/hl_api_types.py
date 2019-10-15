@@ -41,7 +41,6 @@ __all__ = [
     'Connectome',
     'CreateParameter',
     'GIDCollection',
-    'GIDCollectionIterator',
     'Mask',
     'Parameter',
 ]
@@ -53,51 +52,49 @@ def CreateParameter(parametertype, specs):
 
     Parameters
     ----------
-    parametertype : {'constant', 'linear', 'exponential', 'gaussian', \
-        'gaussian2D', 'uniform', 'normal', 'lognormal'}
-        Function types with or without distance dependency
+    parametertype : string
+                    Parameter type with or without distance dependency.
+                    Can be one of the following: 'constant', 'linear', 'exponential', 'gaussian', 'gaussian2D',
+                                                 'uniform', 'normal', 'lognormal', 'distance', 'position'
     specs : dict
-        Dictionary specifying the parameters of the provided
-        `'parametertype'`, see **Parameter types**.
+            Dictionary specifying the parameters of the provided
+            `parametertype`, see **Parameter types**.
 
 
     Returns
     -------
-    out : ``Parameter`` object
+    `Parameter`:
+        Object representing the parameter
 
     Notes
     -----
-    -
-
+    - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
+    instance :py:func:`.random.uniform`.
 
     **Parameter types**
 
-    Available parameter types (`parametertype` parameter), their function and
+    Some available parameter types (`parametertype` parameter), their function and
     acceptable keys for their corresponding specification dictionaries
 
-    * Constant
+    - Constant
         ::
-
             'constant' :
                 {'value' : float} # constant value
-
-    * Randomization
+    - Randomization
         ::
-
             # random parameter with uniform distribution in [min,max)
             'uniform' :
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
-            # or
+
             # random parameter with normal distribution, optionally truncated
             # to [min,max)
             'normal':
                 {'mean' : float, # mean value, default: 0.0
                  'sigma': float, # standard deviation, default: 1.0
                  'min'  : float, # minimum value, default: -inf
-
                  'max'  : float} # maximum value, default: +inf
-            # or
+
             # random parameter with lognormal distribution,
             # optionally truncated to [min,max)
             'lognormal' :
@@ -105,21 +102,18 @@ def CreateParameter(parametertype, specs):
                  'sigma': float, # standard deviation of log, default: 1.0
                  'min'  : float, # minimum value, default: -inf
                  'max'  : float} # maximum value, default: +inf
-
-
-    **Example**
-        ::
-
     """
     return sli_func('CreateParameter', {parametertype: specs})
 
 
 class GIDCollectionIterator(object):
     """
-    Iterator class for GIDCollection.
+    Iterator class for `GIDCollection`.
 
-    Can either return the respective gid (this is the default), or a pair
-    consisting of the respective gid and modelID.
+    Returns
+    -------
+    `GIDCollection`:
+        Single GID `GIDCollection` of respective iteration.
     """
 
     def __init__(self, gc):
@@ -142,21 +136,21 @@ class GIDCollectionIterator(object):
 
 class GIDCollection(object):
     """
-    Class for GIDCollection.
+    Class for `GIDCollection`.
 
-    GIDCollection represents the nodes of a network. The class supports
-    iteration, concatination, indexing, slicing, membership, convertion to and
+    `GIDCollection` represents the nodes of a network. The class supports
+    iteration, concatination, indexing, slicing, membership, length, convertion to and
     from lists, test for membership, and test for equality. By using the
-    membership functions ``get(.)`` and ``set(.)``, you can get and set desired
+    membership functions ``get()`` and ``set()``, you can get and set desired
     parameters.
 
-    A GIDCollection is created by the ``Create`` function, or by converting a
-    list of nodes to a GIDCollection with ``nest.GIDCollection(list)``.
+    A `GIDCollection` is created by the :py:func:`.Create` function, or by converting a
+    list of nodes to a `GIDCollection` with ``nest.GIDCollection(list)``.
+    
+    If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
 
-    By iterating over the GIDCollection you get the gids. If you apply the
-    ``items()`` function, you can also read the modelIDs.
-
-    **Example**
+    Example
+    -------
         ::
             import nest
 
@@ -165,16 +159,12 @@ class GIDCollection(object):
             # Create GIDCollection representing nodes
             gc = nest.Create('iaf_psc_alpha', 10)
 
-            # Print gids and modelID
-            for gid, mid in gc.items():
-                print(gid, mid)
-
             # Convert from list
             gids_in = [2, 4, 6, 8]
             new_gc = nest.GIDCollection(gids_in)
 
             # Convert to list
-            gc_list =  [x for x in gc]
+            gc_list =  gc.tolist()
 
             # Concatenation
             Enrns = nest.Create('aeif_cond_alpha', 600)
@@ -275,58 +265,33 @@ class GIDCollection(object):
               This is for hierarchical addressing.
          output : str, ['pandas','json'], optional
              Whether the returned data should be in a Pandas DataFrame or in a
-             JSON serializable format.  Default is ''.
+             JSON serializable format.
 
         Returns
         -------
-        int or float
-            If there is a single node in the GIDCollection, and a single
+        int or float:
+            If there is a single node in the `GIDCollection`, and a single
             parameter in params.
-        array_like
-            If there are multiple nodes in the GIDCollection, and a single
+        array_like:
+            If there are multiple nodes in the `GIDCollection`, and a single
             parameter in params.
-        dict
-            If there are multiple parameters in params. Also, if no parameters
+        dict:
+            If there are multiple parameters in params. Or, if no parameters
             are specified, a dictionary containing aggregated parameter-values
             for all nodes is returned.
-        DataFrame
+        DataFrame:
             Pandas Data frame if output should be in pandas format.
 
         Raises
         ------
         TypeError
-            If the input params are on the wrong form.
+            If the input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the nodes.
 
         See Also
         --------
         set
-
-        Examples
-        --------
-        Single parameter:
-
-        >>> neurons.get('V_m')
-        (-70.0, -70.0, ..., -70.0)
-
-        >>> neurons[3].get('V_m')
-        -70.0
-
-        Multiple parameters:
-
-        >>> neurons.get(['V_m', 'V_th'])
-        {'V_m': (-70.0, -70.0, ..., -70.0),
-         'V_th': (-55.0, -55.0, ..., -55.0)}
-
-        Hierarchical addressing:
-
-        >>> sd.get('events', 'senders')
-        array([], dtype=int64)
-
-        >>> sd.get('events', ['senders', 'times'])
-        {'senders': array([], dtype=int64),
-         'times': array([], dtype=float64)}
         """
         # ------------------------- #
         #      Checks of input      #
@@ -370,34 +335,34 @@ class GIDCollection(object):
 
     def set(self, params, val=None):
         """
-        NB! This is the same implementation as SetStatus
+        Set the parameters of nodes to params.
 
-        Set the parameters of nodes or layers to params.
+        NB! This is the same implementation as `SetStatus`.
 
-        If val is given, params has to be the name of an attribute, which is
-        set to val on the nodes. val can be a single value or a list of the
-        same size as the GIDCollection.
+        If `val` is given, `params` has to be the name of an attribute, which is
+        set to `val` on the nodes. `val` can be a single value or a list of the
+        same size as the `GIDCollection`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the GIDCollection. If val is given, this has to be
+            same length as the `GIDCollection`. If `val` is given, `params` has to be
             the name of a model property as a str.
-        val : int or list, optional
-            If given, params has to be the name of a model property.
+        val : int, list or Parameter, optional
+            If given, `params` has to be the name of a model property.
 
         Raises
         ------
         TypeError
-            Description
+            If the input params are of the wrong form.
+        KeyError
+            If the specified parameter does not exist for the nodes.
         """
 
         if isinstance(params, dict) and self[0].get('local'):
 
-            contains_list = [is_iterable(vals) and not
-                             is_iterable(self[0].get(key))
-                             for key, vals in params.items()]
+            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -412,28 +377,28 @@ class GIDCollection(object):
                 params = temp_param
 
         if val is not None and is_literal(params):
-            if (is_iterable(val) and not
-                    isinstance(val, (uni_str, dict))):
+            if (is_iterable(val) and not isinstance(val, (uni_str, dict))):
                 params = [{params: x} for x in val]
             else:
                 params = {params: val}
 
-        if (isinstance(params, (list, tuple)) and
-                self.__len__() != len(params)):
+        if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
             raise TypeError(
-                "status dict must be a dict, or a list of dicts of length "
-                "len(nodes)")
+                "status dict must be a dict, or a list of dicts of length len(nodes)")
 
         sli_func('SetStatus', self._datum, params)
 
     def tolist(self):
+        """
+        Convert `GIDCollection` to list.
+        """
         if self.__len__() == 0:
             return []
         return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
     def index(self, gid):
         """
-        Find the index of a GID in the GIDCollection.
+        Find the index of a GID in the `GIDCollection`.
 
         Parameters
         ----------
@@ -443,7 +408,7 @@ class GIDCollection(object):
         Raises
         ------
         ValueError
-            If the GID is not in the GIDCollection.
+            If the GID is not in the `GIDCollection`.
         """
         return self.tolist().index(gid)
 
@@ -469,10 +434,12 @@ class Connectome(object):
     """
     Class for Connections.
 
-    Connectome represents the connections of a network. The class supports
-    get(), set(), len(), indexing, iteration and equality.
+    Connectome represents the connections of a network. The class supports indexing, iteration, length and
+    equality. You can get and set connection parameters by using the membership functions ``get()`` and
+    ``set()``, respectively. By using the membership function ``source()`` you get an iterator over source
+    nodes, while ``target()`` returns an interator over the target nodes of the connections.
 
-    A Connectome is created by the ``GetConnections`` function.
+    A Connectome is created by the :py:func`.GetConnections` function.
     """
 
     _datum = None
@@ -486,14 +453,13 @@ class Connectome(object):
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
         elif data is None:
-            # So we can have empty Connectome and not a tuple if there are no
-            # connections.
+            # We can have an empty Connectome if there are no connections.
             self._datum = data
         else:
             if (not isinstance(data, kernel.SLIDatum) or
                     data.dtype != "connectiontype"):
                 raise TypeError("Expected Connection Datum.")
-            # self._datum is a list of Connection datums.
+            # self._datum needs to be a list of Connection datums.
             self._datum = [data]
 
     def __iter__(self):
@@ -531,7 +497,7 @@ class Connectome(object):
 
     def __str__(self):
         """
-        Printing a Connectome returns something of the form:
+        Printing a `Connectome` returns something of the form:
             *--------*-------------*
             | source | 1, 1, 2, 2, |
             *--------*-------------*
@@ -566,7 +532,7 @@ class Connectome(object):
 
     def source(self):
         """
-        Return iterator containing the source gids of the connectome.
+        Return iterator containing the source gids of the `Connectome`.
         """
         sources = self.get('source')
         if not isinstance(sources, (list, tuple)):
@@ -575,7 +541,7 @@ class Connectome(object):
 
     def target(self):
         """
-        Return iterator containing the target gids of the connectome.
+        Return iterator containing the target gids of the `Connectome`.
         """
         targets = self.get('target')
         if not isinstance(targets, (list, tuple)):
@@ -584,10 +550,10 @@ class Connectome(object):
 
     def get(self, keys=None, output=''):
         """
-        Return the parameter dictionary of connections.
+        Return a parameter dictionary of the connections.
 
         If keys is a string, a list of values is returned, unless we have a
-        single ConnectionDatum, in which case the single value is returned.
+        single connection, in which case the single value is returned.
         keys may also be a list, in which case a dictionary with a list of
         values is returned.
 
@@ -599,7 +565,7 @@ class Connectome(object):
             belonging to the keys given.
         output : str, ['pandas','json'], optional
             Whether the returned data should be in a Pandas DataFrame or in a
-            JSON serializable format.  Default is ''.
+            JSON serializable format.
 
         Returns
         -------
@@ -613,7 +579,9 @@ class Connectome(object):
         Raises
         ------
         TypeError
-            Description
+            If input params are of the wrong form.
+        KeyError
+            If the specified parameter does not exist for the connections.
         """
         pandas_output = output == 'pandas'
         if pandas_output and not HAVE_PANDAS:
@@ -655,27 +623,29 @@ class Connectome(object):
 
     def set(self, params, val=None):
         """
+        Set the parameters of the connections to `params`.
+
         NB! This is the same implementation as SetStatus
 
-        Set the parameters of nodes or connections to params.
-
-        If val is given, params has to be the name of an attribute, which is
-        set to val on the nodes. val can be a single value or a list of the
-        same size as the Connections.
+        If `val` is given, `params` has to be the name of an attribute, which is
+        set to `val` on the connections. `val` can be a single value or a list of the
+        same size as the `Connectome`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the Connections. If val is given, this has to be
+            same length as the `Connectome`. If `val` is given, `params` has to be
             the name of a model property as a str.
-        val : str, optional
-            If given, params has to be the name of a model property.
+        val : int, list or Parameter, optional
+            If given, `params` has to be the name of a model property.
 
         Raises
         ------
         TypeError
-            Description
+            If input params are of the wrong form.
+        KeyError
+            If the specified parameter does not exist for the connections.
         """
 
         # This was added to ensure that the function is a nop (instead of,
@@ -709,10 +679,10 @@ class Mask(object):
     """
     Class for spatial masks.
 
-    Masks are used when creating connections in the Topology module. A mask
-    describes which area of the pool layer shall be searched for nodes to
-    connect for any given node in the driver layer. Masks are created using
-    the ``CreateMask`` command.
+    Masks are used when creating connections when nodes have spatial extent. A mask
+    describes the area of the pool population that shall be searched to find nodes to
+    connect to for any given node in the driver population. Masks are created using
+    the :py:func:`.CreateMask` command.
     """
 
     _datum = None
@@ -743,12 +713,10 @@ class Mask(object):
         """
         Test if a point is inside a mask.
 
-
         Parameters
         ----------
         point : tuple/list of float values
             Coordinate of point
-
 
         Returns
         -------
@@ -763,8 +731,8 @@ class Parameter(object):
     Class for parameters
 
     A parameter may be used as a probability kernel when creating
-    connections or as synaptic parameters (such as weight and delay).
-    Parameters are created using the ``CreateParameter`` command.
+    connections and nodes or as synaptic parameters (such as weight and delay).
+    Parameters are created using the :py:func:`.CreateParameter` command.
     """
 
     _datum = None
@@ -841,26 +809,18 @@ class Parameter(object):
         """
         Compute value of parameter.
 
-
         Returns
         -------
         out : value
             The value of the parameter
 
-
         See also
         --------
         CreateParameter
 
-
-        Notes
-        -----
-        -
-
-
-        **Example**
+        Example
+        -------
             ::
-
                 import nest
 
                 # normal distribution parameter
@@ -868,7 +828,6 @@ class Parameter(object):
 
                 # get out value
                 P.GetValue()
-
         """
         return sli_func("GetValue", self._datum)
 

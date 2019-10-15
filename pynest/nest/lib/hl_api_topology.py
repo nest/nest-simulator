@@ -69,12 +69,11 @@ def CreateMask(masktype, specs, anchor=None):
     node in the driver population. Several mask types are available. Examples
     are the grid region, the rectangular, circular or doughnut region.
 
-    The command ``CreateMask`` creates a Mask object which may be combined
-    with other ``Mask`` objects using Boolean operators. The mask is specified
+    The command ``CreateMask`` creates a `Mask` object which may be combined
+    with other `Mask` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    ``Mask`` objects can be passed to ``Connect`` in a connection dictionary with the key `'mask'`.
-
+    `Mask` objects can be passed to :py:func:`.Connect` in a connection dictionary with the key `'mask'`.
 
     Parameters
     ----------
@@ -85,37 +84,33 @@ def CreateMask(masktype, specs, anchor=None):
         are different types for 2- and 3-dimensional layers.
     specs : dict
         Dictionary specifying the parameters of the provided `masktype`,
-        see **Mask types**.
+        see `Mask types`.
     anchor : [tuple/list of floats | dict with the keys `'column'` and \
         `'row'` (for grid masks only)], optional, default: None
         By providing anchor coordinates, the location of the mask relative to
         the driver node can be changed. The list of coordinates has a length
         of 2 or 3 dependent on the number of dimensions.
 
-
     Returns
     -------
-    out : ``Mask`` object
-
+    Mask:
+        Object representing the mask
 
     See also
     --------
-    Connect
-
+    :py:func:`.Connect`
 
     Notes
     -----
     - All angles must be given in degrees.
 
-
-    **Mask types**
-
+    Mask types
+    ----------
     Available mask types (`masktype`) and their corresponding parameter
     dictionaries:
 
-    * 2D free and grid-based layers
+    - 2D free and grid-based layers
         ::
-
             'rectangular' :
                 {'lower_left'   : [float, float],
                  'upper_right'  : [float, float],
@@ -134,10 +129,8 @@ def CreateMask(masktype, specs, anchor=None):
                  'azimuth_angle' : float,   # default: 0.0,
                  'anchor' : [float, float], # default: [0.0, 0.0]}
 
-
-    * 3D free and grid-based layers
+    - 3D free and grid-based layers
         ::
-
             'box' :
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
@@ -155,8 +148,7 @@ def CreateMask(masktype, specs, anchor=None):
                  'polar_angle' : float,     # default: 0.0,
                  'anchor' : [float, float, float], # default: [0.0, 0.0, 0.0]}}
 
-
-    * 2D grid-based layers only
+    - 2D grid-based layers only
         ::
 
             'grid' :
@@ -167,13 +159,12 @@ def CreateMask(masktype, specs, anchor=None):
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
             ::
-
                 'anchor' :
                     {'row' : float,
                      'column' : float}
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
@@ -191,7 +182,6 @@ def CreateMask(masktype, specs, anchor=None):
 
             # connect layer l with itself according to the specifications
             nest.Connect(l, l, conndict)
-
     """
     if anchor is None:
         return sli_func('CreateMask', {masktype: specs})
@@ -204,35 +194,31 @@ def GetPosition(nodes):
     """
     Return the spatial locations of nodes.
 
-
     Parameters
     ----------
     nodes : GIDCollection
-        GIDCollection of nodes we want the positions to
-
+        `GIDCollection` of nodes we want the positions to
 
     Returns
     -------
-    out : tuple or tuple of tuple(s)
+    tuple or tuple of tuple(s):
         Tuple of position with 2- or 3-elements or list of positions
-
 
     See also
     --------
-    Displacement : Get vector of lateral displacement between nodes.
-    Distance : Get lateral distance between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    DumpLayerNodes : Write layer node positions to file.
-
+    :py:func:`.Displacement`: Get vector of lateral displacement between nodes.
+    :py:func:`.Distance`: Get lateral distance between nodes.
+    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
+    :py:func:`.DumpLayerNodes`: Write node positions to file.
 
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    - The functions :py:func:`.GetPosition`, :py:func:`.Displacement` and :py:func:`.Distance`
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
@@ -240,23 +226,20 @@ def GetPosition(nodes):
             # Reset kernel
             nest.ResetKernel
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a GIDCollection with spatial extent
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
-            # retrieve positions of all (local) nodes belonging to the layer
-            pos = nest.GetPosition(l)
+            # retrieve positions of all (local) nodes belonging to the population
+            pos = nest.GetPosition(s_nodes)
 
-            # retrieve positions of the first node in the layer
-            pos = nest.GetPosition(l[0])
+            # retrieve positions of the first node in the GIDCollection
+            pos = nest.GetPosition(s_nodes[0])
 
-            # retrieve positions of node 4
-            pos = nest.GetPosition(l[4:5])
-
-            # retrieve positions of a subset of nodes in the layer
-            pos = nest.GetPosition(l[2:18])
+            # retrieve positions of a subset of nodes in the population
+            pos = nest.GetPosition(s_nodes[2:18])
     """
     if not isinstance(nodes, GIDCollection):
-        raise TypeError("nodes must be a layer GIDCollection")
+        raise TypeError("nodes must be a GIDCollection with spatial extent")
 
     return sli_func('GetPosition', nodes)
 
@@ -269,56 +252,51 @@ def Displacement(from_arg, to_arg):
     Displacement is the shortest displacement, taking into account
     periodic boundary conditions where applicable. If explicit positions
     are given in the `from_arg` list, they are interpreted in the `to_arg`
-    layer.
+    population.
 
-    * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
+    - If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
-    * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be GIDCollections of the same length and the displacement for each
+    - If `from_arg` and `to_arg` both have more than two elements, they have
+      to be of the same length and the displacement between each
       pair is returned.
-
 
     Parameters
     ----------
     from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
-        GIDCollection of GIDs or tuple/list of position(s)
+        `GIDCollection` of GIDs or tuple/list of position(s)
     to_arg : GIDCollection
-        GIDCollection of GIDs
-
+        `GIDCollection` of GIDs
 
     Returns
     -------
-    out : tuple
+    tuple:
         Displacement vectors between pairs of nodes in `from_arg` and `to_arg`
-
 
     See also
     --------
-    Distance : Get lateral distances between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    GetPosition : Return the spatial locations of nodes.
-
+    :py:func:`.Distance`: Get lateral distances between nodes.
+    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    - The functions :py:func:`.GetPosition`, :py:func:`.Displacement` and :py:func:`.Distance`
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
-
 
     **Example**
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # displacement between node 2 and 3
-            print(nest.Displacement(l[1], l[2]))
+            print(nest.Displacement(s_nodes[1], s_nodes[2]))
 
             # displacment between the position (0.0., 0.0) and node 2
-            print(nest.Displacement([(0.0, 0.0)], l[1:2]))
+            print(nest.Displacement([(0.0, 0.0)], s_nodes[1]))
     """
     if not isinstance(to_arg, GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
@@ -335,63 +313,58 @@ def Displacement(from_arg, to_arg):
 
 def Distance(from_arg, to_arg):
     """
-    Get lateral distances from node(s)/position(s) from_arg to node(s) to_arg.
+    Get lateral distances from node(s)/position(s) `from_arg` to node(s) `to_arg`.
 
     The distance between two nodes is the length of its displacement.
 
     If explicit positions are given in the `from_arg` list, they are
-    interpreted in the `to_arg` layer. Distance is the shortest distance,
+    interpreted in the `to_arg` population. Distance is the shortest distance,
     taking into account periodic boundary conditions where applicable.
 
-    * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
+    - If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
-    * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be lists of the same length and the distance for each pair is
+    - If `from_arg` and `to_arg` both have more than two elements, they have
+      to be of the same length and the distance for each pair is
       returned.
-
 
     Parameters
     ----------
     from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
-        GIDCollection of GIDs or tuple/list of position(s)
+        `GIDCollection` of GIDs or tuple/list of position(s)
     to_arg : GIDCollection
-        GIDCollection of GIDs
-
+        `GIDCollection` of GIDs
 
     Returns
     -------
-    out : tuple
-        Distances between from and to
-
+    tuple:
+        Distances between `from` and `to`
 
     See also
     --------
-    Displacement : Get vector of lateral displacements between nodes.
-    DumpLayerConnections : Write connectivity information to file.
-    GetPosition : Return the spatial locations of nodes.
-
+    :py:func:`.Displacement`: Get vector of lateral displacements between nodes.
+    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
     Notes
     -----
-    * The functions ``GetPosition``, ``Displacement`` and ``Distance`` now
+    - The functions :py:func:`.GetPosition`, :py:func:`.Displacement` and :py:func:`.Distance`
       only works for nodes local to the current MPI process, if used in a
       MPI-parallel simulation.
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # distance between node 2 and 3
-            print(nest.Distance(l[1], l[2]))
+            print(nest.Distance(s_nodes[1], s_nodes[2]))
 
             # distance between the position (0.0., 0.0) and node 2
-            print(nest.Distance([(0.0, 0.0)], l[1:2]))
-
+            print(nest.Distance([(0.0, 0.0)], s_nodes[1]))
     """
     if not isinstance(to_arg, GIDCollection):
         raise TypeError("to_arg must be a GIDCollection")
@@ -408,57 +381,50 @@ def Distance(from_arg, to_arg):
 
 def FindNearestElement(layer, locations, find_all=False):
     """
-    Return the node(s) closest to the location(s) in the given layer.
+    Return the node(s) closest to the `locations` in the given `layer`.
 
     This function works for fixed grid layer only.
 
-    * If locations is a single 2-element array giving a grid location, return a
-      list of GIDs of layer elements at the given location.
-    * If locations is a list of coordinates, the function returns a list of
-      lists with GIDs of the nodes at all locations.
-
+    * If `locations` is a single 2-element array giving a grid location, return a
+      `GIDCollection` of `layer` elements at the given location.
+    * If `locations` is a list of coordinates, the function returns a `GIDCollection` of the nodes at all locations.
 
     Parameters
     ----------
     layer : GIDCollection
-        GIDCollection of layer GIDs
+        `GIDCollection` of spatially distributed GIDs
     locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
         2-element list of positions
     find_all : bool, default: False
         If there are several nodes with same minimal distance, return only the
         first found, if `False`.
-        If `True`, instead of returning a single GID, return a list of GIDs
+        If `True`, instead of returning a single `GIDCollection`, return a list of `GIDCollection`
         containing all nodes with minimal distance.
-
 
     Returns
     -------
-    out : tuple of int(s)
-        List of node GIDs
-
+    GIDCollection:
+        `GIDCollection` of node GIDs
+    list:
+        list of `GIDCollection` if find_all is True
 
     See also
     --------
-    FindCenterElement : Return GID(s) of node closest to center of layers.
-    GetPosition : Return the spatial locations of nodes.
+    :py:func:`.FindCenterElement`: Return GIDCollection of node closest to center of layers.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
-
-    Notes
-    -----
-    -
-
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # get GID of element closest to some location
-            nest.FindNearestElement(l, [3.0, 4.0], True)
+            nest.FindNearestElement(s_nodes, [3.0, 4.0], True)
     """
 
     if not isinstance(layer, GIDCollection):
@@ -514,36 +480,28 @@ def _rank_specific_filename(basename):
 
 def DumpLayerNodes(layer, outname):
     """
-    Write GID and position data of layer to file.
+    Write `GID` and position data of `layer` to file.
 
-    Write GID and position data to layer file. For each node in a layer,
+    Write `GID` and position data to `outname` file. For each node in `layer`,
     a line with the following information is written:
         ::
 
             GID x-position y-position [z-position]
 
-    If `layer` contains several GIDs, data for all layer will be written to a
+    If `layer` contains several `GIDs`, data for all nodes in `layer` will be written to a
     single file.
-
 
     Parameters
     ----------
     layer : GIDCollection
-        GIDCollection of GIDs of a Topology layer
+        `GIDCollection` of spatially distributed GIDs
     outname : str
         Name of file to write to (existing files are overwritten)
 
-
-    Returns
-    -------
-    out : None
-
-
     See also
     --------
-    DumpLayerConnections : Write connectivity information to file.
-    GetPosition : Return the spatial locations of nodes.
-
+    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
     Notes
     -----
@@ -553,17 +511,17 @@ def DumpLayerNodes(layer, outname):
       the file name suffix.
     * Each file stores data for nodes local to that file.
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # write layer node positions to file
-            nest.DumpLayerNodes(l, 'positions.txt')
+            nest.DumpLayerNodes(s_nodes, 'positions.txt')
 
     """
     if not isinstance(layer, GIDCollection):
@@ -581,7 +539,6 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
     This function writes connection information to file for all outgoing
     connections from the given layers with the given synapse model.
-    Data for all layers in the list is combined.
 
     For each connection, one line is stored, in the following format:
         ::
@@ -592,31 +549,23 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     If targets do not have positions (eg spike detectors outside any layer),
     NaN is written for each displacement coordinate.
 
-
     Parameters
     ----------
     source_layers : GIDCollection
-        GIDCollection of GIDs of a Topology layer
+        `GIDCollection` of spatially distributed GIDs
     target_layers : GIDCollection
-        GIDCollection of GIDs of a Topology layer
+       `GIDCollection` of (spatially distributed) GIDs
     synapse_model : str
         NEST synapse model
     outname : str
         Name of file to write to (will be overwritten if it exists)
 
-
-    Returns
-    -------
-    out : None
-
-
     See also
     --------
-    DumpLayerNodes : Write layer node positions to file.
-    GetPosition : Return the spatial locations of nodes.
-    nest.GetConnections : Return connection identifiers between
+    :py:func:`.DumpLayerNodes`: Write layer node positions to file.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    :py:func:`.GetConnections`: Return connection identifiers between
         sources and targets
-
 
     Notes
     -----
@@ -626,19 +575,20 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
       the MPI Rank into the file name before the file name suffix.
     * Each file stores data for local nodes.
 
-
     **Example**
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
-            nest.ConnectLayers(l,l, {'rule': 'pairwise_bernoulli', 'p': 1.0}, {'synapse_model': 'static_synapse'})
+            nest.Connect(s_nodes, s_nodes,
+                        {'rule': 'pairwise_bernoulli', 'p': 1.0},
+                        {'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
-            nest.DumpLayerConnections(l, l, 'static_synapse', 'conns.txt')
+            nest.DumpLayerConnections(s_nodes, s_nodes, 'static_synapse', 'conns.txt')
     """
     if not isinstance(source_layer, GIDCollection):
         raise TypeError("source_layer must be a GIDCollection")
@@ -659,45 +609,36 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
 def FindCenterElement(layer):
     """
-    Return GID(s) of node closest to center of layer.
-
+    Return `GIDCollection` of node closest to center of `layer`.
 
     Parameters
     ----------
     layers : GIDCollection
-        GIDCollection of layer GIDs
-
+        `GIDCollection` of spatially distributed GIDs
 
     Returns
     -------
-    out : int
-        The GID of the node closest to the center of the layer, as specified in
-        the layer parameters. If several nodes are equally close to the center,
+    GIDCollection:
+        `GIDCollection` of the node closest to the center of the `layer`, as specified by `layer`
+        parameters given in ``layer.spatial``. If several nodes are equally close to the center,
         an arbitrary one of them is returned.
-
 
     See also
     --------
-    FindNearestElement : Return the node(s) closest to the location(s) in the
-        given layer.
-    GetPosition : Return the spatial locations of nodes.
+    :py:func:`.FindNearestElement`: Return the node(s) closest to the location(s) in the given `layer`.
+    :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
-
-    Notes
-    -----
-    -
-
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
-            # get GID of the element closest to the center of the layer
-            nest.FindCenterElement(l)
+            # get GIDCollection of the element closest to the center of the layer
+            nest.FindCenterElement(s_nodes)
     """
 
     if not isinstance(layer, GIDCollection):
@@ -709,66 +650,58 @@ def FindCenterElement(layer):
 
 def GetTargetNodes(sources, tgt_layer, syn_model=None):
     """
-    Obtain targets of a list of sources in given target layer.
+    Obtain targets of `sources` in given `target` population.
 
+    For each neuron in `sources`, this function finds all target elements
+    in `tgt_layer`. If `syn_model` is not given (default), all targets are
+    returned, otherwise only targets of specific type.
 
     Parameters
     ----------
-    sources : tuple/list of int(s)
-        List of GID(s) of source neurons
+    sources : GIDCollection
+        GIDCollection with GIDs of `sources`
     tgt_layer : GIDCollection
-        GIDCollection with GIDs of tgt_layer
+        GIDCollection with GIDs of `tgt_layer`
     syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
-
     Returns
     -------
-    out : tuple of list(s) of int(s)
-        List of GIDs of target neurons fulfilling the given criteria.
-        It is a list of lists, one list per source.
-
-        For each neuron in `sources`, this function finds all target elements
-        in `tgt_layer`. If `syn_model` is not given (default), all targets are
-        returned, otherwise only targets of specific type.
-
+    tuple of GIDCollection:
+        Tuple of `GIDCollections` of target neurons fulfilling the given criteria, one `GIDCollection` per
+        source GID in `sources`.
 
     See also
     --------
-    GetTargetPositions : Obtain positions of targets of a list of sources in a
-        given target layer.
-    nest.GetConnections : Return connection identifiers between
+    :py:func:`.GetTargetPositions`: Obtain positions of targets in a given target layer connected to given source.
+    :py:func:`.GetConnections`: Return connection identifiers between
         sources and targets
-
 
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 
             # connectivity specifications with a mask
-            conndict = {'connection_type': 'divergent',
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
                         'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
                                                  'upper_right': [2.0, 1.0]}}}
 
-            # connect layer l with itself according to the given
+            # connect population s_nodes with itself according to the given
             # specifications
-            nest.ConnectLayers(l, l, conndict)
+            nest.Connect(s_nodes, s_nodes, conndict)
 
-            # get the GIDs of the targets of the source neuron with GID 5
-            nest.GetTargetNodes([5], l)
+            # get the GIDs of the targets of a source neuron
+            nest.GetTargetNodes(s_nodes[4], s_nodes)
     """
     if not isinstance(sources, GIDCollection):
         raise TypeError("sources must be a GIDCollection.")
@@ -792,64 +725,57 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
-    Obtain positions of targets to a given GIDCollection of sources.
+    Obtain positions of targets to a given `GIDCollection` of `sources`.
 
+    For each neuron in `sources`, this function finds all target elements
+    in `tgt_layer`. If `syn_model` is not given (default), all targets are
+    returned, otherwise only targets of specific type.
 
     Parameters
     ----------
     sources : GIDCollection
-        GIDCollection with GID(s) of source neurons
+        `GIDCollection` with GID(s) of source neurons
     tgt_layer : GIDCollection
-        GIDCollection of tgt_layer
+        `GIDCollection` of tgt_layer
     syn_type : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
-
     Returns
     -------
-    out : list of list(s) of tuple(s) of floats
+    list of list(s) of tuple(s) of floats:
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
-        For each neuron in `sources`, this function finds all target elements
-        in `tgt_layer`. If `syn_model` is not given (default), all targets are
-        returned, otherwise only targets of specific type.
-
-
     See also
     --------
-    GetTargetNodes : Obtain targets of a list of sources in a given target
-        layer.
-
+    :py:func:`.GetTargetNodes`: Obtain targets of a `GIDCollection` of sources in a given target
+        population.
 
     Notes
     -----
     * For distributed simulations, this function only returns targets on the
       local MPI process.
 
-
-    **Example**
+    Example
+    -------
         ::
 
             import nest
 
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 
             # connectivity specifications with a mask
-            conndict1 = {'connection_type': 'divergent',
-                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                                  'upper_right' : [2.0, 1.0]}}}
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
 
-            # connect layer l with itself according to the given
+            # connect population s_nodes with itself according to the given
             # specifications
-            nest.ConnectLayers(l, l, conndict1)
+            nest.Connect(s_nodes, s_nodes, conndict)
 
-            # get the positions of the targets of the source neuron with GID 5
-            nest.GetTargetPositions(l[5:6], l)
+            # get the positions of the targets of a source neuron
+            nest.GetTargetPositions(s_nodes[5], s_nodes)
     """
     if not isinstance(sources, GIDCollection):
         raise TypeError("sources must be a GIDCollection.")
@@ -880,26 +806,26 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
 def SelectNodesByMask(layer, anchor, mask_obj):
     """
-    Obtain the GIDs inside a masked area of a topology layer.
+    Obtain the GIDs inside a masked area of a spatially distributed population.
 
-    The function finds and returns all the GIDs inside a given mask of a single
-    layer. It works on both 2-dimensional and 3-dimensional masks and layers.
-    All mask types are allowed, including combined masks.
+    The function finds and returns all the GIDs inside a given mask of a
+    `layer`. The GIDs are returned as a `GIDCollection`. The function works on both 2-dimensional and
+    3-dimensional masks and layers. All mask types are allowed, including combined masks.
 
     Parameters
     ----------
     layer : GIDCollection
-        GIDCollection with GIDs of the layer to select nodes from.
+        `GIDCollection` with GIDs of the `layer` to select nodes from.
     anchor : tuple/list of double
         List containing center position of the layer. This is the point from
         where we start to search.
     mask_obj: object
-        Mask object specifying chosen area.
+        `Mask` object specifying chosen area.
 
     Returns
     -------
-    out : list of int(s)
-        GID(s) of nodes/elements inside the mask.
+    GIDCollection:
+        `GIDCollection` of nodes/elements inside the mask.
     """
 
     if not isinstance(layer, GIDCollection):
@@ -944,16 +870,12 @@ def _shifted_positions(pos, ext):
 
 def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     """
-    Plot all nodes in a layer.
-
-    This function plots only top-level nodes, not the content of composite
-    nodes.
-
+    Plot all nodes in a `layer`.
 
     Parameters
     ----------
-    layer : GIDCollection (Layer)
-        GIDCollection with GIDs of layer to plot
+    layer : GIDCollection
+        `GIDCollection` of spatially distributed nodes
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is
         created.
@@ -962,38 +884,33 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     nodesize : float, optional, default: 20
         Marker size for nodes
 
-
     Returns
     -------
-    out : `matplotlib.figure.Figure` object
-
+    `matplotlib.figure.Figure` object
 
     See also
     --------
-    PlotProbabilityParameter : Create a plot of the connection probability and/or mask.
-    PlotTargets : Plot all targets of a given source.
+    :py:func:`.PlotProbabilityParameter`: Create a plot of the connection probability and/or mask.
+    :py:func:`.PlotTargets`: Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
-
 
     Notes
     -----
-    * Do not use this function in distributed simulations.
+    * Do **not** use this function in distributed simulations.
 
 
-    **Example**
+    Example
+    -------
         ::
 
             import nest
             import matplotlib.pyplot as plt
 
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 
             # plot layer with all its nodes
-            nest.PlotLayer(l)
+            nest.PlotLayer(s_nodes)
             plt.show()
     """
 
@@ -1055,21 +972,20 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     """
     Plot all targets of source neuron `src_nrn` in a target layer `tgt_layer`.
 
-
     Parameters
     ----------
     src_nrn : GIDCollection
-        GIDCollection of source neuron (as single-element GIDCollection)
+        `GIDCollection` of source neuron (as single-element GIDCollection)
     tgt_layer : GIDCollection
-        GIDCollection of tgt_layer
+        `GIDCollection` of tgt_layer
     syn_type : [None | str], optional, default: None
-        Show only targets connected to with a given synapse type
+        Show only targets connected with a given synapse type
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is created.
     mask : [None | dict], optional, default: None
-        Draw mask with targets; see ``PlotProbabilityParameter`` for details.
+        Draw mask with targets; see :py:func:`.PlotProbabilityParameter` for details.
     probability_parameter : [None | Parameter], optional, default: None
-        Draw connection probability with targets; see ``PlotProbabilityParameter`` for details.
+        Draw connection probability with targets; see :py:func:`.PlotProbabilityParameter` for details.
     src_color : [None | any matplotlib color], optional, default: 'red'
         Color used to mark source node position
     src_size : float, optional, default: 50
@@ -1083,27 +999,21 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     kernel_color : [None | any matplotlib color], optional, default: 'red'
         Color used for lines marking kernel
 
-
     Returns
     -------
-    out : matplotlib.figure.Figure object
-
+    matplotlib.figure.Figure object
 
     See also
     --------
-    GetTargetNodes : Obtain targets of a list of sources in a given target
-        layer.
-    GetTargetPositions : Obtain positions of targets of a list of sources in a
-        given target layer.
-    probability_parameter : Add indication of connection probability and mask to axes.
-    PlotLayer : Plot all nodes in a layer.
+    :py:func:`.GetTargetNodes`: Obtain targets of a sources in a given target layer.
+    :py:func:`.GetTargetPositions`: Obtain positions of targets of sources in a given target layer.
+    :py:func:`.probability_parameter`: Add indication of connection probability and mask to axes.
+    :py:func:`.PlotLayer`: Plot all nodes in a spatially distributed population.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
-
 
     Notes
     -----
-    * Do not use this function in distributed simulations.
-
+    * Do **not** use this function in distributed simulations.
 
     **Example**
         ::
@@ -1111,23 +1021,20 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             import nest
             import matplotlib.pyplot as plt
 
-            # create a layer
-            l = nest.CreateLayer({'rows'      : 11,
-                                'columns'   : 11,
-                                'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_psc_alpha'})
+            # create a spatial population
+            s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 
             # connectivity specifications with a mask
-            conndict = {'connection_type': 'divergent',
-                         'mask': {'rectangular': {'lower_left'  : [-2.0, -1.0],
-                                                  'upper_right' : [2.0, 1.0]}}}
+            conndict = {'rule': 'pairwise_bernoulli', 'p': 1.,
+                        'mask': {'rectangular': {'lower_left' : [-2.0, -1.0],
+                                                 'upper_right': [2.0, 1.0]}}}
 
-            # connect layer l with itself according to the given
+            # connect population s_nodes with itself according to the given
             # specifications
-            nest.ConnectLayers(l, l, conndict)
+            nest.Connect(s_nodes, s_nodes, conndict)
 
-            # plot the targets of the source neuron with GID 5
-            nest.PlotTargets(l[4:5], l)
+            # plot the targets of a source neuron
+            nest.PlotTargets(s_nodes[4], s_nodes)
             plt.show()
     """
 
@@ -1309,26 +1216,26 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
     """
     Create a plot of the connection probability and/or mask.
 
-    A probability plot is created based on a Parameter and a source. The
-    Parameter should have a distance dependency. The source must be given
-    as a GIDCollection with a single GID. Optionally a mask can also be
+    A probability plot is created based on a `Parameter` and a `source`. The
+    `Parameter` should have a distance dependency. The `source` must be given
+    as a `GIDCollection` with a single GID. Optionally a `mask` can also be
     plotted.
 
     Parameters
     ----------
     source : GIDCollection
-        Single GID GIDCollection to use as source.
+        Single GID `GIDCollection` to use as source.
     parameter : Parameter object
-        Parameter the probability is based on.
+        `Parameter` the probability is based on.
     mask : Dictionary
         Optional specification of a connection mask. Connections will only
-        be made to nodes inside the mask. See CreateMask for options on
+        be made to nodes inside the mask. See :py:func:`.CreateMask` for options on
         how to specify the mask.
     edges : list/tuple
         List of four edges of the region to plot. The values are given as
         [x_min, x_max, y_min, y_max].
     shape : list/tuple
-        Number of Parameter values to calculate in each direction.
+        Number of `Parameter` values to calculate in each direction.
     ax : matplotlib.axes.AxesSubplot,
         A matplotlib axes instance to plot in. If none is given,
         a new one is created.

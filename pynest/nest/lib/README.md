@@ -13,13 +13,14 @@ rules:
    
 2. Nodes are identified by their global IDs (GID) by default.
 
-3. GIDs are always written as lists, e.g. [0], [1,2]
+3. GIDs are always represented by a GIDCollection, e.g.
+   GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
-4. Commands that return a GID must return it as list of GID(s).
+4. Commands that return a GID must return it as GIDCollection.
 
 5. When possible, loops over nodes should be propagated down to the
-   SLI level.  This minimizes the number of Python<->SLI conversions
-   and increases performance.  Loops in SLI are also faster than in
+   SLI level. This minimizes the number of Python<->SLI conversions
+   and increases performance. Loops in SLI are also faster than in
    Python. 
         
 6. If you have a *very* good reason, you may deviate from these guidelines.

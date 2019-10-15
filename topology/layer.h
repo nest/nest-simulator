@@ -570,7 +570,7 @@ template < int D >
 inline std::vector< double >
 Layer< D >::compute_displacement( const std::vector< double >& from_pos, const index to_lid ) const
 {
-  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ) );
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
 }
 
 template < int D >
@@ -612,7 +612,7 @@ template < int D >
 inline std::vector< double >
 Layer< D >::get_position_vector( const index sind ) const
 {
-  return std::vector< double >( get_position( sind ) );
+  return std::vector< double >( get_position( sind ).get_vector() );
 }
 
 template < int D >

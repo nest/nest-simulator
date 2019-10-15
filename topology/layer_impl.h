@@ -94,8 +94,8 @@ template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ names::extent ] = std::vector< double >( extent_ );
-  ( *d )[ names::center ] = std::vector< double >( lower_left_ + extent_ / 2 );
+  ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
+  ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
 
   if ( periodic_.none() )
   {

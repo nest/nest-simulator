@@ -108,11 +108,6 @@ public:
   Position& operator=( const Position&& other );
 
   /**
-   * @returns the Position as a std::vector
-   */
-  operator std::vector< T >() const;
-
-  /**
    * @returns an element (coordinate) of the Position
    */
   T& operator[]( int i );
@@ -481,13 +476,6 @@ inline Position< D, T >& Position< D, T >::operator=( const Position&& other )
   return *this;
 }
 
-
-template < int D, class T >
-Position< D, T >::operator std::vector< T >() const
-{
-  return x_;
-}
-
 template < int D, class T >
 inline T& Position< D, T >::operator[]( int i )
 {
@@ -504,7 +492,7 @@ template < int D, class T >
 Token
 Position< D, T >::getToken() const
 {
-  std::vector< T > result = std::vector< T >( *this );
+  std::vector< T > result = std::vector< T >( get_vector() );
 
   return Token( result );
 }

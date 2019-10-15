@@ -134,8 +134,8 @@ BoxMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< std::vector< double > >( maskd, names::lower_left, lower_left_ );
-  def< std::vector< double > >( maskd, names::upper_right, upper_right_ );
+  def< std::vector< double > >( maskd, names::lower_left, lower_left_.get_vector() );
+  def< std::vector< double > >( maskd, names::upper_right, upper_right_.get_vector() );
   def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
   def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
@@ -211,7 +211,7 @@ BallMask< D >::get_dict() const
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
   def< double >( maskd, names::radius, radius_ );
-  def< std::vector< double > >( maskd, names::anchor, center_ );
+  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
   return d;
 }
 
@@ -291,7 +291,7 @@ EllipseMask< D >::get_dict() const
   def< double >( maskd, names::major_axis, major_axis_ );
   def< double >( maskd, names::minor_axis, minor_axis_ );
   def< double >( maskd, names::polar_axis, polar_axis_ );
-  def< std::vector< double > >( maskd, names::anchor, center_ );
+  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
   def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
   def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
@@ -506,7 +506,7 @@ DictionaryDatum
 AnchoredMask< D >::get_dict() const
 {
   DictionaryDatum d = m_->get_dict();
-  def< std::vector< double > >( d, names::anchor, anchor_ );
+  def< std::vector< double > >( d, names::anchor, anchor_.get_vector() );
   return d;
 }
 

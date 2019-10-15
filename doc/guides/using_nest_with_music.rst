@@ -308,29 +308,15 @@ where w is the width of the port. The MUSIC configuration file
 
 ::
 
-    stoptime=0.01
-
-    [from]
-      binary=./minimalmusicsetup_sendnest.py
-      np=1
-
-    [to]
-      binary=./minimalmusicsetup_receivenest.py
-      np=1
-
-    from.spikes_out -> to.spikes_in [1]
-
-::
-
     stoptime=1.0
     [from]
-    np=1
-    binary=./cont_out.py
+      np=1
+      binary=constsource
     [to]
-    np=1
-    binary=./cont_in.py
+      np=1
+      binary=./conttest.py
 
-    from.cont_out -> to.cont_in [10]
+    from.contdata -> to.contdata [10]
 
 The receiving side is again implemented using a
 :doc:`PyNEST <../tutorials/index>` script (``conttest.py``).

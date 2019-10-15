@@ -37,48 +37,142 @@ distance = CreateParameter('distance', {})
 
 
 class dimension_distance(object):
+    """
+    Distance in separate dimensions.
+
+    Three variables are defined, x, y, and z, which represent the distance
+    in their respective dimensions. Note that this parameter can only be
+    used in contexts with two nodes, e.g. when connecting.
+    """
     x = CreateParameter('distance', {'dimension': 1})
     y = CreateParameter('distance', {'dimension': 2})
     z = CreateParameter('distance', {'dimension': 3})
 
     @staticmethod
     def n(dimension):
+        """
+        Distance in given dimension.
+
+        Parameters
+        ----------
+        dimension : int
+            Dimension in which to get the distance.
+
+        Returns
+        -------
+        Parameter:
+            Object yielding the distance in the given dimension.
+        """
         return CreateParameter('distance', {'dimension': dimension})
 
 
 class pos(object):
+    """
+    Position of node in a specific dimension.
+
+    Three variables are defined, x, y, and z, which represent the position
+    in their respective dimensions. Note that this parameter can only be
+    used in contexts with one node, e.g. when setting node status.
+    """
     x = CreateParameter('position', {'dimension': 0})
     y = CreateParameter('position', {'dimension': 1})
     z = CreateParameter('position', {'dimension': 2})
 
     @staticmethod
     def n(dimension):
+        """
+        Position in given dimension.
+
+        Parameters
+        ----------
+        dimension : int
+            Dimension in which to get the position.
+
+        Returns
+        -------
+        Parameter:
+            Object yielding the position in the given dimension.
+        """
         return CreateParameter('position', {'dimension': dimension})
 
 
 class source_pos(object):
+    """
+    Position of the source node in a specific dimension.
+
+    Three variables are defined, x, y, and z, which represent the source
+    node position in their respective dimensions. Note that this parameter
+    can only be used in contexts with two nodes, e.g. when connecting.
+    """
     x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 1})
     y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 1})
     z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 1})
 
     @staticmethod
     def n(dimension):
+        """
+        Position of source node in given dimension.
+
+        Parameters
+        ----------
+        dimension : int
+            Dimension in which to get the position.
+
+        Returns
+        -------
+        Parameter:
+            Object yielding the position in the given dimension.
+        """
         return CreateParameter('position',
                                {'dimension': dimension, 'synaptic_endpoint': 1})
 
 
 class target_pos(object):
+    """
+    Position of the target node in a specific dimension.
+
+    Three variables are defined, x, y, and z, which represent the target
+    node position in their respective dimensions. Note that this parameter
+    can only be used in contexts with two nodes, e.g. when connecting.
+    """
     x = CreateParameter('position', {'dimension': 0, 'synaptic_endpoint': 2})
     y = CreateParameter('position', {'dimension': 1, 'synaptic_endpoint': 2})
     z = CreateParameter('position', {'dimension': 2, 'synaptic_endpoint': 2})
 
     @staticmethod
     def n(dimension):
+        """
+        Position of target node in given dimension.
+
+        Parameters
+        ----------
+        dimension : int
+            Dimension in which to get the position.
+
+        Returns
+        -------
+        Parameter:
+            Object yielding the position in the given dimension.
+        """
         return CreateParameter('position',
                                {'dimension': dimension, 'synaptic_endpoint': 2})
 
 
 class grid(object):
+    """
+    Defines grid-based positions for nodes.
+
+    Parameters
+    ----------
+    shape : list
+        Two- or three-element list with the grid shape in two or three dimensions, respectively.
+    center : list, optional
+        Position of the center of the layer.
+    extent : list, optional
+        Extent of the layer in each dimension.
+    edge_wrap : bool, optional
+        Specifies periodic boundary conditions.
+    """
     def __init__(self, shape, center=None, extent=None, edge_wrap=False):
         self.shape = shape
         self.center = center
@@ -87,6 +181,23 @@ class grid(object):
 
 
 class free(object):
+    """
+    Defines positions for nodes based on a list of positions, or a Parameter object.
+
+    Parameters
+    ----------
+    pos : [list | Parameter]
+        Either a list of two- or three-element lists containing positions, depending on number of dimensions,
+        a two- or three-element list of Parameters, depending on number of dimensions,
+        or a single Parameter.
+    extent : list, optional
+        Extent of the layer in each dimension.
+    edge_wrap : bool, optional
+        Specifies periodic boundary conditions.
+    num_dimensions : int, optional
+        If a single Parameter is given as position, and no extent is
+        specified, the number of dimensions must be set explicitly.
+    """
     def __init__(self, pos, extent=None, edge_wrap=False, num_dimensions=None):
         if extent and num_dimensions:
             raise TypeError(
@@ -120,6 +231,7 @@ class free(object):
         self.edge_wrap = edge_wrap
 
     def _parameter_list_to_dimension(self, dim_parameters, num_dimensions):
+        """Converts a list of Parameters to a dimension2d or dimension3d Parameter."""
         if num_dimensions == 2:
             dimfunc = 'dimension2d'
         elif num_dimensions == 3:

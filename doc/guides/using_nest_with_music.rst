@@ -69,8 +69,8 @@ continuing.
 
    import nest
 
-   nest.sli_run("statusdict/have_music ::")
-   if not nest.spp():
+   nest.ll_api.sli_run("statusdict/have_music ::")
+   if not nest.ll_api.spp():
        import sys
 
        print("NEST was not compiled with support for MUSIC, not running.")
@@ -124,8 +124,8 @@ script, but without the spike generator.
 
   import nest
 
-  nest.sli_run("statusdict/have_music ::")
-  if not nest.spp():
+  nest.ll_api.sli_run("statusdict/have_music ::")
+  if not nest.ll_api.spp():
       import sys
 
       print("NEST was not compiled with support for MUSIC, not running.")

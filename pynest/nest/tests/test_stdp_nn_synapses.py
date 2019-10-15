@@ -50,10 +50,6 @@ class STDPNNSynapsesTest(unittest.TestCase):
         self.simulation_duration = 1e+4  # [ms]
         self.hardcoded_trains_length = 15.  # [ms]
         self.synapse_parameters = {
-            #"model": "stdp_nn_pre-centered_synapse",
-            #"model": "stdp_nn_restr_synapse",
-            #"model": "stdp_nn_symm_synapse",
-            # will further iterate through the above
             "receptor_type": 1,
             "delay": self.resolution,
             # STDP constants
@@ -77,15 +73,15 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
         pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
-                pre_spikes, post_spikes,
-                self.synapse_parameters["weight"])
+            pre_spikes, post_spikes,
+            self.synapse_parameters["weight"])
         self.assertAlmostEqual(
-                weight_reproduced_independently,
-                weight_by_nest,
-                msg=synapse_model + " test: "
-                        "Resulting synaptic weight %e "
-                        "differs from expected %e" % (
-                            weight_by_nest, weight_reproduced_independently))
+            weight_reproduced_independently,
+            weight_by_nest,
+            msg=synapse_model + " test: "
+                                "Resulting synaptic weight %e "
+                                "differs from expected %e" % (
+                                    weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -98,18 +94,16 @@ class STDPNNSynapsesTest(unittest.TestCase):
         nest.SetKernelStatus({'resolution': self.resolution})
 
         presynaptic_neuron, postsynaptic_neuron = nest.Create(
-                "parrot_neuron",
-                2,
-                params=self.neuron_parameters)
+            "parrot_neuron",
+            2,
+            params=self.neuron_parameters)
         presynaptic_generator, postsynaptic_generator = nest.Create(
-                "poisson_generator",
-                2,
-                params=({"rate": self.presynaptic_firing_rate,
-                         "stop": (self.simulation_duration
-                                  - self.hardcoded_trains_length)},
-                        {"rate": self.postsynaptic_firing_rate,
-                         "stop": (self.simulation_duration
-                                  - self.hardcoded_trains_length)}))
+            "poisson_generator",
+            2,
+            params=({"rate": self.presynaptic_firing_rate,
+                     "stop": (self.simulation_duration - self.hardcoded_trains_length)},
+                    {"rate": self.postsynaptic_firing_rate,
+                     "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
 
         # While the random sequences, fairly long, would supposedly
         # reveal small differences in the weight change between NEST
@@ -124,8 +118,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
             hardcoded_post_times
         ) = [
             [
-                self.simulation_duration - self.hardcoded_trains_length
-                + t * 1.0  # ms
+                self.simulation_duration - self.hardcoded_trains_length + t
                 for t in train
             ] for train in (
                 (1, 5, 6, 7, 9, 11, 12, 13),
@@ -137,48 +130,43 @@ class STDPNNSynapsesTest(unittest.TestCase):
             additional_pre_spike_sender,
             additional_post_spike_sender
         ) = nest.Create(
-                "spike_generator",
-                2,
-                params=({"spike_times": hardcoded_pre_times},
-                        {"spike_times": hardcoded_post_times})
+            "spike_generator",
+            2,
+            params=({"spike_times": hardcoded_pre_times},
+                    {"spike_times": hardcoded_post_times})
         )
 
         # The detector is to save the randomly generated spike trains.
         spike_detector = nest.Create("spike_detector")
 
         nest.Connect(
-                (
-                    presynaptic_generator, additional_pre_spike_sender,
-                    postsynaptic_generator, additional_post_spike_sender
-                ),
-                (
-                    presynaptic_neuron, presynaptic_neuron,
-                    postsynaptic_neuron, postsynaptic_neuron
-                ),
-                syn_spec={"model": "static_synapse"},
-                conn_spec="one_to_one")
+            (
+                presynaptic_generator, additional_pre_spike_sender,
+                postsynaptic_generator, additional_post_spike_sender
+            ),
+            (
+                presynaptic_neuron, presynaptic_neuron,
+                postsynaptic_neuron, postsynaptic_neuron
+            ),
+            syn_spec={"model": "static_synapse"},
+            conn_spec="one_to_one")
         nest.Connect(
-                (presynaptic_neuron, postsynaptic_neuron),
-                spike_detector,
-                syn_spec={"model": "static_synapse"},
-                conn_spec="all_to_all")
+            (presynaptic_neuron, postsynaptic_neuron),
+            spike_detector,
+            syn_spec={"model": "static_synapse"},
+            conn_spec="all_to_all")
         # The synapse of interest itself
         nest.Connect(
-                (presynaptic_neuron,),
-                (postsynaptic_neuron,),
-                syn_spec=self.synapse_parameters)
-        plastic_synapse_of_interest = nest.GetConnections(
-                synapse_model=self.synapse_parameters["model"])
+            (presynaptic_neuron,),
+            (postsynaptic_neuron,),
+            syn_spec=self.synapse_parameters)
+        plastic_synapse_of_interest = nest.GetConnections(synapse_model=self.synapse_parameters["model"])
 
         nest.Simulate(self.simulation_duration)
 
         all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
-        pre_spikes = all_spikes['times'][
-                all_spikes['senders'] == presynaptic_neuron
-                ]
-        post_spikes = all_spikes['times'][
-                all_spikes['senders'] == postsynaptic_neuron
-                ]
+        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron]
+        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron]
         weight = nest.GetStatus(plastic_synapse_of_interest, keys='weight')[0]
         return (pre_spikes, post_spikes, weight)
 
@@ -193,42 +181,34 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
         # These are defined just for convenience,
         # STDP is evaluated on exact times nonetheless
-        pre_spikes_forced_to_grid = [
-                int(t / self.resolution) for t in _pre_spikes]
-        post_spikes_forced_to_grid = [
-                int(t / self.resolution) for t in _post_spikes]
+        pre_spikes_forced_to_grid = [int(t / self.resolution) for t in _pre_spikes]
+        post_spikes_forced_to_grid = [int(t / self.resolution) for t in _post_spikes]
 
         t_previous_pre = -1
         t_previous_post = -1
         w = _initial_weight
-        for time_in_simulation_steps in range(
-                    0,
-                    int(self.simulation_duration / self.resolution)):
+        n_steps = int(self.simulation_duration / self.resolution)
+        for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
                 # A presynaptic spike occured now.
 
                 # Adjusting the current time to make it exact.
-                t = _pre_spikes[
-                        pre_spikes_forced_to_grid.index(
-                                time_in_simulation_steps)]
+                t = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
 
                 # Evaluating the depression rule.
-                if (self.synapse_parameters["model"]
-                        == "stdp_nn_restr_synapse"):
+                if self.synapse_parameters["model"] == "stdp_nn_restr_synapse":
                     current_nearest_neighbour_pair_is_suitable = (
-                            t_previous_post > t_previous_pre)
+                        t_previous_post > t_previous_pre)
                     # If '<', t_previous_post has already been paired
                     # with t_previous_pre, thus due to the restricted
                     # pairing scheme we do not account it.
-                if (self.synapse_parameters["model"] == "stdp_nn_symm_synapse"
-                    or self.synapse_parameters["model"]
-                        == "stdp_nn_pre-centered_synapse"):
+                if (self.synapse_parameters["model"] == "stdp_nn_symm_synapse" or
+                        self.synapse_parameters["model"] == "stdp_nn_pre-centered_synapse"):
                     # The current pre-spike is simply paired with the
                     # nearest post-spike.
                     current_nearest_neighbour_pair_is_suitable = True
 
-                if (current_nearest_neighbour_pair_is_suitable
-                        and t_previous_post != -1):
+                if (current_nearest_neighbour_pair_is_suitable and t_previous_post != -1):
                     # Otherwise, if == -1, there have been
                     # no post-spikes yet, and nothing to pair with.
                     w = self.depress(t_previous_post - t, w)
@@ -241,30 +221,26 @@ class STDPNNSynapsesTest(unittest.TestCase):
                 # A postsynaptic spike occured now.
 
                 # Adjusting the current time to make it exact.
-                t = _post_spikes[post_spikes_forced_to_grid.index(
-                        time_in_simulation_steps)]
+                t = _post_spikes[post_spikes_forced_to_grid.index(time_in_simulation_steps)]
 
                 # A post-spike is actually accounted in STDP only after
                 # it backpropagates through the dendrite.
                 t += self.synapse_parameters["delay"]
 
                 # Evaluating the facilitation rule.
-                if (self.synapse_parameters["model"]
-                        == "stdp_nn_symm_synapse"):
+                if self.synapse_parameters["model"] == "stdp_nn_symm_synapse":
                     if t_previous_pre != -1:  # otherwise nothing to pair with
                         w = self.facilitate(t - t_previous_pre, w)
 
-                if (self.synapse_parameters["model"]
-                        == "stdp_nn_restr_synapse"):
-                    if (t_previous_pre != -1  # if == -1, nothing to pair with
-                            and t_previous_pre > t_previous_post):
-                        # if '<', t_previous_pre has already been
-                        # paired with t_previous_post, thus due to the
-                        # restricted pairing scheme we do not account it.
-                        w = self.facilitate(t - t_previous_pre, w)
+                if self.synapse_parameters["model"] == "stdp_nn_restr_synapse":
+                    if t_previous_pre != -1:  # if == -1, nothing to pair with
+                        if t_previous_pre > t_previous_post:
+                            # if '<', t_previous_pre has already been
+                            # paired with t_previous_post, thus due to the
+                            # restricted pairing scheme we do not account it.
+                            w = self.facilitate(t - t_previous_pre, w)
 
-                if (self.synapse_parameters["model"]
-                        == "stdp_nn_pre-centered_synapse"):
+                if self.synapse_parameters["model"] == "stdp_nn_pre-centered_synapse":
                     if t_previous_pre != -1:  # if == -1, nothing to pair with
                         # Going through all preceding presynaptic spikes
                         # that are later than the previous post.
@@ -288,10 +264,9 @@ class STDPNNSynapsesTest(unittest.TestCase):
         if _delta_t == 0:
             return w
         w += (
-            self.synapse_parameters["lambda"]
-            * ((1 - w/self.synapse_parameters["Wmax"])
-                ** self.synapse_parameters["mu_plus"])
-            * exp(-1 * _delta_t / self.synapse_parameters["tau_plus"])
+            self.synapse_parameters["lambda"] *
+            ((1 - w / self.synapse_parameters["Wmax"])**self.synapse_parameters["mu_plus"]) *
+            exp(-1 * _delta_t / self.synapse_parameters["tau_plus"])
         )
         if w > self.synapse_parameters["Wmax"]:
             w = self.synapse_parameters["Wmax"]
@@ -301,11 +276,10 @@ class STDPNNSynapsesTest(unittest.TestCase):
         if _delta_t == 0:
             return w
         w -= (
-            self.synapse_parameters["lambda"]
-            * self.synapse_parameters["alpha"]
-            * ((w/self.synapse_parameters["Wmax"])
-                ** self.synapse_parameters["mu_minus"])
-            * exp(_delta_t / self.neuron_parameters["tau_minus"])
+            self.synapse_parameters["lambda"] *
+            self.synapse_parameters["alpha"] *
+            ((w / self.synapse_parameters["Wmax"])**self.synapse_parameters["mu_minus"]) *
+            exp(_delta_t / self.neuron_parameters["tau_minus"])
         )
         if w < 0:
             w = 0
@@ -315,8 +289,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_symm")
 
     def test_nn_pre_centered_synapse(self):
-        self.do_nest_simulation_and_compare_to_reproduced_weight(
-                "nn_pre-centered")
+        self.do_nest_simulation_and_compare_to_reproduced_weight("nn_pre-centered")
 
     def test_nn_restr_synapse(self):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_restr")

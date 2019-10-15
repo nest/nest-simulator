@@ -22,7 +22,6 @@
 import unittest
 import nest
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
 
 
@@ -30,14 +29,13 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testAAAResetKernel(self):
-        """Test proper reset of backend defaults by ResetKernel.
+        """Test reset of recording backend defaults.
 
         As ResetKernel is used by many of the tests in this file to
         ensure a consistent initial state, this test has to be run
         before all others. This is ensured by prefix "AAA" in front of
         the name. See https://docs.python.org/3/library/unittest.html
         for details on test execution order.
-
         """
 
         mm_defaults = nest.GetDefaults("multimeter")
@@ -59,14 +57,13 @@ class TestRecordingBackends(unittest.TestCase):
 
         mm_defaults = nest.GetDefaults("multimeter")
         rb_properties = ["record_to", "time_in_steps"]
+        rb_defaults = [mm_defaults[k] for k in rb_properties]
 
         self.assertEqual(rb_defaults_initial, rb_defaults)
 
 
     def testDefaultBackendsAvailable(self):
-        """Test availability of default backends.
-
-        """
+        """Test availability of default recording backends."""
 
         nest.ResetKernel()
 
@@ -80,9 +77,11 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testGlobalRecordingBackendProperties(self):
-        """
-        If compiled with SIONlib, set and get global backend properties on the
-        corresponding backend, as that is the only backend which has them.
+        """Test setting of global backend properties.
+
+        This only runs if compiled with SIONlib and sets and gets
+        global backend properties on the corresponding backend, as
+        that is the only backend which has them.
         """
 
         nest.ResetKernel()
@@ -94,10 +93,11 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testSetDefaultRecordingBackend(self):
-        """
-        Test if setting another default recording backend for a recording
-        device as works and does not influence the default backend of all
-        other recording devices.
+        """Test setting the default recording backend.
+
+        Test if setting another default recording backend for a
+        recording device works and does not influence the default
+        backend of all other recording devices.
         """
 
         nest.ResetKernel()
@@ -111,9 +111,7 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testSetDefaultsRecordingBackendProperties(self):
-        """
-        Test if setting recording backend default properties works.
-        """
+        """Test setting recording backend defaults."""
 
         nest.ResetKernel()
 
@@ -126,9 +124,11 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testRecordingBackendDefaultsToInstances(self):
-        """
-        Make sure that backend defaults end up in instances and don't
-        influence other instances even though they use the same backend
+        """Test that backend defaults end up in instances.
+
+        Also check that that backend defaults set on one model and
+        don't influence other instances even though they use the same
+        backend
         """
 
         nest.ResetKernel()
@@ -147,7 +147,8 @@ class TestRecordingBackends(unittest.TestCase):
 
 
     def testRecordingBackendMemory(self):
-        """
+        """Test the recording backend 'memory'.
+
         - Check if the event dict is there from the start
         - Check if the n_events is set correctly
         - Check if the events dict is cleared when setting n_events to 0
@@ -155,21 +156,25 @@ class TestRecordingBackends(unittest.TestCase):
         - Check if time_in_steps works properly
         - Check it ResetKernel deletes data from memory backend
         """
+
         pass
 
 
     def testRecordingBackendASCII(self):
-        """
+        """Test the recording backend 'ascii'.
+
         - Check if data_prefix and data_path end up in the filenames list
         - Check if setting the file extension works
         - Check if time_in_steps works properly
         """
+
         pass
 
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestRecordingBackends)
     return suite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)

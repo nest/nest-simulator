@@ -38,7 +38,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
   , P_( rd.P_ )
-  , backend_params_( rd.backend_params_ )
+  , backend_params_( new Dictionary( *rd.backend_params_ ) )
 {
 }
 

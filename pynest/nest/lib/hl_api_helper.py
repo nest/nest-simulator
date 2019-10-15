@@ -68,7 +68,7 @@ __all__ = [
 # These flags are used to print deprecation warnings only once.
 # Only flags for special cases need to be entered here, such as special models
 # or function parameters, all flags for deprecated functions will be registered
-# by the @deprecated decorator.
+# by the @deprecated decorator, and therefore does not manually need to be placed here.
 _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
                                              'replacement': 'replacement_mod'},
                         'iaf_psc_alpha_canon': {'deprecation_issued': False,
@@ -617,7 +617,7 @@ def get_parameters(gc, param):
     """
     Get parameters from nodes.
 
-    Used by GIDCollection.get()
+    Used by GIDCollections `get()` function.
 
     Parameters
     ----------
@@ -655,7 +655,7 @@ def get_parameters_hierarchical_addressing(gc, params):
     """
     Get parameters from nodes, hierarchical case.
 
-    Used by GIDCollection.get()
+    Used by GIDCollections `get()` function.
 
     Parameters
     ----------

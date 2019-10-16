@@ -341,6 +341,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
   if ( not mask_.get() )
   {
     mask_ = new AllMask< D >();
+    return;
   }
 
   try // Try to cast to GridMask

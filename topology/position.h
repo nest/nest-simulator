@@ -123,7 +123,8 @@ public:
    */
   Token getToken() const;
 
-  const std::vector< T >& get_vector() const;
+  const std::vector< T > get_vector() const;
+  void get_vector( std::vector< T >& vector ) const;
 
   /**
    * Elementwise addition.
@@ -298,7 +299,8 @@ public:
   friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
-  std::vector< T > x_;
+  // std::vector< T > x_;
+  std::array< T, D > x_;
 };
 
 /**
@@ -398,13 +400,11 @@ private:
 
 template < int D, class T >
 inline Position< D, T >::Position()
-  : x_( D, 0 )
 {
 }
 
 template < int D, class T >
 inline Position< D, T >::Position( const T& x, const T& y )
-  : x_( D, 0 )
 {
   assert( D == 2 );
   x_[ 0 ] = x;
@@ -413,7 +413,6 @@ inline Position< D, T >::Position( const T& x, const T& y )
 
 template < int D, class T >
 inline Position< D, T >::Position( const T& x, const T& y, const T& z )
-  : x_( D, 0 )
 {
   assert( D == 3 );
   x_[ 0 ] = x;
@@ -423,7 +422,6 @@ inline Position< D, T >::Position( const T& x, const T& y, const T& z )
 
 template < int D, class T >
 inline Position< D, T >::Position( const T* const y )
-  : x_( D, 0 )
 {
   for ( int i = 0; i < D; ++i )
   {
@@ -433,12 +431,12 @@ inline Position< D, T >::Position( const T* const y )
 
 template < int D, class T >
 inline Position< D, T >::Position( const std::vector< T >& y )
-  : x_( y )
 {
   if ( y.size() != D )
   {
     throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
   }
+  std::copy( y.begin(), y.end(), x_.begin() );
 }
 
 template < int D, class T >
@@ -450,18 +448,13 @@ inline Position< D, T >::Position( const Position< D, T >& other )
 template < int D, class T >
 template < class U >
 inline Position< D, T >::Position( const Position< D, U >& other )
-  : x_( D, 0 )
+  : x_( other.x_ )
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = other.x_[ i ];
-  }
 }
 
 
 template < int D, class T >
 inline Position< D, T >::Position( Position&& other )
-  : x_( D, 0 )
 {
   x_ = std::move( other.x_ );
 }
@@ -499,10 +492,18 @@ Position< D, T >::getToken() const
 
 
 template < int D, class T >
-const std::vector< T >&
+const std::vector< T >
 Position< D, T >::get_vector() const
 {
-  return x_;
+  return std::vector< T >( x_.begin(), x_.end() );
+}
+
+template < int D, class T >
+void
+Position< D, T >::get_vector( std::vector< T >& vector ) const
+{
+  assert( vector.size() == D );
+  std::copy( x_.begin(), x_.end(), vector.begin() );
 }
 
 

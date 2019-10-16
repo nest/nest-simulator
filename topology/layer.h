@@ -612,7 +612,9 @@ template < int D >
 inline std::vector< double >
 Layer< D >::get_position_vector( const index sind ) const
 {
-  return std::vector< double >( get_position( sind ).get_vector() );
+  std::vector< double > vector( D );
+  get_position( sind ).get_vector( vector );
+  return vector;
 }
 
 template < int D >

@@ -299,7 +299,6 @@ public:
   friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
-  // std::vector< T > x_;
   std::array< T, D > x_;
 };
 
@@ -401,6 +400,7 @@ private:
 template < int D, class T >
 inline Position< D, T >::Position()
 {
+  x_.fill( 0 );
 }
 
 template < int D, class T >
@@ -452,7 +452,6 @@ inline Position< D, T >::Position( const Position< D, U >& other )
 {
 }
 
-
 template < int D, class T >
 inline Position< D, T >::Position( Position&& other )
 {
@@ -485,8 +484,7 @@ template < int D, class T >
 Token
 Position< D, T >::getToken() const
 {
-  std::vector< T > result = std::vector< T >( get_vector() );
-
+  std::vector< T > result = get_vector();
   return Token( result );
 }
 

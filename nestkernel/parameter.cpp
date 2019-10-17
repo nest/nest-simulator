@@ -71,6 +71,13 @@ Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) co
   for ( auto&& token : token_array )
   {
     std::vector< double > target_pos = getValue< std::vector< double > >( token );
+    if ( target_pos.size() != source_pos.size() )
+    {
+      throw BadProperty(
+        String::compose( "Parameter apply: Target position has %1 dimensions, but source position has %2 dimensions.",
+          target_pos.size(),
+          source_pos.size() ) );
+    }
     auto value = this->value( rng, source_pos, target_pos, *source_layer.get() );
     result.push_back( value );
   }

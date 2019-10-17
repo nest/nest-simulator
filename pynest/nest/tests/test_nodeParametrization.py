@@ -383,7 +383,12 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        nest.Connect(layer, layer, syn_spec={'weight': nest.spatial.distance})
+        conn_spec = {
+            'rule': 'fixed_outdegree',
+            'outdegree': 5,
+            'p': 1.0
+        }
+        nest.Connect(layer, layer, conn_spec=conn_spec, syn_spec={'weight': nest.spatial.distance})
         conns = nest.GetConnections()
         conn_status = conns.get()
 

@@ -80,6 +80,8 @@ public:
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
 
+  virtual uint get_num_dimensions() const = 0;
+
   /**
    * Get position of node. Only possible for local nodes.
    * @param lid index of node within layer
@@ -95,6 +97,9 @@ public:
    * @returns vector pointing from from_pos to node to's position
    */
   virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const = 0;
+  virtual double compute_displacement( const std::vector< double >& from_pos,
+    const std::vector< double >& to_pos,
+    const uint dimension ) const = 0;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -104,6 +109,8 @@ public:
    * @returns length of vector pointing from from_pos to node to's position
    */
   virtual double compute_distance( const std::vector< double >& from_pos, const index lid ) const = 0;
+  virtual double compute_distance( const std::vector< double >& from_pos,
+    const std::vector< double >& to_pos ) const = 0;
 
   /**
    * Connect this layer to the given target layer. The actual connections
@@ -221,6 +228,12 @@ public:
    */
   void get_status( DictionaryDatum& ) const;
 
+  uint
+  get_num_dimensions() const
+  {
+    return D;
+  }
+
   /**
    * @returns The bottom left position of the layer
    */
@@ -278,6 +291,9 @@ public:
    * @returns vector pointing from from_pos to to_pos
    */
   virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
+  virtual double compute_displacement( const std::vector< double >& from_pos,
+    const std::vector< double >& to_pos,
+    const uint dimension ) const;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -300,6 +316,9 @@ public:
   double compute_distance( const Position< D >& from_pos, const index lid ) const;
 
   double compute_distance( const std::vector< double >& from_pos, const index lid ) const;
+
+  double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const;
+
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -551,7 +570,7 @@ template < int D >
 inline std::vector< double >
 Layer< D >::compute_displacement( const std::vector< double >& from_pos, const index to_lid ) const
 {
-  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ) );
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
 }
 
 template < int D >
@@ -577,10 +596,23 @@ Layer< D >::compute_distance( const std::vector< double >& from_pos, const index
 }
 
 template < int D >
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
+{
+  double squared_displacement = 0;
+  for ( uint i = 0; i <= D; ++i )
+  {
+    const double displacement = compute_displacement( from_pos, to_pos, i );
+    squared_displacement += displacement * displacement;
+  }
+  return std::sqrt( squared_displacement );
+}
+
+template < int D >
 inline std::vector< double >
 Layer< D >::get_position_vector( const index sind ) const
 {
-  return std::vector< double >( get_position( sind ) );
+  return get_position( sind ).get_vector();
 }
 
 template < int D >

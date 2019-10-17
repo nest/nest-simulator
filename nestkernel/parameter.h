@@ -43,6 +43,8 @@
 namespace nest
 {
 
+class AbstractLayer;
+
 /**
  * Abstract base class for parameters.
  */
@@ -87,7 +89,7 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
     return value( rng, nullptr );
   }
@@ -466,7 +468,7 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
     switch ( synaptic_endpoint_ )
     {
@@ -524,7 +526,7 @@ public:
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const;
+    const AbstractLayer& layer ) const;
 
   Parameter*
   clone() const
@@ -590,10 +592,10 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return parameter1_->value( rng, source_pos, target_pos, displacement )
-      * parameter2_->value( rng, source_pos, target_pos, displacement );
+    return parameter1_->value( rng, source_pos, target_pos, layer )
+      * parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
@@ -659,10 +661,10 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return parameter1_->value( rng, source_pos, target_pos, displacement )
-      / parameter2_->value( rng, source_pos, target_pos, displacement );
+    return parameter1_->value( rng, source_pos, target_pos, layer )
+      / parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
@@ -728,10 +730,10 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return parameter1_->value( rng, source_pos, target_pos, displacement )
-      + parameter2_->value( rng, source_pos, target_pos, displacement );
+    return parameter1_->value( rng, source_pos, target_pos, layer )
+      + parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
@@ -797,10 +799,10 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return parameter1_->value( rng, source_pos, target_pos, displacement )
-      - parameter2_->value( rng, source_pos, target_pos, displacement );
+    return parameter1_->value( rng, source_pos, target_pos, layer )
+      - parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
@@ -862,9 +864,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return p_->value( rng, source_pos, target_pos, displacement );
+    return p_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
@@ -950,10 +952,10 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return compare_( parameter1_->value( rng, source_pos, target_pos, displacement ),
-      parameter2_->value( rng, source_pos, target_pos, displacement ) );
+    return compare_( parameter1_->value( rng, source_pos, target_pos, layer ),
+      parameter2_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
@@ -1060,15 +1062,15 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    if ( condition_->value( rng, source_pos, target_pos, displacement ) )
+    if ( condition_->value( rng, source_pos, target_pos, layer ) )
     {
-      return if_true_->value( rng, source_pos, target_pos, displacement );
+      return if_true_->value( rng, source_pos, target_pos, layer );
     }
     else
     {
-      return if_false_->value( rng, source_pos, target_pos, displacement );
+      return if_false_->value( rng, source_pos, target_pos, layer );
     }
   }
 
@@ -1134,9 +1136,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::min( p_->value( rng, source_pos, target_pos, displacement ), other_value_ );
+    return std::min( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
   }
 
   Parameter*
@@ -1202,9 +1204,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::max( p_->value( rng, source_pos, target_pos, displacement ), other_value_ );
+    return std::max( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
   }
 
   Parameter*
@@ -1256,7 +1258,7 @@ public:
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const;
+    const AbstractLayer& layer ) const;
 
   Parameter*
   clone() const
@@ -1321,9 +1323,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::exp( p_->value( rng, source_pos, target_pos, displacement ) );
+    return std::exp( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
@@ -1386,9 +1388,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::sin( p_->value( rng, source_pos, target_pos, displacement ) );
+    return std::sin( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
@@ -1450,9 +1452,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::cos( p_->value( rng, source_pos, target_pos, displacement ) );
+    return std::cos( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
@@ -1517,9 +1519,9 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const std::vector< double >& displacement ) const
+    const AbstractLayer& layer ) const
   {
-    return std::pow( p_->value( rng, source_pos, target_pos, displacement ), exponent_ );
+    return std::pow( p_->value( rng, source_pos, target_pos, layer ), exponent_ );
   }
 
   Parameter*

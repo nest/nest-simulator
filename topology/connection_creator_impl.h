@@ -705,6 +705,11 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
       is_selected[ random_id ] = true;
 
+
+      target_positions[ random_id ].first.get_vector( target_pos_vector );
+      const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
+      const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
+
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
       // to desynchronized global rngs.
@@ -712,10 +717,6 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
       {
         continue;
       }
-
-      target_positions[ random_id ].first.get_vector( target_pos_vector );
-      const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
-      const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
       kernel().connection_manager.connect(

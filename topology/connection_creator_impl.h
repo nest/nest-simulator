@@ -79,6 +79,9 @@ ConnectionCreator::connect_to_target_( Iterator from,
 {
   librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
+  // We create a source pos vector here that can be updated with the
+  // source position. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
   std::vector< double > source_pos( D );
   const std::vector< double > target_pos = tgt_pos.get_vector();
 
@@ -379,6 +382,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+      // We create a source pos vector here that can be updated with the
+      // source position. This is done to avoid creating and destroying
+      // unnecessarily many vectors.
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
 
@@ -637,6 +644,9 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
   MaskedLayer< D > masked_target( target, mask_, allow_oversized_ );
   const auto masked_target_end = masked_target.end();
 
+  // We create a target positions vector here that can be updated with the
+  // position and GID pairs. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
   std::vector< std::pair< Position< D >, index > > target_positions;
 
   std::vector< std::pair< Position< D >, index > >* sources = source.get_global_positions_vector();
@@ -649,6 +659,10 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
     const Position< D > source_pos = src_it->first;
     const index source_id = src_it->second;
     const std::vector< double > source_pos_vector = source_pos.get_vector();
+
+    // We create a target pos vector here that can be updated with the
+    // target position. This is done to avoid creating and destroying
+    // unnecessarily many vectors.
     std::vector< double > target_pos_vector( D );
     std::vector< double > probabilities;
 

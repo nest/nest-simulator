@@ -70,7 +70,7 @@ jobs:
       os: osx
       osx_image: xcode10.2
       language: generic
-      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
+      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
     
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
@@ -153,11 +153,9 @@ before_install:
            brew tap brewsci/science
            brew tap brewsci/bio
            brew install coreutils gsl open-mpi automake autoconf libtool
+           brew unlink gcc
            brew install gcc@8
-           brew remove gcc@5
-           brew remove gcc@6
-           brew remove gcc@7
-           brew remove gcc@9
+           brew link gcc@8
            brew list
            brew leaves
            brew cask list

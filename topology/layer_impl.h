@@ -67,7 +67,7 @@ template < int D >
 double
 Layer< D >::compute_displacement( const std::vector< double >& from_pos,
   const std::vector< double >& to_pos,
-  const uint dimension ) const
+  const unsigned int dimension ) const
 {
   double displacement = to_pos[ dimension ] - from_pos[ dimension ];
   if ( periodic_[ dimension ] )

@@ -80,7 +80,7 @@ public:
    */
   virtual void get_status( DictionaryDatum& ) const = 0;
 
-  virtual uint get_num_dimensions() const = 0;
+  virtual unsigned int get_num_dimensions() const = 0;
 
   /**
    * Get position of node. Only possible for local nodes.
@@ -99,7 +99,7 @@ public:
   virtual std::vector< double > compute_displacement( const std::vector< double >& from_pos, const index to ) const = 0;
   virtual double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
-    const uint dimension ) const = 0;
+    const unsigned int dimension ) const = 0;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -228,7 +228,7 @@ public:
    */
   void get_status( DictionaryDatum& ) const;
 
-  uint
+  unsigned int
   get_num_dimensions() const
   {
     return D;
@@ -293,7 +293,7 @@ public:
   virtual Position< D > compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const;
   virtual double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
-    const uint dimension ) const;
+    const unsigned int dimension ) const;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -600,7 +600,7 @@ inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
 {
   double squared_displacement = 0;
-  for ( uint i = 0; i < D; ++i )
+  for ( unsigned int i = 0; i < D; ++i )
   {
     const double displacement = compute_displacement( from_pos, to_pos, i );
     squared_displacement += displacement * displacement;

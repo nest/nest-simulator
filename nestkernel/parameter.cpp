@@ -226,7 +226,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng,
   case 1:
   case 2:
   case 3:
-    if ( ( uint ) dimension_ > layer.get_num_dimensions() )
+    if ( ( unsigned int ) dimension_ > layer.get_num_dimensions() )
     {
       throw KernelException(
         "Spatial distance dimension must be within the defined number of "

@@ -600,7 +600,7 @@ inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
 {
   double squared_displacement = 0;
-  for ( uint i = 0; i <= D; ++i )
+  for ( uint i = 0; i < D; ++i )
   {
     const double displacement = compute_displacement( from_pos, to_pos, i );
     squared_displacement += displacement * displacement;

@@ -75,14 +75,14 @@ nest::RecordingDevice::Parameters_::Parameters_( const Parameters_& p )
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice&, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::record_to ] = LiteralDatum( record_to_ );
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d )
+nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -105,7 +105,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   // JME: make sure we're outside of Prepare/Run/Cleanup context
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( *this, d );  // throws if BadProperty
+  ptmp.set( d );         // throws if BadProperty
 
   Device::set_status( d );
 
@@ -147,7 +147,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 void
 nest::RecordingDevice::get_status( DictionaryDatum& d ) const
 {
-  P_.get( *this, d );
+  P_.get( d );
 
   Device::get_status( d );
 

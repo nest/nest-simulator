@@ -109,8 +109,8 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& );
-    void get( const RecordingDevice&, DictionaryDatum& ) const;
-    void set( const RecordingDevice&, const DictionaryDatum& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   } P_;
 
   DictionaryDatum backend_params_;

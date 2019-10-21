@@ -42,7 +42,6 @@ const Name center( "center" );
 const Name circular( "circular" );
 const Name connection_type( "connection_type" );
 const Name convergent( "convergent" );
-const Name depth( "depth" );
 const Name divergent( "divergent" );
 const Name edge_wrap( "edge_wrap" );
 const Name elements( "elements" );

@@ -271,6 +271,12 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(nodes_list[5], 26)
         self.assertEqual(nodes_list[19], 54)
 
+        # Test iteration of sliced GIDCollection
+        i = 0
+        for n in nodes_step:
+            self.assertEqual(n, nest.GIDCollection([compare_list[i]]))
+            i += 1
+
         n_slice_first = nodes[:10]
         n_slice_middle = nodes[2:7]
         n_slice_middle_jump = nodes[2:12:2]

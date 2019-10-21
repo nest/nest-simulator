@@ -442,11 +442,11 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionPrimitive& pr
 GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& comp )
   : parts_( comp.parts_ )
   , size_( comp.size_ )
-  , step_( 1 )
-  , start_part_( 0 )
-  , start_offset_( 0 )
-  , stop_part_( 0 )
-  , stop_offset_( 0 )
+  , step_( comp.step_ )
+  , start_part_( comp.start_part_ )
+  , start_offset_( comp.start_offset_ )
+  , stop_part_( comp.stop_part_ )
+  , stop_offset_( comp.stop_offset_ )
 {
 }
 
@@ -497,24 +497,41 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
   {
     throw BadProperty( "Index out of range." );
   }
+
   if ( composite.step_ > 1 or composite.stop_part_ != 0 or composite.stop_offset_ != 0 )
   {
-    throw BadProperty( "Cannot slice a sliced composite GIDCollection." );
+    // The GIDCollection is sliced
+    if ( size_ > 1 )
+    {
+      // Creating a sliced GC with more than one GID from a sliced GC is impossible.
+      throw BadProperty( "Cannot slice a sliced composite GIDCollection." );
+    }
+    // we have a single single GID, must just find where it is.
+    const_iterator it = composite.begin() + start;
+    it.get_current_part_offset( start_part_, start_offset_ );
+    stop_part_ = start_part_;
+    stop_offset_ = start_offset_ + 1;
   }
-
-  size_t global_index = 0;
-  for ( const_iterator it = composite.begin(); it < composite.end(); ++it )
+  else
   {
-    if ( global_index == start )
+    // The GIDCollection is not sliced
+
+    // Iterate through the composite to find where to start and stop.
+    // TODO: There is some room for improvement here. Can go through parts instead, similar to in find().
+    size_t global_index = 0;
+    for ( const_iterator it = composite.begin(); it < composite.end(); ++it )
     {
-      it.get_current_part_offset( start_part_, start_offset_ );
+      if ( global_index == start )
+      {
+        it.get_current_part_offset( start_part_, start_offset_ );
+      }
+      else if ( global_index == stop )
+      {
+        it.get_current_part_offset( stop_part_, stop_offset_ );
+        break;
+      }
+      ++global_index;
     }
-    else if ( global_index == stop )
-    {
-      it.get_current_part_offset( stop_part_, stop_offset_ );
-      break;
-    }
-    ++global_index;
   }
 }
 
@@ -691,11 +708,28 @@ GIDCollectionComposite::to_array() const
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
 {
+  if ( not( start < stop ) )
+  {
+    throw BadParameter( "start < stop required." );
+  }
+  if ( not( stop <= size() ) )
+  {
+    throw BadParameter( "stop <= size() required." );
+  }
   if ( not valid() )
   {
     throw KernelException( "InvalidGIDCollection" );
   }
-  return GIDCollectionPTR( new GIDCollectionComposite( *this, start, stop, step ) );
+
+  auto new_composite = GIDCollectionComposite( *this, start, stop, step );
+
+  if ( step == 1 and new_composite.start_part_ == new_composite.stop_part_ )
+  {
+    // Return only the primitive
+    return new_composite.parts_[ new_composite.start_part_ ].slice(
+      new_composite.start_offset_, new_composite.stop_offset_ );
+  }
+  return GIDCollectionPTR( new GIDCollectionComposite( new_composite ) );
 }
 
 void

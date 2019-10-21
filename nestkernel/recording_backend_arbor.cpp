@@ -80,6 +80,10 @@ nest::RecordingBackendArbor::~RecordingBackendArbor() throw()
 void
 nest::RecordingBackendArbor::initialize()
 {
+  auto nthreads = kernel().vp_manager.get_num_threads();
+  device_map devices( nthreads );
+  devices_.swap( devices );
+  arbor_->spike_buffers.resize( nthreads );
 }
 
 void
@@ -126,10 +130,7 @@ nest::RecordingBackendArbor::set_value_names( const RecordingDevice&,
 void
 nest::RecordingBackendArbor::pre_run_hook()
 {
-  auto nthreads = kernel().vp_manager.get_num_threads();
-  device_map devices( nthreads );
-  devices_.swap( devices );
-  arbor_->spike_buffers.resize( nthreads );
+  // nothing to do
 }
 
 void

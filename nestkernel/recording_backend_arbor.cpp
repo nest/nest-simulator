@@ -109,7 +109,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
   }
   else
   {
-    throw BadProperty( "Only spike detectors can record to arbor recording backend" );
+    throw BadProperty( "Only spike detectors can record to recording backend 'arbor'." );
   }
 }
 

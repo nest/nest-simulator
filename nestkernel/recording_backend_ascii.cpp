@@ -334,8 +334,8 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 void
 nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_extension_;
+  ( *d )[ names::precision ] = precision_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
 
   initialize_property_array( d, names::filenames );
@@ -345,7 +345,7 @@ nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 {
-  updateValue< long >( d, names::precision, precision_ );
   updateValue< std::string >( d, names::file_extension, file_extension_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
+  updateValue< long >( d, names::precision, precision_ );
 }

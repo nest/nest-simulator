@@ -113,7 +113,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   {
     DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
 
-    // copy all properties from d not previously accessed to backend_params
+    // copy all properties not previously accessed from d to backend_params
     for ( auto kv_pair = d->begin(); kv_pair != d->end(); ++kv_pair )
     {
       if ( not kv_pair->second.accessed() )

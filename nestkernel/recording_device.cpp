@@ -101,7 +101,8 @@ nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
 
 nest::RecordingDevice::State_::State_()
   : n_events_( 0 )
-{}
+{
+}
 
 void
 nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
@@ -151,7 +152,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
     {
       if ( not kv_pair->second.accessed() )
       {
-	( *backend_params )[ kv_pair->first ] = kv_pair->second;
+        ( *backend_params )[ kv_pair->first ] = kv_pair->second;
       }
     }
 
@@ -163,8 +164,8 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
     {
       if ( kv_pair->second.accessed() )
       {
-	( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
-	d->lookup( kv_pair->first ).set_access_flag();
+        ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
+        d->lookup( kv_pair->first ).set_access_flag();
       }
     }
   }

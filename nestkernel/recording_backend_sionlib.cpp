@@ -153,8 +153,8 @@ nest::RecordingBackendSIONlib::open_files_()
   {
     local_comm_ = MPI_COMM_NULL;
 #ifdef BG_MULTIFILE
-  // MPIX calls not thread-safe; use only master thread here
-  // (omp single may be problematic as well)
+// MPIX calls not thread-safe; use only master thread here
+// (omp single may be problematic as well)
 #pragma omp master
     {
       MPIX_Pset_same_comm_create( &local_comm_ );

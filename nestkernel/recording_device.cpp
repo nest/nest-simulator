@@ -102,7 +102,10 @@ nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
-  // JME: make sure we're outside of Prepare/Run/Cleanup context
+  if ( kernel().simulation_manager.has_been_prepared() )
+  {
+    throw BadProperty( "Recorder parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
+  }
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

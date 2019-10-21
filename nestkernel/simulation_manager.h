@@ -126,6 +126,13 @@ public:
   bool has_been_simulated() const;
 
   /**
+   * Return true, if the SimulationManager has been prepared for simulation.
+   * This is the case from the time when the Prepare function is called until
+   * the simulation context is left by a call to Cleanup.
+   */
+  bool has_been_prepared() const;
+
+  /**
    * Get slice number. Increased by one for each slice. Can be used
    * to choose alternating buffers.
    */
@@ -200,6 +207,12 @@ inline bool
 SimulationManager::has_been_simulated() const
 {
   return simulated_;
+}
+
+inline bool
+SimulationManager::has_been_prepared() const
+{
+  return prepared_;
 }
 
 inline size_t

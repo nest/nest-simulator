@@ -116,7 +116,14 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
 void
 nest::RecordingBackendArbor::disenroll( const RecordingDevice& device )
 {
-  // JME: implement disenroll
+  const auto tid = device.get_thread();
+  const auto gid = device.get_gid();
+
+  auto device_it = devices_[ tid ].find( gid );
+  if ( device_it != devices_[ tid ].end() )
+  {
+    devices_[ tid ].erase( device_it );
+  }
 }
 
 void

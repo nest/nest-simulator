@@ -28,6 +28,23 @@ __all__ = [
 
 
 def conditional(condition, param_if_true, param_if_false):
+    """
+    Yields one value or another, based on the condition.
+
+    Parameters
+    ----------
+    condition : Parameter
+        A comparing Parameter, created with the usual comparators.
+    param_if_true : [Parameter | float]
+        Value or Parameter used to get a value used if the condition evaluates to true.
+    param_if_false : [Parameter | float]
+        Value or Parameter used to get a value used if the condition evaluates to false.
+
+    Returns
+    -------
+    Parameter:
+        Object representing the conditional.
+    """
     if isinstance(param_if_true, (int, float)):
         param_if_true = CreateParameter(
             'constant', {'value': float(param_if_true)})

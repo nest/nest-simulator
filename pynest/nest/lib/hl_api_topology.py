@@ -1110,7 +1110,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
 
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
-
+    """Create Matplotlib Patch objects representing the mask"""
     edge_color = 'black'
     alpha = 0.2
     line_width = 2

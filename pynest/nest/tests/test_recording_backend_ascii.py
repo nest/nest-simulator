@@ -25,11 +25,9 @@ import nest
 
 class TestRecordingBackendASCII(unittest.TestCase):
 
-
     def testAAAOverwriteFiles(self):
 
-        pass
-
+        pass  # JME
 
     def testDataPrefixDataPathAndFilenames(self):
         """Test if data_prefix and data_path end up in the filenames."""
@@ -48,18 +46,15 @@ class TestRecordingBackendASCII(unittest.TestCase):
             lines = f.readlines()
             print(lines)
 
-
     def testFilenameExtension(self):
         """Test if setting the filename extension works."""
 
-        pass
-
+        pass  # JME
 
     def testFileContent(self):
         """Test if the file contains correct headers and expected content"""
 
-        pass
-
+        pass  # JME
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
@@ -72,7 +67,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         nest.Simulate(15)
         self.assertEqual(mm.get("n_events"), 140)
-       
+
         nest.Simulate(1)
         self.assertEqual(mm.get("n_events"), 150)
 
@@ -81,7 +76,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"local_num_threads": 2})
 
-        mm = nest.Create("multimeter", params={"record_to": "memory"})
+        mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
         nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
 
@@ -90,7 +85,6 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         nest.Simulate(1)
         self.assertEqual(mm.get("n_events"), 300)
-
 
     def testResetEventCounter(self):
         """"""
@@ -114,7 +108,6 @@ class TestRecordingBackendASCII(unittest.TestCase):
         mm.set("n_events", 0)
         self.assertEqual(mm.get("n_events"), 0)
 
-
     def testTimeInSteps(self):
         """Check if time_in_steps works properly."""
 
@@ -125,11 +118,12 @@ class TestRecordingBackendASCII(unittest.TestCase):
         # Check that time_in_steps is set False by default
         self.assertFalse(mm.get("time_in_steps"))
 
-        ## TODO: Read the file and check content, i.e. number of columns
+        # JME: Read the file and check content, i.e. number of columns
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestRecordingBackendMemory)
+    suite = unittest.TestLoader()
+    suite = suite.loadTestsFromTestCase(TestRecordingBackendASCII)
     return suite
 
 

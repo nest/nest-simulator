@@ -27,7 +27,6 @@ HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")
 
 class TestRecordingBackends(unittest.TestCase):
 
-
     def testAAAResetKernel(self):
         """Test reset of recording backend defaults.
 
@@ -61,7 +60,6 @@ class TestRecordingBackends(unittest.TestCase):
 
         self.assertEqual(rb_defaults_initial, rb_defaults)
 
-
     def testDefaultBackendsAvailable(self):
         """Test availability of default recording backends."""
 
@@ -75,7 +73,6 @@ class TestRecordingBackends(unittest.TestCase):
         if HAVE_SIONLIB:
             self.assertTrue("sionlib" in backends)
 
-
     def testGlobalRecordingBackendProperties(self):
         """Test setting of global backend properties.
 
@@ -86,11 +83,10 @@ class TestRecordingBackends(unittest.TestCase):
 
         nest.ResetKernel()
 
-        if HAVE_SIONLIB:
+        if HAVE_SIONLIB:  # JME
             # sl_params = {"sionlib": {"sion_chunksize": 512 }}
             # nest.SetKernelStatus({"recording_backends": sl_params})
             pass
-
 
     def testSetDefaultRecordingBackend(self):
         """Test setting the default recording backend.
@@ -109,7 +105,6 @@ class TestRecordingBackends(unittest.TestCase):
         self.assertEqual(rb_defaults_mm, "ascii")
         self.assertEqual(rb_defaults_sd, "memory")
 
-
     def testSetDefaultsRecordingBackendProperties(self):
         """Test setting recording backend defaults."""
 
@@ -121,7 +116,6 @@ class TestRecordingBackends(unittest.TestCase):
 
         self.assertEqual(sd_defaults["record_to"], "ascii")
         self.assertEqual(sd_defaults["file_extension"], "nest")
-
 
     def testRecordingBackendDefaultsToInstances(self):
         """Test that backend defaults end up in instances.

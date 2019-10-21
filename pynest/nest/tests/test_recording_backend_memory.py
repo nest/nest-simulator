@@ -25,7 +25,6 @@ import nest
 
 class TestRecordingBackendMemory(unittest.TestCase):
 
-
     def testEventsDict(self):
         """Test if the event dict is there from the start."""
 
@@ -33,7 +32,6 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
         events = mm.get("events")
-
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
@@ -69,7 +67,6 @@ class TestRecordingBackendMemory(unittest.TestCase):
         self.assertEqual(mm.get("n_events"), 300)
         self.assertEqual(mm.get("events")["times"].size, 300)
 
-
     def testResetEventCounter(self):
         """"""
 
@@ -93,7 +90,6 @@ class TestRecordingBackendMemory(unittest.TestCase):
         # Check that the events dict is cleared when setting n_events to 0
         mm.set("n_events", 0)
         self.assertEqual(mm.get("events")["times"].size, 0)
-
 
     def testTimeInSteps(self):
         """"""
@@ -125,7 +121,8 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestRecordingBackendMemory)
+    suite = unittest.TestLoader()
+    suite = suite.loadTestsFromTestCase(TestRecordingBackendMemory)
     return suite
 
 

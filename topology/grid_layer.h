@@ -172,7 +172,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
   {
     new_size *= new_dims[ i ];
 
-    this->dims_[ i ] = ( index ) new_dims[ i ];
+    this->dims_[ i ] = static_cast< index >( new_dims[ i ] );
   }
 
   if ( new_size != this->gid_collection_->size() )

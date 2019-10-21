@@ -1210,12 +1210,16 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   {
     unsigned long s_id;
     index sgid;
+    bool skip_autapse = false;
+    bool skip_multapse = false;
 
     do
     {
       s_id = rng->ulrand( n_rnd );
       sgid = ( *sources_ )[ s_id ];
-    } while ( ( not allow_autapses_ and sgid == tgid ) or ( not allow_multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+      skip_autapse = not allow_autapses_ and sgid == tgid;
+      skip_multapse = not allow_multapses_ and ch_ids.find( s_id ) != ch_ids.end();
+    } while ( skip_autapse or skip_multapse );
 
     if ( not allow_multapses_ )
     {
@@ -1306,12 +1310,16 @@ nest::FixedOutDegreeBuilder::connect_()
     {
       unsigned long t_id;
       index tgid;
+      bool skip_autapse = false;
+      bool skip_multapse = false;
 
       do
       {
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
-      } while ( ( not allow_autapses_ and tgid == sgid ) or ( not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
+        skip_autapse = not allow_autapses_ and tgid == sgid;
+        skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
+      } while ( skip_autapse or skip_multapse );
 
       if ( not allow_multapses_ )
       {

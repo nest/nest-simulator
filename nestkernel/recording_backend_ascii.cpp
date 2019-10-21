@@ -281,7 +281,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
     throw IOError();
   }
 
-  file_ << "# NEST version: " << NEST_VERSION << std::endl
+  file_ << "# NEST version: " << NEST_VERSION_STRING << std::endl
 	<< "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";

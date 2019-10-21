@@ -1,0 +1,138 @@
+# -*- coding: utf-8 -*-
+#
+# test_recording_backend_ascii.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+import unittest
+import nest
+
+
+class TestRecordingBackendASCII(unittest.TestCase):
+
+
+    def testAAAOverwriteFiles(self):
+
+        pass
+
+
+    def testDataPrefixDataPathAndFilenames(self):
+        """Test if data_prefix and data_path end up in the filenames."""
+
+        nest.ResetKernel()
+        kernel_params = {"data_prefix": "dataprefix", "overwrite_files": True}
+        nest.SetKernelStatus(kernel_params)
+
+        mm_params = {"record_to": "ascii", "record_from": ["V_m"]}
+        mm = nest.Create("multimeter", params=mm_params)
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Simulate(100)
+
+        fname = mm.get("filenames")[0]
+        with open(fname) as f:
+            lines = f.readlines()
+            print(lines)
+
+
+    def testFilenameExtension(self):
+        """Test if setting the filename extension works."""
+
+        pass
+
+
+    def testFileContent(self):
+        """Test if the file contains correct headers and expected content"""
+
+        pass
+
+
+    def testEventCounter(self):
+        """Test that n_events counts the number of events correctly."""
+
+        nest.ResetKernel()
+
+        mm = nest.Create("multimeter", params={"record_to": "ascii"})
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+        self.assertEqual(mm.get("n_events"), 140)
+       
+        nest.Simulate(1)
+        self.assertEqual(mm.get("n_events"), 150)
+
+        # Now with multithreading
+
+        nest.ResetKernel()
+        nest.SetKernelStatus({"local_num_threads": 2})
+
+        mm = nest.Create("multimeter", params={"record_to": "memory"})
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
+
+        nest.Simulate(15)
+        self.assertEqual(mm.get("n_events"), 280)
+
+        nest.Simulate(1)
+        self.assertEqual(mm.get("n_events"), 300)
+
+
+    def testResetEventCounter(self):
+        """"""
+
+        nest.ResetKernel()
+
+        mm = nest.Create("multimeter", params={"record_to": "ascii"})
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+
+        # Check that an error is raised when setting n_events to a number != 0
+        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            mm.set("n_events", 10)
+
+        # Check that the event counter was indeed not changed
+        self.assertEqual(mm.get("n_events"), 140)
+
+        # Check that the events dict is cleared when setting n_events to 0
+        mm.set("n_events", 0)
+        self.assertEqual(mm.get("n_events"), 0)
+
+
+    def testTimeInSteps(self):
+        """Check if time_in_steps works properly."""
+
+        nest.ResetKernel()
+
+        mm = nest.Create("multimeter", params={"record_to": "ascii"})
+
+        # Check that time_in_steps is set False by default
+        self.assertFalse(mm.get("time_in_steps"))
+
+        ## TODO: Read the file and check content, i.e. number of columns
+
+
+def suite():
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestRecordingBackendMemory)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

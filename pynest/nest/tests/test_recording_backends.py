@@ -146,31 +146,6 @@ class TestRecordingBackends(unittest.TestCase):
         self.assertEqual(sd_status["file_extension"], "dat")
 
 
-    def testRecordingBackendMemory(self):
-        """Test the recording backend 'memory'.
-
-        - Check if the event dict is there from the start
-        - Check if the n_events is set correctly
-        - Check if the events dict is cleared when setting n_events to 0
-          and that an error is thrown if it is set to another number
-        - Check if time_in_steps works properly
-        - Check it ResetKernel deletes data from memory backend
-        """
-
-        pass
-
-
-    def testRecordingBackendASCII(self):
-        """Test the recording backend 'ascii'.
-
-        - Check if data_prefix and data_path end up in the filenames list
-        - Check if setting the file extension works
-        - Check if time_in_steps works properly
-        """
-
-        pass
-
-
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestRecordingBackends)
     return suite

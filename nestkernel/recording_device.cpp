@@ -99,6 +99,33 @@ nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
   }
 }
 
+nest::RecordingDevice::State_::State_()
+  : n_events_( 0 )
+{}
+
+void
+nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
+{
+  size_t n_events = 0;
+  updateValue< long >( d, names::n_events, n_events );
+  ( *d )[ names::n_events ] = n_events + n_events_;
+}
+
+void
+nest::RecordingDevice::State_::set( const DictionaryDatum& d )
+{
+  size_t n_events = 0;
+  if ( updateValue< long >( d, names::n_events, n_events ) )
+  {
+    if ( n_events != 0 )
+    {
+      throw BadProperty( "Property n_events can only be set to 0 (which clears all stored events)." );
+    }
+
+    n_events_ = 0;
+  }
+}
+
 void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
@@ -109,6 +136,9 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
+
+  State_ stmp = S_; // temporary copy in case of errors
+  stmp.set( d );    // throws if BadProperty
 
   Device::set_status( d );
 
@@ -143,14 +173,16 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
     kernel().io_manager.enroll_recorder( ptmp.record_to_, *this, d );
   }
 
-  // if we get here, temporary contains consistent set of properties
+  // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+  S_ = stmp;
 }
 
 void
 nest::RecordingDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
+  S_.get( d );
 
   Device::get_status( d );
 
@@ -187,4 +219,5 @@ nest::RecordingDevice::write( const Event& event,
   const std::vector< long >& long_values )
 {
   kernel().io_manager.write( P_.record_to_, *this, event, double_values, long_values );
+  S_.n_events_++;
 }

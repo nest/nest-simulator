@@ -137,17 +137,6 @@ nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, 
   {
     device_data->second.get_status( d );
   }
-
-  size_t n_events = 0;
-  for ( auto& device_data_for_thread : device_data_ )
-  {
-    const auto device_data = device_data_for_thread.find( gid );
-    if ( device_data != device_data_for_thread.end() )
-    {
-      n_events += device_data->second.get_n_events();
-    }
-  }
-  ( *d )[ names::n_events ] = n_events;
 }
 
 void
@@ -225,12 +214,6 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
   }
 }
 
-size_t
-nest::RecordingBackendMemory::DeviceData::get_n_events() const
-{
-  return senders_.size();
-}
-
 void
 nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 {
@@ -281,15 +264,15 @@ void
 nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
 {
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
-
-  size_t n_events = 0;
-  if ( updateValue< long >( d, names::n_events, n_events ) )
   {
-    if ( n_events != 0 )
     {
-      throw BadProperty( "Property n_events can only be set to 0 (which clears all stored events)." );
     }
 
+  }
+
+  size_t n_events = 1;
+  if ( updateValue< long >( d, names::n_events, n_events ) and n_events == 0 )
+  {
     clear();
   }
 }

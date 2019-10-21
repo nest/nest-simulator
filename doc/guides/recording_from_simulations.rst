@@ -74,6 +74,11 @@ instance:
    the device.  Recording backends might use the label to generate
    device specific identifiers like filenames and such.
 
+ n_events
+   The number of events that were collected by the recorder can be
+   read out of the `n_events` entry. The number of events can be reset
+   to 0. Other values cannot be set.
+
  origin
    A positive floating point number (default : `0.0`) used as the
    reference time for `start` and `stop`.

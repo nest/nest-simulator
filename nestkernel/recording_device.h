@@ -113,6 +113,15 @@ private:
     void set( const DictionaryDatum& );
   } P_;
 
+  struct State_
+  {
+    size_t n_events_; //!< The number of events recorded by the device.
+
+    State_();
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
+  } S_;
+
   DictionaryDatum backend_params_;
 };
 

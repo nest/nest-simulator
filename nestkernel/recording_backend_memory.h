@@ -80,10 +80,12 @@ Parameter summary
 
  time_in_steps
    A Boolean (default: *false*) specifying whether to store time in
-   steps, i.e., in integer multiples of the simulation resolution (under
-   the key ``times`` of the ``events`` dictionary) plus a floating point
-   number for the negative offset from the next grid point in ms (under
-   key ``offset``), or just the simulation time in ms under key ``times``.
+   steps, i.e., in integer multiples of the simulation resolution
+   (under the key ``times`` of the ``events`` dictionary) plus a
+   floating point number for the negative offset from the next grid
+   point in ms (under key ``offset``), or just the simulation time in
+   ms under key ``times``. This property cannot be set after Simulate
+   has been called.
 
 EndDocumentation */
 

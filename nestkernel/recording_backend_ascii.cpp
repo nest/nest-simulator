@@ -346,6 +346,16 @@ void
 nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_extension_ );
-  updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   updateValue< long >( d, names::precision, precision_ );
+
+  bool time_in_steps = false;
+  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
+  {
+    if ( kernel().simulation_manager.has_been_simulated() )
+    {
+      throw BadProperty( "Property time_in_steps cannot be set after Simulate has been called." );
+    }
+
+    time_in_steps_ = time_in_steps;
+  }
 }

@@ -128,9 +128,10 @@ Parameter summary
 
  time_in_steps
    A Boolean (default: *false*) specifying whether to write time in
-   steps, i.e., in integer multiples of the simulation resolution plus a
-   floating point number for the negative offset from the next grid
-   point in ms, or just the simulation time in ms.
+   steps, i.e., in integer multiples of the simulation resolution plus
+   a floating point number for the negative offset from the next grid
+   point in ms, or just the simulation time in ms. This property
+   cannot be set after Simulate has been called.
 
 EndDocumentation */
 

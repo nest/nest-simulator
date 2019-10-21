@@ -263,11 +263,15 @@ nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
 {
-  updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
+  bool time_in_steps = false;
+  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
   {
+    if ( kernel().simulation_manager.has_been_simulated() )
     {
+      throw BadProperty( "Property time_in_steps cannot be set after Simulate has been called." );
     }
 
+    time_in_steps_ = time_in_steps;
   }
 
   size_t n_events = 1;

@@ -570,6 +570,7 @@ nest::SimulationManager::cleanup()
 
   if ( not simulated_ )
   {
+    prepared_ = false;
     return;
   }
 

@@ -410,7 +410,10 @@ class GIDCollection(object):
         ValueError
             If the GID is not in the `GIDCollection`.
         """
-        return self.tolist().index(gid)
+        index = sli_func('Find', self._datum, gid)
+        if index == -1:
+            raise ValueError('{} is not in GIDCollection'.format(gid))
+        return index
 
 
 class ConnectomeIterator(object):

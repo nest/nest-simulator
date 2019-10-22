@@ -99,10 +99,16 @@ nest::glif_psc::State_::State_( const Parameters_& p )
   , threshold_( -51.68 - p.E_L_ ) // in mV
   , threshold_spike_( 0.0 )       // in mV
   , threshold_voltage_( 0.0 )     // in mV
-  , ASCurrents_( p.asc_init_ )    // in pA
   , I_( 0.0 )                     // in pA
+  , I_syn_( 0.0 )                 // in pA
+  , ASCurrents_( p.asc_init_ )    // in pA
+  , ASCurrents_sum_(0.0)          // in pA
   , refractory_steps_( 0 )
 {
+  for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )
+  {
+	ASCurrents_sum_ += ASCurrents_[a];
+  }
   y1_.clear();
   y2_.clear();
 }
@@ -492,7 +498,7 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
       S_.ASCurrents_sum_ = 0.0;
       // for glif3/4/5 models with "ASC"
       // take after spike current value at the beginning of the time to compute
-      // the exact mean ASC for the time step and sum the exact mean ASCs;
+      // the exact mean ASC for the time step and sum the exact ASCs of all ports;
       // and then update the current values to the value at the end of the time
       // step, ready for the next time step
       if ( P_.has_asc_ )

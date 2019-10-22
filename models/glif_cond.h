@@ -80,7 +80,7 @@ g          double - Membrane conductance in nS.
 E_L        double - Resting membrane potential in mV.
 C_m        double - Capacitance of the membrane in pF.
 t_ref      double - Duration of refractory time in ms.
-V_reset    double - Reset potential of the membrane in mV (glif 1-3).
+V_reset    double - Reset potential of the membrane in mV (GLIF 1 or GLIF 3).
 th_spike_add           double - Threshold addition following spike in mV
                                 (delta_theta_s in Equation (6) in [1]).
 th_spike_decay         double - Spike-induced threshold time constant in 1/ms
@@ -125,14 +125,14 @@ GLIF Model 5 - (True, True, True).
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the Allen Cell Type Database (celltypes.brain-map.org).
-For example, the default parameter setting of glif_psc neuron model was from
+For example, the default parameter setting of this glif_cond neuron model was from
 the parameter values of GLIF Model 5 of Cell 490626718, which can be retrieved from
 https://celltypes.brain-map.org/mouse/experiment/electrophysiology/490626718,
 with units being converted from SI units (i.e., V, S (1/Ohm), F, s, A) to
 NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values being rounded to
 appropriate digits for simplification.
 
-For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
+For models with spike dependent threshold (i.e., GLIF 2, GLIF 4 and GLIF 5),
 parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue spike until the end of the simulation regardless the stimulated inputs.
@@ -200,10 +200,10 @@ private:
   // make dynamics function quasi-member
   friend int glif_cond_dynamics( double, const double*, double*, void* );
 
-  // The next two classes need to be friends to access the State_ class/member
-  friend class nest::RecordablesMap< glif_cond >;
-  friend class nest::UniversalDataLogger< glif_cond >;
-
+  // The next three classes need to be friends to access the State_ class/member
+  friend class DynamicRecordablesMap< glif_cond >;
+  friend class DynamicUniversalDataLogger< glif_cond >;
+  friend class DataAccessFunctor< glif_cond >;
 
   struct Parameters_
   {
@@ -231,7 +231,6 @@ private:
     //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    // model_type glif_model_;
     //! boolean flag which indicates whether the neuron has spike dependent threshold component
     bool has_theta_spike_;
 
@@ -252,26 +251,36 @@ private:
 
   struct State_
   {
-    double V_m_;                       //!< membrane potential in mV
-    std::vector< double > ASCurrents_; //!< after-spike currents in pA
-    double ASCurrents_sum_;            //!< in pA
+
     double threshold_;                 //!< voltage threshold in mV
     double threshold_spike_;           //!< spike component of threshold in mV
     double threshold_voltage_;         //!< voltage component of threshold in mV
+    std::vector< double > ASCurrents_; //!< after-spike currents in pA
+    double ASCurrents_sum_;            //!< in pA
     int refractory_steps_;             //!< Number of refractory steps remaining
 
-    //! Symbolic indices to the elements of the state vector y
+    //! Symbolic indices to the elements of the state vector y and recordables
+    //! y only includes state of V_M and DG_SYN, G_SYN
     //! repeat DG_SYN, G_SYN if more receptors
+    //! Recordable indices, I, ASC, TH, Th_SPK, TH_VLT, are for
+    //! injection currents, sum of ASC currents, thresholds, spike component of
+    //! thresholds, voltage component of thresholds recordings retrieve.
     enum StateVecElems
     {
       V_M = 0,
+      I,
+      ASC_SUM,
+      TH,
+      TH_SPK,
+      TH_VLT,
       DG_SYN,
       G_SYN,
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        // V_M
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;         // V_M
+    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1; // I, ASC, TH, Th_SPK, TH_VLT
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;  // DG_SYN, G_SYN
 
     std::vector< double > y_; //!< neuron state
 
@@ -293,7 +302,7 @@ private:
     nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
-    nest::UniversalDataLogger< glif_cond > logger_;
+    DynamicUniversalDataLogger< glif_cond > logger_;
 
     /* GSL ODE stuff */
     gsl_odeiv_step* s_;    //!< stepping function
@@ -327,6 +336,7 @@ private:
     double potential_decay_rate_;                      //!< membrane potential decay rate
     double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
     std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
+    std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
     std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
     double phi;
 
@@ -337,53 +347,54 @@ private:
     std::vector< double > CondInitialValues_;
   };
 
-  double
-  get_threshold_() const
-  {
-    return S_.threshold_ + P_.E_L_;
-  }
-
-  double
-  get_threshold_spike_() const
-  {
-    return S_.threshold_spike_;
-  }
-
-  double
-  get_threshold_voltage_() const
-  {
-    return S_.threshold_voltage_;
-  }
-
-  //! Read out state vector elements, used by UniversalDataLogger
-  template < State_::StateVecElems elem >
-  double
-  get_y_elem_() const
-  {
-
-    if ( elem == nest::glif_cond::State_::V_M )
-    {
-      return S_.y_[ elem ] + P_.E_L_;
-    }
-    else
-    {
-      return S_.y_[ elem ];
-    }
-  }
-
-  double
-  get_ASCurrents_sum_() const
-  {
-    return S_.ASCurrents_sum_;
-  }
-
   Parameters_ P_;
   State_ S_;
   Variables_ V_;
   Buffers_ B_;
 
   // Mapping of recordables names to access functions
-  static nest::RecordablesMap< glif_cond > recordablesMap_;
+  DynamicRecordablesMap< glif_cond > recordablesMap_;
+
+  // Data Access Functor getter
+  DataAccessFunctor< glif_cond > get_data_access_functor( size_t elem );
+  inline double
+  get_state_element( size_t elem )
+  {
+    if ( elem == nest::glif_cond::State_::V_M )
+    {
+      return S_.y_[ elem ] + P_.E_L_;
+    }
+    else if ( elem == nest::glif_cond::State_::I )
+    {
+      return B_.I_;
+    }
+    else if ( elem == nest::glif_cond::State_::ASC_SUM )
+    {
+      return S_.ASCurrents_sum_;
+    }
+    else if ( elem == nest::glif_cond::State_::TH )
+    {
+      return S_.threshold_ + P_.E_L_;
+    }
+    else if ( elem == nest::glif_cond::State_::TH_SPK )
+    {
+      return S_.threshold_spike_;
+    }
+    else if ( elem == nest::glif_cond::State_::TH_VLT )
+    {
+      return S_.threshold_voltage_;
+    }
+    else
+    {
+      return S_.y_[ elem - nest::glif_cond::State_::NUMBER_OF_RECORDABLES_ELEMENTS ];
+    }
+  };
+
+  // Utility function that inserts the synaptic conductances to the
+  // recordables map
+
+  Name get_g_receptor_name( size_t receptor );
+  void insert_conductance_recordables( size_t first = 0 );
 };
 
 
@@ -445,6 +456,26 @@ glif_cond::set_status( const DictionaryDatum& d )
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
 
   Archiving_Node::set_status( d );
+
+  /*
+   * Here is where we must update the recordablesMap_ if new receptors
+   * are added!
+   */
+  if ( ptmp.n_receptors_() > P_.n_receptors_() ) // Number of receptors increased
+  {
+    for ( size_t receptor = P_.n_receptors_(); receptor < ptmp.n_receptors_(); ++receptor )
+    {
+      size_t elem = glif_cond::State_::G_SYN + receptor * glif_cond::State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      recordablesMap_.insert( get_g_receptor_name( receptor ), get_data_access_functor( elem ) );
+    }
+  }
+  else if ( ptmp.n_receptors_() < P_.n_receptors_() )
+  { // Number of receptors decreased
+    for ( size_t receptor = ptmp.n_receptors_(); receptor < P_.n_receptors_(); ++receptor )
+    {
+      recordablesMap_.erase( get_g_receptor_name( receptor ) );
+    }
+  }
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

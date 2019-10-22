@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# glif_psc_neuron.py
+# glif_cond_neuron.py
 #
 # This file is part of NEST.
 #
@@ -20,18 +20,19 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Current-based generalized leaky integrate and fire (GLIF) neuron example
+Conductance-based generalized leaky integrate and fire (GLIF) neuron example
 --------------------------------
 
-Simple example of how to use the ``glif_psc`` neuron model for
+Simple example of how to use the ``glif_cond`` neuron model for
 five different levels of GLIF neurons.
 
 Four stimulation paradigms are illustrated for the GLIF model
 with externally applied current and spikes impinging
 
-Voltage traces, current traces, threshold traces, and spikes are shown.
+Voltage traces, injecting current traces, threshold traces, synaptic
+conductance traces and spikes are shown.
 
-KEYWORDS: glif_psc
+KEYWORDS: glif_cond
 """
 
 ##############################################################################
@@ -49,61 +50,53 @@ nest.ResetKernel()
 resolution = 0.05
 nest.SetKernelStatus({"resolution": resolution})
 
-##############################################################################
-# We also pre-define the synapse time constant array, [2.0, 1.0] ms for
-# the two desired synaptic ports of the GLIF neurons. Note that the default
-# synapse time constant is [2.0] ms, which is for neuron with one port.
-
-syn_tau = [2.0, 1.0]
-
 ###############################################################################
 # We create the five levels of GLIF model to be tested, i.e.,
 # ``lif``, ``lif_r``, ``lif_asc``, ``lif_r_asc``, ``lif_r_asc_a``.
-# For each level of GLIF model, we create  a ``glif_psc`` node. The node is
-# created by setting relative model mechanism parameters and the time constant
-# of the 2 synaptic ports as mentioned above. Other neuron parameters are set
-# as default. The five ``glif_psc`` node handles were combined as a list.
+# For each level of GLIF model, we create  a ``glif_cond`` node. The node is
+# created by setting relative model mechanism parameters. Other neuron
+# parameters are set as default. The five ``glif_cond`` node handles are
+# combined as a list. Note that the default number of synaptic ports
+# is two for spike inputs. One port is excitation receptor with time
+# constant being 0.2 ms and reversal potential being 0.0 mV. The other port is
+# inhibition receptor with time constant being 2.0 ms and -85.0 mV.
+# Note that users can set as many synaptic ports as needed for ``glif_cond``
+# by setting array parameters ``tau_syn`` and ``E_rev`` of the model.
 
-n_lif = nest.Create("glif_psc",
+n_lif = nest.Create("glif_cond",
                     params={"spike_dependent_threshold": False,
                             "after_spike_currents": False,
-                            "adapting_threshold": False,
-                            "tau_syn": syn_tau})
-n_lif_r = nest.Create("glif_psc",
+                            "adapting_threshold": False})
+n_lif_r = nest.Create("glif_cond",
                       params={"spike_dependent_threshold": True,
                               "after_spike_currents": False,
-                              "adapting_threshold": False,
-                              "tau_syn": syn_tau})
-n_lif_asc = nest.Create("glif_psc",
+                              "adapting_threshold": False})
+n_lif_asc = nest.Create("glif_cond",
                         params={"spike_dependent_threshold": False,
                                 "after_spike_currents": True,
-                                "adapting_threshold": False,
-                                "tau_syn": syn_tau})
-n_lif_r_asc = nest.Create("glif_psc",
+                                "adapting_threshold": False})
+n_lif_r_asc = nest.Create("glif_cond",
                           params={"spike_dependent_threshold": True,
                                   "after_spike_currents": True,
-                                  "adapting_threshold": False,
-                                  "tau_syn": syn_tau})
-n_lif_r_asc_a = nest.Create("glif_psc",
+                                  "adapting_threshold": False})
+n_lif_r_asc_a = nest.Create("glif_cond",
                             params={"spike_dependent_threshold": True,
                                     "after_spike_currents": True,
-                                    "adapting_threshold": True,
-                                    "tau_syn": syn_tau})
+                                    "adapting_threshold": True})
 
 neurons = n_lif + n_lif_r + n_lif_asc + n_lif_r_asc + n_lif_r_asc_a
 
 ###############################################################################
-# For the stimulation input to the glif_psc neurons, we create one excitation
+# For the stimulation input to the glif_cond neurons, we create one excitation
 # spike generator and one inhibition spike generator, each of which generates
 # three spikes; we also create one step current generator and a Poisson
-# generator, a parrot neuron (to be paired with the Poisson generator).
+# generator, a parrot neuron(to be paired with the Poisson generator).
 # The three different injections are spread to three different time periods,
 # i.e., 0 ms ~ 200 ms, 200 ms ~ 500 ms, 600 ms ~ 900 ms.
-# Each of the excitation and inhibition spike generators generates three spikes
-# at different time points. Configuration of the current generator includes the
-# definition of the start and stop times and the amplitude of the injected
-# current. Configuration of the Poisson generator includes the definition of
-# the start and stop times and the rate of the injected spike train.
+# Configuration of the current generator includes the definition of the start
+# and stop times and the amplitude of the injected current. Configuration of
+# the Poisson generator includes the definition of the start and stop times and
+# the rate of the injected spike train.
 
 espikes = nest.Create("spike_generator",
                       params={"spike_times": [10., 100., 150.],
@@ -116,24 +109,25 @@ cg = nest.Create("step_current_generator",
                          "amplitude_times": [200., ],
                          "start": 200., "stop": 500.})
 pg = nest.Create("poisson_generator",
-                 params={"rate": 150000., "start": 600., "stop": 900.})
+                 params={"rate": 15000., "start": 600., "stop": 900.})
 pn = nest.Create("parrot_neuron")
 
 ###############################################################################
 # The generators are then connected to the neurons. Specification of
 # the ``receptor_type`` uniquely defines the target receptor.
-# We connect current generator, the spike generators, Poisson generator (via
-# parrot neuron) to receptor 0, 1, and 2 of the GLIF neurons, respectively.
+# We connect current generator to receptor 0, the excitation spike generator
+# and the Poisson generator (via parrot neuron) to receptor 1, and the
+# inhibition spike generator to receptor 2 of the GLIF neurons.
 # Note that Poisson generator is connected to parrot neuron to transit the
-# spikes to the glif_psc neuron.
+# spikes to the glif_cond neuron.
 
 nest.Connect(cg, neurons, syn_spec={"delay": resolution})
 nest.Connect(espikes, neurons,
              syn_spec={"delay": resolution, "receptor_type": 1})
 nest.Connect(ispikes, neurons,
-             syn_spec={"delay": resolution, "receptor_type": 1})
+             syn_spec={"delay": resolution, "receptor_type": 2})
 nest.Connect(pg, pn, syn_spec={"delay": resolution})
-nest.Connect(pn, neurons, syn_spec={"delay": resolution, "receptor_type": 2})
+nest.Connect(pn, neurons, syn_spec={"delay": resolution, "receptor_type": 1})
 
 ###############################################################################
 # A ``multimeter`` is created and connected to the neurons. The parameters
@@ -142,7 +136,8 @@ nest.Connect(pn, neurons, syn_spec={"delay": resolution, "receptor_type": 2})
 
 mm = nest.Create("multimeter",
                  params={"interval": resolution,
-                         "record_from": ["V_m", "I", "I_syn", "threshold",
+                         "record_from": ["V_m", "I", "g_1", "g_2",
+                                         "threshold",
                                          "threshold_spike",
                                          "threshold_voltage",
                                          "ASCurrents_sum"]})
@@ -150,7 +145,7 @@ nest.Connect(mm, neurons)
 
 ###############################################################################
 # A ``spike_detector`` is created and connected to the neurons record the
-# spikes generated by the glif_psc neurons.
+# spikes generated by the glif_cond neurons.
 
 sd = nest.Create("spike_detector")
 nest.Connect(neurons, sd)
@@ -173,17 +168,17 @@ spikes = spike_data["times"]
 # the overall threshold (in green), and the spikes (as red dots) in one panel;
 # the spike component of threshold (in yellow) and the voltage component of
 # threshold (in black) in another panel; the injected currents(in strong blue),
-# the sum of after spike currents(in cyan), and the synaptic currents (in
-# magenta) in responding to the spike inputs to the neurons in the third panel.
-# We plot all these three panels for each level of GLIF model in a seperated
-# figure.
+# the sum of after spike currents(in cyan) in the third panel; and the synaptic
+# conductances of the two receptors (in blue and orange) in responding to the
+# spike inputs to the neurons in the fourth panel. We plot all these four
+# panels for each level of GLIF model in a seperated figure.
 
 glif_models = ["lif", "lif_r", "lif_asc", "lif_r_asc", "lif_r_asc_a"]
 for i in range(len(glif_models)):
 
     glif_model = glif_models[i]
     plt.figure(glif_model)
-    gs = gridspec.GridSpec(3, 1, height_ratios=[2, 1, 1])
+    gs = gridspec.GridSpec(4, 1, height_ratios=[2, 1, 1, 1])
     t = data["times"][senders == 1]
 
     ax1 = plt.subplot(gs[0])
@@ -194,7 +189,7 @@ for i in range(len(glif_models)):
              len(spikes[spike_senders == neurons[i]]), "r.")
     plt.legend(["V_m", "threshold", "spike"])
     plt.ylabel("V (mV)")
-    plt.title("Simulation of glif_psc neuron of " + glif_model)
+    plt.title("Simulation of glif_cond neuron of " + glif_model)
 
     ax2 = plt.subplot(gs[1])
     plt.plot(t, data["threshold_spike"][senders == neurons[i]], "y")
@@ -205,9 +200,15 @@ for i in range(len(glif_models)):
     ax3 = plt.subplot(gs[2])
     plt.plot(t, data["I"][senders == neurons[i]], "--")
     plt.plot(t, data["ASCurrents_sum"][senders == neurons[i]], "c-.")
-    plt.plot(t, data["I_syn"][senders == neurons[i]], "m")
     plt.legend(["I_e", "ASCurrents_sum", "I_syn"])
     plt.ylabel("I (pA)")
+    plt.xlabel("t (ms)")
+
+    ax4 = plt.subplot(gs[3])
+    plt.plot(t, data["g_1"][senders == neurons[i]], "-")
+    plt.plot(t, data["g_2"][senders == neurons[i]], "--")
+    plt.legend(["G_1", "G_2"])
+    plt.ylabel("G (nS)")
     plt.xlabel("t (ms)")
 
 plt.show()

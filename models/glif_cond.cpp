@@ -44,10 +44,7 @@
 #include "integerdatum.h"
 #include "lockptrdatum.h"
 
-
 using namespace nest;
-
-nest::RecordablesMap< nest::glif_cond > nest::glif_cond::recordablesMap_;
 
 namespace nest
 {
@@ -55,13 +52,40 @@ namespace nest
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::glif_cond >::create()
+DynamicRecordablesMap< nest::glif_cond >::create( glif_cond& host )
 {
-  insert_( names::V_m, &nest::glif_cond::get_y_elem_< nest::glif_cond::State_::V_M > );
-  insert_( names::ASCurrents_sum, &nest::glif_cond::get_ASCurrents_sum_ );
-  insert_( names::threshold, &nest::glif_cond::get_threshold_ );
-  insert_( names::threshold_spike, &nest::glif_cond::get_threshold_spike_ );
-  insert_( names::threshold_voltage, &nest::glif_cond::get_threshold_voltage_ );
+  insert( names::V_m, host.get_data_access_functor( glif_cond::State_::V_M ) );
+  insert( names::I, host.get_data_access_functor( glif_cond::State_::I ) );
+  insert( names::ASCurrents_sum, host.get_data_access_functor( glif_cond::State_::ASC_SUM ) );
+  insert( names::threshold, host.get_data_access_functor( glif_cond::State_::TH ) );
+  insert( names::threshold_spike, host.get_data_access_functor( glif_cond::State_::TH_SPK ) );
+  insert( names::threshold_voltage, host.get_data_access_functor( glif_cond::State_::TH_VLT ) );
+
+  host.insert_conductance_recordables();
+}
+
+Name
+glif_cond::get_g_receptor_name( size_t receptor )
+{
+  std::stringstream receptor_name;
+  receptor_name << "g_" << receptor + 1;
+  return Name( receptor_name.str() );
+}
+
+void
+glif_cond::insert_conductance_recordables( size_t first )
+{
+  for ( size_t receptor = first; receptor < P_.n_receptors_(); ++receptor )
+  {
+    size_t elem = glif_cond::State_::G_SYN + receptor * glif_cond::State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    recordablesMap_.insert( get_g_receptor_name( receptor ), this->get_data_access_functor( elem ) );
+  }
+}
+
+DataAccessFunctor< glif_cond >
+glif_cond::get_data_access_functor( size_t elem )
+{
+  return DataAccessFunctor< glif_cond >( *this, elem );
 }
 }
 
@@ -88,7 +112,8 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   for ( size_t i = 0; i < node.P_.n_receptors_(); ++i )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn += y[ S::G_SYN + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
+    I_syn +=
+      y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] * ( y[ S::V_M ] + node.P_.E_L_ - node.P_.E_rev_[ i ] );
   }
 
   const double I_leak = node.P_.G_ * ( y[ S::V_M ] );
@@ -101,8 +126,10 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
-    f[ S::DG_SYN + j ] = -y[ S::DG_SYN + j ] / node.P_.tau_syn_[ i ];
-    f[ S::G_SYN + j ] = y[ S::DG_SYN + j ] - ( y[ S::G_SYN + j ] / node.P_.tau_syn_[ i ] );
+    f[ S::DG_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] =
+      -y[ S::DG_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] / node.P_.tau_syn_[ i ];
+    f[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] = y[ S::DG_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ]
+      - ( y[ S::G_SYN - S::NUMBER_OF_RECORDABLES_ELEMENTS + j ] / node.P_.tau_syn_[ i ] );
   }
 
   return GSL_SUCCESS;
@@ -144,17 +171,26 @@ nest::glif_cond::State_::State_( const Parameters_& p )
   , threshold_spike_( 0.0 )       // in mV
   , threshold_voltage_( 0.0 )     // in mV
   , ASCurrents_( p.asc_init_ )    // in pA
-  , y_( STATE_VECTOR_MIN_SIZE, 0.0 )
+  , ASCurrents_sum_( 0.0 )        // in pA
   , refractory_steps_( 0 )
+  , y_( STATE_VECTOR_MIN_SIZE - NUMBER_OF_RECORDABLES_ELEMENTS, 0.0 )
 
 {
-  y_[ V_M ] = 0.0; // initialize to membrane potential
+  for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )
+	{
+	  ASCurrents_sum_ += ASCurrents_[a];
+	}
+	y_[ V_M ] = 0.0; // initialize to membrane potential
 }
 
 nest::glif_cond::State_::State_( const State_& s )
 {
   threshold_ = s.threshold_;
+  threshold_spike_ = s.threshold_spike_;
+  threshold_voltage_ = s.threshold_voltage_;
   ASCurrents_ = s.ASCurrents_;
+  ASCurrents_sum_ = s.ASCurrents_sum_;
+  refractory_steps_ = s.refractory_steps_;
   y_ = s.y_;
 }
 
@@ -166,6 +202,11 @@ nest::glif_cond::State_& nest::glif_cond::State_::operator=( const State_& s )
     return *this;
   }
 
+  threshold_ = s.threshold_;
+  threshold_spike_ = s.threshold_spike_;
+  threshold_voltage_ = s.threshold_voltage_;
+  ASCurrents_ = s.ASCurrents_;
+  refractory_steps_ = s.refractory_steps_;
   y_ = s.y_;
 
   return *this;
@@ -388,8 +429,10 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
                             / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg->push_back( y_[ State_::DG_SYN + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
-    g->push_back( y_[ State_::G_SYN + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
+    dg->push_back( y_[ State_::DG_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS
+      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
+    g->push_back( y_[ State_::G_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS
+      + ( i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ) ] );
   }
 
   ( *d )[ names::dg ] = DoubleVectorDatum( dg );
@@ -468,7 +511,7 @@ nest::glif_cond::glif_cond()
   , S_( P_ )
   , B_( *this )
 {
-  recordablesMap_.create();
+  recordablesMap_.create( *this );
 }
 
 nest::glif_cond::glif_cond( const glif_cond& n )
@@ -477,6 +520,7 @@ nest::glif_cond::glif_cond( const glif_cond& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  recordablesMap_.create( *this );
 }
 
 nest::glif_cond::~glif_cond()
@@ -552,10 +596,12 @@ nest::glif_cond::calibrate()
   if ( P_.has_asc_ )
   {
     V_.asc_decay_rates_.resize( P_.asc_decay_.size() );
+    V_.asc_stable_coeff_.resize( P_.asc_decay_.size() );
     V_.asc_refractory_decay_rates_.resize( P_.asc_decay_.size() );
     for ( std::size_t a = 0; a < P_.asc_decay_.size(); ++a )
     {
       V_.asc_decay_rates_[ a ] = std::exp( -P_.asc_decay_[ a ] * h );
+      V_.asc_stable_coeff_[ a ] = ( ( 1.0 / P_.asc_decay_[ a ] ) / h ) * ( 1.0 - V_.asc_decay_rates_[ a ] );
       V_.asc_refractory_decay_rates_[ a ] = P_.asc_r_[ a ] * std::exp( -P_.asc_decay_[ a ] * P_.t_ref_ );
     }
   }
@@ -655,11 +701,15 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       // Calculate new ASCurrents value using exponential methods
       S_.ASCurrents_sum_ = 0.0;
       // for glif3/4/5 models with "ASC"
+      // take after spike current value at the beginning of the time to compute
+      // the exact mean ASC for the time step and sum the exact ASCs of all ports;
+      // and then update the current values to the value at the end of the time
+      // step, ready for the next time step
       if ( P_.has_asc_ )
       {
         for ( std::size_t a = 0; a < S_.ASCurrents_.size(); ++a )
         {
-          S_.ASCurrents_sum_ += S_.ASCurrents_[ a ];
+          S_.ASCurrents_sum_ += ( V_.asc_stable_coeff_[ a ] * S_.ASCurrents_[ a ] );
           S_.ASCurrents_[ a ] = S_.ASCurrents_[ a ] * V_.asc_decay_rates_[ a ];
         }
       }
@@ -733,8 +783,8 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
     {
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
-      const size_t jjj = i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      S_.y_[ State_::DG_SYN + jjj ] +=
+      S_.y_[ State_::DG_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS
+        + i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ] +=
         B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
     }
     // Update any external currents

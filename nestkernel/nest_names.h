@@ -222,7 +222,6 @@ extern const Name GABA_A;
 extern const Name GABA_B;
 extern const Name gamma_shape;
 extern const Name gaussian;
-extern const Name glif_model;
 extern const Name global_id;
 extern const Name grng;
 extern const Name grng_seed;

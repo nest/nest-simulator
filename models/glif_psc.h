@@ -70,7 +70,7 @@ g          double - Membrane conductance in nS.
 E_L        double - Resting membrane potential in mV.
 C_m        double - Capacitance of the membrane in pF.
 t_ref      double - Duration of refractory time in ms.
-V_reset    double - Reset potential of the membrane in mV (glif 1-3).
+V_reset    double - Reset potential of the membrane in mV (GLIF 1 or GLIF 3).
 th_spike_add           double - Threshold addition following spike in mV
                                 (delta_theta_s in Equation (6) in [1]).
 th_spike_decay         double - Spike-induced threshold time constant in 1/ms
@@ -228,16 +228,16 @@ private:
   struct State_
   {
     double U_;                         //!< relative membrane potential in mV
-    double ASCurrents_sum_;            //!< in pA
     double threshold_;                 //!< total threshold in mV
     double threshold_spike_;           //!< spike component of threshold in mV
     double threshold_voltage_;         //!< voltage component of threshold in mV
     double I_;                         //!< external current in pA
     double I_syn_;                     //!< post synaptic current in pA
     std::vector< double > ASCurrents_; //!< after-spike currents in pA
+    double ASCurrents_sum_;            //!< in pA
+    int refractory_steps_;             //!< Number of refractory steps remaining
     std::vector< double > y1_;         //!< synapse current evolution state 1 in pA
     std::vector< double > y2_;         //!< synapse current evolution state 2 in pA
-    int refractory_steps_;             //!< Number of refractory steps remaining
 
     State_( const Parameters_& );
 

@@ -201,7 +201,6 @@ const Name GABA_A( "GABA_A" );
 const Name GABA_B( "GABA_B" );
 const Name gamma_shape( "gamma_shape" );
 const Name gaussian( "gaussian" );
-const Name glif_model( "glif_model" );
 const Name global_id( "global_id" );
 const Name grng( "grng" );
 const Name grng_seed( "grng_seed" );

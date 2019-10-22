@@ -76,17 +76,22 @@ class TestRecordingBackends(unittest.TestCase):
     def testGlobalRecordingBackendProperties(self):
         """Test setting of global backend properties.
 
-        This only runs if compiled with SIONlib and sets and gets
-        global backend properties on the corresponding backend, as
-        that is the only backend which has them.
+        This sets and gets global backend properties and only runs if
+        compiled with SIONlib, as the corresponding backend is the
+        only backend with global parameters.
         """
 
         nest.ResetKernel()
 
-        if HAVE_SIONLIB:  # JME
-            # sl_params = {"sionlib": {"sion_chunksize": 512 }}
-            # nest.SetKernelStatus({"recording_backends": sl_params})
-            pass
+        if HAVE_SIONLIB:
+            rb_status = nest.GetKernelStatus("recording_backends")
+            chunksize = rb_status["sionlib"]["sion_chunksize"]
+            sl_params = {"sionlib": {"sion_chunksize": chunksize + 1}}
+            nest.SetKernelStatus({"recording_backends": sl_params})
+
+            rb_status = nest.GetKernelStatus("recording_backends")
+            sl_chunksize = rb_status["sionlib"]["sion_chunksize"]
+            self.assertEqual(sl_chunksize, chunksize + 1)
 
     def testSetDefaultRecordingBackend(self):
         """Test setting the default recording backend.

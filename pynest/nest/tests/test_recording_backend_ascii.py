@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys
+import os
 import unittest
 import nest
 
@@ -32,9 +32,9 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         mm_params = {"record_to": "ascii", "record_from": ["V_m"]}
         mm = nest.Create("multimeter", params=mm_params)
-        
+
         os.remove(mm.get("filenames")[0])
-        
+
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
         nest.Simulate(100)
 
@@ -52,7 +52,11 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.Simulate(100)
 
     def testDataPrefixDataPathAndFilenameExtension(self):
-        """Test if data_prefix, data_path and file extension end up in filenames."""
+        """Test if filename is corrrectly built.
+
+        This also tests that data_prefix, data_path, file extension
+        end up in filenames.
+        """
 
         nest.ResetKernel()
 
@@ -82,7 +86,25 @@ class TestRecordingBackendASCII(unittest.TestCase):
     def testLabel(self):
         """Test that label replaces the model name in the file name if set."""
 
-        pass  # JME
+        nest.ResetKernel()
+
+        label = "label"
+
+        kernel_params = {
+            "overwrite_files": True,
+        }
+        nest.SetKernelStatus(kernel_params)
+
+        mm_params = {
+            "record_to": "ascii",
+            "record_from": ["V_m"],
+            "label": label,
+        }
+        mm = nest.Create("multimeter", mm_params)
+        fname = mm.get("filenames")[0]
+
+        self.assertTrue(label in fname)
+        self.assertTrue(mm.get("model") not in fname)
 
     def testFileContent(self):
         """Test if the file contains correct headers and expected content"""
@@ -97,10 +119,21 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.Simulate(15)
 
         fname = mm.get("filenames")[0]
-        print("================\n"+fname+"\n================", sys.stderr)
         with open(fname) as f:
             lines = f.readlines()
-            print(lines, file=sys.stderr)
+
+            self.assertEqual(len(lines), mm.get("n_events")+3)
+
+            nest.ll_api.sr("statusdict/version ::")
+            version = nest.ll_api.spp()
+            self.assertEqual(lines[0], "# NEST version: {}\n".format(version))
+
+            header_2 = "# RecordingBackendASCII version:"
+            self.assertTrue(lines[1].startswith(header_2))
+
+            self.assertEqual(lines[2], "# sender\ttime_ms\tV_m\n")
+
+            self.assertEqual(lines[3], "2\t0.100\t-70.000\n")
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
@@ -168,7 +201,16 @@ class TestRecordingBackendASCII(unittest.TestCase):
         # Check that time_in_steps is set False by default
         self.assertFalse(mm.get("time_in_steps"))
 
-        # JME: Read the file and check content, i.e. number of columns
+        mm.set({"record_from": ["V_m"], "time_in_steps": True})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+
+        fname = mm.get("filenames")[0]
+        with open(fname) as f:
+            lines = f.readlines()
+            h3_expected = "# sender\ttime_step\ttime_offset\tV_m\n"
+            self.assertEqual(lines[2], h3_expected)
 
 
 def suite():

@@ -217,10 +217,11 @@ private:
     bool time_in_steps_;                     //!< Should time be recorded in steps (ms if false)
     std::string file_basename_;              //!< File name up to but not including the "."
     std::string file_extension_;             //!< File name extension without leading "."
-    std::string filename_;                   //!< Full filename as determined and used by open_file()
     std::ofstream file_;                     //!< File stream to use for the device
     std::vector< Name > double_value_names_; //!< names for values of type double
     std::vector< Name > long_value_names_;   //!< names for values of type long
+
+    std::string compute_filename_() const;   //!< Compose and return the filename
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > data_map;

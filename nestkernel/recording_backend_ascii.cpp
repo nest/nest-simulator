@@ -249,34 +249,26 @@ nest::RecordingBackendASCII::DeviceData::flush_file()
 void
 nest::RecordingBackendASCII::DeviceData::open_file()
 {
-  std::string data_path = kernel().io_manager.get_data_path();
-  if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
-  {
-    data_path += '/';
-  }
+  std::string filename = compute_filename_();
 
-  std::string data_prefix = kernel().io_manager.get_data_prefix();
-
-  filename_ = data_path + data_prefix + file_basename_ + "." + file_extension_;
-
-  std::ifstream test( filename_.c_str() );
+  std::ifstream test( filename.c_str() );
   if ( test.good() && not kernel().io_manager.overwrite_files() )
   {
     std::string msg = String::compose(
       "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
       "the kernel property overwrite_files to true. To change the name or location of the file, "
       "change the kernel properties data_path or data_prefix, or the device property label.",
-      filename_ );
+      filename );
     LOG( M_ERROR, "RecordingBackendASCII::enroll()", msg );
     throw IOError();
   }
   test.close();
 
-  file_ = std::ofstream( filename_.c_str() );
+  file_ = std::ofstream( filename.c_str() );
 
   if ( not file_.good() )
   {
-    std::string msg = String::compose( "I/O error while opening file '%1'.", filename_ );
+    std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
     LOG( M_ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
@@ -338,8 +330,9 @@ nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
   ( *d )[ names::precision ] = precision_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
 
+  std::string filename = compute_filename_();
   initialize_property_array( d, names::filenames );
-  append_property( d, names::filenames, filename_ );
+  append_property( d, names::filenames, filename );
 }
 
 void
@@ -358,4 +351,18 @@ nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 
     time_in_steps_ = time_in_steps;
   }
+}
+
+std::string
+nest::RecordingBackendASCII::DeviceData::compute_filename_() const
+{
+  std::string data_path = kernel().io_manager.get_data_path();
+  if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
+  {
+    data_path += '/';
+  }
+
+  std::string data_prefix = kernel().io_manager.get_data_prefix();
+
+  return data_path + data_prefix + file_basename_ + "." + file_extension_;
 }

@@ -177,10 +177,10 @@ nest::glif_cond::State_::State_( const Parameters_& p )
 
 {
   for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )
-	{
-	  ASCurrents_sum_ += ASCurrents_[a];
-	}
-	y_[ V_M ] = 0.0; // initialize to membrane potential
+  {
+    ASCurrents_sum_ += ASCurrents_[ a ];
+  }
+  y_[ V_M ] = 0.0; // initialize to membrane potential
 }
 
 nest::glif_cond::State_::State_( const State_& s )

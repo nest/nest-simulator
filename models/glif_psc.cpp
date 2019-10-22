@@ -102,12 +102,12 @@ nest::glif_psc::State_::State_( const Parameters_& p )
   , I_( 0.0 )                     // in pA
   , I_syn_( 0.0 )                 // in pA
   , ASCurrents_( p.asc_init_ )    // in pA
-  , ASCurrents_sum_(0.0)          // in pA
+  , ASCurrents_sum_( 0.0 )        // in pA
   , refractory_steps_( 0 )
 {
   for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )
   {
-	ASCurrents_sum_ += ASCurrents_[a];
+    ASCurrents_sum_ += ASCurrents_[ a ];
   }
   y1_.clear();
   y2_.clear();

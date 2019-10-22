@@ -192,18 +192,12 @@ public:
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
 private:
-  /**
-   * Build device file basename as being the device's label (or model
-   * name if no label is given), the device's GID, and the virtual
-   * process ID, all separated by dashes, followed by a dot and the
-   * filename extension.
-   */
-  const std::string build_basename_( const RecordingDevice& device ) const;
+  const std::string compute_vp_gid_string_( const RecordingDevice& device ) const;
 
   struct DeviceData
   {
     DeviceData() = delete;
-    DeviceData( std::string );
+    DeviceData( std::string, std::string );
     void set_value_names( const std::vector< Name >&, const std::vector< Name >& );
     void open_file();
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
@@ -215,8 +209,10 @@ private:
   private:
     long precision_;                         //!< Number of decimal places used when writing decimal values
     bool time_in_steps_;                     //!< Should time be recorded in steps (ms if false)
-    std::string file_basename_;              //!< File name up to but not including the "."
+    std::string modelname_;                  //!< File name up to but not including the "."
+    std::string vp_gid_string_;              //!< The vp and gid component of the filename
     std::string file_extension_;             //!< File name extension without leading "."
+    std::string label_;                      //!< The label of the device.
     std::ofstream file_;                     //!< File stream to use for the device
     std::vector< Name > double_value_names_; //!< names for values of type double
     std::vector< Name > long_value_names_;   //!< names for values of type long

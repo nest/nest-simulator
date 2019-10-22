@@ -63,8 +63,9 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictio
   data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
   if ( device_data == device_data_[ t ].end() )
   {
-    std::string basename = build_basename_( device );
-    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData( basename ) ) );
+    std::string vp_gid_string = compute_vp_gid_string_( device );
+    std::string modelname = device.get_name();
+    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData( modelname, vp_gid_string ) ) );
     device_data = p.first;
   }
 
@@ -151,24 +152,18 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendASCII::build_basename_( const RecordingDevice& device ) const
+nest::RecordingBackendASCII::compute_vp_gid_string_( const RecordingDevice& device ) const
 {
   const float num_vps = kernel().vp_manager.get_num_virtual_processes();
   const float num_nodes = kernel().node_manager.size();
   const int vp_digits = static_cast< int >( std::floor( std::log10( num_vps ) ) + 1 );
   const int gid_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
 
-  std::string label = device.get_label();
-  if ( label.empty() )
-  {
-    label = device.get_name();
-  }
+  std::ostringstream vp_gid_string;
+  vp_gid_string << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid() << "-"
+		<< std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
 
-  std::ostringstream basename;
-  basename << label << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid() << "-"
-           << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
-
-  return basename.str();
+  return vp_gid_string.str();
 }
 
 void
@@ -198,14 +193,14 @@ nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
 void
 nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
 {
-  DeviceData dd( "" );
+    DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
 nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
 {
-  DeviceData dd( "" );
+    DeviceData dd( "", "" );
   dd.get_status( params );
 }
 
@@ -224,11 +219,13 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
 
 /* ******************* Device meta data class DeviceData ******************* */
 
-nest::RecordingBackendASCII::DeviceData::DeviceData( std::string file_basename )
+nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_gid_string)
   : precision_( 3 )
   , time_in_steps_( false )
-  , file_basename_( file_basename )
+  , modelname_( modelname )
+  , vp_gid_string_( vp_gid_string )
   , file_extension_( "dat" )
+  , label_( "" )
 {
 }
 
@@ -340,6 +337,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_extension_ );
   updateValue< long >( d, names::precision, precision_ );
+  updateValue< std::string >( d, names::label, label_ );
 
   bool time_in_steps = false;
   if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
@@ -362,7 +360,13 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_() const
     data_path += '/';
   }
 
+  std::string label = label_;
+  if ( label.empty() )
+  {
+    label = modelname_;
+  }
+
   std::string data_prefix = kernel().io_manager.get_data_prefix();
 
-  return data_path + data_prefix + file_basename_ + "." + file_extension_;
+  return data_path + data_prefix + label + vp_gid_string_ + "." + file_extension_;
 }

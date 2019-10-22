@@ -623,12 +623,14 @@ cdef inline object sli_datum_to_object(Datum* dat):
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
 
-    cdef tmp = [None] * dat.size()
+    cdef tmp = [None] * int(dat.size())
 
-    cdef size_t i
+    cdef size_t i, n
     cdef Token* tok = dat.begin()
 
-    for i in range(len(tmp)):
+    n = len(tmp)
+
+    for i in range(n):
         tmp[i] = sli_datum_to_object(tok.datum())
         inc(tok)
 

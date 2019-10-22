@@ -229,59 +229,48 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_GIDCollection_membership(self):
         """Membership in GIDCollections"""
+        def check_membership(gc, reference, inverse_ref):
+            """Checks that all GIDs in reference are in GC, and that elements in inverse_ref are not in the GC."""
+            for i in reference:
+                self.assertTrue(i in gc, 'i={}'.format(i))
+            for j in inverse_ref:
+                self.assertFalse(j in gc)
+
+            self.assertFalse(reference[-1] + 1 in gc)
+            self.assertFalse(0 in gc)
+            self.assertFalse(-1 in gc)
 
         # Primitive GIDCollection
         N = 10
         primitive = nest.Create('iaf_psc_alpha', N)
-        for i in range(1, N+1):
-            self.assertTrue(i in primitive)
-        self.assertFalse(N+1 in primitive)
-        self.assertFalse(0 in primitive)
-        self.assertFalse(-1 in primitive)
+        check_membership(primitive, range(1, N+1), [])
 
         # Composite GIDCollection
         exp_N = 5
         N += exp_N
         composite = primitive + nest.Create('iaf_psc_exp', exp_N)
-        for i in range(1, N+1):
-            self.assertTrue(i in composite)
+        check_membership(composite, range(1, N+1), [])
 
         # Sliced GIDCollection
         low = 3
         high = 12
         sliced = composite[low:high]
-        for i in range(low+1, high+1):
-            self.assertTrue(i in sliced)
-        # Check that elements that are in the GC, but not in the sliced
-        # GC, are not counted as members of the sliced GC.
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high]
-        for j in inverse_reference:
-            self.assertFalse(j in sliced)
+        check_membership(sliced, range(low+1, high+1), inverse_reference)
 
         # GIDCollection with step
         step = 3
         stepped = composite[::step]
-        for i in range(1, N+1, step):
-            self.assertTrue(i in stepped)
-        # Check that elements that are in the GC, but not in the stepped
-        # GC, are not counted as members of the stepped GC.
         inverse_reference = list(range(1, N))
         del inverse_reference[::step]
-        for j in inverse_reference:
-            self.assertFalse(j in stepped)
+        check_membership(stepped, range(1, N+1, step), inverse_reference)
 
         # Sliced GIDCollection with step
         sliced_stepped = composite[low:high:step]
-        for i in range(low+1, high+1, step):
-            self.assertTrue(i in sliced_stepped)
-        # Check that elements that are in the GC, but not in the sliced
-        # and stepped GC, are not counted as members of the sliced and
-        # stepped GC.
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
-        for j in inverse_reference:
-            self.assertFalse(j in sliced_stepped)
+        check_membership(sliced_stepped, range(low+1, high+1, step), inverse_reference)
 
     def test_GIDCollection_index(self):
         """GIDCollections index function"""

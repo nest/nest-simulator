@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import os, sys
 import unittest
 import nest
 
@@ -27,39 +28,85 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
     def testAAAOverwriteFiles(self):
 
-        pass  # JME
-
-    def testDataPrefixDataPathAndFilenames(self):
-        """Test if data_prefix and data_path end up in the filenames."""
-
         nest.ResetKernel()
-        kernel_params = {"data_prefix": "dataprefix", "overwrite_files": True}
-        nest.SetKernelStatus(kernel_params)
 
         mm_params = {"record_to": "ascii", "record_from": ["V_m"]}
         mm = nest.Create("multimeter", params=mm_params)
+        
+        os.remove(mm.get("filenames")[0])
+        
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
         nest.Simulate(100)
 
-        fname = mm.get("filenames")[0]
-        with open(fname) as f:
-            lines = f.readlines()
-            print(lines)
+        nest.ResetKernel()
 
-    def testFilenameExtension(self):
-        """Test if setting the filename extension works."""
+        mm = nest.Create("multimeter", params=mm_params)
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        with self.assertRaises(nest.kernel.NESTErrors.IOError):
+            nest.Simulate(100)
+
+        nest.Cleanup()
+
+        nest.SetKernelStatus({"overwrite_files": True})
+        nest.Simulate(100)
+
+    def testDataPrefixDataPathAndFilenameExtension(self):
+        """Test if data_prefix, data_path and file extension end up in filenames."""
+
+        nest.ResetKernel()
+
+        data_prefix = "data_prefix"
+        data_path = "/tmp/"
+        file_extension = "nest"
+
+        kernel_params = {
+            "data_prefix": data_prefix,
+            "data_path": data_path,
+            "overwrite_files": True,
+        }
+        nest.SetKernelStatus(kernel_params)
+
+        mm_params = {
+            "record_to": "ascii",
+            "record_from": ["V_m"],
+            "file_extension": file_extension,
+        }
+        mm = nest.Create("multimeter", mm_params)
+        fname = mm.get("filenames")[0]
+
+        self.assertTrue(data_path in fname)
+        self.assertTrue(data_prefix in fname)
+        self.assertTrue(fname.endswith(file_extension))
+
+    def testLabel(self):
+        """Test that label replaces the model name in the file name if set."""
 
         pass  # JME
 
     def testFileContent(self):
         """Test if the file contains correct headers and expected content"""
 
-        pass  # JME
+        nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
+
+        mm = nest.Create("multimeter", params={"record_to": "ascii"})
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+
+        fname = mm.get("filenames")[0]
+        print("================\n"+fname+"\n================", sys.stderr)
+        with open(fname) as f:
+            lines = f.readlines()
+            print(lines, file=sys.stderr)
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
 
         nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
@@ -74,7 +121,8 @@ class TestRecordingBackendASCII(unittest.TestCase):
         # Now with multithreading
 
         nest.ResetKernel()
-        nest.SetKernelStatus({"local_num_threads": 2})
+        kernel_params = {"overwrite_files": True, "local_num_threads": 2}
+        nest.SetKernelStatus(kernel_params)
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
@@ -90,6 +138,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         """"""
 
         nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
@@ -112,6 +161,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         """Check if time_in_steps works properly."""
 
         nest.ResetKernel()
+        nest.SetKernelStatus({"overwrite_files": True})
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
 

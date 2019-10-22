@@ -28,6 +28,8 @@
 
 // C++ includes:
 #include <algorithm> // copy
+#include <numeric>   // accumulate
+
 
 namespace nest
 {
@@ -790,6 +792,54 @@ GIDCollectionComposite::contains( index gid ) const
     }
   }
   return false;
+}
+
+long
+GIDCollectionComposite::find( const index gid ) const
+{
+  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( stop_part_ > 0 and stop_part_ != parts_.size() )
+    or stop_offset_ > 0 )
+  {
+    // Composite is sliced, we must iterate to find the index.
+    auto it = begin();
+    long index = 0;
+    for ( const_iterator it = begin(); it < end(); ++it, ++index )
+    {
+      if ( ( *it ).gid == gid )
+      {
+        return index;
+      }
+    }
+    return -1;
+  }
+  else
+  {
+    // using the same algorithm as contains(), but returns the GID if found.
+    long lower = 0;
+    long upper = parts_.size() - 1;
+    while ( lower <= upper )
+    {
+      size_t middle = floor( ( lower + upper ) / 2.0 );
+      if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
+      {
+        lower = middle + 1;
+      }
+      else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
+      {
+        upper = middle - 1;
+      }
+      else
+      {
+        auto size_accu = []( long a, GIDCollectionPrimitive b )
+        {
+          return a + b.size();
+        };
+        long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
+        return sum_pre + parts_[ middle ].find( gid );
+      }
+    }
+    return -1;
+  }
 }
 
 void

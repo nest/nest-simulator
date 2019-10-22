@@ -882,33 +882,6 @@ GIDCollectionComposite::is_range() const
 {
   return false;
 }
-
-inline long
-GIDCollectionComposite::find( const index neuron_id ) const
-{
-  // using the same algorithm as contains(), but returns the GID if found.
-  long lower = 0;
-  long upper = parts_.size() - 1;
-  while ( lower <= upper )
-  {
-    size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < neuron_id )
-    {
-      lower = middle + 1;
-    }
-    else if ( neuron_id < ( *( parts_[ middle ].begin() ) ).gid )
-    {
-      upper = middle - 1;
-    }
-    else
-    {
-      return parts_[ middle ].find( neuron_id );
-    }
-  }
-  return -1;
-}
-
-
 } // namespace nest
 
 #endif /* #ifndef GID_COLLECTION_H */

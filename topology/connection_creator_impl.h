@@ -641,17 +641,13 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
   // We create a target positions vector here that can be updated with the
   // position and GID pairs. This is done to avoid creating and destroying
   // unnecessarily many vectors.
-  std::vector< std::pair< Position< D >, index > > target_positions;
+  std::vector< std::pair< Position< D >, index > > target_pos_gid_pairs;
+  std::vector< std::pair< Position< D >, index > > source_pos_gid_pairs = *source.get_global_positions_vector();
 
-  std::vector< std::pair< Position< D >, index > >* sources = source.get_global_positions_vector();
-
-  for ( typename std::vector< std::pair< Position< D >, index > >::iterator src_it = sources->begin();
-        src_it != sources->end();
-        ++src_it )
+  for ( const auto& source_pos_gid_pair : source_pos_gid_pairs )
   {
-
-    const Position< D > source_pos = src_it->first;
-    const index source_id = src_it->second;
+    const Position< D > source_pos = source_pos_gid_pair.first;
+    const index source_id = source_pos_gid_pair.second;
     const std::vector< double > source_pos_vector = source_pos.get_vector();
 
     // We create a target pos vector here that can be updated with the
@@ -662,26 +658,26 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
     // Find potential targets and probabilities
     librandom::RngPtr rng = get_global_rng();
-    target_positions.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
-    std::copy( masked_target.begin( source_pos ), masked_target_end, target_positions.begin() );
+    target_pos_gid_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
+    std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_gid_pairs.begin() );
 
-    probabilities.reserve( target_positions.size() );
+    probabilities.reserve( target_pos_gid_pairs.size() );
     if ( kernel_.get() )
     {
-      for ( const auto& target_pos_gid_pair : target_positions )
+      for ( const auto& target_pos_gid_pair : target_pos_gid_pairs )
       {
-        // TODO: Why is probability calculated in source layer?
+        // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
         target_pos_gid_pair.first.get_vector( target_pos_vector );
         probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
       }
     }
     else
     {
-      probabilities.resize( target_positions.size(), 1.0 );
+      probabilities.resize( target_pos_gid_pairs.size(), 1.0 );
     }
 
-    if ( target_positions.empty()
-      or ( ( not allow_multapses_ ) and ( target_positions.size() < number_of_connections_ ) ) )
+    if ( target_pos_gid_pairs.empty()
+      or ( ( not allow_multapses_ ) and ( target_pos_gid_pairs.size() < number_of_connections_ ) ) )
     {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
@@ -693,7 +689,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
     // If multapses are not allowed, we must keep track of which
     // targets have been selected already.
-    std::vector< bool > is_selected( target_positions.size() );
+    std::vector< bool > is_selected( target_pos_gid_pairs.size() );
 
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
@@ -704,7 +700,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
         --i;
         continue;
       }
-      index target_id = target_positions[ random_id ].second;
+      index target_id = target_pos_gid_pairs[ random_id ].second;
       if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
       {
         --i;
@@ -713,8 +709,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
       is_selected[ random_id ] = true;
 
-
-      target_positions[ random_id ].first.get_vector( target_pos_vector );
+      target_pos_gid_pairs[ random_id ].first.get_vector( target_pos_vector );
       const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
       const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
 

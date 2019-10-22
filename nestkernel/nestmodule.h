@@ -415,6 +415,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } memberq_g_ifunction;
 
+  class Find_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } find_g_ifunction;
+
   class eq_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

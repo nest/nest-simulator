@@ -259,37 +259,47 @@ def SetStatus(nodes, params, val=None):
     Parameters
     ----------
     nodes : GIDCollection or tuple
-        Either a `GIDCollection` representing nodes, or a `Connectome` of connection handles as returned by
+        Either a `GIDCollection` representing nodes, or a `Connectome`
+        of connection handles as returned by
         :py:func:`.GetConnections()`.
     params : str or dict or list
-        Dictionary of parameters or list of dictionaries of parameters of same length as `nodes`. If `val` is
-        given, this has to be the name of a model property as a str.
+        Dictionary of parameters or list of dictionaries of parameters
+        of same length as `nodes`. If `val` is given, this has to be
+        the name of a model property as a str.
     val : int, list, optional
         If given, params has to be the name of a model property.
 
     Raises
     ------
     TypeError
-        If `nodes` is not a list of nodes or synapses, or if the number of parameters don't match the number of nodes
-        or synapses.
+        If `nodes` is not a list of nodes or synapses, or if the
+        number of parameters don't match the number of nodes or
+        synapses.
 
     See Also
     -------
     :py:func:`.GetStatus`
+
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or
-            isinstance(nodes, nest.Connectome)):
-        raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
+    if not isinstance(nodes, (nest.GIDCollection, nest.Connectome)):
+        raise TypeError("'nodes' must be GIDCollection or a Connectome.")
 
-    # This was added to ensure that the function is a nop (instead of, for instance, raising an exception) when applied
-    # to an empty list, which is an artifact of the API operating on lists, rather than relying on language idioms,
-    # such as comprehensions
+    # This was added to ensure that the function is a nop (instead of,
+    # for instance, raising an exception) when applied to an empty
+    # list, which is an artifact of the API operating on lists, rather
+    # than relying on language idioms, such as comprehensions
     if len(nodes) == 0:
         return
 
-    if (isinstance(params, dict) and isinstance(nodes, nest.GIDCollection) and nodes[0].get('local')):
-        contains_list = [is_iterable(vals) and not is_iterable(nodes[0].get(key)) for key, vals in params.items()]
+    n0 = nodes[0]
+    params_is_dict = isinstance(params, dict)
+    set_status_nodes = isinstance(nodes, nest.GIDCollection)
+    set_status_local_nodes = set_status_nodes and n0.get('local')
+
+    if (params_is_dict and set_status_local_nodes):
+        contains_list = [is_iterable(vals) and not is_iterable(n0.get(key))
+                         for key, vals in params.items()]
 
         if any(contains_list):
             temp_param = [{} for _ in range(len(nodes))]

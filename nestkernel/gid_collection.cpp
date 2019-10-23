@@ -118,7 +118,7 @@ GIDCollection::GIDCollection()
 }
 
 GIDCollectionPTR
-GIDCollection::create( IntVectorDatum gidsdatum )
+GIDCollection::create( const IntVectorDatum& gidsdatum )
 {
   if ( gidsdatum->size() == 0 )
   {
@@ -136,7 +136,7 @@ GIDCollection::create( IntVectorDatum gidsdatum )
 }
 
 GIDCollectionPTR
-GIDCollection::create( TokenArray gidsarray )
+GIDCollection::create( const TokenArray& gidsarray )
 {
   if ( gidsarray.size() == 0 )
   {
@@ -768,7 +768,7 @@ GIDCollectionComposite::contains( index gid ) const
   long upper = parts_.size() - 1;
   while ( lower <= upper )
   {
-    size_t middle = floor( ( lower + upper ) / 2.0 );
+    long middle = floor( ( lower + upper ) / 2.0 );
 
     if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
     {
@@ -784,7 +784,8 @@ GIDCollectionComposite::contains( index gid ) const
       {
         index start_gid = ( *( parts_[ middle ].begin() + start_offset_ ) ).gid;
         index end_gid = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid;
-        index stop_gid = stop_part_ != middle ? end_gid : ( *( parts_[ middle ].begin() + stop_offset_ ) ).gid;
+        index stop_gid =
+          stop_part_ != ( size_t ) middle ? end_gid : ( *( parts_[ middle ].begin() + stop_offset_ ) ).gid;
 
         return gid >= start_gid and ( ( gid - start_gid ) % step_ ) == 0 and gid <= stop_gid;
       }
@@ -819,7 +820,8 @@ GIDCollectionComposite::find( const index gid ) const
     long upper = parts_.size() - 1;
     while ( lower <= upper )
     {
-      size_t middle = floor( ( lower + upper ) / 2.0 );
+      long middle = floor( ( lower + upper ) / 2.0 );
+
       if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
       {
         lower = middle + 1;
@@ -830,7 +832,7 @@ GIDCollectionComposite::find( const index gid ) const
       }
       else
       {
-        auto size_accu = []( long a, GIDCollectionPrimitive b )
+        auto size_accu = []( long a, const GIDCollectionPrimitive& b )
         {
           return a + b.size();
         };
@@ -855,7 +857,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     size_t current_part = 0;
     size_t current_offset = 0;
-    size_t previous_part = 4294967295; // initializing as large number (for now)
+    size_t previous_part = std::numeric_limits< size_t >::infinity();
     index primitive_last = 0;
 
     size_t primitive_size = 0;

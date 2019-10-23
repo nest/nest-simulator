@@ -191,7 +191,7 @@ public:
    * @param gids Vector of GIDs from which to create the GIDCollection
    * @return a GIDCollection pointer to the created GIDCollection
    */
-  static GIDCollectionPTR create( IntVectorDatum gids );
+  static GIDCollectionPTR create( const IntVectorDatum& gids );
 
   /**
    * Create a GIDCollection from an array of GIDs. Results in a primitive if the
@@ -200,7 +200,7 @@ public:
    * @param gids Array of GIDs from which to create the GIDCollection
    * @return a GIDCollection pointer to the created GIDCollection
    */
-  static GIDCollectionPTR create( TokenArray gids );
+  static GIDCollectionPTR create( const TokenArray& gids );
 
   /**
    * Check to see if the fingerprint of the GIDCollection matches that of the
@@ -797,13 +797,13 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
   else
   {
     // Composite is unsliced, we can do a more efficient search.
-    long tot_prev_gids = 0;
+    size_t tot_prev_gids = 0;
     for ( std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin(); gc != parts_.end();
           ++gc ) // iterate over GIDCollections
     {
       if ( tot_prev_gids + ( *gc ).size() > i ) // is i in current GIDCollection?
       {
-        long local_i = i - tot_prev_gids; // get local i
+        size_t local_i = i - tot_prev_gids; // get local i
         return ( *gc )[ local_i ];
       }
       else // i is not in current GIDCollection

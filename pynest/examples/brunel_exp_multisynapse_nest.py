@@ -169,22 +169,21 @@ ispikes = nest.Create("spike_detector")
 
 ################################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory
-# spikes using ``SetStatus``, which expects a list of node handles and a list
-# of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
-# that the spikes will be recorded in a .gdf file starting with the string
-# assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
-# each spike is saved to file by stating the gid of the spiking neuron and
-# the spike time in one line.
+# spikes by sending parameter dictionaries to ``set``. Setting the variable
+# ``to_file`` to `True` ensures that the spikes will be recorded in a .gdf
+# file starting with the string assigned to label. Setting ``withtime`` and
+# ``withgid`` to `True` ensures that each spike is saved to file by stating
+# the gid of the spiking neuron and the spike time in one line.
 
-nest.SetStatus(espikes, [{"label": "brunel-py-ex",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
+espikes.set({"label": "brunel-py-ex",
+             "withtime": True,
+             "withgid": True,
+             "to_file": True})
 
-nest.SetStatus(ispikes, [{"label": "brunel-py-in",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
+ispikes.set({"label": "brunel-py-in",
+             "withtime": True,
+             "withgid": True,
+             "to_file": True})
 
 print("Connecting devices")
 
@@ -281,8 +280,8 @@ endsimulate = time.time()
 # Reading out the total number of spikes received from the spike detector
 # connected to the excitatory population and the inhibitory population.
 
-events_ex = nest.GetStatus(espikes, "n_events")[0]
-events_in = nest.GetStatus(ispikes, "n_events")[0]
+events_ex = espikes.get("n_events")
+events_in = ispikes.get("n_events")
 
 ###############################################################################
 # Calculation of the average firing rate of the excitatory and the inhibitory

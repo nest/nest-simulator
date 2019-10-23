@@ -114,7 +114,8 @@ cache:
 before_install:
    - export SOURCEDIR=$PWD
    # select the right C++ compiler version (gcc8) -- note that update-alternatives is not available on MacOS
-   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+   - |
+     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
        ls -lh /usr/bin/g++*
        ls -lh /usr/bin/gcc*
        ls -lh /usr/bin/c++*
@@ -146,7 +147,19 @@ before_install:
            pyenv install --list
            pyenv global 3.6.7
          fi
-         if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool gcc@8; fi
+         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+           brew --version
+           brew update
+           brew tap brewsci/science
+           brew tap brewsci/bio
+           brew install coreutils gsl open-mpi automake autoconf libtool
+           brew unlink gcc
+           brew install gcc@8
+           brew link gcc@8
+           brew list
+           brew leaves
+           brew cask list
+         fi
          pip install --upgrade pip
          pip install --upgrade setuptools
          # Installing additional packages using pip as they only have

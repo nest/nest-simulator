@@ -167,11 +167,11 @@ nest::glif_cond::Parameters_::Parameters_()
 }
 
 nest::glif_cond::State_::State_( const Parameters_& p )
-  : threshold_( -51.68 - p.E_L_ ) // in mV
-  , threshold_spike_( 0.0 )       // in mV
-  , threshold_voltage_( 0.0 )     // in mV
-  , ASCurrents_( p.asc_init_ )    // in pA
-  , ASCurrents_sum_( 0.0 )        // in pA
+  : threshold_( p.th_inf_ )    // in mV
+  , threshold_spike_( 0.0 )    // in mV
+  , threshold_voltage_( 0.0 )  // in mV
+  , ASCurrents_( p.asc_init_ ) // in pA
+  , ASCurrents_sum_( 0.0 )     // in pA
   , refractory_steps_( 0 )
   , y_( STATE_VECTOR_MIN_SIZE - NUMBER_OF_RECORDABLES_ELEMENTS, 0.0 )
 

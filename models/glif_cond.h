@@ -74,7 +74,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
+V_m        double - Membrane potential in mV (absolute value)
 V_th       double - Instantaneous threshold in mV.
 g          double - Membrane conductance in nS.
 E_L        double - Resting membrane potential in mV.
@@ -137,7 +137,7 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) - voltage_reset_add)
+condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
 < (V_th + th_spike_add).
 
 References:
@@ -338,7 +338,7 @@ private:
     std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
     std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
     std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
-    double phi;
+    double phi;                                        //!< threshold voltage component coefficient
 
     /** Amplitude of the synaptic conductance.
         This value is chosen such that an event of weight 1.0 results in a peak

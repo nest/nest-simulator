@@ -86,7 +86,7 @@ nest::glif_psc::Parameters_::Parameters_()
   , asc_decay_( std::vector< double >{ 0.003, 0.1 } )    // in 1/ms
   , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
-  , tau_syn_( 1, 2.0 ) // in ms
+  , tau_syn_( std::vector< double >( 1, 2.0 ) ) // in ms
   , has_connections_( false )
   , has_theta_spike_( false )
   , has_asc_( false )
@@ -95,14 +95,14 @@ nest::glif_psc::Parameters_::Parameters_()
 }
 
 nest::glif_psc::State_::State_( const Parameters_& p )
-  : U_( 0.0 )                     // in mV
-  , threshold_( -51.68 - p.E_L_ ) // in mV
-  , threshold_spike_( 0.0 )       // in mV
-  , threshold_voltage_( 0.0 )     // in mV
-  , I_( 0.0 )                     // in pA
-  , I_syn_( 0.0 )                 // in pA
-  , ASCurrents_( p.asc_init_ )    // in pA
-  , ASCurrents_sum_( 0.0 )        // in pA
+  : U_( 0.0 )                  // in mV
+  , threshold_( p.th_inf_ )    // in mV
+  , threshold_spike_( 0.0 )    // in mV
+  , threshold_voltage_( 0.0 )  // in mV
+  , I_( 0.0 )                  // in pA
+  , I_syn_( 0.0 )              // in pA
+  , ASCurrents_( p.asc_init_ ) // in pA
+  , ASCurrents_sum_( 0.0 )     // in pA
   , refractory_steps_( 0 )
 {
   for ( std::size_t a = 0; a < p.asc_init_.size(); ++a )

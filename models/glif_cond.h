@@ -74,7 +74,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV (absolute value)
+V_m        double - Membrane potential in mV (absolute value).
 V_th       double - Instantaneous threshold in mV.
 g          double - Membrane conductance in nS.
 E_L        double - Resting membrane potential in mV.

@@ -50,15 +50,15 @@ def uniform(min=0.0, max=1.0):
     return CreateParameter('uniform', {'min': min, 'max': max})
 
 
-def normal(loc=0.0, scale=1.0):
+def normal(mean=0.0, std=1.0):
     """
     Draws samples from a normal distribution.
 
     Parameters
     ----------
-    loc : float, optional
+    mean : float, optional
         Mean of the distribution. Default value is 0.
-    scale : float, optional
+    std : float, optional
         Standard deviation of the distribution. Default value is 1.0.
 
     Returns
@@ -66,35 +66,35 @@ def normal(loc=0.0, scale=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('normal', {'mean': loc, 'sigma': scale})
+    return CreateParameter('normal', {'mean': mean, 'std': std})
 
 
-def exponential(scale=1.0):
+def exponential(beta=1.0):
     """
     Draws samples from an exponential distribution.
 
     Parameters
     ----------
-    scale : float, optional
-        Standard deviation of the distribution. Default value is 1.0.
+    beta : float, optional
+        Scale parameter the distribution. Default value is 1.0.
 
     Returns
     -------
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('exponential', {'scale': scale})
+    return CreateParameter('exponential', {'beta': beta})
 
 
-def lognormal(mu=0.0, sigma=1.0):
+def lognormal(mean=0.0, std=1.0):
     """
     Draws samples from a log-normal distribution.
 
     Parameters
     ----------
-    mu : float, optional
+    mean : float, optional
         Mean value of the underlying normal distribution. Default value is 0.
-    sigma : float, optional
+    std : float, optional
         Standard deviation of the underlying normal distribution. Default value is 1.0.
 
     Returns
@@ -102,4 +102,4 @@ def lognormal(mu=0.0, sigma=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('lognormal', {'mu': mu, 'sigma': sigma})
+    return CreateParameter('lognormal', {'mean': mean, 'std': std})

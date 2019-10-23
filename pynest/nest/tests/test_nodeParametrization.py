@@ -92,7 +92,7 @@ class TestNodeParametrization(unittest.TestCase):
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.normal(
-                                loc=10.0, scale=5.0)})
+                                mean=10.0, std=5.0)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -101,7 +101,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with random.exonential as parameter"""
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
-                            {'V_m': nest.random.exponential(scale=1.0)})
+                            {'V_m': nest.random.exponential(beta=1.0)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -113,7 +113,7 @@ class TestNodeParametrization(unittest.TestCase):
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.lognormal(
-                                mu=10., sigma=20.)})
+                                mean=10., std=20.)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -122,7 +122,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with different parameters added"""
         nodes = nest.Create('iaf_psc_alpha', 3,
                             {'V_m': -80.0 +
-                             nest.random.exponential(scale=0.1)})
+                             nest.random.exponential(beta=0.1)})
 
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, -80.0)

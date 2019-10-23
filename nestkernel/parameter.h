@@ -293,23 +293,23 @@ public:
   NormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mean_( 0.0 )
-    , sigma_( 1.0 )
+    , std_( 1.0 )
     , rdev()
   {
     updateValue< double >( d, names::mean, mean_ );
-    updateValue< double >( d, names::sigma, sigma_ );
-    if ( sigma_ <= 0 )
+    updateValue< double >( d, names::std, std_ );
+    if ( std_ <= 0 )
     {
       throw BadProperty(
         "nest::NormalParameter: "
-        "sigma > 0 required." );
+        "std > 0 required." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return mean_ + rdev( rng ) * sigma_;
+    return mean_ + rdev( rng ) * std_;
   }
 
   Parameter*
@@ -319,7 +319,7 @@ public:
   }
 
 private:
-  double mean_, sigma_;
+  double mean_, std_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -337,24 +337,24 @@ public:
    */
   LognormalParameter( const DictionaryDatum& d )
     : Parameter( d )
-    , mu_( 0.0 )
-    , sigma_( 1.0 )
+    , mean_( 0.0 )
+    , std_( 1.0 )
     , rdev()
   {
-    updateValue< double >( d, names::mu, mu_ );
-    updateValue< double >( d, names::sigma, sigma_ );
-    if ( sigma_ <= 0 )
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::std, std_ );
+    if ( std_ <= 0 )
     {
       throw BadProperty(
         "nest::LognormalParameter: "
-        "sigma > 0 required." );
+        "std > 0 required." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return std::exp( mu_ + rdev( rng ) * sigma_ );
+    return std::exp( mean_ + rdev( rng ) * std_ );
   }
 
   Parameter*
@@ -364,7 +364,7 @@ public:
   }
 
 private:
-  double mu_, sigma_;
+  double mean_, std_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -381,15 +381,15 @@ public:
    */
   ExponentialParameter( const DictionaryDatum& d )
     : Parameter( d )
-    , scale_( 1.0 )
+    , beta_( 1.0 )
   {
-    updateValue< double >( d, names::scale, scale_ );
+    updateValue< double >( d, names::beta, beta_ );
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return scale_ * ( -std::log( 1 - rng->drand() ) );
+    return beta_ * ( -std::log( 1 - rng->drand() ) );
   }
 
   Parameter*
@@ -399,7 +399,7 @@ public:
   }
 
 private:
-  double scale_;
+  double beta_;
 };
 
 

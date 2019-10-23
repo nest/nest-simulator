@@ -22,8 +22,8 @@ Choice of compiler
 
 The default compiler for NEST is GNU gcc/g++. Version 7 or higher is required
 due to the presence of bugs in earlier versions that prevent the compilation
-from succeeding. NEST has also successfully been compiled with other 
-compilers, including Intel icc/icpc, Pathscale, Portland and IBM compilers.
+from succeeding. NEST has also successfully been compiled with Clang 7 and the
+IBM XL C++ compiler.
 
 To select a specific compiler, please add the following flags to your ``cmake``
 line::

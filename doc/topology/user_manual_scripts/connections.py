@@ -379,14 +379,14 @@ kernel_fig(fig, 231, conndict, kern=0.5)
 #{ conn4g #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
-                                             p_center=1.0, std_deviation=1.0),
+                                                     p_center=1.0, std_deviation=1.0),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
 kernel_fig(fig, 232, conndict, kern={'gaussian': {'p_center': 1.0, 'sigma': 1.0}})
 
 #{ conn4cut #}
 distribution = nest.spatial_distributions.gaussian(nest.spatial.distance,
-                                           p_center=1.0, std_deviation=1.0)
+                                                   p_center=1.0, std_deviation=1.0)
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.logic.conditional(distribution > 0.5,
                                         distribution,
@@ -397,9 +397,9 @@ kernel_fig(fig, 234, conndict)
 
 #{ conn42d #}
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.spatial_distributions.gaussian2D(nest.spatial.dimension_distance.x,
-                                               nest.spatial.dimension_distance.y,
-                                               p_center=1.0, std_deviation_x=1., std_deviation_y=3.),
+            'p': nest.spatial_distributions.gaussian2D(nest.spatial.distance.x,
+                                                       nest.spatial.distance.y,
+                                                       p_center=1.0, std_deviation_x=1., std_deviation_y=3.),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
 kernel_fig(fig, 235, conndict)
@@ -511,7 +511,7 @@ plt.savefig('../user_manual_figures/conn5.png', bbox_inches='tight')
 
 # --------------------------------
 #{ conn_param_design #}
-parameter = 0.5 + nest.spatial.dimension_distance.x + 2. * nest.spatial.dimension_distance.y
+parameter = 0.5 + nest.spatial.distance.x + 2. * nest.spatial.distance.y
 #{ end #}
 
 #{ conn_param_design_ex #}

@@ -229,12 +229,95 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_GIDCollection_membership(self):
         """Membership in GIDCollections"""
+        def check_membership(gc, reference, inverse_ref):
+            """Checks that all GIDs in reference are in GC, and that elements in inverse_ref are not in the GC."""
+            for i in reference:
+                self.assertTrue(i in gc, 'i={}'.format(i))
+            for j in inverse_ref:
+                self.assertFalse(j in gc)
 
-        nodes = nest.Create('iaf_psc_alpha', 10)
+            self.assertFalse(reference[-1] + 1 in gc)
+            self.assertFalse(0 in gc)
+            self.assertFalse(-1 in gc)
 
-        self.assertTrue(5 in nodes)
-        self.assertTrue(10 in nodes)
-        self.assertFalse(11 in nodes)
+        # Primitive GIDCollection
+        N = 10
+        primitive = nest.Create('iaf_psc_alpha', N)
+        check_membership(primitive, range(1, N+1), [])
+
+        # Composite GIDCollection
+        exp_N = 5
+        N += exp_N
+        composite = primitive + nest.Create('iaf_psc_exp', exp_N)
+        check_membership(composite, range(1, N+1), [])
+
+        # Sliced GIDCollection
+        low = 3
+        high = 12
+        sliced = composite[low:high]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[low:high]
+        check_membership(sliced, range(low+1, high+1), inverse_reference)
+
+        # GIDCollection with step
+        step = 3
+        stepped = composite[::step]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[::step]
+        check_membership(stepped, range(1, N+1, step), inverse_reference)
+
+        # Sliced GIDCollection with step
+        sliced_stepped = composite[low:high:step]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[low:high:step]
+        check_membership(sliced_stepped, range(low+1, high+1, step), inverse_reference)
+
+    def test_GIDCollection_index(self):
+        """GIDCollections index function"""
+        def check_index_against_list(gc, inverse_ref):
+            """Checks GC index against list index, and that elements specified in inverse_ref are not found."""
+            for i in gc.tolist():
+                self.assertEqual(gc.index(i), gc.tolist().index(i), 'i={}'.format(i))
+            for j in inverse_ref:
+                with self.assertRaises(ValueError):
+                    gc.index(j)
+            with self.assertRaises(ValueError):
+                gc.index(gc.tolist()[-1] + 1)
+            with self.assertRaises(ValueError):
+                gc.index(0)
+            with self.assertRaises(ValueError):
+                gc.index(-1)
+
+        # Primitive GIDCollection
+        N = 10
+        primitive = nest.Create('iaf_psc_alpha', N)
+        check_index_against_list(primitive, [])
+
+        # Composite GIDCollection
+        exp_N = 5
+        composite = primitive + nest.Create('iaf_psc_exp', exp_N)
+        check_index_against_list(composite, [])
+
+        # Sliced GIDCollection
+        low = 3
+        high = 12
+        sliced = composite[low:high]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[low:high]
+        check_index_against_list(sliced, inverse_reference)
+
+        # GIDCollection with step
+        step = 3
+        stepped = composite[::step]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[::step]
+        check_index_against_list(stepped, inverse_reference)
+
+        # Sliced GIDCollection with step
+        sliced_stepped = composite[low:high:step]
+        inverse_reference = list(range(1, N))
+        del inverse_reference[low:high:step]
+        check_index_against_list(sliced_stepped, inverse_reference)
 
     def test_correct_len_on_GIDCollection(self):
         """len function on GIDCollection"""
@@ -270,6 +353,12 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(nodes_list[2], 5)
         self.assertEqual(nodes_list[5], 26)
         self.assertEqual(nodes_list[19], 54)
+
+        # Test iteration of sliced GIDCollection
+        i = 0
+        for n in nodes_step:
+            self.assertEqual(n, nest.GIDCollection([compare_list[i]]))
+            i += 1
 
         n_slice_first = nodes[:10]
         n_slice_middle = nodes[2:7]

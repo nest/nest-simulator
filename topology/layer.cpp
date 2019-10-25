@@ -121,15 +121,19 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
 
-    if ( ! std::all_of( shape.begin(), shape.end(), []( long x ) { return x>0; }) )
+    if ( !std::all_of( shape.begin(), shape.end(),
+           []( long x )
+           {
+             return x > 0;
+           } ) )
     {
       throw BadProperty( "All shape entries must be positive." );
     }
 
     int num_dimensions = shape.size();
-    length = std::accumulate(std::begin( shape ), std::end( shape ), 1, std::multiplies< long >());
+    length = std::accumulate( std::begin( shape ), std::end( shape ), 1, std::multiplies< long >() );
 
-    if ( num_dimensions == 2)
+    if ( num_dimensions == 2 )
     {
       layer_local = new GridLayer< 2 >();
     }

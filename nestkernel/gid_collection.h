@@ -789,22 +789,31 @@ GIDCollectionPrimitive::find( const index neuron_id ) const
 
 inline index GIDCollectionComposite::operator[]( const size_t i ) const
 {
-  long tot_prev_gids = 0;
-  for ( std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin(); gc != parts_.end();
-        ++gc ) // iterate over GIDCollections
+  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or stop_part_ != parts_.size() or stop_offset_ > 0 )
   {
-    if ( tot_prev_gids + ( *gc ).size() > i ) // is i in current GIDCollection?
-    {
-      long local_i = i - tot_prev_gids; // get local i
-      return ( *gc )[ local_i ];
-    }
-    else // i is not in current GIDCollection
-    {
-      tot_prev_gids += ( *gc ).size();
-    }
+    // Composite is sliced, we use iterator arithmetic.
+    return ( *( begin() + i ) ).gid;
   }
-  // throw exception if outside of GIDCollection
-  throw std::out_of_range( "pos points outside of the GIDCollection" );
+  else
+  {
+    // Composite is unsliced, we can do a more efficient search.
+    long tot_prev_gids = 0;
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin(); gc != parts_.end();
+          ++gc ) // iterate over GIDCollections
+    {
+      if ( tot_prev_gids + ( *gc ).size() > i ) // is i in current GIDCollection?
+      {
+        long local_i = i - tot_prev_gids; // get local i
+        return ( *gc )[ local_i ];
+      }
+      else // i is not in current GIDCollection
+      {
+        tot_prev_gids += ( *gc ).size();
+      }
+    }
+    // throw exception if outside of GIDCollection
+    throw std::out_of_range( "pos points outside of the GIDCollection" );
+  }
 }
 
 
@@ -873,33 +882,6 @@ GIDCollectionComposite::is_range() const
 {
   return false;
 }
-
-inline long
-GIDCollectionComposite::find( const index neuron_id ) const
-{
-  // using the same algorithm as contains(), but returns the GID if found.
-  long lower = 0;
-  long upper = parts_.size() - 1;
-  while ( lower <= upper )
-  {
-    size_t middle = floor( ( lower + upper ) / 2.0 );
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < neuron_id )
-    {
-      lower = middle + 1;
-    }
-    else if ( neuron_id < ( *( parts_[ middle ].begin() ) ).gid )
-    {
-      upper = middle - 1;
-    }
-    else
-    {
-      return parts_[ middle ].find( neuron_id );
-    }
-  }
-  return -1;
-}
-
-
 } // namespace nest
 
 #endif /* #ifndef GID_COLLECTION_H */

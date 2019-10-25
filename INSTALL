@@ -114,8 +114,10 @@ Change compilation behavior:
                                                    paths by ';'. [default OFF]
     -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
                                                    Separate multiple defines by ';'. [default OFF]
-    -Dwith-boost=[OFF|ON]                          Build C++-testsuite using the Boost unittest
-                                                   framework.
+    -Dwith-boost=[OFF|ON|forced|</path/to/boost>]  Use efficient Boost sorting, and build C++-testsuite
+                                                   using the Boost unittest framework. If set to 'forced',
+                                                   NEST will attempt to use Boost functions even if Boost is
+                                                   not found by CMake. [default ON]
 
 Other options:
 

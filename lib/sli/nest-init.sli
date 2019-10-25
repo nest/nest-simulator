@@ -574,6 +574,10 @@ def
   /MemberQ_g_i load
 def
 
+/Find [/gidcollectiontype /integertype]
+  /Find_g_i load
+def
+
 /eq [/gidcollectiontype /gidcollectiontype] /eq_g load def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -146,7 +146,7 @@ class GIDCollection(object):
 
     A `GIDCollection` is created by the :py:func:`.Create` function, or by converting a
     list of nodes to a `GIDCollection` with ``nest.GIDCollection(list)``.
-    
+
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
 
     Example
@@ -224,7 +224,7 @@ class GIDCollection(object):
 
     def __eq__(self, other):
         if not isinstance(other, GIDCollection):
-            raise NotImplementedError()
+            raise NotImplementedError('Cannot compare GIDCollection to {}'.format(type(other).__name__))
 
         if self.__len__() != other.__len__():
             return False
@@ -410,7 +410,10 @@ class GIDCollection(object):
         ValueError
             If the GID is not in the `GIDCollection`.
         """
-        return self.tolist().index(gid)
+        index = sli_func('Find', self._datum, gid)
+        if index == -1:
+            raise ValueError('{} is not in GIDCollection'.format(gid))
+        return index
 
 
 class ConnectomeIterator(object):

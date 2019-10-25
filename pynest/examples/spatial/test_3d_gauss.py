@@ -48,7 +48,7 @@ ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 # Gaussian connections in full volume [-0.75,0.75]**3
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
-              'p': nest.distributions.gaussian(nest.spatial.distance,
+              'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
                                                std_deviation=0.25),
               'allow_autapses': False,
               'mask': {'volume': {'lower_left': [-0.75, -0.75, -0.75],

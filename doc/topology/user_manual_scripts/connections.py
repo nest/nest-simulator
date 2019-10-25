@@ -378,14 +378,14 @@ kernel_fig(fig, 231, conndict, kern=0.5)
 
 #{ conn4g #}
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.distributions.gaussian(nest.spatial.distance,
+            'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
                                              p_center=1.0, std_deviation=1.0),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
 kernel_fig(fig, 232, conndict, kern={'gaussian': {'p_center': 1.0, 'sigma': 1.0}})
 
 #{ conn4cut #}
-distribution = nest.distributions.gaussian(nest.spatial.distance,
+distribution = nest.spatial_distributions.gaussian(nest.spatial.distance,
                                            p_center=1.0, std_deviation=1.0)
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.logic.conditional(distribution > 0.5,
@@ -397,7 +397,7 @@ kernel_fig(fig, 234, conndict)
 
 #{ conn42d #}
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.distributions.gaussian2D(nest.spatial.dimension_distance.x,
+            'p': nest.spatial_distributions.gaussian2D(nest.spatial.dimension_distance.x,
                                                nest.spatial.dimension_distance.y,
                                                p_center=1.0, std_deviation_x=1., std_deviation_y=3.),
             'mask': {'circular': {'radius': 4.}}}
@@ -479,7 +479,7 @@ cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
-sdict = {'weight': nest.distributions.exponential(nest.spatial.distance, a=1, tau=5.)}
+sdict = {'weight': nest.spatial_distributions.exponential(nest.spatial.distance, a=1, tau=5.)}
 #{ end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Exponential',
        rpos=[25., 0.])
@@ -489,7 +489,7 @@ cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
-sdict = {'weight': nest.distributions.gaussian(nest.spatial.distance, p_center=1., std_deviation=5.)}
+sdict = {'weight': nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=1., std_deviation=5.)}
 #{ end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Gaussian', clr='green',
        rpos=[25., 0.])

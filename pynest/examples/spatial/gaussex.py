@@ -42,8 +42,8 @@ a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
 
 cdict = {'rule': 'pairwise_bernoulli',
-         'p': nest.distributions.gaussian(nest.spatial.distance,
-                                          std_deviation=0.5),
+         'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
+                                                  std_deviation=0.5),
          'mask': {'circular': {'radius': 3.0}}}
 
 nest.Connect(a, b, cdict)

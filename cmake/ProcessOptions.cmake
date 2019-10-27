@@ -572,7 +572,7 @@ function( NEST_PROCESS_WITH_BOOST )
   # Find Boost
   set( HAVE_BOOST OFF PARENT_SCOPE )
   if ( with-boost )
-    if ( NOT ${with-boost} STREQUAL "ON" )
+    if ( NOT ${with-boost} STREQUAL "ON" AND NOT ${with-boost} STREQUAL "forced" )
       # a path is set
       set( BOOST_ROOT "${with-boost}" )
     endif ()
@@ -588,8 +588,14 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
     endif ()
-  endif ()
-endfunction()
+    if ( NOT Boost_FOUND AND ${with-boost} STREQUAL "forced" )
+      # In some cases, Boost may be available to the compiler, even if it is not found by CMake (such as on Piz Daint).
+      # We can therefore force HAVE_BOOST variable to be ON, even if no Boost library is found.
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      set( BOOST_FOUND "FORCED" PARENT_SCOPE )
+    endif()
+  endif()
+  endfunction()
 
 function( NEST_PROCESS_TARGET_BITS_SPLIT )
   if ( target-bits-split )

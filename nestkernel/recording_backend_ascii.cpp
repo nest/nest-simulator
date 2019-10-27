@@ -52,6 +52,7 @@ nest::RecordingBackendASCII::initialize()
 void
 nest::RecordingBackendASCII::finalize()
 {
+  // nothing to do
 }
 
 void
@@ -119,6 +120,7 @@ nest::RecordingBackendASCII::post_run_hook()
 void
 nest::RecordingBackendASCII::post_step_hook()
 {
+  // nothing to do
 }
 
 void
@@ -193,14 +195,14 @@ nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
 void
 nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
 {
-    DeviceData dd( "", "" );
+  DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
 nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
 {
-    DeviceData dd( "", "" );
+  DeviceData dd( "", "" );
   dd.get_status( params );
 }
 

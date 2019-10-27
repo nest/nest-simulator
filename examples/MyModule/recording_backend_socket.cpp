@@ -38,55 +38,92 @@ nest::RecordingBackendSocket::RecordingBackendSocket()
 
 nest::RecordingBackendSocket::~RecordingBackendSocket() throw()
 {
-  cleanup();
 }
 
-// Register backend
 void
-nest::RecordingBackendSocket::enroll( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendSocket::initialize()
 {
+  // nothing to do
+}
 
-  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
-  {
-    B_.addr_.sin_family = AF_INET;
-    inet_aton( P_.ip_.c_str(), &B_.addr_.sin_addr );
-    B_.addr_.sin_port = htons( P_.port_ );
+void
+nest::RecordingBackendSocket::finalize()
+{
+  // nothing to do
+}
 
-    B_.socket_ = socket( PF_INET, SOCK_DGRAM, 0 );
-  }
-  else
+void
+nest::RecordingBackendSocket::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+{
+  if ( device.get_type() != RecordingDevice::SPIKE_DETECTOR )
   {
-    throw BadProperty(
-      "Only spike detectors can record to recording backend "
-      ">Socket<" );
+    throw BadProperty( "Only spike detectors can record to recording backend 'socket'" );
   }
 }
 
-// Write the data from the event to the backend specific channel
+void
+nest::RecordingBackendSocket::disenroll( const RecordingDevice& device )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::set_value_names( const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::pre_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::post_run_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::post_step_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSocket::prepare()
+{
+  B_.addr_.sin_family = AF_INET;
+  inet_aton( P_.ip_.c_str(), &B_.addr_.sin_addr );
+  B_.addr_.sin_port = htons( P_.port_ );
+
+  B_.socket_ = socket( PF_INET, SOCK_DGRAM, 0 );
+}
+
+void
+nest::RecordingBackendSocket::cleanup()
+{
+  close( B_.socket_ );
+}
+
 void
 nest::RecordingBackendSocket::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
-  {
-#pragma omp critical
-    {
-      index sd_gid = device.get_gid();
-      index node_gid = event.get_sender_gid();
-      std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+  assert ( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
 
-      // We explicitly ignore errors here by not evaluating the return
-      // code of the sendto() function.
-      sendto( B_.socket_, msg.c_str(), msg.size(), 0, ( struct sockaddr* ) &B_.addr_, sizeof( B_.addr_ ) );
-    }
-  }
-  else
+#pragma omp critical
   {
-    throw;
+    index sd_gid = device.get_gid();
+    index node_gid = event.get_sender_gid();
+    std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+
+    // We explicitly ignore errors here by not evaluating the return
+    // code of the sendto() function.
+    sendto( B_.socket_, msg.c_str(), msg.size(), 0, ( struct sockaddr* ) &B_.addr_, sizeof( B_.addr_ ) );
   }
 }
 
@@ -129,49 +166,19 @@ nest::RecordingBackendSocket::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::RecordingBackendSocket::pre_run_hook()
+nest::RecordingBackendSocket::check_device_status( const DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSocket::post_run_hook()
+nest::RecordingBackendSocket::get_device_defaults( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSocket::cleanup()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSocket::synchronize()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSocket::prepare()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSocket::clear( const RecordingDevice& )
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSocket::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSocket::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendSocket::get_device_status( const RecordingDevice&, DictionaryDatum& ) const
 {
   // nothing to do
 }

@@ -38,33 +38,63 @@ nest::RecordingBackendSoundClick::~RecordingBackendSoundClick() throw()
   cleanup();
 }
 
-// Register a device to record data using a certain backend
-// Called by each multimeter during network calibration
 void
-nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendSoundClick::initialize()
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::finalize()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device const DictionaryDatum& )
+{
+  if ( device.get_type() != RecordingDevice::SPIKE_DETECTOR )
   {
-    // Start or resume, respectively, the stopwatch, which represents the
-    // real time.
-    stopwatch_.start();
-  }
-  else
-  {
-    throw BadProperty(
-      "Only spike detectors can record to recording backend "
-      ">SoundClick<" );
+    throw BadProperty( "Only spike detectors can record to recording backend 'SoundClick'" );
   }
 }
 
-// Initialize global backend-specific data structures
-// Called during simulation startup
+void
+nest::RecordingBackendSoundClick::disenroll( const RecordingDevice& device )
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::set_value_names( const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& )
+{
+  // nothing to do
+}
+
 void
 nest::RecordingBackendSoundClick::pre_run_hook()
 {
-  LOG( M_INFO, "Recording Backend", ( "Recording backend >SoundClick< successfully initialized." ) );
+  // nothing to do
+}
+
+
+void
+nest::RecordingBackendSoundClick::post_run_hook()
+{
+  // nothing to do
+}
+
+
+void
+nest::RecordingBackendSoundClick::post_step_hook()
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::prepare()
+{
+  stopwatch_.start();
 }
 
 // Clean up the backend at the end of a call to Simulate
@@ -77,63 +107,30 @@ nest::RecordingBackendSoundClick::cleanup()
   stopwatch_.stop();
 }
 
-// Write the data from the spike-event to the backend specific channel
 void
 nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
+  assert ( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
+
   // Calculate the time lag between real time (i.e., the stopwatch) and the
   // time of the spike event, and, if necessary, delay playing the sound.
   // This creates the illusion of a realistic sound from an
   // electrophysiological recording.
 
-  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  int time_spike_event_us = static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
+  int time_elapsed_us = static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
+  int time_lag_us = time_spike_event_us - time_elapsed_us;
+
+  // Slow down the simulation to biological real time!
+  if ( time_lag_us > 0 )
   {
-    int time_spike_event_us = static_cast< int >( floor( event.get_stamp().get_ms() * 1000.0 ) );
-    int time_elapsed_us = static_cast< int >( floor( stopwatch_.elapsed_timestamp() ) );
-    int time_lag_us = time_spike_event_us - time_elapsed_us;
-
-    // Slow down the simulation to biological real time!
-    if ( time_lag_us > 0 )
-    {
-      usleep( time_lag_us );
-    }
-
-    sound_.
-
-      play();
+    usleep( time_lag_us );
   }
-  else
-  {
-    throw;
-  }
-}
 
-// Synchronize backend at the end of each simulation cycle
-void
-nest::RecordingBackendSoundClick::synchronize()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSoundClick::prepare()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSoundClick::post_run_hook()
-{
-  // nothing to do
-}
-
-void
-nest::RecordingBackendSoundClick::clear( const RecordingDevice& )
-{
-  // nothing to do
+  sound_.play();
 }
 
 void
@@ -149,13 +146,19 @@ nest::RecordingBackendSoundClick::get_status( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendSoundClick::set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
+nest::RecordingBackendSoundClick::check_device_status( const DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSoundClick::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendSoundClick::get_device_defaults( DictionaryDatum& ) const
+{
+  // nothing to do
+}
+
+void
+nest::RecordingBackendSoundClick::get_device_status( const RecordingDevice&, DictionaryDatum& ) const
 {
   // nothing to do
 }

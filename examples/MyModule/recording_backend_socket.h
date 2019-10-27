@@ -61,50 +61,39 @@ public:
 
   ~RecordingBackendSocket() throw();
 
-  /**
-   * Function called by spike detectors using this recording
-   * backend. This function opens the socket.
-   */
-  void enroll( const RecordingDevice&,     // device
-    const std::vector< Name >&,            // double value names
-    const std::vector< Name >& ) override; // long value names
+  void initialize() override;
 
-  /**
-   * Flush files after a single call to Run
-   */
-  void post_run_hook() override;
+  void finalize() override;
 
-  /**
-   * Finalize the RecordingBackendSocket after the simulation has finished.
-   */
-  void cleanup() override;
+  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
 
-  /**
-   * Trivial synchronization function. The RecordingBackendSocket does
-   * not need explicit synchronization after each time step.
-   */
-  void synchronize() override;
+  void disenroll( const RecordingDevice& device ) override;
 
-  /**
-   * Functions to write data to file.
-   */
-  void write( const RecordingDevice&,      // device
-    const Event&,                          // event
-    const std::vector< double >&,          // double values
-    const std::vector< long >& ) override; // long values
-
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& d ) const override;
-
-  /**
-   * Initialize the RecordingBackendSocket during simulation preparation.
-   */
-  void pre_run_hook() override;
+  void set_value_names( const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void prepare() override;
-  void clear( const RecordingDevice& ) override;
-  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d ) override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const override;
+
+  void cleanup() override;
+
+  void pre_run_hook() override;
+
+  void post_run_hook() override;
+
+  void post_step_hook() override;
+
+  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+
+  void set_status( const DictionaryDatum& ) override;
+
+  void get_status( DictionaryDatum& ) const override;
+
+  void check_device_status( const DictionaryDatum& ) const override;
+
+  void get_device_defaults( DictionaryDatum& ) const override;
+
+  void get_device_status( const RecordingDevice&, DictionaryDatum& ) const override;
 
 private:
   struct Parameters_

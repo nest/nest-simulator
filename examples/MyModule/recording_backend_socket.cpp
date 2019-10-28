@@ -68,7 +68,9 @@ nest::RecordingBackendSocket::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendSocket::set_value_names( const RecordingDevice&, const std::vector< Name >&, const std::vector< Name >& )
+nest::RecordingBackendSocket::set_value_names( const RecordingDevice&,
+  const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   // nothing to do
 }
@@ -113,7 +115,7 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  assert ( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
+  assert( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
 
 #pragma omp critical
   {

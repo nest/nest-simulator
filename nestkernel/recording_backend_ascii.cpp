@@ -163,7 +163,7 @@ nest::RecordingBackendASCII::compute_vp_gid_string_( const RecordingDevice& devi
 
   std::ostringstream vp_gid_string;
   vp_gid_string << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid() << "-"
-		<< std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
+                << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
 
   return vp_gid_string.str();
 }
@@ -221,7 +221,7 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
 
 /* ******************* Device meta data class DeviceData ******************* */
 
-nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_gid_string)
+nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_gid_string )
   : precision_( 3 )
   , time_in_steps_( false )
   , modelname_( modelname )

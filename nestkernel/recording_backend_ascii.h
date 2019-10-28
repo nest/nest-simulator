@@ -217,7 +217,7 @@ private:
     std::vector< Name > double_value_names_; //!< names for values of type double
     std::vector< Name > long_value_names_;   //!< names for values of type long
 
-    std::string compute_filename_() const;   //!< Compose and return the filename
+    std::string compute_filename_() const; //!< Compose and return the filename
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > data_map;

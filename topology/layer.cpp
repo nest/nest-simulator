@@ -121,7 +121,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
 
-    if ( !std::all_of( shape.begin(),
+    if ( not std::all_of( shape.begin(),
            shape.end(),
            []( long x )
            {

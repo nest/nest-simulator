@@ -20,6 +20,8 @@
  *
  */
 
+#include <memory>
+
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -110,10 +112,10 @@ mynest::StepPatternBuilder::connect_()
       // allocate pointer to thread-specific random generator
       librandom::RngPtr rng = nest::kernel().rng_manager.get_rng( tid );
 
-      for ( nest::GIDCollection::const_iterator target_it = targets_->begin(); target_it < targets_->end();
+      for ( auto target_it = targets_->begin(); target_it < targets_->end();
             advance_( target_it, targets_->end(), target_step_ ) )
       {
-        for ( nest::GIDCollection::const_iterator source_it = sources_->begin(); source_it < sources_->end();
+        for ( auto source_it = sources_->begin(); source_it < sources_->end();
               advance_( source_it, sources_->end(), source_step_ ) )
         {
           if ( not allow_autapses_ and ( *source_it ).gid == ( *target_it ).gid )
@@ -123,8 +125,7 @@ mynest::StepPatternBuilder::connect_()
           }
           if ( not change_connected_synaptic_elements( ( *source_it ).gid, ( *source_it ).gid, tid, 1 ) )
           {
-            for ( nest::GIDCollection::const_iterator source_it = sources_->begin(); source_it < sources_->end();
-                  ++source_it )
+            for ( size_t i = 0; i < sources_->size(); ++i )
             {
               skip_conn_parameter_( tid );
             }
@@ -140,7 +141,7 @@ mynest::StepPatternBuilder::connect_()
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = std::make_shared< WrappedThreadException >( err );
     }
   }
 }

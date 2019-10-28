@@ -38,7 +38,7 @@ public:
     const DictionaryDatum& syn_spec );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   /**
@@ -51,8 +51,7 @@ private:
    * @param Number of positions to advance
    * @return Iterator after advance
    */
-  static void
-  advance_( nest::GIDCollection::const_iterator&, const nest::GIDCollection::const_iterator&, size_t );
+  static void advance_( nest::GIDCollection::const_iterator&, const nest::GIDCollection::const_iterator&, size_t );
 
   size_t source_step_;
   size_t target_step_;

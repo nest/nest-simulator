@@ -86,18 +86,16 @@ mynest::MyModule::MyModule()
 #endif
 }
 
-mynest::MyModule::~MyModule()
-{
-}
+mynest::MyModule::~MyModule() = default;
 
 const std::string
-mynest::MyModule::name( void ) const
+mynest::MyModule::name() const
 {
   return std::string( "My NEST Module" ); // Return name of the module
 }
 
 const std::string
-mynest::MyModule::commandstring( void ) const
+mynest::MyModule::commandstring() const
 {
   // Instruct the interpreter to load mymodule-init.sli
   return std::string( "(mymodule-init) run" );

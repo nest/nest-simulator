@@ -123,7 +123,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
   }
 
-  if ( connection_type == names::convergent )
+  if ( connection_type == names::pairwise_bernoulli_on_source )
   {
 
     if ( number_of_connections >= 0 )
@@ -135,7 +135,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       type_ = Pairwise_bernoulli_on_source;
     }
   }
-  else if ( connection_type == names::divergent )
+  else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
 
     if ( number_of_connections >= 0 )

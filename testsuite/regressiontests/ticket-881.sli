@@ -45,52 +45,52 @@ M_ERROR setverbosity
 
 /num_expected num_nodes dup mul def   % all to all
 
-% Test 1: pairwise convergent
+% Test 1: pairwise pairwise_bernoulli_on_source
 {
   ResetKernel
   << /local_num_threads num_threads >> SetKernelStatus
-  
+
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
-  << /connection_type (convergent) >> ConnectLayers
+  << /connection_type (pairwise_bernoulli_on_source) >> ConnectLayers
 
-  << >> GetConnections length num_expected eq 
+  << >> GetConnections length num_expected eq
 } assert_or_die
 
-% Test 2: pairwise divergent
+% Test 2: pairwise pairwise_bernoulli_on_target
 {
   ResetKernel
   << /local_num_threads num_threads >> SetKernelStatus
-  
+
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
-  << /connection_type (divergent) >> ConnectLayers
+  << /connection_type (pairwise_bernoulli_on_target) >> ConnectLayers
 
-  << >> GetConnections length num_expected eq 
+  << >> GetConnections length num_expected eq
 } assert_or_die
 
 % Test 3: fixed fan-in
 {
   ResetKernel
   << /local_num_threads num_threads >> SetKernelStatus
-  
+
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
-  << /connection_type (convergent) /number_of_connections num_nodes >> ConnectLayers
+  << /connection_type (pairwise_bernoulli_on_source) /number_of_connections num_nodes >> ConnectLayers
 
-  << >> GetConnections length num_expected eq 
+  << >> GetConnections length num_expected eq
 } assert_or_die
 
 % Test 4: fixed fan-out
 {
   ResetKernel
   << /local_num_threads num_threads >> SetKernelStatus
-  
+
   << /elements /iaf_psc_alpha /positions node_pos >> CreateLayer
   dup
-  << /connection_type (divergent) /number_of_connections num_nodes >> ConnectLayers
+  << /connection_type (pairwise_bernoulli_on_target) /number_of_connections num_nodes >> ConnectLayers
 
-  << >> GetConnections length num_expected eq 
+  << >> GetConnections length num_expected eq
 } assert_or_die
 
 

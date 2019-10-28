@@ -128,11 +128,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
     if ( number_of_connections >= 0 )
     {
-      type_ = Convergent;
+      type_ = Fixed_indegree;
     }
     else
     {
-      type_ = Target_driven;
+      type_ = Pairwise_bernoulli_on_source;
     }
   }
   else if ( connection_type == names::divergent )
@@ -140,11 +140,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
     if ( number_of_connections >= 0 )
     {
-      type_ = Divergent;
+      type_ = Fixed_outdegree;
     }
     else
     {
-      type_ = Source_driven;
+      type_ = Pairwise_bernoulli_on_target;
     }
   }
   else

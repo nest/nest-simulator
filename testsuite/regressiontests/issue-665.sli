@@ -71,18 +71,18 @@ skip_if_not_threaded
 def
 
 {
-  << /connection_type /convergent >> gen_to_layer_test
+  << /connection_type /pairwise_bernoulli_on_source >> gen_to_layer_test
 }
 assert_or_die
 
 {
-  << /connection_type /divergent >> gen_to_layer_test
+  << /connection_type /pairwise_bernoulli_on_target >> gen_to_layer_test
 }
 assert_or_die
 
 {
   % one incoming connection to each neuron in layer
-  << /connection_type /convergent
+  << /connection_type /pairwise_bernoulli_on_source
      /number_of_connections 1 >> gen_to_layer_test
 }
 assert_or_die
@@ -90,7 +90,7 @@ assert_or_die
 {
   % four outgoing connections, one to each neuron in layer
   % prohibit multapses to ensure consistent result
-  << /connection_type /divergent
+  << /connection_type /pairwise_bernoulli_on_target
      /number_of_connections 4
      /allow_multapses false >> gen_to_layer_test
 }
@@ -129,12 +129,12 @@ assert_or_die
 def
 
 {
-  << /connection_type /convergent >> layer_to_det_test
+  << /connection_type /pairwise_bernoulli_on_source >> layer_to_det_test
 }
 assert_or_die
 
 {
-  << /connection_type /divergent >> layer_to_det_test
+  << /connection_type /pairwise_bernoulli_on_target >> layer_to_det_test
 }
 fail_or_die
 clear
@@ -142,7 +142,7 @@ clear
 {
   % four incoming connections, one to each neuron in layer
   % prohibit multapses to ensure consistent result
-  << /connection_type /convergent
+  << /connection_type /pairwise_bernoulli_on_source
      /number_of_connections 4
      /allow_multapses false >> layer_to_det_test
 }
@@ -151,7 +151,7 @@ clear
 
 {
   % one outgoing connection from each neuron in layer
-  << /connection_type /divergent
+  << /connection_type /pairwise_bernoulli_on_target
      /number_of_connections 1 >> layer_to_det_test
 }
 fail_or_die

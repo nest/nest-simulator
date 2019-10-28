@@ -41,7 +41,7 @@ def
 {
   ResetKernel
   make_grid_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /mask << /grid << /shape [ 1 1 ] >> >>
   >>
   ConnectLayers
@@ -51,7 +51,7 @@ def
 {
   ResetKernel
   make_grid_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /mask << /grid << /shape [ 2 1 ] >> >>
   >>
   ConnectLayers
@@ -61,7 +61,7 @@ def
 {
   ResetKernel
   make_grid_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /mask << /grid << /shape [ 1 2 ] >> >>
   >>
   ConnectLayers
@@ -71,7 +71,7 @@ def
 {
   ResetKernel
   make_grid_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /mask << /grid << /shape [ 2 2 ] >> >>
   >>
   ConnectLayers
@@ -81,7 +81,7 @@ def
 {
   ResetKernel
   make_grid_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /mask << /grid << /shape [ 2 2 ] >> >>
      /allow_oversized_mask true
   >>
@@ -94,7 +94,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /circular << /radius 0.5 >> >>
   >>
   ConnectLayers
@@ -104,7 +104,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /circular << /radius 0.51 >> >>
   >>
   ConnectLayers
@@ -114,7 +114,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /circular << /radius 0.51 >> >>
       /allow_oversized_mask true
   >>
@@ -127,7 +127,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.5 >> >>
   >>
   ConnectLayers
@@ -137,7 +137,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
   >>
   ConnectLayers
@@ -147,7 +147,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
       /allow_oversized_mask true
   >>
@@ -160,7 +160,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.5 0.5] >> >>
   >>
   ConnectLayers
@@ -170,7 +170,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
   >>
   ConnectLayers
@@ -180,7 +180,7 @@ def
 {
   ResetKernel
   make_free_layer dup
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
       /allow_oversized_mask true
   >>

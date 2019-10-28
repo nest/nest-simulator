@@ -54,7 +54,7 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
+/conns << /connection_type (pairwise_bernoulli_on_target)
           /mask << /grid << /shape [ 3 2 ] >> /anchor [ 0 1 ] >>
        >> def
 

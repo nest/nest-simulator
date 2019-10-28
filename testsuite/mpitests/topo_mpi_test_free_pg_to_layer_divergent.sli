@@ -1,5 +1,5 @@
 /*
- *  topo_mpi_test_free_pg_to_layer_divergent.sli
+ *  topo_mpi_test_free_pg_to_layer_pairwise_bernoulli_on_target.sli
  *
  *  This file is part of NEST.
  *
@@ -73,6 +73,6 @@ skip_if_not_threaded
 
 [1 2 4]
 {
-  << /connection_type /divergent /number_of_connections 10 >> test_connection
+  << /connection_type /pairwise_bernoulli_on_target /number_of_connections 10 >> test_connection
 } distributed_process_invariant_collect_assert_or_die
 

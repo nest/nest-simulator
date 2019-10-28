@@ -43,24 +43,24 @@ ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectio
 {
   switch ( type_ )
   {
-  case Target_driven:
+  case Pairwise_bernoulli_on_source:
 
-    target_driven_connect_( source, target, target_gc );
+    pairwise_bernoulli_on_source_( source, target, target_gc );
     break;
 
-  case Convergent:
+  case Fixed_indegree:
 
-    convergent_connect_( source, target, target_gc );
+    fixed_indegree_( source, target, target_gc );
     break;
 
-  case Divergent:
+  case Fixed_outdegree:
 
-    divergent_connect_( source, target, target_gc );
+    fixed_outdegree_( source, target, target_gc );
     break;
 
-  case Source_driven:
+  case Pairwise_bernoulli_on_target:
 
-    source_driven_connect_( source, target, target_gc );
+    pairwise_bernoulli_on_target_( source, target, target_gc );
     break;
 
   default:
@@ -174,9 +174,9 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 
 template < int D >
 void
-ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
-  // Target driven connect
+  // Connect using pairwise Bernoulli drawing source nodes (target driven)
   // For each local target node:
   //  1. Apply Mask to source layer
   //  2. For each source node: Compute probability, draw random number, make
@@ -246,9 +246,10 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& targe
 
 template < int D >
 void
-ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
-  // Source driven connect is actually implemented as target driven,
+  // Connecting using pairwise Bernoulli drawing target nodes (source driven)
+  // It is actually implemented as pairwise Bernoulli on source nodes,
   // but with displacements computed in the target layer. The Mask has been
   // reversed so that it can be applied to the source instead of the target.
   // For each local target node:
@@ -329,14 +330,14 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
 
 template < int D >
 void
-ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
   if ( number_of_connections_ < 1 )
   {
     return;
   }
 
-  // Convergent connections (fixed fan in)
+  // fixed_indegree connections (fixed fan in)
   //
   // For each local target node:
   // 1. Apply Mask to source layer
@@ -600,7 +601,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
 template < int D >
 void
-ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -628,7 +629,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
     assert( not tgt->is_proxy() );
   }
 
-  // Divergent connections (fixed fan out)
+  // Fixed_outdegree connections (fixed fan out)
   //
   // For each (global) source: (All connections made on all mpi procs)
   // 1. Apply mask to global targets

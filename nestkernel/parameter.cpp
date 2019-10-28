@@ -52,7 +52,7 @@ Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) co
   {
     throw KernelException( "apply: not meta" );
   }
-  LayerMetadata const* const source_layer_metadata = dynamic_cast< LayerMetadata const* >( source_metadata.get() );
+  auto const* const source_layer_metadata = dynamic_cast< LayerMetadata const* >( source_metadata.get() );
   if ( not source_layer_metadata )
   {
     throw KernelException( "apply: not layer_meta" );
@@ -102,7 +102,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
-  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
+  auto const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
   {
     throw KernelException( "NodePosParameter: not layer_meta" );
@@ -149,7 +149,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   {
     throw KernelException( "SpatialDistanceParameter: not source meta" );
   }
-  LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
+  auto const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
   if ( not source_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
@@ -175,7 +175,7 @@ SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* targe
   {
     throw KernelException( "SpatialDistanceParameter: not target meta" );
   }
-  LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
+  auto const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
   if ( not target_layer_meta )
   {
     throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# hl_api_distributions.py
+# hl_api_spatial_distributions.py
 #
 # This file is part of NEST.
 #

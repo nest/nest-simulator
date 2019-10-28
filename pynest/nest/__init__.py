@@ -31,7 +31,7 @@ from .hl_api import *                 # noqa
 from . import random                  # noqa
 from . import spatial                 # noqa
 from . import math                    # noqa
-from . import distributions           # noqa
+from . import spatial_distributions   # noqa
 from . import logic                   # noqa
 
 

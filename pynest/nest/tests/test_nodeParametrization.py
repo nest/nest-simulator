@@ -411,9 +411,9 @@ class TestNodeParametrization(unittest.TestCase):
         """Test dimension specific connection distance parameter"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
 
-        for i, parameter in enumerate([nest.spatial.dimension_distance.x,
-                                       nest.spatial.dimension_distance.y,
-                                       nest.spatial.dimension_distance.z]):
+        for i, parameter in enumerate([nest.spatial.distance.x,
+                                       nest.spatial.distance.y,
+                                       nest.spatial.distance.z]):
             nest.ResetKernel()
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
@@ -442,12 +442,12 @@ class TestNodeParametrization(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
-                                   nest.spatial.dimension_distance.z})
+                                   nest.spatial.distance.z})
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
-                                   nest.spatial.dimension_distance.n(-1)})
+                                   nest.spatial.distance.n(-1)})
 
     def test_src_tgt_position_parameter(self):
         """Test source and target position parameter"""

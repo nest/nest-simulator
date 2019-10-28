@@ -118,7 +118,7 @@ public:
   /**
    * Used to validate that we can send SpikeEvent to desired target:port.
    */
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool );
+  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool ) override;
 
   /**
    * @defgroup mynest_handle Functions handling incoming events.
@@ -126,32 +126,32 @@ public:
    * defining @c handle() and @c connect_sender() for the given event.
    * @{
    */
-  void handle( nest::SpikeEvent& );         //! accept spikes
-  void handle( nest::CurrentEvent& );       //! accept input current
-  void handle( nest::DataLoggingRequest& ); //! allow recording with multimeter
+  void handle( nest::SpikeEvent& ) override;         //! accept spikes
+  void handle( nest::CurrentEvent& ) override;       //! accept input current
+  void handle( nest::DataLoggingRequest& ) override; //! allow recording with multimeter
 
-  nest::port handles_test_event( nest::SpikeEvent&, nest::port );
-  nest::port handles_test_event( nest::CurrentEvent&, nest::port );
-  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
+  nest::port handles_test_event( nest::SpikeEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::CurrentEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port ) override;
   /** @} */
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   //! Reset parameters and state of neuron.
 
   //! Reset state of neuron.
-  void init_state_( const Node& proto );
+  void init_state_( const Node& proto ) override;
 
   //! Reset internal buffers of neuron.
-  void init_buffers_();
+  void init_buffers_() override;
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void calibrate() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );
+  void update( nest::Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< pif_psc_alpha >;

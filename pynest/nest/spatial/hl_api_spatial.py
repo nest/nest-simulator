@@ -24,7 +24,6 @@ from ..lib.hl_api_types import CreateParameter, Parameter
 from ..ll_api import sli_func
 
 __all__ = [
-    'dimension_distance',
     'distance',
     'grid',
     'free',
@@ -33,20 +32,38 @@ __all__ = [
     'target_pos',
 ]
 
-distance = CreateParameter('distance', {})
 
-
-class dimension_distance(object):
+class DistanceParameter(Parameter):
     """
-    Distance in separate dimensions.
+    Object representing the distance between two nodes in space.
 
-    Three variables are defined, x, y, and z, which represent the distance
-    in their respective dimensions. Note that this parameter can only be
-    used in contexts with two nodes, e.g. when connecting.
+    If used alone, the DistanceObject represents simply the Euclidean
+    distance between two nodes.
+
+    Alternatively the distance in a single dimension may be chosen. Three
+    properties are defined, x, y, and z, which represent the distance in
+    their respective dimensions. Note that the distance parameter can only
+    be used in contexts with two nodes, e.g. when connecting.
     """
-    x = CreateParameter('distance', {'dimension': 1})
-    y = CreateParameter('distance', {'dimension': 2})
-    z = CreateParameter('distance', {'dimension': 3})
+
+    def __init__(self):
+        distance_parameter = CreateParameter('distance', {})
+        super().__init__(distance_parameter._datum)
+
+    @property
+    def x(self):
+        """Parameter representing the distance on the x-axis"""
+        return CreateParameter('distance', {'dimension': 1})
+
+    @property
+    def y(self):
+        """Parameter representing the distance on the y-axis"""
+        return CreateParameter('distance', {'dimension': 2})
+
+    @property
+    def z(self):
+        """Parameter representing the distance on the z-axis"""
+        return CreateParameter('distance', {'dimension': 3})
 
     @staticmethod
     def n(dimension):
@@ -66,13 +83,16 @@ class dimension_distance(object):
         return CreateParameter('distance', {'dimension': dimension})
 
 
+distance = DistanceParameter()
+
+
 class pos(object):
     """
     Position of node in a specific dimension.
 
-    Three variables are defined, x, y, and z, which represent the position
-    in their respective dimensions. Note that this parameter can only be
-    used in contexts with one node, e.g. when setting node status.
+    Three properties are defined, x, y, and z, which represent the
+    position in their respective dimensions. Note that this parameter can
+    only be used in contexts with one node, e.g. when setting node status.
     """
     x = CreateParameter('position', {'dimension': 0})
     y = CreateParameter('position', {'dimension': 1})
@@ -100,7 +120,7 @@ class source_pos(object):
     """
     Position of the source node in a specific dimension.
 
-    Three variables are defined, x, y, and z, which represent the source
+    Three properties are defined, x, y, and z, which represent the source
     node position in their respective dimensions. Note that this parameter
     can only be used in contexts with two nodes, e.g. when connecting.
     """
@@ -131,7 +151,7 @@ class target_pos(object):
     """
     Position of the target node in a specific dimension.
 
-    Three variables are defined, x, y, and z, which represent the target
+    Three properties are defined, x, y, and z, which represent the target
     node position in their respective dimensions. Note that this parameter
     can only be used in contexts with two nodes, e.g. when connecting.
     """
@@ -173,6 +193,7 @@ class grid(object):
     edge_wrap : bool, optional
         Specifies periodic boundary conditions.
     """
+
     def __init__(self, shape, center=None, extent=None, edge_wrap=False):
         self.shape = shape
         self.center = center
@@ -198,6 +219,7 @@ class free(object):
         If a single Parameter is given as position, and no extent is
         specified, the number of dimensions must be set explicitly.
     """
+
     def __init__(self, pos, extent=None, edge_wrap=False, num_dimensions=None):
         if extent and num_dimensions:
             raise TypeError(

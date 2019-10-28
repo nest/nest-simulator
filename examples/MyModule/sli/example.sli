@@ -23,14 +23,14 @@
 << /overwrite_files true >> SetKernelStatus
 /pif_psc_alpha Create /a Set
 /pif_psc_alpha Create /b Set
-a b /drop_odd_synapse Connect
+a b /all_to_all /drop_odd_synapse Connect
 /dc_generator Create /dc Set
 dc << /amplitude 100.0 >> SetStatus
 GetKernelStatus /resolution get /h Set
 /voltmeter Create /vm Set vm << /interval h /precision 10 /record_to /ascii >> SetStatus
 vm a Connect
 vm b Connect
-dc 1 Connect
+dc a Connect
 1000 Simulate
 
 

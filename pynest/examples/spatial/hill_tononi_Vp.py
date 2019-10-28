@@ -503,7 +503,7 @@ ctConnections = []
 # ! we adapt those values that need adapting, and
 horIntra_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 12.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.05, std_deviation=7.5 * dpc)}
+                      "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=0.05, std_deviation=7.5 * dpc)}
 
 horIntra_syn_spec = {"synapse_model": "AMPA",
                      "weight": 1.0,
@@ -529,7 +529,7 @@ for conn in [{"sources": "L23pyr", "targets": "L23pyr", "conn_spec": {}},
 # ! We proceed as above.
 verIntra_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 2.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=1.0, std_deviation=7.5 * dpc)}
+                      "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=1.0, std_deviation=7.5 * dpc)}
 
 verIntra_syn_spec = {"synapse_model": "AMPA",
                      "weight": 2.0,
@@ -562,7 +562,7 @@ for conn in [{"sources": "L23pyr", "targets": "L56pyr",
 # ! the connections inhibitory.
 intraInh_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 7.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.25, std_deviation=7.5 * dpc)}
+                      "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=0.25, std_deviation=7.5 * dpc)}
 
 intraInh_syn_spec = {"synapse_model": "GABA_A",
                      "weight": -2.0,
@@ -584,7 +584,7 @@ for conn in [{"sources": "L23in", "targets": "L23pyr", "conn_spec": {}},
 # ! We proceed as above.
 corThal_conn_spec = {"rule": "pairwise_bernoulli",
                      "mask": {"circular": {"radius": 5.0 * dpc}},
-                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.5, std_deviation=7.5 * dpc)}
+                     "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=0.5, std_deviation=7.5 * dpc)}
 
 corThal_syn_spec = {"synapse_model": "AMPA",
                     "weight": 1.0,
@@ -694,7 +694,7 @@ for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
 thalCorDiff_conn_spec = {"rule": "pairwise_bernoulli",
                          "use_on_source": True,
                          "mask": {"circular": {"radius": 5.0 * dpc}},
-                         "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.1, std_deviation=7.5*dpc)}
+                         "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=0.1, std_deviation=7.5*dpc)}
 
 thalCorDiff_syn_spec = {"synapse_model": "AMPA",
                         "weight": 5.0,
@@ -737,31 +737,31 @@ print("Connecting: intra-thalamic")
 
 for src, tgt, conn, syn in [(TpRelay, Rp,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
+                              "p": nest.spatial_distributions.gaussian(
                                  nest.spatial.distance, p_center=1.0, std_deviation=7.5*dpc)},
                              {"synapse_model": "AMPA",
                               "weight": 2.0}),
                             (TpInter, TpRelay,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
+                              "p": nest.spatial_distributions.gaussian(
                                  nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
                              {"synapse_model": "GABA_A",
                               "weight": -1.0}),
                             (TpInter, TpInter,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
+                              "p": nest.spatial_distributions.gaussian(
                                  nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, TpRelay, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                           "p": nest.distributions.gaussian(
+                                           "p": nest.spatial_distributions.gaussian(
                                                nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, TpInter, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                           "p": nest.distributions.gaussian(
+                                           "p": nest.spatial_distributions.gaussian(
                                                nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, Rp, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                      "p": nest.distributions.gaussian(
+                                      "p": nest.spatial_distributions.gaussian(
                                           nest.spatial.distance, p_center=0.5, std_deviation=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0})
                             ]:
@@ -781,7 +781,7 @@ for src, tgt, conn, syn in [(TpRelay, Rp,
 # ! We use 1 ms here.
 retThal_conn_spec = {"rule": "pairwise_bernoulli",
                      "mask": {"circular": {"radius": 1.0 * dpc}},
-                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.75, std_deviation=2.5*dpc)}
+                     "p": nest.spatial_distributions.gaussian(nest.spatial.distance, p_center=0.75, std_deviation=2.5*dpc)}
 
 retThal_syn_spec = {"weight": 10.0,
                     "delay": 1.0,

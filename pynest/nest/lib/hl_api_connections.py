@@ -274,7 +274,6 @@ def _connect_layers_needed(conn_spec):
 
 
 def _connect_spatial(pre, post, projections):
-    # TODO: layers should aldready be on the stack; no need to pass them to sli_func
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
@@ -286,7 +285,8 @@ def _connect_spatial(pre, post, projections):
         return d
 
     projections = fixdict(projections)
-    sli_func('ConnectLayers', pre, post, projections)
+    sps(projections)
+    sr('ConnectLayers')
 
 
 def _connect_nonunique(syn_spec):

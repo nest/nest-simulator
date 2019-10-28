@@ -136,18 +136,39 @@ public:
   double get_K_value( double t );
 
   /**
-   * write the Kminus and triplet_Kminus values at t (in ms) to
-   * the provided locations.
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& nearest_neighbor_Kminus,
+   *   double& triplet_Kminus )
+   * write the Kminus (eligibility trace for STDP),
+   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
+   *   like Kminus, but increased to 1, rather than by 1, on a spike
+   *   occurrence),
+   * and triplet_Kminus
+   * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
+  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
 
-  void get_K_values( double t, double& Kminus, double& triplet_Kminus );
+  /**
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& triplet_Kminus )
+   * The legacy version of the function, kept for compatibility
+   * after changing the function signature in PR #865.
+   * @throws UnexpectedEvent
+   */
+  void
+  get_K_values( double t, double& Kminus, double& triplet_Kminus )
+  {
+    double nearest_neighbor_Kminus_to_discard;
+    get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, triplet_Kminus );
+  }
 
   /**
    * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
-
   double get_triplet_K_value( const std::deque< histentry >::iterator& iter );
 
   /**

@@ -1,14 +1,24 @@
 Source: nest
 Section: science
 Priority: optional
-Maintainer: Jochen Martin Eppler <eppler@biologie.uni-freiburg.de>
-Build-Depends: debhelper (>= 5), autotools-dev, libreadline5-dev, libgsl0-dev, python-dev, libopenmpi-dev, libibverbs-dev, python-numpy
-Standards-Version: 3.7.2
+Maintainer: Steffen Graber <s.graber@fz-juelich.de>
+Build-Depends: cmake, debhelper (>= 9), autotools-dev,
+	software-properties-common, build-essential, autoconf, python3,
+	libltdl-dev, libreadline-dev, libncurses-dev, libgsl-dev, openmpi-bin,
+	python3-dev, libopenmpi-dev, libgomp1, libomp-dev, libibverbs-dev, libpcre3, libpcre3-dev, jq,
+	libmusic1v5, music-bin, libmusic-dev, python3-numpy, python3-pandas,
+	python3-scipy,python3-matplotlib, python3-setuptools, python3-tk,
+	python3-pydot, cython3, libtool
+Standards-Version: 4.1.1
 
 Package: nest
 Architecture: any
-Depends: ${shlibs:Depends}, openmpi-bin
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3, libltdl-dev,
+	libreadline-dev, libncurses-dev, libgsl-dev, openmpi-bin,
+	python3-dev, libopenmpi-dev, libgomp1, libomp-dev, libibverbs-dev, libpcre3, libpcre3-dev, jq,
+	libmusic1v5, music-bin, libmusic-dev, python3-numpy, python3-pandas,
+	python3-scipy, python3-matplotlib, python3-setuptools, python3-pydot, python3-tk,
+	cython3
 Description: NEST is a simulator for networks of spiking neurons.
  NEST is a simulation system for large networks of biologically realistic
  point-neurons and neurons with a small number of electrical compartments.
- For more information, see https://www.nest-initiative.org

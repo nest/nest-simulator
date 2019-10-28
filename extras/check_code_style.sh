@@ -29,7 +29,7 @@ GIT_START_SHA=master             # If 'file=' is not specified all changed files
 GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 
 VERA=vera++                      # The names of the static code analysis tools executables.
-CPPCHECK=cppcheck                #    CPPCHECK version 1.80 or later is required !
+CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required !
 CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
 PEP8=pep8
 
@@ -107,7 +107,7 @@ Options:
 
     --cppcheck=exe                   The name of the CPPCHECK executable.
                                      Default: --cppcheck=cppcheck
-                                     Note: CPPCHECK version 1.80 or later is required.
+                                     Note: CPPCHECK version 1.69 or later is required.
                                            This corresponds to the version installed in
                                            the NEST Travis CI build and test environment.
 
@@ -256,16 +256,16 @@ if $PERFORM_VERA; then
   "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
 fi
 
-# Verify the CPPCHECK installation. CPPCHECK version 1.80 or later is required.
+# Verify the CPPCHECK installation. CPPCHECK version 1.69 or later is required.
 # Previous versions of CPPCHECK halted on sli/tokenutils.cc (see https://github.com/nest/nest-simulator/pull/79)
 if $PERFORM_CPPCHECK; then
-  $CPPCHECK --enable=all --inconclusive --std=c++11 ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CPPCHECK installation. Executable: $CPPCHECK"
+  $CPPCHECK --enable=all --inconclusive --std=c++03 ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CPPCHECK installation. Executable: $CPPCHECK"
   cppcheck_version=`$CPPCHECK --version | sed 's/^Cppcheck //'`
   IFS=\. read -a cppcheck_version_a <<< "$cppcheck_version"
   if [[ ${cppcheck_version_a[0]} -lt 1 ]]; then
-    error_exit "Failed to verify the CPPCHECK installation. Version 1.80 or later is required. The executable '$CPPCHECK' is of version $cppcheck_version."
-  elif [[ ${cppcheck_version_a[0]} -eq 1 && ${cppcheck_version_a[1]} -lt 80 ]]; then
-    error_exit "Failed to verify the CPPCHECK installation. Version 1.80 or later is required. The executable '$CPPCHECK' is of version $cppcheck_version."
+    error_exit "Failed to verify the CPPCHECK installation. Version 1.69 or later is requires. The executable '$CPPCHECK' is of version $cppcheck_version."
+  elif [[ ${cppcheck_version_a[0]} -eq 1 && ${cppcheck_version_a[1]} -lt 69 ]]; then
+    error_exit "Failed to verify the CPPCHECK installation. Version 1.69 or later is requires. The executable '$CPPCHECK' is of version $cppcheck_version."
   fi
 fi
 
@@ -315,6 +315,3 @@ IGNORE_MSG_PEP8=false
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
 "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
-if [ $? -gt 0 ]; then
-    exit $?
-fi

@@ -127,6 +127,9 @@
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
 #include "stdp_dopa_connection.h"
+#include "stdp_nn_restr_connection.h"
+#include "stdp_nn_symm_connection.h"
+#include "stdp_nn_pre-centered_connection.h"
 #include "stdp_pl_connection_hom.h"
 #include "stdp_triplet_connection.h"
 #include "tsodyks2_connection.h"
@@ -294,6 +297,9 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
   register_connection_model< ClopathConnection >(
     "clopath_synapse", default_connection_model_flags | Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< STDPNNRestrConnection >( "stdp_nn_restr_synapse" );
+  register_connection_model< STDPNNSymmConnection >( "stdp_nn_symm_synapse" );
+  register_connection_model< STDPNNPreCenteredConnection >( "stdp_nn_pre-centered_synapse" );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );

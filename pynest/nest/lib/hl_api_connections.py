@@ -264,13 +264,25 @@ def _process_spatial_projections(conn_spec, syn_spec):
     return projections
 
 
-def _connect_layers_needed(conn_spec):
-    if conn_spec is None:
-        return False
-    rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
-    return ('mask' in conn_spec or
-            ('p' in conn_spec and not rule_is_bernoulli) or
-            'use_on_source' in conn_spec)
+def _connect_layers_needed(conn_spec, syn_spec):
+    if isinstance(conn_spec, dict):
+        # If a conn_spec entry is based on spatial properties, we must use ConnectLayers.
+        for key, item in conn_spec.items():
+            if isinstance(item, Parameter) and item.is_spatial():
+                return True
+        # We must use ConnectLayers in some additional cases.
+        rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
+        if ('mask' in conn_spec or
+                ('p' in conn_spec and not rule_is_bernoulli) or
+                'use_on_source' in conn_spec):
+            return True
+    # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.
+    if isinstance(syn_spec, dict):
+        for key, item in syn_spec.items():
+            if isinstance(item, Parameter) and item.is_spatial():
+                return True
+    # If we get here, there is not need to use ConnectLayers.
+    return False
 
 
 def _connect_spatial(pre, post, projections):
@@ -494,7 +506,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
                         "GIDCollection")
 
     # In some cases we must connect with ConnectLayers instead.
-    if _connect_layers_needed(processed_conn_spec):
+    if _connect_layers_needed(processed_conn_spec, processed_syn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
             raise TypeError(

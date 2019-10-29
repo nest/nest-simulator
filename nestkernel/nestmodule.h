@@ -612,6 +612,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } getvalue_Pfunction;
 
+  class IsSpatial_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } isspatial_Pfunction;
+
   class Apply_P_DFunction : public SLIFunction
   {
   public:

@@ -834,6 +834,9 @@ class Parameter(object):
         """
         return sli_func("GetValue", self._datum)
 
+    def is_spatial(self):
+        return sli_func('ParameterIsSpatial', self._datum)
+
     def apply(self, spatial_gc, positions=None):
         if positions is None:
             return sli_func('Apply', self._datum, spatial_gc)

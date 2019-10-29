@@ -178,7 +178,15 @@ public:
    */
   std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
 
+  /**
+   * Check if the Parameter is based on spatial properties.
+   * @returns true if the Parameter is based on spatial properties, false otherwise.
+   */
+  bool is_spatial() const;
+
 protected:
+  bool parameter_is_spatial_{ false };
+
   Node* gid_to_node_ptr_( const index, const thread ) const;
 };
 
@@ -414,6 +422,7 @@ public:
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
+    parameter_is_spatial_ = true;
     bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
     if ( not dimension_specified )
     {
@@ -502,6 +511,7 @@ public:
     : Parameter( d )
     , dimension_( 0 )
   {
+    parameter_is_spatial_ = true;
     updateValue< long >( d, names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
@@ -548,6 +558,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -558,6 +569,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~ProductParameter() override
@@ -617,6 +629,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -627,6 +640,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~QuotientParameter() override
@@ -686,6 +700,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -696,6 +711,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~SumParameter() override
@@ -755,6 +771,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -765,6 +782,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~DifferenceParameter() override
@@ -823,6 +841,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -832,6 +851,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~ConverseParameter() override
@@ -907,6 +927,7 @@ public:
     {
       throw BadParameter( "Comparator specification has to be in the range 0-5." );
     }
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -1003,6 +1024,7 @@ public:
     , if_true_( if_true.clone() )
     , if_false_( if_false.clone() )
   {
+    parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
   }
 
   /**
@@ -1014,6 +1036,7 @@ public:
     , if_true_( p.if_true_->clone() )
     , if_false_( p.if_false_->clone() )
   {
+    parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
   }
 
   ~ConditionalParameter() override
@@ -1094,6 +1117,7 @@ public:
     , p_( p.clone() )
     , other_value_( other_value )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1104,6 +1128,7 @@ public:
     , p_( p.p_->clone() )
     , other_value_( p.other_value_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~MinParameter() override
@@ -1162,6 +1187,7 @@ public:
     , p_( p.clone() )
     , other_value_( other_value )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1172,6 +1198,7 @@ public:
     , p_( p.p_->clone() )
     , other_value_( p.other_value_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~MaxParameter() override
@@ -1237,6 +1264,7 @@ public:
     , max_( p.max_ )
     , max_redraws_( p.max_redraws_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~RedrawParameter() override
@@ -1282,6 +1310,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1347,6 +1376,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1356,6 +1386,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~SinParameter() override
@@ -1411,6 +1442,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1420,6 +1452,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~CosParameter() override
@@ -1477,6 +1510,7 @@ public:
     , p_( p.clone() )
     , exponent_( exponent )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1487,6 +1521,7 @@ public:
     , p_( p.p_->clone() )
     , exponent_( p.exponent_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~PowParameter() override
@@ -1547,6 +1582,7 @@ public:
     , px_( px.clone() )
     , py_( py.clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   DimensionParameter( const Parameter& px, const Parameter& py, const Parameter& pz )
@@ -1555,6 +1591,7 @@ public:
     , py_( py.clone() )
     , pz_( pz.clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   /**
@@ -1567,6 +1604,7 @@ public:
     , py_( p.py_->clone() )
     , pz_( p.pz_->clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   ~DimensionParameter() override
@@ -1718,6 +1756,12 @@ inline Parameter*
 Parameter::dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const
 {
   return new DimensionParameter( *this, y_parameter, z_parameter );
+}
+
+inline bool
+Parameter::is_spatial() const
+{
+  return parameter_is_spatial_;
 }
 
 } // namespace nest

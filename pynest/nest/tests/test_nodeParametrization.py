@@ -418,6 +418,7 @@ class TestNodeParametrization(unittest.TestCase):
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
             nest.Connect(layer, layer,
+                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
                          syn_spec={'weight': parameter})
             conns = nest.GetConnections()
             conn_status = conns.get()
@@ -463,9 +464,10 @@ class TestNodeParametrization(unittest.TestCase):
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
             # Scale up delay because of limited number of digits.
-            nest.Connect(layer, layer, syn_spec={
-                'weight': source_positions[i],
-                'delay': 100*target_positions[i]})
+            nest.Connect(layer, layer,
+                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
+                         syn_spec={'weight': source_positions[i],
+                                   'delay': 100*target_positions[i]})
             conns = nest.GetConnections()
             conn_status = conns.get()
 
@@ -653,6 +655,36 @@ class TestNodeParametrization(unittest.TestCase):
             self.assertEqual(len(layer.spatial['positions'][0]), n_dim)
             self.assertEqual(
                 len(np.unique(layer.spatial['positions'][0])), n_dim)
+
+    def test_parameter_is_spatial(self):
+        """Test parameter is_spatial function"""
+        constant_parameter = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        spatial_parameters = [nest.spatial.pos.x,
+                              nest.spatial.distance,
+                              nest.spatial.distance.x]
+        non_spatial_parameters = [constant_parameter,
+                                  nest.random.uniform(),
+                                  nest.random.normal(),
+                                  nest.random.lognormal(),
+                                  nest.random.exponential()]
+
+        def apply_assert(assert_func, p):
+            assert_func(p.is_spatial())
+            assert_func(nest.math.cos(p).is_spatial())
+            assert_func(nest.math.sin(p).is_spatial())
+            assert_func(nest.math.exp(p).is_spatial())
+            assert_func(nest.math.max(p, 1.0).is_spatial())
+            assert_func(nest.math.min(p, 1.0).is_spatial())
+            assert_func(nest.math.redraw(p, 0.0, 1.0).is_spatial())
+            assert_func((p + constant_parameter).is_spatial())
+            assert_func((constant_parameter + p).is_spatial())
+            assert_func(nest.logic.conditional(p, constant_parameter, constant_parameter).is_spatial())
+            assert_func(nest.logic.conditional(constant_parameter, p, constant_parameter).is_spatial())
+            assert_func(nest.logic.conditional(constant_parameter, constant_parameter, p).is_spatial())
+        for p in spatial_parameters:
+            apply_assert(self.assertTrue, p)
+        for p in non_spatial_parameters:
+            apply_assert(self.assertFalse, p)
 
 
 def suite():

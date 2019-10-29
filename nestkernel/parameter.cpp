@@ -249,6 +249,7 @@ RedrawParameter::RedrawParameter( const Parameter& p, const double min, const do
   , max_( max )
   , max_redraws_( 1000 )
 {
+  parameter_is_spatial_ = p_->is_spatial();
   if ( min > max )
   {
     throw BadParameterValue( "min <= max required." );

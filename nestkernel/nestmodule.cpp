@@ -1875,6 +1875,20 @@ NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::IsSpatial_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  auto param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  bool parameter_is_spatial = is_spatial( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( parameter_is_spatial );
+  i->EStack.pop();
+}
+
 /** @BeginDocumentation
   Name: Apply
 */
@@ -1976,6 +1990,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
   i->createcommand( "GetValue_P", &getvalue_Pfunction );
+  i->createcommand( "IsSpatial_P", &isspatial_Pfunction );
   i->createcommand( "Apply_P_D", &apply_P_Dfunction );
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 

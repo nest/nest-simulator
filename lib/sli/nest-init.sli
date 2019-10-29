@@ -380,6 +380,10 @@ def
   /GetValue_P load
 def
 
+/ParameterIsSpatial [/parametertype]
+  /IsSpatial_P load
+def
+
 /Apply [/parametertype /dictionarytype]
   /Apply_P_D load
 def

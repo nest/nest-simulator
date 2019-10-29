@@ -452,19 +452,7 @@ public:
   double
   value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
-    switch ( synaptic_endpoint_ )
-    {
-    case 0:
-      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
-    case 1:
-    {
-      Node* source = gid_to_node_ptr_( sgid, target_thread );
-      return get_node_pos_( rng, source );
-    }
-    case 2:
-      return get_node_pos_( rng, target );
-    }
-    throw KernelException( "Wrong synaptic_endpoint_." );
+    throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
   }
 
   double
@@ -525,7 +513,11 @@ public:
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
 
-  double value( librandom::RngPtr&, index, Node*, thread ) const override;
+  double
+  value( librandom::RngPtr&, index, Node*, thread ) const override
+  {
+    throw KernelException( "Spatial distance parameter can only be used when using ConnectLayers." );
+  }
 
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,

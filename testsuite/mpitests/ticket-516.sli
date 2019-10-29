@@ -55,9 +55,9 @@
 
 [6]
 {
- (convergent) setup_network
+ (pairwise_bernoulli_on_source) setup_network
  sim_time Simulate
 
- (divergent) setup_network
+ (pairwise_bernoulli_on_target) setup_network
  sim_time Simulate
 } distributed_pass_or_die

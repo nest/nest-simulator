@@ -107,8 +107,8 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/logic
       )
 
-  install( DIRECTORY nest/distributions/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/distributions
+  install( DIRECTORY nest/spatial_distributions/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
       )
 
   find_program( NOSETESTS nosetests )

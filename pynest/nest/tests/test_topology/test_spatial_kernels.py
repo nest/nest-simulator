@@ -168,18 +168,18 @@ class SpatialTester(object):
             kernel = (self._params['c'] + self._params['a'] *
                       nest.spatial.distance)
         elif kernel_name == 'exponential':
-            kernel = self._params['c'] + nest.distributions.exponential(
+            kernel = self._params['c'] + nest.spatial_distributions.exponential(
                 nest.spatial.distance,
                 a=self._params['a'],
                 tau=self._params['tau'])
         elif kernel_name == 'gaussian':
-            kernel = self._params['c'] + nest.distributions.gaussian(
+            kernel = self._params['c'] + nest.spatial_distributions.gaussian(
                 nest.spatial.distance,
                 p_center=self._params['p_center'],
                 mean=self._params['mean'],
                 std_deviation=self._params['sigma'])
         elif kernel_name == 'gamma':
-            kernel = nest.distributions.gamma(
+            kernel = nest.spatial_distributions.gamma(
                 nest.spatial.distance,
                 alpha=self._params['kappa'],
                 theta=self._params['theta'])

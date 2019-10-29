@@ -172,16 +172,16 @@ def
 
 /good_connspecs
 [
-  << /connection_type /convergent >>
-  << /connection_type /divergent >>
-  << /connection_type /convergent /allow_oversized_mask true >>
-  << /connection_type /convergent /synapse_model /static_synapse >>
-  << /connection_type /convergent /allow_multapses false >>
-  << /connection_type /convergent /allow_autapses false >>
-  << /connection_type /convergent /allow_oversized_mask true >>
-  << /connection_type /convergent /number_of_connections 2 >>
-  << /connection_type /divergent /number_of_connections 2 >>
-  << /connection_type /convergent /delay 2.0 >>
+  << /connection_type /pairwise_bernoulli_on_source >>
+  << /connection_type /pairwise_bernoulli_on_target >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_oversized_mask true >>
+  << /connection_type /pairwise_bernoulli_on_source /synapse_model /static_synapse >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_multapses false >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_autapses false >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_oversized_mask true >>
+  << /connection_type /pairwise_bernoulli_on_source /number_of_connections 2 >>
+  << /connection_type /pairwise_bernoulli_on_target /number_of_connections 2 >>
+  << /connection_type /pairwise_bernoulli_on_source /delay 2.0 >>
 ]
 def
 
@@ -283,7 +283,7 @@ good_distance_parameters [ 0.5 1.0 ] join
   /kspec Set
   (Test 7: ) =only
   kspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /kernel kspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /kernel kspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -295,7 +295,7 @@ bad_distance_parameters
   /kspec Set
   (Test 8: ) =only
   kspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /kernel kspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /kernel kspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -307,7 +307,7 @@ good_parameters [ 0.5 1.0 ] join
   /wspec Set
   (Test 9: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weight wspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /weight wspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -319,7 +319,7 @@ bad_parameters
   /wspec Set
   (Test 10: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weight wspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /weight wspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -331,7 +331,7 @@ good_masks_2d
   /mspec Set
   (Test 11: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -343,7 +343,7 @@ bad_masks_2d
   /mspec Set
   (Test 12: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -355,7 +355,7 @@ good_masks_3d
   /mspec Set
   (Test 13: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_3d
   } pass_or_die
   clear
@@ -367,7 +367,7 @@ bad_masks_3d
   /mspec Set
   (Test 14: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_3d
   } fail_or_die
   clear

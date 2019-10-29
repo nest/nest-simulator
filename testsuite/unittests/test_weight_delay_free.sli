@@ -45,7 +45,7 @@
 << /distance << >> >> CreateParameter
 mul add /linear_parameter Set
 
-/conns << /connection_type (divergent)
+/conns << /connection_type (pairwise_bernoulli_on_target)
           /mask    << /rectangular << /lower_left [ -0.5 -0.5 ] /upper_right [ 9.5 0.5 ] >> >>
           /weight linear_parameter
           /delay  linear_parameter

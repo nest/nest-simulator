@@ -238,22 +238,22 @@ def _process_spatial_projections(conn_spec, syn_spec):
             raise ValueError(
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
-        projections['connection_type'] = 'convergent'
+        projections['connection_type'] = 'pairwise_bernoulli_on_source'
         projections['number_of_connections'] = projections.pop('indegree')
     elif conn_spec['rule'] == 'fixed_outdegree':
         if 'use_on_source' in conn_spec:
             raise ValueError(
                 "'use_on_source' can only be set when using " +
                 "pairwise_bernoulli")
-        projections['connection_type'] = 'divergent'
+        projections['connection_type'] = 'pairwise_bernoulli_on_target'
         projections['number_of_connections'] = projections.pop('outdegree')
     elif conn_spec['rule'] == 'pairwise_bernoulli':
         if ('use_on_source' in conn_spec and
                 conn_spec['use_on_source']):
-            projections['connection_type'] = 'convergent'
+            projections['connection_type'] = 'pairwise_bernoulli_on_source'
             projections.pop('use_on_source')
         else:
-            projections['connection_type'] = 'divergent'
+            projections['connection_type'] = 'pairwise_bernoulli_on_target'
             if 'use_on_source' in projections:
                 projections.pop('use_on_source')
     else:

@@ -25,7 +25,7 @@
 
 // C++ includes:
 #include <limits>
-#include <math.h>
+#include <cmath>
 
 // Includes from librandom:
 #include "normal_randomdev.h"
@@ -54,9 +54,7 @@ public:
   /**
    * Creates an Parameter with default values.
    */
-  Parameter()
-  {
-  }
+  Parameter() = default;
 
   /**
    * Creates a Parameter with values specified in a dictionary.
@@ -69,9 +67,7 @@ public:
   /**
    * Virtual destructor
    */
-  virtual ~Parameter()
-  {
-  }
+  virtual ~Parameter() = default;
 
   /**
    * Generates a value based on parameter specifications and arguments.
@@ -208,21 +204,19 @@ public:
     value_ = getValue< double >( d, "value" );
   }
 
-  ~ConstantParameter()
-  {
-  }
+  ~ConstantParameter() override = default;
 
   /**
    * @returns the constant value of this parameter.
    */
   double
-  value( librandom::RngPtr&, Node* ) const
+  value( librandom::RngPtr&, Node* ) const override
   {
     return value_;
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ConstantParameter( value_ );
   }
@@ -261,13 +255,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* ) const
+  value( librandom::RngPtr& rng, Node* ) const override
   {
     return lower_ + rng->drand() * range_;
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new UniformParameter( *this );
   }
@@ -305,13 +299,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* ) const
+  value( librandom::RngPtr& rng, Node* ) const override
   {
     return mean_ + rdev( rng ) * sigma_;
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new NormalParameter( *this );
   }
@@ -350,13 +344,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* ) const
+  value( librandom::RngPtr& rng, Node* ) const override
   {
     return std::exp( mu_ + rdev( rng ) * sigma_ );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new LognormalParameter( *this );
   }
@@ -385,13 +379,13 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* ) const
+  value( librandom::RngPtr& rng, Node* ) const override
   {
     return scale_ * ( -std::log( 1 - rng->drand() ) );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ExponentialParameter( *this );
   }
@@ -437,7 +431,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     if ( synaptic_endpoint_ != 0 )
     {
@@ -447,7 +441,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     switch ( synaptic_endpoint_ )
     {
@@ -468,7 +462,7 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     switch ( synaptic_endpoint_ )
     {
@@ -485,7 +479,7 @@ public:
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new NodePosParameter( *this );
   }
@@ -516,20 +510,20 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, Node* ) const
+  value( librandom::RngPtr& rng, Node* ) const override
   {
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
 
-  double value( librandom::RngPtr&, index, Node*, thread ) const;
+  double value( librandom::RngPtr&, index, Node*, thread ) const override;
 
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const;
+    const AbstractLayer& layer ) const override;
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new SpatialDistanceParameter( *this );
   }
@@ -566,7 +560,7 @@ public:
   {
   }
 
-  ~ProductParameter()
+  ~ProductParameter() override
   {
     delete parameter1_;
     delete parameter2_;
@@ -576,13 +570,13 @@ public:
    * @returns the value of the product.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       * parameter2_->value( rng, sgid, target, target_thread );
@@ -592,14 +586,14 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return parameter1_->value( rng, source_pos, target_pos, layer )
       * parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ProductParameter( *this );
   }
@@ -635,7 +629,7 @@ public:
   {
   }
 
-  ~QuotientParameter()
+  ~QuotientParameter() override
   {
     delete parameter1_;
     delete parameter2_;
@@ -645,13 +639,13 @@ public:
    * @returns the value of the product.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return parameter1_->value( rng, node ) / parameter2_->value( rng, node );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       / parameter2_->value( rng, sgid, target, target_thread );
@@ -661,14 +655,14 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return parameter1_->value( rng, source_pos, target_pos, layer )
       / parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new QuotientParameter( *this );
   }
@@ -704,7 +698,7 @@ public:
   {
   }
 
-  ~SumParameter()
+  ~SumParameter() override
   {
     delete parameter1_;
     delete parameter2_;
@@ -714,13 +708,13 @@ public:
    * @returns the value of the sum.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return parameter1_->value( rng, node ) + parameter2_->value( rng, node );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       + parameter2_->value( rng, sgid, target, target_thread );
@@ -730,14 +724,14 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return parameter1_->value( rng, source_pos, target_pos, layer )
       + parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new SumParameter( *this );
   }
@@ -773,7 +767,7 @@ public:
   {
   }
 
-  ~DifferenceParameter()
+  ~DifferenceParameter() override
   {
     delete parameter1_;
     delete parameter2_;
@@ -783,13 +777,13 @@ public:
    * @returns the value of the difference.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return parameter1_->value( rng, sgid, target, target_thread )
       - parameter2_->value( rng, sgid, target, target_thread );
@@ -799,14 +793,14 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return parameter1_->value( rng, source_pos, target_pos, layer )
       - parameter2_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new DifferenceParameter( *this );
   }
@@ -840,7 +834,7 @@ public:
   {
   }
 
-  ~ConverseParameter()
+  ~ConverseParameter() override
   {
     delete p_;
   }
@@ -849,13 +843,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return p_->value( rng, node );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return p_->value( rng, sgid, target, target_thread );
   }
@@ -864,13 +858,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return p_->value( rng, source_pos, target_pos, layer );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ConverseParameter( *this );
   }
@@ -926,7 +920,7 @@ public:
   {
   }
 
-  ~ComparingParameter()
+  ~ComparingParameter() override
   {
     delete parameter1_;
     delete parameter2_;
@@ -936,13 +930,13 @@ public:
    * @returns the result of the comparison, bool given as a double.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return compare_(
       parameter1_->value( rng, sgid, target, target_thread ), parameter2_->value( rng, sgid, target, target_thread ) );
@@ -952,14 +946,14 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return compare_( parameter1_->value( rng, source_pos, target_pos, layer ),
       parameter2_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ComparingParameter( *this );
   }
@@ -1022,7 +1016,7 @@ public:
   {
   }
 
-  ~ConditionalParameter()
+  ~ConditionalParameter() override
   {
     delete condition_;
     delete if_true_;
@@ -1033,7 +1027,7 @@ public:
    * @returns the value chosen by the comparison.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     if ( condition_->value( rng, node ) )
     {
@@ -1046,7 +1040,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     if ( condition_->value( rng, sgid, target, target_thread ) )
     {
@@ -1062,7 +1056,7 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     if ( condition_->value( rng, source_pos, target_pos, layer ) )
     {
@@ -1075,7 +1069,7 @@ public:
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ConditionalParameter( *this );
   }
@@ -1112,7 +1106,7 @@ public:
   {
   }
 
-  ~MinParameter()
+  ~MinParameter() override
   {
     delete p_;
   }
@@ -1121,13 +1115,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::min( p_->value( rng, node ), other_value_ );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::min( p_->value( rng, sgid, target, target_thread ), other_value_ );
   }
@@ -1136,13 +1130,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::min( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new MinParameter( *this );
   }
@@ -1180,7 +1174,7 @@ public:
   {
   }
 
-  ~MaxParameter()
+  ~MaxParameter() override
   {
     delete p_;
   }
@@ -1189,13 +1183,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::max( p_->value( rng, node ), other_value_ );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::max( p_->value( rng, sgid, target, target_thread ), other_value_ );
   }
@@ -1204,13 +1198,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::max( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new MaxParameter( *this );
   }
@@ -1245,7 +1239,7 @@ public:
   {
   }
 
-  ~RedrawParameter()
+  ~RedrawParameter() override
   {
     delete p_;
   }
@@ -1253,15 +1247,15 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double value( librandom::RngPtr& rng, Node* node ) const;
-  double value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const;
+  double value( librandom::RngPtr& rng, Node* node ) const override;
+  double value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override;
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const;
+    const AbstractLayer& layer ) const override;
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new RedrawParameter( *this );
   }
@@ -1299,7 +1293,7 @@ public:
   {
   }
 
-  ~ExpParameter()
+  ~ExpParameter() override
   {
     delete p_;
   }
@@ -1308,13 +1302,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::exp( p_->value( rng, node ) );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::exp( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1323,13 +1317,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::exp( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new ExpParameter( *this );
   }
@@ -1364,7 +1358,7 @@ public:
   {
   }
 
-  ~SinParameter()
+  ~SinParameter() override
   {
     delete p_;
   }
@@ -1373,13 +1367,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::sin( p_->value( rng, node ) );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::sin( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1388,13 +1382,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::sin( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new SinParameter( *this );
   }
@@ -1428,7 +1422,7 @@ public:
   {
   }
 
-  ~CosParameter()
+  ~CosParameter() override
   {
     delete p_;
   }
@@ -1437,13 +1431,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::cos( p_->value( rng, node ) );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::cos( p_->value( rng, sgid, target, target_thread ) );
   }
@@ -1452,13 +1446,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::cos( p_->value( rng, source_pos, target_pos, layer ) );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new CosParameter( *this );
   }
@@ -1495,7 +1489,7 @@ public:
   {
   }
 
-  ~PowParameter()
+  ~PowParameter() override
   {
     delete p_;
   }
@@ -1504,13 +1498,13 @@ public:
    * @returns the value of the parameter.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     return std::pow( p_->value( rng, node ), exponent_ );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     return std::pow( p_->value( rng, sgid, target, target_thread ), exponent_ );
   }
@@ -1519,13 +1513,13 @@ public:
   value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) const
+    const AbstractLayer& layer ) const override
   {
     return std::pow( p_->value( rng, source_pos, target_pos, layer ), exponent_ );
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new PowParameter( *this );
   }
@@ -1575,7 +1569,7 @@ public:
   {
   }
 
-  ~DimensionParameter()
+  ~DimensionParameter() override
   {
     delete px_;
     delete py_;
@@ -1589,13 +1583,13 @@ public:
    * The DimensionParameter has no double value, so this method will always throw.
    */
   double
-  value( librandom::RngPtr& rng, Node* node ) const
+  value( librandom::RngPtr& rng, Node* node ) const override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
@@ -1624,7 +1618,7 @@ public:
   }
 
   Parameter*
-  clone() const
+  clone() const override
   {
     return new DimensionParameter( *this );
   }

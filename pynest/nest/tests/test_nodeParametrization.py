@@ -686,6 +686,20 @@ class TestNodeParametrization(unittest.TestCase):
         for p in non_spatial_parameters:
             apply_assert(self.assertFalse, p)
 
+    def test_parameter_apply(self):
+        """Parameter apply function"""
+        positions = [[x, 0.5*x] for x in np.linspace(0, 0.5, 5)]
+        position_array = np.array(positions)
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
+
+        # Spatial gc only
+        self.assertEqual(tuple(position_array[:, 0]), nest.spatial.pos.x.apply(layer))
+        self.assertEqual(tuple(position_array[:, 1]), nest.spatial.pos.y.apply(layer))
+
+        # Spatial gc with a single gid, and list of positions
+        distance_reference = tuple(np.sqrt(position_array[:, 0]**2 + position_array[:, 1]**2))
+        self.assertEqual(distance_reference, nest.spatial.distance.apply(layer[0], positions))
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeParametrization, 'test')

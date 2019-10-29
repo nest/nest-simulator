@@ -195,7 +195,7 @@ nest.Simulate(simtime)
 # For the symmetric network setup used here, the excitatory and inhibitory
 # rates are identical. For comparison execute the example ``brunel_delta_nest.py``.
 
-data = nest.GetStatus(multimeter)[0]['events']
+data = multimeter.get('events')
 rates_ex = data['rate'][
     numpy.where(data['senders'] == nest.GetStatus(siegert_ex, 'global_id')[0])]
 rates_in = data['rate'][

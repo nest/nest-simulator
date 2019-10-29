@@ -116,10 +116,8 @@ Change compilation behavior:
                                                    Separate multiple defines by ';'. [default OFF]
     -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]     Use SIONlib to compile the corresponding recording
                                                    backend. [default OFF]
-    -Dwith-boost=[OFF|ON|forced|</path/to/boost>]  Use efficient Boost sorting, and build C++-testsuite
-                                                   using the Boost unittest framework. If set to 'forced',
-                                                   NEST will attempt to use Boost functions even if Boost is
-                                                   not found by CMake. [default ON]
+    -Dwith-boost=[OFF|ON]                          Build C++-testsuite using the Boost unittest
+                                                   framework.
 
 Other options:
 

@@ -204,7 +204,7 @@ nest.Simulate(simtime)
 # omitted so initial transients do not perturb our results. We then print the
 # results from theory and simulation.
 
-v_free = nest.GetStatus(vm, 'events')[0]['V_m'][500:-1]
+v_free = vm.get('events', 'V_m')[500:-1]
 print('mean membrane potential (actual / calculated): {0} / {1}'
       .format(np.mean(v_free), mu * 1000))
 print('variance (actual / calculated): {0} / {1}'

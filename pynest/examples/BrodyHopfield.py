@@ -76,24 +76,23 @@ noise = nest.Create('noise_generator')
 drive = nest.Create('ac_generator')
 
 ###############################################################################
-# Set the parameters specified above for the generators using ``SetStatus``.
+# Set the parameters specified above for the generators using ``set``.
 
-nest.SetStatus(drive, driveparams)
-nest.SetStatus(noise, noiseparams)
+drive.set(driveparams)
+noise.set(noiseparams)
 
 ###############################################################################
 # Set the parameters specified above for the neurons. Neurons get an internal
 # current. The first neuron additionally receives the current with amplitude
 # `bias_begin`, the last neuron with amplitude `bias_end`.
 
-nest.SetStatus(neurons, neuronparams)
-nest.SetStatus(neurons, [{'I_e':
-                          (n * (bias_end - bias_begin) / N + bias_begin)}
-                         for n in neurons])
+neurons.set(neuronparams)
+neurons.set({'I_e': [(n * (bias_end - bias_begin) / N + bias_begin)
+                     for n in range(1, len(neurons) + 1)]})
 
 ###############################################################################
 # Connect alternating current and noise generators as well as
-# `spike_detector`s. to neurons
+# `spike_detector`s to neurons
 
 nest.Connect(drive, neurons)
 nest.Connect(noise, neurons)

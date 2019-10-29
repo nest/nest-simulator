@@ -152,16 +152,12 @@ ispikes = nest.Create("spike_detector")
 
 ###############################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory
-# spikes using ``SetStatus``, which expects a list of node handles and a list
-# of parameter dictionaries. Setting the property `record_to` to *"ascii"*
-# ensures that the spikes will be recorded to a file, whose name starts with
-# the string assigned to label.
+# spikes by sending parameter dictionaries to ``set``. Setting the property
+# `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
+# whose name starts with the string assigned to the property `label`.
 
-nest.SetStatus(espikes, [{"label": "brunel-py-ex",
-                          "record_to": "ascii"}])
-
-nest.SetStatus(ispikes, [{"label": "brunel-py-in",
-                          "record_to": "ascii"}])
+espikes.set({"label": "brunel-py-ex", "record_to": "ascii"})
+ispikes.set({"label": "brunel-py-in", "record_to": "ascii"})
 
 print("Connecting devices")
 
@@ -245,8 +241,8 @@ endsimulate = time.time()
 # Reading out the total number of spikes received from the spike detector
 # connected to the excitatory population and the inhibitory population.
 
-events_ex = nest.GetStatus(espikes, "n_events")[0]
-events_in = nest.GetStatus(ispikes, "n_events")[0]
+events_ex = espikes.get("n_events")
+events_in = ispikes.get("n_events")
 
 ###############################################################################
 # Calculation of the average firing rate of the excitatory and the inhibitory

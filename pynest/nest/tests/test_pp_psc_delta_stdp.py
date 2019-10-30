@@ -46,38 +46,18 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
 
         nest.Connect(nrn_pre, nrn_post1 + nrn_post2,
                      syn_spec={'synapse_model': 'stdp_synapse', 'weight': w_0})
-        conn1 = nest.GetConnections(nrn_pre, nrn_post1)
-        conn2 = nest.GetConnections(nrn_pre, nrn_post2)
 
         sg_pre = nest.Create('spike_generator')
         nest.SetStatus(sg_pre,
                        {'spike_times': np.arange(Dt, nsteps * Dt, 10. * Dt)})
         nest.Connect(sg_pre, nrn_pre)
 
-        mm = nest.Create('multimeter')
-        nest.SetStatus(mm, {'record_from': ['V_m']})
-        nest.Connect(mm, nrn_post1 + nrn_post2)
-
-        sd = nest.Create('spike_detector')
-        nest.Connect(nrn_pre + nrn_post1 + nrn_post2, sd)
-
-        t = []
-        w1 = []
-        w2 = []
-        t.append(0.)
-        w1.append(conn1.get('weight'))
-        w2.append(conn2.get('weight'))
-
         for i in range(nsteps):
             nest.Simulate(Dt)
-            t.append(i * Dt)
-            w1.append(conn1.get('weight'))
-            w2.append(conn1.get('weight'))
 
-        archiver_length1 = nest.GetStatus(nrn_post1,
-                                          keys=['archiver_length'])[0]
-        archiver_length2 = nest.GetStatus(nrn_post2,
-                                          keys=['archiver_length'])[0]
+        archiver_length1 = nrn_post1.get('archiver_length')
+        archiver_length2 = nrn_post2.get('archiver_length')
+        print(archiver_length1)
         self.assertEqual(archiver_length1, archiver_length2)
 
 

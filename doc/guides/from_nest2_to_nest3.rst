@@ -1,7 +1,7 @@
 From NEST 2.x to NEST 3.0
 =========================
 
-.. contents:: Here you'll find
+.. contents:: On this page, you'll find
    :local:
    :depth: 2
 
@@ -9,13 +9,13 @@ From NEST 2.x to NEST 3.0
 
   See the :doc:`../nest-3/nest2_vs_3` to see a full list of functions that have changed
 
-NEST 3 introduces a number of new features and concepts, and some changes
+NEST 3.0 introduces a number of new features and concepts, and some changes
 to the user interface that are not backwards compatible. One big change is
-the removal of subnets and all functions based on subnets. To organize
-neurons you should instead use the powerful GIDCollections, which will be
-presented below. Other big features include Connectome objects to
-efficiently work with connections, Parameter objects, and changes to how
-nodes with spatial information are defined and how to work with them.
+the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
+neurons, we now use the powerful :ref:`GIDCollections <gid>`, which will be
+presented below. Other big features include :ref:`connectome` objects to
+efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
+nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
 
 This guide is based exclusively on PyNEST.
 
@@ -31,23 +31,24 @@ In NEST 3.0, when you create a population with
 ``nest.Create()``, a GIDCollection is returned instead of a list. And when you
 connect two populations, you provide ``nest.Connect()`` with two
 populations in the form of GIDCollections.
+But instead of working with lists of GIDs you are working with
+GIDCollections.
+
 
 .. pull-quote::
 
    In **many use cases**, the addition of GIDCollections requires **no changes** to the
    scripts.
 
-But instead of working with lists of GIDs you are working with
-GIDCollections.
 
 GIDCollections are compact and efficient containers containing the global
 ID representations of nodes.
 
 ``GIDCollections`` support:
 
+-  :ref:`Indexing <indexing>`
 -  :ref:`Iteration <iterating>`
 -  :ref:`Slicing <slicing>`
--  :ref:`Indexing <indexing>`
 -  :ref:`Getting the size <get_size>` ``len``
 -  :ref:`Conversion to and from lists <converting_lists>`
 -  :ref:`Joining of two non-overlapping GIDCollections <joining>`
@@ -105,13 +106,6 @@ Printing
    >>>  print(nrns)
         GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
-.. _get_size:
-
-Getting the size
-    You can easily get the number of GIDs in the GIDCollection with
-
-   >>>  len(nrns)
-        10
 .. _indexing:
 
 Indexing
@@ -121,39 +115,6 @@ Indexing
 
    >>>  print(nrns[3])
         GIDCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
-
-.. _slicing:
-
-Slicing
-    A GIDCollection can be sliced in the same way one would slice a list,
-    with ``start:stop:step`` inside brackets
-
-
-    >>>  print(nrns[2:9:3])
-         GIDCollection(metadata=None,
-                       model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
-
-.. _joining:
-
-Joining
-    When joining two GIDCollections, NEST tries to concatenate the
-    primitives into a single primitive.
-
-
-    >>>  nrns_2 = nest.Create('iaf_psc_alpha', 3)
-    >>>  print(nrns + nrns_2)
-         GIDCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
-
-    If the GIDs are not continuous or the models are different, a composite will be created:
-
-    >>>  nrns_3 = nest.Create('iaf_psc_delta', 3)
-    >>>  print(nrns + nrns_3)
-         GIDCollection(metadata=None,
-                      model=iaf_psc_alpha, size=10, first=1, last=10;
-                      model=iaf_psc_delta, size=3, first=14, last=16)
-
-    Note that joining GIDCollections that overlap or that contain metadata
-    (see section on Topology) is impossible.
 
 .. _iterating:
 
@@ -176,6 +137,26 @@ Iteration
     You can also iterate ``nrns.items()``, which yields tuples containing
     the GID and the model ID.
 
+.. _slicing:
+
+Slicing
+    A GIDCollection can be sliced in the same way one would slice a list,
+    with ``start:stop:step`` inside brackets
+
+
+    >>>  print(nrns[2:9:3])
+         GIDCollection(metadata=None,
+                       model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
+
+
+.. _get_size:
+
+Getting the size
+    You can easily get the number of GIDs in the GIDCollection with
+
+   >>>  len(nrns)
+        10
+
 .. _converting_lists:
 
 Conversion to and from lists
@@ -195,6 +176,27 @@ Conversion to and from lists
     Note however that the nodes have to already have been created. If any
     of the GIDs refer to nodes that are not created, an error is thrown.
 
+.. _joining:
+
+Joining
+    When joining two GIDCollections, NEST tries to concatenate the
+    primitives into a single primitive.
+
+
+    >>>  nrns_2 = nest.Create('iaf_psc_alpha', 3)
+    >>>  print(nrns + nrns_2)
+         GIDCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
+
+    If the GIDs are not continuous or the models are different, a composite will be created:
+
+    >>>  nrns_3 = nest.Create('iaf_psc_delta', 3)
+    >>>  print(nrns + nrns_3)
+         GIDCollection(metadata=None,
+                      model=iaf_psc_alpha, size=10, first=1, last=10;
+                      model=iaf_psc_delta, size=3, first=14, last=16)
+
+    Note that joining GIDCollections that overlap or that contain metadata
+    (see section on Topology) is impossible.
 
 .. _testing_equality:
 
@@ -304,12 +306,12 @@ implemented):
 set()
 ~~~~~~
 
+We can set the the values of a parameter by iterating over each node
+
 * ``nodes.set(parameter_name, parameter_value)``
 * ``nodes.set(parameter_name, [parameter_val_1, parameter_val_2, ... , parameter_val_n])``
 * ``nodes.set(parameter_dict)``
 * ``nodes.set([parameter_dict_1, parameter_dict_2, ... , parameter_dict_n])``
-
-We can set the the values of a parameter by iterating over each node
 
 Examples
 ^^^^^^^^
@@ -387,13 +389,18 @@ We can create a composite GIDCollection (i.e., a non-contiguous or non-homogenou
 Connectome
 ~~~~~~~~~~
 
+Just like a GIDCollection is a container for GIDs, a Connectome is a
+container for connections. In NEST 3, when you call ``GetConnections()`` a
+Connectome is returned. Connectomes support a lot of the same operations
+as GIDCollections.
+
 ``Connectome`` supports:
 
--  :ref:`Iteration <conn_iterating>`
 -  :ref:`Indexing <conn_indexing>`
+-  :ref:`Iteration <conn_iterating>`
 -  :ref:`Slicing <conn_slicing>`
--  :ref:`Testing for equality <conn_testing_equality>`
 -  :ref:`Getting the size <conn_size>` ``len``
+-  :ref:`Testing for equality <conn_testing_equality>`
 -  :ref:`get_param` parameters
 -  :ref:`set_param` parameters
 
@@ -401,10 +408,6 @@ Connectome
 
     You can find a :doc:`full example <../examples/connectome>` in our example network page
 
-Just like a GIDCollection is a container for GIDs, a Connectome is a
-container for connections. In NEST 3, when you call ``GetConnections()`` a
-Connectome is returned. Connectomes support a lot of the same operations
-as GIDCollections:
 
 Printing
     Printing a Connectome produces a table of source and target GIDs
@@ -416,25 +419,6 @@ Printing
          *--------*-------------*
          | target | 1, 2, 1, 2, |
          *--------*-------------*
-
-.. _conn_size:
-
-Getting the size
-    We can get the number of connections in the Connectome with
-
-
-.. code-block:: ipython
-
-    nest.ResetKernel()
-
-    positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
-
-    nest.Connect(layer, layer)
-    connectome = nest.GetConnections()
-
->>>    len(connectome)
-       100
 
 .. _conn_indexing:
 
@@ -448,22 +432,43 @@ Indexing
          | target | 9, |
          *--------*----*
 
+
+.. _conn_iterating:
+
+Iteration
+    A Connectome can be iterated, yielding single connection Connectomes.
+
 .. _conn_slicing:
 
 Slicing
     A Connectome can be sliced with ``start:stop:step`` inside brackets
 
-   >>>  print(connectome[0:3:2])
-        *--------*-------*
-        | source | 1, 1, |
-        *--------*-------*
-        | target | 10, 8,|
-        *--------*-------*
+    >>>  print(connectome[0:3:2])
+         *--------*-------*
+         | source | 1, 1, |
+         *--------*-------*
+         | target | 10, 8,|
+         *--------*-------*
 
-.. _conn_interating:
+.. _conn_size:
 
-Iteration
-    A Connectome can be iterated, yielding single connection Connectomes.
+Getting the size
+    We can get the number of connections in the Connectome with
+
+
+    .. code-block:: ipython
+
+        nest.ResetKernel()
+
+        positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
+
+        nest.Connect(layer, layer)
+        connectome = nest.GetConnections()
+
+    >>>    len(connectome)
+           100
+
 
 .. _conn_testing_equality:
 
@@ -511,10 +516,10 @@ Getting an iterator over the sources or targets
 
 .. _param_ex:
 
-Parameterization
+Parametrization
 ~~~~~~~~~~~~~~~~
 
-NEST 3 introduces *Parameter objects*, i.e. objects that represent values
+NEST 3.0 introduces *Parameter objects*, i.e., objects that represent values
 drawn from a random distribution or values based on various spatial node
 parameters. Parameters can be used to set node status, to create positions
 in topology (see :ref:`Topology section <topo_changes>` below), and to define connection
@@ -569,9 +574,7 @@ distribution.
     ax[0].set_ylabel('V_m');
 
 
-
-.. image:: NEST3_13_0.png
-
+.. image:: ../nest-3/NEST3_13_0.png
 
 
 .. code-block:: ipython
@@ -594,7 +597,7 @@ distribution.
 
 
 
-.. image:: NEST3_14_0.png
+.. image:: ../nest-3/NEST3_14_0.png
 
 
 .. _spatial_ex:
@@ -634,7 +637,7 @@ Spatial parameters
     nest.PlotLayer(grid_layer);
 
 
-.. image:: NEST3_23_0.png
+.. image:: ../nest-3/NEST3_23_0.png
 
 
 .. code-block:: ipython
@@ -643,7 +646,7 @@ Spatial parameters
     nest.PlotLayer(free_layer);
 
 
-.. image:: NEST3_24_0.png
+.. image:: ../nest-3/NEST3_24_0.png
 
 
 .. code-block:: ipython
@@ -667,7 +670,7 @@ Spatial parameters
 
 
 
-.. image:: NEST3_25_0.png
+.. image:: ../nest-3/NEST3_25_0.png
 
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
@@ -678,14 +681,16 @@ Distribution functions
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-``nest.distributions.exponential()`` takes `x`, `a`, and `tau` as arguments
+nest.distributions.exponential()
+     takes `x`, `a`, and `tau` as arguments
 
 .. math::
 
      p(x) = a e^{-\frac{x}{\tau}}
 
 
-``nest.distributions.gaussian()`` `x`, `p_center`, `mean`, and `std_deviation` as arguments
+nest.distributions.gaussian()
+     takes `x`, `p_center`, `mean`, and `std_deviation` as arguments
 
 
 
@@ -695,8 +700,8 @@ Distribution functions
 
 
 
-``nest.distributions.gaussian2D()`` takes `x`, `y`, `p_center`, `mean_x`, `mean_y`, `std_deviation_x`,
-`std_deviation_y`, and `rho` as arguments
+nest.distributions.gaussian2D()
+     takes `x`, `y`, `p_center`, `mean_x`, `mean_y`, `std_deviation_x`, `std_deviation_y`, and `rho` as arguments
 
 
 .. math::
@@ -711,7 +716,8 @@ Distribution functions
 
 
 
-``nest.distributions.gamma()`` takes `x`, `alpha`, and `theta` as arguments.
+nest.distributions.gamma()
+    takes `x`, `alpha`, and `theta` as arguments.
 
 
  .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}
@@ -722,6 +728,7 @@ With these functions, you can, for example, recreate a Gaussian kernel as a para
   +------------------------------------------------------------+-----------------------------------------------------------------+
   | NEST 2.x                                                   | NEST 3.0                                                        |
   +------------------------------------------------------------+-----------------------------------------------------------------+
+  |  ::                                                        |  ::                                                             |
   |                                                            |                                                                 |
   |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.distributions.gaussian(                        |
   |                                                            |     nest.spatial.distance, p_center=1.0, std_deviation=1.0)     |
@@ -759,7 +766,7 @@ With these functions, you can, for example, recreate a Gaussian kernel as a para
 
 
 
-.. image:: NEST3_34_0.png
+.. image:: ../nest-3/NEST3_34_0.png
 
 .. _math_ex:
 
@@ -776,8 +783,8 @@ Mathematical functions
   | ``nest.random.sin()``      | Calculates the sine of a Parameter        |
   +----------------------------+-------------------------------------------+
 
-The mathematical functions take a Parameter object as argument, and return
-a new Parameter which applies the mathematical function on the Parameter
+The mathematical functions take a parameter object as argument, and return
+a new parameter which applies the mathematical function on the Parameter
 given as argument.
 
 .. code-block:: ipython
@@ -805,7 +812,7 @@ given as argument.
 
 
 
-.. image:: NEST3_27_0.png
+.. image:: ../nest-3/NEST3_27_0.png
 
 .. _logic:
 
@@ -855,7 +862,7 @@ Clipping, redraw, and conditionals
 
 
 
-.. image:: NEST3_26_0.png
+.. image:: ../nest-3/NEST3_26_0.png
 
 The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a Parameter. Essentially they work like the standard ``min()`` and
@@ -892,10 +899,10 @@ statement. Three arguments are required:
     nest.logic.conditional(nest.random.uniform(min=-1., max=1.) < 0., 0., 1.)
 
 
-Combining parameters
+Combine parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-NEST Parameters support the basic arithmetic operations. Two Parameters
+NEST parameters support the basic arithmetic operations. Two parameters
 can be added together, subtracted, multiplied with each other, or one can
 be divided by the other. They also support being raised to the power of a
 number, but they can only be raised to the power of an integer or a
@@ -919,10 +926,10 @@ Some examples:
     # The quadratic distance between two nodes, with a noisy distance component.
     p = nest.spatial.distance**2 + 0.4 * nest.random.uniform() * nest.spatial.distance
 
-Using parameters to set node properties
+Use parameters to set node properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Using Parameters makes it easy to set node properties
+Using parameters makes it easy to set node properties
 
   +-----------------------------------------------+----------------------------------------------------+
   | NEST 2.x                                      | NEST 3.0                                           |
@@ -947,7 +954,7 @@ Topology module
 
 -  All topology functions are now part of ``nest`` and not
    ``nest.topology``
--  You can use the ``Create`` and ``Connect`` functions for structured?? networks, same as you would for a "regular"
+-  You can use the ``Create`` and ``Connect`` functions for spatial  networks, same as you would for non-spatial
    network
 -  ``nest.GetPosition`` -> now takes a GIDCollection instead of a list of GIDs
 -  ``nest.FindCenterElement`` -> now returns ``int`` instead of
@@ -961,7 +968,7 @@ Much of the functionality of Topology has been moved to the standard
 functions. In fact, there is no longer a Topology module in PyNEST. The
 functions that are specific for Topology are now in the ``nest`` module.
 
-Creating layers
+Create layers
 ^^^^^^^^^^^^^^^
 
 Creating layers is now done with the standard ``nest.Create()`` function.
@@ -1042,7 +1049,7 @@ multiple layers.
 
 .. TODO: Composite layer replacement recommendation/example
 
-Connecting layers
+Connect layers
 ^^^^^^^^^^^^^^^^^^
 
 Similar to creating layers, connecting layers is now done with the
@@ -1136,6 +1143,8 @@ probability and delay, and random weights from a normal distribution:
 What's removed?
 -----------------
 
+.. subnet_rm::
+
 Subnets
 ~~~~~~~~~~
 
@@ -1156,23 +1165,16 @@ Printing the network as a tree of subnets is no longer possible. The
 ``PrintNetwork()`` function has been replaced with ``PrintNodes()``, which
 prints GID ranges and model names of the nodes in the network.
 
-  +---------------------------------------------+---------------------------------------+
-  | NEST 2.x                                    | NEST 3.0                              |
-  +=============================================+=======================================+
-  |                                             |                                       |
-  | ::                                          | ::                                    |
-  |                                             |                                       |
-  |     nest.PrintNetwork(depth=2, subnet=None) |     nest.PrintNodes()                 |
-  |                                             |                                       |
-  | prints                                      | prints                                |
-  |                                             |                                       |
-  | ::                                          | ::                                    |
-  |                                             |                                       |
-  |     +-[0] root dim=[15]                     |      1 .. 10 iaf_psc_alpha            |
-  |        |                                    |     11 .. 15 iaf_psc_exp              |
-  |        +-[1]...[10] iaf_psc_alpha           |                                       |
-  |        +-[11]...[15] iaf_psc_exp            |                                       |
-  |                                             |                                       |
-  +---------------------------------------------+---------------------------------------+
+  +----------------------------------------------+---------------------------------------+
+  | NEST 2.x                                     | NEST 3.0                              |
+  +==============================================+=======================================+
+  |                                              |                                       |
+  | >>>  nest.PrintNetwork(depth=2, subnet=None) | >>>  nest.PrintNodes()                |
+  |      [0] root dim=[15]                       |      1 .. 10 iaf_psc_alpha            |
+  |      [1]...[10] iaf_psc_alpha                |      11 .. 15 iaf_psc_exp             |
+  |      [11]...[15] iaf_psc_exp                 |                                       |
+  |                                              |                                       |
+  |                                              |                                       |
+  +----------------------------------------------+---------------------------------------+
 
 

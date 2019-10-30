@@ -11,6 +11,11 @@ NEST 2.X vs. NEST 3.0 conversion reference guide
 
 * Terms that changed for NEST 3.0 are marked in :green:`green`.
 
+.. note::
+
+    Dependencies
+    only Python 3.X
+    only Matplotlib 3.X.X
 
 .. seealso::
 

@@ -47,7 +47,7 @@ jobs:
       env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading 
+      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
     - stage: MPI-Threading-Python
       python: 3.6.7
       env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
@@ -62,8 +62,8 @@ jobs:
       env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: Python-Full-build
       python: 2.7.13
-      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: GCC8Clang7
+      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
+    - stage: Clang7
       language: cpp
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
     - stage: OsX
@@ -71,7 +71,7 @@ jobs:
       osx_image: xcode10.2
       language: generic
       env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
-    
+
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
@@ -87,7 +87,7 @@ addons:
      - cmake
      - libltdl-dev
      - libreadline6-dev
-     - libncurses5-dev 
+     - libncurses5-dev
      - libgsl0-dev
      - python-all-dev
      - ipython
@@ -143,7 +143,7 @@ before_install:
          cd $HOME/build
          echo $PATH
   # Upgrade pip and setuptools
-         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then 
+         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then
            pyenv install --list
            pyenv global 3.6.7
          fi
@@ -169,7 +169,7 @@ before_install:
          pip install cython scipy matplotlib terminaltables
          pip install numpy==1.16.5
      fi
-    
+
 install:
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
@@ -185,7 +185,7 @@ install:
          echo ${CC}
          echo ${CXX}
      fi
-  
+
 before_script:
    # Change directory back to the NEST source code directory.
    - cd $SOURCEDIR

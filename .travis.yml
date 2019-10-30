@@ -142,7 +142,7 @@ before_install:
          cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
          cd $HOME/build
          echo $PATH
-  # Upgrade pip and setuptools
+         # Upgrade pip and setuptools
          if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then
            pyenv install --list
            pyenv global 3.6.7
@@ -162,10 +162,10 @@ before_install:
          fi
          pip install --upgrade pip
          pip install --upgrade setuptools
-  # Installing additional packages using pip as they only have
-  # outdated versions in the Travis package whitelist.
-  # terminaltables is required by parse_travis_log.py to create
-  # the build summary.
+         # Installing additional packages using pip as they only have
+         # outdated versions in the Travis package whitelist.
+         # terminaltables is required by parse_travis_log.py to create
+         # the build summary.
          pip install cython scipy matplotlib terminaltables
          pip install numpy==1.16.5
      fi

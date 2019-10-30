@@ -155,27 +155,53 @@ first NEST process and show the same membrane potential trace.
 
 ::
 
-    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
-    -70
-    -70
-    -68.1559
-    -61.9174
-    -70
-    -70
-    -70
-    -65.2054
-    -62.1583
+                  -- N E S T --
+	  Copyright (C) 2004 The NEST Initiative
 
-    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
-    -70
-    -70
-    -68.1559
-    -61.9174
-    -70
-    -70
-    -70
-    -65.2054
-    -62.1583
+	 Version: nest-2.18.0
+	 Built: Oct 16 2019 06:14:48
+
+	 This program is provided AS IS and comes with
+	 NO WARRANTY. See the file LICENSE for details.
+
+	 Problems or suggestions?
+	   Visit https://www.nest-simulator.org
+
+	 Type 'nest.help()' to find out more about NEST.
+
+
+				  -- N E S T --
+	  Copyright (C) 2004 The NEST Initiative
+
+	 Version: nest-2.18.0
+	 Built: Oct 16 2019 06:14:48
+
+	 This program is provided AS IS and comes with
+	 NO WARRANTY. See the file LICENSE for details.
+
+	 Problems or suggestions?
+	   Visit https://www.nest-simulator.org
+
+	 Type 'nest.help()' to find out more about NEST.
+
+	2	1	-70
+	2	2	-70
+	2	3	-68.1559
+	2	4	-61.9174
+	2	5	-70
+	2	6	-70
+	2	7	-70
+	2	8	-65.2054
+	2	9	-62.1583
+	2	1	-70
+	2	2	-70
+	2	3	-68.1559
+	2	4	-61.9174
+	2	5	-70
+	2	6	-70
+	2	7	-70
+	2	8	-65.2054
+	2	9	-62.1583
 
 Receiving string messages
 -------------------------
@@ -247,54 +273,56 @@ which yields the following output:
 
 ::
 
-               -- N E S T 2 beta --
-              Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
-       Version 1.9-svn Sep 22 2010 16:50:01
+				  -- N E S T --
+	  Copyright (C) 2004 The NEST Initiative
 
-    This program is provided AS IS and comes with
-    NO WARRANTY. See the file LICENSE for details.
+	 Version: nest-2.18.0
+	 Built: Oct 16 2019 06:14:48
 
-    Problems or suggestions?
-      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
-      Mailing list: nest_user@nest-initiative.org
+	 This program is provided AS IS and comes with
+	 NO WARRANTY. See the file LICENSE for details.
 
-    Type 'nest.help()' to find out more about NEST.
+	 Problems or suggestions?
+	   Visit https://www.nest-simulator.org
 
-    Sep 23 16:09:12 Simulate [Info]:
-        Simulating 10 ms.
+	 Type 'nest.help()' to find out more about NEST.
 
-    Sep 23 16:09:12 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
 
-    Sep 23 16:09:12 music_message_in_proxy::calibrate() [Info]:
-        Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
-        ms.
+	Oct 30 08:45:31 music_message_in_proxy::calibrate() [Info]:
+		Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
+		ms.
 
-    Sep 23 16:09:12 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Oct 30 08:45:31 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:09:12 Scheduler::resume [Info]:
-        Entering MUSIC runtime with tick = 0.1 ms
+	Oct 30 08:45:31 MUSICManager::enter_runtime [Info]:
+		Entering MUSIC runtime with tick = 0.1 ms
 
-    Sep 23 16:09:12 Scheduler::resume [Info]:
-        Simulation finished.
-    [{'messages': [], 'message_times': array([], dtype=float64)}]
+	Oct 30 08:45:31 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    :
+	Oct 30 08:45:31 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([], dtype=float64), 'messages': ()},)
 
-    Sep 23 16:13:36 Simulate [Info]:
-        Simulating 10 ms.
+	.
+	.
 
-    Sep 23 16:13:36 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
+	Oct 30 08:45:31 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:13:36 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Oct 30 08:45:31 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:13:36 Scheduler::resume [Info]:
-        Simulation finished.
-    [{'messages': ['Hello', '!'], 'message_times': array([ 300.,  700.])}]
+	Oct 30 08:45:31 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([ 300.,  700.]), 'messages': ('Hello', '!')},)
 
 Receiving continuous data
 -------------------------
@@ -352,51 +380,52 @@ which yields the following output:
 
 ::
 
-               -- N E S T 2 beta --
-              Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
-       Version 1.9-svn Sep 22 2010 16:50:01
+				  -- N E S T --
+	  Copyright (C) 2004 The NEST Initiative
 
-    This program is provided AS IS and comes with
-    NO WARRANTY. See the file LICENSE for details.
+	 Version: nest-2.18.0
+	 Built: Oct 16 2019 06:14:48
 
-    Problems or suggestions?
-      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
-      Mailing list: nest_user@nest-initiative.org
+	 This program is provided AS IS and comes with
+	 NO WARRANTY. See the file LICENSE for details.
 
-    Type 'nest.help()' to find out more about NEST.
+	 Problems or suggestions?
+	   Visit https://www.nest-simulator.org
 
-    Sep 23 16:49:09 Simulate [Info]:
-        Simulating 10 ms.
+	 Type 'nest.help()' to find out more about NEST.
 
-    Sep 23 16:49:09 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
 
-    Sep 23 16:49:09 music_cont_in_proxy::calibrate() [Info]:
-        Mapping MUSIC input port 'contdata' with width=10.
+	Oct 30 08:58:16 music_cont_in_proxy::calibrate() [Info]:
+		Mapping MUSIC input port 'contdata' with width=10.
 
-    Sep 23 16:49:09 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Oct 30 08:58:16 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:49:09 Scheduler::resume [Info]:
-        Entering MUSIC runtime with tick = 0.1 ms
+	Oct 30 08:58:16 MUSICManager::enter_runtime [Info]:
+		Entering MUSIC runtime with tick = 0.1 ms
 
-    Sep 23 16:49:09 Scheduler::resume [Info]:
-        Simulation finished.
-    [array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])]
+	Oct 30 08:58:17 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    :
+	Oct 30 08:58:17 SimulationManager::run [Info]:
+		Simulation finished.
+	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)
 
-    Sep 23 16:47:24 Simulate [Info]:
-        Simulating 10 ms.
+	.
+	.
 
-    Sep 23 16:47:24 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
+	Oct 30 08:58:17 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:47:24 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Oct 30 08:58:17 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:47:24 Scheduler::resume [Info]:
-        Simulation finished.
-    [array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])]
-
+	Oct 30 08:58:17 SimulationManager::run [Info]:
+		Simulation finished.
+	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)

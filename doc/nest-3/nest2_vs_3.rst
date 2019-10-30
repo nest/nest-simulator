@@ -19,7 +19,7 @@ NEST 2.X vs. NEST 3.0 conversion reference guide
 
 .. seealso::
 
-  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <nest3_overview>`
+  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
 
 .. _node_ref:
 

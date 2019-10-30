@@ -32,14 +32,13 @@ In NEST 3.0, when you create a population with
 connect two populations, you provide ``nest.Connect()`` with two
 populations in the form of GIDCollections.
 But instead of working with lists of GIDs you are working with
-GIDCollections.
+GIDCollections. For more information on GIDcollections for SLI and PyNEST see our :doc:`../nest-3/GIDcollections` page.
 
 
-.. pull-quote::
+.. note::
 
-   In **many use cases**, the addition of GIDCollections requires **no changes** to the
-   scripts.
-
+   In **many use cases**, you will not need to make any changes to your scripts in NEST 3.0, unless you have used
+   topology or subnets.
 
 GIDCollections are compact and efficient containers containing the global
 ID representations of nodes.

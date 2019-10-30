@@ -49,7 +49,6 @@ extern const Name box;
 extern const Name center;
 extern const Name circular;
 extern const Name connection_type;
-extern const Name depth;
 extern const Name edge_wrap;
 extern const Name elements;
 extern const Name ellipsoidal;

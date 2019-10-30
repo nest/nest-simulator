@@ -41,7 +41,6 @@ const Name box( "box" );
 const Name center( "center" );
 const Name circular( "circular" );
 const Name connection_type( "connection_type" );
-const Name depth( "depth" );
 const Name edge_wrap( "edge_wrap" );
 const Name elements( "elements" );
 const Name ellipsoidal( "ellipsoidal" );

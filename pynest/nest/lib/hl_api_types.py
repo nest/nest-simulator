@@ -415,6 +415,17 @@ class GIDCollection(object):
             raise ValueError('{} is not in GIDCollection'.format(gid))
         return index
 
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, attr, value):
+        # `_datum` is the only property of GIDCollection that should not be
+        # interpreted as a property of the model
+        if attr == '_datum':
+            super().__setattr__(attr, value)
+        else:
+            self.set({attr: value})
+
 
 class ConnectomeIterator(object):
     """

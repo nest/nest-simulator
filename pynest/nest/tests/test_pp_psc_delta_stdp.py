@@ -47,17 +47,32 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         nest.Connect(nrn_pre, nrn_post1 + nrn_post2,
                      syn_spec={'synapse_model': 'stdp_synapse', 'weight': w_0})
 
+        conn1 = nest.GetConnections(nrn_pre, nrn_post1)
+        conn2 = nest.GetConnections(nrn_pre, nrn_post2)
+        print(conn1)
+        print(conn2)
+
         sg_pre = nest.Create('spike_generator')
         nest.SetStatus(sg_pre,
                        {'spike_times': np.arange(Dt, nsteps * Dt, 10. * Dt)})
         nest.Connect(sg_pre, nrn_pre)
 
+        w1 = np.zeros(nsteps+1)
+        w2 = np.zeros(nsteps+1)
+        w1[0] = nest.GetStatus(conn1, keys=['weight'])[0][0]
+        w2[0] = nest.GetStatus(conn2, keys=['weight'])[0][0]
+
         for i in range(nsteps):
             nest.Simulate(Dt)
+            w1[i+1] = nest.GetStatus(conn1, keys=['weight'])[0][0]
+            w2[i+1] = nest.GetStatus(conn2, keys=['weight'])[0][0]
+
+        self.assertEqual(list(w1), list(w2))
 
         archiver_length1 = nrn_post1.get('archiver_length')
         archiver_length2 = nrn_post2.get('archiver_length')
         print(archiver_length1)
+        print(archiver_length2)
         self.assertEqual(archiver_length1, archiver_length2)
 
 

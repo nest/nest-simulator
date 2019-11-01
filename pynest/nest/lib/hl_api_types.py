@@ -191,9 +191,6 @@ class GIDCollection(object):
             gc = sli_func('cvgidcollection', data)
             self._datum = gc._datum
 
-        # Spatial values for layers.
-        super(GIDCollection, self).__setattr__('spatial', None)
-
     def __iter__(self):
         return GIDCollectionIterator(self)
 
@@ -243,13 +240,6 @@ class GIDCollection(object):
 
     def __repr__(self):
         return sli_func('pcvs', self._datum)
-
-    def set_spatial(self):
-        """
-        set spatial data to self.spatial
-        """
-        spatial_metadata = sli_func('GetMetadata', self._datum)
-        super(GIDCollection, self).__setattr__('spatial', spatial_metadata)
 
     def get(self, *params, **kwargs):
         """
@@ -416,6 +406,11 @@ class GIDCollection(object):
         return index
 
     def __getattr__(self, attr):
+        if attr == 'spatial':
+            metadata = sli_func('GetMetadata', self._datum)
+            val = metadata if metadata else None
+            super().__setattr__(attr, val)
+            return self.spatial
         return self.get(attr)
 
     def __setattr__(self, attr, value):

@@ -434,15 +434,15 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.get() )
-  {
-    throw KernelException( "The GIDCollection has invalid metadata." );
-  }
-
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-  meta->get_status( dict );
 
-  ( *dict )[ names::network_size ] = gc->size();
+  //return empty dict if GC does not have metadata
+  if ( meta.get() )
+  {
+    meta->get_status( dict );
+
+    ( *dict )[ names::network_size ] = gc->size();
+  }
 
   i->OStack.pop();
   i->OStack.push( dict );

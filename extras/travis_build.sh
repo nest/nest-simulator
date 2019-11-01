@@ -51,9 +51,7 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
-      CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
+   if [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.7/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.7/include/python3.6m/"
    fi
    if [[ $OSTYPE = darwin* ]]; then

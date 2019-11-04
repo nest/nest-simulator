@@ -629,8 +629,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
         {
           const index syn_id = spike_data.get_syn_id();
           const index lcid = spike_data.get_lcid();
-          const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
-          se.set_sender_node_id( source_node_id );
 
           kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
         }
@@ -648,8 +646,6 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
           if ( it->get_tid() == tid )
           {
             const index lcid = it->get_lcid();
-            const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
-            se.set_sender_node_id( source_node_id );
 
             kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
           }

@@ -1076,15 +1076,14 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::indegree ].datum() );
   if ( pd )
   {
-    indegree_ = pd->get();
+    indegree_ = *pd;
     // TODO: Checks of parameter range
   }
   else
   {
-    // TODO: Is it easier to only accept parameters?
     // Assume indegree is a scalar
     const long value = ( *conn_spec )[ names::indegree ];
-    indegree_ = new ConstantParameter( value );
+    indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
     if ( not allow_multapses_ )
@@ -1245,15 +1244,15 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
   if ( pd )
   {
-    outdegree_ = pd->get();
+    outdegree_ = *pd;
     // TODO: Checks of parameter range
   }
   else
   {
-    // TODO: Is it easier to only accept parameters?
     // Assume outdegree is a scalar
     const long value = ( *conn_spec )[ names::outdegree ];
-    outdegree_ = new ConstantParameter( value );
+
+    outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
 
     // verify that outdegree is not larger than target population if multapses
     // are disabled
@@ -1548,20 +1547,18 @@ nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   if ( pd )
   {
-    p_ = pd->get();
+    p_ = *pd;
     // TODO: Checks of parameter range
   }
   else
   {
-    // TODO: Is it easier to only accept parameters?
     // Assume p is a scalar
     const double value = ( *conn_spec )[ names::p ];
     if ( value < 0 or 1 < value )
     {
       throw BadProperty( "Connection probability 0 <= p <= 1 required." );
     }
-    // TODO: delete parameter in destructor?
-    p_ = new ConstantParameter( value );
+    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
   }
 }
 

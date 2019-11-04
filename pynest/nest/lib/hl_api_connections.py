@@ -436,14 +436,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Example NEST parametertypes
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - nest.random.uniform(min, max)
-    - nest.random.normal(loc, scale)
+    - nest.random.normal(mean, std)
     - nest.math.cos(nest.Parameter)
     - nest.spatial.distance
-    - nest.distribution.exponential(nest.Parameter, a, tau)
+    - nest.distribution.exponential(nest.Parameter, beta)
 
     Distributed parameters can also be initialised with a dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
-    any distribution-specific parameters (e.g. 'mu' and 'sigma').
+    any distribution-specific parameters (e.g. 'mean' and 'std').
 
     To see all available distributions, run:
     nest.ll_api.sli_run('rdevdict info')
@@ -453,12 +453,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'normal' with 'mu', 'sigma'
-    - 'normal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'lognormal' with 'mu', 'sigma'
-    - 'lognormal_clipped' with 'mu', 'sigma', 'low', 'high'
+    - 'normal' with 'mean', 'std'
+    - 'lognormal' with 'mean', 'std'
+    - 'exponential' with 'beta'
     - 'uniform' with 'low', 'high'
-    - 'uniform_int' with 'low', 'high'
 
     Example syn-spec choices
     ~~~~~~~~~~~~~~~~~~~~~~~~~

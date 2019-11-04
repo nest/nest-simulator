@@ -105,16 +105,16 @@ Parameters can be used to set node and connection parameters.
 
 | NEST 2.x | NEST 3.0                                                     |
 | -------- | ------------------------------------------------------------ |
-|          | `nest.random.exponential(scale=1.0)`<br /><br />returns `nest.Parameter` |
-|          | `nest.random.lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None)`<br /><br />returns `nest.Parameter` |
-|          | `nest.random.normal(loc=0.0, scale=1.0, min=None, max=None, redraw=False)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.exponential(beta=1.0)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.lognormal(mean=0.0, std=1.0)`<br /><br />returns `nest.Parameter` |
+|          | `nest.random.normal(mean=0.0, std=1.0)`<br /><br />returns `nest.Parameter` |
 |          | `nest.random.uniform(min=0.0, max=1.0)`<br /><br />returns `nest.Parameter` |
 
 **spatial**
 
 | NEST 2.x | NEST 3.0                                                     |
 | -------- | ------------------------------------------------------------ |
-|          | `nest.spatial.dimension_distance.x`<br /><br />`nest.spatial.dimension_distance.y`<br /><br />`nest.spatial.dimension_distance.z`<br /><br />returns `nest.Parameter` |
+|          | `nest.spatial.distance.x`<br /><br />`nest.spatial.distance.y`<br /><br />`nest.spatial.distance.z`<br /><br />returns `nest.Parameter` |
 |          | `nest.spatial.distance`<br /><br />returns `nest.Parameter`  |
 |          | `nest.spatial.free(pos, extent=None, edge_wrap=False, num_dimensions=None)`<br /><br />returns `nest.Parameter` |
 |          | `nest.spatial.grid(rows, columns, depth=None, center=None, extent=None, edge_wrap=False)`<br /><br />returns `nest.Parameter` |
@@ -140,10 +140,10 @@ Parameters can be used to set node and connection parameters.
 
 | NEST 2.x | NEST 3.0                                                     |
 | -------- | ------------------------------------------------------------ |
-|          | `nest.distributions.exponential(nest.Parameter, a=1.0, tau=1.0)` |
-|          | `nest.distributions.gaussian(nest.Parameter, p_center=1.0, mean=0.0, std_deviation=1.0)` |
-|          | `nest.distributions.gaussian2D(nest.Parameter, y, p_center=1.0, mean_x=0.0, mean_y=0.0, std_deviation_x=1.0,std_deviation_y=1.0, rho=0.0)` |
-|          | `nest.distributions.gamma(nest.Parameter, alpha=1.0, theta=1.0)` |
+|          | `nest.spatial_distributions.exponential(nest.Parameter, beta=1.0)` |
+|          | `nest.spatial_distributions.gaussian(nest.Parameter, mean=0.0, std=1.0)` |
+|          | `nest.spatial_distributions.gaussian2D(nest.Parameter, nest.Parameter, mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0)` |
+|          | `nest.spatial_distributions.gamma(nest.Parameter, kappa=1.0)` |
 
 
 
@@ -272,7 +272,7 @@ When `output` is given, the return value is given in the form of the output spec
 
 **Syntax `set()`:**
 
-`nodes.set(parameter_name, parameter_value)`  
+`nodes.set(parameter_name, parameter_value)`
 
 `nodes.set(parameter_name, [parameter_val_1, parameter_val_2, ... , parameter_val_n])`
 
@@ -328,9 +328,9 @@ print(conns.get(['source', 'weight']))
 
 **spatial**
 
-- `nest.spatial.dimension_distance.x`
-- `nest.spatial.dimension_distance.y`
-- `nest.spatial.dimension_distance.x`
+- `nest.spatial.distance.x`
+- `nest.spatial.distance.y`
+- `nest.spatial.distance.x`
 - `nest.spatial.distance`
 - `nest.grid()`
 - `nest.free()`
@@ -350,8 +350,7 @@ print(conns.get(['source', 'weight']))
 
 **distributions**
 
-- `nest.distributions.exponential()`
-- `nest.distributions.gaussian()`
-- `nest.distributions.gaussian2D()`
-- `nest.distributions.gamma()`
-
+- `nest.spatial_distributions.exponential()`
+- `nest.spatial_distributions.gaussian()`
+- `nest.spatial_distributions.gaussian2D()`
+- `nest.spatial_distributions.gamma()`

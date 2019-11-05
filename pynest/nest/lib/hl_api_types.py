@@ -191,9 +191,6 @@ class GIDCollection(object):
             gc = sli_func('cvgidcollection', data)
             self._datum = gc._datum
 
-        # Spatial values for layers.
-        super(GIDCollection, self).__setattr__('spatial', None)
-
     def __iter__(self):
         return GIDCollectionIterator(self)
 
@@ -243,13 +240,6 @@ class GIDCollection(object):
 
     def __repr__(self):
         return sli_func('pcvs', self._datum)
-
-    def set_spatial(self):
-        """
-        set spatial data to self.spatial
-        """
-        spatial_metadata = sli_func('GetMetadata', self._datum)
-        super(GIDCollection, self).__setattr__('spatial', spatial_metadata)
 
     def get(self, *params, **kwargs):
         """
@@ -414,6 +404,22 @@ class GIDCollection(object):
         if index == -1:
             raise ValueError('{} is not in GIDCollection'.format(gid))
         return index
+
+    def __getattr__(self, attr):
+        if attr == 'spatial':
+            metadata = sli_func('GetMetadata', self._datum)
+            val = metadata if metadata else None
+            super().__setattr__(attr, val)
+            return self.spatial
+        return self.get(attr)
+
+    def __setattr__(self, attr, value):
+        # `_datum` is the only property of GIDCollection that should not be
+        # interpreted as a property of the model
+        if attr == '_datum':
+            super().__setattr__(attr, value)
+        else:
+            self.set({attr: value})
 
 
 class ConnectomeIterator(object):
@@ -833,6 +839,9 @@ class Parameter(object):
                 P.GetValue()
         """
         return sli_func("GetValue", self._datum)
+
+    def is_spatial(self):
+        return sli_func('ParameterIsSpatial', self._datum)
 
     def apply(self, spatial_gc, positions=None):
         if positions is None:

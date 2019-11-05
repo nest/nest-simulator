@@ -199,10 +199,10 @@ class StructralPlasticityExample:
             }
         })
 
-    def create_nodes(self):
-
 ####################################################################################
 # Now we assign the growth curves to the corresponding synaptic elements
+
+    def create_nodes(self):
 
         synaptic_elements = {
             'Den_ex': self.growth_curve_e_e,
@@ -243,7 +243,6 @@ class StructralPlasticityExample:
         nest.Connect(noise, self.nodes_i, 'all_to_all',
                      {'weight': self.psc_ext, 'delay': 1.0})
 
-
 ####################################################################################
 # In order to save the amount of average calcium concentration in each
 # population through time we create the function ``record_ca``. Here we use the
@@ -256,7 +255,6 @@ class StructralPlasticityExample:
 
         ca_i = nest.GetStatus(self.nodes_i, 'Ca'),  # Calcium concentration
         self.mean_ca_i.append(numpy.mean(ca_i))
-
 
 ####################################################################################
 # In order to save the state of the connectivity in the network through time
@@ -273,7 +271,6 @@ class StructralPlasticityExample:
                                             for neuron in syn_elems_e))
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
                                             for neuron in syn_elems_i))
-
 
 ####################################################################################
 # We define a function to plot the recorded values
@@ -302,7 +299,6 @@ class StructralPlasticityExample:
         ax1.legend(loc=1)
         ax2.legend(loc=4)
         pl.savefig('StructuralPlasticityExample.eps', format='eps')
-
 
 ####################################################################################
 # It is time to specify how we want to perform the simulation. In this

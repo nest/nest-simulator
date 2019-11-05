@@ -394,6 +394,12 @@ get_value( const ParameterDatum& param )
   return param->value( rng, nullptr );
 }
 
+bool
+is_spatial( const ParameterDatum& param )
+{
+  return param->is_spatial();
+}
+
 std::vector< double >
 apply( const ParameterDatum& param, const GIDCollectionDatum& gc )
 {

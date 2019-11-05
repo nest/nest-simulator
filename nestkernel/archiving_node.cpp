@@ -48,8 +48,7 @@ nest::Archiving_Node::Archiving_Node()
   , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
-  , max_delay_( -1.0 )
-  , trace_( 0. )
+  , max_delay_( 0 )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -129,12 +128,16 @@ nest::Archiving_Node::get_K_value( double t )
 }
 
 void
-nest::Archiving_Node::get_K_values( double t, double& K_value, double& triplet_K_value )
+nest::Archiving_Node::get_K_values( double t,
+  double& K_value,
+  double& nearest_neighbor_K_value,
+  double& triplet_K_value )
 {
   // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
     triplet_K_value = triplet_Kminus_;
+    nearest_neighbor_K_value = Kminus_;
     K_value = Kminus_;
     return;
   }
@@ -149,6 +152,7 @@ nest::Archiving_Node::get_K_values( double t, double& K_value, double& triplet_K
       triplet_K_value =
         ( history_[ i ].triplet_Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
       K_value = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      nearest_neighbor_K_value = std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ );
       return;
     }
     --i;
@@ -157,6 +161,7 @@ nest::Archiving_Node::get_K_values( double t, double& K_value, double& triplet_K
   // this case occurs when the trace was requested at a time precisely at or
   // before the first spike in the history
   triplet_K_value = 0.0;
+  nearest_neighbor_K_value = 0.0;
   K_value = 0.0;
 }
 

@@ -178,7 +178,15 @@ public:
    */
   std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
 
+  /**
+   * Check if the Parameter is based on spatial properties.
+   * @returns true if the Parameter is based on spatial properties, false otherwise.
+   */
+  bool is_spatial() const;
+
 protected:
+  bool parameter_is_spatial_{ false };
+
   Node* gid_to_node_ptr_( const index, const thread ) const;
 };
 
@@ -285,23 +293,23 @@ public:
   NormalParameter( const DictionaryDatum& d )
     : Parameter( d )
     , mean_( 0.0 )
-    , sigma_( 1.0 )
+    , std_( 1.0 )
     , rdev()
   {
     updateValue< double >( d, names::mean, mean_ );
-    updateValue< double >( d, names::sigma, sigma_ );
-    if ( sigma_ <= 0 )
+    updateValue< double >( d, names::std, std_ );
+    if ( std_ <= 0 )
     {
       throw BadProperty(
         "nest::NormalParameter: "
-        "sigma > 0 required." );
+        "std > 0 required." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return mean_ + rdev( rng ) * sigma_;
+    return mean_ + rdev( rng ) * std_;
   }
 
   Parameter*
@@ -311,7 +319,7 @@ public:
   }
 
 private:
-  double mean_, sigma_;
+  double mean_, std_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -329,24 +337,24 @@ public:
    */
   LognormalParameter( const DictionaryDatum& d )
     : Parameter( d )
-    , mu_( 0.0 )
-    , sigma_( 1.0 )
+    , mean_( 0.0 )
+    , std_( 1.0 )
     , rdev()
   {
-    updateValue< double >( d, names::mu, mu_ );
-    updateValue< double >( d, names::sigma, sigma_ );
-    if ( sigma_ <= 0 )
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::std, std_ );
+    if ( std_ <= 0 )
     {
       throw BadProperty(
         "nest::LognormalParameter: "
-        "sigma > 0 required." );
+        "std > 0 required." );
     }
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return std::exp( mu_ + rdev( rng ) * sigma_ );
+    return std::exp( mean_ + rdev( rng ) * std_ );
   }
 
   Parameter*
@@ -356,7 +364,7 @@ public:
   }
 
 private:
-  double mu_, sigma_;
+  double mean_, std_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -373,15 +381,15 @@ public:
    */
   ExponentialParameter( const DictionaryDatum& d )
     : Parameter( d )
-    , scale_( 1.0 )
+    , beta_( 1.0 )
   {
-    updateValue< double >( d, names::scale, scale_ );
+    updateValue< double >( d, names::beta, beta_ );
   }
 
   double
   value( librandom::RngPtr& rng, Node* ) const override
   {
-    return scale_ * ( -std::log( 1 - rng->drand() ) );
+    return beta_ * ( -std::log( 1 - rng->drand() ) );
   }
 
   Parameter*
@@ -391,7 +399,7 @@ public:
   }
 
 private:
-  double scale_;
+  double beta_;
 };
 
 
@@ -414,6 +422,7 @@ public:
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
+    parameter_is_spatial_ = true;
     bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
     if ( not dimension_specified )
     {
@@ -443,19 +452,7 @@ public:
   double
   value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
   {
-    switch ( synaptic_endpoint_ )
-    {
-    case 0:
-      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
-    case 1:
-    {
-      Node* source = gid_to_node_ptr_( sgid, target_thread );
-      return get_node_pos_( rng, source );
-    }
-    case 2:
-      return get_node_pos_( rng, target );
-    }
-    throw KernelException( "Wrong synaptic_endpoint_." );
+    throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
   }
 
   double
@@ -502,6 +499,7 @@ public:
     : Parameter( d )
     , dimension_( 0 )
   {
+    parameter_is_spatial_ = true;
     updateValue< long >( d, names::dimension, dimension_ );
     if ( dimension_ < 0 )
     {
@@ -515,7 +513,11 @@ public:
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
 
-  double value( librandom::RngPtr&, index, Node*, thread ) const override;
+  double
+  value( librandom::RngPtr&, index, Node*, thread ) const override
+  {
+    throw KernelException( "Spatial distance parameter can only be used when using ConnectLayers." );
+  }
 
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
@@ -548,6 +550,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -558,6 +561,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~ProductParameter() override
@@ -617,6 +621,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -627,6 +632,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~QuotientParameter() override
@@ -686,6 +692,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -696,6 +703,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~SumParameter() override
@@ -755,6 +763,7 @@ public:
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -765,6 +774,7 @@ public:
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   ~DifferenceParameter() override
@@ -823,6 +833,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -832,6 +843,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~ConverseParameter() override
@@ -907,6 +919,7 @@ public:
     {
       throw BadParameter( "Comparator specification has to be in the range 0-5." );
     }
+    parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
   }
 
   /**
@@ -1003,6 +1016,7 @@ public:
     , if_true_( if_true.clone() )
     , if_false_( if_false.clone() )
   {
+    parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
   }
 
   /**
@@ -1014,6 +1028,7 @@ public:
     , if_true_( p.if_true_->clone() )
     , if_false_( p.if_false_->clone() )
   {
+    parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
   }
 
   ~ConditionalParameter() override
@@ -1094,6 +1109,7 @@ public:
     , p_( p.clone() )
     , other_value_( other_value )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1104,6 +1120,7 @@ public:
     , p_( p.p_->clone() )
     , other_value_( p.other_value_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~MinParameter() override
@@ -1162,6 +1179,7 @@ public:
     , p_( p.clone() )
     , other_value_( other_value )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1172,6 +1190,7 @@ public:
     , p_( p.p_->clone() )
     , other_value_( p.other_value_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~MaxParameter() override
@@ -1237,6 +1256,7 @@ public:
     , max_( p.max_ )
     , max_redraws_( p.max_redraws_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~RedrawParameter() override
@@ -1282,6 +1302,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1347,6 +1368,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1356,6 +1378,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~SinParameter() override
@@ -1411,6 +1434,7 @@ public:
     : Parameter( p )
     , p_( p.clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1420,6 +1444,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~CosParameter() override
@@ -1477,6 +1502,7 @@ public:
     , p_( p.clone() )
     , exponent_( exponent )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   /**
@@ -1487,6 +1513,7 @@ public:
     , p_( p.p_->clone() )
     , exponent_( p.exponent_ )
   {
+    parameter_is_spatial_ = p_->is_spatial();
   }
 
   ~PowParameter() override
@@ -1547,6 +1574,7 @@ public:
     , px_( px.clone() )
     , py_( py.clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   DimensionParameter( const Parameter& px, const Parameter& py, const Parameter& pz )
@@ -1555,6 +1583,7 @@ public:
     , py_( py.clone() )
     , pz_( pz.clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   /**
@@ -1567,6 +1596,7 @@ public:
     , py_( p.py_->clone() )
     , pz_( p.pz_->clone() )
   {
+    parameter_is_spatial_ = true;
   }
 
   ~DimensionParameter() override
@@ -1718,6 +1748,12 @@ inline Parameter*
 Parameter::dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const
 {
   return new DimensionParameter( *this, y_parameter, z_parameter );
+}
+
+inline bool
+Parameter::is_spatial() const
+{
+  return parameter_is_spatial_;
 }
 
 } // namespace nest

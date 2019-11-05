@@ -43,6 +43,12 @@ try:
 except ImportError:
     HAVE_PYDOT = False
 
+try:
+    import pandas
+    HAVE_PANDAS = True
+except ImportError:
+    HAVE_PANDAS = False
+
 
 class VisualizationTestCase(unittest.TestCase):
     def nest_tmpdir(self):
@@ -153,9 +159,10 @@ class VisualizationTestCase(unittest.TestCase):
         nest.raster_plot.from_file_numpy([filename])
         self.spike_detector_raster_verify(sd_ref)
 
-        # Test from_file_pandas
-        nest.raster_plot.from_file_pandas([filename])
-        self.spike_detector_raster_verify(sd_ref)
+        if HAVE_PANDAS:
+            # Test from_file_pandas
+            nest.raster_plot.from_file_pandas([filename])
+            self.spike_detector_raster_verify(sd_ref)
 
         # Test extract_events
         all_extracted = nest.raster_plot.extract_events(data)

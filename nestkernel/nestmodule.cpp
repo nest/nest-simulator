@@ -434,15 +434,15 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.get() )
-  {
-    throw KernelException( "The GIDCollection has invalid metadata." );
-  }
-
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-  meta->get_status( dict );
 
-  ( *dict )[ names::network_size ] = gc->size();
+  //return empty dict if GC does not have metadata
+  if ( meta.get() )
+  {
+    meta->get_status( dict );
+
+    ( *dict )[ names::network_size ] = gc->size();
+  }
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -1875,6 +1875,20 @@ NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::IsSpatial_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  auto param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  bool parameter_is_spatial = is_spatial( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( parameter_is_spatial );
+  i->EStack.pop();
+}
+
 /** @BeginDocumentation
   Name: Apply
 */
@@ -1976,6 +1990,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
   i->createcommand( "GetValue_P", &getvalue_Pfunction );
+  i->createcommand( "IsSpatial_P", &isspatial_Pfunction );
   i->createcommand( "Apply_P_D", &apply_P_Dfunction );
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 

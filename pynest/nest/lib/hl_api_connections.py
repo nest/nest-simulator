@@ -264,17 +264,28 @@ def _process_spatial_projections(conn_spec, syn_spec):
     return projections
 
 
-def _connect_layers_needed(conn_spec):
-    if conn_spec is None:
-        return False
-    rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
-    return ('mask' in conn_spec or
-            ('p' in conn_spec and not rule_is_bernoulli) or
-            'use_on_source' in conn_spec)
+def _connect_layers_needed(conn_spec, syn_spec):
+    if isinstance(conn_spec, dict):
+        # If a conn_spec entry is based on spatial properties, we must use ConnectLayers.
+        for key, item in conn_spec.items():
+            if isinstance(item, Parameter) and item.is_spatial():
+                return True
+        # We must use ConnectLayers in some additional cases.
+        rule_is_bernoulli = 'pairwise_bernoulli' in str(conn_spec['rule'])
+        if ('mask' in conn_spec or
+                ('p' in conn_spec and not rule_is_bernoulli) or
+                'use_on_source' in conn_spec):
+            return True
+    # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.
+    if isinstance(syn_spec, dict):
+        for key, item in syn_spec.items():
+            if isinstance(item, Parameter) and item.is_spatial():
+                return True
+    # If we get here, there is not need to use ConnectLayers.
+    return False
 
 
 def _connect_spatial(pre, post, projections):
-    # TODO: layers should aldready be on the stack; no need to pass them to sli_func
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
@@ -286,7 +297,8 @@ def _connect_spatial(pre, post, projections):
         return d
 
     projections = fixdict(projections)
-    sli_func('ConnectLayers', pre, post, projections)
+    sps(projections)
+    sr('ConnectLayers')
 
 
 def _connect_nonunique(syn_spec):
@@ -424,14 +436,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Example NEST parametertypes
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
     - nest.random.uniform(min, max)
-    - nest.random.normal(loc, scale)
+    - nest.random.normal(mean, std)
     - nest.math.cos(nest.Parameter)
     - nest.spatial.distance
-    - nest.distribution.exponential(nest.Parameter, a, tau)
+    - nest.distribution.exponential(nest.Parameter, beta)
 
     Distributed parameters can also be initialised with a dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
-    any distribution-specific parameters (e.g. 'mu' and 'sigma').
+    any distribution-specific parameters (e.g. 'mean' and 'std').
 
     To see all available distributions, run:
     nest.ll_api.sli_run('rdevdict info')
@@ -441,12 +453,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    - 'normal' with 'mu', 'sigma'
-    - 'normal_clipped' with 'mu', 'sigma', 'low', 'high'
-    - 'lognormal' with 'mu', 'sigma'
-    - 'lognormal_clipped' with 'mu', 'sigma', 'low', 'high'
+    - 'normal' with 'mean', 'std'
+    - 'lognormal' with 'mean', 'std'
+    - 'exponential' with 'beta'
     - 'uniform' with 'low', 'high'
-    - 'uniform_int' with 'low', 'high'
 
     Example syn-spec choices
     ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -494,7 +504,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
                         "GIDCollection")
 
     # In some cases we must connect with ConnectLayers instead.
-    if _connect_layers_needed(processed_conn_spec):
+    if _connect_layers_needed(processed_conn_spec, processed_syn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
             raise TypeError(

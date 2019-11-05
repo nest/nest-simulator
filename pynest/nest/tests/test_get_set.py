@@ -469,6 +469,47 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
                                250.0, 111.0, 250.0, 111.0, 250.0))
 
+    def test_get_attribute(self):
+        """Test get using getattr"""
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        self.assertEqual(nodes.C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
+                                     250.0, 250.0, 250.0, 250.0, 250.0))
+        self.assertEqual(nodes.global_id, tuple(range(1, 11)))
+        self.assertEqual(nodes.E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
+                                     -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
+                                     -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.t_ref, (2.0, 2.0, 2.0, 2.0, 2.0,
+                                       2.0, 2.0, 2.0, 2.0, 2.0))
+        with self.assertRaises(KeyError):
+            print(nodes.nonexistent_attribute)
+
+        self.assertIsNone(nodes.spatial)
+        spatial_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        self.assertIsNotNone(spatial_nodes.spatial)
+        spatial_reference = {'network_size': 4,
+                             'center': (0.0, 0.0),
+                             'edge_wrap': False,
+                             'extent': (1.0, 1.0),
+                             'shape': (2, 2)}
+        self.assertEqual(spatial_nodes.spatial, spatial_reference)
+
+    def test_set_attribute(self):
+        """Test set using setattr"""
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes.C_m = 100.0
+        self.assertEqual(nodes.get('C_m'), (100.0, 100.0, 100.0, 100.0, 100.0,
+                                            100.0, 100.0, 100.0, 100.0, 100.0))
+        v_reset_reference = (-85., -82., -80., -77., -75., -72., -70., -67., -65., -62.)
+        nodes.V_reset = v_reset_reference
+        self.assertEqual(nodes.get('V_reset'), v_reset_reference)
+
+        with self.assertRaises(IndexError):
+            nodes.V_reset = [-85., -82., -80., -77., -75.]
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nodes.nonexistent_attribute = 1.
+
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollectionGetSet, 'test')

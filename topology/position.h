@@ -24,11 +24,14 @@
 #define POSITION_H
 
 // C++ includes:
+#include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Includes from libnestutil:

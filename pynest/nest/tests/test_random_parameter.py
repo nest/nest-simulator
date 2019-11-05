@@ -60,35 +60,35 @@ class RandomParameterTestCase(unittest.TestCase):
     def test_normal(self):
         """Test normal distribution Parameter"""
         mean = 2.3
-        sigma = 1.7
+        std = 1.7
 
         cdf = 'norm'
-        cdf_args = (mean, sigma)
-        param = nest.random.normal(loc=mean, scale=sigma)
+        cdf_args = (mean, std)
+        param = nest.random.normal(mean=mean, std=std)
 
         self.ks_assert(param, cdf, cdf_args)
 
     def test_lognormal(self):
         """Test lognormal distribution Parameter"""
         loc = 0.  # Only for SciPy distribution
-        sigma = 0.9
-        mu = 1.7
-        scale = np.exp(mu)
+        std = 0.9
+        mean = 1.7
+        scale = np.exp(mean)
 
         cdf = 'lognorm'
-        cdf_args = (sigma, loc, scale)
-        param = nest.random.lognormal(mu=mu, sigma=sigma)
+        cdf_args = (std, loc, scale)
+        param = nest.random.lognormal(mean=mean, std=std)
 
         self.ks_assert(param, cdf, cdf_args)
 
     def test_exponential(self):
         """Test exponential distribution Parameter"""
         loc = 0.0  # Only for SciPy distribution
-        scale = 1.0
+        beta = 1.0
 
         cdf = 'expon'
-        cdf_args = (loc, scale)
-        param = nest.random.exponential(scale=scale)
+        cdf_args = (loc, beta)
+        param = nest.random.exponential(beta=beta)
 
         self.ks_assert(param, cdf, cdf_args)
 

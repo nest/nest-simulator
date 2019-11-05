@@ -927,60 +927,62 @@ position can be used. The others can only be used when connecting.
   +-----------------------------------------+-------------------------------------------------------------------------+
   | | ``nest.spatial.distance``             | | Distance between two nodes. Can only be used when connecting.         |
   +-----------------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.dimension_distance.x`` |                                                                         |
-  | | ``nest.spatial.dimension_distance.y`` | | Distance on the x, y and z axis between the source and target neuron. |
-  | | ``nest.spatial.dimension_distance.z`` | | Can only be used when connecting.                                     |
+  | | ``nest.spatial.distance.x``           |                                                                         |
+  | | ``nest.spatial.distance.y``           | | Distance on the x, y and z axis between the source and target neuron. |
+  | | ``nest.spatial.distance.z``           | | Can only be used when connecting.                                     |
   +-----------------------------------------+-------------------------------------------------------------------------+
 
 NEST provides some functions to help create distributions based on for
 example the distance between two neurons, shown in the table below. There
 are also Parameters drawing values from random distributions.
 
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  | Distribution function                | Arguments          | Function                                             |
-  +======================================+====================+======================================================+
-  |                                      |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
-  | ``nest.distributions.exponential()`` | | x,               |                                                      |
-  |                                      | | a,               |                                                      |
-  |                                      | | tau              |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      | | x,               | .. math::                                            |
-  | ``nest.distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
-  |                                      | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
-  |                                      | | std_deviation    |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | .. math::                                            |
-  |                                      | | x,               |                                                      |
-  |                                      | | y,               |    p(x) = p_{\text{center}}                          |
-  |                                      | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
-  | ``nest.distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
-  |                                      | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
-  |                                      | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
-  |                                      | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
-  |                                      | | rho              |    {2(1-\rho^2)}}                                    |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
-  | ``nest.distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
-  |                                      | | alpha,           |                                                      |
-  |                                      | | theta            |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | :math:`p\in [\text{min},\text{max})` uniformly       |
-  | ``nest.random.uniform()``            | | min,             |                                                      |
-  |                                      | | max              |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | :math:`p \in [\text{min},\text{max})` normal         |
-  |                                      | | loc,             | with given mean and :math:`\sigma`                   |
-  | ``nest.random.normal()``             | | scale,           |                                                      |
-  |                                      | | min,             |                                                      |
-  |                                      | | max              |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | :math:`p \in [\text{min},\text{max})` lognormal      |
-  |                                      | | mean,            | with given :math:`\mu` and :math:`\sigma`            |
-  | ``nest.random.lognormal()``          | | sigma,           |                                                      |
-  |                                      | | min,             |                                                      |
-  |                                      | | max,             |                                                      |
-  |                                      | | dimension        |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  | Distribution function                        | Arguments          | Function                                             |
+  +==============================================+====================+======================================================+
+  |                                              |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
+  | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
+  |                                              | | a,               |                                                      |
+  |                                              | | tau              |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              | | x,               | .. math::                                            |
+  | ``nest.spatial_distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
+  |                                              | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
+  |                                              | | std_deviation    |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = p_{\text{center}}                          |
+  |                                              | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
+  |                                              | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
+  |                                              | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                              | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
+  |                                              | | rho              |    {2(1-\rho^2)}}                                    |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
+  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
+  |                                              | | alpha,           |                                                      |
+  |                                              | | theta            |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | :math:`p\in [\text{min},\text{max})` uniformly       |
+  | ``nest.random.uniform()``                    | | min,             |                                                      |
+  |                                              | | max              |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | normal with given mean and :math:`\sigma`            |
+  | ``nest.random.normal()``                     | | mean,            |                                                      |
+  |                                              | | std,             |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    |                                                      |
+  | ``nest.random.exponential()``                | | beta             | exponential with a given scale, :math:`\beta`        |
+  |                                              |                    |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | :math:`p \in [\text{min},\text{max})` lognormal      |
+  |                                              | | mean,            | with given :math:`\mu` and :math:`\sigma`            |
+  | ``nest.random.lognormal()``                  | | sigma,           |                                                      |
+  |                                              | | min,             |                                                      |
+  |                                              | | max,             |                                                      |
+  |                                              | | dimension        |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
 
 .. _fig_conn4:
 
@@ -1156,7 +1158,7 @@ on the following principles:
    different extents in :math:`x`- and :math:`y`-directions this means
    that the maximum layer size is determined by the smaller extension.
 
--  ``nest.spatial.distance`` and ``nest.spatial.dimension_distance``
+-  ``nest.spatial.distance`` and its single dimension variants
    always consider the shortest distance (displacement) between driver and
    pool node.
 

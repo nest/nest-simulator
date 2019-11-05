@@ -1261,7 +1261,6 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
         plt.colorbar(img, ax=ax)
 
     if mask is not None:
-        source.set_spatial()
         periodic = source.spatial['edge_wrap']
         extent = source.spatial['extent']
         source_pos = GetPosition(source)

@@ -93,7 +93,6 @@ def Create(model, n=1, params=None, positions=None):
         if params is None:
             params = {}
         layer = sli_func('CreateLayerParams', layer_specs, params)
-        layer.set_spatial()
 
         return layer
 

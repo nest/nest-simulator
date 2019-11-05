@@ -623,10 +623,12 @@ cdef inline object sli_datum_to_object(Datum* dat):
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
 
-    # the size of dat has to be explicitly cast to int to avoid compiler warnings (#1318) during cythonization
+    # the size of dat has to be explicitly cast to int to avoid
+    # compiler warnings (#1318) during cythonization
     cdef tmp = [None] * int(dat.size())
 
-    # i and n have to be cast to size_t (unsigned long int) to avoid compiler warnings (#1318) in the for loop below
+    # i and n have to be cast to size_t (unsigned long int) to avoid
+    # compiler warnings (#1318) in the for loop below
     cdef size_t i, n
     cdef Token* tok = dat.begin()
 

@@ -340,7 +340,7 @@ public:
    * Sets flag indicating whether connection information needs to be
    * communicated.
    */
-  void set_have_connections_changed( thread tid, const bool changed );
+  void set_have_connections_changed( const thread tid, const bool changed );
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -711,7 +711,7 @@ ConnectionManager::have_connections_changed() const
 }
 
 inline void
-ConnectionManager::set_have_connections_changed( thread tid, const bool changed )
+ConnectionManager::set_have_connections_changed( const thread tid, const bool changed )
 {
   have_connections_changed_.set( tid, changed );
 }

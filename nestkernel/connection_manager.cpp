@@ -614,7 +614,7 @@ nest::ConnectionManager::connect_( Node& s,
   {
     check_primary_connections_.set( tid, true );
   }
-  if ( not check_secondary_connections_[ tid ] and not is_primary )
+  else ( not check_secondary_connections_[ tid ] and not is_primary )
   {
     check_secondary_connections_.set( tid, true );
   }

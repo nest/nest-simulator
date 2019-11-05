@@ -210,7 +210,6 @@ SPManager::disconnect_single( index sgid, Node* target, thread target_thread, Di
 {
   if ( kernel().connection_manager.have_connections_changed() )
   {
-    kernel().connection_manager.check_secondary_connections_exist();
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
       kernel().model_manager.create_secondary_events_prototypes(); // necessary before
@@ -301,7 +300,6 @@ SPManager::disconnect( GIDCollection& sources,
 {
   if ( kernel().connection_manager.have_connections_changed() )
   {
-    kernel().connection_manager.check_secondary_connections_exist();
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
       kernel().model_manager.create_secondary_events_prototypes(); // necessary before

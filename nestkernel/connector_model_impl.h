@@ -277,8 +277,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   assert( connector != 0 );
 
   // TODO: simplify: push_back should not return anything
-  Connector< ConnectionT >* vc =
-    static_cast< Connector< ConnectionT >* >( connector );
+  Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
   connector = &vc->push_back( connection );
 
   thread_local_connectors[ syn_id ] = connector;

@@ -610,12 +610,18 @@ nest::ConnectionManager::connect_( Node& s,
 
   increase_connection_count( tid, syn_id );
 
+  // We do not check has_primary_connections_ and secondary_connections_exist_
+  // directly as this led to worse performance on the supercomputer Piz Daint.
   if ( not check_primary_connections_[ tid ] and is_primary )
   {
+#pragma omp atomic write
+    has_primary_connections_ = true;
     check_primary_connections_.set( tid, true );
   }
-  else ( not check_secondary_connections_[ tid ] and not is_primary )
+  else if ( not check_secondary_connections_[ tid ] and not is_primary )
   {
+#pragma omp atomic write
+    secondary_connections_exist_ = true;
     check_secondary_connections_.set( tid, true );
   }
 }
@@ -1565,19 +1571,11 @@ nest::ConnectionManager::resize_connections()
 void
 nest::ConnectionManager::sync_has_primary_connections()
 {
-  has_primary_connections_ = check_primary_connections_.any_true();
-#pragma omp barrier
-
-#pragma omp single
   has_primary_connections_ = kernel().mpi_manager.any_true( has_primary_connections_ );
 }
 
 void
 nest::ConnectionManager::check_secondary_connections_exist()
 {
-  secondary_connections_exist_ = check_secondary_connections_.any_true();
-#pragma omp barrier
-
-#pragma omp single
   secondary_connections_exist_ = kernel().mpi_manager.any_true( secondary_connections_exist_ );
 }

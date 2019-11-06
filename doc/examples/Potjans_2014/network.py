@@ -242,7 +242,7 @@ class Network:
                         # Find the vp for the GID and place the GID in correct list
                         vp = info['vp']
                         vp_lists[vp].append(info['global_id'])
-    
+
             for vp, vps_gids in enumerate(vp_lists):
                 # Set random membrane portential
                 nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(

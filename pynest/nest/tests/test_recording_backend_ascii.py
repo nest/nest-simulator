@@ -33,7 +33,10 @@ class TestRecordingBackendASCII(unittest.TestCase):
         mm_params = {"record_to": "ascii", "record_from": ["V_m"]}
         mm = nest.Create("multimeter", params=mm_params)
 
-        os.remove(mm.get("filenames")[0])
+        try:
+            os.remove(mm.get("filenames")[0])
+        except FileNotFoundError:
+            pass
 
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
         nest.Simulate(100)

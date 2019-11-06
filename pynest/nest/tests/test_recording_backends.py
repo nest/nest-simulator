@@ -37,6 +37,8 @@ class TestRecordingBackends(unittest.TestCase):
         for details on test execution order.
         """
 
+        nest.ResetKernel()
+
         mm_defaults = nest.GetDefaults("multimeter")
         rb_properties = ["record_to", "time_in_steps"]
         rb_defaults_initial = [mm_defaults[k] for k in rb_properties]

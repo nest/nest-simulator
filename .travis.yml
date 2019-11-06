@@ -136,7 +136,9 @@ before_install:
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo ${MATRIX_EVAL}
          eval "${MATRIX_EVAL}"
-         cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+         cp extras/install_csa-libneurosim.sh $HOME
+	 cp extras/install_music.sh $HOME
+	 cp extras/install_sionlib.sh $HOME
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools

@@ -30,7 +30,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
+import re
 
 import pip
 
@@ -141,7 +141,7 @@ breathe_default_project = "EXTRACT_MODELS"
 
 subprocess.call('doxygen', shell=True)
 
-mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -309,8 +309,6 @@ models_with_documentation = (
     "nestkernel/recording_backend_sionlib",
 )
 
-import re
-import os
 pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
 for model in models_with_documentation:
     with open("../%s.h" % model) as f:

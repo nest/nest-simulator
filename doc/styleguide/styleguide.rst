@@ -45,75 +45,14 @@ The language we use
 
 We follow spelling and grammar rules of American English, using Merriam Webster as our reference.
 
-For additional style questions or concepts, follow the Microsoft Writing Styling Guide.
+For additional style questions or concepts not covered here, we recommend the Microsoft Writing Styling Guide.
 
 The markup language we use is reStructuredText. This includes documentation blocks in files written in Python and cpp.
 
 We write in plain (global) English, and avoid slang or jargon that is unnecessary.
 
-We do, however, use terminology appropriate to NEST and neuroscience when specific and exact terms are needed. But explanations or references
-are provided for clarity.
-
-
-Headings and subheadings
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Headings and subheadings should describe the purpose of the section.
-
-Begin with a descriptive verb (avoid vague verbs like get or use) or begin with `How to ...`
-
-Heading should explain the section in a short phrase.
-
-Use the imperative not the gerund ('ing') form of verbs.
-
-Avoid section names like `Introduction` or `Part 1`.
-
-One word subheadings are fine if section is short and the meaning is clear.
-
-Headings and subheadings should always begin with a capital but all other words
-should be lower case (except proper nouns).
-
-
-::
-
- Good examples: Create your first neural network
-                Set up and configure MUSIC to work with NEST
-                Add a device to your network
-
- Bad examples:  Start here.
-                MUSIC and NEST
-                Device setup
-
-
-Numbers
-~~~~~~~~~
-
-Numbers should be spelled out if they begin a sentence. In most cases, however, the numeral/ordinal is preferred.
-
-For additinal mathematical notation, use the math role or directive (see below).
-
-We use the period for the decimal point. (`57.45`)
-
-The thousand seperator is the comma except when showing a code example
-
-Example:
-
-   We have over 5,000 connections.
-
-   The number of connections is ``x = 5000``
-
-Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`)  (see glossary).
-
-Lists
-~~~~~~~
-
-User ordered lists for step-by-step instructions only. Do not have more that 2 related actions in one step.
-
-Use bullet lists to improve clarity of long lists (more than 5 items).
-
-If bullet/ordered list text is a complete sentence, use proper punctuation and end with period.
-
-If bullet/ordere list text is an incomplete sentence, do not end with period.
+We do, however, use terminology appropriate to NEST and neuroscience when specific and exact terms are needed, which is often. But explanations or references
+should be provided for clarity in introductory texts.
 
 Active voice
 ~~~~~~~~~~~~~~
@@ -125,56 +64,6 @@ to use active voice.
 
 Mix it up! Use both styles.
 
-When Writing about people
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Avoid gendered terms (NOT police man BUT police officer).
-
-Instead of "guys" or "girls" use inclusive language such as everyone, all, members, folks.
-
-"They" is an acceptable singular 3rd person pronoun (See www.merriam-webster.com/dictionary/they)
-
-Abbreviation and acronyms
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Spell out acronyms on first appearance on each page or article it appears
-For example: Random number generator (rng)
-
-If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell it out
-
-
-Commas
-~~~~~~~
-
-Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet list if your list is more than 5 items.
-
-Use the comma as separator for thousands (37,000).
-
-To join two sentences into one, you must use a conjuction (and, or , but) along with the comma. Or use the semicolon.
-
-Conjunctions (For, And, Nor, But, Or, Yet, So)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can use these to start a sentence if clarity is not impeded.
-(There is **no rule** against doing this)
-
-Ampersand
-~~~~~~~~~~~~
-
-Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's)
-
-
-Capitalization
-~~~~~~~~~~~~~~~
-
-Capitalize first word of heading, but use lower case for the rest.
-
-Capitalize first word in bullet.
-
-Capitalize proper nouns and follow company policy in naming conventions (e.g., macOS, LaTeX).
-
-
-
 Types of formatting to use in writing
 --------------------------------------
 
@@ -182,35 +71,34 @@ We use specific formatting marks to help readers scan through and find what they
 as provide references to important terms.
 
 
-Monospace \``double back tick\``
+\``Double back tick\``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The use of double back ticks is to provide an indicator for terms that will become links to reference pages or
+to highlight syntax constructs.
 
 Use the double back tick for:
 
-- Any term that should become a link to a another page
-- Any term that you want to demonstrate the correct syntax
-
-- Terms to be linked:
 
   - objects/functions
   - model names
   - important vocabulary
-
-
-.. note::
-
-   A script will search through the files to replace the above terms with the correct syntax that will provide a link to the appropriate
-   source.
-
-- Terms to demonstrate syntax
-
   - **complete** function call (e.g., ``nest.Create("iaf_psc_alpha")`` NOT (``("iaf_psc_alpha")`` )
   - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
   - Key value pairs (``{key: value}``)
   - Variables with assigned values ``x = 10``
 
+
+.. note::
+
+   We have a script that will  replace the terms with the correct syntax for creating a link to to the appropriate
+   source.
+
+
 \`Single back tick\`
 ~~~~~~~~~~~~~~~~~~~~~
+
+Use single back ticks for
 
 - Keys
 - Parameters
@@ -245,26 +133,17 @@ A brief look into reStructuredText markup
 
 .. note::
 
-   reStructuredText is sensitive to indentation. A single space should be always be between between text and headings,
-   tables, reference labels, and directives  Some characters have assigned special meanings. Use the '\\' to use the literal
-   character.
+   reStructuredText is sensitive to indentation. A single newline should always be between any text and headings,
+   tables, reference labels, or directives.
 
 How to write code or code snippets in reStructuredText
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-For writing Python code, you can use the double colon  `::`
+For writing Python code, you can use the double colon
 
 
  \::
-
-    python code here
-
-    x = 1
-
-    for i in line:
-        x = i
-        print(thing.x)
 
 Rendered as
 
@@ -284,13 +163,6 @@ For other code styles use the code-block directive (you can also use this one fo
 
 \   .. code-block:: cpp
 
-
-       int main()
-       {
-         cout << "Hello, World!";
-         return 0;
-       }
-
 Rendered as
 
     .. code-block:: cpp
@@ -302,7 +174,7 @@ Rendered as
        }
 
 
-For input/output examples use the following
+For input/output examples use the following syntax
 
 ::
 
@@ -314,7 +186,7 @@ Directives
 ~~~~~~~~~~~
 
 
-This is not a complete reference to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
+This is not a complete guide to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
 or `Docutils section on directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
 
 Include images in text
@@ -448,11 +320,11 @@ Rendered as
    :doc:`custom name <file>`
 
 
-For referencing rst files, sections, or figures
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+For referencing  sections, figures, or arbitrary places in files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also reference arbitrary places in a file, but you must insert a custom name (second option) to create
-a link.
+For section headings, you can use either of the two examples below. But to reference figures or arbitrary places in a file,
+you must include a custom name (second example) in the reference for it to work.
 
 ::
 
@@ -503,7 +375,7 @@ Rendered as
        word
         here is definition
 
-For models to link to cpp model info
+To link to cpp model info
 
 ::
 
@@ -564,5 +436,128 @@ Please ensure your reference follows the following guidelines:
 
  .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the evolution
         of gigantism. Biological Reviews. 86(1):117-155. https://doi.org/10.1111/j.1469-185X.2010.00137.x
+
+How we write . . .
+---------------------
+
+Headings and subheadings
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Headings and subheadings should describe the purpose of the section.
+
+Begin with a descriptive verb or begin with `How to ...`
+
+Heading should explain the section in a short phrase.
+
+Use the verb stem and not the gerund ('ing') form of verbs. Not 'Adding a model', but  'Add a model'.
+
+Avoid section names like `Introduction` or `Part 1`.
+
+One word subheadings are fine, if section is short and the meaning is clear.
+
+Headings and subheadings should always begin with an uppercase letter but all other words
+should be lower case (except proper nouns).
+
+
+
+
++-----------------------------------+----------------+
+| Good examples:                    | Bad examples:  |
++===================================+================+
+| Create your first neural network  | Start here     |
++-----------------------------------+----------------+
+| How to set up and configure MUSIC | MUSIC and NEST |
++-----------------------------------+----------------+
+| Add a device to your network      | Adding devices |
++-----------------------------------+----------------+
+
+
+Numbers
+~~~~~~~~~
+
+Numbers should be spelled out if they begin a sentence. In most cases, however, the numeral/ordinal format is preferred.
+
+For additinal mathematical notation, use the math role or directive (see below).
+
+We use the period for the decimal point. (`57.45`)
+
+The thousand seperator is the comma except when showing a code example
+
+   Example:
+
+   We have over 5,000 connections.
+   The number of connections is ``x = 5000``
+
+Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`)  (see glossary).
+
+Lists
+~~~~~~~
+
+Use ordered lists for step-by-step instructions only. Do not have more that 2 related actions in one step.
+
+Use bullet lists to improve clarity of long lists (more than 5 items).
+
+If bullet/ordered list text is a complete sentence, use proper punctuation and end with period.
+
+If bullet/ordered list text is an incomplete sentence, do not end with period.
+
+
+When writing about people
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Avoid gendered terms (NOT police man BUT police officer).
+
+Instead of "guys" or "girls" use inclusive language such as everyone, all, members, folks.
+
+"They" is an acceptable singular 3rd person pronoun (See www.merriam-webster.com/dictionary/they)
+
+Abbreviations and acronyms
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Spell out acronyms on first appearance on each page or article it appears
+For example: Random number generator (rng)
+
+If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell it out
+
+
+Commas
+~~~~~~~
+
+Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet list if your list is more than 5 items.
+
+Use the comma as separator for thousands (37,000).
+
+To join two sentences into one, you must use a conjuction (and, or , but) along with the comma. Or use the semicolon.
+
+Conjunctions (For, And, Nor, But, Or, Yet, So)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use these to start a sentence if clarity is not impeded.
+(There is **no rule** against doing this).
+
+Avoid using `So`, `However`, at the beginning of sentences.
+
+Ampersand
+~~~~~~~~~~~~
+
+Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's)
+
+
+Capitalization
+~~~~~~~~~~~~~~~
+
+Capitalize first word of heading, but use lower case for the rest.
+
+Capitalize first word in bullet.
+
+Capitalize proper nouns and follow company policy in naming conventions (e.g., macOS, LaTeX).
+
+
+
+Why do we have a styleguide?
+-----------------------------
+
+The styleguide was created to provide a single reference point for content creation in NEST. This helps ensure content remains clear and consistent.
+The style choices we make here are meant to follow the major trends in technical writing for software.
 
 

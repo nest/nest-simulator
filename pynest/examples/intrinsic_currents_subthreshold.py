@@ -131,10 +131,10 @@ nest.Connect(mm, nrn)
 
 for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 
-    nest.SetStatus(dc, {'amplitude': I_dep})
+    dc.amplitude = I_dep
     nest.Simulate(t_sim_dep)
 
-    nest.SetStatus(dc, {'amplitude': I_hyp})
+    dc.amplitude = I_hyp
     nest.Simulate(t_sim_hyp)
 
 ###############################################################################
@@ -146,7 +146,7 @@ for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 # returned by the multimeter. Because all NEST function return arrays,
 # we need to pick out element `0` from the result of ``GetStatus``.
 
-data = nest.GetStatus(mm)[0]['events']
+data = mm.events
 t = data['times']
 
 ###############################################################################
@@ -175,7 +175,7 @@ Vax.set_xlabel('Time [ms]')
 #   automatically shifted by the delay.
 
 conns = nest.GetConnections(dc, nrn)
-delay = conns.get('delay')[0]
+delay = conns.get('delay')
 dt = nest.GetKernelStatus('resolution')
 
 t_dc, I_dc = [0], [0]

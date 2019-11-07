@@ -39,14 +39,14 @@ time. `tau > 0` means spike2 is later than spike1
 """
 
 import nest
-from matplotlib.pylab import *
+import numpy as np
 
 
 def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
     tau_max_i = int(tau_max / h)
     tbin_i = int(tbin / h)
 
-    cross = zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
+    cross = np.zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
 
     j0 = 0
 
@@ -115,10 +115,10 @@ h = 0.1
 tau_max = 100.0  # ms correlation window
 t_bin = 10.0  # ms bin size
 
-spikes = nest.GetStatus(sd)[0]['events']['senders']
+spikes = sd.get('events', 'senders')
 
-sp1 = find(spikes[:] == 4)
-sp2 = find(spikes[:] == 5)
+sp1 = spikes[spikes == 4]
+sp2 = spikes[spikes == 5]
 
 # Find crosscorrolation
 cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)

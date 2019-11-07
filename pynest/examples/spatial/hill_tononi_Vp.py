@@ -155,7 +155,7 @@ if SHOW_FIGURES:
 else:
     plt_show = plt.show
 
-    def nop(s=None):
+    def nop(s=None, block=None):
         pass
 
     plt.show = nop
@@ -802,14 +802,14 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 
 # ! Connections from Retina to TpRelay
 retina_ctr_gid = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_gid)
+retina_ctr_index = retina.index(retina_ctr_gid.get('global_id'))
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
 TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid.get('global_id'))
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 

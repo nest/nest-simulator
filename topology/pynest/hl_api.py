@@ -107,8 +107,7 @@ class Mask(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Masks must be created using the CreateMask command."""
-        if not isinstance(datum, nest.kernel.SLIDatum) or \
-            datum.dtype != "masktype":
+        if not isinstance(datum, nest.kernel.SLIDatum) or datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
         self._datum = datum
 
@@ -308,8 +307,7 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum, nest.kernel.SLIDatum) or \
-            datum.dtype != "parametertype":
+        if not isinstance(datum, nest.kernel.SLIDatum) or datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
         self._datum = datum
 
@@ -813,8 +811,7 @@ def ConnectLayers(pre, post, projections):
         raise nest.kernel.NESTError("pre and post must have the same length.")
 
     # ensure projections is list of full length
-    projections = nest.hl_api.broadcast(projections, len(pre), (dict, ),
-                                 "projections")
+    projections = nest.hl_api.broadcast(projections, len(pre), (dict, ), "projections")
 
     # Replace python classes with SLI datums
     def fixdict(d):

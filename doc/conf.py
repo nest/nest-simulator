@@ -85,7 +85,6 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 
 # -- General configuration ------------------------------------------------
 
-
 # import errors on libraries that depend on C modules
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
 # compile-with-readthedocs-when-youre-using-numpy-and-scipy/

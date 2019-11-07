@@ -75,6 +75,8 @@ def Create(model, n=1, params=None, positions=None):
     model_deprecation_warning(model)
 
     if positions is not None:
+        if not isinstance(positions, (nest.spatial.free, nest.spatial.grid)):
+            raise TypeError('`positions` must be either a nest.spatial.free object or nest.spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, nest.spatial.free):

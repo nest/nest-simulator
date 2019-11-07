@@ -28,6 +28,18 @@ import numpy as np
 
 class TestPgRateChange(unittest.TestCase):
 
+    def _kstest_first_spiketimes(self, sd, start_t, rate, n_parrots, resolution, p_value_lim):
+        scale_parameter = n_parrots / rate
+        events = nest.GetStatus(sd)[0]['events']
+        senders = events['senders']
+        times = events['times']
+        min_times = [np.min(times[np.where(senders == s)])
+                     for s in np.unique(senders)]
+        d, p_val = scipy.stats.kstest(
+            min_times, 'expon', args=(start_t + resolution, scale_parameter))
+        print('p_value =', p_val)
+        self.assertGreater(p_val, p_value_lim)
+
     def test_statistical_rate_change(self):
         """Statistical test of poisson_generator_ps rate change"""
 
@@ -35,18 +47,6 @@ class TestPgRateChange(unittest.TestCase):
         resolution = 0.25  # Simulation resolution
         n_parrots = 1000  # Number of parrot neurons
         sim_time = 100  # Time to simulate
-
-        def kstest_first_spiketimes(sd, start_t, rate):
-            scale_parameter = n_parrots/rate
-            events = nest.GetStatus(sd)[0]['events']
-            senders = events['senders']
-            times = events['times']
-            min_times = [np.min(times[np.where(senders == s)])
-                         for s in np.unique(senders)]
-            d, p_val = scipy.stats.kstest(
-                min_times, 'expon', args=(start_t + resolution, scale_parameter))
-            print('p_value =', p_val)
-            self.assertGreater(p_val, p_value_lim)
 
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': resolution})
@@ -60,7 +60,7 @@ class TestPgRateChange(unittest.TestCase):
 
         # First simulation
         nest.Simulate(sim_time)
-        kstest_first_spiketimes(sd, 0., rate)
+        self._kstest_first_spiketimes(sd, 0., rate, n_parrots, resolution, p_value_lim)
 
         # Second simulation, with rate = 0
         rate = 0.
@@ -69,7 +69,7 @@ class TestPgRateChange(unittest.TestCase):
         # previous simulation run that were sent, but not received.
         nest.SetStatus(sd, {'n_events': 0,
                             'start': float(sim_time) + resolution,
-                            'stop': 2.*sim_time})
+                            'stop': 2. * sim_time})
         nest.Simulate(sim_time)
         self.assertEqual(nest.GetStatus(sd)[0]['n_events'], 0)
 
@@ -78,9 +78,9 @@ class TestPgRateChange(unittest.TestCase):
         nest.SetStatus(pg, {'rate': rate})
         nest.SetStatus(sd, {'n_events': 0,
                             'start': 2. * sim_time,
-                            'stop': 3.*sim_time})
+                            'stop': 3. * sim_time})
         nest.Simulate(sim_time)
-        kstest_first_spiketimes(sd, 2*sim_time, rate)
+        self._kstest_first_spiketimes(sd, 2. * sim_time, rate, n_parrots, resolution, p_value_lim)
 
 
 def suite():

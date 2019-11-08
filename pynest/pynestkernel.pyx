@@ -641,12 +641,18 @@ cdef inline object sli_datum_to_object(Datum* dat):
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
-    cdef tmp = [None] * dat.size()
 
-    cdef size_t i
+    # the size of dat has to be explicitly cast to int to avoid
+    # compiler warnings (#1318) during cythonization
+    cdef tmp = [None] * int(dat.size())
+
+    # i and n have to be cast to size_t (unsigned long int) to avoid
+    # compiler warnings (#1318) in the for loop below
+    cdef size_t i, n
     cdef Token* tok = dat.begin()
 
-    if not len(tmp):
+    n = len(tmp)
+    if not n:
         return ()
 
     if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
@@ -658,10 +664,9 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
             inc(tok)
         return nest.Connectome(tmp)
     else:
-        for i in range(len(tmp)):
+        for i in range(n):
             tmp[i] = sli_datum_to_object(tok.datum())
             inc(tok)
-
         return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):

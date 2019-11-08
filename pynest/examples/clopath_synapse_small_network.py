@@ -137,25 +137,22 @@ nest.Connect(pop_inh, pop_exc, conn_dict_inh_to_exc, syn_dict_inh_to_exc)
 ##############################################################################
 # Randomize the initial membrane potential
 
-for nrn in pop_exc:
-    nrn.set({'V_m': np.random.normal(-60.0, 25.0)})
-
-for nrn in pop_inh:
-    nrn.set({'V_m': np.random.normal(-60.0, 25.0)})
+pop_exc.V_m = nest.random.normal(-60., 25.)
+pop_inh.V_m = nest.random.normal(-60., 25.)
 
 ##############################################################################
 # Simulation divided into intervals of 100ms for shifting the Gaussian
 
-for i in range(int(simulation_time/100.0)):
+sim_interval = 100.
+for i in range(int(simulation_time/sim_interval)):
     # set rates of poisson generators
     rates = np.empty(500)
     # pg_mu will be randomly chosen out of 25,75,125,...,425,475
     pg_mu = 25 + random.randint(0, 9) * 50
     for j in range(500):
-        rates[j] = pg_A * \
-            np.exp((-1 * (j - pg_mu) ** 2) / (2 * (pg_sigma) ** 2))
+        rates[j] = pg_A * np.exp((-1 * (j - pg_mu)**2) / (2 * pg_sigma**2))
         pg[j].set({'rate': rates[j]*1.75})
-    nest.Simulate(100.0)
+    nest.Simulate(sim_interval)
 
 ##############################################################################
 # Plot results
@@ -165,8 +162,8 @@ fig1, axA = pl.subplots(1, sharex=False)
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
 exc_conns = nest.GetConnections(pop_exc, pop_exc)
-exc_conns_senders = np.array(exc_conns.source)
-exc_conns_targets = np.array(exc_conns.target)
+exc_conns_senders = np.array(list(exc_conns.source()))
+exc_conns_targets = np.array(list(exc_conns.target()))
 exc_conns_weights = np.array(exc_conns.get('weight'))
 idx_array = np.argsort(exc_conns_senders)
 targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))

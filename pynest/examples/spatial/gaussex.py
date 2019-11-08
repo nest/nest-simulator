@@ -50,27 +50,24 @@ nest.Connect(a, b, cdict)
 
 # plot targets of neurons in different grid locations
 
-# first, clear existing figure, get current figure
-pylab.clf()
-fig = pylab.gcf()
-
 # plot targets of two source neurons into same figure, with mask
 # use different colors
-for src_index, color in [(30 * 15 + 15, 'blue'), (0, 'green')]:
+for src_index, color, cmap in [(30 * 15 + 15, 'blue', 'Blues'), (0, 'green', 'Greens')]:
     # obtain node id for center
     src = a[src_index:src_index + 1]
-    nest.PlotTargets(src, b, mask=cdict['mask'], kernel=cdict['p'],
+    fig = pylab.figure()
+    nest.PlotTargets(src, b, mask=cdict['mask'], probability_parameter=cdict['p'],
                      src_color=color, tgt_color=color, mask_color=color,
-                     kernel_color=color, src_size=100,
+                     probability_cmap=cmap, src_size=100,
                      fig=fig)
 
-# beautify
-pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.grid(True)
-pylab.axis([-2.0, 2.0, -2.0, 2.0])
-pylab.axes().set_aspect('equal', 'box')
-pylab.title('Connection targets, Gaussian kernel')
+    # beautify
+    pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
+    pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
+    pylab.grid(True)
+    pylab.axis([-2.0, 2.0, -2.0, 2.0])
+    pylab.axes().set_aspect('equal', 'box')
+    pylab.title('Connection targets, Gaussian kernel')
 
 pylab.show()
 

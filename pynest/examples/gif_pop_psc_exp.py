@@ -127,25 +127,25 @@ nest_pops = nest.Create('gif_pop_psc_exp', M)
 
 C_m = 250.  # irrelevant value for membrane capacity, cancels out in simulation
 g_L = C_m / tau_m
-for i in range(M):
-    nest.SetStatus(nest_pops[i], {
-        'C_m': C_m,
-        'I_e': mu[i] * g_L[i],
-        'lambda_0': c[i],  # in Hz!
-        'Delta_V': Delta_u[i],
-        'tau_m': tau_m[i],
-        'tau_sfa': tau_theta[i],
-        'q_sfa': J_theta[i] / tau_theta[i],  # [J_theta]= mV*ms -> [q_sfa]=mV
-        'V_T_star': V_th[i],
-        'V_reset': V_reset[i],
-        'len_kernel': -1,  # -1 triggers automatic history size
-        'N': N[i],
-        't_ref': t_ref[i],
-        'tau_syn_ex': max([tau_ex, dt]),
-        'tau_syn_in': max([tau_in, dt]),
-        'E_L': 0.
-    })
 
+params = [{
+    'C_m': C_m,
+    'I_e': mu[i] * g_L[i],
+    'lambda_0': c[i],  # in Hz!
+    'Delta_V': Delta_u[i],
+    'tau_m': tau_m[i],
+    'tau_sfa': tau_theta[i],
+    'q_sfa': J_theta[i] / tau_theta[i],  # [J_theta]= mV*ms -> [q_sfa]=mV
+    'V_T_star': V_th[i],
+    'V_reset': V_reset[i],
+    'len_kernel': -1,  # -1 triggers automatic history size
+    'N': N[i],
+    't_ref': t_ref[i],
+    'tau_syn_ex': max([tau_ex, dt]),
+    'tau_syn_in': max([tau_in, dt]),
+    'E_L': 0.
+} for i in range(M)]
+nest_pops.set(params)
 
 # connect the populations
 g_syn = np.ones_like(J_syn)  # synaptic conductance
@@ -153,10 +153,9 @@ g_syn[:, 0] = C_m / tau_ex
 g_syn[:, 1] = C_m / tau_in
 for i in range(M):
     for j in range(M):
-        nest.SetDefaults('static_synapse',
-                         {'weight': J_syn[i, j] * g_syn[i, j] * pconn[i, j],
-                          'delay': delay[i, j]})
-        nest.Connect(nest_pops[j], nest_pops[i])
+        nest.Connect(nest_pops[j], nest_pops[i],
+                     syn_spec={'weight': J_syn[i, j] * g_syn[i, j] * pconn[i, j],
+                               'delay': delay[i, j]})
 
 ###############################################################################
 # To record the instantaneous population rate `Abar(t)` we use a multimeter,
@@ -214,14 +213,14 @@ Abar = np.ones_like(A_N) * np.nan
 
 # simulate 1 step longer to make sure all t are simulated
 nest.Simulate(t_end + dt)
-data_mm = nest.GetStatus(nest_mm)[0]['events']
+data_mm = nest_mm.get('events')
 for i, nest_i in enumerate(nest_pops):
-    a_i = data_mm['mean'][data_mm['senders'] == nest_i]
+    a_i = data_mm['mean'][data_mm['senders'] == nest_i.get('global_id')]
     a = a_i / N[i] / dt
     min_len = np.min([len(a), len(Abar)])
     Abar[:min_len, i] = a[:min_len]
 
-    data_sd = nest.GetStatus(nest_sd[i], keys=['events'])[0][0]['times']
+    data_sd = nest_sd[i].get('events', 'times')
     data_sd = data_sd * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))
     A = np.histogram(data_sd, bins=bins)[0] / float(N[i]) / dt_rec
@@ -283,17 +282,16 @@ for i in range(M):
 # connect the populations
 for i, nest_i in enumerate(nest_pops):
     for j, nest_j in enumerate(nest_pops):
-        nest.SetDefaults('static_synapse', {
-            'weight': J_syn[i, j] * g_syn[i, j],
-            'delay': delay[i, j]})
-
         if np.allclose(pconn[i, j], 1.):
             conn_spec = {'rule': 'all_to_all'}
         else:
             conn_spec = {
                 'rule': 'fixed_indegree', 'indegree': int(pconn[i, j] * N[j])}
 
-        nest.Connect(nest_j, nest_i, conn_spec)
+        nest.Connect(nest_j, nest_i,
+                     conn_spec,
+                     syn_spec={'weight': J_syn[i, j] * g_syn[i, j],
+                               'delay': delay[i, j]})
 
 ###############################################################################
 # We want to record all spikes of each population in order to compute the
@@ -304,21 +302,18 @@ for i, nest_i in enumerate(nest_pops):
 nest_sd = []
 for i, nest_i in enumerate(nest_pops):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'withgid': False,
-                                'withtime': True, 'time_in_steps': True})
-    nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
+    nest_sd[i].set({'withgid': False, 'withtime': True, 'time_in_steps': True})
 
     # record all spikes from population to compute population activity
-    nest.Connect(nest_i, nest_sd[i])
+    nest.Connect(nest_i, nest_sd[i], syn_spec={'weight': 1., 'delay': dt})
 
-Nrecord = [5, 0]  # for each population "i" the first Nrecord[i] neurons are
-#                   recorded
+Nrecord = [5, 0]    # for each population "i" the first Nrecord[i] neurons are recorded
 nest_mm_Vm = []
 for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
-    nest.SetStatus(nest_mm_Vm[i], {'record_from': ['V_m'],
-                                   'withgid': True, 'withtime': True,
-                                   'interval': dt_rec})
+    nest_mm_Vm[i].set({'record_from': ['V_m'],
+                       'withgid': True, 'withtime': True,
+                       'interval': dt_rec})
     if Nrecord[i] != 0:
         nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]])
 
@@ -331,7 +326,7 @@ for i, nest_i in enumerate(nest_pops):
 nest_stepcurrent = nest.Create('step_current_generator', M)
 # set the parameters for the step currents
 for i in range(M):
-    nest.SetStatus(nest_stepcurrent[i], {
+    nest_stepcurrent[i].set({
         'amplitude_times': tstep[i] + t0,
         'amplitude_values': step[i] * g_L[i], 'origin': t0, 'stop': t_end})
     # optionally a stopping time may be added by: 'stop': sim_T + t0
@@ -357,8 +352,7 @@ nest.Simulate(t_end + dt)
 # excitatory population (in Hz):
 
 for i in range(len(nest_pops)):
-    data_sd = nest.GetStatus(
-        nest_sd[i], keys=['events'])[0][0]['times'] * dt - t0
+    data_sd = nest_sd[i].get('events', 'times') * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))
     A = np.histogram(data_sd, bins=bins)[0] / float(N[i]) / dt_rec
     A_N[:, i] = A * 1000  # in Hz
@@ -380,13 +374,12 @@ plt.title('Population activities (microscopic sim.)')
 voltage = []
 for i in range(M):
     if Nrecord[i] > 0:
-        senders = nest.GetStatus(nest_mm_Vm[i])[0]['events']['senders']
-        v = nest.GetStatus(nest_mm_Vm[i])[0]['events']['V_m']
+        senders = nest_mm_Vm[i].get('events', 'senders')
+        v = nest_mm_Vm[i].get('events', 'V_m')
         voltage.append(
             np.array([v[np.where(senders == j)] for j in set(senders)]))
     else:
         voltage.append(np.array([]))
-
 
 f, axarr = plt.subplots(Nrecord[0], sharex=True)
 for i in range(Nrecord[0]):

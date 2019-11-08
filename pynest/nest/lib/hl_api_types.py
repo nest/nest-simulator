@@ -213,8 +213,10 @@ class GIDCollection(object):
             step = 1 if key.step is None else key.step
 
             return sli_func('Take', self._datum, [start, stop, step])
-        else:
+        elif isinstance(key, int):
             return sli_func('Take', self._datum, [key + (key >= 0)])
+        else:
+            raise IndexError('only integers and slices are valid indices')
 
     def __contains__(self, gid):
         return sli_func('MemberQ', self._datum, gid)

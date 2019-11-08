@@ -213,7 +213,7 @@ class GIDCollection(object):
             step = 1 if key.step is None else key.step
 
             return sli_func('Take', self._datum, [start, stop, step])
-        elif isinstance(key, int):
+        elif isinstance(key, (int, numpy.integer)):
             return sli_func('Take', self._datum, [key + (key >= 0)])
         else:
             raise IndexError('only integers and slices are valid indices')

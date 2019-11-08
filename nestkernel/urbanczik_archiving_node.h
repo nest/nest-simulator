@@ -124,14 +124,6 @@ protected:
 
 private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];
-
-  double theta_plus_;
-
-  double theta_minus_;
-
-  size_t hist_len_;
-
-  size_t hist_current_;
 };
 
 template < class urbanczik_parameters >

@@ -165,10 +165,13 @@ public:
 private:
   // data members of each connection
   double weight_;
+  double init_weight_;
   double tau_Delta_;
   double eta_;
   double Wmin_;
   double Wmax_;
+  double PI_integral_;
+  double PI_exp_integral_;
   double tau_L_trace_;
   double tau_s_trace_;
 
@@ -201,26 +204,27 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
 
   target->get_urbanczik_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish, comp );
 
-  double Delta_T = t_spike - t_lastspike_;
-  double dw = 0.0;
-  int integral_counter = t_lastspike_ < 0.0 ? 10000.0 : 0.0;
   double const g_L = target->get_g_L( comp );
   double const tau_L = target->get_tau_L( comp );
   double const C_m = target->get_C_m( comp );
   double const tau_s = weight_ > 0.0 ? target->get_tau_syn_ex( comp ) : target->get_tau_syn_in( comp );
-  double const dt = Time::get_resolution().get_ms();
+  double dPI_exp_integral = 0.0;
 
   while ( start != finish )
   {
-    double const PSP_ =
-      ( tau_L_trace_ * exp( -dt * integral_counter / tau_L ) - tau_s_trace_ * exp( -dt * integral_counter / tau_s ) );
-    dw += ( exp( -( Delta_T - dt * integral_counter ) / tau_Delta_ ) - 1 ) * start->dw_ * PSP_;
+    double const t_up = start->t_ + dendritic_delay;     // from t_lastspike to t_spike
+    double const minus_delta_t_up = t_lastspike_ - t_up; // from 0 to -delta t
+    double const minus_t_down = t_up - t_spike;          // from -t_spike to 0
+    double const PI =
+      ( tau_L_trace_ * exp( minus_delta_t_up / tau_L ) - tau_s_trace_ * exp( minus_delta_t_up / tau_s ) ) * start->dw_;
+    PI_integral_ += PI;
+    dPI_exp_integral += exp( minus_t_down / tau_Delta_ ) * PI;
     start++;
-    integral_counter++;
   }
-  dw *= -15.0 * C_m * tau_s * eta_ / ( g_L * ( tau_L - tau_s ) );
 
-  weight_ += dw;
+  PI_exp_integral_ = ( exp( ( t_lastspike_ - t_spike ) / tau_Delta_ ) * PI_exp_integral_ + dPI_exp_integral );
+  weight_ = PI_integral_ - PI_exp_integral_;
+  weight_ = init_weight_ + weight_ * 15.0 * C_m * tau_s * eta_ / ( g_L * ( tau_L - tau_s ) );
 
   if ( weight_ > Wmax_ )
   {
@@ -250,10 +254,13 @@ template < typename targetidentifierT >
 UrbanczikConnection< targetidentifierT >::UrbanczikConnection()
   : ConnectionBase()
   , weight_( 1.0 )
+  , init_weight_( 1.0 )
   , tau_Delta_( 100.0 )
   , eta_( 0.07 )
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
+  , PI_integral_( 0.0 )
+  , PI_exp_integral_( 0.0 )
   , tau_L_trace_( 0.0 )
   , tau_s_trace_( 0.0 )
   , t_lastspike_( -1.0 )
@@ -264,10 +271,13 @@ template < typename targetidentifierT >
 UrbanczikConnection< targetidentifierT >::UrbanczikConnection( const UrbanczikConnection< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
+  , init_weight_( rhs.init_weight_ )
   , tau_Delta_( rhs.tau_Delta_ )
   , eta_( rhs.eta_ )
   , Wmin_( rhs.Wmin_ )
   , Wmax_( rhs.Wmax_ )
+  , PI_integral_( rhs.PI_integral_ )
+  , PI_exp_integral_( rhs.PI_exp_integral_ )
   , tau_L_trace_( rhs.tau_L_trace_ )
   , tau_s_trace_( rhs.tau_s_trace_ )
   , t_lastspike_( rhs.t_lastspike_ )
@@ -298,6 +308,7 @@ UrbanczikConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::Wmin, Wmin_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
 
+  init_weight_ = weight_;
   // check if weight_ and Wmin_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
   {

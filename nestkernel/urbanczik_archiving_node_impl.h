@@ -35,20 +35,12 @@ namespace nest
 template < class urbanczik_parameters >
 nest::Urbanczik_Archiving_Node< urbanczik_parameters >::Urbanczik_Archiving_Node()
   : Archiving_Node()
-  , theta_plus_( -45.3 )
-  , theta_minus_( -70.6 )
-  , hist_len_( 0 )
-  , hist_current_( 0 )
 {
 }
 
 template < class urbanczik_parameters >
 nest::Urbanczik_Archiving_Node< urbanczik_parameters >::Urbanczik_Archiving_Node( const Urbanczik_Archiving_Node& n )
   : Archiving_Node( n )
-  , theta_plus_( n.theta_plus_ )
-  , theta_minus_( n.theta_minus_ )
-  , hist_len_( n.hist_len_ )
-  , hist_current_( n.hist_current_ )
 {
 }
 
@@ -57,9 +49,6 @@ void
 nest::Urbanczik_Archiving_Node< urbanczik_parameters >::get_status( DictionaryDatum& d ) const
 {
   Archiving_Node::get_status( d );
-
-  def< double >( d, names::theta_plus, theta_plus_ );
-  def< double >( d, names::theta_minus, theta_minus_ );
 }
 
 template < class urbanczik_parameters >
@@ -67,15 +56,6 @@ void
 nest::Urbanczik_Archiving_Node< urbanczik_parameters >::set_status( const DictionaryDatum& d )
 {
   Archiving_Node::set_status( d );
-
-  // We need to preserve values in case invalid values are set
-  double new_theta_plus = theta_plus_;
-  double new_theta_minus = theta_minus_;
-  updateValue< double >( d, names::theta_plus, new_theta_plus );
-  updateValue< double >( d, names::theta_minus, new_theta_minus );
-
-  theta_plus_ = new_theta_plus;
-  theta_minus_ = new_theta_minus;
 }
 
 template < class urbanczik_parameters >

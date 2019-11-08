@@ -67,7 +67,7 @@ class TestConnectome(unittest.TestCase):
 
         get_conns = nest.GetConnections()
 
-        get_conns.set('delay', 2.0)
+        get_conns.set(delay=2.0)
         get_conns.set(({'weight': 1.5},
                        {'weight': 2.5},
                        {'weight': 3.5},
@@ -88,7 +88,7 @@ class TestConnectome(unittest.TestCase):
         self.assertEqual(weight, [6.0, 6.0, 6.0, 6.0])
 
         with self.assertRaises(nest.kernel.NESTError):
-            get_conns.set('source', 2)
+            get_conns.set(source=2)
 
         nest.ResetKernel()
         nrns = nest.Create('iaf_psc_alpha', 2)
@@ -96,7 +96,7 @@ class TestConnectome(unittest.TestCase):
 
         get_conns = nest.GetConnections()
 
-        get_conns.set('weight', [2.0, 3.0, 4.0, 5.0])
+        get_conns.set(weight=[2.0, 3.0, 4.0, 5.0])
         weight = get_conns.get('weight')
         self.assertEqual(weight, [2.0, 3.0, 4.0, 5.0])
 
@@ -346,7 +346,7 @@ class TestConnectome(unittest.TestCase):
 
         nest.ResetKernel()
         self.assertEqual(conns.get(), ())
-        conns.set('weight', 10.)
+        conns.set(weight=10.)
         self.assertEqual(conns.get('weight'), ())
 
 

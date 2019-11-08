@@ -305,7 +305,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_set_with_random_as_val(self):
         """Test set with random parameter as val"""
         nodes = nest.Create('iaf_psc_alpha', 3)
-        nodes.set('V_m', nest.random.uniform(-75., -55.))
+        nodes.set(V_m=nest.random.uniform(-75., -55.))
 
         for vm in nodes.get('V_m'):
             self.assertGreater(vm, -75.)

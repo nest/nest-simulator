@@ -88,7 +88,7 @@ spikedetector = nest.Create("spike_detector")
 # are configured using ``set``. Note that we need not set parameters
 # for the neuron and the spike detector, since they have satisfactory defaults.
 
-noise.set("rate", [n_ex * r_ex, n_in * r_in])
+noise.set(rate=[n_ex * r_ex, n_in * r_in])
 voltmeter.set({"withgid": True, "withtime": True})
 
 ###############################################################################
@@ -125,8 +125,8 @@ nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 def output_rate(guess):
     print("Inhibitory rate estimate: %5.2f Hz" % guess)
     rate = float(abs(n_in * guess))
-    noise[1].set("rate", rate)
-    spikedetector.set("n_events", 0)
+    noise[1].set(rate=rate)
+    spikedetector.set(n_events=0)
     nest.Simulate(t_sim)
     out = spikedetector.get("n_events") * 1000.0 / t_sim
     print("  -> Neuron rate: %6.2f Hz (goal: %4.2f Hz)" % (out, r_ex))

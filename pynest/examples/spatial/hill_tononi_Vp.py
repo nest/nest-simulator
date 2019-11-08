@@ -366,7 +366,7 @@ retina = nest.Create('RetinaNode', positions=layerGrid)
 
 retina_phase = 360.0 / Params['lambda_dg'] * (math.cos(Params['phi_dg']) * nest.spatial.pos.x +
                                               math.sin(Params['phi_dg']) * nest.spatial.pos.y)
-retina.set('phase', retina_phase)
+retina.set(phase=retina_phase)
 
 # ! Thalamus
 # ! --------
@@ -887,7 +887,7 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
         d = recorder.get('events', 'V_m')
         # clear data from multimeter
-        recorder.set('n_events', 0)
+        recorder.set(n_events=0)
 
         # update image data and title
         im.set_data(np.reshape(d, (Params['N'], Params['N'])))

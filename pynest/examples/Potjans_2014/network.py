@@ -209,21 +209,16 @@ class Network:
                 }
             )
             if self.net_dict['V0_type'] == 'optimized':
-                population.set('V_m', nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['optimized'][i],
-                                                         std=self.net_dict['neuron_params']['V0_sd']['optimized'][i]))
+                population.set(V_m=nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                                                      std=self.net_dict['neuron_params']['V0_sd']['optimized'][i]))
             elif self.net_dict['V0_type'] == 'original':
-                population.set('V_m', nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['original'],
-                                                         std=self.net_dict['neuron_params']['V0_sd']['original']))
+                population.set(V_m=nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['original'],
+                                                      std=self.net_dict['neuron_params']['V0_sd']['original']))
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
                 population[0].get('global_id'),
                 population[-1].get('global_id')))
         pop_file.close()
-
-        if self.net_dict['V0_type'] == 'original':
-            for gids in self.pops:
-                gids.set('V_m', nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['original'],
-                                                   std=self.net_dict['neuron_params']['V0_sd']['original']))
 
     def create_devices(self):
         """ Creates the recording devices.

@@ -323,24 +323,22 @@ class GIDCollection(object):
 
         return result
 
-    def set(self, params, val=None):
+    def set(self, params=None, **kwargs):
         """
         Set the parameters of nodes to params.
 
-        NB! This is the same implementation as `SetStatus`.
+        NB! This is almost the same implementation as `SetStatus`.
 
-        If `val` is given, `params` has to be the name of an attribute, which is
-        set to `val` on the nodes. `val` can be a single value or a list of the
-        same size as the `GIDCollection`.
+        If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
+        can be single values or list of the same size as the `GIDCollection`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `GIDCollection`. If `val` is given, `params` has to be
-            the name of a model property as a str.
-        val : int, list or Parameter, optional
-            If given, `params` has to be the name of a model property.
+            same length as the `GIDCollection`.
+        kwargs : keyword argument pairs
+            Named arguments of parameters of the elements in the `GIDCollection`.
 
         Raises
         ------
@@ -349,6 +347,11 @@ class GIDCollection(object):
         KeyError
             If the specified parameter does not exist for the nodes.
         """
+
+        if kwargs and params is None:
+            params = kwargs
+        elif kwargs and params:
+            raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict) and self[0].get('local'):
 
@@ -365,12 +368,6 @@ class GIDCollection(object):
                         for i, temp_dict in enumerate(temp_param):
                             temp_dict[key] = vals[i]
                 params = temp_param
-
-        if val is not None and is_literal(params):
-            if (is_iterable(val) and not isinstance(val, (uni_str, dict))):
-                params = [{params: x} for x in val]
-            else:
-                params = {params: val}
 
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
             raise TypeError(
@@ -630,24 +627,22 @@ class Connectome(object):
 
         return final_result
 
-    def set(self, params, val=None):
+    def set(self, params=None, **kwargs):
         """
         Set the parameters of the connections to `params`.
 
-        NB! This is the same implementation as SetStatus
+        NB! This is almost the same implementation as SetStatus
 
-        If `val` is given, `params` has to be the name of an attribute, which is
-        set to `val` on the connections. `val` can be a single value or a list of the
-        same size as the `Connectome`.
+        If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
+        can be single values or list of the same size as the `Connectome`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `Connectome`. If `val` is given, `params` has to be
-            the name of a model property as a str.
-        val : int, list or Parameter, optional
-            If given, `params` has to be the name of a model property.
+            same length as the `Connectome`. 
+        kwargs : keyword argument pairs
+            Named arguments of parameters of the elements in the `Connectome`.
 
         Raises
         ------
@@ -663,17 +658,31 @@ class Connectome(object):
         if self.__len__() == 0 or GetKernelStatus()['network_size'] == 0:
             return
 
-        if val is not None and is_literal(params):
-            if is_iterable(val) and not isinstance(val, (uni_str, dict)):
-                params = [{params: x} for x in val]
-            else:
-                params = {params: val}
-
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
             raise TypeError(
                 "status dict must be a dict, or a list of dicts of length "
                 "len(nodes)")
+
+        if kwargs and params is None:
+            params = kwargs
+        elif kwargs and params:
+            raise TypeError("must either provide params or kwargs, but not both.")
+
+        if isinstance(params, dict):
+            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+    
+            if any(contains_list):
+                temp_param = [{} for _ in range(self.__len__())]
+    
+                for key, vals in params.items():
+                    if not is_iterable(vals):
+                        for temp_dict in temp_param:
+                            temp_dict[key] = vals
+                    else:
+                        for i, temp_dict in enumerate(temp_param):
+                            temp_dict[key] = vals[i]
+                params = temp_param
 
         params = broadcast(params, self.__len__(), (dict,), "params")
 

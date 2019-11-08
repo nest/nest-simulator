@@ -65,8 +65,8 @@ jobs:
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
     - stage: OsX
       os: osx
-      osx_image: xcode10.2
-      language: generic
+      osx_image: xcode10.3 # Python 3.7.4 running on macOS 10.14.4
+      language: shell # language 'python' result in errors on macOS
       env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
 
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
@@ -147,6 +147,8 @@ before_install:
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
            brew --version
            brew update
+           brew info python
+           export PATH="/usr/local/opt/python/libexec/bin:$PATH"  # To use homebrew's Python
            brew tap brewsci/science
            brew tap brewsci/bio
            brew install coreutils gsl open-mpi automake autoconf libtool
@@ -157,8 +159,10 @@ before_install:
            brew leaves
            brew cask list
          fi
-         pip install --upgrade pip
-         pip install --upgrade setuptools
+         if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+           pip install --upgrade pip setuptools
+         fi
+         
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create

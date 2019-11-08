@@ -151,7 +151,7 @@ before_install:
            brew --version
            brew update
            brew info python
-           export PATH="/usr/local/opt/python/libexec/bin:$PATH" #To use homebrew's python, add the directory in the PATH.
+           export PATH="/usr/local/opt/python/libexec/bin:$PATH"  # To use homebrew's Python
            brew tap brewsci/science
            brew tap brewsci/bio
            brew install coreutils gsl open-mpi automake autoconf libtool

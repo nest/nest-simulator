@@ -1,17 +1,17 @@
 
 # Security Policy
 
-The NEST-Simulator is a research oriented software and as such is expected to
+The NEST simulator is research oriented software and as such is expected to
 run mainly in well protected environments. In case it is found that this
 software can be used to violate security mechanisms, developers will try to
 provide patches that mitigate the risk of this misuse.
 
-The current policy is SECURITY.md in nest/nest-simulator master branch, which
-can also be found at <https://github.com/nest/nest-simulator/security/policy>.
+The current policy is explained in SECURITY.md in the nest-simulator master branch.
+The policy can also be found at <https://github.com/nest/nest-simulator/security/policy>.
 
 ## Supported Versions
 
-Generally only the last version will receive security related updates. In severe
+Generally only the latest version will receive security related updates. In severe
 cases developers may create a backport of the corresponding patch for the
 previous version, if it is also affected.  Currently the following versions are
 being supported with security updates:

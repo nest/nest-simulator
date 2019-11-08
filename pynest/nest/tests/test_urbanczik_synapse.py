@@ -174,13 +174,13 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         '''
         create connections
         '''
-        nest.Connect(sg_prox, prrt_nrn, syn_spec={'delay': 1.0})
+        nest.Connect(sg_prox, prrt_nrn, syn_spec={'delay': resolution})
         nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
                        {'weight_recorder': wr[0]})
         nest.Connect(prrt_nrn, nrn, syn_spec=syn_params)
         nest.Connect(sg_soma_exc, nrn,
                      syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
-        nest.Connect(mm, nrn, syn_spec={'delay': 0.1})
+        nest.Connect(mm, nrn, syn_spec={'delay': resolution})
         nest.Connect(nrn, sd_soma, syn_spec={'delay': resolution})
 
         '''
@@ -229,7 +229,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         C_m_prox = nrn_params['proximal']['C_m']
         tau_L = C_m_prox / g_L_prox
         E_L_prox = nrn_params['proximal']['E_L']
-        t0 = 2.1
+        t0 = 1.0
         alpha_response = (np.heaviside(t - t0, 0.5)*tau_s*(np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
                           (g_L_prox*(tau_L - tau_s)))
 

@@ -640,7 +640,7 @@ class Connectome(object):
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `Connectome`. 
+            same length as the `Connectome`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `Connectome`.
 
@@ -671,10 +671,10 @@ class Connectome(object):
 
         if isinstance(params, dict):
             contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
-    
+
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
-    
+
                 for key, vals in params.items():
                     if not is_iterable(vals):
                         for temp_dict in temp_param:

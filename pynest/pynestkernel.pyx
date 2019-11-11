@@ -656,7 +656,7 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
         return ()
 
     if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
-        for i in range(len(tmp)):
+        for i in range(n):
             datum = SLIDatum()
             (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
             tmp[i] = datum

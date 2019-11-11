@@ -40,6 +40,14 @@ class CreateLayer(unittest.TestCase):
         self.assertEqual(len(layer), 9)
         self.assertEqual(layer.spatial['shape'][1], 3)
 
+    def test_Create_3D_grid(self):
+        """Test Create simple 3D grid."""
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[3, 4, 5]))
+
+        self.assertEqual(len(layer), 60)
+        self.assertEqual(layer.spatial['shape'], (3, 4, 5))
+
     def test_Create_grid_with_extent(self):
         """Test Create simple grid with extent."""
         layer = nest.Create('iaf_psc_alpha',

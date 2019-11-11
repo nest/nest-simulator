@@ -133,5 +133,5 @@ nest.Simulate(500.0)
 # Finally, generate voltage traces. Both are shown in the same plot and
 # should be almost completely overlapping.
 
-nest.voltage_trace.from_device([voltmeter[0].get('global_id')])
-nest.voltage_trace.from_device([voltmeter[1].get('global_id')])
+nest.voltage_trace.from_device(voltmeter[0])
+nest.voltage_trace.from_device(voltmeter[1])

@@ -30,21 +30,21 @@ M_INFO setverbosity
 sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 
 /iaf_psc_alpha Create /n1 Set
-sg n1 << /weight 15000.0 >> Connect
+sg n1 /all_to_all << /weight 15000.0 >> Connect
 
 /iaf_psc_alpha Create /n2 Set
-n1 n2 << /weight 15000.0 >> Connect
+n1 n2 /all_to_all << /weight 15000.0 >> Connect
 
 /iaf_psc_alpha Create /n3 Set
-n2 n3 << /weight 15000.0 >> Connect
+n2 n3 /all_to_all << /weight 15000.0 >> Connect
 
 /music_event_out_proxy Create /meop Set
 meop << /port_name (spikes_out1) >> SetStatus
-n1 meop << /music_channel 0 >> Connect
+n1 meop /all_to_all << /music_channel 0 >> Connect
 
 /music_event_out_proxy Create /meop Set
 meop << /port_name (spikes_out2) >> SetStatus
-n2 meop << /music_channel 0 >> Connect
+n2 meop /all_to_all << /music_channel 0 >> Connect
 
 /spike_detector Create /sd1 Set
 sd1 << /label (sendnest-n2) /record_to /ascii >> SetStatus

@@ -47,7 +47,6 @@ References
 import nest
 import pylab as pl
 import numpy
-import random
 
 n_neuron = 500
 gap_per_neuron = 60
@@ -66,7 +65,7 @@ nest.ResetKernel()
 # First we set the random seed, adjust the kernel settings and create
 # ``hh_psc_alpha_gap`` neurons, ``spike_detector`` and ``poisson_generator``.
 
-random.seed(1)
+numpy.random.seed(1)
 
 nest.SetKernelStatus({'resolution': 0.05,
                       'total_num_virtual_procs': threads,
@@ -115,8 +114,7 @@ nest.Connect(pg, neurons, 'all_to_all',
 
 nest.Connect(neurons, sd)
 
-for i in range(n_neuron):
-    nest.SetStatus(neurons[i], {'V_m': (-40. - 40. * random.random())})
+neurons.V_m = nest.random.uniform(min=-80., max=-40.)
 
 #######################################################################################
 # Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
@@ -130,13 +128,12 @@ for i in range(n_neuron):
 # using the ``make_symmetric`` flag for ``one_to_one`` connections.
 
 n_connection = int(n_neuron * gap_per_neuron / 2)
-neuron_list = [n for n in neurons]
-connections = numpy.transpose(
-    [random.sample(neuron_list, 2) for _ in range(n_connection)])
+neuron_list = neurons.tolist()
+connections = numpy.random.choice(neuron_list, [n_connection, 2])
 
-for indx in range(n_connection):
-    nest.Connect(nest.GIDCollection([connections[0][indx]]),
-                 nest.GIDCollection([connections[1][indx]]),
+for source_gid, target_gid in connections:
+    nest.Connect(nest.GIDCollection([source_gid]),
+                 nest.GIDCollection([target_gid]),
                  {'rule': 'one_to_one', 'make_symmetric': True},
                  {'synapse_model': 'gap_junction', 'weight': gap_weight})
 
@@ -145,9 +142,9 @@ for indx in range(n_connection):
 
 nest.Simulate(simtime)
 
-times = nest.GetStatus(sd, 'events')[0]['times']
-spikes = nest.GetStatus(sd, 'events')[0]['senders']
-n_spikes = nest.GetStatus(sd, 'n_events')[0]
+times = sd.get('events', 'times')
+spikes = sd.get('events', 'senders')
+n_spikes = sd.get('n_events')
 
 hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 

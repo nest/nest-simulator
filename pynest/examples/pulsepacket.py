@@ -49,7 +49,6 @@ References
 import nest
 import numpy
 import pylab
-import array
 
 # Properties of pulse packet:
 
@@ -101,9 +100,9 @@ Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 # It returns the provoked membrane potential (in mV)
 
 def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
-    term1 = (1 / (Tau_s) - 1 / (Tau_m))
-    term2 = numpy.exp(-Time / (Tau_s))
-    term3 = numpy.exp(-Time / (Tau_m))
+    term1 = (1 / Tau_s - 1 / Tau_m)
+    term2 = numpy.exp(-Time / Tau_s)
+    term3 = numpy.exp(-Time / Tau_m)
     PSP = (Weight / Cm * numpy.exp(1) / Tau_s *
            (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
     return PSP * 1e3
@@ -175,11 +174,7 @@ psp_norm = psp / psp_amp
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-
-tmp = numpy.zeros(2 * len(psp_norm))
-tmp[len(psp_norm) - 1:-1] += psp_norm
-psp_norm = tmp
-del tmp
+psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1])
 U = a * psp_amp * pylab.convolve(gauss, psp_norm)
 l = len(U)
 t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
@@ -257,9 +252,9 @@ nest.Simulate(simtime)
 # data point at position x in the voltage array (``V_m``), can be found at the
 # same position x in the sender (`senders`) and the time array (`times`).
 
-Vm = nest.GetStatus(vm, 'events')[0]['V_m']
-times = nest.GetStatus(vm, 'events')[0]['times']
-senders = nest.GetStatus(vm, 'events')[0]['senders']
+Vm = vm.get('events', 'V_m')
+times = vm.get('events', 'times')
+senders = vm.get('events', 'senders')
 
 
 ###############################################################################
@@ -278,7 +273,7 @@ pylab.plot(t_U, U + V0, 'r', lw=2, zorder=3, label='analytical solution')
 # Then we plot all individual membrane potentials.
 # The time axes is the range of the simulation time in steps of ms.
 
-Vm_single = [Vm[senders == ii] for ii in neurons]
+Vm_single = [Vm[senders == n.get('global_id')] for n in neurons]
 simtimes = numpy.arange(1, simtime)
 for idn in range(n_neurons):
     if idn == 0:
@@ -299,3 +294,4 @@ pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
 pylab.xlim((-5 * (tau_m + tau_s) + pulsetime,
             10 * (tau_m + tau_s) + pulsetime))
+pylab.show()

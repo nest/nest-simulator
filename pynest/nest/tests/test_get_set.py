@@ -107,13 +107,13 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         n3 = nest.Create('iaf_psc_exp')
         n4 = nest.Create('iaf_psc_alpha', 3)
 
-        n1.set('V_m', [-77., -88.])
+        n1.set(V_m=[-77., -88.])
         n3.set({'V_m': -55.})
 
-        n1.set('C_m', [251., 252.])
-        n2.set('C_m', [253., 254.])
+        n1.set(C_m=[251., 252.])
+        n2.set(C_m=[253., 254.])
         n3.set({'C_m': 255.})
-        n4.set('C_m', [256., 257., 258.])
+        n4.set(C_m=[256., 257., 258.])
 
         n5 = n1 + n2 + n3 + n4
 
@@ -411,7 +411,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                100.0, 100.0, 100.0, 100.0, 100.0))
 
         # Set same value for all nodes.
-        nodes.set('tau_Ca', 500.0)
+        nodes.set(tau_Ca=500.0)
         tau_Ca = nodes.get('tau_Ca')
         self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
                                   500.0, 500.0, 500.0, 500.0, 500.0))
@@ -425,14 +425,14 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                60.0, 70.0, 80.0, 90.0, -100.0))
 
         # Set value of a parameter based on list. List must be length of nodes.
-        nodes.set('V_reset', [-85., -82., -80., -77., -75.,
-                              -72., -70., -67., -65., -62.])
+        nodes.set(V_reset=[-85., -82., -80., -77., -75.,
+                           -72., -70., -67., -65., -62.])
         V_reset = nodes.get('V_reset')
         self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
                                    -72., -70., -67., -65., -62.))
 
-        with self.assertRaises(TypeError):
-            nodes.set('V_reset', [-85., -82., -80., -77., -75.])
+        with self.assertRaises(IndexError):
+            nodes.set(V_reset=[-85., -82., -80., -77., -75.])
 
         # Set different parameters with a dictionary.
         nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
@@ -455,7 +455,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
-        nodes[2:9:2].set('C_m', 111.0)
+        nodes[2:9:2].set(C_m=111.0)
         V_m = nodes.get('V_m')
         g = nodes.get(['t_ref', 'tau_m'])
         C_m = nodes.get('C_m')

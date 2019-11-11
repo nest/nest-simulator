@@ -155,7 +155,7 @@ if SHOW_FIGURES:
 else:
     plt_show = plt.show
 
-    def nop(s=None):
+    def nop(s=None, block=None):
         pass
 
     plt.show = nop
@@ -364,7 +364,7 @@ retina = nest.Create('RetinaNode', positions=layerGrid)
 
 retina_phase = 360.0 / Params['lambda_dg'] * (math.cos(Params['phi_dg']) * nest.spatial.pos.x +
                                               math.sin(Params['phi_dg']) * nest.spatial.pos.y)
-retina.set('phase', retina_phase)
+retina.set(phase=retina_phase)
 
 # ! Thalamus
 # ! --------
@@ -800,14 +800,14 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 
 # ! Connections from Retina to TpRelay
 retina_ctr_gid = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_gid)
+retina_ctr_index = retina.index(retina_ctr_gid.get('global_id'))
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
 TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid.get('global_id'))
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 
@@ -885,7 +885,7 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
         d = recorder.get('events', 'V_m')
         # clear data from multimeter
-        recorder.set('n_events', 0)
+        recorder.set(n_events=0)
 
         # update image data and title
         im.set_data(np.reshape(d, (Params['N'], Params['N'])))

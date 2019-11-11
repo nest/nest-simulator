@@ -36,30 +36,22 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
-% TODO: This test should be rewritten as a new test, testing parameters of the
-% new Parameter classes.
-/skipped exit_test_gracefully
-
 M_ERROR setverbosity
 
 /good_random_parameters
 [
   << /uniform << /min 0. /max 1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 0. /max 1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 0. /max 1. /cutoff 0.1 >> >>
-  << /lognormal << /mu 0. /sigma 1. /min 0. /max 1. >> >>
+  << /normal << /mean 0. /std 1. >> >>
+  << /lognormal << /mean 0. /std 1. >> >>
+  << /exponential << /beta 1. >> >>
 ]
 def
 
 /good_distance_parameters
 [
-  << /linear << /a 1. /c 0. >> >>
-  << /exponential << /a 1. /c 0. /tau 1. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 0.5 >> >>
+  << /distance << >> >>
+  << /distance << /dimension 1 >> >>
+  << /distance << /dimension 2 >> >>
 ]
 def
 
@@ -68,38 +60,19 @@ def
 /bad_random_parameters
 [
   << /uniform << /min 0. /max 0. >> >>
-  << /normal << /mu 0. /sigma 1. >> >>   % check if bad parameter names are detected
-  << /normal << /mean 0. /sigma 0. >> >>
-  << /normal << /mean 0. /sigma -1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 1. /max 1. >> >>
-  << /lognormal << /mu 0. /sigma 0. >> >>
-  << /lognormal << /mu 0. /sigma -1. >> >>
-  << /lognormal << /mu 0. /sigma 1. /min 1. /max 1. >> >>
+  << /normal << /mean 0. /sigma 1. >> >>   % check if bad parameter names are detected
+  << /normal << /mean 0. /std 0. >> >>
+  << /normal << /mean 0. /std -1. >> >>
+  << /lognormal << /mu 0. /std 0. >> >>
+  << /lognormal << /mu 0. /std -1. >> >>
+  << /lognormal << /mu 0. /std 1. >> >>
 ]
 def
 
 /bad_distance_parameters
 [
-  << /exponential << /a 1. /c 0. /tau 0. >> >>
-  << /exponential << /a 1. /c 0. /tau -1. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 0. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma -1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 0.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 0.5 >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 0.
-   				     /rho 0.5 >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho -1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 1. >> >>
+  << /distance << /dim 1 >> >>
+  << /distance << /dimension 1 /min 0. >> >>
 ]
 def
 
@@ -215,23 +188,23 @@ def
 } def
 
 
-%% first: test CreateTopologyParameter on good parameter sets
+%% first: test CreateParameter on good parameter sets
 good_parameters
 {
   /pset Set
   (Test 1: ) =only
   pset keys ==
-  { pset CreateTopologyParameter } pass_or_die
+  { pset CreateParameter } pass_or_die
   clear
 } forall
 
-%% second: test CreateTopologyParameter on bad parameter sets
+%% second: test CreateParameter on bad parameter sets
 bad_parameters
 {
   /pset Set
   (Test 2: ) =only
   pset keys ==
-  { pset CreateTopologyParameter } fail_or_die
+  { pset CreateParameter } fail_or_die
   clear
 } forall
 
@@ -398,5 +371,3 @@ bad_connspecs
 } forall
 
 endusing
-
-

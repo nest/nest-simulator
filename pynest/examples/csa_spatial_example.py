@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# csa_topology_example.py
+# csa_spatial_example.py
 #
 # This file is part of NEST.
 #
@@ -20,12 +20,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Using CSA with Topology layers
-------------------------------
+Using CSA with spatial populations
+----------------------------------
 
 This example shows a brute-force way of specifying connections between
-NEST Topology layers using Connection Set Algebra instead of the
-built-in connection routines.
+NEST populations with spatial data using Connection Set Algebra instead of
+the built-in connection routines.
 
 Using the CSA requires NEST to be compiled with support for
 libneurosim [1]_.
@@ -48,7 +48,7 @@ References
 
 
 import nest
-import nest.topology as topo
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does
@@ -63,7 +63,7 @@ except ImportError:
           "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
           "and CSA and libneurosim are available.")
     import sys
-    sys.exit()
+    sys.exit(1)
 
 ###############################################################################
 # We define a factory that returns a CSA-style geometry function for
@@ -74,9 +74,9 @@ except ImportError:
 # memory overhead.
 
 
-def geometryFunction(topologyLayer):
+def geometryFunction(population):
 
-    positions = topo.GetPosition(topologyLayer)
+    positions = nest.GetPosition(population)
 
     def geometry_function(idx):
         return positions[idx]
@@ -87,15 +87,14 @@ def geometryFunction(topologyLayer):
 nest.ResetKernel()
 
 ###############################################################################
-# We create two layers that have 20x20 neurons of type ``iaf_psc_alpha``.
+# We create two spatial populations that have 20x20 neurons of type
+# ``iaf_psc_alpha``.
 
-pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
-                         'rows': 20, 'columns': 20})
-pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
-                         'rows': 20, 'columns': 20})
+pop1 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([20, 20]))
+pop2 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([20, 20]))
 
 ###############################################################################
-# For each layer, we create a CSA-style geometry function and a CSA metric
+# For each population, we create a CSA-style geometry function and a CSA metric
 # based on them.
 
 g1 = geometryFunction(pop1)
@@ -122,5 +121,6 @@ nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
 # Finally, we use the ``PlotTargets`` function to show all targets in `pop2`
 # starting at the center neuron of `pop1`.
 
-cntr = topo.FindCenterElement(pop1)
-topo.PlotTargets(pop1[cntr], pop2)
+cntr = nest.FindCenterElement(pop1)
+nest.PlotTargets(cntr, pop2)
+plt.show()

@@ -186,8 +186,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
       }
       if ( tau_syn_[ i ] == Tau_ )
       {
-        throw BadProperty(
-          "Membrane and synapse time constant(s) must differ. See note in documentation." );
+        throw BadProperty( "Membrane and synapse time constant(s) must differ. See note in documentation." );
       }
     }
   }

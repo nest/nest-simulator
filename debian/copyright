@@ -4,7 +4,7 @@ Source: https://github.com/nest/nest-simulator/
 
 Files: *
 Copyright: 2004-2019 The NEST Initiative <nest_user@nest-initiative.org>
-License: GPL-2
+License: GPL-2+
 
 Files: librandom/*
 Copyright: other people
@@ -12,9 +12,9 @@ License: other license
 
 Files: debian/*
 Copyright: 2019 The NEST Initiative <nest_user@nest-initiative.org>
-License: GPL-2
+License: GPL-2+
 
-License: GPL-2
+License: GPL-2+
  NEST is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 2 of the License, or

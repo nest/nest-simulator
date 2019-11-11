@@ -184,13 +184,13 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         # Check that an error is raised when setting n_events to a number != 0
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            mm.set("n_events", 10)
+            mm.n_events = 10
 
         # Check that the event counter was indeed not changed
         self.assertEqual(mm.get("n_events"), 140)
 
         # Check that the events dict is cleared when setting n_events to 0
-        mm.set("n_events", 0)
+        mm.n_events = 0
         self.assertEqual(mm.get("n_events"), 0)
 
     def testTimeInSteps(self):

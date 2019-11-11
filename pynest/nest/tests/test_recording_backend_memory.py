@@ -80,7 +80,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         # Check that an error is raised when setting n_events to a number != 0
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            mm.set("n_events", 10)
+            mm.n_events = 10
 
         # Check that the event counter was indeed not changed and the
         # events dictionary is still intact
@@ -88,7 +88,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         self.assertEqual(mm.get("events")["times"].size, 140)
 
         # Check that the events dict is cleared when setting n_events to 0
-        mm.set("n_events", 0)
+        mm.n_events = 0
         self.assertEqual(mm.get("events")["times"].size, 0)
 
     def testTimeInSteps(self):
@@ -108,7 +108,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         # Check times are in int (i.e.steps) and offsets are there and of
         # type float if time_in_steps == True
-        mm.set("time_in_steps", True)
+        mm.time_in_steps = True
         self.assertEqual(mm.get("events")["times"].dtype, "int64")
         self.assertTrue("offsets" in mm.get("events"))
         self.assertEqual(mm.get("events")["offsets"].dtype, "float64")
@@ -117,7 +117,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         # been called.
         nest.Simulate(10)
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            mm.set("time_in_steps", False)
+            mm.time_in_steps = False
 
 
 def suite():

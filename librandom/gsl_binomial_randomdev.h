@@ -104,9 +104,9 @@ public:
    * p - success probability for single trial
    * n - number of trials
    */
-  void set_p_n( double, unsigned int );
-  void set_p( double );       //!<set p
-  void set_n( unsigned int ); //!<set n
+  void set_p_n( double, size_t );
+  void set_p( double ); //!<set p
+  void set_n( size_t ); //!<set n
 
   /**
    * Import sets of overloaded virtual functions.

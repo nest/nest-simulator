@@ -37,13 +37,13 @@ import pip
 # pip.main(['install', 'Sphinx==1.5.6'])
 # pip.main(['install', 'sphinx-gallery'])
 
-# import sphinx_gallery
 import subprocess
 
 # import shlex
 
 from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
+# Disabling import of Mock to fix error in sphinx_gallery build
+#from mock import Mock as MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -62,20 +62,21 @@ source_suffix = ['.rst']
 # compile-with-readthedocs-when-youre-using-numpy-and-scipy/
 
 
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
+#class Mock(MagicMock):
+#    @classmethod
+#    def __getattr__(cls, name):
+#        return MagicMock()
 
 
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+#MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
+#sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
 
 extensions = [
+    'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
@@ -106,6 +107,15 @@ mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+sphinx_gallery_conf = {
+#    'doc_module': ('sphinx_gallery', 'numpy'),
+     # path to your examples scripts
+     'examples_dirs': '../pynest/examples',
+     # path where to save gallery generated examples
+     'gallery_dirs': 'auto_examples',
+#    'backreferences_dir': False
+     'plot_gallery': 'False'
+}
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #

@@ -51,13 +51,11 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
-      CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
+   if [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.7/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.7/include/python3.6m/"
    fi
-   if [[ $OSTYPE == darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
+   if [[ $OSTYPE = darwin* ]]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
@@ -97,7 +95,7 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-if [[ $OSTYPE == darwin* ]]; then
+if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
     CONFIGURE_BOOST="-Dwith-boost=OFF"
@@ -166,11 +164,16 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
       #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
-       file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
+       file_names=`curl --retry 5 "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
     else
        echo "MSGBLD0090: Retrieving changed files using git diff."    
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
+
+    # Note: uncomment the following line to static check *all* files, not just those that have changed.
+    # Warning: will run for a very long time (will time out on Travis CI instances)
+
+    # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
     printf '%s\n' "$file_names" | while IFS= read -r line
      do
@@ -181,7 +184,6 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
      done
     echo "MSGBLD0100: Retrieving changed files completed."
     echo
-
 
     # Set the command line arguments for the static code analysis script and execute it.
 
@@ -213,16 +215,19 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+    if [ $? -gt 0 ]; then
+        exit $?
+    fi
 else
     echo "MSGBLD0225: Static code analysis skipped due to build configuration."
-fi  # End of Static code analysis.
+fi
 
-
+if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
 cd "$NEST_VPATH"
 cp ../extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
-if [[ "$OSTYPE" == "darwin"* ]] ; then
+    if [[ "$OSTYPE" = "darwin"* ]] ; then
     sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 fi
 
@@ -264,24 +269,20 @@ echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
 
-if [ "$xRUN_TESTSUITE" = "1" ]; then
     echo
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               R U N   N E S T   T E S T S U I T E                           +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
         export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+    elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
         export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
     fi
     make installcheck
     echo "MSGBLD0300: Make installcheck completed."
-else
-    echo "MSGBLD0305: Skip installcheck."
-fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "MSGBLD0310: This build was triggered by a pull request."
@@ -294,3 +295,4 @@ if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
 fi
 
 echo "MSGBLD0340: Build completed."
+fi

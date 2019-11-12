@@ -92,7 +92,7 @@ class TestNodeParametrization(unittest.TestCase):
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.normal(
-                                loc=10.0, scale=5.0)})
+                                mean=10.0, std=5.0)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -101,7 +101,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with random.exonential as parameter"""
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
-                            {'V_m': nest.random.exponential(scale=1.0)})
+                            {'V_m': nest.random.exponential(beta=1.0)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -113,7 +113,7 @@ class TestNodeParametrization(unittest.TestCase):
         N = 3
         nodes = nest.Create('iaf_psc_alpha', N,
                             {'V_m': nest.random.lognormal(
-                                mu=10., sigma=20.)})
+                                mean=10., std=20.)})
         self.assertEqual(len(nodes.get('V_m')), N)
         self.assertEqual(len(nodes.get('V_m')), len(np.unique(nodes.get('V_m'))),
                          'Values from random distribution are not unique')
@@ -122,7 +122,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test Create with different parameters added"""
         nodes = nest.Create('iaf_psc_alpha', 3,
                             {'V_m': -80.0 +
-                             nest.random.exponential(scale=0.1)})
+                             nest.random.exponential(beta=0.1)})
 
         for vm in nodes.get('V_m'):
             self.assertGreaterEqual(vm, -80.0)
@@ -305,7 +305,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_set_with_random_as_val(self):
         """Test set with random parameter as val"""
         nodes = nest.Create('iaf_psc_alpha', 3)
-        nodes.set('V_m', nest.random.uniform(-75., -55.))
+        nodes.set(V_m=nest.random.uniform(-75., -55.))
 
         for vm in nodes.get('V_m'):
             self.assertGreater(vm, -75.)
@@ -383,7 +383,12 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        nest.Connect(layer, layer, syn_spec={'weight': nest.spatial.distance})
+        conn_spec = {
+            'rule': 'fixed_outdegree',
+            'outdegree': 5,
+            'p': 1.0
+        }
+        nest.Connect(layer, layer, conn_spec=conn_spec, syn_spec={'weight': nest.spatial.distance})
         conns = nest.GetConnections()
         conn_status = conns.get()
 
@@ -406,13 +411,14 @@ class TestNodeParametrization(unittest.TestCase):
         """Test dimension specific connection distance parameter"""
         positions = [[x, x, x] for x in np.linspace(0, 0.5, 5)]
 
-        for i, parameter in enumerate([nest.spatial.dimension_distance.x,
-                                       nest.spatial.dimension_distance.y,
-                                       nest.spatial.dimension_distance.z]):
+        for i, parameter in enumerate([nest.spatial.distance.x,
+                                       nest.spatial.distance.y,
+                                       nest.spatial.distance.z]):
             nest.ResetKernel()
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
             nest.Connect(layer, layer,
+                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
                          syn_spec={'weight': parameter})
             conns = nest.GetConnections()
             conn_status = conns.get()
@@ -437,12 +443,12 @@ class TestNodeParametrization(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
-                                   nest.spatial.dimension_distance.z})
+                                   nest.spatial.distance.z})
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(layer, layer,
                          syn_spec={'weight':
-                                   nest.spatial.dimension_distance.n(-1)})
+                                   nest.spatial.distance.n(-1)})
 
     def test_src_tgt_position_parameter(self):
         """Test source and target position parameter"""
@@ -458,9 +464,10 @@ class TestNodeParametrization(unittest.TestCase):
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
             # Scale up delay because of limited number of digits.
-            nest.Connect(layer, layer, syn_spec={
-                'weight': source_positions[i],
-                'delay': 100*target_positions[i]})
+            nest.Connect(layer, layer,
+                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
+                         syn_spec={'weight': source_positions[i],
+                                   'delay': 100*target_positions[i]})
             conns = nest.GetConnections()
             conn_status = conns.get()
 
@@ -648,6 +655,50 @@ class TestNodeParametrization(unittest.TestCase):
             self.assertEqual(len(layer.spatial['positions'][0]), n_dim)
             self.assertEqual(
                 len(np.unique(layer.spatial['positions'][0])), n_dim)
+
+    def test_parameter_is_spatial(self):
+        """Test parameter is_spatial function"""
+        constant_parameter = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        spatial_parameters = [nest.spatial.pos.x,
+                              nest.spatial.distance,
+                              nest.spatial.distance.x]
+        non_spatial_parameters = [constant_parameter,
+                                  nest.random.uniform(),
+                                  nest.random.normal(),
+                                  nest.random.lognormal(),
+                                  nest.random.exponential()]
+
+        def apply_assert(assert_func, p):
+            assert_func(p.is_spatial())
+            assert_func(nest.math.cos(p).is_spatial())
+            assert_func(nest.math.sin(p).is_spatial())
+            assert_func(nest.math.exp(p).is_spatial())
+            assert_func(nest.math.max(p, 1.0).is_spatial())
+            assert_func(nest.math.min(p, 1.0).is_spatial())
+            assert_func(nest.math.redraw(p, 0.0, 1.0).is_spatial())
+            assert_func((p + constant_parameter).is_spatial())
+            assert_func((constant_parameter + p).is_spatial())
+            assert_func(nest.logic.conditional(p, constant_parameter, constant_parameter).is_spatial())
+            assert_func(nest.logic.conditional(constant_parameter, p, constant_parameter).is_spatial())
+            assert_func(nest.logic.conditional(constant_parameter, constant_parameter, p).is_spatial())
+        for p in spatial_parameters:
+            apply_assert(self.assertTrue, p)
+        for p in non_spatial_parameters:
+            apply_assert(self.assertFalse, p)
+
+    def test_parameter_apply(self):
+        """Parameter apply function"""
+        positions = [[x, 0.5*x] for x in np.linspace(0, 0.5, 5)]
+        position_array = np.array(positions)
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
+
+        # Spatial gc only
+        self.assertEqual(tuple(position_array[:, 0]), nest.spatial.pos.x.apply(layer))
+        self.assertEqual(tuple(position_array[:, 1]), nest.spatial.pos.y.apply(layer))
+
+        # Spatial gc with a single gid, and list of positions
+        distance_reference = tuple(np.sqrt(position_array[:, 0]**2 + position_array[:, 1]**2))
+        self.assertEqual(distance_reference, nest.spatial.distance.apply(layer[0], positions))
 
 
 def suite():

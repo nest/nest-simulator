@@ -49,15 +49,13 @@ ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
               'p': 1.,
-              'autapses': False,
+              'allow_autapses': False,
               'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
                                   'upper_right': [0.2, 0.2, 0.2]}}})
 
 # show connections from center element
 # sender shown in red, targets in green
-ctr_gid = nest.FindCenterElement(l1)
-ctr_index = ctr_gid - 1
-ctr = l1[ctr_index:ctr_index + 1]
+ctr = nest.FindCenterElement(l1)
 xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
 xctr, yctr, zctr = nest.GetPosition(ctr)
 ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')

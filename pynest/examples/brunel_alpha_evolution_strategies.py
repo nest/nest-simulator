@@ -245,15 +245,15 @@ def simulate(parameters):
     espikes = nest.Create('spike_detector')
     ispikes = nest.Create('spike_detector')
 
-    nest.SetStatus(espikes, [{'label': 'brunel-py-ex',
-                              'withtime': True,
-                              'withgid': True,
-                              'to_file': False}])
+    espikes.set({'label': 'brunel-py-ex',
+                 'withtime': True,
+                 'withgid': True,
+                 'to_file': False})
 
-    nest.SetStatus(ispikes, [{'label': 'brunel-py-in',
-                              'withtime': True,
-                              'withgid': True,
-                              'to_file': False}])
+    ispikes.set({'label': 'brunel-py-in',
+                 'withtime': True,
+                 'withgid': True,
+                 'to_file': False})
 
     nest.CopyModel('static_synapse', 'excitatory',
                    {'weight': J_ex, 'delay': parameters['delay']})
@@ -277,17 +277,15 @@ def simulate(parameters):
     nest.Connect(nodes_in[:parameters['N_rec']], ispikes)
 
     conn_parameters_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-    nest.Connect(
-        nodes_ex, nodes_ex + nodes_in, conn_parameters_ex, 'excitatory')
+    nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_parameters_ex, 'excitatory')
 
     conn_parameters_in = {'rule': 'fixed_indegree', 'indegree': CI}
-    nest.Connect(
-        nodes_in, nodes_ex + nodes_in, conn_parameters_in, 'inhibitory')
+    nest.Connect(nodes_in, nodes_ex + nodes_in, conn_parameters_in, 'inhibitory')
 
     nest.Simulate(parameters['sim_time'])
 
-    return (nest.GetStatus(espikes, 'events')[0],
-            nest.GetStatus(ispikes, 'events')[0])
+    return (espikes.get('events'),
+            ispikes.get('events'))
 
 
 ###############################################################################

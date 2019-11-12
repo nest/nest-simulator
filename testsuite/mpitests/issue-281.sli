@@ -46,7 +46,7 @@ Author: Hans Ekkehard Plesser, 2016-03-18
   dup
 
   <<
-     /connection_type /divergent
+     /connection_type /pairwise_bernoulli_on_target
      /number_of_connections 8
      /allow_multapses false
      /allow_autapses false

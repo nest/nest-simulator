@@ -64,7 +64,7 @@ except ImportError:
           "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
           "and CSA and libneurosim are available.")
     import sys
-    sys.exit()
+    sys.exit(1)
 
 ###############################################################################
 # To set up the connectivity, We create a ``random`` connection set with a

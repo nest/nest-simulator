@@ -1,5 +1,5 @@
 /*
- *  topo_mpi_test_convergent.sli
+ *  topo_mpi_test_pairwise_bernoulli_on_target.sli
  *
  *  This file is part of NEST.
  *
@@ -23,7 +23,7 @@
 (unittest) run
 /unittest using
 
-% Convergent test
+% pairwise_bernoulli_on_target test
 [1 2 4]
 {
   ResetKernel
@@ -37,7 +37,7 @@
   << /distance << >> >> CreateParameter
   mul add /linear_parameter Set
 
-  /conns << /connection_type (convergent)
+  /conns << /connection_type (pairwise_bernoulli_on_target)
             /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
             /weight linear_parameter
          >> def

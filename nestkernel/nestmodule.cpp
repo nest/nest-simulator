@@ -434,15 +434,15 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   }
 
   GIDCollectionMetadataPTR meta = gc->get_metadata();
-  if ( not meta.get() )
-  {
-    throw KernelException( "The GIDCollection has invalid metadata." );
-  }
-
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-  meta->get_status( dict );
 
-  ( *dict )[ names::network_size ] = gc->size();
+  //return empty dict if GC does not have metadata
+  if ( meta.get() )
+  {
+    meta->get_status( dict );
+
+    ( *dict )[ names::network_size ] = gc->size();
+  }
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -1286,6 +1286,19 @@ NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+
+  const auto res = gidcoll->find( gid );
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
 NestModule::eq_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1863,6 +1876,53 @@ NestModule::GetValue_PFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::IsSpatial_PFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  auto param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
+
+  bool parameter_is_spatial = is_spatial( param );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( parameter_is_spatial );
+  i->EStack.pop();
+}
+
+/** @BeginDocumentation
+  Name: Apply
+*/
+void
+NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+
+  auto result = apply( param, positions );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
+NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
+
+  auto result = apply( param, gc );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
 NestModule::init( SLIInterpreter* i )
 {
   ConnectionType.settypename( "connectiontype" );
@@ -1930,6 +1990,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
   i->createcommand( "GetValue_P", &getvalue_Pfunction );
+  i->createcommand( "IsSpatial_P", &isspatial_Pfunction );
+  i->createcommand( "Apply_P_D", &apply_P_Dfunction );
+  i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
@@ -1966,6 +2029,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( "Find_g_i", &find_g_ifunction );
   i->createcommand( "eq_g", &eq_gfunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
   i->createcommand( ":enditerator_g", &enditerator_gfunction );

@@ -24,11 +24,14 @@
 #define POSITION_H
 
 // C++ includes:
+#include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 // Includes from libnestutil:
@@ -93,9 +96,19 @@ public:
   Position( const Position< D, U >& other );
 
   /**
-   * @returns the Position as a std::vector
+   * Move constructor.
    */
-  operator std::vector< T >() const;
+  Position( Position&& other );
+
+  /**
+   * Assignment constructor.
+   */
+  Position& operator=( const Position& other ) = default;
+
+  /**
+   * Move assignment constructor.
+   */
+  Position& operator=( const Position&& other );
 
   /**
    * @returns an element (coordinate) of the Position
@@ -112,6 +125,9 @@ public:
    * @returns array of positions stored as a token object.
    */
   Token getToken() const;
+
+  const std::vector< T > get_vector() const;
+  void get_vector( std::vector< T >& vector ) const;
 
   /**
    * Elementwise addition.
@@ -286,7 +302,7 @@ public:
   friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
 
 protected:
-  T x_[ D ];
+  std::array< T, D > x_;
 };
 
 /**
@@ -387,10 +403,7 @@ private:
 template < int D, class T >
 inline Position< D, T >::Position()
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = 0;
-  }
+  x_.fill( 0 );
 }
 
 template < int D, class T >
@@ -426,38 +439,36 @@ inline Position< D, T >::Position( const std::vector< T >& y )
   {
     throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
   }
-  std::copy( y.begin(), y.end(), x_ );
+  std::copy( y.begin(), y.end(), x_.begin() );
 }
 
 template < int D, class T >
 inline Position< D, T >::Position( const Position< D, T >& other )
+  : x_( other.x_ )
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = other.x_[ i ];
-  }
 }
 
 template < int D, class T >
 template < class U >
 inline Position< D, T >::Position( const Position< D, U >& other )
+  : x_( other.x_ )
 {
-  for ( int i = 0; i < D; ++i )
-  {
-    x_[ i ] = other.x_[ i ];
-  }
 }
 
 template < int D, class T >
-Position< D, T >::operator std::vector< T >() const
+inline Position< D, T >::Position( Position&& other )
 {
-  std::vector< T > result;
-  for ( int i = 0; i < D; ++i )
-  {
-    result.push_back( x_[ i ] );
-  }
+  x_ = std::move( other.x_ );
+}
 
-  return result;
+template < int D, class T >
+inline Position< D, T >& Position< D, T >::operator=( const Position&& other )
+{
+  if ( this != &other )
+  {
+    x_ = std::move( other.x_ );
+  }
+  return *this;
 }
 
 template < int D, class T >
@@ -476,10 +487,26 @@ template < int D, class T >
 Token
 Position< D, T >::getToken() const
 {
-  std::vector< T > result = std::vector< T >( *this );
-
+  std::vector< T > result = get_vector();
   return Token( result );
 }
+
+
+template < int D, class T >
+const std::vector< T >
+Position< D, T >::get_vector() const
+{
+  return std::vector< T >( x_.begin(), x_.end() );
+}
+
+template < int D, class T >
+void
+Position< D, T >::get_vector( std::vector< T >& vector ) const
+{
+  assert( vector.size() == D );
+  std::copy( x_.begin(), x_.end(), vector.begin() );
+}
+
 
 template < int D, class T >
 template < class OT >

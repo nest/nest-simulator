@@ -73,6 +73,6 @@ skip_if_not_threaded
 
 [1 2 4]
 {
-  << /connection_type /convergent >> test_connection
+  << /connection_type /pairwise_bernoulli_on_source >> test_connection
 } distributed_process_invariant_collect_assert_or_die
 

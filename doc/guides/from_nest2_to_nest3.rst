@@ -414,27 +414,27 @@ distribution.
 Spatial parameters
 ^^^^^^^^^^^^^^^^^^
 
-  +-----------------------------------------+-------------------------------------------------------------------------+
-  | Parameter                               | Description                                                             |
-  +=========================================+=========================================================================+
-  | | ``nest.spatial.pos.x``                | | Position of a neuron, on the x, y, and z axis.                        |
-  | | ``nest.spatial.pos.y``                | | Can be used to set node properties, but not for connecting.           |
-  | | ``nest.spatial.pos.z``                |                                                                         |
-  +-----------------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.source_pos.x``         | | Position of the source neuron, on the x, y, and z axis.               |
-  | | ``nest.spatial.source_pos.y``         | | Can only be used when connecting.                                     |
-  | | ``nest.spatial.source_pos.z``         |                                                                         |
-  +-----------------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.target_pos.x``         |                                                                         |
-  | | ``nest.spatial.target_pos.y``         | | Position of the target neuron, on the x, y, and z axis.               |
-  | | ``nest.spatial.target_pos.z``         | | Can only be used when connecting.                                     |
-  +-----------------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.distance``             | | Distance between two nodes. Can only be used when connecting.         |
-  +-----------------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.dimension_distance.x`` |                                                                         |
-  | | ``nest.spatial.dimension_distance.y`` | | Distance on the x, y and z axis between the source and target neuron. |
-  | | ``nest.spatial.dimension_distance.z`` | | Can only be used when connecting.                                     |
-  +-----------------------------------------+-------------------------------------------------------------------------+
+  +----------------------------------+-------------------------------------------------------------------------+
+  | Parameter                        | Description                                                             |
+  +==================================+=========================================================================+
+  | | ``nest.spatial.pos.x``         | | Position of a neuron, on the x, y, and z axis.                        |
+  | | ``nest.spatial.pos.y``         | | Can be used to set node properties, but not for connecting.           |
+  | | ``nest.spatial.pos.z``         |                                                                         |
+  +----------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.source_pos.x``  | | Position of the source neuron, on the x, y, and z axis.               |
+  | | ``nest.spatial.source_pos.y``  | | Can only be used when connecting.                                     |
+  | | ``nest.spatial.source_pos.z``  |                                                                         |
+  +----------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.target_pos.x``  |                                                                         |
+  | | ``nest.spatial.target_pos.y``  | | Position of the target neuron, on the x, y, and z axis.               |
+  | | ``nest.spatial.target_pos.z``  | | Can only be used when connecting.                                     |
+  +----------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.distance``      | | Distance between two nodes. Can only be used when connecting.         |
+  +----------------------------------+-------------------------------------------------------------------------+
+  | | ``nest.spatial.distance.x``    |                                                                         |
+  | | ``nest.spatial.distance.y``    | | Distance on the x, y and z axis between the source and target neuron. |
+  | | ``nest.spatial.distance.z``    | | Can only be used when connecting.                                     |
+  +----------------------------------+-------------------------------------------------------------------------+
 
   These Parameters represent positions of neurons or distances between two
   neurons. To set node parameters, only the node position can be used. The
@@ -443,34 +443,31 @@ Spatial parameters
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
 
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  | Distribution function                | Arguments          | Function                                             |
-  +======================================+====================+======================================================+
-  |                                      |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
-  | ``nest.distributions.exponential()`` | | x,               |                                                      |
-  |                                      | | a,               |                                                      |
-  |                                      | | tau              |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      | | x,               | .. math::                                            |
-  | ``nest.distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
-  |                                      | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
-  |                                      | | std_deviation    |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | .. math::                                            |
-  |                                      | | x,               |                                                      |
-  |                                      | | y,               |    p(x) = p_{\text{center}}                          |
-  |                                      | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
-  | ``nest.distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
-  |                                      | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
-  |                                      | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
-  |                                      | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
-  |                                      | | rho              |    {2(1-\rho^2)}}                                    |
-  +--------------------------------------+--------------------+------------------------------------------------------+
-  |                                      |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
-  | ``nest.distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
-  |                                      | | alpha,           |                                                      |
-  |                                      | | theta            |                                                      |
-  +--------------------------------------+--------------------+------------------------------------------------------+
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  | Distribution function                        | Arguments          | Function                                             |
+  +==============================================+====================+======================================================+
+  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}               |
+  | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
+  |                                              | | beta             |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              | | x,               | .. math::                                            |
+  | ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
+  |                                              | | std              |     {2\text{std}^2}}                                 |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
+  |                                              | | mean_x,          |    {\text{std_x}^2}-\frac{                           |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
+  |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
+  |                                              | | rho              |    {2(1-\rho^2)}}                                    |
+  |                                              |                    |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
+  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
+  |                                              | | kappa            |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
 
 With these functions, you can recreate for example a Gaussian kernel as a
 parameter:
@@ -481,7 +478,7 @@ parameter:
   |                                                            |                                                                 |
   | ::                                                         | ::                                                              |
   |                                                            |                                                                 |
-  |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.distributions.gaussian(                        |
+  |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.spatial_distributions.gaussian(                |
   |                                                            |         nest.spatial.distance, p_center=1.0, std_deviation=1.0) |
   |                                                            |                                                                 |
   +------------------------------------------------------------+-----------------------------------------------------------------+
@@ -775,27 +772,27 @@ Usage examples
 A grid layer connected with Gaussian distance dependent connection
 probability and rectangular mask on the target layer:
 
-  +---------------------------------------------------------+---------------------------------------------------------+
-  | NEST 2.x                                                | NEST 3.0                                                |
-  +=========================================================+=========================================================+
-  |                                                         |                                                         |
-  | ::                                                      | ::                                                      |
-  |                                                         |                                                         |
-  |     l = tp.CreateLayer(                                 |     l = nest.Create('iaf_psc_alpha',                    |
-  |         {'columns': nc, 'rows': nr,                     |                     positions=nest.spatial.grid(        |
-  |          'elements': 'iaf_psc_alpha',                   |                         rows=nr, columns=nc,            |
-  |          'extent': [2., 2.]})                           |                         extent=[2., 2.]))               |
-  |                                                         |                                                         |
-  |     conn_dict = {'connection_type': 'divergent',        |     conn_dict = {'rule': 'pairwise_bernoulli',          |
-  |                  'kernel': {'gaussian':                 |                  'p': nest.distributions.gaussian(      |
-  |                             {'p_center': 1.,            |                      nest.spatial.distance,             |
-  |                              'sigma': 1.}},             |                      p_center=1., std_deviation=1.),    |
-  |                  'mask': {'rectangular':                |                  'mask': {'rectangular':                |
-  |                           {'lower_left': [-0.5, -0.5],  |                           {'lower_left': [-0.5, -0.5],  |
-  |                            'upper_right': [0.5, 0.5]}}} |                            'upper_right': [0.5, 0.5]}}} |
-  |     nest.ConnectLayers(l, l, conn_dict)                 |     nest.Connect(l, l, conn_dict)                       |
-  |                                                         |                                                         |
-  +---------------------------------------------------------+---------------------------------------------------------+
+  +---------------------------------------------------------+----------------------------------------------------------------------+
+  | NEST 2.x                                                | NEST 3.0                                                             |
+  +=========================================================+======================================================================+
+  |                                                         |                                                                      |
+  | ::                                                      | ::                                                                   |
+  |                                                         |                                                                      |
+  |     l = tp.CreateLayer(                                 |     l = nest.Create('iaf_psc_alpha',                                 |
+  |         {'columns': nc, 'rows': nr,                     |                     positions=nest.spatial.grid(                     |
+  |          'elements': 'iaf_psc_alpha',                   |                         rows=nr, columns=nc,                         |
+  |          'extent': [2., 2.]})                           |                         extent=[2., 2.]))                            |
+  |                                                         |                                                                      |
+  |     conn_dict = {'connection_type': 'divergent',        |     conn_dict = {'rule': 'pairwise_bernoulli',                       |
+  |                  'kernel': {'gaussian':                 |                  'p': nest.spatial_distributions.gaussian(           |
+  |                             {'p_center': 1.,            |                      nest.spatial.distance,                          |
+  |                              'sigma': 1.}},             |                      p_center=1., std_deviation=1.),                 |
+  |                  'mask': {'rectangular':                |                  'mask': {'rectangular':                             |
+  |                           {'lower_left': [-0.5, -0.5],  |                           {'lower_left': [-0.5, -0.5],               |
+  |                            'upper_right': [0.5, 0.5]}}} |                            'upper_right': [0.5, 0.5]}}}              |
+  |     nest.ConnectLayers(l, l, conn_dict)                 |     nest.Connect(l, l, conn_dict)                                    |
+  |                                                         |                                                                      |
+  +---------------------------------------------------------+----------------------------------------------------------------------+
 
 A free layer with uniformly distributed positions, connected with fixed
 number of outgoing connections, linear distance dependent connection
@@ -816,8 +813,8 @@ probability and delay, and random weights from a normal distribution:
   |     conn_dict = {'connection_type': 'divergent',                 |                  'p': 1. - 0.5*nest.spatial.distance,                         |
   |                  'number_of_connections': 50,                    |                  'weight': nest.random.normal(min=-1., max=1.),               |
   |                  'kernel': {'linear':                            |                  'delay': 1.5*nest.spatial.distance,                          |
-  |                             {'a': -0.5, 'c': 1.}},               |                  'multapses': True,                                           |
-  |                  'weights': {'normal':                           |                  'autapses': False}                                           |
+  |                             {'a': -0.5, 'c': 1.}},               |                  'allow_multapses': True,                                     |
+  |                  'weights': {'normal':                           |                  'allow_autapses': False}                                     |
   |                              {'min': -1.0, 'max': 1.0}},         |     nest.Connect(l, l, conn_dict)                                             |
   |                  'delays': {'linear': {'a': 1.5, 'c': 0.}},      |                                                                               |
   |                  'allow_multapses': True,                        |                                                                               |

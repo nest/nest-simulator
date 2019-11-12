@@ -1,5 +1,5 @@
 /*
- *  topo_mpi_test_free_pg_to_layer_convergent.sli
+ *  topo_mpi_test_free_layer_to_layer_pairwise_bernoulli_on_source.sli
  *
  *  This file is part of NEST.
  *
@@ -43,12 +43,11 @@ skip_if_not_threaded
   /pos Set
 
   /layer_spec_a
-  <<
-    /positions [[0.0 0.0]]
+  << /positions pos
+    /extent [1.25 1.25]
     /edge_wrap false
-    /elements /poisson_generator
+    /elements /iaf_psc_alpha
   >> def
-
 
   /layer_spec_b
   << /positions pos
@@ -73,6 +72,6 @@ skip_if_not_threaded
 
 [1 2 4]
 {
-  << /connection_type /convergent /number_of_connections 10 >> test_connection
+  << /connection_type /pairwise_bernoulli_on_source /number_of_connections 10 >> test_connection
 } distributed_process_invariant_collect_assert_or_die
 

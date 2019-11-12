@@ -174,8 +174,8 @@ protected:
   GIDCollectionPTR sources_;
   GIDCollectionPTR targets_;
 
-  bool autapses_;
-  bool multapses_;
+  bool allow_autapses_;
+  bool allow_multapses_;
   bool make_symmetric_;
   bool creates_symmetric_connections_;
 
@@ -308,7 +308,7 @@ protected:
 
 private:
   void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool, long );
-  Parameter* indegree_;
+  ParameterDatum indegree_;
 };
 
 class FixedOutDegreeBuilder : public ConnBuilder
@@ -320,7 +320,7 @@ protected:
   void connect_();
 
 private:
-  Parameter* outdegree_;
+  ParameterDatum outdegree_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder
@@ -345,7 +345,7 @@ protected:
 
 private:
   void inner_connect_( const int, librandom::RngPtr&, Node*, index );
-  Parameter* p_; //!< connection probability
+  ParameterDatum p_; //!< connection probability
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

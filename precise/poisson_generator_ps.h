@@ -230,6 +230,13 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty
 
+  // If the rate is changed, the event_hook must handle the interval from
+  // the rate change to the first subsequent spike.
+  if ( d->known( names::rate ) )
+  {
+    B_.next_spike_.assign( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
+  }
+
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

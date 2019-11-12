@@ -37,14 +37,14 @@ connectivity rule (default: 'all\_to\_all') or a dictionary specifying
 the rule and the rule-specific parameters (e.g. 'indegree'), which must
 be given.
 
-In addition switches allowing self-connections ('autapses', default:
-True) and multiple connections between pairs of neurons ('multapses',
+In addition switches allowing self-connections ('allow_autapses', default:
+True) and multiple connections between pairs of neurons ('allow_multapses',
 default: True) can be contained in the dictionary. The validity of the
 switches is confined by the Connect-call. Thus connecting the same set
-of neurons multiple times with the switch 'multapses' set to False, one
+of neurons multiple times with the switch 'allow_multapses' set to False, one
 particular connection might be established multiple times. The same
 applies to nodes being specified multiple times in the source or target
-vector. Here 'multapses' set to False will result in one potential
+vector. Here 'allow_multapses' set to False will result in one potential
 connection between each occurring node pair.
 
 ``syn_spec`` defines the synapse type and its properties. It can be
@@ -464,7 +464,7 @@ Example new connection routine:
 
 ::
 
-    conn_dict = {'rule': 'fixed_indegree', 'indegree': N, 'autapses': True, 'multapses': True}
+    conn_dict = {'rule': 'fixed_indegree', 'indegree': N, 'allow_autapses': True, 'allow_multapses': True}
     syn_dict = {'model': 'my_synapse', 'weight': w0, 'delay': d0}
     nest.Connect(A, B, conn_dict, syn_dict)
 
@@ -515,7 +515,7 @@ Example new connection routine:
 
 ::
 
-    conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N, 'autapses': True, 'multapses': True}
+    conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N, 'allow_autapses': True, 'allow_multapses': True}
     syn_dict = {'model': 'my_synapse', 'weight': w0, 'delay': w0}
     nest.Connect(A, B, conn_dict, syn_dict)
 

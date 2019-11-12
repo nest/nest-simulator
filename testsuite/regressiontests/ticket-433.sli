@@ -57,7 +57,7 @@ M_INFO setverbosity
 {
   retina
   Tp
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /receptor_type ampa
      /synapse_model /ht_synapse
      /mask << /circular << /radius 2.0 >> >>
@@ -74,7 +74,7 @@ bind def
 
   retina
   Tp
-  << /connection_type (divergent)
+  << /connection_type (pairwise_bernoulli_on_target)
      /synapse_model /ht_syn_ampa
      /mask << /circular << /radius 2.0 >> >>
   >>

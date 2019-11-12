@@ -155,7 +155,7 @@ if SHOW_FIGURES:
 else:
     plt_show = plt.show
 
-    def nop(s=None):
+    def nop(s=None, block=None):
         pass
 
     plt.show = nop
@@ -366,7 +366,7 @@ retina = nest.Create('RetinaNode', positions=layerGrid)
 
 retina_phase = 360.0 / Params['lambda_dg'] * (math.cos(Params['phi_dg']) * nest.spatial.pos.x +
                                               math.sin(Params['phi_dg']) * nest.spatial.pos.y)
-retina.set('phase', retina_phase)
+retina.set(phase=retina_phase)
 
 # ! Thalamus
 # ! --------
@@ -505,7 +505,7 @@ ctConnections = []
 # ! we adapt those values that need adapting, and
 horIntra_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 12.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.05, std_deviation=7.5 * dpc)}
+                      "p": 0.05*nest.spatial_distributions.gaussian(nest.spatial.distance, std=7.5 * dpc)}
 
 horIntra_syn_spec = {"synapse_model": "AMPA",
                      "weight": 1.0,
@@ -531,7 +531,7 @@ for conn in [{"sources": "L23pyr", "targets": "L23pyr", "conn_spec": {}},
 # ! We proceed as above.
 verIntra_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 2.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=1.0, std_deviation=7.5 * dpc)}
+                      "p": nest.spatial_distributions.gaussian(nest.spatial.distance, std=7.5 * dpc)}
 
 verIntra_syn_spec = {"synapse_model": "AMPA",
                      "weight": 2.0,
@@ -564,7 +564,7 @@ for conn in [{"sources": "L23pyr", "targets": "L56pyr",
 # ! the connections inhibitory.
 intraInh_conn_spec = {"rule": "pairwise_bernoulli",
                       "mask": {"circular": {"radius": 7.0 * dpc}},
-                      "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.25, std_deviation=7.5 * dpc)}
+                      "p": 0.25*nest.spatial_distributions.gaussian(nest.spatial.distance, std=7.5 * dpc)}
 
 intraInh_syn_spec = {"synapse_model": "GABA_A",
                      "weight": -2.0,
@@ -586,7 +586,7 @@ for conn in [{"sources": "L23in", "targets": "L23pyr", "conn_spec": {}},
 # ! We proceed as above.
 corThal_conn_spec = {"rule": "pairwise_bernoulli",
                      "mask": {"circular": {"radius": 5.0 * dpc}},
-                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.5, std_deviation=7.5 * dpc)}
+                     "p": 0.5*nest.spatial_distributions.gaussian(nest.spatial.distance, std=7.5 * dpc)}
 
 corThal_syn_spec = {"synapse_model": "AMPA",
                     "weight": 1.0,
@@ -696,7 +696,7 @@ for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
 thalCorDiff_conn_spec = {"rule": "pairwise_bernoulli",
                          "use_on_source": True,
                          "mask": {"circular": {"radius": 5.0 * dpc}},
-                         "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.1, std_deviation=7.5*dpc)}
+                         "p": 0.1*nest.spatial_distributions.gaussian(nest.spatial.distance, std=7.5*dpc)}
 
 thalCorDiff_syn_spec = {"synapse_model": "AMPA",
                         "weight": 5.0,
@@ -739,32 +739,32 @@ print("Connecting: intra-thalamic")
 
 for src, tgt, conn, syn in [(TpRelay, Rp,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
-                                 nest.spatial.distance, p_center=1.0, std_deviation=7.5*dpc)},
+                              "p": nest.spatial_distributions.gaussian(
+                                 nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "AMPA",
                               "weight": 2.0}),
                             (TpInter, TpRelay,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
-                                 nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
+                              "p": 0.25*nest.spatial_distributions.gaussian(
+                                 nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "GABA_A",
                               "weight": -1.0}),
                             (TpInter, TpInter,
                              {"mask": {"circular": {"radius": 2.0 * dpc}},
-                              "p": nest.distributions.gaussian(
-                                 nest.spatial.distance, p_center=0.25, std_deviation=7.5*dpc)},
+                              "p": 0.25*nest.spatial_distributions.gaussian(
+                                 nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, TpRelay, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                           "p": nest.distributions.gaussian(
-                                               nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
+                                           "p": 0.15*nest.spatial_distributions.gaussian(
+                                               nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, TpInter, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                           "p": nest.distributions.gaussian(
-                                               nest.spatial.distance, p_center=0.15, std_deviation=7.5*dpc)},
+                                           "p": 0.15*nest.spatial_distributions.gaussian(
+                                               nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0}),
                             (Rp, Rp, {"mask": {"circular": {"radius": 12.0 * dpc}},
-                                      "p": nest.distributions.gaussian(
-                                          nest.spatial.distance, p_center=0.5, std_deviation=7.5*dpc)},
+                                      "p": 0.5*nest.spatial_distributions.gaussian(
+                                          nest.spatial.distance, std=7.5*dpc)},
                              {"synapse_model": "GABA_A", "weight": -1.0})
                             ]:
     conn_spec = thal_conn_spec.copy()
@@ -783,7 +783,7 @@ for src, tgt, conn, syn in [(TpRelay, Rp,
 # ! We use 1 ms here.
 retThal_conn_spec = {"rule": "pairwise_bernoulli",
                      "mask": {"circular": {"radius": 1.0 * dpc}},
-                     "p": nest.distributions.gaussian(nest.spatial.distance, p_center=0.75, std_deviation=2.5*dpc)}
+                     "p": 0.75*nest.spatial_distributions.gaussian(nest.spatial.distance, std=2.5*dpc)}
 
 retThal_syn_spec = {"weight": 10.0,
                     "delay": 1.0,
@@ -802,14 +802,14 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 
 # ! Connections from Retina to TpRelay
 retina_ctr_gid = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_gid)
+retina_ctr_index = retina.index(retina_ctr_gid.get('global_id'))
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
 TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid.get('global_id'))
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 
@@ -887,7 +887,7 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
         d = recorder.get('events', 'V_m')
         # clear data from multimeter
-        recorder.set('n_events', 0)
+        recorder.set(n_events=0)
 
         # update image data and title
         im.set_data(np.reshape(d, (Params['N'], Params['N'])))

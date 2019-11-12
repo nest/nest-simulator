@@ -172,7 +172,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
   {
     new_size *= new_dims[ i ];
 
-    this->dims_[ i ] = ( index )new_dims[ i ];
+    this->dims_[ i ] = static_cast< index >( new_dims[ i ] );
   }
 
   if ( new_size != this->gid_collection_->size() )
@@ -201,7 +201,7 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  ( *d )[ names::shape ] = std::vector< index >( dims_ );
+  ( *d )[ names::shape ] = std::vector< index >( dims_.get_vector() );
 }
 
 template < int D >

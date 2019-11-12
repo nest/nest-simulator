@@ -44,9 +44,9 @@ __all__ = [
 def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
-   Generates `n` new network objects of the supplied model type. If `n` is not
-   given, a single node is created. Note that if setting parameters of the
-   nodes fail, the nodes will still have been created.
+    Generates `n` new network objects of the supplied model type. If `n` is not
+    given, a single node is created. Note that if setting parameters of the
+    nodes fail, the nodes will still have been created.
 
     Parameters
     ----------
@@ -54,27 +54,29 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict or list, optional
-        Parameters for the new nodes. A single dictionary or a list of
-        dictionaries with size n. If omitted, the model's defaults are used.
+    params : dict, list or `Parameter`, optional
+        Parameters for the new nodes. A single dictionary, a list of
+        dictionaries with size n or a `Parameter`. If omitted, the model's defaults are used.
+    positions: :py:class:`spatial.grid` or :py:class:`spatial.free` object, optional
+        Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
 
     Returns
     -------
     GIDCollection:
-        Object representing global IDs of created nodes
+        Object representing global IDs of created nodes, see :py:class:`GIDCollection` for more.
 
     Raises
     ------
     NESTError
         If setting node parameters fail. However, the nodes will still have
         been created.
-
-    KEYWORDS:
     """
 
     model_deprecation_warning(model)
 
     if positions is not None:
+        if not isinstance(positions, (nest.spatial.free, nest.spatial.grid)):
+            raise TypeError('`positions` must be either a nest.spatial.free object or nest.spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, nest.spatial.free):
@@ -93,7 +95,6 @@ def Create(model, n=1, params=None, positions=None):
         if params is None:
             params = {}
         layer = sli_func('CreateLayerParams', layer_specs, params)
-        layer.set_spatial()
 
         return layer
 
@@ -128,14 +129,14 @@ def Create(model, n=1, params=None, positions=None):
 
 @check_stack
 def PrintNodes():
-    """Print the GID ranges and model names of the nodes in the network."""
+    """Print the `GID` ranges and model names of all the nodes in the network."""
 
     sr("PrintNodesToStream")
     print(spp())
 
 
 def GetNodes(properties={}, local_only=False):
-    """Return all global ids with the given properties.
+    """Return all nodes with the given properties as `GIDCollection`.
 
     Parameters
     ----------
@@ -155,7 +156,7 @@ def GetNodes(properties={}, local_only=False):
     Returns
     -------
     GIDCollection:
-        GIDCollection of nodes
+        `GIDCollection` of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)
@@ -163,24 +164,23 @@ def GetNodes(properties={}, local_only=False):
 
 @check_stack
 def GetLocalGIDCollection(gc):
-    """Get local nodes of a GIDCollection as a new GIDCollection.
+    """Get local nodes of a `GIDCollection` as a new `GIDCollection`.
 
-    This function gets the local elements in a GIDCollection. The
-    resulting elements are returned in a new GIDCollection. If there are no
-    local elements, an empty GIDCollection is returned.
+    This function returns the local nodes of a `GIDCollection`. If there are no
+    local elements, an empty `GIDCollection` is returned.
 
     Parameters:
     -----------
-    gc: GIDCollection
-        GIDCollection for which to get local nodes
+    gc: `GIDCollection`
+        `GIDCollection` for which to get local nodes
 
     Returns
     -------
     GIDCollection:
-        Object representing the local nodes of the given GIDCollection
+        Object representing the local nodes of the given `GIDCollection`
     """
     if not isinstance(gc, GIDCollection):
-        raise TypeError("Must provide a GIDCollection GIDCollection")
+        raise TypeError("GetLocalGIDCollection requires a GIDCollection in order to run")
 
     sps(gc)
     sr("LocalOnly")

@@ -39,6 +39,51 @@ Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
   return kernel().node_manager.get_node_or_proxy( gid, t );
 }
 
+std::vector< double >
+Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) const
+{
+  std::vector< double > result;
+  result.reserve( token_array.size() );
+  librandom::RngPtr rng = get_global_rng();
+
+  // Get source layer from the GIDCollection
+  auto source_metadata = gc->get_metadata();
+  if ( not source_metadata.get() )
+  {
+    throw KernelException( "apply: not meta" );
+  }
+  auto const* const source_layer_metadata = dynamic_cast< LayerMetadata const* >( source_metadata.get() );
+  if ( not source_layer_metadata )
+  {
+    throw KernelException( "apply: not layer_meta" );
+  }
+  AbstractLayerPTR source_layer = source_layer_metadata->get_layer();
+  if ( not source_layer.get() )
+  {
+    throw KernelException( "apply: not valid layer" );
+  }
+
+  assert( gc->size() == 1 );
+  const index source_lid = gc->operator[]( 0 ) - source_metadata->get_first_gid();
+  std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
+
+  // For each position, calculate the displacement, then calculate the parameter value
+  for ( auto&& token : token_array )
+  {
+    std::vector< double > target_pos = getValue< std::vector< double > >( token );
+    if ( target_pos.size() != source_pos.size() )
+    {
+      throw BadProperty(
+        String::compose( "Parameter apply: Target position has %1 dimensions, but source position has %2 dimensions.",
+          target_pos.size(),
+          source_pos.size() ) );
+    }
+    auto value = this->value( rng, source_pos, target_pos, *source_layer.get() );
+    result.push_back( value );
+  }
+  return result;
+}
+
 
 double
 NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
@@ -57,7 +102,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not meta" );
   }
-  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
+  auto const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
   {
     throw KernelException( "NodePosParameter: not layer_meta" );
@@ -77,120 +122,28 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   }
   return pos[ dimension_ ];
 }
-
-double
-SpatialDistanceParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
-{
-  Node* source = gid_to_node_ptr_( sgid, target_thread );
-  // Initial checks
-  if ( not source )
-  {
-    throw KernelException( "SpatialDistanceParameter: source not node" );
-  }
-  if ( not target )
-  {
-    throw KernelException( "SpatialDistanceParameter: target not node" );
-  }
-
-  // Source
-
-  GIDCollectionPTR source_gc = source->get_gc();
-  if ( not source_gc.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not source gc" );
-  }
-  GIDCollectionMetadataPTR source_meta = source_gc->get_metadata();
-  if ( not source_meta.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not source meta" );
-  }
-  LayerMetadata const* const source_layer_meta = dynamic_cast< LayerMetadata const* >( source_meta.get() );
-  if ( not source_layer_meta )
-  {
-    throw KernelException( "SpatialDistanceParameter: not source_layer_meta" );
-  }
-  AbstractLayerPTR source_layer = source_layer_meta->get_layer();
-  if ( not source_layer.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not valid source layer" );
-  }
-  index source_lid = source->get_gid() - source_meta->get_first_gid();
-
-  // Target
-
-  GIDCollectionPTR target_gc = target->get_gc();
-  if ( not target_gc.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not target gc" );
-  }
-  GIDCollectionMetadataPTR target_meta = target_gc->get_metadata();
-  if ( not target_meta.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not target meta" );
-  }
-  LayerMetadata const* const target_layer_meta = dynamic_cast< LayerMetadata const* >( target_meta.get() );
-  if ( not target_layer_meta )
-  {
-    throw KernelException( "SpatialDistanceParameter: not target_layer_meta" );
-  }
-  AbstractLayerPTR target_layer = target_layer_meta->get_layer();
-  if ( not target_layer.get() )
-  {
-    throw KernelException( "SpatialDistanceParameter: not valid target layer" );
-  }
-  index target_lid = target->get_gid() - target_meta->get_first_gid();
-  std::vector< double > target_pos = target_layer->get_position_vector( target_lid );
-
-  switch ( dimension_ )
-  {
-  case 0:
-    return source_layer->compute_distance( target_pos, source_lid );
-  case 1:
-  case 2:
-  case 3:
-    if ( ( unsigned int ) dimension_ > target_pos.size() )
-    {
-      throw KernelException(
-        "Spatial distance dimension must be within the defined number of "
-        "dimensions for the nodes." );
-    }
-    return std::abs( source_layer->compute_displacement( target_pos, source_lid )[ dimension_ - 1 ] );
-  default:
-    throw KernelException( String::compose(
-      "SpatialDistanceParameter dimension must be either 0 for unspecified,"
-      " or 1-3 for x-z. Got ",
-      dimension_ ) );
-    break;
-  }
-}
-
 double
 SpatialDistanceParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const std::vector< double >& displacement ) const
+  const AbstractLayer& layer ) const
 {
   switch ( dimension_ )
   {
   case 0:
   {
-    double sq_sum = 0;
-    for ( auto&& disp_n : displacement )
-    {
-      sq_sum += disp_n * disp_n;
-    }
-    return std::sqrt( sq_sum );
+    return layer.compute_distance( source_pos, target_pos );
   }
   case 1:
   case 2:
   case 3:
-    if ( ( unsigned int ) dimension_ > displacement.size() )
+    if ( ( unsigned int ) dimension_ > layer.get_num_dimensions() )
     {
       throw KernelException(
         "Spatial distance dimension must be within the defined number of "
         "dimensions for the nodes." );
     }
-    return std::abs( displacement[ dimension_ - 1 ] );
+    return std::abs( layer.compute_displacement( source_pos, target_pos, dimension_ - 1 ) );
   default:
     throw KernelException( String::compose(
       "SpatialDistanceParameter dimension must be either 0 for unspecified,"
@@ -207,6 +160,7 @@ RedrawParameter::RedrawParameter( const Parameter& p, const double min, const do
   , max_( max )
   , max_redraws_( 1000 )
 {
+  parameter_is_spatial_ = p_->is_spatial();
   if ( min > max )
   {
     throw BadParameterValue( "min <= max required." );
@@ -253,7 +207,7 @@ double
 RedrawParameter::value( librandom::RngPtr& rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const std::vector< double >& displacement ) const
+  const AbstractLayer& layer ) const
 {
   double value;
   size_t num_redraws = 0;
@@ -263,7 +217,7 @@ RedrawParameter::value( librandom::RngPtr& rng,
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, source_pos, target_pos, displacement );
+    value = p_->value( rng, source_pos, target_pos, layer );
   } while ( value < min_ or value > max_ );
 
   return value;

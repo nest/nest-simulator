@@ -27,7 +27,7 @@ Name: testsuite::ticket-798 - Random number generation fails in multi-threaded s
 Synopsis: (ticket-798) run -> NEST exits if test fails
 
 Description:
-This test creates a large number of neurons with a convergent connetion to one target neuron, using the quantal_stp_synapse
+This test creates a large number of neurons with a pairwise_bernoulli_on_source connetion to one target neuron, using the quantal_stp_synapse
 Author: Marc-Oliver Gewaltig
 */
 

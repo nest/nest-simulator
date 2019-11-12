@@ -30,16 +30,76 @@ __all__ = [
 
 
 def uniform(min=0.0, max=1.0):
+    """
+    Draws samples from a uniform distribution.
+
+    Samples are distributed uniformly in [min, max) (includes min, but excludes max).
+
+    Parameters
+    ----------
+    min : float, optional
+        Lower boundary of the sample interval. Default value is 0.
+    max : float, optional
+        Upper boundary of the sample interval. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
     return CreateParameter('uniform', {'min': min, 'max': max})
 
 
-def normal(loc=0.0, scale=1.0):
-    return CreateParameter('normal', {'mean': loc, 'sigma': scale})
+def normal(mean=0.0, std=1.0):
+    """
+    Draws samples from a normal distribution.
+
+    Parameters
+    ----------
+    mean : float, optional
+        Mean of the distribution. Default value is 0.
+    std : float, optional
+        Standard deviation of the distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('normal', {'mean': mean, 'std': std})
 
 
-def exponential(scale=1.0):
-    return CreateParameter('exponential', {'scale': scale})
+def exponential(beta=1.0):
+    """
+    Draws samples from an exponential distribution.
+
+    Parameters
+    ----------
+    beta : float, optional
+        Scale parameter the distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('exponential', {'beta': beta})
 
 
-def lognormal(mu=0.0, sigma=1.0):
-    return CreateParameter('lognormal', {'mu': mu, 'sigma': sigma})
+def lognormal(mean=0.0, std=1.0):
+    """
+    Draws samples from a log-normal distribution.
+
+    Parameters
+    ----------
+    mean : float, optional
+        Mean value of the underlying normal distribution. Default value is 0.
+    std : float, optional
+        Standard deviation of the underlying normal distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('lognormal', {'mean': mean, 'std': std})

@@ -45,7 +45,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
-            'autapses': autapses,
+            'allow_autapses': autapses,
         }
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
@@ -60,8 +60,8 @@ class ConnectLayersTestCase(unittest.TestCase):
             'rule': 'fixed_indegree',
             'indegree': 10,
             'p': 1.0,
-            'autapses': False,
-            'multapses': multapses,
+            'allow_autapses': False,
+            'allow_multapses': multapses,
         }
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
@@ -247,6 +247,18 @@ class ConnectLayersTestCase(unittest.TestCase):
         for conn_spec in [conn_spec_kernel, conn_spec_mask]:
             with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(self.layer, self.layer, conn_spec)
+
+    def test_connect_oversized_mask(self):
+        """Connecting with specified oversized mask possible."""
+        free_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(
+            [[0., 0.]], edge_wrap=True, extent=[1., 1.]))
+        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'mask': {'circular': {'radius': 2.}}}
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(free_layer, free_layer, conn_spec)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+        conn_spec['allow_oversized_mask'] = True
+        nest.Connect(free_layer, free_layer, conn_spec)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
     def test_connect_layers_weights(self):
         """Connecting layers with specified weights"""

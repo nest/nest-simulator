@@ -51,18 +51,14 @@ class MaskedLayer;
  * to the given parameters. This method is templated with the dimension
  * of the layers, and is called via the Layer connect call using a
  * visitor pattern. The connect method relays to another method (e.g.,
- * convergent_connect_) implementing the concrete connection
+ * fixed_indegree_) implementing the concrete connection
  * algorithm. It would be more elegant if this was a base class for
  * classes representing different connection algorithms with a virtual
  * connect method, but it is not possible to have a virtual template
  * method.
  *
- * This class distinguishes between target driven and convergent
- * connections, which are both called "convergent" in the Topology module
- * documentation, and between source driven and divergent
- * connections. The true convergent/divergent connections are those with
- * a fixed number of connections (fan in/out). The only difference
- * between source driven and target driven connections is which layer
+ * The difference between the Pairwise_bernoulli_on_source and
+ * Pairwise_bernoulli_on_target connection types is which layer
  * coordinates the mask and parameters are defined in.
  */
 class ConnectionCreator
@@ -70,10 +66,10 @@ class ConnectionCreator
 public:
   enum ConnectionType
   {
-    Target_driven,
-    Source_driven,
-    Convergent,
-    Divergent
+    Pairwise_bernoulli_on_source,
+    Pairwise_bernoulli_on_target,
+    Fixed_indegree,
+    Fixed_outdegree
   };
 
   /**
@@ -142,29 +138,16 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
-
-  /**
-   * Calculate parameter values for this position.
-   *
-   * TODO: remove when all four connection variants are refactored
-   */
-  template < int D >
-  void get_parameters_( librandom::RngPtr rng,
-    const Position< D >& source_pos,
-    const Position< D >& target_pos,
-    const Position< D >& displacement,
-    double& weight,
-    double& delay );
+  void fixed_outdegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   ConnectionType type_;
   bool allow_autapses_;

@@ -1,5 +1,5 @@
 /*
- *  topo_mpi_test_divergent.sli
+ *  topo_mpi_test_pairwise_bernoulli_on_source.sli
  *
  *  This file is part of NEST.
  *
@@ -23,7 +23,7 @@
 (unittest) run
 /unittest using
 
-% Divergent test
+% pairwise_bernoulli_on_source test
 [1 2 4]
 {
   ResetKernel
@@ -37,7 +37,7 @@
   << /distance << >> >> CreateParameter
   mul add /linear_parameter Set
 
-  /conns << /connection_type (divergent)
+  /conns << /connection_type (pairwise_bernoulli_on_source)
             /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
             /weight linear_parameter
          >> def

@@ -71,7 +71,7 @@ class TestAllToAll(TestParams):
             hf.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayWithoutAutapses(self):
-        self.conn_dict['autapses'] = False
+        self.conn_dict['allow_autapses'] = False
         for label in ['weight', 'delay']:
             syn_params = {}
             if label == 'weight':

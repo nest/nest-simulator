@@ -47,9 +47,10 @@ template < int D >
 Position< D >
 Layer< D >::compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const
 {
-  Position< D > displ = to_pos - from_pos;
+  Position< D > displ = to_pos;
   for ( int i = 0; i < D; ++i )
   {
+    displ[ i ] -= from_pos[ i ];
     if ( periodic_[ i ] )
     {
       displ[ i ] = -0.5 * extent_[ i ] + std::fmod( displ[ i ] + 0.5 * extent_[ i ], extent_[ i ] );
@@ -60,6 +61,20 @@ Layer< D >::compute_displacement( const Position< D >& from_pos, const Position<
     }
   }
   return displ;
+}
+
+template < int D >
+double
+Layer< D >::compute_displacement( const std::vector< double >& from_pos,
+  const std::vector< double >& to_pos,
+  const unsigned int dimension ) const
+{
+  double displacement = to_pos[ dimension ] - from_pos[ dimension ];
+  if ( periodic_[ dimension ] )
+  {
+    displacement -= extent_[ dimension ] * std::round( displacement * ( 1 / extent_[ dimension ] ) );
+  }
+  return displacement;
 }
 
 template < int D >
@@ -79,8 +94,8 @@ template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ names::extent ] = std::vector< double >( extent_ );
-  ( *d )[ names::center ] = std::vector< double >( lower_left_ + extent_ / 2 );
+  ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
+  ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
 
   if ( periodic_.none() )
   {
@@ -326,6 +341,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
   if ( not mask_.get() )
   {
     mask_ = new AllMask< D >();
+    return;
   }
 
   try // Try to cast to GridMask

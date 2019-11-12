@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.1400175.svg)](https://doi.org/10.5281/zenodo.1400175)
-[![Latest Version](https://img.shields.io/badge/latest%20version-2.16.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.16.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2605422.svg)](https://doi.org/10.5281/zenodo.2605422)
+[![Latest Version](https://img.shields.io/badge/latest%20version-2.18.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.18.0)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -111,6 +111,10 @@ you received in the NEST sources.
 ## Citing NEST
 
 Please cite NEST if you use it in your work.
+
+If you use NEST 2.18.0, please cite it as **Jordan, Jakob et al. (2019)
+NEST 2.18.0. Zenodo. 10.5281/zenodo.2605422**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.2605422).
 
 If you use NEST 2.16.0, please cite it as **Linssen, Charl et al. (2018)
 NEST 2.16.0. Zenodo. 10.5281/zenodo.1400175**. The full citation is available

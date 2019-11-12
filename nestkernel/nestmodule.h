@@ -413,6 +413,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } memberq_g_ifunction;
 
+  class Find_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } find_g_ifunction;
+
   class eq_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -606,6 +611,24 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } getvalue_Pfunction;
+
+  class IsSpatial_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } isspatial_Pfunction;
+
+  class Apply_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_Dfunction;
+
+  class Apply_P_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_gfunction;
 
 private:
   static ParameterFactory& parameter_factory_();

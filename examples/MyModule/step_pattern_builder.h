@@ -32,13 +32,13 @@ namespace mynest
 class StepPatternBuilder : public nest::ConnBuilder
 {
 public:
-  StepPatternBuilder( const nest::GIDCollection& sources,
-    const nest::GIDCollection& targets,
+  StepPatternBuilder( const nest::GIDCollectionPTR sources,
+    const nest::GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
 protected:
-  void connect_();
+  void connect_() override;
 
 private:
   /**
@@ -51,8 +51,7 @@ private:
    * @param Number of positions to advance
    * @return Iterator after advance
    */
-  static nest::GIDCollection::const_iterator&
-  advance_( nest::GIDCollection::const_iterator&, const nest::GIDCollection::const_iterator&, size_t );
+  static void advance_( nest::GIDCollection::const_iterator&, const nest::GIDCollection::const_iterator&, size_t );
 
   size_t source_step_;
   size_t target_step_;

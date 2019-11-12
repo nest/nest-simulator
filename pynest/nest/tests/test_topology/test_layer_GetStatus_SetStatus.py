@@ -41,7 +41,7 @@ class GetSetTestCase(unittest.TestCase):
                                 extent=[2., 2.],
                                 edge_wrap=True))
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(KeyError):
             nest.SetStatus(layer, {'center': [1., 1.]})
 
         nest.SetStatus(layer, 'V_m', -50.)
@@ -116,7 +116,7 @@ class GetSetTestCase(unittest.TestCase):
         with self.assertRaises(KeyError):
             layer.set({'center': [1., 1.]})
 
-        layer.set('V_m', -50.)
+        layer.set(V_m=-50.)
 
         self.assertEqual(layer.get('V_m'),
                          (-50., -50., -50., -50., -50.,

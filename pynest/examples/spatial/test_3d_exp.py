@@ -48,17 +48,15 @@ ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 # Exponential connections in full volume [-0.75,0.75]**3
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
-              'p': nest.distributions.exponential(nest.spatial.distance,
-                                                  tau=0.25),
-              'autapses': False,
+              'p': nest.spatial_distributions.exponential(nest.spatial.distance,
+                                                          beta=0.25),
+              'allow_autapses': False,
               'mask': {'volume': {'lower_left': [-0.75, -0.75, -0.75],
                                   'upper_right': [0.75, 0.75, 0.75]}}})
 
 # show connections from center element
 # sender shown in red, targets in green
-ctr_gid = nest.FindCenterElement(l1)
-ctr_index = ctr_gid - 1
-ctr = l1[ctr_index:ctr_index + 1]
+ctr = nest.FindCenterElement(l1)
 xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
 xctr, yctr, zctr = nest.GetPosition(ctr)
 ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')

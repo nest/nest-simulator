@@ -380,6 +380,18 @@ def
   /GetValue_P load
 def
 
+/ParameterIsSpatial [/parametertype]
+  /IsSpatial_P load
+def
+
+/Apply [/parametertype /dictionarytype]
+  /Apply_P_D load
+def
+
+/Apply [/parametertype /gidcollectiontype]
+  /Apply_P_g load
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /Simulate trie
@@ -564,6 +576,10 @@ def
 
 /InCollection [/gidcollectiontype /integertype]
   /MemberQ_g_i load
+def
+
+/Find [/gidcollectiontype /integertype]
+  /Find_g_i load
 def
 
 /eq [/gidcollectiontype /gidcollectiontype] /eq_g load def
@@ -778,10 +794,10 @@ def
                 The following options may be given for all connection rules;
                 not all rules support all options and many rules add rule-specific options.
 
-                autapses      bool  - allow self-connections (default: true)
-                multapses     bool  - allow multiple connections between pairs
-                                      of neurons (default: true)
-                symmetric     bool  - also create connection in opposite direction to
+                allow_autapses  bool  - allow self-connections (default: true)
+                allow_multapses bool  - allow multiple connections between pairs
+                                        of neurons (default: true)
+                symmetric       bool  - also create connection in opposite direction to
                                       obtain symmetric connections (default: false)
 
    /syn_spec  - dictionary with synapse specification, must at least contain /model

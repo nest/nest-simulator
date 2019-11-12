@@ -9,13 +9,18 @@ From NEST 2.x to NEST 3.0
 
   See the :doc:`../nest-3/nest2_vs_3` to see a full list of functions that have changed
 
-NEST 3.0 introduces a number of new features and concepts, and some changes
-to the user interface that are not backwards compatible. One big change is
-the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
-neurons, we now use the powerful :ref:`GIDCollections <gid>`, which will be
-presented below. Other big features include :ref:`connectome` objects to
-efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
-nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
+
+NEST 3.0 introduces a more object-oriented approach to node and connection handling. The changes will allow you to
+perform operations that were not possible in previous versions.
+
+
+..   NEST 3.0 introduces a number of new features and concepts, and some changes
+   to the user interface that are not backwards compatible. One big change is
+   the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
+   neurons, we now use the powerful :ref:`GIDCollections <gid>`, which will be
+   presented below. Other big features include :ref:`connectome` objects to
+   efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
+   nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
 
 This guide is based exclusively on PyNEST.
 
@@ -24,15 +29,13 @@ What's new?
 
 .. _gid:
 
-GIDCollections
-~~~~~~~~~~~~~~
+Compact and flexible container for node handles (neurons, devices)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In NEST 3.0, when you create a population with
-``nest.Create()``, a GIDCollection is returned instead of a list. And when you
-connect two populations, you provide ``nest.Connect()`` with two
-populations in the form of GIDCollections.
-But instead of working with lists of GIDs you are working with
-GIDCollections. For more information on GIDcollections for SLI and PyNEST see our :doc:`../nest-3/GIDcollections` page.
+In NEST 3.0, ``nest.Create()`` returns a *GIDCollection* object instead of a list of global IDs.
+This object-oriented approach provides ia much more memory-efficient and powerful representation of node handles.
+
+Direct  access to node properties
 
 
 .. note::
@@ -40,41 +43,20 @@ GIDCollections. For more information on GIDcollections for SLI and PyNEST see ou
    In **many use cases**, you will not need to make any changes to your scripts in NEST 3.0, unless you have used
    topology or subnets.
 
-GIDCollections are compact and efficient containers containing the global
-ID representations of nodes.
 
-``GIDCollections`` support:
+NEST 3.0 supports the following functionality
 
 -  :ref:`Indexing <indexing>`
 -  :ref:`Iteration <iterating>`
 -  :ref:`Slicing <slicing>`
 -  :ref:`Getting the size <get_size>` ``len``
 -  :ref:`Conversion to and from lists <converting_lists>`
--  :ref:`Joining of two non-overlapping GIDCollections <joining>`
+-  :ref:`Joining of two non-overlapping GIDCollections <joining>`  >> composing
 -  :ref:`Testing whether one GIDCollection is equal to another <testing_equality>` (contains the
-   same GIDs)
+   same GIDs) >> testing of equality
 -  :ref:`Testing of membership <testing_membership>`
--  :ref:`get_param` parameters
--  :ref:`set_param` parameters
+-  Access to node properties with :ref:`get_param` and  :ref:`set_param` and direct attributes (dot notation e.g.)
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
-
-A GIDCollection is created by
-
-- creating new nodes
-- combining two or more GIDCollections
-- slicing a GIDCollection
-- providing a list of GIDs, but only GIDs of existing nodes
-
-The GIDs in a GIDCollection are sorted automatically. All GIDs in a
-GIDCollection are unique, so a GID can occur at most once per
-GIDCollection.
-
-A GIDCollection can be either primitive or composite. A primitive
-GIDCollection is contiguous in that it represents a continuous range of
-GIDs. It is also homogeneous in that all GIDs refer to nodes of the same
-type, i.e., they have the same model. A composite GIDCollection consists of
-several primitive GIDCollections that either have different models, or
-where the GIDs are not continuous.
 
 
   +---------------------------------------------+----------------------------------------------+
@@ -94,11 +76,9 @@ where the GIDs are not continuous.
 
 .. _GID_support:
 
-GIDCollections support the following operations:
 
 Printing
     A compact representation of information about the GIDCollection can be printed.
-
 
 
    >>>  nrns = nest.Create('iaf_psc_alpha', 10)

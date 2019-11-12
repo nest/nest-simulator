@@ -100,7 +100,6 @@ code.descclassname {
 }
 
 .rst-content dl:not(.docutils) dt {
-   float: left;
    border-top: None;
    background: None;
 }
@@ -129,9 +128,11 @@ code.descclassname {
    }
 
    .wy-table-responsive {
-      overflow: visible !important;
+      overflow: scroll;
       word-wrap: break-word;
    }
+
+}
 /*html body div.wy-table-responsive {
   margin-bottom: 0;
 }
@@ -210,3 +211,65 @@ html body div.wy-table-responsive .footnote td {
     text-decoration: line-through;
 }
 
+@media screen and (min-width: 1270px)  {
+    /* Pop out the in-page links to the right instead of the lef */
+    /*div.wy-side-scroll li.toctree-l1.current > ul {
+     */
+   div[class^='contents'] {
+     position: fixed;
+     margin-left: 0px;
+     overflow-y: auto;
+     padding-left: 15px;
+     border-left: 1px solid #e1e4e5;
+         border-left-color: #e1e4e5;
+         border-left-style: solid;
+         border-left-width: 1px;
+     border-right: 1px, #e0e0e0, solid;
+         border-right-width: 1px;
+         border-right-color: #e0e0e0;
+         border-right-style: solid;
+     height: 100%;
+     width: 250px;
+     top: 0px;
+     left: 1100px;
+     padding-right: 10px;
+     background: linear-gradient(90deg, #fcfcfc, rgba(0, 0, 0, 0));
+     padding-top: 70px;
+    }
+    }
+    .rst-content .section ul p {
+        margin-bottom: 0px;
+    }
+}
+
+ /*   div.wy-side-scroll li.toctree-l1.current a {
+        border-right: none;
+    }
+
+    div.wy-side-scroll li.toctree-l1.current ul {
+        max-width: 400px;
+    }
+
+    div.wy-side-scroll li.toctree-l1.current ul, li.toctree-l1.current li, li.toctree-l1.current a {
+        background-color: transparent !important;
+    }
+
+    /* All items should now be visible regardless of expandy state */
+    /*div.wy-side-scroll li.toctree-l1.current ul {
+      display: block !important;
+    }
+
+    /* hide the expandy buttons */
+   /* div.wy-side-scroll li.toctree-l1.current span.toctree-expand {
+        display: none !important;
+    }
+
+    /* Make the padding correct */
+    /*div.wy-side-scroll li.toctree-l2 li.toctree-l3 > a {
+      padding: .4045em 4.045em !important;
+    }
+
+    div.wy-side-scroll li.toctree-l4 > a {
+      padding: .4045em 5.663em !important;
+  }
+} */

@@ -1,16 +1,25 @@
-NEST 2.X vs. NEST 3 conversion reference guide
+NEST 2.X vs. NEST 3.0 conversion reference guide
 ==================================================
 
-* This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3
+.. contents:: Here you'll find
+   :local:
+   :depth: 2
+
+* This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3.0
 
 * Functions not mentioned are unchanged
 
-* The new terms for NEST 3 are marked in :green:`green`.
+* Terms that changed for NEST 3.0 are marked in :green:`green`.
 
+.. note::
+
+    Dependencies
+    only Python 3.X
+    only Matplotlib 3.X.X
 
 .. seealso::
 
-  You can find code examples of changes in NEST 3 :doc:`in our NEST-3 overview <nest3_overview>`
+  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
 
 .. _node_ref:
 
@@ -72,7 +81,7 @@ Connection
 Subnets
 ~~~~~~~
 
-**The subnets module is deprecated!**
+**The subnets module is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |
@@ -238,7 +247,7 @@ Connection rules
 ^^^^^^^^^^^^^^^^
 
 ====================================== =================================================
-NEST 2.x                               NEST 3
+NEST 2.x                               NEST 3.0
 ====================================== =================================================
 convergent                             pairwise_bernoulli *and* use_on_source=True
 convergent *and* num_connections       fixed_indegree
@@ -336,13 +345,16 @@ Parameters can now be used to set node and connection parameters.
 :green:`math`
 ^^^^^^^^^^^^^
 
-+---------+--------------------------------+
-| NEST 2.x| NEST 3.0                       |
-+=========+================================+
-|         |  nest.math.exp(nest.Parameter) |
-|         |  nest.math.sin(nest.Parameter) |
-|         |  nest.math.cos(nest.Parameter) |
-+---------+--------------------------------+
++----------+-------------------------------+
+| NEST 2.X | NEST 3.0                      |
++==========+===============================+
+|          | nest.math.exp(nest.Parameter) |
++----------+-------------------------------+
+|          | nest.math.sin(nest.Parameter) |
++----------+-------------------------------+
+|          | nest.math.cos(nest.Parameter) |
++----------+-------------------------------+
+
 
 .. _logic_param:
 

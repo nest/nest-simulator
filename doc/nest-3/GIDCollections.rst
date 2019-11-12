@@ -201,7 +201,7 @@ e.g., in topology:
 
 .. code:: c++
 
-   class GIDCollectionMetadata 
+   class GIDCollectionMetadata
    {
      public:
         GIDCollectionMetadata() {}

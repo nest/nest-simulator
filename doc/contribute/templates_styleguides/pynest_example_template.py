@@ -18,26 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
-"""[[ This template demonstrates how to create an example Python script for
-      NEST.
-
-   The format is based on `NumPy style docstring
-   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructuredText markup. Please review the syntax rules if you are
-   unfamiliar with either reStructuredText or NumPy style docstrings.
-
-   Copy this file and replace the sample text with a description of your
-   script.
-   The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire
-   docstring!
-
-   Your script should contain a complete code-block that begins with all
-   necessary imports and ends with code that displays the output.]]
-"""
-
-"""Simulate a balanced neuron with the bisection method
+"""Template demonstrating how to create examples for PyNEST
 ----------------------------------------------------------------
 [[ Titles should be one line and state what the example does.
   It should begin with a verb in the present tense and include type of model
@@ -46,6 +27,21 @@
 [[ Extended summary - a detailed explanation of your example. Try to answer the
    folowing questions. ]]
 [[ What does this script do? What is the purpose? ]]
+This template demonstrates how to create an example Python script for
+NEST.
+Copy this file and replace the sample text with a description of your
+example script.
+
+Make sure to remove any text that is irrelevant for your example!
+
+The format is based on `NumPy style docstring
+<https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+reStructuredText markup. Please review the syntax rules if you are
+unfamiliar with either reStructuredText or NumPy style docstrings.
+Your example should contain a complete code-block that begins with all
+necessary imports and ends with code that displays the output.
+
+Below is a more concrete example of how an extended summary could look like:
 
 This script simulates a neuron by an excitatory and an inhibitory
 population of neurons firing a Poisson spike train.
@@ -62,10 +58,10 @@ The output shows the target neuron's membrane potential as a function of time.
 
 [[ Does this example have a real world application or use case?
   Are there particular applications or areas of research that would benefit
-  from this example? ]]
+  from this example? You can reference relevant papers that this example
+  may be based on]]
 
 This model used here is applicable for neurorobotics, particularly cases of ...
-
 
 [[ If applicable, state any prerequisite the reader needs to have installed or
    configured that is not standard ]]
@@ -81,7 +77,6 @@ configuration:
 This model used here corresponds to the formulation presented in
 Sander et al. [1]_ and the bisection method developed in
 Gewaltig and Diesmann [2]_.
-
 
 [[ See Also section - Include a couple of related examples, models,
    or functions. ]]
@@ -127,14 +122,7 @@ References
   by last name ]]
 
 :Authors: D Adams, N Gaiman
-    D Adams, N Gaiman
-
-    [[ Include a couple of comma-separated keywords - this will help us
-       increase discoverability of related documents ]]
-
-KEYWORDS: scipy, poisson spike train, precise
 """
-
 import nest  # [[ begin code section with imports]]
 import scipy
 

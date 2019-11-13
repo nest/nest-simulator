@@ -30,9 +30,8 @@
 
    Copy this file and replace the sample text with a description of the API.
    The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire 
+   completely removed from your final version - Including this entire
    docstring!
-
    ]]
 """
 
@@ -50,7 +49,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     synapse_label parameters is permitted.
 
     [[ Deprecation warnings should appear directly after the extended summary.
-      It should state in what version the object was deprecated, when it will 
+      It should state in what version the object was deprecated, when it will
       be removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0
@@ -122,13 +121,7 @@ def get.Connections(source=None, target=None, synape_model=None,
 
     .. [1] Bonewald LF. (2011). The amazing osteocyte. Journal of Bone and
            Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
-
-    [[Keywords that idenfity important aspects of the function but not the
-     function name itself can be included in a comma separated list. These
-     terms will help us increase discoverability of related documents ]]
-
-    KEYWORDS: Important terms, Comma Separated
-    """
+       """
 
     # [[ in line comments should be used to explain why this code is here]]
     # This code was included because of bug Y when running X

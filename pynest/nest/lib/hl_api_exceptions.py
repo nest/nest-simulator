@@ -40,7 +40,7 @@ class NESTMappedException(type):
         # Dynamic class construction, first check if we know its parent
         if errorname in self.parents:
             parent = getattr(self, self.parents[errorname])
-        else: # otherwise, get the default (SLIException)
+        else:  # otherwise, get the default (SLIException)
             parent = self.default_parent
 
         # and now dynamically construct the new class
@@ -106,9 +106,9 @@ class NESTErrors(metaclass=NESTMappedException):
             message = "{} in {}{}".format(errorname, commandname, errormessage)
             NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
 
-            self.errorname   = errorname
+            self.errorname = errorname
             self.commandname = commandname
-            self.errormessage  = errormessage
+            self.errormessage = errormessage
 
     class PyNESTError(NESTError):
         """Exceptions produced from Python/Cython code.
@@ -126,8 +126,8 @@ class NESTErrors(metaclass=NESTMappedException):
 
         Parameters:
         ----------
-        parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
-            because of the dynamic creation of the function
+        parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or
+            super(type,...) because of the dynamic creation of the function
              (used as a closure on the constructed __init__).
         errorname: the class name for information purposes
           internally (used as a closure on the constructed __init__).
@@ -144,7 +144,8 @@ class NESTErrors(metaclass=NESTMappedException):
             -----------
             commandname: sli command name.
             errormessage: sli error message.
-            errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set when creating an instance)
+            errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set
+                        when creating an instance)
             *args, **kwargs: passed through to base class.
 
             self will be a descendant of {}.

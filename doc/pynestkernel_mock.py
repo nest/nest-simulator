@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# hl_api_exceptions.py
+# pynestkernel_mock.py
 #
 # This file is part of NEST.
 #
@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+from mock import MagicMock
 
 
 class NESTMappedException(type):
@@ -40,7 +42,7 @@ class NESTMappedException(type):
         # Dynamic class construction, first check if we know its parent
         if errorname in self.parents:
             parent = getattr(self, self.parents[errorname])
-        else: # otherwise, get the default (SLIException)
+        else:  # otherwise, get the default (SLIException)
             parent = self.default_parent
 
         # and now dynamically construct the new class
@@ -106,9 +108,9 @@ class NESTErrors(metaclass=NESTMappedException):
             message = "{} in {}{}".format(errorname, commandname, errormessage)
             NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
 
-            self.errorname   = errorname
+            self.errorname = errorname
             self.commandname = commandname
-            self.errormessage  = errormessage
+            self.errormessage = errormessage
 
     class PyNESTError(NESTError):
         """Exceptions produced from Python/Cython code.
@@ -222,13 +224,14 @@ class NESTErrors(metaclass=NESTMappedException):
 # So we don't break any code that currently catches a nest.NESTError
 NESTError = NESTErrors.NESTError
 
-from mock import MagicMock
 
 class SLIDatum(object):
     def __init__(self):
         pass
+
     def __dealloc__(self):
         pass
+
     def __repr__(self):
         return MagicMock()
 
@@ -236,12 +239,16 @@ class SLIDatum(object):
 class SLILiteral(object):
     def __init__(self, name):
         pass
+
     def __hash__(self):
         return MagicMock()
+
     def __repr__(self):
         return MagicMock()
+
     def __str__(self):
         return MagicMock()
+
     def __richcmp__(self, other, op):
         return MagicMock()
 
@@ -249,17 +256,22 @@ class SLILiteral(object):
 class NESTEngine(object):
     def __init__(self):
         pass
+
     def __dealloc__(self):
         pass
+
     def init(self, argv, modulepath):
         return MagicMock()
+
     def run(self, cmd):
         pass
+
     def push(self, obj):
         pass
+
     def pop(self):
         return MagicMock()
+
     def push_connection_datums(self, conns):
         pass
-
 

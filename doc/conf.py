@@ -38,7 +38,9 @@ import subprocess
 
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
-
+from mock_kernel import convert
+# import and set mockfile to sys.modules
+import pynestkernel_mock
 
 source_suffix = ['.rst']
 
@@ -46,7 +48,7 @@ source_suffix = ['.rst']
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-doc_path  = os.path.abspath(os.path.dirname(__file__))
+doc_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.abspath(doc_path + "/..")
 
 sys.path.insert(0, os.path.abspath(root_path))
@@ -57,27 +59,21 @@ sys.path.insert(0, os.path.abspath(doc_path))
 
 
 # -- Mock pynestkernel ----------------------------------------------------
-#on_rtd = os.environ.get('READTHEDOCS') == 'True'
-#if on_rtd:
-
-from mock_kernel import convert
+# on_rtd = os.environ.get('READTHEDOCS') == 'True'
+# if on_rtd:
 
 # create mockfile
 
 excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
-infile  = root_path + "/pynest/pynestkernel.pyx"
+infile = root_path + "/pynest/pynestkernel.pyx"
 outfile = doc_path + "/pynestkernel_mock.py"
 
 with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
-    mockedmodule  = fexc.read() + "\n\n"
+    mockedmodule = fexc.read() + "\n\n"
     mockedmodule += "from mock import MagicMock\n\n"
     mockedmodule += convert(fin)
 
     fout.write(mockedmodule)
-
-# import and set mockfile to sys.modules
-
-import pynestkernel_mock
 
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
@@ -206,17 +202,18 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
-nitpick_ignore =  [('py:class', 'None'),
-                   ('py:class', 'optional'),
-                   ('py:class', 's'),
-                   ('cpp:identifier', 'CommonSynapseProperties'),
-                   ('cpp:identifier', 'Connection<targetidentifierT>'),
-                   ('cpp:identifier', 'Archiving_Node'),
-                   ('cpp:identifier', 'DeviceNode'),
-                   ('cpp:identifier', 'Node'),
-                   ('cpp:identifier', 'Clopath_Archiving_Node'),
-                   ('cpp:identifier', 'MessageHandler'),
-                   ('cpp:identifer', 'CommonPropertiesHomW') ]
+nitpick_ignore = [('py:class', 'None'),
+                  ('py:class', 'optional'),
+                  ('py:class', 's'),
+                  ('cpp:identifier', 'CommonSynapseProperties'),
+                  ('cpp:identifier', 'Connection<targetidentifierT>'),
+                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'DeviceNode'),
+                  ('cpp:identifier', 'Node'),
+                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'MessageHandler'),
+                  ('cpp:identifer', 'CommonPropertiesHomW')]
+
 
 def setup(app):
     app.add_stylesheet('css/custom.css')

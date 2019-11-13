@@ -252,8 +252,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                             else:
                                 syn_spec[key] = value
                         elif rule == 'fixed_total_number':
-                            if ('N' in conn_spec
-                                    and value.shape[0] != conn_spec['N']):
+                            if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
                                 raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
                                     "dimension " + str(conn_spec['N']) + ", a "
@@ -269,8 +268,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
                     elif len(value.shape) == 2:
                         if rule == 'all_to_all':
-                            if value.shape[0] != len(post) or \
-                                value.shape[1] != len(pre):
+                            if value.shape[0] != len(post) or value.shape[1] != len(pre):
 
                                 raise kernel.NESTError(
                                     "'" + key + "' has to be an array of "
@@ -322,7 +320,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 @check_stack
 @deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0 \
             Use Connect with one_to_one rule instead.')
-
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 

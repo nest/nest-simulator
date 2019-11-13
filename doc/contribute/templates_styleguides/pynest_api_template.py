@@ -1,18 +1,3 @@
-"""[[ This template demonstrates how to create a docstring for the PyNEST API.
-
-   If you have modified an API, please ensure you update the docstring!
-
-   The format is based on `NumPy style docstring
-   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructured text mark up. Please review the syntax rules if you are
-   unfamiliar with either reStructured text or NumPy style docstrings.
-
-   Copy this file and replace the sample text with a description of the API.
-   The double bracketed sections [[ ]], which provide explanations, should be
-   completel removed from your final version - Including this entire docstring!
-
-   ]]
-"""
 # -*- coding: utf-8 -*-
 #
 # pynest_api_template.py
@@ -34,6 +19,23 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""[[ This template demonstrates how to create a docstring for the PyNEST API.
+
+   If you have modified an API, please ensure you update the docstring!
+
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructuredText markup. Please review the syntax rules if you are
+   unfamiliar with either reStructuredText or NumPy style docstrings.
+
+   Copy this file and replace the sample text with a description of the API.
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completely removed from your final version - Including this entire 
+   docstring!
+
+   ]]
+"""
+
 
 def get.Connections(source=None, target=None, synape_model=None,
                     synapse_label=None):
@@ -41,16 +43,15 @@ def get.Connections(source=None, target=None, synape_model=None,
     [[ In a single 'summary line', state what the function does ]]
     [[ All functions should have a docstring with at least a summary line ]]
 
-
     [[ Below summary line (separated by new line), there should be an extended
        summary section that should be used to clarify functionality.]]
 
     Any combination of source, target, synapse_model and
     synapse_label parameters is permitted.
 
-    [[ Deprecation warnings should appear directly after a brief description.
-      It should state  what version the object was deprecated, when it will be
-      removed and what recommend way obtains the same functionality]]
+    [[ Deprecation warnings should appear directly after the extended summary.
+      It should state in what version the object was deprecated, when it will 
+      be removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0
 
@@ -90,7 +91,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     Details on the connectivity. [[ Here details regarding the code or further
     explanations can be included. This section may include mathematical
     equations, written in LaTeX format. You can include references to relevant
-    papers using the reStructured format. Do not include model formulas ]]
+    papers using the reStructuredText syntax. Do not include model formulas ]]
 
     The discrete-time Fourier time-convolution [1]_ property states that
 

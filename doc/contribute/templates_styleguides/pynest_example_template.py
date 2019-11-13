@@ -1,20 +1,3 @@
-"""[[ This template demonstrates how to create an example python script for
-      NEST.
-
-   The format is based on `NumPy style docstring
-   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
-   reStructured text mark up. Please review the syntax rules if you are
-   unfamiliar with either reStructured text or NumPy style docstrings.
-
-   Copy this file and replace the sample text with a description of your
-   script.
-   The double bracketed sections [[ ]], which provide explanations, should be
-   completely removed from your final version - Including this entire
-   docstring!
-
-   Your script should contain a complete code-block that begins with all
-   necessary imports and ends with code that displays the output.]]
-"""
 # -*- coding: utf-8 -*-
 #
 # pynest_example_template.py
@@ -36,7 +19,25 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Simulate a balanced neuron with the bisection method
+"""[[ This template demonstrates how to create an example Python script for
+      NEST.
+
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructuredText markup. Please review the syntax rules if you are
+   unfamiliar with either reStructuredText or NumPy style docstrings.
+
+   Copy this file and replace the sample text with a description of your
+   script.
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completely removed from your final version - Including this entire
+   docstring!
+
+   Your script should contain a complete code-block that begins with all
+   necessary imports and ends with code that displays the output.]]
+"""
+
+"""Simulate a balanced neuron with the bisection method
 ----------------------------------------------------------------
 [[ Titles should be one line and state what the example does.
   It should begin with a verb in the present tense and include type of model
@@ -44,24 +45,24 @@
 
 [[ Extended summary - a detailed explanation of your example. Try to answer the
    folowing questions. ]]
-[[ What does this script do? What is the purpose?]]
+[[ What does this script do? What is the purpose? ]]
 
 This script simulates a neuron by an excitatory and an inhibitory
 population of neurons firing a Poisson spike train.
 Optimization is performed using the `bisection` method from Scipy,
 which simulates the network repeatedly.
 
-The aim  of this example script is to find a firing rate for the inhibitory
+The aim of this example script is to find a firing rate for the inhibitory
 population that will make the neuron fire at the same rate as the excitatory
 population.
 
-[[ What kind of output is expected?]]
+[[ What kind of output is expected? ]]
 
 The output shows the target neuron's membrane potential as a function of time.
 
 [[ Does this example have a real world application or use case?
   Are there particular applications or areas of research that would benefit
-  from this example?]]
+  from this example? ]]
 
 This model used here is applicable for neurorobotics, particularly cases of ...
 
@@ -75,7 +76,7 @@ configuration:
 
 [[ If applicable, mention the literature reference for this example.
    Note the syntax of the citation. And don't forget to add a "References"
-   section!]]
+   section! ]]
 
 This model used here corresponds to the formulation presented in
 Sander et al. [1]_ and the bisection method developed in
@@ -93,11 +94,11 @@ See Also
 Notes
 ------
 [[ Additional information can be included here regarding background theory,
-   relevant mathetmatical equations etc.]]
+   relevant mathematical equations etc. ]]
 
 The value of :math:`\omega` is X.
 For the population and time-averaged from the spiking simulation:
-[[ Note the syntax used for displaying equations uses reStructured text
+[[ Note the syntax used for displaying equations uses reStructuredText
    directive with LaTeX math formulae ]]
 
 .. math::
@@ -108,11 +109,11 @@ For the population and time-averaged from the spiking simulation:
  * bullet points are usually more easily read than paragraphs
 
 References
-------------
+----------
     [[ Note the format of the reference. No bold nor italics is used. Last name
        of author(s) followed by year, title in sentence case and full name of
        journal followed by volume and page range. Include the doi if
-       applicable.]]
+       applicable. ]]
 
 .. [1] Sander M., et al. (2011). Biology of the sauropod dinosaurs: The
        evolution of gigantism. Biological Reviews. 86(1):117-155.
@@ -125,7 +126,7 @@ References
   Author(s) should be comma separated with first name as initials followed
   by last name ]]
 
-:Authors:
+:Authors: D Adams, N Gaiman
     D Adams, N Gaiman
 
     [[ Include a couple of comma-separated keywords - this will help us
@@ -158,4 +159,4 @@ complete code ...
 ##############################################################################
 # Finally, we plot the target neuron's membrane potential as a function of time
 
-nest.voltage_trace.from_device(voltmeter)  # [[ end with output]]
+nest.voltage_trace.from_device(voltmeter)  # [[ end with output ]]

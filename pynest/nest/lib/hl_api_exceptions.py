@@ -67,7 +67,8 @@ class NESTMappedException(type):
         return newclass
 
 
-class NESTErrors(metaclass=NESTMappedException):
+class NESTErrors:
+    __metaclass__ = NESTMappedException
     """Namespace for NEST exceptions, including dynamically created classes from SLI.
 
     Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException.

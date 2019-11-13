@@ -168,10 +168,7 @@ public:
 
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -202,9 +199,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Tsodyks2Connection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
@@ -241,8 +236,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
-  const Tsodyks2Connection& rhs )
+Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -272,8 +266,7 @@ Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

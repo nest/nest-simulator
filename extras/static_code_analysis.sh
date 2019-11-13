@@ -54,6 +54,9 @@ PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
+# PEP8 rules.
+PEP8_MAX_LINE_LENGTH=120
+
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
@@ -171,7 +174,7 @@ for f in $FILE_NAMES; do
       # CPPCHECK
       if $PERFORM_CPPCHECK; then
         print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
-        $CPPCHECK --enable=all --inconclusive --std=c++03 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
+        $CPPCHECK --enable=all --language=c++ --std=c++11 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
         # Remove the header, the first line.
         tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
         if [ -s "${f_base}_cppcheck.txt" ]; then
@@ -218,7 +221,7 @@ for f in $FILE_NAMES; do
       fi
 
       # Add the file to the list of files with format errors.
-      if $vera_failed || $cppcheck_failed || $clang_format_failed; then
+      if (! $IGNORE_MSG_VERA && $vera_failed) || (! $IGNORE_MSG_CPPCHECK && $cppcheck_failed) || (! $IGNORE_MSG_CLANG_FORMAT && $clang_format_failed); then
         c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;
@@ -238,7 +241,7 @@ for f in $FILE_NAMES; do
             IGNORES=$PEP8_IGNORES
             ;;
         esac
-        if ! pep8_result=`$PEP8 --ignore=$IGNORES $f` ; then
+        if ! pep8_result=`$PEP8 --max-line-length=$PEP8_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pep8_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PEP8] $line"
@@ -307,6 +310,7 @@ if [ $nlines_copyright_check \> 1 ] || \
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
       print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
+  exit 1
 else
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

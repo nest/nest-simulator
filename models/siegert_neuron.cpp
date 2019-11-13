@@ -69,8 +69,7 @@ integrand1( double x, void* p )
   }
   else
   {
-    return exp( -( x - y_th ) * ( x - y_th ) )
-      * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
+    return exp( -( x - y_th ) * ( x - y_th ) ) * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
   }
 }
 
@@ -239,10 +238,7 @@ nest::siegert_neuron::~siegert_neuron()
  * ---------------------------------------------------------------- */
 
 double
-nest::siegert_neuron::siegert1( double theta_shift,
-  double V_reset_shift,
-  double mu,
-  double sigma )
+nest::siegert_neuron::siegert1( double theta_shift, double V_reset_shift, double mu, double sigma )
 {
   double y_th;
   y_th = ( theta_shift - mu ) / sigma;
@@ -279,18 +275,14 @@ nest::siegert_neuron::siegert1( double theta_shift,
     }
   }
 
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
+  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
 }
 
 double
-nest::siegert_neuron::siegert2( double theta_shift,
-  double V_reset_shift,
-  double mu,
-  double sigma )
+nest::siegert_neuron::siegert2( double theta_shift, double V_reset_shift, double mu, double sigma )
 {
   double y_th;
   y_th = ( theta_shift - mu ) / sigma;
@@ -317,8 +309,7 @@ nest::siegert_neuron::siegert2( double theta_shift,
     }
   }
 
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
+  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
@@ -334,10 +325,8 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // function (Fourcaud & Brunel, 2002)
   double alpha = 2.0652531522312172;
 
-  double theta_shift =
-    P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r_shift =
-    P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double theta_shift = P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift = P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   // Catch cases where neurons get no input.
   // Use (Brunel, 2000) eq. (22) to estimate
@@ -383,8 +372,7 @@ nest::siegert_neuron::init_buffers_()
 void
 nest::siegert_neuron::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -398,13 +386,9 @@ nest::siegert_neuron::calibrate()
  */
 
 bool
-nest::siegert_neuron::update_( Time const& origin,
-  const long from,
-  const long to,
-  const bool called_from_wfr_update )
+nest::siegert_neuron::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
@@ -420,8 +404,7 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive =
-      siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
+    double drive = siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
     if ( not called_from_wfr_update )
@@ -432,8 +415,7 @@ nest::siegert_neuron::update_( Time const& origin,
     else // check convergence of waveform relaxation
     {
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded =
-        wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr_update iteration
       B_.last_y_values[ lag ] = S_.r_;
     }

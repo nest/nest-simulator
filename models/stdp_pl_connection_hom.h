@@ -189,10 +189,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -238,9 +235,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPPLConnectionHom< targetidentifierT >::send( Event& e,
-  thread t,
-  const STDPPLHomCommonProperties& cp )
+STDPPLConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
@@ -255,10 +250,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
@@ -269,13 +261,11 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-    weight_ = facilitate_(
-      weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
   }
 
   // depression due to new pre-synaptic spike
-  weight_ =
-    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -283,8 +273,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ =
-    Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 
   t_lastspike_ = t_spike;
 }
@@ -299,8 +288,7 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom(
-  const STDPPLConnectionHom& rhs )
+STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom( const STDPPLConnectionHom& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , Kplus_( rhs.Kplus_ )
@@ -324,8 +312,7 @@ STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );

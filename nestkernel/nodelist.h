@@ -110,8 +110,7 @@ class LocalNodeListIterator
 
 private:
   //! Create iterator from pointer to Node in subnet
-  LocalNodeListIterator( std::vector< Node* >::iterator const& node,
-    std::vector< Node* >::iterator const& list_end )
+  LocalNodeListIterator( std::vector< Node* >::iterator const& node, std::vector< Node* >::iterator const& list_end )
     : current_node_( node )
     , list_end_( list_end )
   {
@@ -153,8 +152,7 @@ private:
 // ----------------------------------------------------------------------------
 
 template <>
-LocalNodeListBase< LocalNodeListIterator >::iterator
-LocalNodeListBase< LocalNodeListIterator >::begin() const;
+LocalNodeListBase< LocalNodeListIterator >::iterator LocalNodeListBase< LocalNodeListIterator >::begin() const;
 
 /**
  * List interface to subnet providing iteration over all local nodes.
@@ -172,8 +170,7 @@ class LocalChildListIterator
 
 private:
   //! Create iterator from pointer to Node in subnet
-  LocalChildListIterator( std::vector< Node* >::iterator const& node,
-    std::vector< Node* >::iterator const& list_end )
+  LocalChildListIterator( std::vector< Node* >::iterator const& node, std::vector< Node* >::iterator const& list_end )
     : current_node_( node )
     , list_end_( list_end )
   {
@@ -207,8 +204,7 @@ private:
 };
 
 template <>
-LocalNodeListBase< LocalChildListIterator >::iterator
-LocalNodeListBase< LocalChildListIterator >::begin() const;
+LocalNodeListBase< LocalChildListIterator >::iterator LocalNodeListBase< LocalChildListIterator >::begin() const;
 
 /**
  * List interface to subnet providing iteration over immediate local child
@@ -229,8 +225,7 @@ class LocalLeafListIterator
 
 private:
   //! Create iterator from pointer to Node in subnet
-  LocalLeafListIterator( std::vector< Node* >::iterator const& node,
-    std::vector< Node* >::iterator const& list_end )
+  LocalLeafListIterator( std::vector< Node* >::iterator const& node, std::vector< Node* >::iterator const& list_end )
     : base_it_( node, list_end )
   {
     while ( not base_it_.is_end_() and not is_leaf_( *base_it_ ) )
@@ -271,8 +266,7 @@ private:
 };
 
 template <>
-LocalNodeListBase< LocalLeafListIterator >::iterator
-LocalNodeListBase< LocalLeafListIterator >::begin() const;
+LocalNodeListBase< LocalLeafListIterator >::iterator LocalNodeListBase< LocalLeafListIterator >::begin() const;
 
 /**
  * List interface to subnet providing iteration over local leaf nodes.

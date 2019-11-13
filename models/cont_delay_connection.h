@@ -55,7 +55,7 @@ Example:
     /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
 
     def
-    /n  /iaf_psc_delta_canon Create def
+    /n  /iaf_psc_delta_ps Create def
     /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
     def
 
@@ -94,7 +94,7 @@ FirstVersion: June 2007
 
 Author: Abigail Morrison
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
+SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
 */
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
@@ -210,10 +210,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -232,9 +229,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-ContDelayConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+ContDelayConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );

@@ -51,8 +51,7 @@ private:
   const unsigned int max_size_;
 
 public:
-  SendBufferPosition( const AssignedRanks& assigned_ranks,
-    const unsigned int send_recv_count_per_rank );
+  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
 
   /**
    * Returns current index of specified rank in MPI buffer.
@@ -88,8 +87,7 @@ public:
   const unsigned int send_recv_count_per_rank;
 };
 
-inline SendBufferPosition::SendBufferPosition(
-  const AssignedRanks& assigned_ranks,
+inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks,
   const unsigned int send_recv_count_per_rank )
   : num_spike_data_written_( 0 )
   , max_size_( assigned_ranks.max_size )

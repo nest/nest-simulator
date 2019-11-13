@@ -11,7 +11,7 @@
  *  (at your option) any later version.
  *
  *  NEST is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -148,12 +148,9 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double rate )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate >
-  rate_transformer_threshold_lin;
+typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();

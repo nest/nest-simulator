@@ -84,7 +84,6 @@ extern const Name polar_axis;
 extern const Name positions;
 extern const Name radius;
 extern const Name rectangular;
-extern const Name rho;
 extern const Name row;
 extern const Name rows;
 extern const Name sigma_x;

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# issue-1034.py
+# test_regression_issue-1034.py
 #
 # This file is part of NEST.
 #

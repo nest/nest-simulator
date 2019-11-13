@@ -120,8 +120,7 @@ public:
   {
     DictionaryDatum dict( new Dictionary );
     ( *dict )[ names::messages ] = messages;
-    ( *dict )[ names::message_times ] =
-      DoubleVectorDatum( new std::vector< double >( message_times ) );
+    ( *dict )[ names::message_times ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
     ( *d )[ names::n_messages ] = messages.size();
     ( *d )[ names::data ] = dict;
   }

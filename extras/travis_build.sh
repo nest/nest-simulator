@@ -51,13 +51,13 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+   if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
       CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
+   elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.7/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.7/include/python3.6m/"
    fi
-   if [[ $OSTYPE == darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
+   if [[ $OSTYPE = darwin* ]]; then
+      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.4/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
@@ -97,7 +97,7 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-if [[ $OSTYPE == darwin* ]]; then
+if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
     CONFIGURE_BOOST="-Dwith-boost=OFF"
@@ -144,14 +144,14 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd ..
         echo "MSGBLD0040: CPPCHECK installation completed."
-    
+
         echo "MSGBLD0050: Installing CLANG-FORMAT."
         wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         # Copy and not move because '.cache' may aleady contain other subdirectories and files.
         cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
         echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
+
         # Remove these directories, otherwise the copyright-header check will complain.
         rm -rf ./cppcheck
         rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
@@ -161,32 +161,36 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
-      #            The commit range might not properly reflect the history.
-      #            see https://github.com/travis-ci/travis-ci/issues/2668
+    # Note: BUG: Extracting the filenames may not work in all cases.
+    #            The commit range might not properly reflect the history.
+    #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
-       file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
+       file_names=`curl --retry 5 "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
     else
-       echo "MSGBLD0090: Retrieving changed files using git diff."    
+       echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
 
+    # Note: uncomment the following line to static check *all* files, not just those that have changed.
+    # Warning: will run for a very long time (will time out on Travis CI instances)
+
+    # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
+
     printf '%s\n' "$file_names" | while IFS= read -r line
-     do
+    do
        for single_file_name in $file_names
        do
          echo "MSGBLD0095: File changed: $single_file_name"
        done
-     done
+    done
     echo "MSGBLD0100: Retrieving changed files completed."
     echo
-
 
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8
@@ -213,84 +217,84 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+    if [ $? -gt 0 ]; then
+        exit $?
+    fi
 else
     echo "MSGBLD0225: Static code analysis skipped due to build configuration."
-fi  # End of Static code analysis.
-
-
-cd "$NEST_VPATH"
-cp ../examples/sli/nestrc.sli ~/.nestrc
-# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
-# Not having this in place leads to a "not enough slots available" error.
-if [[ "$OSTYPE" == "darwin"* ]] ; then
-    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 fi
 
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0230: Configuring CMake."
-cmake \
-    -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
-    -Dwith-optimize=ON \
-    -Dwith-warning=ON \
-    $CONFIGURE_BOOST \
-    $CONFIGURE_THREADING \
-    $CONFIGURE_MPI \
-    $CONFIGURE_PYTHON \
-    $CONFIGURE_MUSIC \
-    $CONFIGURE_GSL \
-    $CONFIGURE_LTDL \
-    $CONFIGURE_READLINE \
-    $CONFIGURE_LIBNEUROSIM \
-    ..
+if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+    cd "$NEST_VPATH"
+    cp ../examples/sli/nestrc.sli ~/.nestrc
+    # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
+    # Not having this in place leads to a "not enough slots available" error.
+    if [[ "$OSTYPE" = "darwin"* ]] ; then
+        sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
+    fi
 
-echo "MSGBLD0240: CMake configure completed."
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0230: Configuring CMake."
+    cmake \
+        -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+        -Dwith-optimize=ON \
+        -Dwith-warning=ON \
+        $CONFIGURE_BOOST \
+        $CONFIGURE_THREADING \
+        $CONFIGURE_MPI \
+        $CONFIGURE_PYTHON \
+        $CONFIGURE_MUSIC \
+        $CONFIGURE_GSL \
+        $CONFIGURE_LTDL \
+        $CONFIGURE_READLINE \
+        $CONFIGURE_LIBNEUROSIM \
+        ..
 
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               B U I L D   N E S T                                           +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0250: Running Make."
-make VERBOSE=1
-echo "MSGBLD0260: Make completed."
+    echo "MSGBLD0240: CMake configure completed."
 
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               I N S T A L L   N E S T                                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0270: Running make install."
-make install
-echo "MSGBLD0280: Make install completed."
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               B U I L D   N E S T                                           +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0250: Running Make."
+    make VERBOSE=1
+    echo "MSGBLD0260: Make completed."
 
-if [ "$xRUN_TESTSUITE" = "1" ]; then
+    echo
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               I N S T A L L   N E S T                                       +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "MSGBLD0270: Running make install."
+    make install
+    echo "MSGBLD0280: Make install completed."
+
     echo
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               R U N   N E S T   T E S T S U I T E                           +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
+    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
         export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
+    elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
         export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
     fi
     make installcheck
     echo "MSGBLD0300: Make installcheck completed."
-else
-    echo "MSGBLD0305: Skip installcheck."
-fi
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "MSGBLD0310: This build was triggered by a pull request."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
+    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+        echo "MSGBLD0310: This build was triggered by a pull request."
+        echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
+    fi
 
-if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
+    if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
+        echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
+        echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
+    fi
 
-echo "MSGBLD0340: Build completed."
+    echo "MSGBLD0340: Build completed."
+fi

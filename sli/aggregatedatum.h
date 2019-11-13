@@ -95,8 +95,7 @@ public:
     // a direct dynamic_cast<const GenericDatum<D> * > does not seem
     // to work.
 
-    const AggregateDatum< C, slt >* ddc =
-      dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
+    const AggregateDatum< C, slt >* ddc = dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
     if ( ddc == NULL )
     {
       return false;
@@ -161,9 +160,7 @@ AggregateDatum< C, slt >::pprint( std::ostream& out ) const
 
 template < class C, SLIType* slt >
 void
-AggregateDatum< C, slt >::list( std::ostream& out,
-  std::string prefix,
-  int length ) const
+AggregateDatum< C, slt >::list( std::ostream& out, std::string prefix, int length ) const
 {
   if ( length == 0 )
   {

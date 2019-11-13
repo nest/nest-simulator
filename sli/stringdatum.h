@@ -71,8 +71,7 @@ sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory;
 
 
 template <>
-void AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint(
-  std::ostream& out ) const;
+void AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream& out ) const;
 
 
 typedef AggregateDatum< std::string, &SLIInterpreter::Stringtype > StringDatum;

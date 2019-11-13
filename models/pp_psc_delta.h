@@ -180,7 +180,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 
 SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
-iaf_psc_delta_canon
+iaf_psc_delta_ps
 */
 class pp_psc_delta : public Archiving_Node
 {
@@ -338,7 +338,7 @@ private:
     double h_;       //!< simulation time step in ms
     double dt_rate_; //!< rate parameter of dead time distribution
 
-    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::RngPtr rng_;                   //!< random number generator of my own thread
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     librandom::GammaRandomDev gamma_dev_;     //!< random deviate generator
 
@@ -381,10 +381,7 @@ private:
 };
 
 inline port
-pp_psc_delta::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+pp_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

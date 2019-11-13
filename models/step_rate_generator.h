@@ -101,6 +101,12 @@ public:
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
 
+  bool
+  has_proxies() const
+  {
+    return false;
+  }
+
   // port send_test_event( Node&, rport, synindex, bool );
   void
   sends_secondary_event( DelayedRateConnectionEvent& )
@@ -216,10 +222,7 @@ private:
 };
 
 inline port
-step_rate_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -230,8 +233,7 @@ step_rate_generator::send_test_event( Node& target,
 }
 
 inline port
-step_rate_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+step_rate_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

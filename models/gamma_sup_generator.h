@@ -158,15 +158,13 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< unsigned long >
-      occ_; //!< occupation numbers of internal states
+    std::vector< unsigned long > occ_;        //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
       unsigned long ini_occ_ref,
-      unsigned long ini_occ_act ); //!< initialize occupation numbers
-    unsigned long update( double transition_prob,
-      librandom::RngPtr rng ); //!< update age dist and generate spikes
+      unsigned long ini_occ_act );                                         //!< initialize occupation numbers
+    unsigned long update( double transition_prob, librandom::RngPtr rng ); //!< update age dist and generate spikes
   };
 
 
@@ -210,10 +208,7 @@ private:
 };
 
 inline port
-gamma_sup_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+gamma_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

@@ -165,8 +165,8 @@ private:
    */
   struct Parameters_
   {
-    double rate_;   //!< process rate in Hz
-    double p_copy_; //!< copy probability for each spike in the mother process
+    double rate_;               //!< process rate in Hz
+    double p_copy_;             //!< copy probability for each spike in the mother process
     unsigned long mother_seed_; //!< seed of the mother process
     librandom::RngPtr rng_;     //!< random number generator for mother process
 
@@ -192,10 +192,7 @@ private:
 };
 
 inline port
-mip_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 

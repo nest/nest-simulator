@@ -55,8 +55,7 @@ namespace nest
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
-RecordablesMap< rate_neuron_ipn< TNonlinearities > >
-  rate_neuron_ipn< TNonlinearities >::recordablesMap_;
+RecordablesMap< rate_neuron_ipn< TNonlinearities > > rate_neuron_ipn< TNonlinearities >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -88,8 +87,7 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
-  DictionaryDatum& d ) const
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::tau, tau_ );
   def< double >( d, names::lambda, lambda_ );
@@ -106,8 +104,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
-  const DictionaryDatum& d )
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau, tau_ );
   updateValue< double >( d, names::lambda, lambda_ );
@@ -151,8 +148,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::get(
-  DictionaryDatum& d ) const
+nest::rate_neuron_ipn< TNonlinearities >::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::rate, rate_ );   // Rate
   def< double >( d, names::noise, noise_ ); // Noise
@@ -160,22 +156,19 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::get(
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::set(
-  const DictionaryDatum& d )
+nest::rate_neuron_ipn< TNonlinearities >::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ ); // Rate
 }
 
 template < class TNonlinearities >
-nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_(
-  rate_neuron_ipn< TNonlinearities >& n )
+nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_( rate_neuron_ipn< TNonlinearities >& n )
   : logger_( n )
 {
 }
 
 template < class TNonlinearities >
-nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_( const Buffers_&,
-  rate_neuron_ipn< TNonlinearities >& n )
+nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_( const Buffers_&, rate_neuron_ipn< TNonlinearities >& n )
   : logger_( n )
 {
 }
@@ -196,8 +189,7 @@ nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn()
 }
 
 template < class TNonlinearities >
-nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn(
-  const rate_neuron_ipn& n )
+nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn( const rate_neuron_ipn& n )
   : Archiving_Node( n )
   , nonlinearities_( n.nonlinearities_ )
   , P_( n.P_ )
@@ -236,8 +228,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
   // initialize random numbers
   for ( unsigned int i = 0; i < buffer_size; i++ )
   {
-    B_.random_numbers[ i ] =
-      V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+    B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
   }
 
   B_.logger_.reset(); // includes resize
@@ -248,8 +239,7 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_ipn< TNonlinearities >::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -258,8 +248,7 @@ nest::rate_neuron_ipn< TNonlinearities >::calibrate()
     // use stochastic exponential Euler method
     V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
     V_.P2_ = -1.0 / P_.lambda_ * numerics::expm1( -P_.lambda_ * h / P_.tau_ );
-    V_.input_noise_factor_ = std::sqrt(
-      -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
+    V_.input_noise_factor_ = std::sqrt( -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
   }
   else
   {
@@ -281,8 +270,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
@@ -299,8 +287,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     // get noise
     S_.noise_ = P_.sigma_ * B_.random_numbers[ lag ];
     // propagate rate to new time step (exponential integration)
-    S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mu_
-      + V_.input_noise_factor_ * S_.noise_;
+    S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mu_ + V_.input_noise_factor_ * S_.noise_;
 
     double delayed_rates_in = 0;
     double delayed_rates_ex = 0;
@@ -334,16 +321,13 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
       // the non-multiplicative case.
       if ( P_.mult_coupling_ )
       {
-        S_.rate_ += V_.P2_ * H_ex
-          * nonlinearities_.input( delayed_rates_ex + instant_rates_ex );
-        S_.rate_ += V_.P2_ * H_in
-          * nonlinearities_.input( delayed_rates_in + instant_rates_in );
+        S_.rate_ += V_.P2_ * H_ex * nonlinearities_.input( delayed_rates_ex + instant_rates_ex );
+        S_.rate_ += V_.P2_ * H_in * nonlinearities_.input( delayed_rates_in + instant_rates_in );
       }
       else
       {
-        S_.rate_ += V_.P2_
-          * nonlinearities_.input( delayed_rates_ex + instant_rates_ex
-              + delayed_rates_in + instant_rates_in );
+        S_.rate_ +=
+          V_.P2_ * nonlinearities_.input( delayed_rates_ex + instant_rates_ex + delayed_rates_in + instant_rates_in );
       }
     }
     else
@@ -362,8 +346,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     if ( called_from_wfr_update )
     {
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded = wfr_tol_exceeded
-        or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
@@ -395,8 +378,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     B_.random_numbers.resize( buffer_size, numerics::nan );
     for ( unsigned int i = 0; i < buffer_size; i++ )
     {
-      B_.random_numbers[ i ] =
-        V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+      B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
     }
   }
 
@@ -415,8 +397,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::handle(
-  InstantaneousRateConnectionEvent& e )
+nest::rate_neuron_ipn< TNonlinearities >::handle( InstantaneousRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
 
@@ -440,13 +421,11 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
     {
       if ( weight >= 0.0 )
       {
-        B_.instant_rates_ex_[ i ] +=
-          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
+        B_.instant_rates_ex_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
       else
       {
-        B_.instant_rates_in_[ i ] +=
-          weight * nonlinearities_.input( e.get_coeffvalue( it ) );
+        B_.instant_rates_in_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
     }
     i++;
@@ -455,8 +434,7 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::handle(
-  DelayedRateConnectionEvent& e )
+nest::rate_neuron_ipn< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
   const long delay = e.get_delay_steps();
@@ -470,26 +448,22 @@ nest::rate_neuron_ipn< TNonlinearities >::handle(
     {
       if ( weight >= 0.0 )
       {
-        B_.delayed_rates_ex_.add_value(
-          delay + i, weight * e.get_coeffvalue( it ) );
+        B_.delayed_rates_ex_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
       else
       {
-        B_.delayed_rates_in_.add_value(
-          delay + i, weight * e.get_coeffvalue( it ) );
+        B_.delayed_rates_in_.add_value( delay + i, weight * e.get_coeffvalue( it ) );
       }
     }
     else
     {
       if ( weight >= 0.0 )
       {
-        B_.delayed_rates_ex_.add_value(
-          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_ex_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
-        B_.delayed_rates_in_.add_value(
-          delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+        B_.delayed_rates_in_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }
     ++i;

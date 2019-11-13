@@ -34,21 +34,20 @@
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
-  const index s_gid,
+  const index source_gid,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
   const double w )
 {
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   assert( lid < target_to_devices_[ tid ].size() );
   assert( syn_id < target_to_devices_[ tid ][ lid ].size() );
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection(
-      source, target, target_to_devices_[ tid ][ lid ], syn_id, p, d, w );
+    .add_connection( source, target, target_to_devices_[ tid ][ lid ], syn_id, p, d, w );
 }
 
 inline void
@@ -67,8 +66,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
-    .add_connection(
-      source, target, target_from_devices_[ tid ][ ldid ], syn_id, p, d, w );
+    .add_connection( source, target, target_from_devices_[ tid ][ ldid ], syn_id, p, d, w );
 
   // store gid of sending device
   sending_devices_gids_[ tid ][ ldid ] = source.get_gid();
@@ -76,19 +74,35 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 
 inline void
 nest::TargetTableDevices::send_to_device( const thread tid,
-  const index s_gid,
+  const index source_gid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
 {
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
-  for ( std::vector< ConnectorBase* >::iterator it =
-          target_to_devices_[ tid ][ lid ].begin();
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
+  for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
         it != target_to_devices_[ tid ][ lid ].end();
         ++it )
   {
     if ( *it != NULL )
     {
       ( *it )->send_to_all( tid, cm, e );
+    }
+  }
+}
+
+inline void
+nest::TargetTableDevices::send_to_device( const thread tid,
+  const index source_gid,
+  SecondaryEvent& e,
+  const std::vector< ConnectorModel* >& cm )
+{
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
+  const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
+  {
+    if ( target_to_devices_[ tid ][ lid ][ *cit ] != NULL )
+    {
+      target_to_devices_[ tid ][ lid ][ *cit ]->send_to_all( tid, cm, e );
     }
   }
 }
@@ -103,8 +117,7 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   if ( target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
   {
-    target_to_devices_[ tid ][ lid ][ syn_id ]->get_synapse_status(
-      tid, lcid, dict );
+    target_to_devices_[ tid ][ lid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
 }
 
@@ -119,8 +132,7 @@ nest::TargetTableDevices::set_synapse_status_to_device( const thread tid,
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   if ( target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
   {
-    target_to_devices_[ tid ][ lid ][ syn_id ]->set_synapse_status(
-      lcid, dict, cm );
+    target_to_devices_[ tid ][ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
   }
 }
 

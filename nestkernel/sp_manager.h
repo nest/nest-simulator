@@ -99,10 +99,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn The synapse model to use.
    */
-  void disconnect_single( index s,
-    Node* target,
-    thread target_thread,
-    DictionaryDatum& syn );
+  void disconnect_single( index s, Node* target, thread target_thread, DictionaryDatum& syn );
 
   /**
    * Disconnect two collections of nodes.  The connection is
@@ -113,10 +110,7 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollection&,
-    GIDCollection&,
-    DictionaryDatum&,
-    DictionaryDatum& );
+  void disconnect( GIDCollection&, GIDCollection&, DictionaryDatum&, DictionaryDatum& );
 
   /**
    * Disconnect two nodes.
@@ -129,10 +123,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index sgid,
-    Node* target,
-    thread target_thread,
-    const index syn_id );
+  void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
@@ -188,11 +179,7 @@ public:
     std::string se_pre_name,
     std::string se_post_name );
   // Deletion of synapses
-  void delete_synapse( index source,
-    index target,
-    long syn_id,
-    std::string se_pre_name,
-    std::string se_post_name );
+  void delete_synapse( index source, index target, long syn_id, std::string se_pre_name, std::string se_post_name );
 
   void get_synaptic_elements( std::string se_name,
     std::vector< index >& se_vacant_id,
@@ -200,9 +187,7 @@ public:
     std::vector< index >& se_deleted_id,
     std::vector< int >& se_deleted_n );
 
-  void serialize_id( std::vector< index >& id,
-    std::vector< int >& n,
-    std::vector< index >& res );
+  void serialize_id( std::vector< index >& id, std::vector< int >& n, std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 

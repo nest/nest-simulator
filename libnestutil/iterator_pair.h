@@ -74,14 +74,11 @@ inline bool operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
 template < class sort_iter_type_, class perm_iter_type_ >
 struct iterator_pair_types
 {
-  using value_type =
-    boost::tuple< typename std::iterator_traits< sort_iter_type_ >::value_type,
-      typename std::iterator_traits< perm_iter_type_ >::value_type >;
-  using ref_type =
-    boost::tuple< typename std::iterator_traits< sort_iter_type_ >::reference,
-      typename std::iterator_traits< perm_iter_type_ >::reference >;
-  using difference_type =
-    typename std::iterator_traits< sort_iter_type_ >::difference_type;
+  using value_type = boost::tuple< typename std::iterator_traits< sort_iter_type_ >::value_type,
+    typename std::iterator_traits< perm_iter_type_ >::value_type >;
+  using ref_type = boost::tuple< typename std::iterator_traits< sort_iter_type_ >::reference,
+    typename std::iterator_traits< perm_iter_type_ >::reference >;
+  using difference_type = typename std::iterator_traits< sort_iter_type_ >::difference_type;
 };
 
 /**
@@ -91,16 +88,11 @@ struct iterator_pair_types
  * @tparam perm_iter_type_ Iterator type of the container being permuted.
  */
 template < typename sort_iter_type_, typename perm_iter_type_ >
-class IteratorPair
-  : public boost::iterator_facade< IteratorPair< sort_iter_type_,
-                                     perm_iter_type_ >,
-      typename iterator_pair_types< sort_iter_type_,
-                                     perm_iter_type_ >::value_type,
-      std::random_access_iterator_tag,
-      typename iterator_pair_types< sort_iter_type_,
-                                     perm_iter_type_ >::ref_type,
-      typename iterator_pair_types< sort_iter_type_,
-                                     perm_iter_type_ >::difference_type >
+class IteratorPair : public boost::iterator_facade< IteratorPair< sort_iter_type_, perm_iter_type_ >,
+                       typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::value_type,
+                       std::random_access_iterator_tag,
+                       typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type,
+                       typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type >
 {
 public:
   IteratorPair() = default;
@@ -135,22 +127,19 @@ private:
   /**
    * @brief Advance by a number of positions.
    */
-  void advance( typename iterator_pair_types< sort_iter_type_,
-    perm_iter_type_ >::difference_type );
+  void advance( typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type );
 
   /**
    * @brief Access the value referred to.
    * @return A boost::tuple with two values.
    */
-  typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type
-  dereference() const;
+  typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type dereference() const;
 
   /**
    * @brief Measure the distance to another iterator.
    */
-  typename iterator_pair_types< sort_iter_type_,
-    perm_iter_type_ >::difference_type
-  distance_to( IteratorPair const& ) const;
+  typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type distance_to(
+    IteratorPair const& ) const;
 };
 
 /**
@@ -179,16 +168,14 @@ struct rightshift_iterator_pair
   }
 
   template < typename T >
-  inline int operator()( boost::tuples::tuple< nest::Source&, T& > s,
-    unsigned offset )
+  inline int operator()( boost::tuples::tuple< nest::Source&, T& > s, unsigned offset )
   {
     return boost::get< 0 >( s ).get_gid() >> offset;
   }
 };
 
 template < typename sort_iter_type_, typename perm_iter_type_ >
-inline IteratorPair< sort_iter_type_, perm_iter_type_ >::IteratorPair(
-  sort_iter_type_ sort_iter,
+inline IteratorPair< sort_iter_type_, perm_iter_type_ >::IteratorPair( sort_iter_type_ sort_iter,
   perm_iter_type_ perm_iter )
   : sort_iter_( sort_iter )
   , perm_iter_( perm_iter )
@@ -213,8 +200,7 @@ IteratorPair< sort_iter_type_, perm_iter_type_ >::decrement()
 
 template < typename sort_iter_type_, typename perm_iter_type_ >
 inline bool
-IteratorPair< sort_iter_type_, perm_iter_type_ >::equal(
-  IteratorPair const& other ) const
+IteratorPair< sort_iter_type_, perm_iter_type_ >::equal( IteratorPair const& other ) const
 {
   return ( sort_iter_ == other.sort_iter_ );
 }
@@ -222,28 +208,22 @@ IteratorPair< sort_iter_type_, perm_iter_type_ >::equal(
 template < typename sort_iter_type_, typename perm_iter_type_ >
 inline void
 IteratorPair< sort_iter_type_, perm_iter_type_ >::advance(
-  typename iterator_pair_types< sort_iter_type_,
-    perm_iter_type_ >::difference_type n )
+  typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type n )
 {
   sort_iter_ += n;
   perm_iter_ += n;
 }
 
 template < typename sort_iter_type_, typename perm_iter_type_ >
-inline
-  typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type
-  IteratorPair< sort_iter_type_, perm_iter_type_ >::dereference() const
+inline typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type
+IteratorPair< sort_iter_type_, perm_iter_type_ >::dereference() const
 {
-  return (
-    typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type(
-      *sort_iter_, *perm_iter_ ) );
+  return ( typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type( *sort_iter_, *perm_iter_ ) );
 }
 
 template < typename sort_iter_type_, typename perm_iter_type_ >
-inline typename iterator_pair_types< sort_iter_type_,
-  perm_iter_type_ >::difference_type
-IteratorPair< sort_iter_type_, perm_iter_type_ >::distance_to(
-  IteratorPair const& other ) const
+inline typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type
+IteratorPair< sort_iter_type_, perm_iter_type_ >::distance_to( IteratorPair const& other ) const
 {
   return ( other.sort_iter_ - sort_iter_ );
 }

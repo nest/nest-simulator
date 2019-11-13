@@ -24,6 +24,7 @@ Initializer of PyNEST.
 """
 
 from . import ll_api                  # noqa
+from .ll_api import set_communicator  # noqa
 
 from . import pynestkernel as kernel  # noqa
 from .hl_api import *                 # noqa

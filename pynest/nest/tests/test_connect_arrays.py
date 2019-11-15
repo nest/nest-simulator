@@ -40,8 +40,8 @@ class TestConnectArrays(unittest.TestCase):
         nest.Connect(source, target)
         conns = nest.GetConnections()
         st_pairs = np.array([(s, t) for s in source for t in target])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.source())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.target())))
+        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
+        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
     def test_connect_numpy_arrays_gids(self):
         """Connecting numpy arrays with nonunique GIDs"""
@@ -51,8 +51,8 @@ class TestConnectArrays(unittest.TestCase):
         nest.Connect(source, target)
         conns = nest.GetConnections()
         st_pairs = np.array([(s, t) for s in source for t in target])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.source())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.target())))
+        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
+        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
     def test_connect_arrays_unique_gids(self):
         """Connecting arrays with unique GIDs"""
@@ -66,8 +66,8 @@ class TestConnectArrays(unittest.TestCase):
             self.assertTrue('unique' in str(w[-1].message))
         conns = nest.GetConnections()
         st_pairs = np.array([(s, t) for s in gids for t in gids])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.source())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.target())))
+        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
+        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
     def test_connect_array_with_gc(self):
         """Connecting one array with a GIDCollection"""

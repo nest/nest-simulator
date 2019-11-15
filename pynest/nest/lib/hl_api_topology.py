@@ -713,7 +713,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     # Re-organize conns into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
-    for src, tgt in zip(conns.source(), conns.target()):
+    for src, tgt in zip(conns.sources(), conns.targets()):
         src_tgt_map[src].append(tgt)
 
     for src in src_tgt_map.keys():

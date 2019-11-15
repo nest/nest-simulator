@@ -162,8 +162,8 @@ fig1, axA = pl.subplots(1, sharex=False)
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
 exc_conns = nest.GetConnections(pop_exc, pop_exc)
-exc_conns_senders = np.array(list(exc_conns.source()))
-exc_conns_targets = np.array(list(exc_conns.target()))
+exc_conns_senders = np.array(list(exc_conns.sources()))
+exc_conns_targets = np.array(list(exc_conns.targets()))
 exc_conns_weights = np.array(exc_conns.get('weight'))
 idx_array = np.argsort(exc_conns_senders)
 targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))

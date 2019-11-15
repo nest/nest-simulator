@@ -50,7 +50,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
         n_autapses = 0
-        for s, t in zip(conns.source(), conns.target()):
+        for s, t in zip(conns.sources(), conns.targets()):
             if s == t:
                 n_autapses += 1
         self.assertEqual(n_autapses, expected_num_autapses)
@@ -65,7 +65,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
-        conn_pairs = np.array([list(conns.source()), list(conns.target())]).T
+        conn_pairs = np.array([list(conns.sources()), list(conns.targets())]).T
         num_nonunique_conns = len(conn_pairs) - len(np.unique(conn_pairs, axis=0))
         if multapses:
             self.assertGreater(num_nonunique_conns, 0)

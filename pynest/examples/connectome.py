@@ -137,8 +137,8 @@ nest.Connect(nrns, nrns[12:],
 
 # First get a Connectome consisting of all the connections
 conns = nest.GetConnections()
-srcs = conns.source()
-tgts = conns.target()  # source() and target() are iterators
+srcs = conns.source
+tgts = conns.target
 weights = conns.get('weight')
 
 plt.figure(figsize=(14, 12))

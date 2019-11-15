@@ -72,7 +72,7 @@ def plot_network(nodes, filename, ext_conns=False,
     conns = nest.GetConnections(nodes)
 
     graph = pydot.Dot(rankdir='LR', ranksep='5')
-    for source, target in zip(conns.source(), conns.target()):
+    for source, target in zip(conns.sources(), conns.targets()):
         graph.add_edge(pydot.Edge(str(source), str(target)))
 
     filetype = filename.rsplit(".", 1)[1]

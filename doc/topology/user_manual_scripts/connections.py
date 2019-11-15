@@ -538,7 +538,7 @@ def pn_fig(fig, loc, l, cdict,
     first_gid = list(l[0])[0]  # hack to map GID to layer index
     dist = np.array([nest.Distance(l[s - first_gid],
                                    l[t - first_gid])
-                     for s, t in zip(conns.source(), conns.target())])
+                     for s, t in zip(conns.sources(), conns.targets())])
     ax.hist(dist, bins=50, histtype='stepfilled', density=True)
     r = np.arange(0., 0.51, 0.01)
 

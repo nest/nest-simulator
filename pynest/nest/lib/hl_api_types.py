@@ -444,8 +444,8 @@ class Connectome(object):
 
     Connectome represents the connections of a network. The class supports indexing, iteration, length and
     equality. You can get and set connection parameters by using the membership functions ``get()`` and
-    ``set()``, respectively. By using the membership function ``source()`` you get an iterator over source
-    nodes, while ``target()`` returns an interator over the target nodes of the connections.
+    ``set()``, respectively. By using the membership function ``sources()`` you get an iterator over source
+    nodes, while ``targets()`` returns an interator over the target nodes of the connections.
 
     A Connectome is created by the :py:func`.GetConnections` function.
     """
@@ -538,19 +538,26 @@ class Connectome(object):
                   target + '\n' + borderline_t)
         return result
 
-    def source(self):
-        """
-        Return iterator containing the source gids of the `Connectome`.
-        """
+    def __getattr__(self, attr):
+        return self.get(attr)
+
+    def __setattr__(self, attr, value):
+        # `_datum` is the only property of Connectome that should not be
+        # interpreted as a property of the model
+        if attr == '_datum':
+            super().__setattr__(attr, value)
+        else:
+            self.set({attr: value})
+
+    def sources(self):
+        """Return iterator containing the source GIDs of the `Connectome`."""
         sources = self.get('source')
         if not isinstance(sources, (list, tuple)):
             sources = (sources,)
         return iter(sources)
 
-    def target(self):
-        """
-        Return iterator containing the target gids of the `Connectome`.
-        """
+    def targets(self):
+        """Return iterator containing the target GIDs of the `Connectome`."""
         targets = self.get('target')
         if not isinstance(targets, (list, tuple)):
             targets = (targets,)

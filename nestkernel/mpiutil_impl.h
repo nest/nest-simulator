@@ -152,7 +152,7 @@ get_comm_info( bool is_arbor, MPI_Comm comm )
 
   comm_info info;
   info.is_arbor = is_arbor;
-  info.is_nest = !is_arbor;
+  info.is_nest = not is_arbor;
 
   info.global_rank = mpi_rank( MPI_COMM_WORLD );
   info.global_size = mpi_size( MPI_COMM_WORLD );

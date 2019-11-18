@@ -53,8 +53,8 @@ nest.Connect(a_pyr, b_pyr, {'rule': 'pairwise_bernoulli',
                             'mask': {'circular': {'radius': 0.5}}})
 
 nest.Connect(a_pyr, b_in, {'rule': 'pairwise_bernoulli',
-                            'p': 0.2,
-                            'mask': {'circular': {'radius': 1.}}})
+                           'p': 0.2,
+                           'mask': {'circular': {'radius': 1.}}})
 
 pylab.clf()
 

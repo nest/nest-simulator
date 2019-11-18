@@ -37,7 +37,7 @@ nest.ResetKernel()
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
-pos = nest.spatial.grid(shape=[4,3], extent=[2., 1.5])
+pos = nest.spatial.grid(shape=[4, 3], extent=[2., 1.5])
 
 ctx_pyr = nest.Create('pyr', positions=pos)
 ctx_in = nest.Create('in', positions=pos)

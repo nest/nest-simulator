@@ -34,7 +34,7 @@ import pylab
 nest.ResetKernel()
 
 l1 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(shape=[4,3], extent=[2., 1.5]))
+                 positions=nest.spatial.grid(shape=[4, 3], extent=[2., 1.5]))
 
 nest.PrintNodes()
 

@@ -60,6 +60,7 @@ def suite():
 
     return test_suite
 
+
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)

@@ -17,7 +17,7 @@ perform operations that were not possible in previous versions.
 ..   NEST 3.0 introduces a number of new features and concepts, and some changes
    to the user interface that are not backwards compatible. One big change is
    the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
-   neurons, we now use the powerful :ref:`GIDCollections <gid>`, which will be
+   neurons, we now use the powerful :ref:`NodeCollections <gid>`, which will be
    presented below. Other big features include :ref:`connectome` objects to
    efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
    nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
@@ -32,7 +32,7 @@ What's new?
 Compact and flexible container for node handles (neurons, devices)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In NEST 3.0, ``nest.Create()`` returns a *GIDCollection* object instead of a list of global IDs.
+In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This object-oriented approach provides ia much more memory-efficient and powerful representation of node handles.
 
 Direct  access to node properties
@@ -51,8 +51,8 @@ NEST 3.0 supports the following functionality
 -  :ref:`Slicing <slicing>`
 -  :ref:`Getting the size <get_size>` ``len``
 -  :ref:`Conversion to and from lists <converting_lists>`
--  :ref:`Joining of two non-overlapping GIDCollections <joining>`  >> composing
--  :ref:`Testing whether one GIDCollection is equal to another <testing_equality>` (contains the
+-  :ref:`Joining of two non-overlapping NodeCollections <joining>`  >> composing
+-  :ref:`Testing whether one NodeCollection is equal to another <testing_equality>` (contains the
    same GIDs) >> testing of equality
 -  :ref:`Testing of membership <testing_membership>`
 -  Access to node properties with :ref:`get_param` and  :ref:`set_param` and direct attributes (dot notation e.g.)
@@ -65,10 +65,10 @@ NEST 3.0 supports the following functionality
   |                                             |                                              |
   | ::                                          | ::                                           |
   |                                             |                                              |
-  |     # A list of 10 GIDs is returned         |     # A GIDCollection object is returned     |
+  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned     |
   |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
   |                                             |                                              |
-  |     # Use lists as arguments in Connect     |     # Use GIDCollection objects as arguments |
+  |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as arguments |
   |     nest.Connect(nrns, nrns)                |     # in Connect                             |
   |                                             |     nest.Connect(nrns, nrns)                 |
   |                                             |                                              |
@@ -78,27 +78,27 @@ NEST 3.0 supports the following functionality
 
 
 Printing
-    A compact representation of information about the GIDCollection can be printed.
+    A compact representation of information about the NodeCollection can be printed.
 
 
    >>>  nrns = nest.Create('iaf_psc_alpha', 10)
    >>>  print(nrns)
-        GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
+        NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
 .. _indexing:
 
 Indexing
-    Indexing returns a new GIDCollection with a single GID
+    Indexing returns a new NodeCollection with a single GID
 
 
 
    >>>  print(nrns[3])
-        GIDCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
+        NodeCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
 
 .. _iterating:
 
 Iteration
-    You can iterate the GIDs in a GIDCollection
+    You can iterate the GIDs in a NodeCollection
 
      >>>   for gid in nrns:
      >>>       print(gid)
@@ -119,19 +119,19 @@ Iteration
 .. _slicing:
 
 Slicing
-    A GIDCollection can be sliced in the same way one would slice a list,
+    A NodeCollection can be sliced in the same way one would slice a list,
     with ``start:stop:step`` inside brackets
 
 
     >>>  print(nrns[2:9:3])
-         GIDCollection(metadata=None,
+         NodeCollection(metadata=None,
                        model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
 
 
 .. _get_size:
 
 Getting the size
-    You can easily get the number of GIDs in the GIDCollection with
+    You can easily get the number of GIDs in the NodeCollection with
 
    >>>  len(nrns)
         10
@@ -139,16 +139,16 @@ Getting the size
 .. _converting_lists:
 
 Conversion to and from lists
-    GIDCollections can be converted to lists of GIDs
+    NodeCollections can be converted to lists of GIDs
 
 
     >>>  list(nrns)
          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a GIDCollection by providing a list of GIDs
+    And you can create a NodeCollection by providing a list of GIDs
 
-    >>>  print(nest.GIDCollection([2, 3, 4, 8]))
-         GIDCollection(metadata=None,
+    >>>  print(nest.NodeCollection([2, 3, 4, 8]))
+         NodeCollection(metadata=None,
                       model=iaf_psc_alpha, size=3, first=2, last=4;
                       model=iaf_psc_alpha, size=1, first=8)
 
@@ -158,39 +158,39 @@ Conversion to and from lists
 .. _joining:
 
 Joining
-    When joining two GIDCollections, NEST tries to concatenate the
+    When joining two NodeCollections, NEST tries to concatenate the
     primitives into a single primitive.
 
 
     >>>  nrns_2 = nest.Create('iaf_psc_alpha', 3)
     >>>  print(nrns + nrns_2)
-         GIDCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
+         NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
 
     If the GIDs are not continuous or the models are different, a composite will be created:
 
     >>>  nrns_3 = nest.Create('iaf_psc_delta', 3)
     >>>  print(nrns + nrns_3)
-         GIDCollection(metadata=None,
+         NodeCollection(metadata=None,
                       model=iaf_psc_alpha, size=10, first=1, last=10;
                       model=iaf_psc_delta, size=3, first=14, last=16)
 
-    Note that joining GIDCollections that overlap or that contain metadata
+    Note that joining NodeCollections that overlap or that contain metadata
     (see section on Topology) is impossible.
 
 .. _testing_equality:
 
 Test of equality
-    You can test if two GIDCollections are equal, i.e. that they contain the same GIDs
+    You can test if two NodeCollections are equal, i.e. that they contain the same GIDs
 
     >>>  nrns == nrns_2
          False
-    >>>  nrns_2 == nest.GIDCollection([11, 12, 13])
+    >>>  nrns_2 == nest.NodeCollection([11, 12, 13])
          True
 
 .. _testing_membership:
 
 Test of membership
-    You can test if a GIDCollection contains a certain GID
+    You can test if a NodeCollection contains a certain GID
 
     >>>  2 in nrns
          True
@@ -309,7 +309,7 @@ Examples
          -57.0,
          -56.0)}
 
-    We can get the status of the nodes in the GIDCollection. Getting the
+    We can get the status of the nodes in the NodeCollection. Getting the
     status with a single parameter returns a tuple with the values of that
     parameter for all nodes.
 
@@ -346,7 +346,7 @@ Examples
 
 Setting node status
     In the same way as we can ``get`` the status of nodes in a
-    GIDCollection, we can also ``set`` the status.
+    NodeCollection, we can also ``set`` the status.
 
     ::
 
@@ -354,26 +354,26 @@ Setting node status
         nrns.set('V_m', [-50., -51., ...])  # sets different V_m for each node
         nrns.set({'V_m': -55., 'C_m': 150.})  # sets V_m and C_m of all nodes
 
-We can create a composite GIDCollection (i.e., a non-contiguous or non-homogenous GIDCollection) from a list
+We can create a composite NodeCollection (i.e., a non-contiguous or non-homogenous NodeCollection) from a list
 
-    >>>  gc = nest.GIDCollection([1, 3, 7])
+    >>>  gc = nest.NodeCollection([1, 3, 7])
     >>>  print(gc)
-         GIDCollection(metadata=None,
+         NodeCollection(metadata=None,
                model=iaf_psc_alpha, size=1, first=1;
                model=iaf_psc_alpha, size=1, first=3;
                model=iaf_psc_alpha, size=1, first=7)
 
 .. _connectome:
 
-Connectome
+SynapseCollection
 ~~~~~~~~~~
 
-Just like a GIDCollection is a container for GIDs, a Connectome is a
+Just like a NodeCollection is a container for GIDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
-Connectome is returned. Connectomes support a lot of the same operations
-as GIDCollections.
+SynapseCollection is returned. SynapseCollections support a lot of the same operations
+as NodeCollections.
 
-``Connectome`` supports:
+``SynapseCollection`` supports:
 
 -  :ref:`Indexing <conn_indexing>`
 -  :ref:`Iteration <conn_iterating>`
@@ -389,7 +389,7 @@ as GIDCollections.
 
 
 Printing
-    Printing a Connectome produces a table of source and target GIDs
+    Printing a SynapseCollection produces a table of source and target GIDs
 
     >>>  connectome = nest.GetConnections()
     >>>  print(connectome)
@@ -402,7 +402,7 @@ Printing
 .. _conn_indexing:
 
 Indexing
-    Indexing returns a Connectome with a single connection.
+    Indexing returns a SynapseCollection with a single connection.
 
     >>>  print(connectome[1])
          *--------*----*
@@ -415,12 +415,12 @@ Indexing
 .. _conn_iterating:
 
 Iteration
-    A Connectome can be iterated, yielding single connection Connectomes.
+    A SynapseCollection can be iterated, yielding single connection SynapseCollections.
 
 .. _conn_slicing:
 
 Slicing
-    A Connectome can be sliced with ``start:stop:step`` inside brackets
+    A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
     >>>  print(connectome[0:3:2])
          *--------*-------*
@@ -432,7 +432,7 @@ Slicing
 .. _conn_size:
 
 Getting the size
-    We can get the number of connections in the Connectome with
+    We can get the number of connections in the SynapseCollection with
 
 
     .. code-block:: ipython
@@ -452,14 +452,14 @@ Getting the size
 .. _conn_testing_equality:
 
 Test of equality
-    Two Connectomes can be tested for equality, i.e. that they contain the same connections.
+    Two SynapseCollections can be tested for equality, i.e. that they contain the same connections.
 
 .. _conn_get:
 
 Getting connection parameters
-    We can get the parameters of the connections in the Connectome. The
+    We can get the parameters of the connections in the SynapseCollection. The
     structure of the returned values follows the same rules as ``get()``
-    for GIDCollections.
+    for NodeCollections.
 
     ::
 
@@ -481,7 +481,7 @@ Getting connection parameters
 .. _conn_set:
 
 Setting connection parameters
-    Likewise, we can set the parameters of connections in the Connectome
+    Likewise, we can set the parameters of connections in the SynapseCollection
 
     ::
 
@@ -939,7 +939,7 @@ Topology module
    ``nest.topology``
 -  You can use the ``Create`` and ``Connect`` functions for spatial  networks, same as you would for non-spatial
    network
--  ``nest.GetPosition`` -> now takes a GIDCollection instead of a list of GIDs
+-  ``nest.GetPosition`` -> now takes a NodeCollection instead of a list of GIDs
 -  ``nest.FindCenterElement`` -> now returns ``int`` instead of
    ``tuple``
 
@@ -1006,12 +1006,12 @@ where ``spatial_data`` can be one of the following
       extent defined, the number of dimensions has to be provided.
 
 Topology layers are no longer subnets, as subnets have been removed, but
-GIDCollections with metadata. These GIDCollections behave as normal
-GIDCollections with two exceptions:
+NodeCollections with metadata. These NodeCollections behave as normal
+NodeCollections with two exceptions:
 
-- They cannot be merged, as concatenating GIDCollections with metadata is
+- They cannot be merged, as concatenating NodeCollections with metadata is
   not allowed.
-- Setting the status of nodes and connecting layer GIDCollections can
+- Setting the status of nodes and connecting layer NodeCollections can
   use spatial information as parameters.
 
 The second point means that we can use masks and position dependent
@@ -1036,8 +1036,8 @@ Connect layers
 ^^^^^^^^^^^^^^^^^^
 
 Similar to creating layers, connecting layers is now done with the
-standard ``nest.Connect()`` function. Connecting GIDCollections with
-spatial data is no different from connecting GIDCollections without
+standard ``nest.Connect()`` function. Connecting NodeCollections with
+spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
 ``Connect()`` function brings with it some notable changes:
 
@@ -1131,7 +1131,7 @@ What's removed?
 Subnets
 ~~~~~~~~~~
 
-Subnets are gone. Instead GIDCollections should be used to organize neurons.
+Subnets are gone. Instead NodeCollections should be used to organize neurons.
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |

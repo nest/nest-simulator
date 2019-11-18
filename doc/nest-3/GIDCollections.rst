@@ -1,29 +1,29 @@
-GIDCollections in SLI and Python
+NodeCollections in SLI and Python
 ================================
 
 It was decided in the `Open NEST VC 8
 Aug <https://github.com/nest/nest-simulator/wiki/2016-08-08-Open-NEST-Developer-Video-Conference>`__
 to remove subnets which represent structure in the simulation kernel and
 move all structure representation to the script layer in form of
-GIDCollections (see also
+NodeCollections (see also
 `#417 <https://github.com/nest/nest-simulator/issues/417>`__).
 
-Design of GIDCollections
+Design of NodeCollections
 ------------------------
 
-``GIDCollection``\ s were introduced as a compact representation of
+``NodeCollection``\ s were introduced as a compact representation of
 network nodes.
 
 Principles
 ~~~~~~~~~~
 
-``GIDCollection``\ s represent the nodes of a network on the script
+``NodeCollection``\ s represent the nodes of a network on the script
 level (i.e., outside the kernel). They are as compact as possible and
 support efficient operations, especially connection generation and
 status changes or queries.
 
-The script controls the lifetime of the ``GIDCollection``, i.e., a
-``GIDCollection`` is deleted when the corresponding object is deleted at
+The script controls the lifetime of the ``NodeCollection``, i.e., a
+``NodeCollection`` is deleted when the corresponding object is deleted at
 the script level, either explicitly or by going out of scope.
 
 Consideration is given first and foremost to the Python level, since it
@@ -32,45 +32,45 @@ is the primary user interface.
 Terminology
 ~~~~~~~~~~~
 
--  A ``GIDCollection`` is *contiguous* if it represents a contiguous
+-  A ``NodeCollection`` is *contiguous* if it represents a contiguous
    range of GIDs.
--  A ``GIDCollection`` is *homogeneous* if all GIDs in the collection
+-  A ``NodeCollection`` is *homogeneous* if all GIDs in the collection
    refer to nodes of the same type (same model ID).
--  A ``GIDCollection`` is *primitive* if it is contiguous and
+-  A ``NodeCollection`` is *primitive* if it is contiguous and
    homogeneous.
--  A ``GIDCollection`` is *composite* if it is not primitive.
+-  A ``NodeCollection`` is *composite* if it is not primitive.
 
 Assumptions
 ~~~~~~~~~~~
 
-The following assumptions apply to non-explicit ``GIDCollection``\ s: 1.
-``GIDCollection`` objects are created rarely but looked up frequently 1.
-``GIDCollection`` objects are immutable 1. ``GIDCollection`` objects
+The following assumptions apply to non-explicit ``NodeCollection``\ s: 1.
+``NodeCollection`` objects are created rarely but looked up frequently 1.
+``NodeCollection`` objects are immutable 1. ``NodeCollection`` objects
 will first and foremost be created by ``Create`` calls; each such call
-will return a primitive collection 1. A ``GIDCollection`` holds
+will return a primitive collection 1. A ``NodeCollection`` holds
 information about the model ID of each GID in the collection 1. A
-``GIDCollection`` may hold additional metadata (see section on Topology
-below for discussion on Metadata) 1. A GID occurs in a ``GIDCollection``
+``NodeCollection`` may hold additional metadata (see section on Topology
+below for discussion on Metadata) 1. A GID occurs in a ``NodeCollection``
 at most once 1. GIDs are ordered in ascending order in a
-``GIDCollection`` 1. If a composite ``GIDCollection`` contains at least
-one primitive ``GIDCollection`` with metadata, then all primitive
-``GIDCollection``\ s in the ``GIDCollection`` must hold the same
+``NodeCollection`` 1. If a composite ``NodeCollection`` contains at least
+one primitive ``NodeCollection`` with metadata, then all primitive
+``NodeCollection``\ s in the ``NodeCollection`` must hold the same
 metadata. Sameness means in this case that the metadata pointers are
-identical. 1. Primitive ``GIDCollection``\ s with metadata are never
-coalesced into a single primitive ``GIDCollection``, even if their
+identical. 1. Primitive ``NodeCollection``\ s with metadata are never
+coalesced into a single primitive ``NodeCollection``, even if their
 ranges are adjacent and they have the same model type.
 
-``GIDCollection``\ s are made to be able to compactly represent a large
+``NodeCollection``\ s are made to be able to compactly represent a large
 number of nodes. Often over 1000 nodes, and, in extreme cases (4g
 benchmark), billions of nodes.
 
-Operations on ``GIDCollection``\ s
+Operations on ``NodeCollection``\ s
 ----------------------------------
 
-``GIDCollection``\ s support the following operations: 1. Test of
-membership 1. Test whether one ``GIDCollection`` is equal to another
+``NodeCollection``\ s support the following operations: 1. Test of
+membership 1. Test whether one ``NodeCollection`` is equal to another
 (contains the same GIDs) 1. Concatenation of two non-overlapping
-``GIDCollection``\ s 1. Iteration 1. Indexing 1. Slicing 1. Conversion
+``NodeCollection``\ s 1. Iteration 1. Indexing 1. Slicing 1. Conversion
 to and from lists
 
 Examples
@@ -84,65 +84,65 @@ SLI
    /Enrns /iaf_psc_alpha 800 Create def  % (1, 800)
    /Inrns /iaf_psc_alpha 200 Create def  % (801, 1000)
 
-   % Concatenated into a new primitive GIDCollection, (1, 1000)
+   % Concatenated into a new primitive NodeCollection, (1, 1000)
    /nrns Enrns Inrns join def
 
    Enrns nrns << /rule /fixed_indegree /indegree 100 >> Connect
 
    Enrns 10 MemberQ =  % Test of membership
 
-   % Create composite GIDCollection from an array
+   % Create composite NodeCollection from an array
    /gc [ 10 20 30 ] cvgidcollection def
-   /Ilist Inrns cva def  % Convert GIDCollection to array
+   /Ilist Inrns cva def  % Convert NodeCollection to array
 
    Enrns Inrns eq =  % Test of equality
 
    Enrns { ShowStatus } forall  % Iteration
 
-   Inrns 10 get ==  % Indexing, gives a new GIDCollection
-   Enrns 20 Take ==  % Slicing, gives a new GIDCollection
+   Inrns 10 get ==  % Indexing, gives a new NodeCollection
+   Enrns 20 Take ==  % Slicing, gives a new NodeCollection
 
 PyNEST
 ^^^^^^
 
 .. code:: python
 
-   # Create two primitive GIDCollections
+   # Create two primitive NodeCollections
    Enrns = nest.Create('iaf_psc_alpha', 800)
    Inrns = nest.Create('iaf_psc_alpha', 200)
-   nrns = Enrns + Inrns  # Concatenated into a new primitive GIDCollection
+   nrns = Enrns + Inrns  # Concatenated into a new primitive NodeCollection
 
    nest.Connect(Enrns, nrns, {'rule': 'fixed_indegree', 'indegree': 100})
 
    10 in Enrns  # Test of membership
 
-   # Create composite GIDCollection from a list
-   gc = nest.GIDCollection([10, 20, 30])
-   Ilist = list(gc)  # Convert GIDCollection to a Python list
+   # Create composite NodeCollection from a list
+   gc = nest.NodeCollection([10, 20, 30])
+   Ilist = list(gc)  # Convert NodeCollection to a Python list
 
    # Iteration
    for gid in Enrns:
        print(gid)
 
-   print(Inrns[10])  # Indexing, gives a new GIDCollection
-   print(Enrns[:20])  # Slicing, gives a new GIDCollection
+   print(Inrns[10])  # Indexing, gives a new NodeCollection
+   print(Enrns[:20])  # Slicing, gives a new NodeCollection
 
 Topology and Metadata
 ~~~~~~~~~~~~~~~~~~~~~
 
-This first use of metadata for ``GIDCollection``\ s is the subnet-free
+This first use of metadata for ``NodeCollection``\ s is the subnet-free
 reimplementation of Topology
 (`#481 <https://github.com/nest/nest-simulator/issues/481>`__). Layers
 containing only a single neuron model are represented by primitive
-``GIDCollection``\ s, while layers with composite elements require
-composite ``GIDCollection``\ s with one primitive ``GIDCollection`` per
-component. All these primitive ``GIDCollection``\ s are part of the same
+``NodeCollection``\ s, while layers with composite elements require
+composite ``NodeCollection``\ s with one primitive ``NodeCollection`` per
+component. All these primitive ``NodeCollection``\ s are part of the same
 layer and thus share the same geometry. They therefore have all the same
 metadata. This motivates the requirement that all primitive
-``GIDCollection``\ s in a composite ``GIDCollection`` must have the same
+``NodeCollection``\ s in a composite ``NodeCollection`` must have the same
 metadata.
 
-``GIDCollection``\ s with metadata are never coalesced, even if they
+``NodeCollection``\ s with metadata are never coalesced, even if they
 have adjacent ranges and identical model ids, since users may have
 specified composite elements with identical models.
 
@@ -156,7 +156,7 @@ Remarks
 -  Concatenation permitted if uniqueness is preserved and will preserve
    sortedness.
 -  Iteration, indexing and slicing will be based on sortedness and are
-   thus deterministic and independent of how the ``GIDCollection`` was
+   thus deterministic and independent of how the ``NodeCollection`` was
    constructed.
 -  The operations are required to permit existing Python scripts
    employing operations on lists of GIDs to continue to work
@@ -173,43 +173,43 @@ Python interface
    underlying C++ representation.
 -  All operations listed above are available.
 
-Composite ``GIDCollection``\ s
+Composite ``NodeCollection``\ s
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Non-primitive ``GIDCollection``\ s are represented as lists of pointers
-to the ``GIDCollection``\ s they are constructed from. Any immediately
-adjacent ``GIDCollection``\ s of the same node type are combined into a
-primitive ``GIDCollection``.
+Non-primitive ``NodeCollection``\ s are represented as lists of pointers
+to the ``NodeCollection``\ s they are constructed from. Any immediately
+adjacent ``NodeCollection``\ s of the same node type are combined into a
+primitive ``NodeCollection``.
 
 Model ID information
 ~~~~~~~~~~~~~~~~~~~~
 
--  Each primitive ``GIDCollection`` stores the model ID of the GIDs it
+-  Each primitive ``NodeCollection`` stores the model ID of the GIDs it
    represents.
 -  The main purpose of storing model ID information in
-   ``GIDCollection``\ s is to reduce GID-based lookups for model type,
+   ``NodeCollection``\ s is to reduce GID-based lookups for model type,
    existence of thread-siblings, etc in connection, setting and getting
    routines.
 
 Metadata implementation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To provide necessary flexibility, a ``GIDCollectionMetadata`` abstract
+To provide necessary flexibility, a ``NodeCollectionMetadata`` abstract
 base class is provided. This class has only a minimal interface, all
 details are added by derived classes special to the use of the metadata,
 e.g., in topology:
 
 .. code:: c++
 
-   class GIDCollectionMetadata
+   class NodeCollectionMetadata
    {
      public:
-        GIDCollectionMetadata() {}
-        virtual ~GIDCollectionMetadata() = 0;
+        NodeCollectionMetadata() {}
+        virtual ~NodeCollectionMetadata() = 0;
    };
 
-Since all elements of a composite ``GIDCollection`` must contain the
-same ``GIDCollection`` pointer, the composite ``GIDCollection`` can also
+Since all elements of a composite ``NodeCollection`` must contain the
+same ``NodeCollection`` pointer, the composite ``NodeCollection`` can also
 return a metadata pointer.
 
 For an example of metadata, see
@@ -222,36 +222,36 @@ Remarks based on Design Discussion 8 Nov 2016
 on 8 Nov. Here are remarks based on decisions from this VC.
 
 -  We have not included “explicit collections” (general unsorted
-   non-unique arrays) in ``GIDCollection`` interface.
--  GIDCollectionComposite is always a flat container for
-   GIDCollectionPrimitives. A GIDCollectionComposite can therefore not
-   contain GIDCollectionComposites.
+   non-unique arrays) in ``NodeCollection`` interface.
+-  NodeCollectionComposite is always a flat container for
+   NodeCollectionPrimitives. A NodeCollectionComposite can therefore not
+   contain NodeCollectionComposites.
 -  Joining of primitives is allowed only for same metadata (pointer
    equality).
--  ``GIDCollection``\ s are homogeneous containers.
+-  ``NodeCollection``\ s are homogeneous containers.
 -  Structure between different populations has to be taken care of by
    the user.
 -  If structure handling becomes problematic, a new container class for
-   the specific case can be added (external of ``GIDCollection``\ s).
+   the specific case can be added (external of ``NodeCollection``\ s).
 
 Fingerprints
 ------------
 
 After calling ``ResetKernel()`` all nodes and metadata is gone, but we
-still have the ``GIDCollection``\ s. It is important that we are not
-able to use these ``GIDCollection``\ s in functions such as ``Connect``,
+still have the ``NodeCollection``\ s. It is important that we are not
+able to use these ``NodeCollection``\ s in functions such as ``Connect``,
 because the user might have created a new set of nodes or metadata that
-does not correspond to the old ``GIDCollection``, and errors will occur.
+does not correspond to the old ``NodeCollection``, and errors will occur.
 
 To solve this problem we have introduced fingerprints. This will make it
-possible to check whether the ``GIDCollection`` is valid. A fingerprint
-is introduced in the Kernel, and in the ``GIDCollection`` class. We use
+possible to check whether the ``NodeCollection`` is valid. A fingerprint
+is introduced in the Kernel, and in the ``NodeCollection`` class. We use
 a timestamp as the fingerprint. Every time ``ResetKernel()`` is called,
-the fingerprint in the Kernel is updated. When a ``GIDCollection`` is
+the fingerprint in the Kernel is updated. When a ``NodeCollection`` is
 created, we retrieve the fingerprint from the Kernel, and store it in
-the ``GIDCollection`` class. It is then possible to test against the
-Kernel fingerprint and see whether the ``GIDCollection`` is valid when
+the ``NodeCollection`` class. It is then possible to test against the
+Kernel fingerprint and see whether the ``NodeCollection`` is valid when
 we use ``Connect`` or other functions that rely on correctly created
-``GIDCollection``\ s. If we have an invalid ``GIDCollection`` (i.e. the
+``NodeCollection``\ s. If we have an invalid ``NodeCollection`` (i.e. the
 fingerprint does not match that of the Kernel), an
-``IncorrectGIDCollection`` exception is raised.
+``IncorrectNodeCollection`` exception is raised.

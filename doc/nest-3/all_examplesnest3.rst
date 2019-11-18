@@ -7,24 +7,24 @@
 
 >>> nodes_alpha = nest.Create('iaf_psc_alpha', 10)
 >>> print(nodes_alpha)
-    GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
+    NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
 
 
 >>> print(nodes_alpha[2:8])
-    GIDCollection(metadata=None, model=iaf_psc_alpha, size=6, first=3, last=8)
+    NodeCollection(metadata=None, model=iaf_psc_alpha, size=6, first=3, last=8)
 
 
 
 >>> print(nodes_alpha[::2])
-    GIDCollection(metadata=None, model=iaf_psc_alpha, size=5, first=1, last=9, step=2)
+    NodeCollection(metadata=None, model=iaf_psc_alpha, size=5, first=1, last=9, step=2)
 
 
 
 >>>    nodes_exp = nest.Create('iaf_psc_exp', 5)
 >>>    nodes = nodes_alpha + nodes_exp
 >>>    print(nodes)
-       GIDCollection(metadata=None,
+       NodeCollection(metadata=None,
                   model=iaf_psc_alpha, size=10, first=1, last=10;
                   model=iaf_psc_exp, size=5, first=11, last=15)
 
@@ -122,7 +122,7 @@
 
 
 >>>    nest.ResetKernel()
->>>    nodes.get()  # After resetting the kernel, nodes are empty, and this command will raise InvalidGIDCollection
+>>>    nodes.get()  # After resetting the kernel, nodes are empty, and this command will raise InvalidNodeCollection
 
 
 ::
@@ -130,11 +130,11 @@
 
     ---------------------------------------------------------------------------
 
-    NESTErrors.InvalidGIDCollection           Traceback (most recent call last)
+    NESTErrors.InvalidNodeCollection           Traceback (most recent call last)
 
     <ipython-input-11-0854d3ce4d6a> in <module>
           1 nest.ResetKernel()
-    ----> 2 nodes.get()  # raises InvalidGIDCollection
+    ----> 2 nodes.get()  # raises InvalidNodeCollection
 
 
     ~/fzj/documentation_project/NEST-3/install/lib/python3.6/site-packages/nest/lib/hl_api_types.py in get(self, *params, **kwargs)
@@ -160,7 +160,7 @@
         132
 
 
-    NESTErrors.InvalidGIDCollection: ('InvalidGIDCollection in GetStatus_g: ', 'InvalidGIDCollection', 'GetStatus_g', ': ')
+    NESTErrors.InvalidNodeCollection: ('InvalidNodeCollection in GetStatus_g: ', 'InvalidNodeCollection', 'GetStatus_g', ': ')
 
 
 Parameterization
@@ -257,7 +257,7 @@ Spatial
 >>>    grid_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=2, columns=2, center=[1., 1.]))
 >>>    free_layer = nest.Create('iaf_psc_alpha', 4, positions=nest.spatial.free([[1., 1.], [2., 2.], [3., 3.], [4., 4.]]))
 >>>    print(grid_layer)
-       GIDCollection(metadata=spatial, model=iaf_psc_alpha, size=4, first=1, last=4)
+       NodeCollection(metadata=spatial, model=iaf_psc_alpha, size=4, first=1, last=4)
 
 
 
@@ -384,7 +384,7 @@ Spatial
 .. image:: NEST3_27_0.png
 
 
-Connecting with spatial GIDCollections
+Connecting with spatial NodeCollections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: ipython

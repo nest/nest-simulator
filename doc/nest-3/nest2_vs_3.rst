@@ -31,7 +31,7 @@ Nodes
 +=================================+=================================+
 | nest.Create(model, n=1, params= | nest.Create(model, n=1, params= |
 | None) *returns*                 | None) *returns*                 |
-| list                            | :green:`nest.GIDCollection`     |
+| list                            | :green:`nest.NodeCollection`     |
 +---------------------------------+---------------------------------+
 | nest.GetLid(gid) *returns*      |                                 |
 | list                            |                                 |
@@ -49,10 +49,10 @@ Connection
 | list=None, synapse_model=None,              | :green:`nest.GIDcollection` =None,          |
 | synapse_label=None)                         | :green:`nest.GIDcollection` =None,          |
 | *returns* numpy.array                       | synapse_model=None, synapse_label=None)     |
-|                                             | *returns* :green:`nest.Connectome`          |
+|                                             | *returns* :green:`nest.SynapseCollection`          |
 +---------------------------------------------+---------------------------------------------+
-| nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.GIDCollection`,   |
-| =None, syn_spec=None, model=None)           | :green:`nest.GIDCollection`, conn_spec=     |
+| nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.NodeCollection`,   |
+| =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=     |
 |                                             | None, syn_spec=None,                        |
 |                                             | :green:`return_connectome` =False           |
 |                                             | *In syn_spec* *the synapse model*           |
@@ -62,16 +62,16 @@ Connection
 | nest.DataConnect(pre, params=None,          |                                             |
 | model="static_synapse")                     |                                             |
 +---------------------------------------------+---------------------------------------------+
-| nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.GIDCollection`, |
-| parameter_map=None, model='static           | :green:`nest.GIDCollection`, cg,            |
+| nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`, |
+| parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,            |
 | _synapse')                                  | parameter_map=None,                         |
 |                                             | :green:`synapse_model` ='static_synapse')   |
 +---------------------------------------------+---------------------------------------------+
 | nest.DisconnectOneToOne(int, int,           |                                             |
 | syn_spec)                                   |                                             |
 +---------------------------------------------+---------------------------------------------+
-| nest.Disconnect(list, list, conn_spec=      | nest.Disconnect(:green:`nest.GIDCollection`,|
-| 'one_to_one', syn_spec='static_synapse')    | :green:`nest.GIDCollection`, conn_spec=     |
+| nest.Disconnect(list, list, conn_spec=      | nest.Disconnect(:green:`nest.NodeCollection`,|
+| 'one_to_one', syn_spec='static_synapse')    | :green:`nest.NodeCollection`, conn_spec=     |
 |                                             | 'one_to_one', syn_spec='static_synapse')    |
 |                                             |                                             |
 +---------------------------------------------+---------------------------------------------+
@@ -93,13 +93,13 @@ Subnets
 +----------------------------------------+--------------------------------------------+
 | nest.ChangeSubnet(subnet)              |                                            |
 +----------------------------------------+--------------------------------------------+
-| nest.GetLeaves(subnet, properties      | :green:`nest.GIDCollection` will contain   |
+| nest.GetLeaves(subnet, properties      | :green:`nest.NodeCollection` will contain   |
 | =None, local_only=False)               | all nodes                                  |
 +----------------------------------------+--------------------------------------------+
-| nest.GetNodes(subnets, properties      | :green:`nest.GIDCollection` will contain   |
+| nest.GetNodes(subnets, properties      | :green:`nest.NodeCollection` will contain   |
 | =None, local_only=False)               | all nodes                                  |
 +----------------------------------------+--------------------------------------------+
-| nest.GetChildren(subnets, properties   | :green:`nest.GIDCollection` will contain   |
+| nest.GetChildren(subnets, properties   | :green:`nest.NodeCollection` will contain   |
 | =None, local_only=False)               | all nodes                                  |
 +----------------------------------------+--------------------------------------------+
 | nest.GetNetwork(gid, depth)            |                                            |
@@ -122,12 +122,12 @@ Info
 +---------------------------------------+--------------------------------------------+
 | NEST 2.x                              | NEST 3.0                                   |
 +=======================================+============================================+
-| nest.SetStatus(list/tuple,            | nest.SetStatus(:green:`nest.GIDCollection`,|
+| nest.SetStatus(list/tuple,            | nest.SetStatus(:green:`nest.NodeCollection`,|
 | params, val=None)                     | params, val=None) *Can*                    |
 |                                       | *also use* nodes.set(params) *or*          |
 |                                       | conns.set(params)                          |
 +---------------------------------------+--------------------------------------------+
-| nest.GetStatus(list/tuple,            | nest.GetStatus(:green:`nest.GIDCollection`,|
+| nest.GetStatus(list/tuple,            | nest.GetStatus(:green:`nest.NodeCollection`,|
 | keys=None)                            | keys=None) *Can*                           |
 |                                       | *also use* nodes.get(keys=None) *or*       |
 |                                       | conns.get(keys=None)                       |
@@ -148,16 +148,16 @@ Topology is now integrated into NEST and no longer a separate module.
 | tp.CreateLayer(specs) *returns*                | :green:`nest.Create`\ (model, params=None,         |
 | tuple of int(s)                                | positions=nest.spatial.free/grid)                  |
 |                                                | *returns*                                          |
-|                                                | :green:`nest.GIDCollection` NOTE:                  |
+|                                                | :green:`nest.NodeCollection` NOTE:                  |
 |                                                | *Composite layers no longer*                       |
 |                                                | *possible.*                                        |
 +------------------------------------------------+----------------------------------------------------+
 | tp.ConnectLayers(list, list,                   | :green:`nest.Connect`\ (\                          |
-| projections)                                   | :green:`nest.GIDCollection`,                       |
-|                                                | :green:`nest.GIDCollection`, conn_spec= None,      |
+| projections)                                   | :green:`nest.NodeCollection`,                       |
+|                                                | :green:`nest.NodeCollection`, conn_spec= None,      |
 |                                                | syn_spec=None, :green:`return_connectome` = False) |
 +------------------------------------------------+----------------------------------------------------+
-|                                                | :green:`layer_GIDCollection.spatial`               |
+|                                                | :green:`layer_NodeCollection.spatial`               |
 +------------------------------------------------+----------------------------------------------------+
 | tp.GetLayer(nodes) *returns*                   |                                                    |
 | tuple                                          |                                                    |
@@ -167,68 +167,68 @@ Topology is now integrated into NEST and no longer a separate module.
 | tuple                                          |                                                    |
 +------------------------------------------------+----------------------------------------------------+
 | tp.GetPosition(tuple) *returns*                | :green:`nest`.GetPosition(\                        |
-| tuple of tuple(s)                              | :green:`nest.GIDCollection`) *returns*             |
+| tuple of tuple(s)                              | :green:`nest.NodeCollection`) *returns*             |
 |                                                | tuple or                                           |
 |                                                | tuple of tuple(s)                                  |
 +------------------------------------------------+----------------------------------------------------+
 | tp.Displacement(from_arg, to_arg)              | :green:`nest`.Displacement(from_arg, to_arg)       |
 | from_arg:                                      | *from_arg:*                                        |
-| tuple/list of int(s) / tuple/list              | :green:`nest.GIDCollection` *or* tuple/list        |
+| tuple/list of int(s) / tuple/list              | :green:`nest.NodeCollection` *or* tuple/list        |
 | of tuples/lists of floats]                     | with tuple(s)/list(s) of floats                    |
 | to_arg:                                        | *to_arg:*                                          |
-| tuple/list of int(s) *returns*                 | :green:`nest.GIDCollection` *returns*              |
+| tuple/list of int(s) *returns*                 | :green:`nest.NodeCollection` *returns*              |
 | tuple                                          | tuple                                              |
 +------------------------------------------------+----------------------------------------------------+
 | tp.Distance(from_arg, to_arg)                  | :green:`nest`.Distance(from_arg, to_arg)           |
 | from_arg:                                      | *from_arg:*                                        |
-| [tuple/list of ints / tuple/list               | :green:`nest.GIDCollection` *or* tuple/list        |
+| [tuple/list of ints / tuple/list               | :green:`nest.NodeCollection` *or* tuple/list        |
 | with tuples/lists of floats]                   | with tuple(s)/list(s) of floats                    |
 | to:arg:                                        | *to_arg:*                                          |
-| tuple/list of ints *returns*                   | :green:`nest.GIDCollection` *returns*              |
+| tuple/list of ints *returns*                   | :green:`nest.NodeCollection` *returns*              |
 | tuple                                          | tuple                                              |
 +------------------------------------------------+----------------------------------------------------+
 | tp.FindNearestElement(tuple/list,              | :green:`nest`.FindNearestElement(\                 |
-| locations, find_all=True)                      | :green:`nest.GIDCollection`, locations,            |
+| locations, find_all=True)                      | :green:`nest.NodeCollection`, locations,            |
 | *returns*                                      | find_all=True) *returns*                           |
 | tuple                                          | tuple                                              |
 +------------------------------------------------+----------------------------------------------------+
 | tp.DumpLayerNodes(tuple, outname)              | :green:`nest`.DumpLayerNodes(\                     |
-|                                                | :green:`nest.GIDCollection`, outname)              |
+|                                                | :green:`nest.NodeCollection`, outname)              |
 +------------------------------------------------+----------------------------------------------------+
 | tp.DumpLayerConnections(tuple,                 | :green:`nest`.DumpLayerConnections(                |
-| synapse_model, outname)                        | :green:`nest.GIDCollection`,                       |
-|                                                | :green:`nest.GIDCollection`, synapse_model,        |
+| synapse_model, outname)                        | :green:`nest.NodeCollection`,                       |
+|                                                | :green:`nest.NodeCollection`, synapse_model,        |
 |                                                | outname)                                           |
 +------------------------------------------------+----------------------------------------------------+
 | tp.FindCenterElement(tuple)                    | :green:`nest`.FindCenterElement(\                  |
-| *returns*                                      | :green:`nest.GIDCollection`) *returns*             |
+| *returns*                                      | :green:`nest.NodeCollection`) *returns*             |
 | tuple                                          | :green:`int`                                       |
 +------------------------------------------------+----------------------------------------------------+
 | tp.GetTargetNodes(tuple, tuple,                | :green:`nest`.GetTargetNodes(tuple,                |
-| tgt_model=None, syn_model=None)                | :green:`nest.GIDCollection`, syn_model=None)       |
+| tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`, syn_model=None)       |
 | *returns*                                      | *returns*                                          |
 | tuple of list(s) of int(s)                     | tuple of list(s) of int(s)                         |
 +------------------------------------------------+----------------------------------------------------+
 | tp.GetTargetPositions(tuple, tuple,            | :green:`nest`.GetTargetPositions(\                 |
-| tgt_model=None, syn_model=None)                | :green:`nest.GIDCollection`,                       |
-| *returns*                                      | :green:`nest.GIDCollection`, syn_model=None)       |
+| tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`,                       |
+| *returns*                                      | :green:`nest.NodeCollection`, syn_model=None)       |
 | tuple of tuple(s) of tuple(s)                  | *returns* list of list(s) of tuple(s) of           |
 | of floats                                      | floats                                             |
 +------------------------------------------------+----------------------------------------------------+
 | tp.SelectNodesByMask(tuple, anchor,            | :green:`nest`.SelectNodesByMaks(\                  |
-| mask_obj) *returns*                            | :green:`nest.GIDCollection`, anchor, mask_obj)     |
+| mask_obj) *returns*                            | :green:`nest.NodeCollection`, anchor, mask_obj)     |
 | list                                           | *returns*                                          |
 |                                                | list                                               |
 +------------------------------------------------+----------------------------------------------------+
 | tp.PlotLayer(tuple, fig=None,                  | :green:`nest`.PlotLayer(\                          |
-| nodecolor='b', nodesize=20)                    | :green:`nest.GIDCollection`, fig=None,             |
+| nodecolor='b', nodesize=20)                    | :green:`nest.NodeCollection`, fig=None,             |
 | *returns*                                      | nodecolor ='b', nodesize=20) *returns*             |
 | matplotlib.figure.Figure                       | matplotlib.figure.Figure                           |
 | object                                         | object                                             |
 +------------------------------------------------+----------------------------------------------------+
 | tp.PlotTargets(int, tuple, tgt_model=          | :green:`nest`.PlotTargets(\                        |
-| =None, syn_type=None, fig=None,                | :green:`nest.GIDCollection`,                       |
-| mask=None, kernel=None, src_color=             | :green:`nest.GIDCollection`, syn_type=             |
+| =None, syn_type=None, fig=None,                | :green:`nest.NodeCollection`,                       |
+| mask=None, kernel=None, src_color=             | :green:`nest.NodeCollection`, syn_type=             |
 | 'red', src_size=50, tgt_color=                 | None, fig=None, mask=None, kernel=                 |
 | 'blue', tgt_size=20, mask_color                | None, src_color='red', src_size=                   |
 | ='red', kernel_color='red')                    | 50, tgt_color='blue', tgt_size=                    |
@@ -237,7 +237,7 @@ Topology is now integrated into NEST and no longer a separate module.
 | object                                         | object                                             |
 +------------------------------------------------+----------------------------------------------------+
 | tp.PlotKernel(ax, int, mask, ke                | :green:`nest`.PlotKernel(ax,                       |
-| rn=None, mask_color='red', kernel              | :green:`nest.GIDCollection`, mask, kern=None,      |
+| rn=None, mask_color='red', kernel              | :green:`nest.NodeCollection`, mask, kern=None,      |
 | _color='red')                                  | mask_color='red', kernel_color='red')              |
 +------------------------------------------------+----------------------------------------------------+
 

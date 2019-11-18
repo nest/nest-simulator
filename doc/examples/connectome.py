@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Example script to show some of the possibilities of the Connectome class. We
-connect neurons, and get the Connectome with a GetConnections call. To get
+Example script to show some of the possibilities of the SynapseCollection class. We
+connect neurons, and get the SynapseCollection with a GetConnections call. To get
 a better understanding of the connections, we plot the weights between the
 source and targets.
 """
@@ -68,8 +68,8 @@ nest.ResetKernel()
 nrns = nest.Create('iaf_psc_alpha', 10)
 
 nest.Connect(nrns, nrns, 'one_to_one')
-conns = nest.GetConnections(nrns, nrns)  # This returns a Connectome
-# We can get desired information of the Connectome with simple get() call.
+conns = nest.GetConnections(nrns, nrns)  # This returns a SynapseCollection
+# We can get desired information of the SynapseCollection with simple get() call.
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
 tgts = g['target']
@@ -101,7 +101,7 @@ nest.Connect(pre, post,
              syn_spec={'weight':
                        {'distribution': 'uniform', 'low': 0.5, 'high': 4.5}})
 
-# Get a Connectome with all connections
+# Get a SynapseCollection with all connections
 conns = nest.GetConnections()
 srcs = conns.get('source')
 tgts = conns.get('target')
@@ -113,7 +113,7 @@ plotMatrix(srcs, tgts, weights, 'All to all connection', 111)
 """
 Lastly, we'll do an exmple that is a bit more complex. We connect different
 neurons with different rules, synapse models and weight distributions, and get
-different Connectomes by calling GetConnections with different inputs.
+different SynapseCollections by calling GetConnections with different inputs.
 """
 nest.ResetKernel()
 
@@ -135,7 +135,7 @@ nest.Connect(nrns[10:], nrns[:12],
 nest.Connect(nrns, nrns[12:],
              {'rule': 'fixed_indegree', 'indegree': 3})
 
-# First get a Connectome consisting of all the connections
+# First get a SynapseCollection consisting of all the connections
 conns = nest.GetConnections()
 srcs = conns.source()
 tgts = conns.target()  # source() and target() are iterators
@@ -144,7 +144,7 @@ weights = conns.get('weight')
 plt.figure(figsize=(14, 12))
 plotMatrix(list(srcs), list(tgts), weights, 'All connections', 221)
 
-# Get Connectome consisting of a subset of connections
+# Get SynapseCollection consisting of a subset of connections
 conns = nest.GetConnections(nrns[:10], nrns[:10])
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
@@ -153,7 +153,7 @@ weights = g['weight']
 
 plotMatrix(srcs, tgts, weights, 'Connections of the first ten neurons', 222)
 
-# Get Connectome consisting of just the stdp_synapses
+# Get SynapseCollection consisting of just the stdp_synapses
 conns = nest.GetConnections(synapse_model='stdp_synapse')
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']
@@ -162,7 +162,7 @@ weights = g['weight']
 
 plotMatrix(srcs, tgts, weights, 'Connections with stdp_synapse', 223)
 
-# Get Connectome consisting of the fixed_total_number connections, but set
+# Get SynapseCollection consisting of the fixed_total_number connections, but set
 # weight before plotting
 conns = nest.GetConnections(nrns[5:10], nrns[:5])
 w = [{'weight': x*1.0} for x in range(1, 6)]

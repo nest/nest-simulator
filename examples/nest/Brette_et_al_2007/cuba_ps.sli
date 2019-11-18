@@ -93,10 +93,7 @@
   /detector /spike_detector
   /detector_params
   <<
-   /withtime true
-   /withgid  true
-   /precise_times true
-   /to_file  true
+   /record_to /ascii
    /label (cuba_ps)
   >>
 

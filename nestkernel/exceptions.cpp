@@ -397,6 +397,32 @@ nest::NumericalInstability::message() const
 }
 
 std::string
+nest::UnmatchedSteps::message() const
+{
+  std::ostringstream msg;
+  msg << "Steps for backend device don't match NEST steps: "
+      << "steps expected: " << total_steps_ << " "
+      << "steps executed: " << current_step_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::BackendPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be prepare()'d multiple times.";
+  return msg.str();
+}
+
+std::string
+nest::BackendNotPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
+  return msg.str();
+}
+
+std::string
 nest::KeyError::message() const
 {
   std::ostringstream msg;

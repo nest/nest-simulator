@@ -457,14 +457,6 @@ nest::SimulationManager::prepare()
 }
 
 void
-nest::SimulationManager::simulate( Time const& t )
-{
-  prepare();
-  run( t );
-  cleanup();
-}
-
-void
 nest::SimulationManager::assert_valid_simtime( Time const& t )
 {
   if ( t == Time::ms( 0.0 ) )
@@ -509,6 +501,8 @@ void
 nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
+
+  kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )
   {
@@ -561,7 +555,7 @@ nest::SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().node_manager.post_run_cleanup();
+  kernel().io_manager.post_run_hook();
 }
 
 void
@@ -576,6 +570,7 @@ nest::SimulationManager::cleanup()
 
   if ( not simulated_ )
   {
+    prepared_ = false;
     return;
   }
 
@@ -945,7 +940,9 @@ nest::SimulationManager::update_()
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
-
+      kernel().io_manager.post_step_hook();
+// enforce synchronization after post-step activities of the recording backends
+#pragma omp barrier
     } while ( to_do_ > 0 and not exit_on_user_signal_ and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements

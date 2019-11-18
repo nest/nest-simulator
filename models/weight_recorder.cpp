@@ -45,17 +45,13 @@
 
 // record time, gid, weight and receiver gid
 nest::weight_recorder::weight_recorder()
-  : DeviceNode()
-  , device_( *this, RecordingDevice::WEIGHT_RECORDER, "csv", true, true, true, true )
-  , user_set_precise_times_( false )
+  : RecordingDevice()
   , P_()
 {
 }
 
 nest::weight_recorder::weight_recorder( const weight_recorder& n )
-  : DeviceNode( n )
-  , device_( *this, n.device_ )
-  , user_set_precise_times_( n.user_set_precise_times_ )
+  : RecordingDevice( n )
   , P_( n.P_ )
 {
 }
@@ -96,7 +92,7 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
   if ( d->known( names::senders ) )
   {
@@ -144,69 +140,28 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::weight_recorder::init_state_( const Node& np )
-{
-  const weight_recorder& wr = static_cast< const weight_recorder& >( np );
-  device_.init_state( wr.device_ );
-  init_buffers_();
-}
-
-void
-nest::weight_recorder::init_buffers_()
-{
-  device_.init_buffers();
-  B_.events_ = std::vector< WeightRecorderEvent >();
-}
-
-void
 nest::weight_recorder::calibrate()
 {
-  if ( kernel().event_delivery_manager.get_off_grid_communication() and not device_.is_precise_times_user_set() )
-  {
-    device_.set_precise_times( true );
-    std::string msg = String::compose(
-      "Precise neuron models exist: the property precise_times "
-      "of the %1 with gid %2 has been set to true",
-      get_name(),
-      get_gid() );
-
-    if ( device_.is_precision_user_set() )
-    {
-      // if user explicitly set the precision, there is no need to do anything.
-      msg += ".";
-    }
-    else
-    {
-      // it makes sense to increase the precision if precise models are used.
-      device_.set_precision( 15 );
-      msg += ", precision has been set to 15.";
-    }
-
-    LOG( M_INFO, "weight_recoder::calibrate", msg );
-  }
-
-  device_.calibrate();
+  RecordingDevice::calibrate(
+    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
 void
 nest::weight_recorder::update( Time const&, const long from, const long to )
 {
+}
 
-  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin(); e != B_.events_.end(); ++e )
-  {
-    device_.record_event( *e );
-  }
-
-  // do not use swap here to clear, since we want to keep the reserved()
-  // memory for the next round
-  B_.events_.clear();
+nest::RecordingDevice::Type
+nest::weight_recorder::get_type() const
+{
+  return RecordingDevice::WEIGHT_RECORDER;
 }
 
 void
 nest::weight_recorder::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  device_.get_status( d );
+  RecordingDevice::get_status( d );
 
   if ( is_model_prototype() )
   {
@@ -231,14 +186,11 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 void
 nest::weight_recorder::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-  {
-    user_set_precise_times_ = true;
-  }
+  Parameters_ ptmp = P_;
+  ptmp.set( d );
 
-  device_.set_status( d );
-
-  P_.set( d, this );
+  RecordingDevice::set_status( d );
+  P_ = ptmp;
 }
 
 
@@ -247,7 +199,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
-  if ( device_.is_active( e.get_stamp() ) )
+  if ( is_active( e.get_stamp() ) )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
@@ -257,7 +209,10 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
       return;
     }
 
-    WeightRecorderEvent* event = e.clone();
-    B_.events_.push_back( *event );
+    write( e,
+      { e.get_weight() },
+      { static_cast< long >( e.get_receiver_gid() ),
+       static_cast< long >( e.get_rport() ),
+       static_cast< long >( e.get_port() ) } );
   }
 }

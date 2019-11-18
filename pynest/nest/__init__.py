@@ -23,16 +23,17 @@
 Initializer of PyNEST.
 """
 
-from . import ll_api      # noqa
+from . import ll_api                  # noqa
+from .ll_api import set_communicator  # noqa
 
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
+from . import pynestkernel as kernel  # noqa
+from .hl_api import *                 # noqa
 
-from . import random  # noqa
-from . import spatial  # noqa
-from . import math  # noqa
-from . import spatial_distributions  # noqa
-from . import logic  # noqa
+from . import random                  # noqa
+from . import spatial                 # noqa
+from . import math                    # noqa
+from . import spatial_distributions   # noqa
+from . import logic                   # noqa
 
 
 def test():

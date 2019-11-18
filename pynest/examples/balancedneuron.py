@@ -84,12 +84,11 @@ voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
 
 ###################################################################################
-# Fourth, the ``poisson_generator`` (`noise`) and the ``voltmeter``
-# are configured using ``set``. Note that we need not set parameters
-# for the neuron and the spike detector, since they have satisfactory defaults.
+# Fourth, the ``poisson_generator`` (`noise`) is configured using ``set``.
+# Note that we need not set parameters for the neuron, the spike detector, and
+# the voltmeter, since they have satisfactory defaults.
 
-noise.set(rate=[n_ex * r_ex, n_in * r_in])
-voltmeter.set({"withgid": True, "withtime": True})
+noise.set("rate", [n_ex * r_ex, n_in * r_in])
 
 ###############################################################################
 # Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the

@@ -135,7 +135,7 @@ M_ERROR setverbosity
       
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def
-      /sd /spike_detector << /withtime false /withgid false >> Create def
+      /sd /spike_detector Create def
       
       pg parrot Connect   % need to connect via parrot since generators cannot connect with
                           % plastic synapses.
@@ -170,7 +170,7 @@ M_ERROR setverbosity
                      {
                        0
                      } ifelse
-                >> def  
+                >> def
 
       parrot n /one_to_one syn_spec Connect
       n sd Connect

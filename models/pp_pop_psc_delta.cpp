@@ -20,10 +20,6 @@
  *
  */
 
-/*
- *  Multimeter support by Yury V. Zaytsev.
- */
-
 #include "pp_pop_psc_delta.h"
 
 // C++ includes:

@@ -65,97 +65,16 @@
     20. Simulate
 
     % check if right state is decoded
-    sp /events get /weights get /w Set
-    w 0 get 1.0 eq assert_or_die
-    w 1 get 0.0 eq assert_or_die
 
+    sp /events get /state get /s Set
+    s 0 get 1 eq assert_or_die
+    s 1 get 0 eq assert_or_die
 
+    % check if recorded at the right times
     sp /events get /times get /times Set
     times cva
     [ 10. 15.] eq
     assert_or_die
-
-    % test the setting of the /precision value absent precise models
-    % 1. checking the default value and changing it
-
-      ResetKernel
-      /spin_detector Create /sd Set
-
-      % is the default correctly set to 3?
-      sd /precision get dup /p_val Set 3 eq assert_or_die
-
-      % is the precision still the same after simulating for some time?
-      100 Simulate
-      sd /precision get p_val eq assert_or_die
-
-    % 2. setting Precision
-
-      ResetKernel
-      /spin_detector Create /sd Set
-
-      % can the precision be correctly set?
-      sd << /precision 15 >> SetStatus
-      sd /precision get 15 eq assert_or_die
-
-      % is the precision the same after simulating?
-      100 Simulate
-      sd /precision get 15 eq assert_or_die
-
-    % test the behavior of the /precise_times flag
-    % 3. if the user does not set it
-
-      ResetKernel
-      /spin_detector Create /sd Set
-
-      % is the default correctly set to false?
-      sd /precise_times get dup /pt_flag Set false eq assert_or_die
-
-      % is the flag still the same after simulating for some time?
-      100 Simulate
-      sd /precise_times get pt_flag eq assert_or_die
-
-      % is the flag still the same after the creation of a precise neuron?
-      /iaf_psc_exp_ps Create ;
-      sd /precise_times get pt_flag eq assert_or_die
-
-      % does the flag change to true if simulating with a precise neuron around?
-      100 Simulate
-      sd /precise_times get true eq assert_or_die
-
-      % check if precision correctly increased to 15.
-      sd /precision get 15 eq assert_or_die
-
-    % 4.a if the user sets the flag to false
-
-      ResetKernel
-      /spin_detector Create /sd Set
-      sd << /precise_times false >> SetStatus
-      /iaf_psc_exp_ps Create ;
-      100 Simulate
-      sd /precise_times get false eq assert_or_die
-
-    % 4.b if the user sets the flag to true
-
-      ResetKernel
-      /spin_detector Create /sd Set
-      sd << /precise_times true >> SetStatus
-      /iaf_psc_exp_ps Create ;
-      100 Simulate
-      sd /precise_times get true eq assert_or_die
-
-    % 5. can precision be set correctly when precise models exist?
-
-      ResetKernel
-      /spin_detector Create /sd Set
-
-      % checking to see if precision gets set correctly.
-      /iaf_psc_exp_ps Create ;
-      sd << /precision 15 >> SetStatus
-      sd /precision get 15 eq assert_or_die
-
-      % does it remain the same after simulation?
-      100 Simulate
-      sd /precision get 15 eq assert_or_die
 
 } def
 

@@ -367,6 +367,14 @@ cdef class NESTEngine(object):
 
         self.pEngine = NULL
 
+    def set_communicator(self, comm):
+        # extract mpi_comm from mpi4py
+        if nest_has_mpi4py():
+            c_set_communicator(comm)
+        else:
+            raise NESTError("set_communicator: "
+                            "NEST not compiled with MPI4PY")
+
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:
             raise NESTErrors.PyNESTError("engine already initialized")
@@ -633,6 +641,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
+
     # the size of dat has to be explicitly cast to int to avoid
     # compiler warnings (#1318) during cythonization
     cdef tmp = [None] * int(dat.size())
@@ -643,7 +652,6 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
     cdef Token* tok = dat.begin()
 
     n = len(tmp)
-    
     if not n:
         return ()
 
@@ -659,7 +667,6 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
         for i in range(n):
             tmp[i] = sli_datum_to_object(tok.datum())
             inc(tok)
-
         return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):

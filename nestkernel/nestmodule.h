@@ -37,6 +37,8 @@
 
 #include "generic_factory.h"
 
+#include "generic_factory.h"
+
 namespace nest
 {
 class Node;

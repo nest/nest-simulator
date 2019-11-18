@@ -150,6 +150,10 @@
 """
 
 import pylab
+import nest
+import nest.topology as topo
+import math
+
 SHOW_FIGURES = False
 
 if not SHOW_FIGURES:
@@ -162,23 +166,9 @@ if not SHOW_FIGURES:
 else:
     pylab.ion()
 
-# ! Introduction
-# !=============
-# ! This tutorial gives a brief introduction to the ConnPlotter
-# ! toolbox.  It is by no means complete.
-
-# ! Load pynest
-import nest
-
-# ! Load NEST Topoplogy module (NEST 2.2)
-import nest.topology as topo
-
 # ! Make sure we start with a clean slate, even if we re-run the script
 # ! in the same Python session.
 nest.ResetKernel()
-
-# ! Import math, we need Pi
-import math
 
 # ! Configurable Parameters
 # ! =======================
@@ -353,10 +343,7 @@ nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
 # ! the recorded neurons, but not the time.
 nest.CopyModel('multimeter', 'RecordingNode',
                params={'interval': Params['sim_interval'],
-                       'record_from': ['V_m'],
-                       'record_to': ['memory'],
-                       'withgid': True,
-                       'withtime': False})
+                       'record_from': ['V_m']})
 
 # ! Populations
 # ! ===========

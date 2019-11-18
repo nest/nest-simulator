@@ -84,8 +84,7 @@ class PostTraceTester(object):
                      syn_spec={"delay": self.delay_})
 
         # create spike detector --- debugging only
-        spikes = nest.Create("spike_detector",
-                             params={'precise_times': True})
+        spikes = nest.Create("spike_detector")
         nest.Connect(pre_parrot_ps + post_parrot_ps, spikes)
 
         # connect both parrot neurons with a stdp synapse onto port 1

@@ -71,9 +71,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                           'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2, params={'withgid': False})
+m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')

@@ -69,10 +69,7 @@ skip_if_without_gsl
     /I_e 400.
   >> SetStatus
   
-  /sd /spike_detector << /record_to [/memory] 
-                           /withgid true 
-                           /withtime true 
-                        >> Create def
+  /sd /spike_detector Create def
   
   neuron1 neuron3
   << /rule /one_to_one /make_symmetric true >> 

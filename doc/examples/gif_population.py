@@ -118,7 +118,7 @@ spike_det = nest.Create("spike_detector")
 nest.Connect(
     population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex},
     syn_spec={"weight": w_ex}
-    )
+)
 
 nest.Connect(noise, population, 'all_to_all', syn_spec={"weight": w_noise})
 

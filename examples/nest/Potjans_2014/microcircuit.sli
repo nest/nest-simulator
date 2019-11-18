@@ -251,17 +251,9 @@
 % th_spike_detector_GID
 /CreateNetworkNodes
 {
-    save_cortical_spikes {
-	/spikes_record_to [ /file ] def
-    }{
-	/spikes_record_to [ /memory ] def
-    } ifelse
-
-    save_voltages {
-	/voltages_record_to [ /file ] def
-    }{
-	/voltages_record_to [ /memory ] def
-    } ifelse
+    /spikes_record_to          save_cortical_spikes {/ascii}{/memory} ifelse def
+    /voltages_record_to        save_voltages        {/ascii}{/memory} ifelse def
+    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def 
 
     neuron_model model_params SetDefaults
     % arrays of GIDs:
@@ -305,33 +297,25 @@
                SetStatus
 	    } forall
 
-            spike_detector_GIDs [layer_index population_index]
-            /spike_detector <<
+            spike_detector_GIDs [layer_index population_index] /spike_detector <<
 	       /label spike_detector_label layer_index cvs join (_) join population_index cvs join
 	       /record_to spikes_record_to
-	    >> Create
-	    put /spike_detector_GIDs Set
+	    >> Create put /spike_detector_GIDs Set
 
-	    voltmeter_GIDs [layer_index population_index]
-	    /voltmeter <<
+	    voltmeter_GIDs [layer_index population_index] /voltmeter <<
 	       /label voltmeter_label layer_index cvs join (_) join population_index cvs join
 	       /record_to voltages_record_to
-	    >> Create
-            put /voltmeter_GIDs Set
+	    >> Create put /voltmeter_GIDs Set
 
 	    K_bg layer_index get population_index get /K_bg_ Set
 
-	    poisson_GIDs [layer_index population_index]
-            /poisson_generator <<
+	    poisson_GIDs [layer_index population_index] /poisson_generator <<
 	       /rate K_bg_ bg_rate mul
-            >> Create
-            put /poisson_GIDs Set
+            >> Create put /poisson_GIDs Set
 
-	    dc_generator_GIDs [layer_index population_index]
-            /dc_generator <<
+	    dc_generator_GIDs [layer_index population_index] /dc_generator <<
 	       /amplitude K_bg_ dc_amplitude mul
-	    >>  Create
-            put /dc_generator_GIDs Set
+	    >>  Create put /dc_generator_GIDs Set
 
         } for % loop over e and i populations
     } for % loop over layers
@@ -346,10 +330,10 @@
            /stop th_start th_duration add
         >> Create /th_poisson_GID Set
 
-        record_thalamic_spikes {
+        save_thalamic_spikes {
             /spike_detector Create <<
 	       /label th_spike_detector_label
-	       /to_file save_thalamic_spikes
+	       /record_to thalamic_spikes_record_to
 	    >> /th_spike_detector_GID Set
         } if
     } if

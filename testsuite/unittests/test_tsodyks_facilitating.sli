@@ -163,10 +163,7 @@ def
 
   /vm 
     /voltmeter 
-    << /withtime true
-       /to_memory true
-       /interval 25.0
-    >>
+    << /interval 25.0 >>
   Create def
 
   synapse_model 

@@ -72,7 +72,7 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   /gen /sinusoidal_poisson_generator Create def
   /parrots /parrot_neuron n Create def
-  /sdets /spike_detector n << /withtime true /withgid false >> Create def
+  /sdets /spike_detector n Create def
 
   gen parrots Connect
   

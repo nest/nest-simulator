@@ -43,10 +43,7 @@ nest.SetKernelStatus({'resolution': 0.05})
 
 neuron = nest.Create('hh_psc_alpha_gap', 2)
 
-vm = nest.Create('voltmeter', params={'to_file': False,
-                                      'withgid': True,
-                                      'withtime': True,
-                                      'interval': 0.1})
+vm = nest.Create('voltmeter', params={'interval': 0.1})
 
 ###############################################################################
 # Then we set the constant current input, modify the inital membrane

@@ -1,5 +1,5 @@
 Running simulations
-==============================
+===================
 
 Introduction
 ------------
@@ -120,6 +120,8 @@ for details about neuron update in continuous time and the
 :doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
 
+.. _stepped_simulations:
+
 Splitting a simulation into multiple intervals
 ----------------------------------------------
 
@@ -193,7 +195,7 @@ a Poisson spike train using different seeds and output files for each run:
         nrn= nest.Create('iaf_psc_alpha')
         sd = nest.Create('spike_detector',
                             params={'label': 'spikes-run{:02d}'.format(n),
-                                    'to_file': True})
+                                    'record_to': 'ascii'})
     
         nest.Connect(pg, nrn)
         nest.Connect(nrn, sd)

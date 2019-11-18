@@ -54,7 +54,7 @@ import nest
 # We first set the parameters of the microscopic model:
 
 
-# all times given in milliseconds
+# All times given in milliseconds
 dt = 0.5
 dt_rec = 1.
 
@@ -69,31 +69,31 @@ M = len(N)  # number of populations
 # neuronal parameters
 t_ref = 4. * np.ones(M)  # absolute refractory period
 tau_m = 20 * np.ones(M)  # membrane time constant
-mu = 24. * np.ones(M)  # constant base current mu=R*(I0+Vrest)
-c = 10. * np.ones(M)  # base rate of exponential link function
-Delta_u = 2.5 * np.ones(M)  # softness of exponential link function
-V_reset = 0. * np.ones(M)  # Reset potential
-V_th = 15. * np.ones(M)  # baseline threshold (non-accumulating part)
+mu = 24. * np.ones(M)    # constant base current mu=R*(I0+Vrest)
+c = 10. * np.ones(M)     # base rate of exponential link function
+Delta_u = 2.5 * np.ones(M)   # softness of exponential link function
+V_reset = 0. * np.ones(M)    # Reset potential
+V_th = 15. * np.ones(M)      # baseline threshold (non-accumulating part)
 tau_sfa_exc = [100., 1000.]  # adaptation time constants of excitatory neurons
 tau_sfa_inh = [100., 1000.]  # adaptation time constants of inhibitory neurons
-J_sfa_exc = [1000., 1000.]  # size of feedback kernel theta
-#                             (= area under exponential) in mV*ms
-J_sfa_inh = [1000., 1000.]  # in mV*ms
+J_sfa_exc = [1000., 1000.]   # size of feedback kernel theta
+#                              (= area under exponential) in mV*ms
+J_sfa_inh = [1000., 1000.]   # in mV*ms
 tau_theta = np.array([tau_sfa_exc, tau_sfa_inh])
 J_theta = np.array([J_sfa_exc, J_sfa_inh])
 
 # connectivity
 J = 0.3  # excitatory synaptic weight in mV if number of input connections
 #          is C0 (see below)
-g = 5.  # inhibition-to-excitation ratio
+g = 5.   # inhibition-to-excitation ratio
 pconn = 0.2 * np.ones((M, M))
 delay = 1. * np.ones((M, M))
 
 C0 = np.array([[800, 200], [800, 200]]) * 0.2  # constant reference matrix
 C = np.vstack((N, N)) * pconn  # numbers of input connections
 
-J_syn = np.array([[J, -g * J], [J, -g * J]]) * \
-    C0 / C  # final synaptic weights scaling as 1/C
+# final synaptic weights scaling as 1/C
+J_syn = np.array([[J, -g * J], [J, -g * J]]) * C0 / C
 
 taus1_ = [3., 6.]  # time constants of exc./inh. post-synaptic currents (PSC's)
 taus1 = np.array([taus1_ for k in range(M)])
@@ -118,16 +118,17 @@ tau_in = 6.  # in ms
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
-nest.SetKernelStatus(
-    {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
+nest.SetKernelStatus({'resolution': dt,
+                      'print_time': True,
+                      'local_num_threads': 1})
 t0 = nest.GetKernelStatus('time')
 
 nest_pops = nest.Create('gif_pop_psc_exp', M)
 
 C_m = 250.  # irrelevant value for membrane capacity, cancels out in simulation
 g_L = C_m / tau_m
-for i, nest_i in enumerate(nest_pops):
-    nest.SetStatus([nest_i], {
+for i in range(M):
+    nest.SetStatus(nest_pops[i], {
         'C_m': C_m,
         'I_e': mu[i] * g_L[i],
         'lambda_0': c[i],  # in Hz!
@@ -137,7 +138,7 @@ for i, nest_i in enumerate(nest_pops):
         'q_sfa': J_theta[i] / tau_theta[i],  # [J_theta]= mV*ms -> [q_sfa]=mV
         'V_T_star': V_th[i],
         'V_reset': V_reset[i],
-        'len_kernel': -1,             # -1 triggers automatic history size
+        'len_kernel': -1,  # -1 triggers automatic history size
         'N': N[i],
         't_ref': t_ref[i],
         'tau_syn_ex': max([tau_ex, dt]),
@@ -150,12 +151,12 @@ for i, nest_i in enumerate(nest_pops):
 g_syn = np.ones_like(J_syn)  # synaptic conductance
 g_syn[:, 0] = C_m / tau_ex
 g_syn[:, 1] = C_m / tau_in
-for i, nest_i in enumerate(nest_pops):
-    for j, nest_j in enumerate(nest_pops):
-        nest.SetDefaults('static_synapse', {
-            'weight': J_syn[i, j] * g_syn[i, j] * pconn[i, j],
-            'delay': delay[i, j]})
-        nest.Connect([nest_j], [nest_i], 'all_to_all')
+for i in range(M):
+    for j in range(M):
+        nest.SetDefaults('static_synapse',
+                         {'weight': J_syn[i, j] * g_syn[i, j] * pconn[i, j],
+                          'delay': delay[i, j]})
+        nest.Connect(nest_pops[j], nest_pops[i])
 
 ###############################################################################
 # To record the instantaneous population rate `Abar(t)` we use a multimeter,
@@ -164,21 +165,16 @@ for i, nest_i in enumerate(nest_pops):
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
 nest.SetStatus(nest_mm, {'record_from': ['n_events', 'mean'],
-                         'withgid': True,
-                         'withtime': False,
                          'interval': dt_rec})
-nest.Connect(nest_mm, nest_pops, 'all_to_all')
+nest.Connect(nest_mm, nest_pops)
 
 # monitor the output using a spike detector
 nest_sd = []
-for i, nest_i in enumerate(nest_pops):
+for i in range(M):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'withgid': False,
-                                'withtime': True,
-                                'time_in_steps': True})
-    nest.SetDefaults('static_synapse', {'weight': 1.,
-                                        'delay': dt})
-    nest.Connect([nest_pops[i]], nest_sd[i], 'all_to_all')
+    nest.SetStatus(nest_sd[i], {'time_in_steps': True})
+    nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
+    nest.Connect(nest_pops[i], nest_sd[i])
 
 ###############################################################################
 # All neurons in a given population will be stimulated with a step input
@@ -192,13 +188,13 @@ step = np.hstack((np.zeros((M, 1)), step))
 nest_stepcurrent = nest.Create('step_current_generator', M)
 # set the parameters for the step currents
 for i in range(M):
-    nest.SetStatus([nest_stepcurrent[i]], {
+    nest.SetStatus(nest_stepcurrent[i], {
         'amplitude_times': tstep[i] + t0,
-        'amplitude_values': step[i] * g_L[i], 'origin': t0, 'stop': t_end})
+        'amplitude_values': step[i] * g_L[i],
+        'origin': t0,
+        'stop': t_end})
     pop_ = nest_pops[i]
-    if type(nest_pops[i]) == int:
-        pop_ = [pop_]
-    nest.Connect([nest_stepcurrent[i]], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
 
 ###############################################################################
 # We can now start the simulation:
@@ -256,15 +252,13 @@ nest.SetKernelStatus(
     {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
 t0 = nest.GetKernelStatus('time')
 
-nest_pops = nest.Create('gif_pop_psc_exp', M)
-
 nest_pops = []
 for k in range(M):
     nest_pops.append(nest.Create('gif_psc_exp', N[k]))
 
 # set single neuron properties
-for i, nest_i in enumerate(nest_pops):
-    nest.SetStatus(nest_i, {
+for i in range(M):
+    nest.SetStatus(nest_pops[i], {
         'C_m': C_m,
         'I_e': mu[i] * g_L[i],
         'lambda_0': c[i],  # in Hz!
@@ -306,12 +300,11 @@ for i, nest_i in enumerate(nest_pops):
 nest_sd = []
 for i, nest_i in enumerate(nest_pops):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'withgid': False,
-                                'withtime': True, 'time_in_steps': True})
+    nest.SetStatus(nest_sd[i], {'time_in_steps': True})
     nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
 
     # record all spikes from population to compute population activity
-    nest.Connect(nest_pops[i], nest_sd[i], 'all_to_all')
+    nest.Connect(nest_i, nest_sd[i])
 
 Nrecord = [5, 0]  # for each population "i" the first Nrecord[i] neurons are
 #                   recorded
@@ -319,10 +312,9 @@ nest_mm_Vm = []
 for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
     nest.SetStatus(nest_mm_Vm[i], {'record_from': ['V_m'],
-                                   'withgid': True, 'withtime': True,
                                    'interval': dt_rec})
-    nest.Connect(nest_mm_Vm[i], list(
-        np.array(nest_pops[i])[:Nrecord[i]]), 'all_to_all')
+    if Nrecord[i] != 0:
+        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]])
 
 ###############################################################################
 # As before, all neurons in a given population will be stimulated with a
@@ -333,14 +325,12 @@ for i, nest_i in enumerate(nest_pops):
 nest_stepcurrent = nest.Create('step_current_generator', M)
 # set the parameters for the step currents
 for i in range(M):
-    nest.SetStatus([nest_stepcurrent[i]], {
+    nest.SetStatus(nest_stepcurrent[i], {
         'amplitude_times': tstep[i] + t0,
         'amplitude_values': step[i] * g_L[i], 'origin': t0, 'stop': t_end})
     # optionally a stopping time may be added by: 'stop': sim_T + t0
     pop_ = nest_pops[i]
-    if type(nest_pops[i]) == int:
-        pop_ = [pop_]
-    nest.Connect([nest_stepcurrent[i]], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
 
 ###############################################################################
 # We can now start the microscopic simulation:
@@ -360,7 +350,7 @@ nest.Simulate(t_end + dt)
 # Let's retrieve the data of the spike detector and plot the activity of the
 # excitatory population (in Hz):
 
-for i, nest_i in enumerate(nest_pops):
+for i in range(len(nest_pops)):
     data_sd = nest.GetStatus(
         nest_sd[i], keys=['events'])[0][0]['times'] * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))

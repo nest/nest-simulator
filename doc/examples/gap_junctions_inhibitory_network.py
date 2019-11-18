@@ -82,8 +82,7 @@ nest.SetKernelStatus({'resolution': 0.05,
 
 neurons = nest.Create('hh_psc_alpha_gap', n_neuron)
 
-sd = nest.Create("spike_detector", params={'to_file': False,
-                                           'to_memory': True})
+sd = nest.Create("spike_detector")
 pg = nest.Create("poisson_generator", params={'rate': 500.0})
 
 ###############################################################################
@@ -99,15 +98,16 @@ conn_dict = {'rule': 'fixed_indegree',
              'allow_autapses': False,
              'allow_multapses': True}
 
-syn_dict = {'model': 'static_synapse',
+syn_dict = {'synapse_model': 'static_synapse',
             'weight': j_inh,
             'delay': delay}
 
 nest.Connect(neurons, neurons, conn_dict, syn_dict)
 
-nest.Connect(pg, neurons, 'all_to_all', syn_spec={'model': 'static_synapse',
-                                                  'weight': j_exc,
-                                                  'delay': delay})
+nest.Connect(pg, neurons, 'all_to_all',
+             syn_spec={'synapse_model': 'static_synapse',
+                       'weight': j_exc,
+                       'delay': delay})
 
 ###############################################################################
 # Then the neurons are connected to the ``spike_detector`` and the initial
@@ -116,7 +116,7 @@ nest.Connect(pg, neurons, 'all_to_all', syn_spec={'model': 'static_synapse',
 nest.Connect(neurons, sd)
 
 for i in range(n_neuron):
-    nest.SetStatus([neurons[i]], {'V_m': (-40. - 40. * random.random())})
+    nest.SetStatus(neurons[i], {'V_m': (-40. - 40. * random.random())})
 
 #######################################################################################
 # Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
@@ -130,12 +130,15 @@ for i in range(n_neuron):
 # using the ``make_symmetric`` flag for ``one_to_one`` connections.
 
 n_connection = int(n_neuron * gap_per_neuron / 2)
+neuron_list = [n for n in neurons]
 connections = numpy.transpose(
-    [random.sample(neurons, 2) for _ in range(n_connection)])
+    [random.sample(neuron_list, 2) for _ in range(n_connection)])
 
-nest.Connect(connections[0], connections[1],
-             {'rule': 'one_to_one', 'make_symmetric': True},
-             {'model': 'gap_junction', 'weight': gap_weight})
+for indx in range(n_connection):
+    nest.Connect(nest.GIDCollection([connections[0][indx]]),
+                 nest.GIDCollection([connections[1][indx]]),
+                 {'rule': 'one_to_one', 'make_symmetric': True},
+                 {'synapse_model': 'gap_junction', 'weight': gap_weight})
 
 ###############################################################################
 # In the end we start the simulation and plot the spike pattern.

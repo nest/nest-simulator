@@ -142,8 +142,8 @@ with a delay (``rate_connection_instantaneous``).
 .. code-block:: default
 
 
-    syn_e = {'weight': w, 'delay': d_e, 'model': 'rate_connection_delayed'}
-    syn_i = {'weight': -g*w, 'model': 'rate_connection_instantaneous'}
+    syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}
+    syn_i = {'weight': -g*w, 'synapse_model': 'rate_connection_instantaneous'}
     conn_e = {'rule': connection_rule, 'outdegree': KE}
     conn_i = {'rule': connection_rule, 'outdegree': KI}
 
@@ -185,9 +185,9 @@ Plot rates of one excitatory and one inhibitory neuron
 
 
     data = nest.GetStatus(mm)[0]['events']
-    rate_ex = data['rate'][numpy.where(data['senders'] == n_e[0])]
-    rate_in = data['rate'][numpy.where(data['senders'] == n_i[0])]
-    times = data['times'][numpy.where(data['senders'] == n_e[0])]
+    rate_ex = data['rate'][numpy.where(data['senders'] == n_e[0].get('global_id'))]
+    rate_in = data['rate'][numpy.where(data['senders'] == n_i[0].get('global_id'))]
+    times = data['times'][numpy.where(data['senders'] == n_e[0].get('global_id'))]
 
     pylab.figure()
     pylab.plot(times, rate_ex, label='excitatory')

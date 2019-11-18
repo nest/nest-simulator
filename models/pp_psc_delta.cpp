@@ -20,15 +20,6 @@
  *
  */
 
-/*
- *  Multimeter support by Yury V. Zaytsev.
- */
-
-/* pp_psc_delta is a stochastically spiking neuron where the potential jumps on
- * each spike arrival.
- */
-
-
 #include "pp_psc_delta.h"
 
 // C++ includes:

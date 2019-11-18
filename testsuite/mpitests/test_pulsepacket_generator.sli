@@ -53,10 +53,7 @@ skip_if_not_threaded
     ;
     /pulsepacket_generator << /pulse_times [5.] /activity 5 /sdev 2.0 >> Create
   } Table def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread

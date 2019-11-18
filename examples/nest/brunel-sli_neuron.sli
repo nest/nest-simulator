@@ -262,10 +262,7 @@ end
       exsd
       <<
         /label (brunel-1-ex)
-        /withtime true   % record time of spikes
-        /withgid  true   % record which neuron spiked
-        /to_file true    % write results to a file
-        /to_memory false
+        /record_to /ascii
       >> SetStatus
 
       (Creating inhibitory spike detector.) =
@@ -273,10 +270,7 @@ end
       insd
       <<
         /label (brunel-1-in)
-        /withtime true
-        /withgid  true
-        /to_file  true
-        /to_memory false
+        /record_to /ascii
       >> SetStatus
 
       % Create custom synapse types with appropriate values for

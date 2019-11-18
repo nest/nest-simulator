@@ -7,19 +7,53 @@
 .. _sphx_glr_auto_examples_sinusoidal_gamma_generator.py:
 
 
-Sinusoidal gamma generator example
-----------------------------------
+SyntaxError
+===========
 
-This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
-different parameters and modes. The source code of the model can be found in
-``models/sinusoidal_gamma_generator.h``.
+Example script with invalid Python syntax
 
-The script is structured into two parts, each of which generates its own
-figure. In part 1A, two generators are created with different orders of the
-underlying gamma process and their resulting PST (Peristiumulus time) and ISI
-(Inter-spike interval) histograms are plotted. Part 1B illustrates the effect
-of the ``individual_spike_trains`` switch. In Part 2, the effects of
-different settings for rate, phase and frequency are demonstrated.
+
+.. code-block:: default
+
+    # -*- coding: utf-8 -*-
+    #
+    # sinusoidal_gamma_generator.py
+    #
+    # This file is part of NEST.
+    #
+    # Copyright (C) 2004 The NEST Initiative
+    #
+    # NEST is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 2 of the License, or
+    # (at your option) any later version.
+    #
+    # NEST is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+    #
+    # You should have received a copy of the GNU General Public License
+    # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+    #
+
+    """
+    Sinusoidal gamma generator example
+    ----------------------------------
+
+    This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
+    different parameters and modes. The source code of the model can be found in
+    ``models/sinusoidal_gamma_generator.h``.
+
+    The script is structured into two parts, each of which generates its own
+    figure. In part 1A, two generators are created with different orders of the
+    underlying gamma process and their resulting PST (Peristiumulus time) and ISI
+    (Inter-spike interval) histograms are plotted. Part 1B illustrates the effect
+    of the ``individual_spike_trains`` switch. In Part 2, the effects of
+    different settings for rate, phase and frequency are demonstrated.
+
+    """
+
 
 
 First, we import all necessary modules to simulate, analyze and
@@ -66,9 +100,8 @@ we create devices to record firing rates (``Multimeter``) and spikes
                             {'rate': 10000.0, 'amplitude': 5000.0,
                              'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-    m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                               'record_from': ['rate']})
-    s = nest.Create('spike_detector', n=2, params={'withgid': False})
+    m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+    s = nest.Create('spike_detector', n=2)
 
     nest.Connect(m, g, 'one_to_one')
     nest.Connect(g, s, 'one_to_one')
@@ -88,11 +121,11 @@ After simulating, the spikes are extracted from the ``spike_detector`` using
 
     for j in range(2):
 
-        ev = nest.GetStatus([m[j]])[0]['events']
+        ev = nest.GetStatus(m[j])[0]['events']
         t = ev['times']
         r = ev['rate']
 
-        sp = nest.GetStatus([s[j]])[0]['events']['times']
+        sp = nest.GetStatus(s[j])[0]['events']['times']
         plt.subplot(221)
         h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
         plt.plot(t, r, color=colors[j])
@@ -193,9 +226,8 @@ generators is changed from initial to after.
     def step(t, n, initial, after, seed=1, dt=0.05):
 
         nest.ResetKernel()
-        nest.SetStatus([0], [{"resolution": dt}])
-        nest.SetStatus([0], [{"grng_seed": 256 * seed + 1}])
-        nest.SetStatus([0], [{"rng_seeds": [256 * seed + 2]}])
+        nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
+                              "rng_seeds": [256 * seed + 2]})
 
         g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
         sd = nest.Create('spike_detector')
@@ -218,6 +250,7 @@ This function serves to plot a histogram of the emitted spikes.
         plt.hist(spikes['times'],
                  bins=np.arange(0., max(spikes['times']) + 1.5, 1.),
                  histtype='step')
+
 
     t = 1000
     n = 1000
@@ -249,7 +282,7 @@ plot the number of spikes per second over time.
                   {'rate': 50.0, },
                   seed=123, dt=dt)
     plot_hist(spikes)
-    exp = np.ones(steps)
+    exp = np.ones(int(steps))
     exp[:int(steps / 2)] *= 20
     exp[int(steps / 2):] *= 50
     plt.plot(exp, 'r')
@@ -275,7 +308,7 @@ time.
                    'frequency': 0., 'phase': 0.},
                   seed=123, dt=dt)
     plot_hist(spikes)
-    exp = np.ones(steps)
+    exp = np.ones(int(steps))
     exp[:int(steps / 2)] *= 80
     exp[int(steps / 2):] *= 40
     plt.plot(exp, 'r')
@@ -360,7 +393,7 @@ second over time.
                   seed=123, dt=1.)
     plot_hist(spikes)
     exp = np.zeros(int(steps))
-    exp[:int(steps / 2)] = 40. * np.ones(steps / 2)
+    exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
     exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
                                                          t / 1000. * np.pi * 20. /
                                                          (steps / 2))))

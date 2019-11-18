@@ -29,6 +29,8 @@
 #include "drop_odd_spike_connection.h"
 #include "pif_psc_alpha.h"
 #include "step_pattern_builder.h"
+#include "recording_backend_soundclick.h"
+#include "recording_backend_socket.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -40,6 +42,7 @@
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
+#include "io_manager_impl.h"
 #include "nestmodule.h"
 #include "target_identifier.h"
 
@@ -128,4 +131,10 @@ mynest::MyModule::init( SLIInterpreter* i )
   // Register connection rule.
   nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >( "step_pattern" );
 
+#ifdef HAVE_SFML_AUDIO
+  // Register recording backends.
+  nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendSoundClick >( "soundclick" );
+#endif
+
+  nest::kernel().io_manager.register_recording_backend< nest::RecordingBackendSocket >( "socket" );
 } // MyModule::init()

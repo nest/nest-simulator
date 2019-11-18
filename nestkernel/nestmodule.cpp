@@ -436,7 +436,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   GIDCollectionMetadataPTR meta = gc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
 
-  //return empty dict if GC does not have metadata
+  // return empty dict if GC does not have metadata
   if ( meta.get() )
   {
     meta->get_status( dict );

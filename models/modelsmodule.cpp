@@ -256,7 +256,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-  kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
@@ -277,20 +277,7 @@ ModelsModule::init( SLIInterpreter* )
 
   Results are returned in the /events entry of the status dictionary,
   which contains membrane potential as vector /V_m and pertaining
-  times as vector /times and node GIDs as /senders, if /withtime and
-  /withgid are set, respectively.
-
-  Accumulator mode:
-  Voltmeter can operate in accumulator mode. In this case, values for all
-  recorded variables are added across all recorded nodes (but kept separate in
-  time). This can be useful to record average membrane potential in a
-  population.
-
-  To activate accumulator mode, either set /to_accumulator to true, or set
-  /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-  to memory, to screen, with GID or with weight. You must activate accumulator
-  mode before simulating. Accumulator data is never written to file. You must
-  extract it from the device using GetStatus.
+  times as vector /times and node GIDs as /senders.
 
   Remarks:
    - The voltmeter model is implemented as a multimeter preconfigured to
@@ -334,7 +321,7 @@ ModelsModule::init( SLIInterpreter* )
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
   ( *vmdict )[ names::record_from ] = ad;
   const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< Multimeter >( name, vmdict, false );
+  kernel().model_manager.register_preconf_node_model< multimeter >( name, vmdict, false );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );

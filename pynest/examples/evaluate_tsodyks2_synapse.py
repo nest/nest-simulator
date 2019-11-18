@@ -110,7 +110,6 @@ nest.Connect(neuron[0], neuron[2], syn_spec="tsodyks2_synapse")
 # Now create two voltmeters to record the responses.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # Connect the voltmeters to the neurons.

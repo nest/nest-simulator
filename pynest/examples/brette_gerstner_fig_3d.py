@@ -68,16 +68,10 @@ dc.set({"amplitude": -800.0, "start": 0.0, "stop": 400.0})
 nest.Connect(dc, neuron, 'all_to_all')
 
 ###############################################################################
-# And add a ``voltmeter`` to record the membrane potentials.
+# And add a ``voltmeter`` to sample the membrane potentials from the neuron
+# in intervals of 0.1 ms.
 
-voltmeter = nest.Create("voltmeter")
-
-###############################################################################
-# We set the voltmeter to record in small intervals of 0.1 ms and connect the
-# voltmeter to the neuron.
-
-voltmeter.set({"withgid": True, "withtime": True, 'interval': 0.1})
-
+voltmeter = nest.Create("voltmeter", params={'interval': 0.1})
 nest.Connect(voltmeter, neuron)
 
 ###############################################################################

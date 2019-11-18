@@ -63,7 +63,7 @@ def
 /sg3 /spike_generator Create def
 
 /csd /correlospinmatrix_detector Create def
-/sd /spike_detector << /to_screen true >> Create def
+/sd /spike_detector Create def
 
 csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 

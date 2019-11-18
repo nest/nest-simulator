@@ -169,22 +169,16 @@ ispikes = nest.Create("spike_detector")
 
 ################################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory
-# spikes using ``SetStatus``, which expects a list of node handles and a list
-# of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
-# that the spikes will be recorded in a .gdf file starting with the string
-# assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
-# each spike is saved to file by stating the gid of the spiking neuron and
-# the spike time in one line.
+# spikes using `SetStatus`, which expects a list of node handles and a list
+# of parameter dictionaries. Setting the property `record_to` to *"ascii"*
+# ensures that the spikes will be recorded to a file, whose name starts with
+# the string assigned to label.
 
 nest.SetStatus(espikes, [{"label": "brunel-py-ex",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
+                          "record_to": "ascii"}])
 
 nest.SetStatus(ispikes, [{"label": "brunel-py-in",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
+                          "record_to": "ascii"}])
 
 print("Connecting devices")
 

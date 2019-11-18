@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Multimeter to file example
+multimeter to file example
 --------------------------
 
 This file demonstrates recording from an ``iaf_cond_alpha`` neuron using a
@@ -67,24 +67,24 @@ print("iaf_cond_alpha recordables: {0}".format(
 # expects a model type and, optionally, the desired number of nodes and a
 # dictionary of parameters to overwrite the default values of the model.
 #
-# * For the neuron, the rise time of the excitatory synaptic alpha function
-#  in ms ``tau_syn_ex`` and the reset potential of the membrane in mV ``V_reset``
-#  are specified.
-# * For the multimeter, the time interval for recording in ms ``interval`` and a
-#  selection of measures to record (the membrane voltage in mV ``V_m`` and the
-#  excitatory ``g_ex`` and inhibitoy ``g_in`` synaptic conductances in nS) are set.
+#  * For the neuron, the rise time of the excitatory synaptic alpha function
+#    (`tau_syn_ex`, in ms) and the reset potential of the membrane
+#    (`V_reset`, in mV) are specified.
+#  * For the ``multimeter``, the time interval for recording (`interval`, in
+#    ms) and the measures to record (membrane potential `V_m` in mV and
+#    excitatory and inhibitoy synaptic conductances `g_ex` and`g_in` in nS)
+#    are set.
 #
 #  In addition, more parameters can be modified for writing to file:
 #
-#  - ``withgid`` is set to True to record the global id of the observed node(s).
-#    (default: False).
-#  - ``to_file`` indicates whether to write the recordings to file and is set
-#    to True.
-#  - ``label`` specifies an arbitrary label for the device. It is used instead of
-#    the name of the model in the output file name.
+#  - `record_to` indicates where to put recorded data. All possible values are
+#    available by inspecting the keys of the `recording_backends` dictionary
+#    obtained from ``GetKernelStatus()``.
+#  - `label` specifies an arbitrary label for the device. If writing to files,
+#    it used in the file name instead of the model name.
 #
-# * For the spike generators, the spike times in ms ``spike_times`` are given
-#   explicitly.
+#  * For the spike generators, the spike times in ms (`spike_times`) are given
+#    explicitly.
 
 n = nest.Create("iaf_cond_alpha",
                 params={"tau_syn_ex": 1.0, "V_reset": -70.0})
@@ -92,8 +92,7 @@ n = nest.Create("iaf_cond_alpha",
 m = nest.Create("multimeter",
                 params={"interval": 0.1,
                         "record_from": ["V_m", "g_ex", "g_in"],
-                        "withgid": True,
-                        "to_file": True,
+                        "record_to": "ascii",
                         "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",
@@ -119,10 +118,8 @@ nest.Simulate(100.)
 
 ###############################################################################
 # After the simulation, the recordings are obtained from the multimeter via the
-# key ``events`` of the status dictionary accessed by ``GetStatus``. ``times``
-# indicates the recording times stored for each data point. They are recorded
-# if the parameter ``withtime`` of the multimeter is set to True which is the
-# default case.
+# key `events` of the status dictionary accessed by ``GetStatus``. `times`
+# contains the recording times stored for each data point.
 
 events = nest.GetStatus(m)[0]["events"]
 t = events["times"]

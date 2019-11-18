@@ -35,6 +35,8 @@ class FacetsTestCase(unittest.TestCase):
 
     def test_facetshw_stdp(self):
 
+        nest.ResetKernel()
+
         modelName = 'stdp_facetshw_synapse_hom'
 
         # homogeneous parameters for all synapses

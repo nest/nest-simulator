@@ -78,7 +78,7 @@ M_ERROR setverbosity
  /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
  /pn1 /parrot_neuron Create def
  /pn2 /parrot_neuron Create def
- /sd /spike_detector << /record_to [ /memory ] /withtime true >> Create def
+ /sd /spike_detector Create def
  
  sg pn1 << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect
  pn2 sd << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect

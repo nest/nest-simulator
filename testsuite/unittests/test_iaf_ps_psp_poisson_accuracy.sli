@@ -158,7 +158,6 @@ def
  n params SetStatus
 
  /spike_detector Create /sd Set
- sd << /precise_times true >> SetStatus
 
  pg pn  Connect
  pn sd  Connect

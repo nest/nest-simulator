@@ -61,7 +61,7 @@ M_ERROR setverbosity
   ResetKernel
   model GetDefaults /recordables get /recs Set
   /n model Create def
-  /mm /multimeter << /record_from recs /withtime false /interval 0.1  >> Create def
+  /mm /multimeter << /record_from recs /interval 0.1  >> Create def
 
   mark 
   {

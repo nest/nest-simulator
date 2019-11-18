@@ -44,9 +44,9 @@ return the handles of two decision units and the ``Multimeter``
         D2 = nest.Create('lin_rate_ipn', params=Params)
 
         nest.Connect(D1, D2, 'all_to_all', {
-            'model': 'rate_connection_instantaneous', 'weight': -0.2})
+            'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
         nest.Connect(D2, D1, 'all_to_all', {
-            'model': 'rate_connection_instantaneous', 'weight': -0.2})
+            'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
 
         mm = nest.Create('multimeter')
         nest.SetStatus(mm, {'interval': dt, 'record_from': ['rate']})

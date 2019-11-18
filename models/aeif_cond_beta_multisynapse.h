@@ -165,7 +165,7 @@ Examples:
     spike = nest.Create('spike_generator', params = {'spike_times':
                                                     np.array([10.0])})
 
-    voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
+    voltmeter = nest.Create('voltmeter')
 
     delays=[1.0, 300.0, 500.0, 700.0]
     w=[1.0, 1.0, 1.0, 1.0]

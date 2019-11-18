@@ -85,7 +85,6 @@ ResetKernel
 
 
 /spike_detector Create /sd Set  
-sd  << /precise_times true >> SetStatus
  
 
 /poisson_generator_ps Create /pg Set

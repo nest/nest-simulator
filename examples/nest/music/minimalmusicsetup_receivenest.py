@@ -36,7 +36,7 @@ meip.set({'port_name': 'spikes_in', 'music_channel': 0})
 nest.Connect(meip, n, 'one_to_one', {'weight': 750.0})
 
 vm = nest.Create('voltmeter')
-vm.set({'to_memory': False, 'to_screen': True})
+vm.record_to = "screen"
 nest.Connect(vm, n)
 
 nest.Simulate(10)

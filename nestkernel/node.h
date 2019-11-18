@@ -239,7 +239,7 @@ public:
    * should have the same values that they had after the node was
    * created. In practice, they will be initialized to the values
    * of the prototype node (model).
-   * @note If the parameters of the model have been changes since the node
+   * @note If the parameters of the model have been changed since the node
    *       was created, the node will be initialized to the present values
    *       set in the model.
    * @note This function is the public interface to the private function
@@ -729,6 +729,13 @@ public:
    */
   void set_model_id( int );
 
+  /** Execute post-initialization actions in node models.
+   * This method is called by NodeManager::add_node() on a node once
+   * is fully initialized, i.e. after gid, gc, model_id, thread, vp is
+   * set.
+   */
+  void set_initialized();
+
   /**
    * @returns type of signal this node produces
    * used in check_connection to only connect neurons which send / receive
@@ -845,7 +852,7 @@ protected:
    *       scheme, init_state_() has a default implementation calling
    *       init_dynamic_state_().
    */
-  virtual void init_state_( Node const& ) = 0;
+  virtual void init_state_( Node const& );
 
   /**
    * Private function to initialize the buffers of a node.
@@ -853,7 +860,9 @@ protected:
    * the implementation for initializing the buffers of a node.
    * @see Node::init_buffers()
    */
-  virtual void init_buffers_() = 0;
+  virtual void init_buffers_();
+
+  virtual void set_initialized_();
 
   Model& get_model_() const;
 
@@ -893,11 +902,13 @@ private:
    * @see get_model_id(), set_model_id()
    */
   int model_id_;
+
   thread thread_;            //!< thread node is assigned to
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
+  bool initialized_;         //!< set true once a node is fully initialized
 
   GIDCollectionPTR gc_ptr_;
 };

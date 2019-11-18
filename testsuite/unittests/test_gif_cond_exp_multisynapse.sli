@@ -87,7 +87,7 @@ skip_if_without_gsl
   dc_gen <<  /amplitude 170. >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
 
   dc_gen neuron Connect
 

@@ -151,8 +151,8 @@ Siegert's rate approximation.
 
 
     num_iterations = 100
-    upper = (V_th * mV - mu) / sigma / np.sqrt(2)
-    lower = (E_L * mV - mu) / sigma / np.sqrt(2)
+    upper = (V_th * mV - mu) / (sigma * np.sqrt(2))
+    lower = (E_L * mV - mu) / (sigma * np.sqrt(2))
     interval = (upper - lower) / num_iterations
     tmpsum = 0.0
     for cu in range(0, num_iterations + 1):
@@ -170,10 +170,17 @@ and compare the theoretical result to the empirical value.
 
 
     nest.ResetKernel()
+
     nest.set_verbosity('M_WARNING')
-    neurondict = {'V_th': V_th, 'tau_m': tau_m, 'tau_syn_ex': tau_syn_ex,
-                  'tau_syn_in': tau_syn_in, 'C_m': C_m, 'E_L': E_L, 't_ref': t_ref,
-                  'V_m': E_L, 'V_reset': E_L}
+    neurondict = {'V_th': V_th,
+                  'tau_m': tau_m,
+                  'tau_syn_ex': tau_syn_ex,
+                  'tau_syn_in': tau_syn_in,
+                  'C_m': C_m,
+                  'E_L': E_L,
+                  't_ref': t_ref,
+                  'V_m': E_L,
+                  'V_reset': E_L}
 
 
 Neurons and devices are instantiated. We set a high threshold as we want
@@ -186,11 +193,11 @@ recording the membrane to collect good statistics.
 
     nest.SetDefaults('iaf_psc_alpha', neurondict)
     n = nest.Create('iaf_psc_alpha', n_neurons)
-    n_free = nest.Create('iaf_psc_alpha', 1, [{'V_th': 1e12}])
+    n_free = nest.Create('iaf_psc_alpha', 1, {'V_th': 1e12})
     pg = nest.Create('poisson_generator', len(rates),
                      [{'rate': float(rate_i)} for rate_i in rates])
-    vm = nest.Create('voltmeter', 1, [{'interval': .1}])
-    sd = nest.Create('spike_detector', 1)
+    vm = nest.Create('voltmeter', 1, {'interval': .1})
+    sd = nest.Create('spike_detector')
 
 
 We connect devices and neurons and start the simulation.
@@ -199,11 +206,10 @@ We connect devices and neurons and start the simulation.
 .. code-block:: default
 
 
-    for i, currentpg in enumerate(pg):
-        nest.Connect([currentpg], n,
-                     syn_spec={'weight': float(J[i]), 'delay': 0.1})
-        nest.Connect([currentpg], n_free,
-                     syn_spec={'weight': J[i]})
+    for indx in range(len(pg)):
+        nest.Connect(pg[indx], n,
+                     syn_spec={'weight': float(J[indx]), 'delay': 0.1})
+        nest.Connect(pg[indx], n_free, syn_spec={'weight': J[indx]})
 
     nest.Connect(vm, n_free)
     nest.Connect(n, sd)

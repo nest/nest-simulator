@@ -51,8 +51,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
                                   {"spike_times": [self.spike_time],
                                    'precise_times': True})
         self.parrot = nest.Create('parrot_neuron_ps')
-        self.spikes = nest.Create("spike_detector",
-                                  params={'precise_times': True})
+        self.spikes = nest.Create("spike_detector")
 
         # record source and parrot spikes
         nest.Connect(self.source, self.spikes)
@@ -154,7 +153,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', 2)
-        detect = nest.Create('spike_detector', params={'precise_times': True})
+        detect = nest.Create('spike_detector')
 
         nest.Connect(source, parrots[:1], syn_spec={'delay': delay})
         nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
@@ -211,8 +210,7 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
         nest.Connect(post_spikes, post_parrot, syn_spec={"delay": delay})
 
         # create spike detector
-        spikes = nest.Create("spike_detector",
-                             params={'precise_times': True})
+        spikes = nest.Create("spike_detector")
         nest.Connect(pre_parrot, spikes)
         nest.Connect(post_parrot, spikes)
 

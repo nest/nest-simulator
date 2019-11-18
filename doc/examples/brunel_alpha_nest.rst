@@ -80,6 +80,7 @@ calibrate the synaptic weights.
                 ((exp(-t_max / tauMem) - exp(-t_max / tauSyn)) / b -
                  t_max * exp(-t_max / tauSyn)))
 
+
     nest.ResetKernel()
 
 
@@ -229,26 +230,16 @@ later be used to record excitatory and inhibitory spikes.
 
 
 Configuration of the spike detectors recording excitatory and inhibitory
-spikes using ``SetStatus``, which expects a list of node handles and a list
-of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
-that the spikes will be recorded in a .gdf file starting with the string
-assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
-each spike is saved to file by stating the gid of the spiking neuron and
-the spike time in one line.
+spikes using ``set``. Setting the property "record_to" to `"ascii"`
+ensures that the spikes will be recorded to a file, whose name starts with
+the string assigned to label.
 
 
 .. code-block:: default
 
 
-    nest.SetStatus(espikes, [{"label": "brunel-py-ex",
-                              "withtime": True,
-                              "withgid": True,
-                              "to_file": True}])
-
-    nest.SetStatus(ispikes, [{"label": "brunel-py-in",
-                              "withtime": True,
-                              "withgid": True,
-                              "to_file": True}])
+    espikes.set({"label": "brunel-py-ex", "record_to": "ascii"})
+    ispikes.set({"label": "brunel-py-in", "record_to": "ascii"})
 
     print("Connecting devices")
 
@@ -368,8 +359,8 @@ connected to the excitatory population and the inhibitory population.
 .. code-block:: default
 
 
-    events_ex = nest.GetStatus(espikes, "n_events")[0]
-    events_in = nest.GetStatus(ispikes, "n_events")[0]
+    events_ex = espikes.get("n_events")
+    events_in = ispikes.get("n_events")
 
 
 Calculation of the average firing rate of the excitatory and the inhibitory

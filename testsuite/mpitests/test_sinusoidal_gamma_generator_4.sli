@@ -66,10 +66,7 @@ skip_if_not_threaded
   >> SetDefaults
 
   /gen /sinusoidal_gamma_generator Create def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
   pnet { gen exch Connect } forall

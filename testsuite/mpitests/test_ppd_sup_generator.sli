@@ -50,10 +50,7 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /pg /ppd_sup_generator << /rate 1000. >> Create def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   pnet { pg exch Connect } forall

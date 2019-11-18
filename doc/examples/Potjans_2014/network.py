@@ -25,11 +25,6 @@ Pynest microcircuit network
 
 Main file for the microcircuit.
 
-
-This example uses the function GetNodes, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
-
 Authors
 ~~~~~~~~
 
@@ -217,19 +212,10 @@ class Network:
             if self.net_dict['V0_type'] == 'optimized':
                 for thread in \
                         np.arange(nest.GetKernelStatus('local_num_threads')):
-                    # Using GetNodes is a work-around until NEST 3.0 is
-                    # released. It will issue a deprecation warning.
-                    local_nodes = nest.GetNodes(
-                        [0], {
-                            'model': self.net_dict['neuron_model'],
-                            'thread': thread
-                        }, local_only=True
-                    )[0]
+                    local_nodes = nest.GetLocalGIDCollection(pop)
                     vp = nest.GetStatus(local_nodes)[0]['vp']
-                    # vp is the same for all local nodes on the same thread
-                    local_pop = list(set(local_nodes).intersection(population))
                     nest.SetStatus(
-                        local_pop, 'V_m', self.pyrngs[vp].normal(
+                        local_nodes, 'V_m', self.pyrngs[vp].normal(
                             self.net_dict
                             ['neuron_params']['V0_mean']['optimized'][i],
                             self.net_dict
@@ -237,23 +223,32 @@ class Network:
                             len(local_pop))
                     )
             self.pops.append(population)
-            pop_file.write('%d  %d \n' % (population[0], population[-1]))
+            pop_file.write('%d  %d \n' % (
+                nest.GetStatus(population[0], 'global_id')[0],
+                nest.GetStatus(population[-1], 'global_id')[0]))
         pop_file.close()
+
         if self.net_dict['V0_type'] == 'original':
-            for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-                local_nodes = nest.GetNodes(
-                    [0], {
-                        'model': self.net_dict['neuron_model'],
-                        'thread': thread
-                        }, local_only=True
-                    )[0]
-                vp = nest.GetStatus(local_nodes)[0]['vp']
-                nest.SetStatus(
-                    local_nodes, 'V_m', self.pyrngs[vp].normal(
+            # Set random membrane potential
+            no_vps = nest.GetKernelStatus('local_num_threads')
+            # Create nested list where elements in the outer list represent
+            # the vps, and each vp will have a list of the GIDs in that vp.
+            vp_lists = [[] for x in range(no_vps)]
+            # Go through all populations
+            for gids in self.pops:
+                node_info = nest.GetStatus(gids)
+                for info in node_info:
+                    if info['local']:
+                        # Find vp for GID and place GID in correct list
+                        vp = info['vp']
+                        vp_lists[vp].append(info['global_id'])
+
+            for vp, vps_gids in enumerate(vp_lists):
+                # Set random membrane portential
+                nest.SetStatus(vps_gids, 'V_m', self.pyrngs[vp].normal(
                         self.net_dict['neuron_params']['V0_mean']['original'],
                         self.net_dict['neuron_params']['V0_sd']['original'],
-                        len(local_nodes))
-                        )
+                        len(vps_gids)))
 
     def create_devices(self):
         """ Creates the recording devices.
@@ -266,10 +261,7 @@ class Network:
         for i, pop in enumerate(self.pops):
             if 'spike_detector' in self.net_dict['rec_dev']:
                 recdict = {
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'spike_detector')
                     }
                 dummy = nest.Create('spike_detector', params=recdict)
@@ -277,10 +269,7 @@ class Network:
             if 'voltmeter' in self.net_dict['rec_dev']:
                 recdictmem = {
                     'interval': self.sim_dict['rec_V_int'],
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'voltmeter'),
                     'record_from': ['V_m'],
                     }
@@ -395,7 +384,7 @@ class Network:
                         'rule': 'fixed_total_number', 'N': synapse_nr
                         }
                     syn_dict = {
-                        'model': 'static_synapse',
+                        'synapse_model': 'static_synapse',
                         'weight': {
                             'distribution': 'normal_clipped', 'mu': weight,
                             'sigma': w_sd
@@ -423,7 +412,7 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
-                'model': 'static_synapse',
+                'synapse_model': 'static_synapse',
                 'weight': self.w_ext,
                 'delay': self.net_dict['poisson_delay']
                 }

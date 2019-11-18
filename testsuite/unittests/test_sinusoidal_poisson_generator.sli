@@ -115,7 +115,7 @@ M_ERROR setverbosity
   /n Set
   /parrots /parrot_neuron n Create def
 
-  /sdets /spike_detector n << /withtime true /withgid false >> Create def
+  /sdets /spike_detector n Create def
 
   /gen /sinusoidal_poisson_generator Create def
 

@@ -57,12 +57,7 @@ taus eq assert_or_die
 /multimeter Create /mm Set
 mm <<
     /record_from [/I_syn]
-    /withgid false
-    /withtime false
-    /to_file false
-    /to_memory true
-    /interval 0.1
-    /precision 5 >> SetStatus
+    /interval 0.1 >> SetStatus
     
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus
@@ -101,8 +96,10 @@ n_syn { true } repeat n_syn arraystore eq assert_or_die
   
   /nrn /iaf_psc_alpha_multisynapse Create def
   
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /I_syn /I_syn_1 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /I_syn /I_syn_1 ]
+		  >> Create def
   
   mm nrn Connect
   
@@ -201,10 +198,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 4 synapse channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from
-                     [ /I_syn_1 /I_syn_2 /I_syn_3 /I_syn_4 ]
-                       >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /I_syn_1 /I_syn_2 /I_syn_3 /I_syn_4 ]
+                  >> Create def
 
   mm nrn Connect
 

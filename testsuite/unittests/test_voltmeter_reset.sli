@@ -45,7 +45,7 @@ SeeAlso: multimeter, testsuite::test_spike_det_reset
   /iaf_psc_alpha Create /n Set
 
   /voltmeter Create /vm Set
-  vm << /record_to [/memory] /withtime true /interval 1.0 >> SetStatus
+  vm << /interval 1.0 >> SetStatus
 
   vm n Connect
 

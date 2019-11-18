@@ -36,7 +36,7 @@ sg.spike_times = [1.0, 1.5, 2.0]
 nest.Connect(sg, n, 'one_to_one', {'weight': 750.0, 'delay': 1.0})
 
 vm = nest.Create('voltmeter')
-vm.set({'to_memory': False, 'to_screen': True})
+vm.record_to = "screen"
 nest.Connect(vm, n)
 
 meop = nest.Create('music_event_out_proxy')

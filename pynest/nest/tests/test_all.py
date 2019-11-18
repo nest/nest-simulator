@@ -70,7 +70,6 @@ from . import test_stdp_multiplicity
 from . import test_stdp_nn_synapses
 from . import test_stdp_triplet_synapse
 from . import test_threads
-from . import test_use_gid_in_filename
 from . import test_vogels_sprekeler_synapse
 from . import test_weight_recorder
 
@@ -125,7 +124,6 @@ def suite():
     suite.addTest(test_stdp_multiplicity.suite())
     suite.addTest(test_stdp_triplet_synapse.suite())
     suite.addTest(test_threads.suite())
-    suite.addTest(test_use_gid_in_filename.suite())
     suite.addTest(test_vogels_sprekeler_synapse.suite())
     suite.addTest(test_weight_recorder.suite())
 

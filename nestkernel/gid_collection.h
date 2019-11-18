@@ -30,6 +30,9 @@
 #include <vector>
 #include <memory>
 
+// Includes from libnestuil:
+#include "lockptr.h"
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"

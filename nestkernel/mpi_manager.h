@@ -72,6 +72,15 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   void init_mpi( int* argc, char** argv[] );
+#ifdef HAVE_MPI
+  void set_communicator( MPI_Comm );
+
+  MPI_Comm
+  get_communicator()
+  {
+    return comm;
+  };
+#endif
 
   /**
    * Return the number of processes used during simulation.
@@ -290,12 +299,8 @@ private:
   std::vector< int > comm_step_;
   unsigned int COMM_OVERFLOW_ERROR;
 
-//! Variable to hold the MPI communicator to use (the datatype matters).
-#ifdef HAVE_MUSIC
-  MPI::Intracomm comm;
-#else  /* #ifdef HAVE_MUSIC */
+  //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
-#endif /* #ifdef HAVE_MUSIC */
   MPI_Datatype MPI_OFFGRID_SPIKE;
 
   void communicate_Allgather( std::vector< unsigned int >& send_buffer,

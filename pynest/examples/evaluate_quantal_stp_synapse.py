@@ -133,7 +133,6 @@ nest.Connect(neuron[0], neuron[2], syn_spec="quantal_stp_synapse")
 # The voltmeter will show us the synaptic responses in neurons 2 and 3.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # One dry run to bring all synapses into their rest state.

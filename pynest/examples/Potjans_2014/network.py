@@ -231,10 +231,7 @@ class Network:
         for i, pop in enumerate(self.pops):
             if 'spike_detector' in self.net_dict['rec_dev']:
                 recdict = {
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'spike_detector')
                     }
                 dummy = nest.Create('spike_detector', params=recdict)
@@ -242,10 +239,7 @@ class Network:
             if 'voltmeter' in self.net_dict['rec_dev']:
                 recdictmem = {
                     'interval': self.sim_dict['rec_V_int'],
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'voltmeter'),
                     'record_from': ['V_m'],
                     }

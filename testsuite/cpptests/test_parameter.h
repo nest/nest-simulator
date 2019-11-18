@@ -23,6 +23,10 @@
 #ifndef TEST_PARAMETER_H
 #define TEST_PARAMETER_H
 
+// The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 107000
+
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
@@ -53,5 +57,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+#endif /* BOOST_VERSION */
 
 #endif /* TEST_PARAMETER_H */

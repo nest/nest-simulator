@@ -217,12 +217,7 @@ ppg_pars = {
     'sdev': sdev
 }
 ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
-vm_pars = {
-    'record_to': ['memory'],
-    'withtime': True,
-    'withgid': True,
-    'interval': sampling_resolution
-}
+vm_pars = {'interval': sampling_resolution}
 vm = nest.Create('voltmeter', 1, vm_pars)
 
 

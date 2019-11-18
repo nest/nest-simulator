@@ -30,7 +30,7 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
+import re
 
 import pip
 
@@ -41,7 +41,10 @@ import pip
 import subprocess
 
 # import shlex
+# import recommonmark
 
+from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -52,8 +55,30 @@ sys.path.insert(0, os.path.abspath('./..'))
 sys.path.insert(0, os.path.abspath('./../topology'))
 sys.path.insert(0, os.path.abspath('./../pynest/nest'))
 
-source_suffix = ['.rst']
+source_suffix = ['.rst', '.md']
+source_parsers = {
+    '.md': CommonMarkParser
+}
 
+# -- Checking for pandoc --------------------------------------------------
+
+try:
+    print(check_output(['pandoc', '--version']))
+except CalledProcessError:
+    print("No pandoc on %s" % os.environ['PATH'])
+
+
+for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
+    for f in files:
+        if f.endswith('.md'):
+            ff = os.path.join(dirpath, f)
+            print(ff)
+            fb = os.path.basename(f)[:-3]
+            print(fb)
+            fo = fb + ".rst"
+            args = ['pandoc', ff, '-o', fo]
+            # check_output(args)
+            # check_output(args)
 
 # -- General configuration ------------------------------------------------
 
@@ -63,7 +88,6 @@ source_suffix = ['.rst']
 
 
 class Mock(MagicMock):
-
     @classmethod
     def __getattr__(cls, name):
         return MagicMock()
@@ -75,6 +99,21 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
+
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# ones.
+# extensions = [
+#    'sphinx.ext.autodoc',
+#    'sphinx.ext.napoleon',
+#    'sphinx.ext.autosummary',
+#    'sphinx.ext.doctest',
+#    'sphinx.ext.intersphinx',
+#    'sphinx.ext.todo',
+#    'sphinx.ext.coverage',
+#    'sphinx.ext.mathjax',
+#    'sphinx_gallery.gen_gallery',
+# ]
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -102,10 +141,7 @@ breathe_default_project = "EXTRACT_MODELS"
 
 subprocess.call('doxygen', shell=True)
 
-mathjax_path = \
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax" \
-    ".js?config=TeX" \
-    "-AMS-MML_HTMLorMML"
+mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -192,9 +228,18 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 
 def setup(app):
+    # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
+    app.add_javascript("js/copybutton.js")
+    app.add_config_value('recommonmark_config', {
+        'auto_toc_tree_section': 'Contents',
+        'enable_inline_math': True,
+        'enable_auto_doc_ref': True,
+        'enable_eval_rst': True
+    }, True)
+    app.add_transform(AutoStructify)
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -253,3 +298,29 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
+
+models_with_documentation = (
+    "models/multimeter",
+    "models/spike_detector",
+    "models/weight_recorder",
+    "nestkernel/recording_backend_ascii",
+    "nestkernel/recording_backend_memory",
+    "nestkernel/recording_backend_screen",
+    "nestkernel/recording_backend_sionlib",
+)
+
+pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
+for model in models_with_documentation:
+    with open("../%s.h" % model) as f:
+        match = re.search(pattern, f.read())
+        if match:
+            rst_dir = "from_cpp/"
+            if not os.path.exists(rst_dir):
+                os.mkdir(rst_dir)
+            rst_fname = rst_dir + os.path.basename(model) + ".rst"
+            rst_file = open(rst_fname, "w")
+            rst_file.write(match.group(1))
+            rst_file.close()
+            print("Wrote model documentation for model " + model)
+        else:
+            print("No documentation found for model " + model)

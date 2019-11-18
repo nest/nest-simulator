@@ -26,7 +26,6 @@ from libcpp.vector cimport vector
 
 from cpython.ref cimport PyObject
 
-
 cdef extern from "name.h":
     cppclass Name:
         string toString() except +
@@ -144,7 +143,8 @@ cdef extern from "interpret.h":
 cdef extern from "neststartup.h":
     int neststartup(int*, char***, SLIInterpreter&, string) except +
     void nestshutdown(int) except +
-
+    cbool nest_has_mpi4py()
+    void c_set_communicator "set_communicator" (object) with gil
 
 cdef extern from *:
 

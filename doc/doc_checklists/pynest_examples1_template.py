@@ -73,17 +73,13 @@ KEYWORDS: scipy, poisson spike train, precise
 import nest  # begin with imports
 
 ###############################################################################
-# The excitatory `poisson_generator` (`noise[0]`) and the voltmeter are
-# configured using `SetStatus`, which expects a list of node handles and
-# a list of parameter dictionaries.
-# The rate of the inhibitory Poisson generator is set later.
-# Note that we do not need to set parameters for the neuron and the
-# spike detector, since they have satisfactory defaults.
+# The excitatory `poisson_generator` (`noise[0]`) is configured using
+# `SetStatus`, which expects a list of node handles and a list of parameter
+# dictionaries.
 
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ##############################################################################
-# Finally, we plot the target neuron's membrane potential as a function of time
+# We plot the target neuron's membrane potential as a function of time
 
 nest.voltage_trace.from_device(voltmeter)  # end with output

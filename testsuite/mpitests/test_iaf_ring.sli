@@ -79,7 +79,7 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
     1000.0 delay Connect
   } forall
 
-  /spike_detector  << /withtime true /time_in_steps true >> Create /sd Set
+  /spike_detector << /time_in_steps true >> Create /sd Set
 
   /parrot_neuron Create /pn Set
 

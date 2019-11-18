@@ -121,19 +121,18 @@ neuron = nest.Create("iaf_psc_exp", 3)
 ###############################################################################
 # The connection from neuron 1 to neuron 2 is a deterministic synapse.
 
-nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks2_synapse")
 
 ###############################################################################
 # The connection from neuron 1 to neuron 3 has a stochastic
 # ``quantal_stp_synapse``.
 
-nest.Connect([neuron[0]], [neuron[2]], syn_spec="quantal_stp_synapse")
+nest.Connect(neuron[0], neuron[2], syn_spec="quantal_stp_synapse")
 
 ###############################################################################
 # The voltmeter will show us the synaptic responses in neurons 2 and 3.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # One dry run to bring all synapses into their rest state.
@@ -141,25 +140,26 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 # simulations this problem does not show, but in small simulations like
 # this, we would see it.
 
-nest.SetStatus([neuron[0]], "I_e", 376.0)
+nest.SetStatus(neuron[0], "I_e", 376.0)
+
 nest.Simulate(500.0)
-nest.SetStatus([neuron[0]], "I_e", 0.0)
+nest.SetStatus(neuron[0], "I_e", 0.0)
 nest.Simulate(1000.0)
 
 ###############################################################################
 # Only now do we connect the ``voltmeter`` to the neurons.
 
-nest.Connect([voltmeter[0]], [neuron[1]])
-nest.Connect([voltmeter[1]], [neuron[2]])
+nest.Connect(voltmeter[0], neuron[1])
+nest.Connect(voltmeter[1], neuron[2])
 
 ###############################################################################
 # This loop runs over the `n_trials` trials and performs a standard protocol
 # of a high-rate response, followed by a pause and then a recovery response.
 
 for t in range(n_trials):
-    nest.SetStatus([neuron[0]], "I_e", 376.0)
+    nest.SetStatus(neuron[0], "I_e", 376.0)
     nest.Simulate(500.0)
-    nest.SetStatus([neuron[0]], "I_e", 0.0)
+    nest.SetStatus(neuron[0], "I_e", 0.0)
     nest.Simulate(1000.0)
 
 ###############################################################################
@@ -169,9 +169,8 @@ nest.Simulate(.1)
 
 ###############################################################################
 # Extract the reference trace.
-
-vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus(voltmeter[0], 'events')[0]['V_m'])
 
 vm.shape = (n_trials, 1500)
 vm_reference.shape = (n_trials, 1500)
@@ -181,7 +180,7 @@ vm_reference.shape = (n_trials, 1500)
 
 vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                          for (i, j) in enumerate(vm_reference[0, :])])
+                           for (i, j) in enumerate(vm_reference[0, :])])
 pylab.plot(vm_mean)
 pylab.plot(vm_ref_mean)
 

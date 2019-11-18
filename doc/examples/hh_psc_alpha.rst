@@ -39,7 +39,7 @@ does not yet check correctness of synaptic response.
     neuron = nest.Create('hh_psc_alpha')
     sd = nest.Create('spike_detector')
 
-    nest.SetStatus(sd, {'to_memory': False})
+    nest.SetStatus(sd)
 
     nest.Connect(neuron, sd, syn_spec={'weight': 1.0, 'delay': h})
 

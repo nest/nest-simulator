@@ -132,7 +132,7 @@ fail_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -162,7 +162,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -215,7 +215,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -250,7 +250,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -313,7 +313,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd Connect
 
   10.0 Simulate
@@ -347,7 +347,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /precise_times true /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -383,7 +383,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /precise_times true /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -489,7 +489,7 @@ assert_or_die
      >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps false >> SetStatus
+  sd << /time_in_steps false >> SetStatus
 
   sg sd 1.0 1.0 Connect
 

@@ -1,16 +1,17 @@
 Guides
 ==============
 
-Here you can find detailed look into a variety of topics in NEST.
+Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
 
     connection_management
     running_simulations
+    stimulating_the_network
+    recording_from_simulations
     parallel_computing
     random_numbers
-    analog_recording_with_multimeter
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music

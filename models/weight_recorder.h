@@ -23,7 +23,6 @@
 #ifndef WEIGHT_RECORDER_H
 #define WEIGHT_RECORDER_H
 
-
 // C++ includes:
 #include <vector>
 
@@ -35,38 +34,45 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
+/* BeginDocumentation
+
+Recording weights from synapses
+###############################
+
+The change in synaptic weights over time is a key observable property in
+studies of plasticity in neuronal network models. To access this information, the
+``weight_recorder`` can be used. In contrast to other recording
+devices, which are connected to a specific set of neurons, the weight
+recorder is instead set as a parameter in the synapse model.
+
+After assigning an instance of a weight recorder to the synapse model
+by setting its ``weight_recorder`` property, the weight
+recorder collects the global IDs of source and target neurons together
+with the weight for each spike event that travels through the observed
+synapses.
+
+To only record from a subset of connected synapses, the
+weight recorder accepts GIDCollections in the parameters ``senders`` and
+``targets``. If set, they restrict the recording of data to only
+synapses that fulfill the given criteria.
+
+::
+
+   >>> wr = nest.Create('weight_recorder')
+   >>> nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
+
+   >>> pre = nest.Create("iaf_psc_alpha", 10)
+   >>> post = nest.Create("iaf_psc_alpha", 10)
+
+   >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+
+
+EndDocumentation */
+
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
-
-Name: weight_recorder - Device for detecting single spikes.
-
-Description:
-
-The weight_recorder device is a recording device. It is used to record
-weights from synapses. Data is recorded in memory or to file as for all
-RecordingDevices.
-By default, source GID, target GID, time and weight of each spike is recorded.
-
-In order to record only from a subset of connected synapses, the
-weight_recorder accepts the parameters 'senders' and 'targets', with which the
-recorded data is limited to the synapses with the corresponding source or target
-gid.
-
-The weight recorder can also record weights with full precision
-from neurons emitting precisely timed spikes. Set /precise_times to
-achieve this.
-
-Data is not necessarily written to file in chronological order.
-
-Receives: WeightRecordingEvent
-
-SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
-*/
-class weight_recorder : public DeviceNode
+class weight_recorder : public RecordingDevice
 {
 
 public:
@@ -104,28 +110,15 @@ public:
 
   port handles_test_event( WeightRecorderEvent&, rport );
 
+  Type get_type() const;
   SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( Node const& );
-  void init_buffers_();
   void calibrate();
-  void post_run_cleanup();
-  void finalize();
   void update( Time const&, const long, const long );
-
-  struct Buffers_
-  {
-    std::vector< WeightRecorderEvent > events_;
-  };
-
-  RecordingDevice device_;
-  Buffers_ B_;
-
-  bool user_set_precise_times_;
 
   struct Parameters_
   {
@@ -135,7 +128,7 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void set( const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -149,18 +142,6 @@ weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
-}
-
-inline void
-weight_recorder::post_run_cleanup()
-{
-  device_.post_run_cleanup();
-}
-
-inline void
-weight_recorder::finalize()
-{
-  device_.finalize();
 }
 
 inline SignalType

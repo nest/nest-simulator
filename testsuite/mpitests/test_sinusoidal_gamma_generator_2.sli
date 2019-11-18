@@ -72,10 +72,7 @@ skip_if_not_threaded
     ;
     /sinusoidal_gamma_generator Create
   } Table def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread

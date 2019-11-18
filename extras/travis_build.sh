@@ -87,6 +87,14 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xSIONLIB" = "1" ] ; then
+    CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
+    chmod +x extras/install_sionlib.sh
+    ./extras/install_sionlib.sh
+else
+    CONFIGURE_SIONLIB="-Dwith-sionlib=OFF"
+fi
+
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
@@ -248,6 +256,7 @@ cmake \
     $CONFIGURE_GSL \
     $CONFIGURE_LTDL \
     $CONFIGURE_READLINE \
+    $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
     ..
 

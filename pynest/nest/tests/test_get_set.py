@@ -159,8 +159,8 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(single_sd.get('start'), 0.0)
 
         # Single node, array parameter
-        self.assertEqual(single_sd.get(['start', 'to_file']),
-                         {'start': 0.0, 'to_file': False})
+        self.assertEqual(single_sd.get(['start', 'time_in_steps']),
+                         {'start': 0.0, 'time_in_steps': False})
 
         # Single node, hierarchical with literal parameter
         np.testing.assert_array_equal(single_sd.get('events', 'times'),
@@ -192,12 +192,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get()
-        self.assertEqual(len(values.keys()), 36)
+        num_values_single_sd = len(values.keys())
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get()
-        self.assertEqual(len(values.keys()), 36)
+        self.assertEqual(len(values.keys()), num_values_single_sd)
         self.assertEqual(values['start'],
                          tuple(0.0 for i in range(len(multi_sd))))
 
@@ -273,12 +273,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
-        self.assertEqual(values.shape, (1, 36))
+        num_values_single_sd = values.shape[1]
         self.assertEqual(values['start'][tuple(single_sd.tolist())[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get(output='pandas')
-        self.assertEqual(values.shape, (len(multi_sd), 36))
+        self.assertEqual(values.shape, (len(multi_sd), num_values_single_sd))
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
                                               for key in tuple(multi_sd.tolist())},
@@ -291,7 +291,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(40)
+        nest.Simulate(39)
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
@@ -366,12 +366,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = json.loads(single_sd.get(output='json'))
-        self.assertEqual(len(values), 36)
+        num_values_single_sd = len(values)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = json.loads(multi_sd.get(output='json'))
-        self.assertEqual(len(values), 36)
+        self.assertEqual(len(values), num_values_single_sd)
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
         # With data in events
@@ -380,7 +380,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(40.)
+        nest.Simulate(39)
 
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}

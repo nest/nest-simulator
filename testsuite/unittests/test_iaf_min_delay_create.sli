@@ -69,7 +69,6 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
   dc_gen <<  /amplitude 1000. >> SetStatus
 
   /voltmeter Create /vm Set
-  vm << /withtime true >> SetStatus
 
   % must connect with explicit delay to assure
   % consistency as min_delay varies      

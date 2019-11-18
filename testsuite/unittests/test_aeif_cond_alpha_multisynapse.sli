@@ -88,8 +88,8 @@ sg << /spike_times [spike_time] >> SetStatus
 
  	sg singlesynapse_neuron /one_to_one << /synapse_model /static_synapse /delay delay_var /weight weight_var >> Connect
  	/voltmeter Create /vm_for_single_synapse_neuron Set
- 	vm_for_single_synapse_neuron << /withtime true /time_in_steps true /interval 0.1 /precision 5 >> SetStatus
-
+ 	vm_for_single_synapse_neuron << /time_in_steps true /interval 0.1 >> SetStatus
+ 
 	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  	vm_for_single_synapse_neuron
 
@@ -97,7 +97,8 @@ sg << /spike_times [spike_time] >> SetStatus
 
 % Create one voltmeter for the multi synapse neuron
 /voltmeter Create /vm Set
-vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5 >> SetStatus
+vm << /time_in_steps true /interval dt >> SetStatus
+
 % Create one aeif_conf_alpha_multisynapse
 /aeif_cond_alpha_multisynapse Create /multisynapse_neuron Set
 multisynapse_neuron << /tau_syn tau_syn_ex /E_rev E_rev >> SetStatus
@@ -173,10 +174,12 @@ append
   ResetKernel
 
   /nrn /aeif_cond_alpha_multisynapse Create def
-
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
-
+  
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /w /g_1 ]
+		  >> Create def
+  
   mm nrn Connect
 
   /len nrn /recordables get length def
@@ -281,8 +284,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 3 conductance channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /g_1 /g_2 /g_3 /g_4 ]
+		  >> Create def
 
   mm nrn Connect
 

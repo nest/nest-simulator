@@ -75,10 +75,10 @@ resolutions = [0.1, 0.5, 1.0]  # ms
 # Now, we simulate the two versions of the neuron models (i.e. discrete-time:
 # ``iaf_psc_exp``; precise: ``iaf_psc_exp_ps``) for each of the defined
 # resolutions. The neurons use their default parameters and we stimulate them
-# by injecting a current using a ``dc_generator`` device. The membrane potential
-# is recorded by a ``voltmeter``, the spikes are recorded by a ``spike_detector``,
-# whose property ``precise_times`` is set to `True`. The data is stored in a
-# dictionary for later use.
+# by injecting a current using a ``dc_generator`` device. The membrane
+# potential is recorded by a ``voltmeter``, the spikes are recorded by
+# a ``spike_detector``.  The data is stored in a dictionary for later
+# use.
 
 
 data = {}
@@ -92,7 +92,7 @@ for h in resolutions:
         neuron = nest.Create(model)
         voltmeter = nest.Create("voltmeter", params={"interval": h})
         dc = nest.Create("dc_generator", params={"amplitude": stim_current})
-        sd = nest.Create("spike_detector", params={"precise_times": True})
+        sd = nest.Create("spike_detector")
 
         nest.Connect(voltmeter, neuron)
         nest.Connect(dc, neuron)

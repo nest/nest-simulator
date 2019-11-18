@@ -63,6 +63,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
 
     return cross
 
+
 nest.ResetKernel()
 
 h = 0.1             # Computation step size in ms
@@ -83,9 +84,7 @@ nest.SetStatus(mg, {'rate': nu, 'p_copy': pc})
 cd = nest.Create('correlation_detector')
 nest.SetStatus(cd, {'tau_max': tau_max, 'delta_tau': delta_tau})
 
-sd = nest.Create('spike_detector')
-nest.SetStatus(sd, {'withtime': True,
-                    'withgid': True, 'time_in_steps': True})
+sd = nest.Create('spike_detector', params={'time_in_steps': True})
 
 pn1 = nest.Create('parrot_neuron')
 pn2 = nest.Create('parrot_neuron')

@@ -77,7 +77,7 @@ precise_models
     ResetKernel
     /sg /spike_generator << /spike_times [ 10. ] >> Create def
     /n model Create def
-    /sd /spike_detector << /withtime true /precise_times true >> Create def
+    /sd /spike_detector Create def
     
     sg n 10000. 1. Connect
     n sd Connect

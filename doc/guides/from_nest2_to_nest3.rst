@@ -5,13 +5,13 @@ From NEST 2.x to NEST 3.0
    :local:
    :depth: 2
 
+
+NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
+perform operations that were not possible in previous versions.
+
 .. seealso::
 
   See the :doc:`../nest-3/nest2_vs_3` to see a full list of functions that have changed
-
-
-NEST 3.0 introduces a more object-oriented approach to node and connection handling. The changes will allow you to
-perform operations that were not possible in previous versions.
 
 
 ..   NEST 3.0 introduces a number of new features and concepts, and some changes
@@ -29,13 +29,11 @@ What's new?
 
 .. _gid:
 
-Compact and flexible container for node handles (neurons, devices)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+New functionality for node handles (neurons and devices)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
-This object-oriented approach provides ia much more memory-efficient and powerful representation of node handles.
-
-Direct  access to node properties
+This provides a more compact and flexible container for node handles.
 
 
 .. note::
@@ -51,9 +49,9 @@ NEST 3.0 supports the following functionality
 -  :ref:`Slicing <slicing>`
 -  :ref:`Getting the size <get_size>` ``len``
 -  :ref:`Conversion to and from lists <converting_lists>`
--  :ref:`Joining of two non-overlapping NodeCollections <joining>`  >> composing
--  :ref:`Testing whether one NodeCollection is equal to another <testing_equality>` (contains the
-   same GIDs) >> testing of equality
+-  :ref:`Composing two non-overlapping NodeCollections <composing>`
+-  :ref:`Testing for equality <testing_equality>` (contains the
+   same GIDs)
 -  :ref:`Testing of membership <testing_membership>`
 -  Access to node properties with :ref:`get_param` and  :ref:`set_param` and direct attributes (dot notation e.g.)
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
@@ -155,13 +153,14 @@ Conversion to and from lists
     Note however that the nodes have to already have been created. If any
     of the GIDs refer to nodes that are not created, an error is thrown.
 
-.. _joining:
+.. _composing:
 
-Joining
-    When joining two NodeCollections, NEST tries to concatenate the
-    primitives into a single primitive.
+Composing
+    When composing two NodeCollections, NEST tries to concatenate the
+    two into a single NodeCollection.
 
 
+    >>>  nrns = nest.Create('iaf_psc_alpha', 10)
     >>>  nrns_2 = nest.Create('iaf_psc_alpha', 3)
     >>>  print(nrns + nrns_2)
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
@@ -174,7 +173,7 @@ Joining
                       model=iaf_psc_alpha, size=10, first=1, last=10;
                       model=iaf_psc_delta, size=3, first=14, last=16)
 
-    Note that joining NodeCollections that overlap or that contain metadata
+    Note that composing NodeCollections that overlap or that contain metadata
     (see section on Topology) is impossible.
 
 .. _testing_equality:
@@ -199,12 +198,10 @@ Test of membership
 
 .. _get_param:
 
-get()
-~~~~~~
+Get the node status
+~~~~~~~~~~~~~~~~~~~~~~
 
-Getting node status
-
-``get`` Returns all parameters in the collection in a dictionary
+``get()`` Returns all parameters in the collection in a dictionary
 with lists.
 
 Get the parameters of the first 3 nodes
@@ -282,10 +279,10 @@ implemented):
 
 .. _set_param:
 
-set()
-~~~~~~
+Set the node status
+~~~~~~~~~~~~~~~~~~~~~~~
 
-We can set the the values of a parameter by iterating over each node
+`set()`` the values of a parameter by iterating over each node
 
 * ``nodes.set(parameter_name, parameter_value)``
 * ``nodes.set(parameter_name, [parameter_val_1, parameter_val_2, ... , parameter_val_n])``
@@ -365,8 +362,8 @@ We can create a composite NodeCollection (i.e., a non-contiguous or non-homogeno
 
 .. _connectome:
 
-SynapseCollection
-~~~~~~~~~~
+New functionality for handling connections (synapses)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Just like a NodeCollection is a container for GIDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
@@ -464,8 +461,7 @@ Getting connection parameters
     ::
 
         connectome.get()  # Returns a dictionary of all parameters
-        >>> connectome[0].get('weight')  # Returns the weight value of the first connection
-            1.0
+        connectome[0].get('weight')  # Returns the weight value of the first connection
         connectome.get('delay')  # Returns a list of delays
         connectome.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
 

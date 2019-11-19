@@ -5,7 +5,7 @@
 .. role:: magenta
 .. role:: pink
 .. role:: orange
-.. role:: lime
+.. role:: darkgreen
 .. role:: green
 .. role:: teal
 .. role:: cyan

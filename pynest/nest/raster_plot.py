@@ -140,10 +140,7 @@ def from_file_pandas(fname, **kwargs):
     """Use pandas."""
     data = None
     for f in fname:
-        dataFrame = pandas.read_csv(
-            f, sep=r'\s+', lineterminator='\n',
-            header=None, index_col=None,
-            skipinitialspace=True)
+        dataFrame = pandas.read_table(f, header=2, skipinitialspace=True)
         newdata = dataFrame.values
 
         if data is None:
@@ -158,7 +155,7 @@ def from_file_numpy(fname, **kwargs):
     """Use numpy."""
     data = None
     for f in fname:
-        newdata = numpy.loadtxt(f)
+        newdata = numpy.loadtxt(f, skiprows=3)
 
         if data is None:
             data = newdata

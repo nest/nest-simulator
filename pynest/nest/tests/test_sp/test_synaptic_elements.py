@@ -96,5 +96,6 @@ def suite():
     test_suite = unittest.makeSuite(TestSynapticElements, 'test')
     return test_suite
 
+
 if __name__ == '__main__':
     unittest.main()

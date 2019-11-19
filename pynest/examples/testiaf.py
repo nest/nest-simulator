@@ -55,6 +55,7 @@ import pylab
 # neuron and the neuron to the spike detector because the neuron sends spikes
 # to the detector and the voltmeter 'observes' the neuron.
 
+
 def build_network(dt):
 
     nest.ResetKernel()

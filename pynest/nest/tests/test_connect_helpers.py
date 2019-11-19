@@ -103,7 +103,7 @@ def get_connectivity_matrix(pop1, pop2):
         index_dic[node.get('global_id')] = count
     for count, node in enumerate(pop2):
         index_dic[node.get('global_id')] = count
-    for source, target in zip(connections.source(), connections.target()):
+    for source, target in zip(connections.sources(), connections.targets()):
         M[index_dic[target]][index_dic[source]] += 1
     return M
 

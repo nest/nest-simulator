@@ -314,10 +314,10 @@ def build_network(logger):
                  {'rule': 'fixed_indegree', 'indegree': CI,
                   'allow_autapses': False, 'allow_multapses': True},
                  {'model': 'syn_in'})
-                  
+
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
-    
+
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
                   'allow_autapses': False, 'allow_multapses': True},
@@ -485,6 +485,7 @@ class Logger(object):
     def __exit__(self, exc_type, exc_val, traceback):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
+
 
 if __name__ == '__main__':
     run_simulation()

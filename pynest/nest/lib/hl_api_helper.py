@@ -580,7 +580,6 @@ def to_json(data):
     return data_json
 
 
-
 def restructure_data(result, keys):
     """
     Restructure list of status dictionaries or list of parameter values to dict with lists or single list or int.
@@ -716,7 +715,7 @@ class SuppressedDeprecationWarning(object):
         self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
                               else (no_dep_funcs, ))
         self._deprecation_status = {}
-        sr('verbosity') # Use sli-version as we cannon import from info because of cirular inclusion problem
+        sr('verbosity')  # Use sli-version as we cannon import from info because of cirular inclusion problem
         self._verbosity_level = spp()
 
     def __enter__(self):

@@ -213,7 +213,7 @@ set_communicator( PyObject* pyobj )
   import_mpi4py();
 
   // If object is not a mpi4py communicator, bail
-  if ( !PyObject_TypeCheck( pyobj, &PyMPIComm_Type ) )
+  if ( not PyObject_TypeCheck( pyobj, &PyMPIComm_Type ) )
   {
     throw nest::KernelException( "set_communicator: argument is not a mpi4py communicator" );
   }

@@ -55,9 +55,9 @@ struct basic_spike
   {
   }
 
-  friend bool operator==( const basic_spike& l, const basic_spike& r )
+  friend bool operator==( const basic_spike& left, const basic_spike& right )
   {
-    return l.time == r.time && l.source == r.source;
+    return left.time == right.time && left.source == right.source;
   }
 };
 
@@ -152,7 +152,7 @@ get_comm_info( bool is_arbor, MPI_Comm comm )
 
   comm_info info;
   info.is_arbor = is_arbor;
-  info.is_nest = !is_arbor;
+  info.is_nest = not is_arbor;
 
   info.global_rank = mpi_rank( MPI_COMM_WORLD );
   info.global_size = mpi_size( MPI_COMM_WORLD );
@@ -177,9 +177,9 @@ get_comm_info( bool is_arbor, MPI_Comm comm )
   {
     auto it = std::adjacent_find( x.begin(),
       x.end(),
-      []( int l, int r )
+      []( int left, int right )
       {
-        return ( r - l ) != 1;
+        return ( right - left ) != 1;
       } );
     return it == x.end() ? x.back() + 1 : ( *it ) + 1;
   };

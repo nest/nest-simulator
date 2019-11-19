@@ -463,5 +463,6 @@ class Logger(object):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
 
+
 if __name__ == '__main__':
     run_simulation()

@@ -1458,7 +1458,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
   for ( int k = 0; k < M; k++ )
   {
-    if ( number_of_targets_on_vp[ k ] > 0 )
+    if ( number_of_targets_on_vp[ k ] > 0 and sum_partitions != N_ )
     {
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
       double p_local = num_local_targets / ( size_targets - sum_dist );

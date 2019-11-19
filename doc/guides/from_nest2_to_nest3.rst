@@ -18,7 +18,7 @@ perform operations that were not possible in previous versions.
    to the user interface that are not backwards compatible. One big change is
    the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
    neurons, we now use the powerful :ref:`NodeCollections <gid>`, which will be
-   presented below. Other big features include :ref:`connectome` objects to
+   presented below. Other big features include :ref:`SynapseCollection` objects to
    efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
    nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
 
@@ -360,7 +360,7 @@ We can create a composite NodeCollection (i.e., a non-contiguous or non-homogeno
                model=iaf_psc_alpha, size=1, first=3;
                model=iaf_psc_alpha, size=1, first=7)
 
-.. _connectome:
+.. _SynapseCollection:
 
 New functionality for handling connections (synapses)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,14 +382,14 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full example <../examples/connectome>` in our example network page
+    You can find a :doc:`full example <../examples/SynapseCollection>` in our example network page
 
 
 Printing
     Printing a SynapseCollection produces a table of source and target GIDs
 
-    >>>  connectome = nest.GetConnections()
-    >>>  print(connectome)
+    >>>  SynapseCollection = nest.GetConnections()
+    >>>  print(SynapseCollection)
          *--------*-------------*
          | source | 1, 1, 2, 2, |
          *--------*-------------*
@@ -401,7 +401,7 @@ Printing
 Indexing
     Indexing returns a SynapseCollection with a single connection.
 
-    >>>  print(connectome[1])
+    >>>  print(SynapseCollection[1])
          *--------*----*
          | source | 1, |
          *--------*----*
@@ -419,7 +419,7 @@ Iteration
 Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
-    >>>  print(connectome[0:3:2])
+    >>>  print(SynapseCollection[0:3:2])
          *--------*-------*
          | source | 1, 1, |
          *--------*-------*
@@ -440,9 +440,9 @@ Getting the size
         layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
 
         nest.Connect(layer, layer)
-        connectome = nest.GetConnections()
+        SynapseCollection = nest.GetConnections()
 
-    >>>    len(connectome)
+    >>>    len(SynapseCollection)
            100
 
 
@@ -460,10 +460,10 @@ Getting connection parameters
 
     ::
 
-        connectome.get()  # Returns a dictionary of all parameters
-        connectome[0].get('weight')  # Returns the weight value of the first connection
-        connectome.get('delay')  # Returns a list of delays
-        connectome.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
+        SynapseCollection.get()  # Returns a dictionary of all parameters
+        SynapseCollection[0].get('weight')  # Returns the weight value of the first connection
+        SynapseCollection.get('delay')  # Returns a list of delays
+        SynapseCollection.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
 
     It is also possible to select an alternative output format with the
     ``output`` keyword. Currently it is possible to get the output in a
@@ -471,8 +471,8 @@ Getting connection parameters
 
     ::
 
-        connectome.get(output='json')  # returns a string in json format
-        connectome.get(output='pandas')  # returns a Pandas DataFrame
+        SynapseCollection.get(output='json')  # returns a string in json format
+        SynapseCollection.get(output='pandas')  # returns a Pandas DataFrame
 
 .. _conn_set:
 
@@ -481,12 +481,12 @@ Setting connection parameters
 
     ::
 
-        connectome.set('delay', 2.0)  # Sets all delays to 2.0
-        connectome.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
-        connectome.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
+        SynapseCollection.set('delay', 2.0)  # Sets all delays to 2.0
+        SynapseCollection.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
+        SynapseCollection.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
 
 Getting an iterator over the sources or targets
-    Calling ``connectome.source()`` or ``connectome.target()`` returns an
+    Calling ``SynapseCollection.source()`` or ``SynapseCollection.target()`` returns an
     iterator over the source GIDs or target GIDs, respectively.
 
 .. _param_ex:

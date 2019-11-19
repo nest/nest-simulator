@@ -276,7 +276,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
         << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
-  file_ << std::fixed << std::setprecision( precision_ ) << "# sender" << timehead;
+  file_ << std::fixed << std::setprecision( precision_ ) << "sender" << timehead;
   for ( auto& val : double_value_names_ )
   {
     file_ << "\t" << val;

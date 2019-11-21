@@ -12,9 +12,9 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. (Minimal) reproducing example
+2. Used parameters
+3. Command to run
 4. See error
 
 **Expected behavior**
@@ -23,16 +23,15 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Desktop/Environment (please complete the following information):**
+ - OS: [e.g. iOS, Ubuntu-18.04]
+ - Browser [if applicable, e.g. chrome, safari]
+ - Shell: [e.g. bash, powershell]
+ - NEST-Version: [e.g. nest-2.18, or git hash]
+ - Installation: [e.g. conda packet, apt, with/out MPI, ...]
+   (in case of manual compile from sources provide the
+    "Installation Summary" that you see at the end of the 
+    cmake step)
 
 **Additional context**
 Add any other context about the problem here.

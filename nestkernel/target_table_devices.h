@@ -104,6 +104,8 @@ public:
    * Sends a spike event to all targets of the source neuron.
    */
   void send_to_device( const thread tid, const index s_gid, Event& e, const std::vector< ConnectorModel* >& cm );
+  void
+  send_to_device( const thread tid, const index s_gid, SecondaryEvent& e, const std::vector< ConnectorModel* >& cm );
 
   /**
    * Sends a spike event to all targets of the source device.

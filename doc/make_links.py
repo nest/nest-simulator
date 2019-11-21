@@ -33,13 +33,13 @@ import glob, os
 import re
 import ast
 
-# Find all occurrences in doc/ of rst files that need to be replaced by correct mark up to create a link 
+# Find all occurrences in doc/ of rst files that need to be replaced by correct mark up to create a link
 def replace_rst(k,v):
     log.info("replacing " + k)
     return
     file_out = "tmp.rst"
 
-    old_pattern = "``" + k + "\W+"
+    old_pattern = "``\w?" + k + "\W+"
     for file in glob.glob("**/*.rst", recursive=True):
         with open(file, "rt") as fin:
             with open(file_out, "wt") as fout:
@@ -76,31 +76,3 @@ with open('glossary.rst') as a, open ('topology/Topology_UserManual.rst') as b:
                 replace_rst(term, gloss_pattern)
 
 
-
-#key = re.compile('^class')
- ## Create the pattern for finding match and replacing it with correct syntax
-#def link_pyapi(functionNode):
-#    pynest_pattern = "``" + functionNode.name + "``"
-#    new_pynest_pattern = ":py:func:`." + functionNode.name + "`"
-#    replace_rst(pynest_pattern, new_pynest_pattern)
-#    for arg in functionNode.args.args:
-#        param_pattern = "``" + arg.arg + "``"
-#        new_param_pattern = ":py:func:`" + arg.arg + " <." + functionNode.name +">`"
-#        #replace_rst(param_pattern, new_param_pattern)
-#
-#def link_model(cppModel):
-#    model_pattern = "``" + cppModel + "``"
-#    new_model_pattern = ":cpp:class:`" + cppModel + " <nest::" + cppModel + ">`"
-#    replace_rst(model_pattern, new_model_pattern)
-#
-#def link_term(item):
-#    gloss_pattern = "``" + item + "``"
-#    new_gloss_pattern = ":term:`" + item + "`"
-##    for i, line in enumerate(open(file)):
-#            if key.match(line):
-#                i = str(i)
-#                models = [line.split(' ')[1]]
-#                for model in models:
-#                    link_model(model)
-
-#    replace_rst(gloss_pattern, new_gloss_pattern)

@@ -33,46 +33,66 @@ import glob, os
 import re
 import ast
 
-# Find all occurrences in doc/ of rst files that need to be replaced by correct mark up to create a link
-def replace_rst(k,v):
-    log.info("replacing " + k)
-    return
+def replace_rst(keywords, replacement):
+    '''
+    Find all occurrences in doc/ of rst files that need to be replaced by
+    correct mark up to create a link
+    '''
     file_out = "tmp.rst"
+    regex = r'``(%s)(\(\))?``'           # HERE FIXME THIS IS BROKEN
 
-    old_pattern = "``\w?" + k + "\W+"
     for file in glob.glob("**/*.rst", recursive=True):
-        with open(file, "rt") as fin:
-            with open(file_out, "wt") as fout:
-                for line in fin:
-                    if re.match(old_pattern, line):
-                        #log.debug("Filename:" + file + "\n" + line)
-                    #fout.write(line.replace(k,v))
-        os.rename(file_out, file)
+        #log.info("replacing keywords in " + file)
+        with open(file, "rt") as fin, open(file_out, "wt") as fout:
+            for lineno, line in enumerate(fin):
+                for keyword in sorted(keywords, key=len, reverse=True):
+                    badpattern = re.compile(regex % keyword)
+                    if not badpattern.search(line): continue
+                    log.debug("    %s:%d: %s", file, lineno+1, line.rstrip())
+                    log.debug("    %s:%d: %s", file, lineno+1, badpattern.sub(replacement, line).rstrip())
+                    #fout.write(line.replace(keyword, replacement))
+        #os.rename(file_out, file)
 
-# search the python modules and return the function names
-for file in glob.glob("../pynest/nest/lib/*.py"):
-    with open(file) as f:
-        node = ast.parse(f.read())
-        functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
-        for function in functions:
-           pypattern = ":py:func:`." + function.name + "`"
-           replace_rst(function.name, pypattern)
+def allfuncnames(fileglob="../pynest/nest/lib/*.py"):
+    '''
+    search the python modules and return the function names
+    '''
+    for file in glob.glob(fileglob):
+        with open(file) as f:
+            node = ast.parse(f.read())
+            functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
+            for function in functions:
+                yield function.name
 
-# get the names of all the models
-for file in glob.glob("../models/*.h"):
-    filename_w_ext = os.path.basename(file)
-    filename, extension = os.path.splitext(filename_w_ext)
-    cpp_pattern = ":cpp:class:`" + filename + " <nest::" + filename + ">`"
-    replace_rst(filename, cpp_pattern)
+def allmodelnames(fileglob="../models/*.h"):
+    '''
+    get the names of all the models
+    '''
+    for file in glob.glob(fileglob):
+        filename, extension = os.path.splitext( os.path.basename(file))
+        yield filename
 
-glossary_terms = re.compile('^ [a-zA-Z]')
-# get all the glossary terms
-with open('glossary.rst') as a, open ('topology/Topology_UserManual.rst') as b:
-    for line in a or b:
-        if glossary_terms.match(line):
-            terms = [line.strip()]
-            for term in terms:
-                gloss_pattern = ":term:`" + term + "`"
-                replace_rst(term, gloss_pattern)
+def allglossterms():
+    '''
+    get all the glossary terms
+    '''
+    glossary_terms = re.compile('^ [a-zA-Z]')
+    with open('glossary.rst') as a, open ('topology/Topology_UserManual.rst') as b:
+        for line in a or b:
+            if glossary_terms.match(line):
+                terms = [line.strip()]
+                for term in terms:
+                    yield term
+
+funcnames = set(allfuncnames())
+modelnames = set(allmodelnames())
+glossterms = set(allglossterms())
+
+overlap = funcnames.intersection(modelnames.union(glossterms))
+print("duplicates: %s" % overlap)
+assert len(funcnames) + len(modelnames) + len(glossterms) == len(funcnames.union(modelnames, glossterms))
+replace_rst(funcnames, ":py:func:`.\g<1>`")
+replace_rst(modelnames, ":cpp:class:`\g<1> <nest::\g<1>>`")
+replace_rst(glossterms, ":term:`\g<1>`")
 
 

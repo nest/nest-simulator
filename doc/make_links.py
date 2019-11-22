@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # make_links.py
@@ -25,15 +26,29 @@
 # Search restructured text files for those terms, functions, and models with specific markup and
 # replace with proper link
 # >> RUN THIS TO MAKE SURE NO DUPLICATES  make_links.py | sort | uniq -c | sort -g
-import logging
-log = logging.getLogger()
-logging.basicConfig(level= logging.DEBUG)
+"""
+Usage: make_links.py [options] [<outfile>]
 
+Options:
+    -n, --dry-run     do not do anything, just show what would be done
+    -v, --verbose     give more details what is going on
+    -h, --help        print this text
+"""
+import docopt
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
+from ruamel.yaml import YAML
+yaml = YAML()
+
+from pprint import pformat
 import glob, os
+import sys
 import re
 import ast
 
-def replace_rst(keywords, replacement):
+def replace_rst(keywords, replacement, dryrun=False):
     '''
     Find all occurrences in doc/ of rst files that need to be replaced by
     correct mark up to create a link
@@ -41,8 +56,11 @@ def replace_rst(keywords, replacement):
     file_out = "tmp.rst"
     regex = r'``(%s)(\(\))?``'           # HERE FIXME THIS IS BROKEN
 
+    nsubs = 0
+    nfiles = 0
     for file in glob.glob("**/*.rst", recursive=True):
         #log.info("replacing keywords in " + file)
+        fnsubs = 0
         with open(file, "rt") as fin, open(file_out, "wt") as fout:
             for lineno, line in enumerate(fin):
                 for keyword in sorted(keywords, key=len, reverse=True):
@@ -50,8 +68,18 @@ def replace_rst(keywords, replacement):
                     if not badpattern.search(line): continue
                     log.debug("    %s:%d: %s", file, lineno+1, line.rstrip())
                     log.debug("    %s:%d: %s", file, lineno+1, badpattern.sub(replacement, line).rstrip())
-                    #fout.write(line.replace(keyword, replacement))
-        #os.rename(file_out, file)
+                    fnsubs += 1
+                    line = badpattern.sub(replacement, line)
+                if not dryrun:
+                    fout.write(line)
+        if not dryrun:
+            os.rename(file_out, file)
+        if fnsubs > 0:
+            log.info('%4d replacements in %s', fnsubs, file)
+            nsubs += fnsubs
+            nfiles += 1
+    log.info('%4d replacements in %d files', nsubs, nfiles)
+
 
 def allfuncnames(fileglob="../pynest/nest/lib/*.py"):
     '''
@@ -84,15 +112,47 @@ def allglossterms():
                 for term in terms:
                     yield term
 
-funcnames = set(allfuncnames())
-modelnames = set(allmodelnames())
-glossterms = set(allglossterms())
+def main():
+    args = docopt.docopt(__doc__)
+    if args['--verbose']:
+        log.setLevel(logging.DEBUG)
+    log.debug(pformat(args))
 
-overlap = funcnames.intersection(modelnames.union(glossterms))
-print("duplicates: %s" % overlap)
-assert len(funcnames) + len(modelnames) + len(glossterms) == len(funcnames.union(modelnames, glossterms))
-replace_rst(funcnames, ":py:func:`.\g<1>`")
-replace_rst(modelnames, ":cpp:class:`\g<1> <nest::\g<1>>`")
-replace_rst(glossterms, ":term:`\g<1>`")
+    # find all terms
+    funcnames = set(allfuncnames())
+    modelnames = set(allmodelnames())
+    glossterms = set(allglossterms())
+    log.info("found %s function names", len(funcnames))
+    log.info("found %s model names", len(modelnames))
+    log.info("found %s glossary terms", len(glossterms))
+
+    # dump terms for other uses
+    if args['<outfile>']:
+        log.info('writing lists to %s...', args['<outfile>'])
+        with open(args['<outfile>'], 'w') as outfile:
+            yaml.dump({
+                    'funcnames': funcnames,
+                    'modelnames': modelnames,
+                    'glossterms': glossterms,
+                    }, outfile)
+
+    # consistency checks
+    overlap = funcnames.intersection(modelnames.union(glossterms))
+    log.warning("duplicates: %s", overlap)   # FIXME incomplete list!
+    assert len(funcnames) + len(modelnames) + len(glossterms) == len(funcnames.union(modelnames, glossterms))
+    log.info('no overlapping terms')
+
+    if args["--dry-run"]:
+        log.warning('not doing replacements because dry-run mode was selected')
+    # do actual replacements
+    replace_rst(funcnames, ":py:func:`.\g<1>`", dryrun=args["--dry-run"])
+    replace_rst(modelnames, ":cpp:class:`\g<1> <nest::\g<1>>`", dryrun=args["--dry-run"])
+    replace_rst(glossterms, ":term:`\g<1>`", dryrun=args["--dry-run"])
+
+
+if __name__ == '__main__':
+    main()
+
+
 
 

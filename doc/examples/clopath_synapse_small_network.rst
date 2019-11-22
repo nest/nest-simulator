@@ -11,7 +11,7 @@ Clopath Rule: Bidirectional connections
 -----------------------------------------
 
 This script simulates a small network of ten excitatory and three
-inhibitory ``aeif_psc_delta_clopath`` neurons. The neurons are randomly connected
+inhibitory :cpp:class:`aeif_psc_delta_clopath <nest::aeif_psc_delta_clopath>` neurons. The neurons are randomly connected
 and driven by 500 Poisson generators. The synapses from the Poisson generators
 to the excitatory population and those among the neurons of the network
 are Clopath synapses. The rate of the Poisson generators is modulated with

@@ -268,7 +268,7 @@ size of inhibitory neurons.
 
 In order to save the amount of average calcium concentration in each
 population through time we create the function ``record_ca``. Here we use the
-``GetStatus`` function to retrieve the value of `Ca` for every neuron in the
+:py:func:`.GetStatus` function to retrieve the value of `Ca` for every neuron in the
 network and then store the average.
 
 
@@ -286,7 +286,7 @@ network and then store the average.
 
 
 In order to save the state of the connectivity in the network through time
-we create the function ``record_connectivity``. Here we use the ``GetStatus``
+we create the function ``record_connectivity``. Here we use the :py:func:`.GetStatus`
 function to retrieve the number of connected pre-synaptic elements of each
 neuron. The total amount of excitatory connections is equal to the total
 amount of connected excitatory pre-synaptic elements. The same applies for

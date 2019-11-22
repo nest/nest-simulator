@@ -198,8 +198,8 @@ simulation time.
     print("Building network")
 
 
-Configuration of the model ``iaf_psc_alpha`` and ``poisson_generator`` using
-``SetDefaults``. This function expects the model to be the inserted as a
+Configuration of the model :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` and :cpp:class:`poisson_generator <nest::poisson_generator>` using
+:py:func:`.SetDefaults`. This function expects the model to be the inserted as a
 string and the parameter to be specified in a dictionary. All instances of
 theses models created after this point will have the properties specified
 in the dictionary by default.
@@ -212,7 +212,7 @@ in the dictionary by default.
     nest.SetDefaults("poisson_generator", {"rate": p_rate})
 
 
-Creation of the nodes using ``Create``. We store the returned handles in
+Creation of the nodes using :py:func:`.Create`. We store the returned handles in
 variables for later reference. Here the excitatory and inhibitory, as well
 as the poisson generator and two spike detectors. The spike detectors will
 later be used to record excitatory and inhibitory spikes.
@@ -229,7 +229,7 @@ later be used to record excitatory and inhibitory spikes.
 
 
 Configuration of the spike detectors recording excitatory and inhibitory
-spikes using ``SetStatus``, which expects a list of node handles and a list
+spikes using :py:func:`.SetStatus`, which expects a list of node handles and a list
 of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
 that the spikes will be recorded in a .gdf file starting with the string
 assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
@@ -253,7 +253,7 @@ the spike time in one line.
     print("Connecting devices")
 
 
-Definition of a synapse using ``CopyModel``, which expects the model name of
+Definition of a synapse using :py:func:`.CopyModel`, which expects the model name of
 a pre-defined synapse, the name of the customary synapse and an optional
 parameter dictionary. The parameters defined in the dictionary will be the
 default parameter for the customary synapse. Here we define one synapse for
@@ -273,7 +273,7 @@ previously defined weights and equal delays.
 Connecting the previously defined poisson generator to the excitatory and
 inhibitory neurons using the excitatory synapse. Since the poisson
 generator is connected to all neurons in the population the default rule
-(``all_to_all``) of ``Connect`` is used. The synaptic properties are inserted
+(``all_to_all``) of :py:func:`.Connect` is used. The synaptic properties are inserted
 via ``syn_spec`` which expects a dictionary when defining multiple variables or
 a string when simply using a pre-defined synapse.
 

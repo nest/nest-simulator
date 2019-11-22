@@ -10,12 +10,12 @@
 Sinusoidal poisson generator example
 ------------------------------------
 
-This script demonstrates the use of the ``sinusoidal_poisson_generator``
+This script demonstrates the use of the :cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>`
 and its different parameters and modes. The source code of the model
 can be found in ``models/sinusoidal_poisson_generator.h``.
 
 The script is structured into two parts and creates one common figure.
-In Part 1, two instances of the ``sinusoidal_poisson_generator`` are
+In Part 1, two instances of the :cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>` are
 created with different parameters. Part 2 illustrates the effect of
 the ``individual_spike_trains`` switch.
 
@@ -35,10 +35,10 @@ We import the modules required to simulate, analyze and plot this example.
 
 
 
-We create two instances of the ``sinusoidal_poisson_generator`` with two
-different parameter sets using ``Create``. Moreover, we create devices to
-record firing rates (``Multimeter``) and spikes (``spike_detector``) and connect
-them to the generators using ``Connect``.
+We create two instances of the :cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>` with two
+different parameter sets using :py:func:`.Create`. Moreover, we create devices to
+record firing rates (``Multimeter``) and spikes (:cpp:class:`spike_detector <nest::spike_detector>`) and connect
+them to the generators using :py:func:`.Connect`.
 
 
 .. code-block:: default
@@ -68,8 +68,8 @@ them to the generators using ``Connect``.
 
 
 
-After simulating, the spikes are extracted from the ``spike_detector`` using
-``GetStatus`` and plots are created with panels for the PST and ISI histograms.
+After simulating, the spikes are extracted from the :cpp:class:`spike_detector <nest::spike_detector>` using
+:py:func:`.GetStatus` and plots are created with panels for the PST and ISI histograms.
 
 
 .. code-block:: default
@@ -111,9 +111,9 @@ The kernel is reset and the number of threads set to 4.
 
 
 
-A ``sinusoidal_poisson_generator`` with  ``individual_spike_trains`` set to
+A :cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>` with  ``individual_spike_trains`` set to
 `True` is created and connected to 20 parrot neurons whose spikes are
-recorded by a ``spike_detector``. After simulating, a raster plot of the spikes
+recorded by a :cpp:class:`spike_detector <nest::spike_detector>`. After simulating, a raster plot of the spikes
 is created.
 
 
@@ -142,9 +142,9 @@ is created.
 
 
 The kernel is reset again and the whole procedure is repeated for a
-``sinusoidal_poisson_generator`` with `individual_spike_trains` set to
+:cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>` with `individual_spike_trains` set to
 `False`. The plot shows that in this case, all neurons receive the same
-spike train from the ``sinusoidal_poisson_generator``.
+spike train from the :cpp:class:`sinusoidal_poisson_generator <nest::sinusoidal_poisson_generator>`.
 
 
 .. code-block:: default

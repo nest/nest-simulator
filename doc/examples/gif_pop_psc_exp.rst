@@ -18,7 +18,7 @@ populations, one excitatory and one inhibitory population.
 
 Note that the population model represents the mesoscopic level
 description of the corresponding microscopic network based on the
-NEST model ``gif_psc_exp``.
+NEST model :cpp:class:`gif_psc_exp <nest::gif_psc_exp>`.
 
 References
 ~~~~~~~~~~~
@@ -107,7 +107,7 @@ Simulation on the mesoscopic level
 To directly simulate the mesoscopic population activities (i.e. generating
 the activity of a finite-size population without simulating single
 neurons), we can build the populations using the NEST model
-``gif_pop_psc_exp``:
+:cpp:class:`gif_pop_psc_exp <nest::gif_pop_psc_exp>`:
 
 
 .. code-block:: default
@@ -258,11 +258,11 @@ and plot the activity:
 Microscopic ("direct") simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As mentioned above, the population model ``gif_pop_psc_exp`` directly
+As mentioned above, the population model :cpp:class:`gif_pop_psc_exp <nest::gif_pop_psc_exp>` directly
 simulates the mesoscopic population activities, i.e. without the need to
 simulate single neurons. On the other hand, if we want to know single
 neuron activities, we must simulate on the microscopic level. This is
-possible by building a corresponding network of ``gif_psc_exp`` neuron models:
+possible by building a corresponding network of :cpp:class:`gif_psc_exp <nest::gif_psc_exp>` neuron models:
 
 
 .. code-block:: default
@@ -409,7 +409,7 @@ excitatory population (in Hz):
 
 
 This should look similar to the population activity obtained from the
-mesoscopic simulation based on the NEST model ``gif_pop_psc_exp`` (cf. figure
+mesoscopic simulation based on the NEST model :cpp:class:`gif_pop_psc_exp <nest::gif_pop_psc_exp>` (cf. figure
 1). Now we retrieve the data of the multimeter, which allows us to look at
 the membrane potentials of single neurons. Here we plot the voltage traces
 (in mV) of five example neurons:

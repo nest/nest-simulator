@@ -101,7 +101,7 @@ total simulation time.
     print("Building network")
 
 
-Configuration of the neuron model using ``SetDefaults``.
+Configuration of the neuron model using :py:func:`.SetDefaults`.
 
 
 .. code-block:: default
@@ -110,7 +110,7 @@ Configuration of the neuron model using ``SetDefaults``.
     nest.SetDefaults(neuron_model, neuron_params)
 
 
-Creation of the nodes using ``Create``.
+Creation of the nodes using :py:func:`.Create`.
 
 
 .. code-block:: default
@@ -121,7 +121,7 @@ Creation of the nodes using ``Create``.
 
 
 
-To record from the rate neurons a ``multimeter`` is created and the parameter
+To record from the rate neurons a :cpp:class:`multimeter <nest::multimeter>` is created and the parameter
 ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
 
@@ -134,9 +134,9 @@ To record from the rate neurons a ``multimeter`` is created and the parameter
 
 Specify synapse and connection dictionaries:
 Connections originating from excitatory neurons are associatated
-with a delay `d` (``rate_connection_delayed``).
+with a delay `d` (:cpp:class:`rate_connection_delayed <nest::rate_connection_delayed>`).
 Connections originating from inhibitory neurons are not associatated
-with a delay (``rate_connection_instantaneous``).
+with a delay (:cpp:class:`rate_connection_instantaneous <nest::rate_connection_instantaneous>`).
 
 
 .. code-block:: default

@@ -9,7 +9,7 @@
 Initial membrane voltage
 ----------------------------
 
-Plot several runs of the ``iaf_cond_exp_sfa_rr`` neuron without input for various
+Plot several runs of the :cpp:class:`iaf_cond_exp_sfa_rr <nest::iaf_cond_exp_sfa_rr>` neuron without input for various
 initial values of the membrane potential.
 
 References
@@ -35,21 +35,21 @@ A loop runs over a range of initial membrane voltages.
 In the beginning of each iteration, the simulation kernel is put back to
 its initial state using `ResetKernel`.
 
-Next, a neuron is instantiated with ``Create``. The used neuron model
-``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron with
+Next, a neuron is instantiated with :py:func:`.Create`. The used neuron model
+:cpp:class:`iaf_cond_exp_sfa_rr <nest::iaf_cond_exp_sfa_rr>` is an implementation of a spiking neuron with
 integrate-and-fire dynamics, conductance-based synapses, an additional
 spike-frequency adaptation and relative refractory mechanisms as described
 in [1]_. Incoming spike events induce a post-synaptic change of
-conductance  modeled  by an  exponential  function. ``SetStatus`` allows to
+conductance  modeled  by an  exponential  function. :py:func:`.SetStatus` allows to
 assign the initial membrane voltage of the current loop run to the neuron.
 
-``Create`` is used once more to instantiate a ``voltmeter`` as recording device
-which is subsequently connected to the neuron with ``Connect``.
+:py:func:`.Create` is used once more to instantiate a ``voltmeter`` as recording device
+which is subsequently connected to the neuron with :py:func:`.Connect`.
 
-Then, a simulation with a duration of 75 ms is started with ``Simulate``.
+Then, a simulation with a duration of 75 ms is started with :py:func:`.Simulate`.
 
 When the simulation has finished, the recorded times and membrane voltages
-are read from the voltmeter via ``GetStatus`` where they can be accessed
+are read from the voltmeter via :py:func:`.GetStatus` where they can be accessed
 through the key ``events`` of the status dictionary.
 
 Finally, the time course of the membrane voltages is plotted for each of

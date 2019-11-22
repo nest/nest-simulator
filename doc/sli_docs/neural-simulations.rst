@@ -31,8 +31,8 @@ one neuron:
 
 We are going to simulate a standard integrate and fire model with
 resting potential at -70 mV and spike threshold at -55 mV. In this line,
-we use the model ``iaf_psc_alpha`` to create a neuron. The command
-``Create`` returns a handle to the created neuron, which we store in the
+we use the model :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` to create a neuron. The command
+:py:func:`.Create` returns a handle to the created neuron, which we store in the
 variable ``neuron``.
 
 Next, we would like to add a stimulation and a recording device to the
@@ -97,7 +97,7 @@ We can now run the simulation and expect to see some results:
 
    SLI ] 15.0 Simulate
 
-The command ``Simulate`` runs the simulation for the specified number of
+The command :py:func:`.Simulate` runs the simulation for the specified number of
 milliseconds. Below, you see a transcript of the simulation:
 
 ::
@@ -173,7 +173,7 @@ time of 15.0 ms, we have 150 simulation steps.
 The neuron that we have simulated was a standard *integrate-and-fire*
 neuron [Tuckwell91] with a resting potential of -70 mV and a threshold
 at -55.0 mV. We see the first effect of the DC input current at 1.2 ms.
-This time delay is due to several reasons: The ``dc_generator`` emits
+This time delay is due to several reasons: The :cpp:class:`dc_generator <nest::dc_generator>` emits
 the first current output at the end of the first time step, i.e., at 0.1
 ms. Since the connection between generator and neuron was created with
 the default delay of 1 ms, the current signal arrives at the neuron at
@@ -198,12 +198,12 @@ are defined at the level of the simulation language interpreter.
 Nodes are created from a set of prescribed models which are stored in
 the dictionary ``modeldict``. The most important neuron models are:
 
-Model name Description ``iaf_psc_alpha`` Simple integrate-and-fire
-neuron with alpha-function PSCs. ``iaf_psc_delta`` Integrate-and-fire
-neuron with delta-function PSCs. ``iaf_cond_alpha`` Conductance-based
-integrate-and-fire neuron with alpha-function synapses. ``iaf_cond_exp``
+Model name Description :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` Simple integrate-and-fire
+neuron with alpha-function PSCs. :cpp:class:`iaf_psc_delta <nest::iaf_psc_delta>` Integrate-and-fire
+neuron with delta-function PSCs. :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` Conductance-based
+integrate-and-fire neuron with alpha-function synapses. :cpp:class:`iaf_cond_exp <nest::iaf_cond_exp>`
 Conductance-based integrate-and-fire neuron with exp-function synapses.
-``hh_psc_alpha`` ``hh_cond_exp_traub`` In order to make the models
+:cpp:class:`hh_psc_alpha <nest::hh_psc_alpha>` :cpp:class:`hh_cond_exp_traub <nest::hh_cond_exp_traub>` In order to make the models
 visible to the interpreter, the model dictionary has to be opened.
 
 Creating nodes
@@ -218,7 +218,7 @@ that we have created before.
    Sep 21 10:13:39 Network::clear_models [Info]:
     Models will be cleared and parameters reset.
 
-Nodes are created from a model, using the command ``Create``.
+Nodes are created from a model, using the command :py:func:`.Create`.
 
 ::
 
@@ -226,9 +226,9 @@ Nodes are created from a model, using the command ``Create``.
    1
 
 In the fist line, we create one integrate and fire neuron from the model
-``iaf_psc_alpha``.
+:cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`.
 
-The return value of ``Create`` is an integer that identifies the last
+The return value of :py:func:`.Create` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
 called the node’s *global id* (the network as a whole owns the global id
@@ -283,9 +283,9 @@ layer we have created above:
    --------------------------------------------------
    Total number of entries: 24
 
-Using the command ``SetStatus``, it is possible to change the entries of
+Using the command :py:func:`.SetStatus`, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
-the threshold value ``V_th`` to -60 mV:
+the threshold value :term:`V_th` to -60 mV:
 
 ::
 
@@ -293,7 +293,7 @@ the threshold value ``V_th`` to -60 mV:
    SLI ] 1 GetStatus /V_th get =
    -60
 
-Please note, that ``SetStatus`` checks if a property really exists in a
+Please note, that :py:func:`.SetStatus` checks if a property really exists in a
 node and will issue an error if it doesn’t. This behavior can be changed
 by the following command:
 
@@ -304,7 +304,7 @@ by the following command:
 Then, NEST is very tolerant with respect to the property that you are
 trying to change: If it does not know the property, or if the property
 cannot be changed, there will be no error, but only a warning. In any
-case, ``SetStatus`` does complain if the new value does not match in the
+case, :py:func:`.SetStatus` does complain if the new value does not match in the
 expected type:
 
 ::
@@ -324,7 +324,7 @@ Connections
 
 Connections between nodes define possible channels for interactions
 between them. A connection between two nodes is established, using the
-command ``Connect``.
+command :py:func:`.Connect`.
 
 Each connection has two basic parameters, *weight* and *delay*. The
 weight determines the strength of the connection, the delay determines
@@ -346,7 +346,7 @@ Example 1
 
 To inspect the parameters of a connection, one first needs to obtain a
 handle to the connection. This is done using the command
-``GetConnections``. It takes a dictionary that at least contains the id
+:py:func:`.GetConnections`. It takes a dictionary that at least contains the id
 of the source node and will return a list of handles for all outgoing
 connections. The search can be restricted by using the optional
 parameters *target* and *synapse_type*.
@@ -363,7 +363,7 @@ Example 2
    SLI ] c2 length ==
    1
 
-To actually see the parameters of the connection, ``GetStatus`` is used,
+To actually see the parameters of the connection, :py:func:`.GetStatus` is used,
 just like it is for nodes.
 
 Example 3
@@ -385,7 +385,7 @@ Example 3
    --------------------------------------------------
    Total number of entries: 7
 
-To change the paramters of a connection, ``SetStatus`` is used, just
+To change the paramters of a connection, :py:func:`.SetStatus` is used, just
 like it is for nodes.
 
 Example 4
@@ -409,7 +409,7 @@ this input.
 
 Devices have a built-in timer which controls the period they are active.
 Outside this interval, a device will remain siltent. The timer can be
-configured using the command ``SetStatus``.
+configured using the command :py:func:`.SetStatus`.
 
 By definition a device is active in the interval \\((t_1,t_2)\) , if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
@@ -442,11 +442,11 @@ A range of devices is available for the stimulation of neurons. The most
 important ones are listed in the following table. For details, refer to
 the documentation of the respective decive.
 
-Model name Description ``spike_generator`` Device to generate spikes at
-specific times. ``poisson_generator`` Device to generate poisson
-shotnoise. ``dc_generator`` Device to generate a constant current.
-``ac_generator`` Device to generate an alternating (sine) current.
-``step_current_generator`` Device to generate a step current with
+Model name Description :cpp:class:`spike_generator <nest::spike_generator>` Device to generate spikes at
+specific times. :cpp:class:`poisson_generator <nest::poisson_generator>` Device to generate poisson
+shotnoise. :cpp:class:`dc_generator <nest::dc_generator>` Device to generate a constant current.
+:cpp:class:`ac_generator <nest::ac_generator>` Device to generate an alternating (sine) current.
+:cpp:class:`step_current_generator <nest::step_current_generator>` Device to generate a step current with
 different amplitudes at different times.
 
 Example 5
@@ -464,23 +464,23 @@ Recording devices
 
 All devices which are used to observe the state of other network nodes
 are called recording devices. Examples are ``voltmeter`` and
-``spike_detector``.
+:cpp:class:`spike_detector <nest::spike_detector>`.
 
 Recording devices have properties which control the amount, the format,
 and the destination of their output. All recorders can either dump the
 recorded data to a file (property ``to_file``), print it to the screen
 (property ``to_screen``) or hold the data in memory (property
 ``to_memory``). Data stored in memory can be retrieved after the
-simulation using ``GetStatus``.
+simulation using :py:func:`.GetStatus`.
 
 Device models are also stored in the dictionary ``modeldict``. The most
 important devices are:
 
 Model name Description ``voltmeter`` Device to observe membrane
-potentials. ``multimeter`` Device to observe arbitrary analog
-quantities. ``spike_detector`` Device to observe spike times. Please
+potentials. :cpp:class:`multimeter <nest::multimeter>` Device to observe arbitrary analog
+quantities. :cpp:class:`spike_detector <nest::spike_detector>` Device to observe spike times. Please
 note that the connection direction for analog recorders (all except
-``spike_detector`` in above list) is inverted with respect to other
+:cpp:class:`spike_detector <nest::spike_detector>` in above list) is inverted with respect to other
 recorders.
 
 Example 6

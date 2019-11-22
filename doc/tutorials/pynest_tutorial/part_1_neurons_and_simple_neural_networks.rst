@@ -112,7 +112,7 @@ will work in the default sub-network which is present when we start
 NEST, known as the ``root node``.
 
 To begin with, the root sub-network is empty. New nodes are created with
-the command ``Create``, which takes as arguments the model name of the
+the command :py:func:`.Create`, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
 the initialising parameters. The function returns a list of handles to
 the new nodes, which you can assign to a variable for later use. These
@@ -124,7 +124,7 @@ call.
 After having imported NEST and also the Pylab interface to Matplotlib [4]_,
 which we will use to display the results, we can start reating nodes.
 As a first example, we will create a neuron of type
-``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
+:cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`. This neuron is an integrate-and-fire neuron with
 alpha-shaped postsynaptic currents. The function returns a list of the
 ids of all the created neurons, in this case only one, which we store in
 a variable called ``neuron``.
@@ -149,7 +149,7 @@ Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to ``GetStatus``:
+of keys, as an optional argument to :py:func:`.GetStatus`:
 
 ::
 
@@ -157,14 +157,14 @@ of keys, as an optional argument to ``GetStatus``:
     nest.GetStatus(neuron, ["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a tuple with one element. In the second
+:term:`I_e`; the result is given as a tuple with one element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a nested tuple. If ``GetStatus`` is
+neuron, and receive the result as a nested tuple. If :py:func:`.GetStatus` is
 called for a list of nodes, the dimension of the outer tuple is the
 length of the node list, and the dimension of the inner tuples is the
 number of keys specified.
 
-To modify the properties in the dictionary, we use ``SetStatus``. In the
+To modify the properties in the dictionary, we use :py:func:`.SetStatus`. In the
 following example, the background current is set to 376.0pA, a value
 causing the neuron to spike periodically.
 
@@ -184,7 +184,7 @@ aware that NEST is type sensitive - if a particular property is of type
 will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
 
-Next we create a ``multimeter``, a *device* we can use to record the
+Next we create a :cpp:class:`multimeter <nest::multimeter>`, a *device* we can use to record the
 membrane voltage of a neuron over time. We set its property ``withtime``
 such that it will also record the points in time at which it samples the
 membrane voltage. The property ``record_from`` expects a list of the
@@ -201,7 +201,7 @@ property ``recordables``.
 We now create a ``spikedetector``, another device that records the
 spiking events produced by a neuron. We use the optional keyword
 argument ``params`` to set its properties. This is an alternative to
-using ``SetStatus``. The property ``withgid`` indicates whether the
+using :py:func:`.SetStatus`. The property ``withgid`` indicates whether the
 spike detector is to record the source id from which it received the
 event (i.e. the id of our neuron).
 
@@ -211,7 +211,7 @@ event (i.e. the id of our neuron).
                     params={"withgid": True, "withtime": True})
 
 A short note on naming: here we have called the neuron ``neuron``, the
-multimeter ``multimeter`` and so on. Of course, you can assign your
+multimeter :cpp:class:`multimeter <nest::multimeter>` and so on. Of course, you can assign your
 created nodes to any variable names you like, but the script is easier
 to read if you choose names that reflect the concepts in your
 simulation.
@@ -247,7 +247,7 @@ to form a small network.
    Spikes of the neuron.
 
 
-The order in which the arguments to ``Connect`` are specified reflects
+The order in which the arguments to :py:func:`.Connect` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
 detector. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
@@ -276,7 +276,7 @@ the multimeter.
     ts = dmm["events"]["times"]
 
 In the first line, we obtain the list of status dictionaries for all
-queried nodes. Here, the variable ``multimeter`` is the id of only one
+queried nodes. Here, the variable :cpp:class:`multimeter <nest::multimeter>` is the id of only one
 node, so the returned list just contains one dictionary. We extract the
 first element of this list by indexing it (hence the ``[0]`` at the
 end). This type of operation occurs quite frequently when using PyNEST,
@@ -286,7 +286,7 @@ usual case when setting up neuronal network simulations) more
 convenient.
 
 This dictionary contains an entry named ``events`` which holds the
-recorded data. It is itself a dictionary with the entries ``V_m`` and
+recorded data. It is itself a dictionary with the entries :term:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
@@ -318,7 +318,7 @@ obtain and display the spikes from the spike detector.
     pylab.show()
 
 Here we extract the events more concisely by using the optional keyword
-argument ``keys`` to ``GetStatus``. This extracts the dictionary element
+argument ``keys`` to :py:func:`.GetStatus`. This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
@@ -349,7 +349,7 @@ now connect this newly created neuron to the multimeter:
 
 Run the simulation and plot the results, they will look incorrect. To
 fix this you must plot the two neuron traces separately. Replace the
-code that extracts the events from the ``multimeter`` with the following
+code that extracts the events from the :cpp:class:`multimeter <nest::multimeter>` with the following
 lines.
 
 ::
@@ -371,7 +371,7 @@ Connecting nodes with specific connections
 A commonly used model of neural activity is the Poisson process. We now
 adapt the previous example so that the neuron receives 2 Poisson spike
 trains, one excitatory and the other inhibitory. Hence, we need a new
-device, the ``poisson_generator``. After creating the neurons, we create
+device, the :cpp:class:`poisson_generator <nest::poisson_generator>`. After creating the neurons, we create
 these two generators and set their rates to 80000Hz and 15000Hz,
 respectively.
 
@@ -391,7 +391,7 @@ Additionally, the constant input current should be set to 0:
 Each event of the excitatory generator should produce a postsynaptic
 current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
 weights can be defined in a dictionary, which is passed to the
-``Connect`` function using the keyword ``syn_spec`` (synapse
+:py:func:`.Connect` function using the keyword ``syn_spec`` (synapse
 specifications). In general all parameters determining the synapse can
 be specified in the synapse dictionary, such as ``"weight"``,
 ``"delay"``, the synaptic model (``"model"``) and parameters specific to
@@ -511,7 +511,7 @@ Nodes
 Connections
 ~~~~~~~~~~~
 
-This is an abbreviated version of the documentation for the ``Connect``
+This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
 :doc:`Connection Management <../../guides/connection_management>` for an introduction
 and worked examples.
@@ -550,7 +550,7 @@ Available keys in the synapse dictionary are ``"model"``, ``"weight"``,
 synapse model. All parameters are optional and if not specified will use
 the default values determined by the current synapse model. ``"model"``
 determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via ``CopyModel()``. All
+NEST or manually specified synapses created via :py:func:`.CopyModel`. All
 other parameters can be scalars or distributions. In the case of scalar
 parameters, all keys take doubles except for ``"receptor_type"`` which
 has to be initialised with an integer. Distributed parameters are

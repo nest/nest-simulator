@@ -35,8 +35,8 @@ A minimal example for the exchange of spikes between two independent
 instances of NEST is given in the example
 ``examples/nest/music/minimalmusicsetup.music``.
 
-It sends spikes using the ``music_event_out_proxy`` script and receives the
-spikes using a ``music_event_in_proxy``.
+It sends spikes using the :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>` script and receives the
+spikes using a :cpp:class:`music_event_in_proxy <nest::music_event_in_proxy>`.
 
 ::
 
@@ -78,8 +78,8 @@ continuing.
 
    nest.set_verbosity("M_ERROR")
 
-Next we create a ``spike_generator`` and set the spike times. We then create
-our neuron model (``iaf_psc_alpha``) and connect the neuron with the spike
+Next we create a :cpp:class:`spike_generator <nest::spike_generator>` and set the spike times. We then create
+our neuron model (:cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`) and connect the neuron with the spike
 generator.
 
 ::
@@ -101,9 +101,9 @@ connect it with the neuron.
 
    nest.Connect(vm, n)
 
-Finally, we  create a ``music_event_out_proxy``, which forwards the spikes it
+Finally, we  create a :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>`, which forwards the spikes it
 receives directly to the MUSIC event output port ``spikes_out``. The spike
-generator is connected to the ``music_event_out_proxy`` on channel 0 and the
+generator is connected to the :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>` on channel 0 and the
 network is simulated for 10 milliseconds.
 
 ::
@@ -150,7 +150,7 @@ script, but without the spike generator.
 
 Running the example using ``mpirun -np 2 music minimalmusicsetup.music``
 yields the following output, which shows that the neurons in both
-processes receive the same input from the ``spike_generator`` in the
+processes receive the same input from the :cpp:class:`spike_generator <nest::spike_generator>` in the
 first NEST process and show the same membrane potential trace.
 
 ::
@@ -215,7 +215,7 @@ time stamps. For this example, we use the data file, ``messages0.dat``:
 The script that sets up the receiving side (``msgtest.py``)
 of the example is shown in the following script.
 
-We first import NEST and create an instance of the ``music_message_in_proxy``.
+We first import NEST and create an instance of the :cpp:class:`music_message_in_proxy <nest::music_message_in_proxy>`.
 We then set the name of the port it listens on to ``msgdata``. The network is
 simulated  in steps of 10 ms.
 
@@ -335,7 +335,7 @@ where w is the width of the port. The MUSIC configuration file
 The receiving side is again implemented using a
 :doc:`PyNEST <../tutorials/index>` script (``conttest.py``).
 We first import the NEST and create an instance of the
-``music_cont_in_proxy``. we set the name of the port
+:cpp:class:`music_cont_in_proxy <nest::music_cont_in_proxy>`. we set the name of the port
 it listens on to ``msgdata``. We then simulate the network in
 steps of 10 ms.
 

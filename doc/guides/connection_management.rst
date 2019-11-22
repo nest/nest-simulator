@@ -3,10 +3,10 @@ Connection Management
 
 From NEST 2.4 onwards the old connection routines (i.e.
 ``(Random)ConvergentConnect``, ``(Random)DivergentConnect`` and plain
-``Connect``) are replaced by one unified ``Connect`` function. In
+:py:func:`.Connect`) are replaced by one unified :py:func:`.Connect` function. In
 `SLI <an-introduction-to-sli.md>`__ ,the old syntax of the function
 still works, while in `PyNEST <introduction-to-pynest.md>`__, the
-``Connect()`` function has been renamed to ``OneToOneConnect()``.
+:py:func:`.Connect` function has been renamed to ``OneToOneConnect()``.
 However, simple cases, which are just creating one-to-one connections
 between two lists of nodes are still working with the new command
 without the need to change the code. Note that the topology-module is
@@ -14,13 +14,13 @@ not effected by theses changes. The translation between the old and the
 new connect routines is described in `Old Connection
 Routines <connection-management.md#old-connection-routines>`__.
 
-The connectivity pattern is defined inside the ``Connect()`` function
+The connectivity pattern is defined inside the :py:func:`.Connect` function
 under the key 'rule'. The patterns available are described in
 `Connection Rules <connection-management.md#connection-rules>`__. In
 addition the synapse model can be specified within the connect function
 and all synaptic parameters can be randomly distributed.
 
-The ``Connect()`` function can be called in either of the following
+The :py:func:`.Connect` function can be called in either of the following
 manners:
 
 ::
@@ -198,7 +198,7 @@ Synapse Specification
 The synapse properties can be given as a string or a dictionary. The
 string can be the name of a pre-defined synapse which can be found in
 the synapsedict (see  :ref:`synapse-types`) or a manually defined
-synapse via ``CopyModel()``.
+synapse via :py:func:`.CopyModel`.
 
 Example:
 
@@ -359,12 +359,12 @@ Old Connection Routines
 -----------------------
 
 The old connection routines are still available in NEST 2.4, apart from
-the old ``Connect()`` which has been renamed to ``OneToOneConnect()``
+the old :py:func:`.Connect` which has been renamed to ``OneToOneConnect()``
 and whose the support will end with the next release.
 
 This section contains the documentation for the old connection routines
 and provides a manual on how to convert the old connection routines to
-the new ``Connect()`` function. The new connection routine doesn't yet
+the new :py:func:`.Connect` function. The new connection routine doesn't yet
 support arrays or lists as input parameter other than ``pre`` and
 ``post``. As a workaround we suggest to loop over the arrays.
 
@@ -390,10 +390,10 @@ Example old connection routine:
     delay = [0.3, 0.5]
     Connect(A, B, weight, delay)
 
-**Note:** Using ``Connect()`` with any of the variables ``params``,
+**Note:** Using :py:func:`.Connect` with any of the variables ``params``,
 ``delay`` and ``model`` will break the code. As a temporary fix the
 function ``OnToOneConnect()`` is provided which works in the same manner
-as the previous ``Connect()``. However, ``OneToOneConnect()`` won't be
+as the previous :py:func:`.Connect`. However, ``OneToOneConnect()`` won't be
 supported in the next release.
 
 Example temporary fix for old connection routine:
@@ -538,10 +538,10 @@ post-synaptic node. Receptor types are identified by integer numbers,
 the default receptor type is 0. The meaning of the receptor type depends
 on the model and is documented in the model documentation. To connect to
 a non-standard receptor type, the parameter *receptor\_type* of the
-additional argument *params* is used in the call to the ``Connect``
+additional argument *params* is used in the call to the :py:func:`.Connect`
 command. To illustrate the concept of receptor types, we give an example
 using standard integrate-and-fire neurons as presynaptic nodes and a
-multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
+multi-compartment integrate-and-fire neuron (:cpp:class:`iaf_cond_alpha_mc <nest::iaf_cond_alpha_mc>`) as
 post-synaptic node.
 
 .. image:: ../_static/img/Receptor_types.png
@@ -609,8 +609,8 @@ synapses of a type. This means that these are the same for all
 connections. They can be used to save memory.
 
 The default values of a synapse type can be inspected using the command
-``GetDefaults()``, which takes the name of the synapse as an argument,
-and modified with ``SetDefaults()``, which takes the name of the synapse
+:py:func:`.GetDefaults`, which takes the name of the synapse as an argument,
+and modified with :py:func:`.SetDefaults`, which takes the name of the synapse
 type and a parameter dictionary as arguments.
 
 ::
@@ -629,7 +629,7 @@ type and a parameter dictionary as arguments.
     SetDefaults("static_synapse", {"weight": 2.5})
 
 For the creation of custom synapse types from already existing synapse
-types, the command ``CopyModel`` is used. It has an optional argument
+types, the command :py:func:`.CopyModel` is used. It has an optional argument
 ``params`` to directly customize it during the copy operation. Otherwise
 the defaults of the copied model are taken.
 
@@ -659,8 +659,8 @@ Each connection id is a 5-tuple or, if available, a NumPy array with the
 following five entries: source-gid, target-gid, target-thread,
 synapse-id, port.
 
-The result of ``GetConnections`` can be given as an argument to the
-``GetStatus`` function, which will then return a list with the
+The result of :py:func:`.GetConnections` can be given as an argument to the
+:py:func:`.GetStatus` function, which will then return a list with the
 parameters of the connections:
 
 ::
@@ -682,8 +682,8 @@ Modifying existing Connections
 ------------------------------
 
 To modify the connections of an existing connection, one also has to
-obtain handles to the connections with ``GetConnections()`` first. These
-can then be given as arguments to the ``SetStatus()`` functions:
+obtain handles to the connections with :py:func:`.GetConnections` first. These
+can then be given as arguments to the :py:func:`.SetStatus` functions:
 
 ::
 

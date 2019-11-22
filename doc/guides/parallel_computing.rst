@@ -55,8 +55,8 @@ Node distributions
 
 The distribution of nodes depends on the type of node.
 
-In the figure below, a node distribution for a small network consisting of ``spike_generator``,
-four ``iaf_psc_alpha`` neurons, and a ``spike_detector``
+In the figure below, a node distribution for a small network consisting of :cpp:class:`spike_generator <nest::spike_generator>`,
+four :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons, and a :cpp:class:`spike_detector <nest::spike_detector>`
 in a scenario with two processes with two threads each.
 
 .. figure:: ../_static/img/Node_distribution.png
@@ -105,13 +105,13 @@ are composed according to the following scheme
     [model|label]-gid-vp.[dat|gdf]
 
 The first part is the name of the `model` (e.g. ``voltmeter`` or
-``spike_detector``) or, if set, the `label` of the recording device. Next is
+:cpp:class:`spike_detector <nest::spike_detector>`) or, if set, the `label` of the recording device. Next is
 the global id (GID) of the recording device, followed by the id of the VP
 assigned to the recorder. Spike files have the file extension ``gdf`` and
-analog recordings from the ``multimeter`` have ``dat`` as file extension.
+analog recordings from the :cpp:class:`multimeter <nest::multimeter>` have ``dat`` as file extension.
 
 The ``label`` and ``file_extension`` of a recording device can be set like any
-other parameter of a node using ``SetStatus``.
+other parameter of a node using :py:func:`.SetStatus`.
 
 
 Spike exchange and synapse update
@@ -130,7 +130,7 @@ Spikes between neurons
   to the `target neuron` may be handled by **different virtual process**.
 
 * But the virtual process assigned to the `target_neuron`, always handles the corresponding spike delivery
-  (see property ``vp`` in the status dictionary).
+  (see property :term:`vp` in the status dictionary).
 
 Spikes between neurons and devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,16 +241,16 @@ commands are available:
 
 .. glossary::
 
- ``NumProcesses``
+ :py:func:`.NumProcesses`
      The number of MPI processes in the simulation
 
  ``ProcessorName``
      The name of the machine. The result might differ on each process.
 
- ``Rank``
+ :py:func:`.Rank`
      The rank of the MPI process. The result differs on each process.
 
- ``SyncProcesses``
+ :py:func:`.SyncProcesses`
       Synchronize all MPI processes.
 
 
@@ -272,7 +272,7 @@ the number of available processes.
 
 The following listing contains a complete simulation script
 (*simulation.py*) with four neurons connected in a chain. The first
-neuron receives random input from a ``poisson_generator`` and the spikes
+neuron receives random input from a :cpp:class:`poisson_generator <nest::poisson_generator>` and the spikes
 of all four neurons are recorded to files.
 
 .. code-block:: bash

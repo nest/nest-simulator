@@ -10,7 +10,7 @@
 Clopath Rule: Spike pairing experiment
 ----------------------------------------
 
-This script simulates one ``aeif_psc_delta_clopath`` neuron that is connected with
+This script simulates one :cpp:class:`aeif_psc_delta_clopath <nest::aeif_psc_delta_clopath>` neuron that is connected with
 a Clopath connection [1]_. The synapse receives pairs of a pre- and a postsynaptic
 spikes that are separated by either 10 ms (pre before post) or -10 ms (post
 before pre). The change of the synaptic weight is measured after five of such

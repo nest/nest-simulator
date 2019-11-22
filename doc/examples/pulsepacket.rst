@@ -204,7 +204,7 @@ All these neurons receive an individual pulse packet that is drawn from a
 Gaussian distribution.
 
 We reset the Kernel, define the simulation resolution and set the
-verbosity using ``set_verbosity`` to suppress info messages.
+verbosity using :py:func:`.set_verbosity` to suppress info messages.
 
 
 .. code-block:: default
@@ -255,8 +255,8 @@ for the and pulse-packet-generators and `vm_pars` for the voltmeter).
 Now, we connect each pulse generator to one neuron via static synapses.
 We want to keep all properties of the static synapse constant except the
 synaptic weight. Therefore we change the weight with  the help of the command
-``SetDefaults``.
-The command ``Connect`` connects all kinds of nodes/devices. Since multiple
+:py:func:`.SetDefaults`.
+The command :py:func:`.Connect` connects all kinds of nodes/devices. Since multiple
 nodes/devices can be connected in different ways e.g., each source connects
 to all targets, each source connects to a subset of targets or each source
 connects to exactly one target, we have to specify the connection. In our
@@ -287,7 +287,7 @@ In the next step we run the simulation for a given duration in ms.
 Finally, we record the membrane potential, when it occurred and to which
 neuron it belongs. We obtain this information using the command
 ``nest.GetStatus(vm, 'events')[0]``. The sender and the time point of a voltage
-data point at position x in the voltage array (``V_m``), can be found at the
+data point at position x in the voltage array (:term:`V_m`), can be found at the
 same position x in the sender (`senders`) and the time array (`times`).
 
 

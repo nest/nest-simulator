@@ -101,7 +101,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The ``'elements'`` entry of the dictionary passed to ``CreateLayer``
    determines the *elements* of the layer. In this case, the layer
-   contains ``iaf_psc_alpha`` neurons.
+   contains :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons.
 
 -  The *center* of the layer is at the origin of the coordinate system,
    :math:`(0,0)`.
@@ -254,7 +254,7 @@ Free layers
 *Free layers* do not restrict node positions to a grid, but allow free
 placement within the extent. To this end, the user needs to specify the
 positions of all nodes explicitly. The following code creates a layer of
-50 ``iaf_psc_alpha`` neurons uniformly distributed in a layer with
+50 :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons uniformly distributed in a layer with
 extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
@@ -430,7 +430,7 @@ Construction of layers with composite elements proceeds exactly as for
 layers with simple elements, except that the ``'elements'`` entry of the
 dictionary passed to ``CreateLayer`` is a Python list or tuple. The
 following code creates a :math:`1\times 2` layer (to keep the output
-from ``PrintNetwork()`` compact) in which each element consists of one
+from :py:func:`.PrintNetwork` compact) in which each element consists of one
 ``'iaf_cond_alpha'`` and one ``'poisson_generator'`` node
 
 .. literalinclude:: user_manual_scripts/layers.py
@@ -442,10 +442,10 @@ from ``PrintNetwork()`` compact) in which each element consists of one
     :end-before: #{ end #}
 
 The network consist of one ``topology_layer_grid`` with four elements:
-two ``iaf_cond_alpha`` and two ``poisson_generator`` nodes. The
+two :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` and two :cpp:class:`poisson_generator <nest::poisson_generator>` nodes. The
 identical nodes are grouped, so that the subnet contains first one full
-layer of ``iaf_cond_alpha`` nodes followed by one full layer of
-``poisson_generator`` nodes.
+layer of :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` nodes followed by one full layer of
+:cpp:class:`poisson_generator <nest::poisson_generator>` nodes.
 
 You can create network elements with several nodes of each type by
 following a model name with the number of nodes to be created:
@@ -458,8 +458,8 @@ following a model name with the number of nodes to be created:
     :start-after: #{ layer7 #}
     :end-before: #{ end #}
 
-In this case, each layer element consists of 10 ``iaf_cond_alpha``
-neurons, one ``poisson_generator``, and two ``noise_generator``\ s.
+In this case, each layer element consists of 10 :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>`
+neurons, one :cpp:class:`poisson_generator <nest::poisson_generator>`, and two :cpp:class:`noise_generator <nest::noise_generator>`\ s.
 
 Note the following points:
 
@@ -494,8 +494,8 @@ follows [2]_:
    space. Neurons within each microcolumn are organized into L2/3, L4,
    and L56 subpopulations. Each subpopulation consists of three
    pyramidal cells and one interneuron. All pyramidal cells are modeled
-   as NEST ``iaf_psc_alpha`` neurons with default parameter values,
-   while interneurons are ``iaf_psc_alpha`` neurons with threshold
+   as NEST :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons with default parameter values,
+   while interneurons are :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons with threshold
    voltage :math:`V_{\text{th}}=-52`\ mV.
 
 How should you implement such a network using the Topology module? The
@@ -1307,7 +1307,7 @@ following principles:
    which specifies the model to connect.
 
 This is exemplified by the following code, which connects pyramidal
-cells (``pyr``) to interneurons (``in``) with a circular mask and
+cells (``pyr``) to interneurons (:term:`in`) with a circular mask and
 uniform probability and interneurons to pyramidal cells with a
 rectangular mask unit probability.
 

@@ -31,10 +31,10 @@ We simplify the model somewhat both to keep this tutorial a bit
 shorter, and because some details of the Hill-Tononi model are not
 currently supported by NEST. Simplifications include:
 
-#  We use the ``iaf_cond_alpha`` neuron model, which is
+#  We use the :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` neuron model, which is
    simpler than the Hill-Tononi model.
 
-#  As the ``iaf_cond_alpha`` neuron model only supports two
+#  As the :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` neuron model only supports two
    synapses (labeled "ex" and "in"), we only include AMPA and
    GABA_A synapses.
 
@@ -83,7 +83,7 @@ Philosophy
 ----------
 
 A network models has two essential components: *populations* and
- *projections*.  We first use NEST's ``CopyModel()`` mechanism to
+ *projections*.  We first use NEST's :py:func:`.CopyModel` mechanism to
 create specific models for all populations and subpopulations in
 the network, and then create the populations using the Topology
 modules ``CreateLayer()`` function.
@@ -208,20 +208,20 @@ functions, see documentation.
     # ! The general neuron model
     # ! ------------------------
     # !
-    # ! We use the ``iaf_cond_alpha`` neuron, which is an
+    # ! We use the :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` neuron, which is an
     # ! integrate-and-fire neuron with two conductance-based synapses which
     # ! have alpha-function time course.  Any input with positive weights
     # ! will automatically directed to the synapse labeled ``_ex``, any
     # ! with negative weights to the synapes labeled ``_in``.  We define
     # ! **all** parameters explicitly here, so that no information is
-    # ! hidden in the model definition in NEST. ``V_m`` is the membrane
+    # ! hidden in the model definition in NEST. :term:`V_m` is the membrane
     # ! potential to which the model neurons will be initialized.
     # ! The model equations and parameters for the Hill-Tononi neuron model
     # ! are given on pp. 1677f and Tables 2 and 3 in that paper. Note some
     # ! peculiarities and adjustments:
     # !
     # ! - Hill & Tononi specify their model in terms of the membrane time
-    # !   constant, while the ``iaf_cond_alpha`` model is based on the
+    # !   constant, while the :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` model is based on the
     # !   membrane capcitance. Interestingly, conducantces are unitless in
     # !   the H&T model. We thus can use the time constant directly as
     # !   membrane capacitance.
@@ -295,7 +295,7 @@ functions, see documentation.
     # ! the network:
     # !
     # ! - Average firing rate ``rate``, firing rate modulation depth ``amplitude``,
-    # !   and temporal modulation frequency ``frequency`` are the same for all
+    # !   and temporal modulation frequency :term:`frequency` are the same for all
     # !   retinal nodes and are set directly below.
     # ! - The temporal phase ``phase`` of each node depends on its position in
     # !   the grating and can only be assigned after the retinal layer has
@@ -323,9 +323,9 @@ functions, see documentation.
     # ! Recording nodes
     # ! ---------------
 
-    # ! We use the new ``multimeter`` device for recording from the model
-    # ! neurons. At present, ``iaf_cond_alpha`` is one of few models
-    # ! supporting ``multimeter`` recording.  Support for more models will
+    # ! We use the new :cpp:class:`multimeter <nest::multimeter>` device for recording from the model
+    # ! neurons. At present, :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` is one of few models
+    # ! supporting :cpp:class:`multimeter <nest::multimeter>` recording.  Support for more models will
     # ! be added soon; until then, you need to use ``voltmeter`` to record
     # ! from other models.
     # !
@@ -800,7 +800,7 @@ functions, see documentation.
     # ! =================
 
     # ! This recording device setup is a bit makeshift. For each population
-    # ! we want to record from, we create one ``multimeter``, then select
+    # ! we want to record from, we create one :cpp:class:`multimeter <nest::multimeter>`, then select
     # ! all nodes of the right model from the target population and
     # ! connect. ``loc`` is the subplot location for the layer.
     print("Connecting: Recording devices")

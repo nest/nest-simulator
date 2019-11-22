@@ -239,7 +239,7 @@ parameters that the output port map did not. We give it a reference to
 our callback function that we defined earlier. When events appear on the
 port, they get passed to the callback function. It also has an optional
 latency parameter. This is the same latency that we set with the
-separate ``SetAcceptableLatency`` function in the NEST
+separate :py:func:`.SetAcceptableLatency` function in the NEST
 example earlier, and it works the same way. Just remember that the MUSIC
 unit of time is seconds, not milliseconds.
 

@@ -42,7 +42,7 @@ dictionary with ``nest.GetStatus(neurons)``. The definitive
 documentation for NEST nodes is the header file, in this case
 ``models/iaf_psc_alpha.h`` in the NEST source.
 
-We create a single ``music_event_out_proxy`` for our
+We create a single :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>` for our
 output on line 8, and set the port name. We loop over all the neurons on
 lines 11-20 and connect them to the proxy one by one, each one with a
 different output channel. As we saw earlier, each MUSIC port can have
@@ -50,7 +50,7 @@ any number of channels. Since the proxy is a device, it ignores any
 weight or delay settings here.
 
 Lastly, we create a spike detector, set the parameters (which we could
-have done directly in the ``Create`` call) and connect the
+have done directly in the :py:func:`.Create` call) and connect the
 neurons to the spike detector so we can see what we’re sending. Then we
 simulate for one second.
 
@@ -82,7 +82,7 @@ simulate for one second.
     nest.Simulate(1000.0)
 
 The receiving process follows the same logic, but is just a little more
-involved. We create two ``music_event_in_proxy`` — one
+involved. We create two :cpp:class:`music_event_in_proxy <nest::music_event_in_proxy>` — one
 per channel — on lines 6-7 and set the input port name. As we discussed
 above, a NEST node can accept many inputs but only emit one stream of
 data, so we need one input proxy per channel to be able to distinguish

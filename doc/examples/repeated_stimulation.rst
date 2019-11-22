@@ -13,11 +13,11 @@ Repeated Stimulation
 Simple example for how to repeat a stimulation protocol
 using the ``origin`` property of devices.
 
-In this example, a ``poisson_generator`` generates a spike train that is
-recorded directly by a ``spike_detector``, using the following paradigm:
+In this example, a :cpp:class:`poisson_generator <nest::poisson_generator>` generates a spike train that is
+recorded directly by a :cpp:class:`spike_detector <nest::spike_detector>`, using the following paradigm:
 
 1. A single trial last for 1000 ms.
-2. Within each trial, the ``poisson_generator`` is active from 100 ms to 500 ms.
+2. Within each trial, the :cpp:class:`poisson_generator <nest::poisson_generator>` is active from 100 ms to 500 ms.
 
 We achieve this by defining the `start` and `stop` properties of the
 generator to 100 ms and 500 ms, respectively, and setting the ``origin`` to the
@@ -37,7 +37,7 @@ First, the modules needed for simulation and analyis are imported.
 
 
 
-Second, we set the parameters so the ``poisson_generator`` generates 1000
+Second, we set the parameters so the :cpp:class:`poisson_generator <nest::poisson_generator>` generates 1000
 spikes per second and is active from 100 to 500 ms
 
 
@@ -64,7 +64,7 @@ The simulation is supposed to take 1s (1000 ms) and is repeated 5 times
 
 
 Third, the network is set up.  We reset the kernel and create a
-``poisson_generator``, in which the handle is stored in `pg`.
+:cpp:class:`poisson_generator <nest::poisson_generator>`, in which the handle is stored in `pg`.
 
 The parameters for rate and start and stop of activity are given as optional
 parameters in the form of a dictionary.
@@ -83,7 +83,7 @@ parameters in the form of a dictionary.
 
 
 
-The ``spike_detector`` is created and the handle stored in `sd`.
+The :cpp:class:`spike_detector <nest::spike_detector>` is created and the handle stored in `sd`.
 
 
 .. code-block:: default
@@ -94,8 +94,8 @@ The ``spike_detector`` is created and the handle stored in `sd`.
 
 
 
-The ``Connect`` function connects the nodes so spikes from pg are collected by
-the ``spike_detector`` `sd`
+The :py:func:`.Connect` function connects the nodes so spikes from pg are collected by
+the :cpp:class:`spike_detector <nest::spike_detector>` `sd`
 
 
 .. code-block:: default
@@ -106,9 +106,9 @@ the ``spike_detector`` `sd`
 
 
 
-Before each trial, we set the ``origin`` of the ``poisson_generator`` to the
+Before each trial, we set the ``origin`` of the :cpp:class:`poisson_generator <nest::poisson_generator>` to the
 current simulation time. This automatically sets the start and stop time of
-the ``poisson_generator`` to the specified times with respect to the origin.
+the :cpp:class:`poisson_generator <nest::poisson_generator>` to the specified times with respect to the origin.
 The simulation is then carried out for the specified time in trial_duration.
 
 

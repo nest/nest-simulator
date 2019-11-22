@@ -12,7 +12,7 @@ If your question is not on there, ask our :doc:`Mailing List <community>`.
 Getting help on the command line interface
 -------------------------------------------
 
-* The ``helpdesk()`` command will launch the documentation pages on your browser.
+* The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
   See `Set up the integrated helpdesk`_ to specify the browser of your choice.
 
 * To access the High-level Python API reference material you can use the commands:
@@ -65,10 +65,10 @@ Model Information
 Set up the integrated helpdesk
 --------------------------------
 
-The command ``helpdesk`` needs to know which browser to launch in order
+The command :py:func:`.helpdesk` needs to know which browser to launch in order
 to display the help pages. The browser is set as an option of
-``helpdesk``. Please see the file ``~/.nestrc`` for an example setting
-``firefox`` as browser. Please note that the command ``helpdesk`` does
+:py:func:`.helpdesk`. Please see the file ``~/.nestrc`` for an example setting
+``firefox`` as browser. Please note that the command :py:func:`.helpdesk` does
 not work if you have compiled NEST with MPI support, but you have to
 enter the address of the helpdesk (``file://$PREFIX/share/doc/nest(``)
 manually into the browser. Please replace ``$PREFIX`` with the prefix

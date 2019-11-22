@@ -47,21 +47,21 @@ parameters except for the ``tau_plus``, which will have the value given
 above.
 
 Moreover, we can also create customised variants of synapse models using
-``CopyModel()``, exactly as demonstrated for neuron models:
+:py:func:`.CopyModel`, exactly as demonstrated for neuron models:
 
 ::
 
     nest.CopyModel("stdp_synapse","layer1_stdp_synapse",{"Wmax": 90.0})
 
 Now ``layer1_stdp_synapse`` will appear in the list returned by
-``Models()``, and can be used anywhere that a built-in model name can be
+:py:func:`.Models`, and can be used anywhere that a built-in model name can be
 used.
 
 STDP synapses
 ~~~~~~~~~~~~~
 
 For the majority of synapses, all of their parameters are accessible via
-``GetDefaults()`` and ``SetDefaults()``. Synapse models implementing
+:py:func:`.GetDefaults` and :py:func:`.SetDefaults`. Synapse models implementing
 spike-timing dependent plasticity are an exception to this, as their
 dynamics are driven by the post-synaptic spike train as well as the
 pre-synaptic one. As a consequence, the time constant of the depressing
@@ -95,7 +95,7 @@ Distributing synapse parameters
 -------------------------------
 
 The synapse parameters are specified in the synapse dictionary which is
-passed to the ``Connect``-function. If the parameter is set to a scalar
+passed to the :py:func:`.Connect`-function. If the parameter is set to a scalar
 all connections will be drawn using the same parameter. Parameters can
 be randomly distributed by assigning a dictionary to the parameter. The
 dictionary has to contain the key ``distribution`` setting the target
@@ -187,14 +187,14 @@ querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
 Once we have the array of connections, we can extract data from it using
-``GetStatus()``. In the simplest case, this returns a list of
+:py:func:`.GetStatus`. In the simplest case, this returns a list of
 dictionaries, containing the parameters and variables for each
-connection found by ``GetConnections``. However, usually we don’t want
+connection found by :py:func:`.GetConnections`. However, usually we don’t want
 all the information from a synapse, but some specific part of it. For
 example, if we want to check we have connected the network as intended,
 we might want to examine only the parameter ``target`` of each
 connection. We can extract just this information by using the optional
-``keys`` argument of ``GetStatus()``:
+``keys`` argument of :py:func:`.GetStatus`:
 
 ::
 
@@ -260,7 +260,7 @@ Repetitive code, copy-and-paste, functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Often you need to repeat a section of code with minor modifications. For
-example, you have two ``multimeter``\ s and you wish to extract the
+example, you have two :cpp:class:`multimeter <nest::multimeter>`\ s and you wish to extract the
 recorded variable from each of them and then calculate its maximum. The
 temptation is to write the code once, then copy-and-paste it to its new
 location and make any necessary modifications:

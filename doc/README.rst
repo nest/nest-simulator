@@ -57,7 +57,7 @@ index via the command line
 
 .. note::
 
- The command ``helpdesk()`` needs to know which browser to launch in order to display
+ The command :py:func:`.helpdesk` needs to know which browser to launch in order to display
  the help pages. The browser is set as an option of helpdesk. Please see the file
  ``~/.nestrc`` for an example setting firefox as browser.
  Please note that the command helpdesk does not work if you have compiled

@@ -59,7 +59,7 @@ Second, the simulation parameters are assigned to variables.
                     'V_m': 0.}      # initial membrane potential
 
 
-Third, the nodes are created using ``Create``. We store the returned handles
+Third, the nodes are created using :py:func:`.Create`. We store the returned handles
 in variables for later reference.
 
 
@@ -72,7 +72,7 @@ in variables for later reference.
     drive = nest.Create('ac_generator')
 
 
-Set the parameters specified above for the generators using ``SetStatus``.
+Set the parameters specified above for the generators using :py:func:`.SetStatus`.
 
 
 .. code-block:: default
@@ -96,7 +96,7 @@ current. The first neuron additionally receives the current with amplitude
                              for n in neurons])
 
 
-Set the parameters for the ``spike_detector``: recorded data should include
+Set the parameters for the :cpp:class:`spike_detector <nest::spike_detector>`: recorded data should include
 the information about global IDs of spiking neurons and the time of
 individual spikes.
 

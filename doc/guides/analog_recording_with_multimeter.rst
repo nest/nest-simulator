@@ -43,7 +43,7 @@ Adapting scripts using voltmeter
 Many NEST users have scripts that use voltmeter to record membrane
 potential. To ease the transition to the new-style analog recording,
 NEST still provides a device called ``voltmeter``. It is simply a
-multimeter pre-configured to record the membrane potential ``V_m``. It
+multimeter pre-configured to record the membrane potential :term:`V_m`. It
 can be used exactly as the old voltmeter. The only change you need to
 make to your scripts is that you collect data from events/V\_m instead
 of from events/potentials, e.g.

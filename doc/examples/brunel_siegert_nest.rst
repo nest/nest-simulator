@@ -139,7 +139,7 @@ simulation time.
     print("Building network")
 
 
-Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
+Configuration of the model :cpp:class:`siegert_neuron <nest::siegert_neuron>` using :py:func:`.SetDefaults`.
 
 
 .. code-block:: default
@@ -148,7 +148,7 @@ Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
     nest.SetDefaults("siegert_neuron", neuron_params)
 
 
-Creation of the nodes using ``Create``. One rate neuron represents the
+Creation of the nodes using :py:func:`.Create`. One rate neuron represents the
 excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 population assuming homogeneity of the populations.
 
@@ -184,7 +184,7 @@ To record from the rate neurons a multimeter is created and the parameter
 
 
 Connections between ``siegert neurons`` are realized with the synapse model
-``diffusion_connection``. These two parameters reflect the prefactors in
+:cpp:class:`diffusion_connection <nest::diffusion_connection>`. These two parameters reflect the prefactors in
 front of the rate variable in eq. 27-29 in [1].
 
 Connections originating from the driving neuron

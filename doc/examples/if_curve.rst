@@ -18,7 +18,7 @@ the two-dimensional `(I_mean, I_std)` space and measures the firing rate of
 the neurons.
 
 In this example, we measure the I-F curve of the adaptive exponential
-integrate and fire neuron (``aeif_cond_exp``), but any other neuron model that
+integrate and fire neuron (:cpp:class:`aeif_cond_exp <nest::aeif_cond_exp>`), but any other neuron model that
 accepts current inputs is possible. The model and its parameters are
 supplied when the IF_curve object is created.
 

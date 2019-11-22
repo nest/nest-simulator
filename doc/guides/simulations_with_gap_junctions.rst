@@ -11,8 +11,8 @@ Introduction
 ------------
 
 Simulations with gap junctions are supported by the Hodgkin-Huxley
-neuron model ``hh_psc_alpha_gap``. The synapse model to create a
-gap-junction connection is named ``gap_junction``. Unlike chemical
+neuron model :cpp:class:`hh_psc_alpha_gap <nest::hh_psc_alpha_gap>`. The synapse model to create a
+gap-junction connection is named :cpp:class:`gap_junction <nest::gap_junction>`. Unlike chemical
 synapses gap junctions are bidirectional connections. In order to create
 **one** accurate gap-junction connection **two** NEST connections are
 required: For each created connection a second connection with the exact

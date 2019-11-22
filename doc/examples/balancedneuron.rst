@@ -40,7 +40,7 @@ plotting. Scipy should be imported before nest.
     import nest.voltage_trace
 
 
-Additionally, we set the verbosity using ``set_verbosity`` to
+Additionally, we set the verbosity using :py:func:`.set_verbosity` to
 suppress info messages.
 
 
@@ -72,7 +72,7 @@ Second, the simulation parameters are assigned to variables.
     prec = 0.01      # how close need the excitatory rates be
 
 
-Third, the nodes are created using ``Create``. We store the returned
+Third, the nodes are created using :py:func:`.Create`. We store the returned
 handles in variables for later reference.
 
 
@@ -85,8 +85,8 @@ handles in variables for later reference.
     spikedetector = nest.Create("spike_detector")
 
 
-Fourth, the excitatory ``poisson_generator`` (`noise[0]`) and the ``voltmeter``
-are configured using ``SetStatus``, which expects a list of node handles and a
+Fourth, the excitatory :cpp:class:`poisson_generator <nest::poisson_generator>` (`noise[0]`) and the ``voltmeter``
+are configured using :py:func:`.SetStatus`, which expects a list of node handles and a
 list of parameter dictionaries. The rate of the inhibitory Poisson generator
 is set later. Note that we need not set parameters for the neuron and the
 spike detector, since they have satisfactory defaults.
@@ -99,15 +99,15 @@ spike detector, since they have satisfactory defaults.
     nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 
-Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the
+Fifth, the :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` is connected to the :cpp:class:`spike_detector <nest::spike_detector>` and the
 ``voltmeter``, as are the two Poisson generators to the neuron. The command
-``Connect`` has different variants. Plain `Connect` just takes the handles of
+:py:func:`.Connect` has different variants. Plain `Connect` just takes the handles of
 pre- and post-synaptic nodes and uses the default values for weight and
 delay. It can also be called with a list of weights, as in the connection
 of the noise below.
 Note that the connection direction for the ``voltmeter`` is reversed compared
-to the ``spike_detector``, because it observes the neuron instead of
-receiving events from it. Thus, ``Connect`` reflects the direction of signal
+to the :cpp:class:`spike_detector <nest::spike_detector>`, because it observes the neuron instead of
+receiving events from it. Thus, :py:func:`.Connect` reflects the direction of signal
 flow in the simulation kernel rather than the physical process of inserting
 an electrode into the neuron. The latter semantics is presently not
 available in NEST.
@@ -125,7 +125,7 @@ available in NEST.
 To determine the optimal rate of the neurons in the inhibitory population,
 the network is simulated several times for different values of the
 inhibitory rate while measuring the rate of the target neuron. This is done
-by calling ``Simulate`` until the rate of the target neuron matches the rate
+by calling :py:func:`.Simulate` until the rate of the target neuron matches the rate
 of the neurons in the excitatory population with a certain accuracy. The
 algorithm is implemented in two steps:
 
@@ -152,10 +152,10 @@ of the target neuron for a given rate of the inhibitory neurons.
 The function takes the firing rate of the inhibitory neurons as an
 argument. It scales the rate with the size of the inhibitory population and
 configures the inhibitory Poisson generator (`noise[1]`) accordingly.
-Then, the spike counter of the ``spike_detector`` is reset to zero. The
-network is simulated using ``Simulate``, which takes the desired simulation
+Then, the spike counter of the :cpp:class:`spike_detector <nest::spike_detector>` is reset to zero. The
+network is simulated using :py:func:`.Simulate`, which takes the desired simulation
 time in milliseconds and advances the network state by this amount of time.
-During simulation, the ``spike_detector`` counts the spikes of the target
+During simulation, the :cpp:class:`spike_detector <nest::spike_detector>` counts the spikes of the target
 neuron and the total number is read out at the end of the simulation
 period. The return value of ``output_rate()`` is the firing rate of the
 target neuron in Hz.

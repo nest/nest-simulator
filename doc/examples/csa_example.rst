@@ -71,7 +71,7 @@ weight and delay, respectively.
     cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
 
-Using the ``Create`` command from PyNEST, we create the neurons of the pre-
+Using the :py:func:`.Create` command from PyNEST, we create the neurons of the pre-
 and postsynaptic populations, each of which containing 16 neurons.
 
 
@@ -82,7 +82,7 @@ and postsynaptic populations, each of which containing 16 neurons.
     post = nest.Create("iaf_psc_alpha", 16)
 
 
-We can now connect the populations using the ``CGConnect`` function. It takes
+We can now connect the populations using the :py:func:`.CGConnect` function. It takes
 the IDs of pre- and postsynaptic neurons (``pre`` and ``post``),
 the connection set (``cs``) and a dictionary that maps the parameters
 weight and delay to positions in the value set associated with the
@@ -95,7 +95,7 @@ connection set.
     nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
 
 
-To stimulate the network, we create a ``poisson_generator`` and set it up to
+To stimulate the network, we create a :cpp:class:`poisson_generator <nest::poisson_generator>` and set it up to
 fire with a rate of 100000 spikes per second. It is connected to the
 neurons of the pre-synaptic population.
 

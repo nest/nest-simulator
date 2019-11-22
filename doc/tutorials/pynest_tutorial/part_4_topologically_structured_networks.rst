@@ -44,7 +44,7 @@ between three types of specificity:
 -  Projection specificity – which cells do they project to, and how?
 
 In the previous handouts, we saw that we can create deterministic or
-randomly selected connections between networks using ``Connect()``. If
+randomly selected connections between networks using :py:func:`.Connect`. If
 we want to create network models that incorporate the spatial location
 and spatial connectivity profiles, it is time to turn to the
 ``topology`` module. **NOTE:** Full documentation for usage of the
@@ -108,7 +108,7 @@ creating simple layers, where each element is from a homogeneous
 population. Then, the corresponding value for this dictionary entry
 should is the model type of the neuron, which can either be an existing
 model in the ``NEST`` collection, or one that we’ve previously defined
-using ``CopyModel()``.
+using :py:func:`.CopyModel`.
 
 We next have to decide whether the nodes should be placed in a
 **grid-based** or **free** (off-grid) fashion, which is equivalent to

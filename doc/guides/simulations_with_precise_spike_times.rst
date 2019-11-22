@@ -61,21 +61,21 @@ hence dedicated to simulations with precise spike times. The device can
 also be connected to grid-constrained neuron models, which only use the
 time stamps of the spikes and ignore their offsets. However, spike
 generation with ``poisson_generator_ps`` is less efficient than with its
-grid-constrained counterpart ``poisson_generator``.
+grid-constrained counterpart :cpp:class:`poisson_generator <nest::poisson_generator>`.
 
 ``parrot_neuron_ps`` repeats the incoming spikes just as its
-grid-constrained counterpart ``parrot_neuron`` but it is able to
+grid-constrained counterpart :cpp:class:`parrot_neuron <nest::parrot_neuron>` but it is able to
 represent precise spike times.
 
 ``iaf_psc_delta_ps`` is an integrate-and-fire neuron model with
 delta-shaped post-synaptic currents that employs precise spike times;
-its grid-constrained counterpart is ``iaf_psc_delta``. In this model the
+its grid-constrained counterpart is :cpp:class:`iaf_psc_delta <nest::iaf_psc_delta>`. In this model the
 precise location of an outgoing spike is determined analytically.
 
 ``iaf_psc_alpha_ps`` and ``iaf_psc_alpha_presc`` are
 integrate-and-fire neuron models with alpha-shaped post-synaptic
 currents that employ precise spike times; their grid-constrained
-counterpart is ``iaf_psc_alpha``. The neuron models have been developed
+counterpart is :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`. The neuron models have been developed
 in the context of `Morrison et al.
 (2007) <http://dx.doi.org/10.1162/neco.2007.19.1.47>`__. As both models
 employ interpolation in order to determine the precise location of an
@@ -86,7 +86,7 @@ spikes, which also affects the attained precision (see `Morrison et al.
 
 ``iaf_psc_exp_ps`` is an integrate-and-fire neuron model with
 exponentially shaped post-synaptic currents that employs precise spike
-times; its grid-constrained counterpart is ``iaf_psc_exp``. It has been
+times; its grid-constrained counterpart is :cpp:class:`iaf_psc_exp <nest::iaf_psc_exp>`. It has been
 developed in the context of `Hanuschkin et al.
 (2010) <http://dx.doi.org/10.3389/fninf.2010.00113>`__, which is a
 continuation of the work presented in `Morrison et al.

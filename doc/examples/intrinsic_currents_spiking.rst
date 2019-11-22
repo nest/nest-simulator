@@ -11,7 +11,7 @@ Intrinsic currents spiking
 
 This example illustrates a neuron receiving spiking input through
 several different receptors (AMPA, NMDA, GABA_A, GABA_B), provoking
-spike output. The model, ``ht_neuron``, also has intrinsic currents
+spike output. The model, :cpp:class:`ht_neuron <nest::ht_neuron>`, also has intrinsic currents
 (``I_NaP``, ``I_KNa``, ``I_T``, and ``I_h``). It is a slightly simplified implementation of
 neuron model proposed in [1]_.
 
@@ -43,7 +43,7 @@ We imported all necessary modules for simulation, analysis and plotting.
     import matplotlib.pyplot as plt
 
 
-Additionally, we set the verbosity using ``set_verbosity`` to suppress info
+Additionally, we set the verbosity using :py:func:`.set_verbosity` to suppress info
 messages. We also reset the kernel to be sure to start with a clean NEST.
 
 
@@ -88,7 +88,7 @@ We create
     #   - synaptic conductances
     #   - intrinsic currents
     #
-    # See :doc:`intrinsic_currents_subthreshold` for more details on ``multimeter``
+    # See :doc:`intrinsic_currents_subthreshold` for more details on :cpp:class:`multimeter <nest::multimeter>`
     # configuration.
 
     nrn = nest.Create('ht_neuron')
@@ -107,13 +107,13 @@ receptor type.
 
 First, we need to obtain the numerical codes for the receptor types from
 the model. The ``receptor_types`` entry of the default dictionary for the
-``ht_neuron`` model is a dictionary mapping receptor names to codes.
+:cpp:class:`ht_neuron <nest::ht_neuron>` model is a dictionary mapping receptor names to codes.
 
 In the loop, we use Python's tuple unpacking mechanism to unpack
 dictionary entries from our `w_recep` dictionary.
 
 Note that we need to pack the `pg` variable into a list before
-passing it to ``Connect``, because iterating over the `p_gens` list
+passing it to :py:func:`.Connect`, because iterating over the `p_gens` list
 makes `pg` a "naked" GID.
 
 
@@ -126,7 +126,7 @@ makes `pg` a "naked" GID.
                                           'weight': rec_wgt})
 
 
-We then connnect the ``multimeter``. Note that the multimeter is connected to
+We then connnect the :cpp:class:`multimeter <nest::multimeter>`. Note that the multimeter is connected to
 the neuron, not the other way around.
 
 
@@ -150,7 +150,7 @@ a dictionary with entry ``times`` containing timestamps for all
 recorded data, plus one entry per recorded quantity.
 All data is contained in the ``events`` entry of the status dictionary
 returned by the multimeter. Because all NEST function return arrays,
-we need to pick out element `0` from the result of ``GetStatus``.
+we need to pick out element `0` from the result of :py:func:`.GetStatus`.
 
 
 .. code-block:: default

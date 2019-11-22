@@ -67,7 +67,7 @@ units is rectified at zero.
 The two decisions units are coupled via mutual inhibition.
 Next the multimeter is created and the handle stored in mm and the option
 ``record_from`` is set. The multimeter is then connected to the two units
-in order to 'observe' them.  The ``Connect`` function takes the handles as input.
+in order to 'observe' them.  The :py:func:`.Connect` function takes the handles as input.
 
 The decision making process is simulated for three different levels of noise
 and three differences in evidence for a given decision. The activity of both
@@ -111,7 +111,7 @@ the decision units and the multimeter are stored in `D1`, `D2` and `mm`
         nest.Simulate(100.0)
 
 
-The network is simulated using ``Simulate``, which takes the desired
+The network is simulated using :py:func:`.Simulate`, which takes the desired
 simulation time in milliseconds and advances the network state by
 this amount of time. After an initial period in the absence of evidence
 for either decision, evidence is given by changing the state of each

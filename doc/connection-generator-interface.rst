@@ -15,7 +15,7 @@ connectivity:
 2. a Connection Generator object is created which specifies the
    connectivity pattern
 3. the Connection Generator is applied to the sets of source and target
-   neurons using the ``CGConnect`` function.
+   neurons using the :py:func:`.CGConnect` function.
 
 Example in PyNEST using the Connection-Set Algebra
 --------------------------------------------------
@@ -48,11 +48,11 @@ Example in SLI using the Connection-Set Algebra
 In SLI, the CSA library is not available directly and the Connection
 Generator has to be created by deserializing an XML string (or file). To
 do so, we first have to select a library to perform the parsing of the
-serialized string using ``CGSelectImplementation``. It takes the root
+serialized string using :py:func:`.CGSelectImplementation`. It takes the root
 tag of the serialization and the name of the C++ library as arguments.
 We then create the Connection Generator from the serialization using
-``CGParse``. As in PyNEST, these ingredients can be passed on to
-``CGConnect``.
+:py:func:`.CGParse`. As in PyNEST, these ingredients can be passed on to
+:py:func:`.CGConnect`.
 
 .. code:: postscript
 

@@ -7,14 +7,14 @@ Introduction
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
 regular interval. The spacing of the grid is called the *simulation
-resolution* (default 0.1ms) and can be set using ``SetKernelStatus``:
+resolution* (default 0.1ms) and can be set using :py:func:`.SetKernelStatus`:
 
 ::
 
     SetKernelStatus("resolution", 0.1)
 
 Even though a neuron model can use smaller time steps internally, the
-membrane potential will only be visible to a ``multimeter`` on the
+membrane potential will only be visible to a :cpp:class:`multimeter <nest::multimeter>` on the
 outside at time points that are multiples of the simulation resolution.
 
 In contrast to the update of nodes, an event-driven approach is used for
@@ -24,7 +24,7 @@ transmitted through them (`Morrison et al.
 simulation and allow the efficient use of computer clusters, NEST uses a
 :doc:`hybrid parallelization strategy <parallel_computing>`. The
 following figure shows the basic loop that is run upon a call to
-``Simulate``:
+:py:func:`.Simulate`:
 
 .. figure:: ../_static/img/simulation_loop-241x300.png
    :alt: Simulation Loop
@@ -66,7 +66,7 @@ the buffers for inter-process communication depend on *dmin+dmax* as
 histories that long back have to be kept. NEST will figure out the
 correct value of *dmin* and *dmax* based on the actual delays used
 during connection setup. Their actual values can be retrieved using
-``GetKernelStatus``:
+:py:func:`.GetKernelStatus`:
 
 ::
 
@@ -79,15 +79,15 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ ``Simulate``, which only work correctly if the content of the spike
+to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
 the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
-to ``Simulate``. To still allow adding new connections inbetween calls
-to ``Simulate``, the required boundaries of delays can be set manually
-using ``SetKernelStatus`` (Please note that the delay extrema are set as
+to :py:func:`.Simulate`. To still allow adding new connections inbetween calls
+to :py:func:`.Simulate`, the required boundaries of delays can be set manually
+using :py:func:`.SetKernelStatus` (Please note that the delay extrema are set as
 properties of the synapse model):
 
 ::
@@ -125,7 +125,7 @@ Splitting a simulation into multiple intervals
 
 In some cases, it may be useful to run a simulation in shorter intervals
 to extract information while the simulation is running. The simplest way
-of doing this is to simply loop over ``Simulate()`` calls:
+of doing this is to simply loop over :py:func:`.Simulate` calls:
 
 ::
 
@@ -134,7 +134,7 @@ of doing this is to simply loop over ``Simulate()`` calls:
         # extract and analyse data
         
 would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
-a number of preparatory and cleanup steps for each ``Simulate()`` call. 
+a number of preparatory and cleanup steps for each :py:func:`.Simulate` call. 
 This makes the solution robust and entirely reliable, but comes with a 
 performance cost.
  
@@ -148,7 +148,7 @@ A more efficient solution doing exactly the same thing is
         # extract and analyse data
     nest.Cleanup()
      
-For convenience, the ``RunManager()`` context manager can handle preparation
+For convenience, the :py:func:`.RunManager` context manager can handle preparation
 and cleanup for you:
 
 ::
@@ -159,15 +159,15 @@ and cleanup for you:
             # extract and analyse data
 
 .. note::
-   - If you do not use ``RunManager()``, you must call ``Prepare()``, 
-     ``Run()`` and ``Cleanup()`` in that order.
-   - You can call ``Run()`` any number of times inside a ``RunManager()`` 
-     context or between ``Prepare()`` and ``Cleanup()`` calls.
-   - Calling ``SetStatus()`` inside a ``RunManager()`` context or
-     between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
+   - If you do not use :py:func:`.RunManager`, you must call :py:func:`.Prepare`, 
+     :py:func:`.Run` and :py:func:`.Cleanup` in that order.
+   - You can call :py:func:`.Run` any number of times inside a :py:func:`.RunManager` 
+     context or between :py:func:`.Prepare` and :py:func:`.Cleanup` calls.
+   - Calling :py:func:`.SetStatus` inside a :py:func:`.RunManager` context or
+     between :py:func:`.Prepare` and :py:func:`.Cleanup` will **lead to unpredictable
      results**.
-   - After calling ``Cleanup()``, you need to call ``Prepare()`` again before
-     calling ``Run()``.
+   - After calling :py:func:`.Cleanup`, you need to call :py:func:`.Prepare` again before
+     calling :py:func:`.Run`.
 
 Repeated simulations
 --------------------
@@ -200,9 +200,9 @@ a Poisson spike train using different seeds and output files for each run:
     
         nest.Simulate(100)
     
-The ``ResetNetwork()`` function available in NEST 2 is incomplete in that it
+The :py:func:`.ResetNetwork` function available in NEST 2 is incomplete in that it
 only resets the state of neurons and devices to default values and deletes
 spikes that are in the delivery pipeline. It does does not reset plastic
 synapses or delete spikes from the spike buffers of neurons. We will
 therefore remove the function in NEST 3 and already now **advise against
-using** ``ResetNetwork()``.
+using** :py:func:`.ResetNetwork`.

@@ -10,12 +10,12 @@
 Multimeter to file example
 --------------------------
 
-This file demonstrates recording from an ``iaf_cond_alpha`` neuron using a
+This file demonstrates recording from an :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` neuron using a
 multimeter and writing data to file.
 
 
 First, we import the necessary modules to simulate and plot this example.
-The simulation kernel is put back to its initial state using ``ResetKernel``.
+The simulation kernel is put back to its initial state using :py:func:`.ResetKernel`.
 
 
 .. code-block:: default
@@ -28,7 +28,7 @@ The simulation kernel is put back to its initial state using ``ResetKernel``.
     nest.ResetKernel()
 
 
-With ``SetKernelStatus``, global properties of the simulation kernel can be
+With :py:func:`.SetKernelStatus`, global properties of the simulation kernel can be
 specified. The following properties are related to writing to file:
 
 * ``overwrite_files`` is set to True to permit overwriting of an existing file.
@@ -45,7 +45,7 @@ specified. The following properties are related to writing to file:
                           "data_prefix": ""})
 
 
-For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
+For illustration, the recordables of the :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` neuron model are
 displayed. This model is an implementation of a spiking neuron using
 integrate-and-fire dynamics with conductance-based synapses. Incoming spike
 events induce a post-synaptic change of conductance modeled by an alpha
@@ -60,7 +60,7 @@ function.
 
 
 A neuron, a multimeter as recording device and two spike generators for
-excitatory and inhibitory stimulation are instantiated. The command ``Create``
+excitatory and inhibitory stimulation are instantiated. The command :py:func:`.Create`
 expects a model type and, optionally, the desired number of nodes and a
 dictionary of parameters to overwrite the default values of the model.
 
@@ -68,7 +68,7 @@ dictionary of parameters to overwrite the default values of the model.
   in ms ``tau_syn_ex`` and the reset potential of the membrane in mV ``V_reset``
   are specified.
 * For the multimeter, the time interval for recording in ms ``interval`` and a
-  selection of measures to record (the membrane voltage in mV ``V_m`` and the
+  selection of measures to record (the membrane voltage in mV :term:`V_m` and the
   excitatory ``g_ex`` and inhibitoy ``g_in`` synaptic conductances in nS) are set.
 
  In addition, more parameters can be modified for writing to file:
@@ -103,7 +103,7 @@ dictionary of parameters to overwrite the default values of the model.
                        params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 
-Next, We connect the spike generators to the neuron with ``Connect``. Synapse
+Next, We connect the spike generators to the neuron with :py:func:`.Connect`. Synapse
 specifications can be provided in a dictionary. In this example of a
 conductance-based neuron, the synaptic weight ``weight`` is given in nS.
 Note that the values are  positive for excitatory stimulation and negative
@@ -118,7 +118,7 @@ for inhibitor connections.
     nest.Connect(m, n)
 
 
-A network simulation with a duration of 100 ms is started with ``Simulate``.
+A network simulation with a duration of 100 ms is started with :py:func:`.Simulate`.
 
 
 .. code-block:: default
@@ -128,7 +128,7 @@ A network simulation with a duration of 100 ms is started with ``Simulate``.
 
 
 After the simulation, the recordings are obtained from the multimeter via the
-key ``events`` of the status dictionary accessed by ``GetStatus``. ``times``
+key ``events`` of the status dictionary accessed by :py:func:`.GetStatus`. ``times``
 indicates the recording times stored for each data point. They are recorded
 if the parameter ``withtime`` of the multimeter is set to True which is the
 default case.

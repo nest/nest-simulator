@@ -54,7 +54,7 @@ References
 
 
 First we set the random seed, adjust the kernel settings and create
-``hh_psc_alpha_gap`` neurons, ``spike_detector`` and ``poisson_generator``.
+:cpp:class:`hh_psc_alpha_gap <nest::hh_psc_alpha_gap>` neurons, :cpp:class:`spike_detector <nest::spike_detector>` and :cpp:class:`poisson_generator <nest::poisson_generator>`.
 
 
 .. code-block:: default
@@ -108,7 +108,7 @@ The desired connections are created with the following commands:
                                                       'delay': delay})
 
 
-Then the neurons are connected to the ``spike_detector`` and the initial
+Then the neurons are connected to the :cpp:class:`spike_detector <nest::spike_detector>` and the initial
 membrane potential of each neuron is set randomly between -40 and -80 mV.
 
 
@@ -121,11 +121,11 @@ membrane potential of each neuron is set randomly between -40 and -80 mV.
         nest.SetStatus([neurons[i]], {'V_m': (-40. - 40. * random.random())})
 
 
-Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
+Finally gap junctions are added to the network. :math:`(60*500)/2` :cpp:class:`gap_junction <nest::gap_junction>`
 connections are added randomly resulting in an average of 60 gap-junction
 connections per neuron. We must not use the ``fixed_indegree`` oder
 ``fixed_outdegree`` functionality of ``nest.Connect()`` to create the
-connections, as ``gap_junction`` connections are bidirectional connections
+connections, as :cpp:class:`gap_junction <nest::gap_junction>` connections are bidirectional connections
 and we need to make sure that the same neurons are connected in both ways.
 This is achieved by creating the connections on the Python level with the
 `random` module of the Python Standard Library and connecting the neurons

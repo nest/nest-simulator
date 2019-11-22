@@ -10,7 +10,7 @@
 One neuron with noise
 ----------------------
 
-This script simulates a neuron with input from the ``poisson_generator``, and
+This script simulates a neuron with input from the :cpp:class:`poisson_generator <nest::poisson_generator>`, and
 records the neuron's membrane potential.
 
 
@@ -34,7 +34,7 @@ simulations.
 
 
 Second, the nodes (the neuron, poisson generator (two of them), and the
-voltmeter) are created using  the ``Create`` function.
+voltmeter) are created using  the :py:func:`.Create` function.
 We store the returned handles in variables for later reference.
 
 
@@ -47,7 +47,7 @@ We store the returned handles in variables for later reference.
 
 
 Third, the voltmeter and the Poisson generator are configured using
-``SetStatus``, which expects a list of node handles and a list of parameter
+:py:func:`.SetStatus`, which expects a list of node handles and a list of parameter
 dictionaries. Note that we do not need to set parameters for the neuron,
 since it has satisfactory defaults.
 We set each Poisson generator to 8000 Hz and 15000 Hz, respectively.
@@ -64,7 +64,7 @@ in time at which it samples the membrane voltage.
     nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 
-Fourth, the neuron is connected to the ``poisson_generator`` and to the
+Fourth, the neuron is connected to the :cpp:class:`poisson_generator <nest::poisson_generator>` and to the
 ``voltmeter``. We also specify the synaptic weight and delay in this step.
 
 
@@ -75,7 +75,7 @@ Fourth, the neuron is connected to the ``poisson_generator`` and to the
     nest.Connect(voltmeter, neuron)
 
 
-Now we simulate the network using ``Simulate``, which takes the
+Now we simulate the network using :py:func:`.Simulate`, which takes the
 desired simulation time in milliseconds.
 
 

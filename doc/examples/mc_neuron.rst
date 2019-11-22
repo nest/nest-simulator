@@ -10,7 +10,7 @@
 Multi-compartment neuron example
 --------------------------------
 
-Simple example of how to use the three-compartment ``iaf_cond_alpha_mc``
+Simple example of how to use the three-compartment :cpp:class:`iaf_cond_alpha_mc <nest::iaf_cond_alpha_mc>`
 neuron model.
 
 Three stimulation paradigms are illustrated:
@@ -72,7 +72,7 @@ The simulation parameters are assigned to variables.
                       })
 
 
-The nodes are created using ``Create``. We store the returned handles
+The nodes are created using :py:func:`.Create`. We store the returned handles
 in variables for later reference.
 
 
@@ -82,7 +82,7 @@ in variables for later reference.
     n = nest.Create('iaf_cond_alpha_mc')
 
 
-A ``multimeter`` is created and connected to the neurons. The parameters
+A :cpp:class:`multimeter <nest::multimeter>` is created and connected to the neurons. The parameters
 specified for the multimeter include the list of quantities that should be
 recorded and the time interval at which quantities are measured.
 

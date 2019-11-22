@@ -4,9 +4,14 @@ Download NEST
 
 .. pull-quote::
 
-   We now have package managers to make NEST installation easier!
+   For standard situations where you just want to use but not modify
+   NEST, you don't have to download the source code.
+   
+   Distribution packages ease the installation on Debian/Ubuntu,
+   Fedora, macOS and Conda.
 
-   See our :doc:`installation instructions <installation/index>` to find the right option for you.
+   See our :doc:`installation instructions <installation/index>` to
+   find the right option for you.
 
 
 Here you'll find the lastest versions of the source code and Live Media for download.

@@ -132,7 +132,10 @@ code.descclassname {
 }
 
 .rst-content .pull-quote {
-    background: #fff785;
+    background: #f0f3f3;
+    padding: 0.5em;
+    border: 1px solid #ff6633;
+    border-radius: 5px;
 }
 
 .rst-content kbd {

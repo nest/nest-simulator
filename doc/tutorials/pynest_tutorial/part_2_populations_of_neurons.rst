@@ -5,7 +5,7 @@ Introduction
 ------------
 
 In this handout we look at creating and parameterising batches of
-``neurons``, and connecting them. When you have worked through this
+*neurons*, and connecting them. When you have worked through this
 material, you will know how to:
 
 -  create populations of neurons with specific parameters
@@ -37,8 +37,8 @@ Creating parameterised populations of nodes
 In the previous handout, we introduced the function
 ``Create(model, n=1, params=None)``. Its mandatory argument is the model
 name, which determines what type the nodes to be created should be. Its
-two optional arguments are ``n``, which gives the number of nodes to be
-created (default: 1) and ``params``, which is a dictionary giving the
+two optional arguments are `n`, which gives the number of nodes to be
+created (default: 1) and `params`, which is a dictionary giving the
 parameters with which the nodes should be initialised. So the most basic
 way of creating a batch of identically parameterised neurons is to
 exploit the optional arguments of :py:func:`.Create`:
@@ -48,7 +48,7 @@ exploit the optional arguments of :py:func:`.Create`:
     ndict = {"I_e": 200.0, "tau_m": 20.0}
     neuronpop = nest.Create("iaf_psc_alpha", 100, params=ndict)
 
-The variable ``neuronpop`` is a tuple of all the ids of the created
+The variable `neuronpop` is a tuple of all the ids of the created
 neurons.
 
 Parameterising the neurons at creation is more efficient than using
@@ -60,7 +60,7 @@ many individual batches of neurons are to be produced, it is more
 convenient to set the defaults of the model, so that all neurons created
 from that model will automatically have the same parameters. The
 defaults of a model can be queried with ``GetDefaults(model)``, and set
-with ``SetDefaults(model, params)``, where ``params`` is a dictionary
+with ``SetDefaults(model, params)``, where `params` is a dictionary
 containing the desired parameter/value pairings. For example:
 
 ::
@@ -73,7 +73,7 @@ containing the desired parameter/value pairings. For example:
 
 The three populations are now identically parameterised with the usual
 model default values for all parameters except :term:`I_e` and :term:`tau_m`,
-which have the values specified in the dictionary ``ndict``.
+which have the values specified in the dictionary `ndict`.
 
 If batches of neurons should be of the same model but using different
 parameters, it is handy to use ``CopyModel(existing, new, params=None)``
@@ -176,17 +176,17 @@ populations of ten neurons each.
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected
-via the default rule, namely ``all_to_all``. Each neuron of ``pop1`` is
-connected to every neuron in ``pop2``, resulting in :math:`10^2`
+via the default rule, namely `all_to_all`. Each neuron of `pop1` is
+connected to every neuron in `pop2`, resulting in :math:`10^2`
 connections.
 
 ::
 
     nest.Connect(pop1, pop2, syn_spec={"weight":20.0})
 
-Alternatively, the neurons can be connected with the ``one_to_one``.
-This means that the first neuron in ``pop1`` is connected to the first
-neuron in ``pop2``, the second to the second, etc., creating ten
+Alternatively, the neurons can be connected with the `one_to_one`.
+This means that the first neuron in `pop1` is connected to the first
+neuron in `pop2`, the second to the second, etc., creating ten
 connections in total.
 
 ::
@@ -202,7 +202,7 @@ Finally, the multimeters are connected using the default rule
 Here we have just used very simple connection schemes. Connectivity
 patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
-containing the key ``rule`` and the key for parameters associated to the
+containing the key `rule` and the key for parameters associated to the
 rule. Please see :doc:`Connection management <../../guides/connection_management>`
 for an illustrated guide to the usage of :py:func:`.Connect`.
 
@@ -210,17 +210,17 @@ Connecting populations with random connections
 ----------------------------------------------
 
 In the previous handout we looked at the connectivity patterns
-``one_to_one`` and ``all_to_all``. However, we often want to look at
+`one_to_one` and `all_to_all`. However, we often want to look at
 networks with a sparser connectivity than all-to-all. Here we introduce
 four connectivity patterns which generate random connections between two
 populations of neurons.
 
-The connection rule ``fixed_indegree`` allows us to create ``n`` random
-connections for each neuron in the target population ``post`` to a
-randomly selected neuron from the source population ``pre``. The
-variables ``weight`` and ``delay`` can be left unspecified, in which
+The connection rule `fixed_indegree` allows us to create `n` random
+connections for each neuron in the target population `post` to a
+randomly selected neuron from the source population `pre`. The
+variables `weight`` and `delay` can be left unspecified, in which
 case the default weight and delay are used. Alternatively we can set
-them in the ``syn_spec`` , so each created connection has the same
+them in the `syn_spec` , so each created connection has the same
 weight and delay. Here is an example:
 
 ::
@@ -237,36 +237,36 @@ weight and delay. Here is an example:
     nest.Connect(epop1, ipop1, conn_dict_ex, syn_dict_ex)
     nest.Connect(ipop1, epop1, conn_dict_in, syn_dict_in)
 
-Now each neuron in the target population ``ipop1`` has ``Ke`` incoming
-random connections chosen from the source population ``epop1`` with
-weight ``Je`` and delay ``d``, and each neuron in the target population
-``epop1`` has ``Ki`` incoming random connections chosen from the source
-population ``ipop1`` with weight ``Ji`` and delay ``d``.
+Now each neuron in the target population `ipop1` has `Ke` incoming
+random connections chosen from the source population `epop1` with
+weight `Je` and delay `d`, and each neuron in the target population
+`epop1` has `Ki` incoming random connections chosen from the source
+population `ipop1` with weight `Ji` and delay `d`.
 
-The connectivity rule ``fixed_outdegree`` works in analogous fashion,
-with ``n`` connections (keyword ``outdegree``) being randomly selected
-from the target population ``post`` for each neuron in the source
-population ``pre``. For reasons of efficiency, particularly when
+The connectivity rule `fixed_outdegree` works in analogous fashion,
+with `n` connections (keyword `outdegree`) being randomly selected
+from the target population `post` for each neuron in the source
+population `pre`. For reasons of efficiency, particularly when
 simulating in a distributed fashion, it is better to use
-``fixed_indegree`` if possible.
+`fixed_indegree` if possible.
 
-Another connectivity pattern available is ``fixed_total_number``. Here
-``n`` connections (keyword ``N``) are created by randomly drawing source
-neurons from the populations ``pre`` and target neurons from the
-population ``post``.
+Another connectivity pattern available is `fixed_total_number`. Here
+`n` connections (keyword `N`) are created by randomly drawing source
+neurons from the populations `pre` and target neurons from the
+population `post`.
 
-When choosing the connectivity rule ``pairwise_bernoulli`` connections
+When choosing the connectivity rule `pairwise_bernoulli` connections
 are generated by iterating through all possible source-target pairs and
-creating each connection with the probability ``p`` (keyword ``p``).
+creating each connection with the probability `p` (keyword `p`).
 
-In addition to the rule specific parameters ``indegree``, ``outdegree``,
-``N`` and ``p``, the ``conn_spec`` can contain the keywords ``autapses``
-and ``multapses`` (set to ``False`` or ``True``) allowing or forbidding
+In addition to the rule specific parameters `indegree`, `outdegree`,
+`N` and `p`, the `conn_spec` can contain the keywords `autapses`
+and `multapses` (set to `False` or `True`) allowing or forbidding
 self-connections and multiple connections between two neurons,
 respectively.
 
 Note that for all connectivity rules, it is perfectly legitimate to have
-the same population simultaneously in the role of ``pre`` and ``post``.
+the same population simultaneously in the role of `pre` and `post`.
 
 For more information on connecting neurons, please read the
 documentation of the :py:func:`.Connect` function and consult the guide at
@@ -275,10 +275,10 @@ documentation of the :py:func:`.Connect` function and consult the guide at
 Specifying the behaviour of devices
 -----------------------------------
 
-All devices implement a basic timing capacity; the parameter ``start``
+All devices implement a basic timing capacity; the parameter `start`
 (default 0) determines the beginning of the device's activity and the
-parameter ``stop`` (default: :math:`∞`) its end. These values are taken
-relative to the value of ``origin`` (default: 0). For example, the
+parameter `stop` (default: :math:`∞`) its end. These values are taken
+relative to the value of `origin` (default: 0). For example, the
 following example creates a :cpp:class:`poisson_generator <nest::poisson_generator>` which is only active
 between 100 and 150ms:
 
@@ -291,11 +291,11 @@ This functionality is useful for setting up experimental protocols with
 stimuli that start and stop at particular times.
 
 So far we have accessed the data recorded by devices directly, by
-extracting the value of ``events``. However, for larger or longer
+extracting the value of `events`. However, for larger or longer
 simulations, we may prefer to write the data to file for later analysis
 instead. All recording devices allow the specification of where data is
-stored over the parameters ``to_memory`` (default: ``True``),
-``to_file`` (default: ``False``) and ``to_screen`` (default: ``False``).
+stored over the parameters `to_memory` (default: `True`),
+`to_file` (default: `False`) and `to_screen` (default: `False`).
 The following code sets up a :cpp:class:`multimeter <nest::multimeter>` to record data to a named
 file:
 
@@ -304,19 +304,19 @@ file:
     recdict = {"to_memory" : False, "to_file" : True, "label" : "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
-If no name for the file is specified using the ``label`` parameter, NEST
+If no name for the file is specified using the `label` parameter, NEST
 will generate its own using the name of the device, and its id. If the
 simulation is multithreaded or distributed, multiple files will be
 created, one for each process and/or thread. For more information on how
 to customise the behaviour and output format of recording devices,
-please read the documentation for ``RecordingDevice``.
+please read the documentation for `RecordingDevice`.
 
 Resetting simulations
 ---------------------
 
 It often occurs that we need to reset a simulation. For example, if you
 are developing a script, then you may need to run it from the
-``ipython`` console multiple times before you are happy with its
+`ipython` console multiple times before you are happy with its
 behaviour. In this case, it is useful to use the function
 :py:func:`.ResetKernel`. This gets rid of all nodes you have created, any
 customised models you created, and resets the internal clock to 0.
@@ -355,18 +355,18 @@ Models
 -  ``GetDefaults(model)``
 
    Return a dictionary with the default parameters of the given
-   ``model``, specified by a string.
+   `model`, specified by a string.
 
 -  ``SetDefaults(model, params)``
 
-   Set the default parameters of the given ``model`` to the values
-   specified in the ``params`` dictionary.
+   Set the default parameters of the given `model` to the values
+   specified in the `params` dictionary.
 
 -  ``CopyModel(existing, new, params=None)``
 
-   Create a ``new`` model by copying an ``existing`` one. Default
-   parameters can be given as ``params``, or else are taken from
-   ``existing``.
+   Create a *new* model by copying an *existing* one. Default
+   parameters can be given as `params`, or else are taken from
+   `existing`.
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~

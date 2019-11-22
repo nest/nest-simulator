@@ -354,7 +354,7 @@ functions, see documentation.
                   'edge_wrap': True}
     # ! This dictionary does not yet specify the elements to put into the
     # ! layer, since they will differ from layer to layer. We will add them
-    # ! below by updating the ``'elements'`` dictionary entry for each
+    # ! below by updating the `elements` dictionary entry for each
     # ! population.
 
     # ! Retina

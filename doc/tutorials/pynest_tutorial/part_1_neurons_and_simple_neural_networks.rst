@@ -109,7 +109,7 @@ are used to stimulate neurons or to record from them. Nodes can be
 arranged in sub-networks to build hierarchical networks such as layers,
 columns, and areas - we will get to this later in the course. For now we
 will work in the default sub-network which is present when we start
-NEST, known as the ``root node``.
+NEST, known as the `root node`.
 
 To begin with, the root sub-network is empty. New nodes are created with
 the command :py:func:`.Create`, which takes as arguments the model name of the
@@ -127,7 +127,7 @@ As a first example, we will create a neuron of type
 :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`. This neuron is an integrate-and-fire neuron with
 alpha-shaped postsynaptic currents. The function returns a list of the
 ids of all the created neurons, in this case only one, which we store in
-a variable called ``neuron``.
+a variable called `neuron`.
 
 ::
 
@@ -175,7 +175,7 @@ causing the neuron to spike periodically.
 Note that we can set several properties at the same time by giving
 multiple comma separated key:value pairs in the dictionary. Also be
 aware that NEST is type sensitive - if a particular property is of type
-``double``, then you do need to explicitly write the decimal point:
+`double`, then you do need to explicitly write the decimal point:
 
 ::
 
@@ -185,23 +185,23 @@ will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
 
 Next we create a :cpp:class:`multimeter <nest::multimeter>`, a *device* we can use to record the
-membrane voltage of a neuron over time. We set its property ``withtime``
+membrane voltage of a neuron over time. We set its property `withtime`
 such that it will also record the points in time at which it samples the
-membrane voltage. The property ``record_from`` expects a list of the
+membrane voltage. The property `record_from` expects a list of the
 names of the variables we would like to record. The variables exposed to
 the multimeter vary from model to model. For a specific model, you can
 check the names of the exposed variables by looking at the neuron’s
-property ``recordables``.
+property `recordables`.
 
 ::
 
     multimeter = nest.Create("multimeter")
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 
-We now create a ``spikedetector``, another device that records the
+We now create a `spikedetector`, another device that records the
 spiking events produced by a neuron. We use the optional keyword
-argument ``params`` to set its properties. This is an alternative to
-using :py:func:`.SetStatus`. The property ``withgid`` indicates whether the
+argument `params` to set its properties. This is an alternative to
+using :py:func:`.SetStatus`. The property `withgid` indicates whether the
 spike detector is to record the source id from which it received the
 event (i.e. the id of our neuron).
 
@@ -210,7 +210,7 @@ event (i.e. the id of our neuron).
     spikedetector = nest.Create("spike_detector",
                     params={"withgid": True, "withtime": True})
 
-A short note on naming: here we have called the neuron ``neuron``, the
+A short note on naming: here we have called the neuron `neuron`, the
 multimeter :cpp:class:`multimeter <nest::multimeter>` and so on. Of course, you can assign your
 created nodes to any variable names you like, but the script is easier
 to read if you choose names that reflect the concepts in your
@@ -285,17 +285,17 @@ individual values. This is to make operations on groups of items (the
 usual case when setting up neuronal network simulations) more
 convenient.
 
-This dictionary contains an entry named ``events`` which holds the
+This dictionary contains an entry named `events` which holds the
 recorded data. It is itself a dictionary with the entries :term:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
-first just printing ``dmm`` to the screen to give you a better
+first just printing `dmm` to the screen to give you a better
 understanding of its structure, and then in the next step extract the
-dictionary ``events``, and so on.
+dictionary `events`, and so on.
 
 Now we are ready to display the data in a figure. To this end, we make
-use of ``pylab``.
+use of `pylab`.
 
 ::
 
@@ -318,13 +318,13 @@ obtain and display the spikes from the spike detector.
     pylab.show()
 
 Here we extract the events more concisely by using the optional keyword
-argument ``keys`` to :py:func:`.GetStatus`. This extracts the dictionary element
-with the key ``events`` rather than the whole status dictionary. The
+argument `keys` to :py:func:`.GetStatus`. This extracts the dictionary element
+with the key `events` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
-line by prefixing the file name with ``python``, or from the Python or ipython
-prompt, by prefixing it with ``run``.
+line by prefixing the file name with `python`, or from the Python or ipython
+prompt, by prefixing it with `run`.
 
 It is possible to collect information of multiple neurons on a single
 multimeter. This does complicate retrieving the information: the data
@@ -391,7 +391,7 @@ Additionally, the constant input current should be set to 0:
 Each event of the excitatory generator should produce a postsynaptic
 current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
 weights can be defined in a dictionary, which is passed to the
-:py:func:`.Connect` function using the keyword ``syn_spec`` (synapse
+:py:func:`.Connect` function using the keyword `syn_spec` (synapse
 specifications). In general all parameters determining the synapse can
 be specified in the synapse dictionary, such as ``"weight"``,
 ``"delay"``, the synaptic model (``"model"``) and parameters specific to
@@ -455,9 +455,9 @@ a constant input current, and add a second neuron.
     multimeter = nest.Create("multimeter")
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
 
-We now connect ``neuron1`` to ``neuron2``, and record the membrane
-potential from ``neuron2`` so we can observe the postsynaptic potentials
-caused by the spikes of ``neuron1``.
+We now connect `neuron1` to `neuron2`, and record the membrane
+potential from `neuron2` so we can observe the postsynaptic potentials
+caused by the spikes of `neuron1`.
 
 ::
 
@@ -472,8 +472,8 @@ addition to the weight, the following shortcut is available:
     nest.Connect(neuron1, neuron2, syn_spec={"weight":20, "delay":1.0})
 
 If you simulate the network and plot the membrane potential as before,
-you should then see the postsynaptic potentials of ``neuron2`` evoked by
-the spikes of ``neuron1`` as in :numref:`vm_psp_two_neurons`.
+you should then see the postsynaptic potentials of `neuron2` evoked by
+the spikes of `neuron1` as in :numref:`vm_psp_two_neurons`.
 
 Command overview
 ----------------
@@ -490,23 +490,23 @@ Nodes
 ~~~~~
 
 -  ``Create(model, n=1, params=None)``
-    Create ``n`` instances of type ``model`` in the current
+    Create `n` instances of type `model` in the current
     sub-network. Parameters for the new nodes can be given as
-    ``params`` (a single dictionary, or a list of dictionaries with
-    size ``n``). If omitted, the ``model``\ ’s defaults are used.
+    `params` (a single dictionary, or a list of dictionaries with
+    size `n`). If omitted, the `model`\ ’s defaults are used.
 
 -  ``GetStatus(nodes, keys=None)``
     Return a list of parameter dictionaries for the given list of
-    ``nodes``. If ``keys`` is given, a list of values is returned
-    instead. ``keys`` may also be a list, in which case the returned
+    `nodes`. If `keys` is given, a list of values is returned
+    instead. `keys` may also be a list, in which case the returned
     list contains lists of values.
 
 -  ``SetStatus(nodes, params, val=None)``
-    Set the parameters of the given ``nodes`` to ``params``, which may
+    Set the parameters of the given `nodes` to `params`, which may
     be a single dictionary, or a list of dictionaries of the same size
-    as ``nodes``. If ``val`` is given, ``params`` has to be the name of
-    a property, which is set to ``val`` on the ``nodes``. ``val`` can
-    be a single value, or a list of the same size as ``nodes``.
+    as `nodes`. If `val` is given, `params` has to be the name of
+    a property, which is set to `val` on the `nodes`. `val` can
+    be a single value, or a list of the same size as `nodes`.
 
 Connections
 ~~~~~~~~~~~
@@ -518,24 +518,24 @@ and worked examples.
 
 -  `Connect(pre, post, conn_spec=None, syn_spec=None, model=None)``
    Connect pre neurons to post neurons.Neurons in pre and post are
-   connected using the specified connectivity (``"one_to_one"`` by
-   default) and synapse type (``"static_synapse"`` by default). Details
+   connected using the specified connectivity (`one_to_one` by
+   default) and synapse type (`static_synapse` by default). Details
    depend on the connectivity rule. Note: Connect does not iterate over
-   subnets, it only connects explicitly specified nodes. ``pre`` -
-   presynaptic neurons, given as list of GIDs ``post`` - presynaptic
-   neurons, given as list of GIDs ``conn_spec`` - name or dictionary
-   specifying connectivity rule, see below ``syn_spec`` - name or
+   subnets, it only connects explicitly specified nodes. `pre` -
+   presynaptic neurons, given as list of GIDs `post` - presynaptic
+   neurons, given as list of GIDs `conn_spec` - name or dictionary
+   specifying connectivity rule, see below `syn_spec` - name or
    dictionary specifying synapses, see below
 
 Connectivity
 ^^^^^^^^^^^^
 
 Connectivity is either specified as a string containing the name of a
-connectivity rule (default: ``"one_to_one"``) or as a dictionary
-specifying the rule and rule-specific parameters (e.g. ``"indegree"``),
+connectivity rule (default: `one_to_one`) or as a dictionary
+specifying the rule and rule-specific parameters (e.g. `indegree`),
 which must be given. In addition switches allowing self-connections
-(``"autapses"``, default: ``True``) and multiple connections between a
-pair of neurons (``"multapses"``, default: ``True``) can be contained in
+(`autapses`, default: `True`) and multiple connections between a
+pair of neurons (`multapses`, default: `True`) can be contained in
 the dictionary.
 
 Synapse
@@ -544,25 +544,25 @@ Synapse
 The synapse model and its properties can be inserted either as a string
 describing one synapse model (synapse models are listed in the
 synapsedict) or as a dictionary as described below. If no synapse model
-is specified the default model ``"static_synapse"`` will be used.
-Available keys in the synapse dictionary are ``"model"``, ``"weight"``,
-``"delay"``, ``"receptor_type"`` and parameters specific to the chosen
+is specified the default model :cpp:class:`static_synapse <nest::static_connection>` will be used.
+Available keys in the synapse dictionary are `model`, `weight`,
+`delay`, `receptor_type` and parameters specific to the chosen
 synapse model. All parameters are optional and if not specified will use
-the default values determined by the current synapse model. ``"model"``
+the default values determined by the current synapse model. `model`
 determines the synapse type, taken from pre-defined synapse types in
 NEST or manually specified synapses created via :py:func:`.CopyModel`. All
 other parameters can be scalars or distributions. In the case of scalar
-parameters, all keys take doubles except for ``"receptor_type"`` which
+parameters, all keys take doubles except for `receptor_type` which
 has to be initialised with an integer. Distributed parameters are
 initialised with yet another dictionary specifying the distribution
-(``"distribution"``, such as ``"normal"``) and distribution-specific
-paramters (such as ``"mu"`` and ``"sigma"``).
+(`distribution`, such as `normal`) and distribution-specific
+paramters (such as `mu` and `sigma`).
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
 - ``Simulate(t)``
-   Simulate the network for ``t`` milliseconds.
+   Simulate the network for `t` milliseconds.
 
 References
 ----------

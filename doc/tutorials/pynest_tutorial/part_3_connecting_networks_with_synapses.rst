@@ -18,7 +18,7 @@ sections of this primer:
 
 -  :doc:`Part 1: Neurons and simple neural
    networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>` 
+-  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 -  :doc:`Part 4: Topologically structured
    networks <part_4_topologically_structured_networks>`
 
@@ -43,7 +43,7 @@ and set them with ``SetDefaults(model,params)``:
     nest.SetDefaults("stdp_synapse",{"tau_plus": 15.0})
 
 Any synapse generated from this model will then have all the standard
-parameters except for the ``tau_plus``, which will have the value given
+parameters except for the `tau_plus`, which will have the value given
 above.
 
 Moreover, we can also create customised variants of synapse models using
@@ -53,7 +53,7 @@ Moreover, we can also create customised variants of synapse models using
 
     nest.CopyModel("stdp_synapse","layer1_stdp_synapse",{"Wmax": 90.0})
 
-Now ``layer1_stdp_synapse`` will appear in the list returned by
+Now `layer1_stdp_synapse` will appear in the list returned by
 :py:func:`.Models`, and can be used anywhere that a built-in model name can be
 used.
 
@@ -89,7 +89,7 @@ connection routine.
     nest.Connect(epop1, epop2, conn_dict, syn_dict)
 
 If no synapse model is given, connections are made using the model
-``static_synapse``.
+:cpp:class`static_synapse <nest::static_connection>`.
 
 Distributing synapse parameters
 -------------------------------
@@ -98,20 +98,20 @@ The synapse parameters are specified in the synapse dictionary which is
 passed to the :py:func:`.Connect`-function. If the parameter is set to a scalar
 all connections will be drawn using the same parameter. Parameters can
 be randomly distributed by assigning a dictionary to the parameter. The
-dictionary has to contain the key ``distribution`` setting the target
-distribution of the parameters (for example ``normal``). Optionally,
+dictionary has to contain the key `distribution` setting the target
+distribution of the parameters (for example `normal`). Optionally,
 parameters associated with the distribution can be set (for example
-``mu``). Here we show an example where the parameters ``alpha`` and
-``weight`` of the stdp synapse are uniformly distributed.
+`mu`). Here we show an example where the parameters `alpha` and
+`weight` of the stdp synapse are uniformly distributed.
 
 ::
 
     alpha_min = 0.1
     alpha_max = 2.
-    w_min = 0.5 
+    w_min = 0.5
     w_max = 5.
 
-    syn_dict = {"model": "stdp_synapse", 
+    syn_dict = {"model": "stdp_synapse",
                 "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
                 "weight": {"distribution": "uniform", "low": w_min, "high": w_max},
                 "delay": 1.0}
@@ -124,22 +124,22 @@ ones are:
 +-------------------+------------------------+
 | Distributions     | Keys                   |
 +===================+========================+
-| ``normal``        | ``mu``, ``sigma``      |
+| `normal`        | `mu`, `sigma`            |
 +-------------------+------------------------+
-| ``lognormal``     | ``mu``, ``sigma``      |
+| `lognormal`     | `mu`,  `sigma`           |
 +-------------------+------------------------+
-| ``uniform``       | ``low``, ``high``      |
+| `uniform`       | `low`, `high`            |
 +-------------------+------------------------+
-| ``uniform_int``   | ``low``, ``high``      |
+| `uniform_int`   | `low`, `high`            |
 +-------------------+------------------------+
-| ``binomial``      | ``n``, ``p``           |
+| `binomial`      | `n`, `p`                 |
 +-------------------+------------------------+
-| ``exponential``   | ``lambda``             |
+| `exponential`   | `lambda`                 |
 +-------------------+------------------------+
-| ``gamma``         | ``order``, ``scale``   |
+| `gamma`         | `order`, `scale`         |
 +-------------------+------------------------+
-| ``poisson``       | ``lambda``             |
-+-------------------+------------------------+
+| `poisson`       | `lambda`                 |
+ +-------------------+-----------------------+|
 
 Querying the synapses
 ---------------------
@@ -148,7 +148,7 @@ The function
 ``GetConnections(source=None, target=None, synapse_model=None)`` returns
 a list of connection identifiers that match the given specifications.
 There are no mandatory arguments. If it is called without any arguments,
-it will return all the connections in the network. If ``source`` is
+it will return all the connections in the network. If `source` is
 specified, as a list of one or more nodes, the function will return all
 outgoing connections from that population:
 
@@ -157,14 +157,14 @@ outgoing connections from that population:
     nest.GetConnections(epop1)
 
 Similarly, we can find the incoming connections of a particular target
-population by specifying ``target`` as a list of one or more nodes:
+population by specifying `target` as a list of one or more nodes:
 
 ::
 
     nest.GetConnections(target=epop2)
 
 will return all connections beween all neurons in the network and
-neurons in ``epop2``. Finally, the search can be restricted by
+neurons in `epop2`. Finally, the search can be restricted by
 specifying a given synapse model:
 
 ::
@@ -172,17 +172,17 @@ specifying a given synapse model:
     nest.GetConnections(synapse_model="stdp_synapse")
 
 will return all the connections in the network which are of type
-``stdp_synapse``. The last two cases are slower than the first case, as
+`stdp_synapse`. The last two cases are slower than the first case, as
 a full search of all connections has to be performed.The arguments
-``source``, ``target`` and ``synapse_model`` can be used individually,
+`source`, `target` and `synapse_model` can be used individually,
 as above, or in any conjunction:
 
 ::
 
     nest.GetConnections(epop1, epop2, "stdp_synapse")
 
-will return all the connections that the neurons in ``epop1`` have to
-neurons in ``epop2`` of type ``stdp_synapse``. Note that all these
+will return all the connections that the neurons in `epop1` have to
+neurons in `epop2` of type `stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
@@ -192,26 +192,26 @@ dictionaries, containing the parameters and variables for each
 connection found by :py:func:`.GetConnections`. However, usually we don’t want
 all the information from a synapse, but some specific part of it. For
 example, if we want to check we have connected the network as intended,
-we might want to examine only the parameter ``target`` of each
+we might want to examine only the parameter `target` of each
 connection. We can extract just this information by using the optional
-``keys`` argument of :py:func:`.GetStatus`:
+`keys` argument of :py:func:`.GetStatus`:
 
 ::
 
     conns = nest.GetConnections(epop1, synapse_model="stdp_synapse")
     targets = nest.GetStatus(conns, "target")
 
-The variable ``targets`` is now list of all the ``target`` values of the
+The variable `targets` is now list of all the `target` values of the
 connections found. If we are interested in more than one parameter,
-``keys`` can be a list of keys as well:
+`keys` can be a list of keys as well:
 
 ::
 
     conns = nest.GetConnections(epop1, synapse_model="stdp_synapse")
     conn_vals = nest.GetStatus(conns, ["target","weight"])
 
-The variable ``conn_vals`` is now a list of lists, containing the
-``target`` and ``weight`` values for each connection found.
+The variable `conn_vals` is now a list of lists, containing the
+`target` and `weight` values for each connection found.
 
 To get used to these methods of querying the synapses, it is recommended
 to try them out on a small network where all connections are known.
@@ -312,7 +312,7 @@ functionality in a more concise and less error-prone fashion:
     print(amax-bmax)
 
 If you find that this clutters your code, as an alternative you can
-write a ``lambda`` function as an argument for ``map``, and enjoy the
+write a `lambda` function as an argument for `map`, and enjoy the
 feeling of smugness that will pervade the rest of your day. A good
 policy is that if you find yourself about to copy-and-paste more than
 one line of code, consider taking the few extra seconds required to
@@ -388,15 +388,15 @@ handout.
 Querying Synapses
 ~~~~~~~~~~~~~~~~~
 
--  ``GetConnections(neuron, synapse_model="None"))`` 
+-  ``GetConnections(neuron, synapse_model="None"))``
 
    Return an array of connection identifiers.
 
    Parameters:
 
-   -  ``source`` - list of source GIDs
-   -  ``target`` - list of target GIDs
-   -  ``synapse_model`` - string with the synapse model
+   -  `source` - list of source GIDs
+   -  `target` - list of target GIDs
+   -  `synapse_model` - string with the synapse model
 
    If GetConnections is called without parameters, all connections in
    the network are returned. If a list of source neurons is given, only

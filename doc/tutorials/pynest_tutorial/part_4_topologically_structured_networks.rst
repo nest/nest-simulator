@@ -4,7 +4,7 @@ Part 4: Topologically structured networks
 Introduction
 ------------
 
-This handout covers the use of NEST’s ``topology`` library to construct
+This handout covers the use of NEST’s `topology` library to construct
 structured networks. When you have worked through this material you will
 be able to:
 
@@ -47,7 +47,7 @@ In the previous handouts, we saw that we can create deterministic or
 randomly selected connections between networks using :py:func:`.Connect`. If
 we want to create network models that incorporate the spatial location
 and spatial connectivity profiles, it is time to turn to the
-``topology`` module. **NOTE:** Full documentation for usage of the
+`topology` module. **NOTE:** Full documentation for usage of the
 topology module is present in NEST Topology Users Manual (NTUM)
 [1]_, which in the following pages is referenced as a
 full-source.
@@ -55,7 +55,7 @@ full-source.
 The nest.topology module
 ------------------------
 
-The ``nest.topology`` module allows us to create populations of nodes
+The `nest.topology` module allows us to create populations of nodes
 with a given spatial organisation, connection profiles which specify how
 neurons are to be connected, and provides a high-level connection
 routine. We can thus create structured networks by designing the
@@ -73,10 +73,10 @@ detail:
    we wish our connections to have. Each connection dictionary specifies
    the properties for one class of connection, and contains parameters
    that allow us to tune the profile. These are related to the
-   location-dependent likelihood of choosing a target (``mask`` and
-   ``kernel``), and the cell-type specificity i.e. which types of cell
-   in a layer can participate in the connection class (``sources`` and
-   ``targets``).
+   location-dependent likelihood of choosing a target (`mask` and
+   `kernel`), and the cell-type specificity i.e. which types of cell
+   in a layer can participate in the connection class (`sources` and
+   `targets`).
 
 3. **Connecting layers**, in which we apply the connection dictionaries
    between layers, equivalent to population-specificity. Note that
@@ -99,15 +99,15 @@ The code for defining a layer follows this template:
     my_layer_dict = {...} # see below for options
     my_layer = topp.CreateLayer(my_layer_dict)
 
-where ``my_layer_dict`` will define the elements of the layer and their
+where `my_layer_dict` will define the elements of the layer and their
 locations.
 
-The choice of nodes to fill the ``layer`` is specified using the
-``elements`` key. For the moment, we’ll only concern ourselves with
+The choice of nodes to fill the `layer` is specified using the
+`elements` key. For the moment, we’ll only concern ourselves with
 creating simple layers, where each element is from a homogeneous
 population. Then, the corresponding value for this dictionary entry
 should is the model type of the neuron, which can either be an existing
-model in the ``NEST`` collection, or one that we’ve previously defined
+model in the `NEST` collection, or one that we’ve previously defined
 using :py:func:`.CopyModel`.
 
 We next have to decide whether the nodes should be placed in a
@@ -179,7 +179,7 @@ The following snippet produces :numref:`free`:
             "extent" : [1.1,1.1],
             "elements" : "iaf_psc_alpha"}
 
-Note: The topology module does support 3D ``layer``\ s, but this is
+Note: The topology module does support 3D `layer`\ s, but this is
 outside the scope of this handout.
 
 An overview of all the parameters that can be used, as well as whether
@@ -221,7 +221,7 @@ Advanced
 
 **Composite layers** can also be created. This layer type extends the
 grid-based layer and allows us to define a number of neurons and other
-elements, such as ``poisson_generators``, at each grid location. A full
+elements, such as *poisson generators*, at each grid location. A full
 explanation is available in Section 2.5 of NTUM. The advantages in this
 approach is that, if we want to have a layer in which each element or
 subnetwork has the same composition of components, then it’s very easy
@@ -244,7 +244,7 @@ To define the types of connections that we want between populations of
 neurons, we specify a *connection dictionary*.
 
 The only two mandatory parameters for any connection dictionary are
-``connection_type`` and ``mask``. All others allow us to tune our
+`connection_type` and `mask`. All others allow us to tune our
 connectivity profiles by tuning the likelihood of a connection, the
 synapse type, the weight and/or delay associated with a connection, or
 the number of connections, as well as specifying restrictions on cell

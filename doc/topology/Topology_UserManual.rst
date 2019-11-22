@@ -99,7 +99,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The layer has five *rows* and five *columns*.
 
--  The ``'elements'`` entry of the dictionary passed to :py:func:`.CreateLayer`
+-  The `elements` entry of the dictionary passed to :py:func:`.CreateLayer`
    determines the *elements* of the layer. In this case, the layer
    contains :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons.
 
@@ -148,7 +148,7 @@ Setting the extent
 
 Layers have a default extent of :math:`1\times 1`. You can specify a
 different extent of a layer, i.e., its size in :math:`x`- and
-:math:`y`-direction by adding an ``'extent'`` entry to the dictionary
+:math:`y`-direction by adding an `extent` entry to the dictionary
 passed to :py:func:`.CreateLayer`:
 
 .. literalinclude:: user_manual_scripts/layers.py
@@ -167,7 +167,7 @@ a two-element tuple of floats. In this example, we have grid spacings
 :math:`dx=0.4` and :math:`dy=0.1`. Changing the extent does not affect
 grid indices.
 
-The size of ``'extent'`` in :math:`x`- and :math:`y`-directions should
+The size of `extent` in :math:`x`- and :math:`y`-directions should
 be numbers that can be expressed exactly as binary fractions. This is
 automatically ensured for integer values. Otherwise, under rare
 circumstances, subtle rounding errors may occur and trigger an
@@ -179,7 +179,7 @@ Setting the center
 ~~~~~~~~~~~~~~~~~~
 
 Layers are centered about the origin :math:`(0,0)` by default. This can
-be changed through the ``'center'`` entry in the dictionary specifying
+be changed through the `center` entry in the dictionary specifying
 the layer. The following code creates layers centered about
 :math:`(0,0)`, :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
@@ -201,7 +201,7 @@ center does not affect grid indices: For each of the three layers in
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
-The ``'center'`` coordinates should be numbers that can be expressed
+The `center` coordinates should be numbers that can be expressed
 exactly as binary fractions. For more information, see
 Sec. \ :ref:`2.1.2 <sec:setextent>`.
 
@@ -273,14 +273,14 @@ extent :math:`1\times 1`, i.e., spanning the square
 Note the following points:
 
 -  For free layers, element *positions* are specified by the
-   ``'positions'`` entry in the dictionary passed to :py:func:`.CreateLayer`.
-   ``'positions'`` is mutually exclusive with ``'rows'``/``'columns'``
+   `positions` entry in the dictionary passed to :py:func:`.CreateLayer`.
+   `positions` is mutually exclusive with `rows`/`columns`
    entries in the dictionary.
 
--  The ``'positions'`` entry must be a Python ``list`` (or ``tuple``) of
+-  The `positions` entry must be a Python `list` (or `tuple`) of
    element coordinates, i.e., of two-element tuples of floats giving the
    (:math:`x`, :math:`y`)-coordinates of the elements. One layer element
-   is created per element in the ``'positions'`` entry.
+   is created per element in the `positions` entry.
 
 -  All layer element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
@@ -288,7 +288,7 @@ Note the following points:
    Sec. \ :ref:`2.4 <sec:periodic>`.
 
 -  Element positions in free layers are *not* shifted when specifying
-   the ``'center'`` of the layer. The user must make sure that the
+   the `center` of the layer. The user must make sure that the
    positions given lie within the extent when centered about the given
    center.
 
@@ -335,7 +335,7 @@ one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
 You specify periodic boundary conditions for a layer using the
-dictionary entry ``edge_wrap``:
+dictionary entry `edge_wrap`:
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ player #}
@@ -379,11 +379,11 @@ From the perspective of NEST, a Topology layer is a special type of
 *subnet*. From the user perspective, the following points may be of
 interest:
 
--  Grid-based layers have the NEST model type ``topology_layer_grid``,
-   free layers the model type ``topology_layer_free``.
+-  Grid-based layers have the NEST model type `topology_layer_grid`,
+   free layers the model type `topology_layer_free`.
 
--  The status dictionary of a layer has a ``'topology'`` entry
-   describing the layer properties (``l`` is the layer created above):
+-  The status dictionary of a layer has an entry
+   describing the layer properties (`l` is the layer created above):
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1s #}
@@ -395,7 +395,7 @@ interest:
 
 
 
-The `'topology'` entry is read-only.
+The `topology` entry is read-only.
 
 -  The NEST kernel sees the elements of the layer in the same way as the
    elements of any subnet. You will notice this when printing a network
@@ -427,11 +427,12 @@ i.e., layers in which each element is a collection of model neurons, or,
 in general NEST network nodes.
 
 Construction of layers with composite elements proceeds exactly as for
-layers with simple elements, except that the ``'elements'`` entry of the
+layers with simple elements, except that the `elements` entry of the
 dictionary passed to :py:func:`.CreateLayer` is a Python list or tuple. The
 following code creates a :math:`1\times 2` layer (to keep the output
 from :py:func:`.PrintNetwork` compact) in which each element consists of one
-``'iaf_cond_alpha'`` and one ``'poisson_generator'`` node
+:cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` and one :cpp:class:`poisson_generator <nest::poisson_generator>`
+node`
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer6 #}
@@ -441,7 +442,7 @@ from :py:func:`.PrintNetwork` compact) in which each element consists of one
     :start-after: #{ layer6 #}
     :end-before: #{ end #}
 
-The network consist of one ``topology_layer_grid`` with four elements:
+The network consist of one `topology_layer_grid` with four elements:
 two :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` and two :cpp:class:`poisson_generator <nest::poisson_generator>` nodes. The
 identical nodes are grouped, so that the subnet contains first one full
 layer of :cpp:class:`iaf_cond_alpha <nest::iaf_cond_alpha>` nodes followed by one full layer of
@@ -539,7 +540,7 @@ Connection
 
 Connection dictionary
    A dictionary specifying the properties of a connection between two
-   layers in a call to ``CreateLayers``.
+   layers in a call to :py:func:`.CreateLayer`
 
 Source
    The *source* of a single connection is the node sending signals
@@ -554,7 +555,7 @@ Target
 Connection type
    The *connection type* determines how nodes are selected when
    :py:func:`.ConnectLayers` creates connections between layers. It is either
-   ``'convergent'`` or ``'divergent'``.
+   `convergent` or `divergent`.
 
 Convergent connection
    When creating a *convergent connection* between layers, Topology
@@ -610,12 +611,12 @@ Kernel
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
    Autapses are permitted by default, but can be disabled by adding
-   ``'allow_autapses': False`` to the connection dictionary.
+   `allow_autapse': False` to the connection dictionary.
 
 Multapse
    Node A is connected to node B by a *multapse* if there are synapses
    (connections) from A to B. Multapses are permitted by default, but
-   can be disabled by adding ``'allow_multapses': False`` to the
+   can be disabled by adding `allow_multapses: False` to the
    connection dictionary.
 
 .. _sec:minimalcall:
@@ -633,7 +634,7 @@ Connections between Topology layers are created by calling
 3. A connection dictionary that contains at least the following entry:
 
    ‘connection_type’
-      either ``'convergent'`` or ``'divergent'``.
+      either `convergent` or `divergent`.
 
 In many cases, the connection dictionary will also contain
 
@@ -669,7 +670,7 @@ Here is a simple example, cf. :numref:`fig_conn1`
    we wrapped the layer to a torus, they would form a :math:`5\times 3`
    rectangle centered on the node at :math:`(4,5)`.
 
-In this example, layer ``l`` is both source and target layer. Connection
+In this example, layer `l` is both source and target layer. Connection
 type is divergent, i.e., for each node in the layer we choose targets
 according to the rectangular mask centered about each source node. Since
 no connection kernel is specified, we connect to all nodes within the
@@ -778,7 +779,7 @@ Elliptical
 
 By default, the masks are centered about the position of the driver
 node, mapped into the pool layer. You can change the location of the
-mask relative to the driver node by specifying an ``'anchor'`` entry in
+mask relative to the driver node by specifying an `anchor` entry in
 the mask dictionary. The anchor is a 2D vector specifying the location
 of the mask center relative to the driver node, as in the following
 examples (cf.  :numref:`fig_conn2_b`).
@@ -806,11 +807,11 @@ examples (cf.  :numref:`fig_conn2_b`).
 
    The same masks as in :numref:`fig_conn2_a`, but centered about
    :math:`(-1.5,-1.5)`, :math:`(-2,0)`, :math:`(1.5,1.5)` and
-   :math:`(2, -1)`, respectively, using the ``'anchor'`` parameter.
+   :math:`(2, -1)`, respectively, using the `anchor` parameter.
 
 and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
-add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
-``azimuth_angle`` is measured in degrees and is the rotational angle
+add an `azimuth_angle` entry in the specific mask dictionary. The
+`azimuth_angle` is measured in degrees and is the rotational angle
 from the x-axis to the y-axis.
 
 .. literalinclude:: user_manual_scripts/connections.py
@@ -865,11 +866,11 @@ Ellipsoidal
     :end-before: #{ end #}
 
 As in the 2D case, you can change the location of the mask relative to
-the driver node by specifying a 3D vector in the ``'anchor'`` entry in
+the driver node by specifying a 3D vector in the `anchor` entry in
 the mask dictionary. If you want to rotate the box or ellipsoidal masks,
-you can add an ``'azimuth_angle'`` entry in the specific mask dictionary
+you can add an `azimuth_angle` entry in the specific mask dictionary
 for rotation from the x-axis towards the y-axis about the z-axis, or an
-``'polar_angle'`` entry, specifying the rotation angle in degrees from
+`polar_angle` entry, specifying the rotation angle in degrees from
 the z-axis about the (possibly rotated) x axis, from the (possibly
 rotated) y-axis. You can specify both at once of course. If both are
 specified, we first rotate about the z-axis and then about the new
@@ -940,7 +941,7 @@ Note the following:
 -  In consequence, grid-based masks should only be used between layers
    with identical grid spacings.
 
--  The semantics of the ``'anchor'`` property for grid-based masks
+-  The semantics of the `anchor` property for grid-based masks
    differ significantly for general masks described in
    Sec. \ :ref:`3.3.1 <sec:free_masks>`. For general masks, the anchor is
    the center of the mask relative to the driver node. For grid-based
@@ -989,53 +990,52 @@ Functions currently available in the Topology module
    constant and the distance-dependent functions, i.e., all functions above
    the double line, can be used as kernels.
 
-   +-----------------+---------------+-------------------------------------------------+
-   | Name            | Parameters    | Function                                        |
-   |                 |               |                                                 |
-   +=================+===============+=================================================+
-   | ``constant``    |               | constant :math:`p\in[0,1]`                      |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``linear``      | ``a``,        | .. math:: p(d) = c + a d                        |
-   |                 | ``c``         |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``exponential`` | ``a``,        | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
-   |                 | ``c``,        |                                                 |
-   |                 | ``tau``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gausssian``   | ``p_center``, | .. math::                                       |
-   |                 | ``sigma``,    |     p(d) = c + p_{\text{center}}  e^{-\frac     |
-   |                 | ``mean``,     |     {(d-\mu)^2}{2\sigma^2}}                     |
-   |                 | ``c``         |                                                 |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gaussian2D``  | ``p_center``, | .. math::                                       |
-   |                 | ``sigma_x``,  |                                                 |
-   |                 | ``sigma_y``,  |    p(d) = c + p_{\text{center}}                 |
-   |                 | ``mean_x``,   |    e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-  |
-   |                 | ``mean_y``,   |    \frac{(d_y-\mu_y)^2}{\sigma_y^2}             |
-   |                 | ``rho``,      |    +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x |
-   |                 | ``c``         |    \sigma_y}}{2(1-\rho^2)}}                     |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``gamma``       | ``kappa``,    | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
-   |                 |               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}     |
-   |                 | ``theta``     |                                                 |
-   |                 |               |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``uniform``     | ``min``,      | :math:`p\in [\text{min},\text{max})` uniformly  |
-   |                 |               |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``normal``      | ``mean``,     | :math:`p \in [\text{min},\text{max})` normal    |
-   |                 | ``sigma``,    | with given mean and :math:`\sigma`              |
-   |                 | ``min``,      |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
-   | ``lognormal``   | ``mu``,       | :math:`p \in [\text{min},\text{max})` lognormal |
-   |                 | ``sigma``,    | with given :math:`\mu` and :math:`\sigma`       |
-   |                 | ``min``,      |                                                 |
-   |                 | ``max``       |                                                 |
-   +-----------------+---------------+-------------------------------------------------+
+   +---------------+-------------+-------------------------------------------------+
+   | Name          | Parameters  | Function                                        |
+   +===============+=============+=================================================+
+   | `constant`    |             | constant :math:`p\in[0|1]`                      |
+   +---------------+-------------+-------------------------------------------------+
+   | `linear`      | `a`,        | .. math:: p(d) = c + a d                        |
+   |               | `c`         |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `exponential` | `a`,        | .. math:: p(d) = c + a e^{-\frac{d}{\tau}}      |
+   |               | `c`,        |                                                 |
+   |               | `tau`       |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `gausssian`   | `p_center`, | .. math::                                       |
+   |               | `sigma`,    | p(d) = c + p_{\text{center}}  e^{-\frac         |
+   |               | `mean`,     | {(d-\mu)^2}{2\sigma^2}}                         |
+   |               | `c`         |                                                 |
+   |               |             |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `gaussian2D`  | `p_center`, | .. math::                                       |
+   |               | `sigma_x`,  |                                                 |
+   |               | `sigma_y`,  | p(d) = c + p_{\text{center}}                    |
+   |               | `mean_x`,   | e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-     |
+   |               | `mean_y`,   | \frac{(d_y-\mu_y)^2}{\sigma_y^2}                |
+   |               | `rho`,      | +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x    |
+   |               | `c`         | \sigma_y}}{2(1-\rho^2)}}                        |
+   |               |             |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `gamma`       | `kappa`,    | .. math:: p(d) = \frac{d^{\kappa-1}e^{-\frac{d} |
+   |               |             | {\theta}}}{\theta^\kappa\Gamma(\kappa)}         |
+   |               | `theta`     |                                                 |
+   |               |             |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `uniform`     | `min`,      | :math:`p\in [\text{min},\text{max})` uniformly  |
+   |               |             |                                                 |
+   |               | `max`       |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `normal`      | `mean`,     | :math:`p \in [\text{min},\text{max})` normal    |
+   |               | `sigma`,    | with given mean and :math:`\sigma`              |
+   |               | `min`,      |                                                 |
+   |               | `max`       |                                                 |
+   +---------------+-------------+-------------------------------------------------+
+   | `lognormal`   | `mu`,       | :math:`p \in [\text{min},\text{max})` lognormal |
+   |               | `sigma`,    | with given :math:`\mu` and :math:`\sigma`       |
+   |               | `min`,      |                                                 |
+   |               | `max`       |                                                 |
+   +---------------+-------------+-------------------------------------------------+
 
 .. _fig_conn4:
 
@@ -1163,7 +1163,7 @@ Randomized weights and delays
     :start-after: #{ conn5uniform #}
     :end-before: #{ end #}
 
-By using the ``'uniform'`` function for weights or delays, one can
+By using the `uniform` function for weights or delays, one can
 obtain randomized values for weights and delays, as shown by the red
 circles in the bottom panel of :numref:`fig_conn5`. Weights and delays can
 currently only be randomized with uniform distribution.
@@ -1303,11 +1303,11 @@ following principles:
 
 -  If only nodes of a given model within each element shall be
    considered as sources or targets then this can be achieved by adding
-   a ``'sources'`` or ``'targets'`` entry to the connection dictionary,
+   a `sources` or `targets` entry to the connection dictionary,
    which specifies the model to connect.
 
 This is exemplified by the following code, which connects pyramidal
-cells (``pyr``) to interneurons (:term:`in`) with a circular mask and
+cells (`pyr`) to interneurons (:term:`in`) with a circular mask and
 uniform probability and interneurons to pyramidal cells with a
 rectangular mask unit probability.
 
@@ -1321,8 +1321,8 @@ Synapse models and properties
 -----------------------------
 
 By default, :py:func:`.ConnectLayers` creates connections using the default
-synapse model in NEST, ``static_synapse``. You can specify a different
-model by adding a ``'synapse_model'`` entry to the connection
+synapse model in NEST, :cpp:class:`static_synapse <nest::static_connection>`. You can specify a different
+model by adding a `synapse_model` entry to the connection
 dictionary, as in this example:
 
 .. literalinclude:: user_manual_scripts/connections.py
@@ -1394,7 +1394,7 @@ Query functions
 ---------------
 
 The following table presents some query functions provided by NEST
-(``nest.``) and Topology (``tp.``). For detailed information about these
+(`nest.`) and Topology (`tp.`). For detailed information about these
 functions, please see the online Python and SLI documentation.
 
 +-------------------------------+---------------------------------------------+
@@ -1555,7 +1555,7 @@ the NEST Developer Manual. The basic steps required to get started are:
 Adding kernel functions
 -----------------------
 
-As an example, we will add a kernel function called ``'affine2d'``,
+As an example, we will add a kernel function called `affine2d`,
 which will be linear (actually affine) in the displacement of the nodes,
 on the form
 
@@ -1571,7 +1571,7 @@ the top of the file ``mymodule.h``:
    #include "parameter.h"
 
 Then, add the class definition, e.g. near the bottom of the file before
-the brace closing the namespace ``mynest``:
+the brace closing the namespace `mynest`:
 
 .. code:: c
 
@@ -1604,11 +1604,11 @@ the brace closing the namespace ``mynest``:
 
 The class contains a constructor, which reads the value of the
 parameters :math:`a`, :math:`b` and :math:`c` from the dictionary
-provided by the user. The function ``updateValue`` will do nothing if
+provided by the user. The function `updateValue` will do nothing if
 the given key is not in the dictionary, and the default values
 :math:`a=b=1,\ c=0` will be used.
 
-The overridden method ``raw_value()`` will return the actual value of
+The overridden method `raw_value()` will return the actual value of
 the kernel function for the displacement given as the first argument,
 which is of type ``nest::Position<2>``. The template argument 2 refers
 to a 2-dimensional position. You can also implement a method taking a
@@ -1616,7 +1616,7 @@ to a 2-dimensional position. You can also implement a method taking a
 3-dimensional layers. The second argument, a random number generator, is
 not used in this example.
 
-The class also needs to have a ``clone()`` method, which will return a
+The class also needs to have a `clone()` method, which will return a
 dynamically allocated copy of the object. We use the (default) copy
 constructor to implement this.
 
@@ -1636,7 +1636,7 @@ compile and install the module by issuing
    make install
 
 To use the function, the module must be loaded into NEST using
-``nest.Install()``. Then, the function is available to be used in
+:py:func:`.Install`. Then, the function is available to be used in
 connections, e.g.
 
 ::
@@ -1652,7 +1652,7 @@ Adding masks
 ------------
 
 The process of adding a mask is similar to that of adding a kernel
-function. A subclass of ``nest::Mask<D>`` must be defined, where ``D``
+function. A subclass of ``nest::Mask<D>`` must be defined, where `D`
 is the dimension (2 or 3). In this case we will define a 2-dimensional
 elliptic mask by creating a class called ``EllipticMask``. Note that
 elliptical masks are already part of NEST see
@@ -1665,8 +1665,8 @@ file:
 
    #include "mask.h"
 
-Compared to the ``Parameter`` class discussed in the previous section,
-the ``Mask`` class has a few more methods that must be overridden:
+Compared to the `Parameter` class discussed in the previous section,
+the `Mask` class has a few more methods that must be overridden:
 
 .. code:: c
 
@@ -1758,11 +1758,11 @@ Changes from Topology 2.14 to 2.16
 The one important change in the Topology module from NEST version 2.14
 to 2.16 was the inclusion of rotated masks:
 
--  Rotation of ``rectangular/box`` and ``elliptical/ellipsoidal`` masks
+-  Rotation of `rectangular/box` and `elliptical/ellipsoidal` masks
    is now possible. NEST offers rotation in two directions, from the
    x-axis towards the y-axis, and from the z-axis away from the y-axis.
-   To specify the former use the variable ``azimuth_angle`` and for the
-   latter, use ``polar_angle``.
+   To specify the former use the variable `azimuth_angle` and for the
+   latter, use `polar_angle`.
 
 Changes from Topology 2.12 to 2.14
 ----------------------------------
@@ -1771,8 +1771,8 @@ This is a short summary of the most important changes in the Topology
 Module from NEST version 2.12 to 2.14.
 
 -  Elliptical and ellipsoidal masks have been added to NEST with
-   NEST 2.14. To specify the mask, the ``major_axis``, ``minor_axis``
-   and (for ellipsoidal masks) ``polar_axis`` must be specified.
+   NEST 2.14. To specify the mask, the `major_axis`, `minor_axis`
+   and (for ellipsoidal masks) `polar_axis` must be specified.
 
 -  It is now possible to obtain the GIDs inside a masked area with the
    function SelectNodesByMask.
@@ -1833,7 +1833,7 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
    (otherwise, neurons are the left and right edge would have been in
    identical locations, not what one wants).
 
--  The semantics of the ``anchor`` entry for kernel functions has
+-  The semantics of the `anchor` entry for kernel functions has
    changed: the anchor now specifies the center of the probability
    distribution relative to the driver node. This is consistent with the
    semantics for free masks, see Sec. \ :ref:`3.3 <sec:conn_masks>` and

@@ -134,7 +134,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
             header_2 = "# RecordingBackendASCII version:"
             self.assertTrue(lines[1].startswith(header_2))
 
-            self.assertEqual(lines[2], "# sender\ttime_ms\tV_m\n")
+            self.assertEqual(lines[2], "sender\ttime_ms\tV_m\n")
 
             self.assertEqual(lines[3], "2\t0.100\t-70.000\n")
 
@@ -212,7 +212,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         fname = mm.get("filenames")[0]
         with open(fname) as f:
             lines = f.readlines()
-            h3_expected = "# sender\ttime_step\ttime_offset\tV_m\n"
+            h3_expected = "sender\ttime_step\ttime_offset\tV_m\n"
             self.assertEqual(lines[2], h3_expected)
 
 

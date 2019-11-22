@@ -86,7 +86,7 @@ A network models has two essential components: *populations* and
  *projections*.  We first use NEST's :py:func:`.CopyModel` mechanism to
 create specific models for all populations and subpopulations in
 the network, and then create the populations using the Topology
-modules ``CreateLayer()`` function.
+modules :py:func:`.CreateLayer` function.
 
 We use a two-stage process to create the connections, mainly
 because the same configurations are required for a number of

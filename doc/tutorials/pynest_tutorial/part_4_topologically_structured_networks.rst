@@ -435,9 +435,9 @@ was built correctly:
 
    There are three functions that can be combined:
 
-   -  ``PlotLayer``
-   -  ``PlotTargets``
-   -  ``PlotKernel``
+   -  :py:func:`.PlotLayer`
+   -  :py:func:`.PlotTargets`
+   -  :py:func:`.PlotKernel`
 
    which allow us to generate the plots used with NUTM and this handout.
    See Section 4.2 of NTUM for more details.

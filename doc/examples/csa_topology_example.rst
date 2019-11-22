@@ -138,7 +138,7 @@ connection set.
     nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
 
-Finally, we use the ``PlotTargets`` function to show all targets in `pop2`
+Finally, we use the :py:func:`.PlotTargets` function to show all targets in `pop2`
 starting at the center neuron of `pop1`.
 
 

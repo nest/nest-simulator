@@ -89,8 +89,8 @@ the returned handles.
 We create a multimeter to record
 
 - membrane potential :term:`V_m`
-- threshold value ``theta``
-- intrinsic currents ``I_NaP``, ``I_KNa``, ``I_T``, ``I_h``
+- threshold value `theta`
+- intrinsic currents `I_NaP`, `I_KNa`, `I_T`, `I_h`
 
 by passing these names in the ``record_from`` list.
 

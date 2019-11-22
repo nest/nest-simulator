@@ -99,7 +99,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The layer has five *rows* and five *columns*.
 
--  The ``'elements'`` entry of the dictionary passed to ``CreateLayer``
+-  The ``'elements'`` entry of the dictionary passed to :py:func:`.CreateLayer`
    determines the *elements* of the layer. In this case, the layer
    contains :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` neurons.
 
@@ -149,7 +149,7 @@ Setting the extent
 Layers have a default extent of :math:`1\times 1`. You can specify a
 different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by adding an ``'extent'`` entry to the dictionary
-passed to ``CreateLayer``:
+passed to :py:func:`.CreateLayer`:
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer2 #}
@@ -273,7 +273,7 @@ extent :math:`1\times 1`, i.e., spanning the square
 Note the following points:
 
 -  For free layers, element *positions* are specified by the
-   ``'positions'`` entry in the dictionary passed to ``CreateLayer``.
+   ``'positions'`` entry in the dictionary passed to :py:func:`.CreateLayer`.
    ``'positions'`` is mutually exclusive with ``'rows'``/``'columns'``
    entries in the dictionary.
 
@@ -428,7 +428,7 @@ in general NEST network nodes.
 
 Construction of layers with composite elements proceeds exactly as for
 layers with simple elements, except that the ``'elements'`` entry of the
-dictionary passed to ``CreateLayer`` is a Python list or tuple. The
+dictionary passed to :py:func:`.CreateLayer` is a Python list or tuple. The
 following code creates a :math:`1\times 2` layer (to keep the output
 from :py:func:`.PrintNetwork` compact) in which each element consists of one
 ``'iaf_cond_alpha'`` and one ``'poisson_generator'`` node
@@ -471,7 +471,7 @@ Note the following points:
 -  When inspecting a layer as a subnet, the different nodes will appear
    in groups of identical nodes.
 
--  For grid-based layers, the function ``GetElement`` returns a list of
+-  For grid-based layers, the function :py:func:`.GetElement` returns a list of
    nodes at a given grid position. See Chapter \ :ref:`4 <sec:inspection>`
    for more on inspecting layers.
 
@@ -517,7 +517,7 @@ Connections
 The most important feature of the Topology module is the ability to
 create connections between layers with quite some flexibility. In this
 chapter, we will illustrate how to specify and create connections. All
-connections are created using the ``ConnectLayers`` function.
+connections are created using the :py:func:`.ConnectLayers` function.
 
 .. _sec:conn_basics:
 
@@ -534,7 +534,7 @@ We begin by introducing important terminology:
 Connection
    In the context of connections between the elements of Topology
    layers, we often call the set of all connections between pairs of
-   network nodes created by a single call to ``ConnectLayers`` a
+   network nodes created by a single call to :py:func:`.ConnectLayers` a
    *connection*.
 
 Connection dictionary
@@ -553,7 +553,7 @@ Target
 
 Connection type
    The *connection type* determines how nodes are selected when
-   ``ConnectLayers`` creates connections between layers. It is either
+   :py:func:`.ConnectLayers` creates connections between layers. It is either
    ``'convergent'`` or ``'divergent'``.
 
 Convergent connection
@@ -624,7 +624,7 @@ A minimal ConnectLayers call
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Connections between Topology layers are created by calling
-``ConnectLayers`` with the following arguments [3]_:
+:py:func:`.ConnectLayers` with the following arguments [3]_:
 
 1. The source layer.
 
@@ -962,7 +962,7 @@ Probabilistic connections can be generated in two different ways using
 Topology:
 
 Free probabilistic connections
-   are the default. In this case, ``ConnectLayers`` considers each
+   are the default. In this case, :py:func:`.ConnectLayers` considers each
    driver node :math:`D` in turn. For each :math:`D`, it evaluates the
    kernel for each pool node :math:`P` within the mask and creates a
    connection according to the resulting probability. This means in
@@ -1108,7 +1108,7 @@ Weights and delays
 
 The functions presented in Table :ref:`tbl_kernels` can also be used to
 specify distance-dependent or randomized weights and delays for the
-connections created by ``ConnectLayers``.
+connections created by :py:func:`.ConnectLayers`.
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
 functions with the following code examples. All examples use a “layer”
@@ -1226,7 +1226,7 @@ out.
 
 Connection generation now proceeds in a different way than before:
 
-1. For each driver node, ``ConnectLayers`` randomly selects a node from
+1. For each driver node, :py:func:`.ConnectLayers` randomly selects a node from
    the mask region in the pool layer, and creates a connection with the
    probability prescribed by the kernel. This is repeated until the
    requested number of connections has been created.
@@ -1240,7 +1240,7 @@ Connection generation now proceeds in a different way than before:
 
 4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
    and prescribe a number of connections greater than the number of pool
-   nodes in the mask, ``ConnectLayers`` may get stuck in an infinite
+   nodes in the mask, :py:func:`.ConnectLayers` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
    the mask may vary considerably for free layers with randomly placed
    nodes.
@@ -1320,7 +1320,7 @@ rectangular mask unit probability.
 Synapse models and properties
 -----------------------------
 
-By default, ``ConnectLayers`` creates connections using the default
+By default, :py:func:`.ConnectLayers` creates connections using the default
 synapse model in NEST, ``static_synapse``. You can specify a different
 model by adding a ``'synapse_model'`` entry to the connection
 dictionary, as in this example:
@@ -1461,18 +1461,18 @@ Visualization functions
 
 Topology provides three functions to visualize networks:
 
-+-------------------+------------------------------------------+
-| ``PlotLayer()``   | Plot nodes in a layer.                   |
-+-------------------+------------------------------------------+
-| ``PlotTargets()`` | Plot all targets of a node in a given    |
-|                   | layer.                                   |
-+-------------------+------------------------------------------+
-| ``PlotKernel()``  | Add indication of mask and kernel to     |
-|                   | plot of layer. It does *not* wrap masks  |
-|                   | and kernels with respect to periodic     |
-|                   | boundary conditions. This function is    |
-|                   | usually called by ``PlotTargets``.       |
-+-------------------+------------------------------------------+
++-------------------------+--------------------------------------------+
+| :py:func:`.PlotLayer`   | Plot nodes in a layer.                     |
++-------------------------+--------------------------------------------+
+| :py:func:`.PlotTargets` | Plot all targets of a node in a given      |
+|                         | layer.                                     |
++-------------------------+--------------------------------------------+
+| :py:func:`.PlotKernel`  | Add indication of mask and kernel to       |
+|                         | plot of layer. It does *not* wrap masks    |
+|                         | and kernels with respect to periodic       |
+|                         | boundary conditions. This function is      |
+|                         | usually called by :py:func:`.PlotTargets`. |
++-------------------------+--------------------------------------------+
 
 .. _fig_vislayer:
 

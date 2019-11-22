@@ -52,7 +52,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , port_name_( "cont_out" )
   , record_from_()
-  , targets_( new GIDCollectionPrimitive() )
+  , targets_( new NodeCollectionPrimitive() )
 {
 }
 
@@ -107,7 +107,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::record_from ] = ad_record_from;
-  ( *d )[ names::targets ] = new GIDCollectionDatum( targets_ );
+  ( *d )[ names::targets ] = new NodeCollectionDatum( targets_ );
 }
 
 void
@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      targets_ = getValue< GIDCollectionDatum >( d, names::targets );
+      targets_ = getValue< NodeCollectionDatum >( d, names::targets );
     }
     else
     {

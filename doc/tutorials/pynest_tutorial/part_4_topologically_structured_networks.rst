@@ -367,7 +367,7 @@ was built correctly:
    See Section 4.2 of NTUM for more details.
 
 It may also be useful to look at the ``spatial`` property of the
-GIDCollection, which describes the layer properties. Other useful
+NodeCollection, which describes the layer properties. Other useful
 functions that may be of help are listed in NTUM Section 4.1.
 
 References

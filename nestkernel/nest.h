@@ -68,12 +68,12 @@ DictionaryDatum get_node_status( const index node_id );
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-GIDCollectionPTR create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const index n );
 
-GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
-void connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+void connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
 
@@ -149,7 +149,7 @@ dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
 bool is_spatial( const ParameterDatum& param );
-std::vector< double > apply( const ParameterDatum& param, const GIDCollectionDatum& gc );
+std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
 std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
 }
 

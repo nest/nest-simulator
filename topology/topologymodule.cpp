@@ -293,7 +293,7 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionDatum layer = create_layer( layer_dict );
+  NodeCollectionDatum layer = create_layer( layer_dict );
 
   for ( auto&& gid_triple : *layer )
   {
@@ -308,10 +308,10 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 /** @BeginDocumentation
   Name: topology::GetPosition - retrieve position of input node
 
-  Synopsis: GIDCollection GetPosition -> [array]
+  Synopsis: NodeCollection GetPosition -> [array]
 
   Parameters:
-  layer      - GIDCollection for layer with layer nodes
+  layer      - NodeCollection for layer with layer nodes
 
   Returns:
   [array]    - spatial position of node [x y]
@@ -338,7 +338,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum result = get_position( layer );
 
@@ -361,7 +361,7 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
             layer from_pos to_gid Displacement -> [double vector]
 
   Parameters:
-  layer       - GIDCollection for layer
+  layer       - NodeCollection for layer
   from_gid    - int, gid of node in a topology layer
   from_pos    - double vector, position in layer
   to_gid      - int, gid of node in a topology layer
@@ -401,13 +401,13 @@ TopologyModule::Displacement_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer_to = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer_to = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  const GIDCollectionDatum layer_from = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const NodeCollectionDatum layer_from = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
 
   if ( layer_to->size() != 1 and layer_from->size() != 1 and not( layer_to->size() == layer_from->size() ) )
   {
-    throw BadProperty( "GIDCollections must have equal length or one must have size 1." );
+    throw BadProperty( "NodeCollections must have equal length or one must have size 1." );
   }
 
   ArrayDatum result = displacement( layer_to, layer_from );
@@ -422,7 +422,7 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   ArrayDatum result = displacement( layer, point );
@@ -439,7 +439,7 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
             layer from_pos to_gid Distance -> double
 
   Parameters:
-  layer       - GIDCollection for layer
+  layer       - NodeCollection for layer
   from_gid    - int, gid of node in a topology layer
   from_pos    - double vector, position in layer
   to_gid      - int, gid of node in a topology layer
@@ -479,13 +479,13 @@ TopologyModule::Distance_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer_to = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer_to = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  const GIDCollectionDatum layer_from = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const NodeCollectionDatum layer_from = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
 
   if ( layer_to->size() != 1 and layer_from->size() != 1 and not( layer_to->size() == layer_from->size() ) )
   {
-    throw BadProperty( "GIDCollections must have equal length or one must have size 1." );
+    throw BadProperty( "NodeCollections must have equal length or one must have size 1." );
   }
 
   Token result = distance( layer_to, layer_from );
@@ -500,7 +500,7 @@ TopologyModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   const ArrayDatum point = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
   Token result = distance( layer, point );
@@ -632,8 +632,8 @@ TopologyModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
   to a region in the opposing layer.
 
   Parameters:
-  sourcelayer  - GIDCollection for source layer
-  targetlayer  - GIDCollectoin for target layer
+  sourcelayer  - NodeCollection for source layer
+  targetlayer  - NodeCollection for target layer
 
   connection_dict - dictionary containing any of the following
                     elements:
@@ -795,8 +795,8 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum source = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum target = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const NodeCollectionDatum source = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  const NodeCollectionDatum target = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   connect_layers( source, target, connection_dict );
@@ -813,7 +813,7 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   layer GetLayerStatus -> dict
 
   Parameters:
-  layer - GIDCollection representing layer
+  layer - NodeCollection representing layer
 
   Returns:
   Status dictionary with information about layer
@@ -823,7 +823,7 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
   DictionaryDatum result = get_layer_status( layer );
 
@@ -839,7 +839,7 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   Parameters:
   ostream - open output stream
-  layer   - GIDCollection for layer
+  layer   - NodeCollection for layer
 
   Description:
   Write information about each element in the given layer to the
@@ -875,7 +875,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   dump_layer_nodes( layer, out );
@@ -893,7 +893,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 
   Parameters:
   ostream          - open outputstream
-  source_layer     - GIDCollection for layer
+  source_layer     - NodeCollection for layer
   synapse_model    - synapse model (literal)
 
   Description:
@@ -930,8 +930,8 @@ TopologyModule::DumpLayerConnections_os_g_g_lFunction::execute( SLIInterpreter* 
   i->assert_stack_load( 4 );
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 3 ) );
-  const GIDCollectionDatum source_layer = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum target_layer = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const NodeCollectionDatum source_layer = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  const NodeCollectionDatum target_layer = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
   dump_layer_connections( syn_model, source_layer, target_layer, out_file );
@@ -959,7 +959,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer_gc = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const NodeCollectionDatum layer_nc = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
@@ -972,7 +972,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
     throw BadProperty( "Center must be 2- or 3-dimensional." );
   }
 
-  AbstractLayerPTR abstract_layer = get_layer( layer_gc );
+  AbstractLayerPTR abstract_layer = get_layer( layer_nc );
 
   if ( dim == 2 )
   {

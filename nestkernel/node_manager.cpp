@@ -92,7 +92,7 @@ NodeManager::get_status( index idx )
   return d;
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 NodeManager::add_node( index model_id, long n )
 {
   have_nodes_changed_ = true;
@@ -128,19 +128,19 @@ NodeManager::add_node( index model_id, long n )
   std::vector< std::shared_ptr< WrappedThreadException > >( kernel().vp_manager.get_num_threads() )
     .swap( exceptions_raised_ );
 
-  auto gc_ptr = GIDCollectionPTR( new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
+  auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_gid, max_gid, model_id ) );
 
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_gid, max_gid, gc_ptr );
+    add_neurons_( *model, min_gid, max_gid, nc_ptr );
   }
   else if ( not model->one_node_per_process() )
   {
-    add_devices_( *model, min_gid, max_gid, gc_ptr );
+    add_devices_( *model, min_gid, max_gid, nc_ptr );
   }
   else
   {
-    add_music_nodes_( *model, min_gid, max_gid, gc_ptr );
+    add_music_nodes_( *model, min_gid, max_gid, nc_ptr );
   }
 
   // check if any exceptions have been raised
@@ -171,12 +171,12 @@ NodeManager::add_node( index model_id, long n )
   kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
   kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
 
-  return gc_ptr;
+  return nc_ptr;
 }
 
 
 void
-NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
+NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
 {
   // upper limit for number of neurons per thread; in practice, either
   // max_new_per_thread-1 or max_new_per_thread nodes will be created
@@ -204,7 +204,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
       {
         Node* node = model.allocate( t );
         node->set_gid_( gid );
-        node->set_gc_( gc_ptr );
+        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
@@ -225,7 +225,7 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, GIDCollec
 }
 
 void
-NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
+NodeManager::add_devices_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
 {
   const size_t n_per_thread = max_gid - min_gid + 1;
 
@@ -243,7 +243,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
 
         Node* node = model.allocate( t );
         node->set_gid_( gid );
-        node->set_gc_( gc_ptr );
+        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
@@ -264,7 +264,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, GIDCollec
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr )
+NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
 {
 #pragma omp parallel
   {
@@ -280,7 +280,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
 
           Node* node = model.allocate( 0 );
           node->set_gid_( gid );
-          node->set_gc_( gc_ptr );
+          node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
@@ -301,7 +301,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCo
   }
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 {
   std::vector< long > nodes;
@@ -378,9 +378,9 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
   }
 
   IntVectorDatum nodes_datum( nodes );
-  GIDCollectionDatum gidcoll( GIDCollection::create( nodes_datum ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
 
-  return gidcoll;
+  return nodecollection;
 }
 
 void

@@ -30,11 +30,11 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
-from .hl_api_types import GIDCollection, Parameter
+from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
     'Create',
-    'GetLocalGIDCollection',
+    'GetLocalNodeCollection',
     'GetNodes',
     'PrintNodes',
 ]
@@ -62,8 +62,8 @@ def Create(model, n=1, params=None, positions=None):
 
     Returns
     -------
-    GIDCollection:
-        Object representing global IDs of created nodes, see :py:class:`GIDCollection` for more.
+    NodeCollection:
+        Object representing global IDs of created nodes, see :py:class:`NodeCollection` for more.
 
     Raises
     ------
@@ -136,7 +136,7 @@ def PrintNodes():
 
 
 def GetNodes(properties={}, local_only=False):
-    """Return all nodes with the given properties as `GIDCollection`.
+    """Return all nodes with the given properties as `NodeCollection`.
 
     Parameters
     ----------
@@ -155,33 +155,33 @@ def GetNodes(properties={}, local_only=False):
 
     Returns
     -------
-    GIDCollection:
-        `GIDCollection` of nodes
+    NodeCollection:
+        `NodeCollection` of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)
 
 
 @check_stack
-def GetLocalGIDCollection(gc):
-    """Get local nodes of a `GIDCollection` as a new `GIDCollection`.
+def GetLocalNodeCollection(nc):
+    """Get local nodes of a `NodeCollection` as a new `NodeCollection`.
 
-    This function returns the local nodes of a `GIDCollection`. If there are no
-    local elements, an empty `GIDCollection` is returned.
+    This function returns the local nodes of a `NodeCollection`. If there are no
+    local elements, an empty `NodeCollection` is returned.
 
     Parameters:
     -----------
-    gc: `GIDCollection`
-        `GIDCollection` for which to get local nodes
+    nc: `NodeCollection`
+        `NodeCollection` for which to get local nodes
 
     Returns
     -------
-    GIDCollection:
-        Object representing the local nodes of the given `GIDCollection`
+    NodeCollection:
+        Object representing the local nodes of the given `NodeCollection`
     """
-    if not isinstance(gc, GIDCollection):
-        raise TypeError("GetLocalGIDCollection requires a GIDCollection in order to run")
+    if not isinstance(nc, NodeCollection):
+        raise TypeError("GetLocalNodeCollection requires a NodeCollection in order to run")
 
-    sps(gc)
+    sps(nc)
     sr("LocalOnly")
     return spp()

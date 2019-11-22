@@ -37,7 +37,7 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 
 #include "deprecation_warning.h"
 
@@ -193,9 +193,9 @@ public:
   index get_gid() const;
 
   /**
-   * Return lockpointer to the GIDCollection that created this node.
+   * Return lockpointer to the NodeCollection that created this node.
    */
-  GIDCollectionPTR get_gc() const;
+  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
@@ -731,7 +731,7 @@ public:
 
   /** Execute post-initialization actions in node models.
    * This method is called by NodeManager::add_node() on a node once
-   * is fully initialized, i.e. after gid, gc, model_id, thread, vp is
+   * is fully initialized, i.e. after gid, nc, model_id, thread, vp is
    * set.
    */
   void set_initialized();
@@ -829,7 +829,7 @@ public:
 private:
   void set_gid_( index ); //!< Set global node id
 
-  void set_gc_( GIDCollectionPTR );
+  void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
    *
@@ -910,7 +910,7 @@ private:
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
   bool initialized_;         //!< set true once a node is fully initialized
 
-  GIDCollectionPTR gc_ptr_;
+  NodeCollectionPTR nc_ptr_;
 };
 
 inline bool
@@ -973,10 +973,10 @@ Node::get_gid() const
   return gid_;
 }
 
-inline GIDCollectionPTR
-Node::get_gc() const
+inline NodeCollectionPTR
+Node::get_nc() const
 {
-  return gc_ptr_;
+  return nc_ptr_;
 }
 
 inline void
@@ -987,9 +987,9 @@ Node::set_gid_( index i )
 
 
 inline void
-Node::set_gc_( GIDCollectionPTR gc_ptr )
+Node::set_nc_( NodeCollectionPTR nc_ptr )
 {
-  gc_ptr_ = gc_ptr;
+  nc_ptr_ = nc_ptr;
 }
 
 inline int

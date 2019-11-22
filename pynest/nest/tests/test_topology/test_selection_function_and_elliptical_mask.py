@@ -46,7 +46,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gids,
-                         nest.GIDCollection([38, 39, 40, 49, 50, 51, 60, 61, 62, 71, 72, 73, 82, 83, 84]))
+                         nest.NodeCollection([38, 39, 40, 49, 50, 51, 60, 61, 62, 71, 72, 73, 82, 83, 84]))
 
         nest.ResetKernel()
 
@@ -61,7 +61,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((16, 17, 21, 22,)))
+        self.assertEqual(gids, nest.NodeCollection((16, 17, 21, 22,)))
 
     def test_SelectNodesByMaskIn3D(self):
         """Test SelectNodesByMask for rectangular mask in 3D layer"""
@@ -79,7 +79,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((1, 2, 12, 13, 122, 123, 133, 134,)))
+        self.assertEqual(gids, nest.NodeCollection((1, 2, 12, 13, 122, 123, 133, 134,)))
 
     def test_CreateEllipticalMask2D(self):
         """Creates simple elliptical mask"""
@@ -101,7 +101,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((50, 61, 72,)))
+        self.assertEqual(gids, nest.NodeCollection((50, 61, 72,)))
 
         maskdict = {'major_axis': 6.0, 'minor_axis': 3.0}
         mask = nest.CreateMask('elliptical', maskdict)
@@ -109,7 +109,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gids,
-                         nest.GIDCollection([28, 38, 39, 40, 49, 50, 51, 60, 61, 62, 71, 72, 73,
+                         nest.NodeCollection([28, 38, 39, 40, 49, 50, 51, 60, 61, 62, 71, 72, 73,
                                              82, 83, 84, 94]))
 
     def test_EllipticalMask2DWithAnchor(self):
@@ -126,7 +126,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gids,
-                         nest.GIDCollection((8, 18, 19, 20, 29, 30, 31, 40, 41, 42, 51, 52, 53,
+                         nest.NodeCollection((8, 18, 19, 20, 29, 30, 31, 40, 41, 42, 51, 52, 53,
                                              62, 63, 64, 74,)))
 
     def test_TiltedEllipticalMask2DWithAnchor(self):
@@ -143,7 +143,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((81, 91, 101,)))
+        self.assertEqual(gids, nest.NodeCollection((81, 91, 101,)))
 
         maskdict = {'major_axis': 6.0, 'minor_axis': 3.0,
                     'anchor': [-1.5, 1.], 'azimuth_angle': 135.}
@@ -152,7 +152,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gids,
-                         nest.GIDCollection([25, 26, 27, 36, 37, 38, 39, 48, 49, 50, 51, 60, 61, 62]))
+                         nest.NodeCollection([25, 26, 27, 36, 37, 38, 39, 48, 49, 50, 51, 60, 61, 62]))
 
         maskdict = {'major_axis': 8.0, 'minor_axis': 3.0,
                     'anchor': [0., 1.], 'azimuth_angle': 90.}
@@ -161,7 +161,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gids,
-                         nest.GIDCollection([47, 48, 49, 50, 51, 56, 57, 58, 59, 60,
+                         nest.NodeCollection([47, 48, 49, 50, 51, 56, 57, 58, 59, 60,
                                              61, 62, 63, 64, 69, 70, 71, 72, 73]))
 
     def test_EllipticalMask2DwithAnchorAndCenteredLayer(self):
@@ -179,14 +179,14 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((8, 13, 18,)))
+        self.assertEqual(gids, nest.NodeCollection((8, 13, 18,)))
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0, 'anchor': [1., 1.]}
         mask = nest.CreateMask('elliptical', maskdict)
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((12, 17, 22,)))
+        self.assertEqual(gids, nest.NodeCollection((12, 17, 22,)))
 
     def test_EllipsoidalMask3D(self):
         """Simple ellipsoidal mask contains the correct GIDs"""
@@ -204,7 +204,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((545, 666, 787,)))
+        self.assertEqual(gids, nest.NodeCollection((545, 666, 787,)))
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
                     'polar_axis': 1.0, 'azimuth_angle': 90.}
@@ -214,7 +214,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((655, 666, 677,)))
+        self.assertEqual(gids, nest.NodeCollection((655, 666, 677,)))
 
     def test_TiltedEllipsoidalMask(self):
         """Ellipsoidal mask contains correct GIDs when tilted with respect to
@@ -235,7 +235,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((62, 63, 64,)))
+        self.assertEqual(gids, nest.NodeCollection((62, 63, 64,)))
 
         nest.ResetKernel()
 
@@ -255,7 +255,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection([34, 63, 92]))
+        self.assertEqual(gids, nest.NodeCollection([34, 63, 92]))
 
         nest.ResetKernel()
 
@@ -270,7 +270,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection([39, 58, 63, 68, 87]))
+        self.assertEqual(gids, nest.NodeCollection([39, 58, 63, 68, 87]))
 
         nest.ResetKernel()
 
@@ -285,7 +285,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection([38, 39, 63, 87, 88]))
+        self.assertEqual(gids, nest.NodeCollection([38, 39, 63, 87, 88]))
 
         nest.ResetKernel()
 
@@ -301,7 +301,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection([34, 38, 58, 63, 68, 88, 92]))
+        self.assertEqual(gids, nest.NodeCollection([34, 38, 58, 63, 68, 88, 92]))
 
     def test_TiltedEllipsoidalMask3DWithAnchor(self):
         """Tilted and anchored ellipsoidal mask contains the correct GIDs"""
@@ -319,7 +319,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((2, 123, 244,)))
+        self.assertEqual(gids, nest.NodeCollection((2, 123, 244,)))
 
         maskdict = {'major_axis': 4., 'minor_axis': 1.,
                     'polar_axis': 1., 'anchor': [-4., -4., -4.],
@@ -330,7 +330,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         gids = nest.SelectNodesByMask(layer, cntr, mask)
 
-        self.assertEqual(gids, nest.GIDCollection((2, 134, 266,)))
+        self.assertEqual(gids, nest.NodeCollection((2, 134, 266,)))
 
 
 def suite():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_layerGIDCollection.py
+# test_layerNodeCollection.py
 #
 # This file is part of NEST.
 #
@@ -20,20 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-General tests for layer GIDCollections.
+General tests for layer NodeCollections.
 """
 
 import unittest
 import nest
 
 
-class TestLayerGIDCollection(unittest.TestCase):
+class TestLayerNodeCollection(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
 
-    def test_addLayerAndGIDCollection(self):
-        """Test that concatenation of plain gc and layer is illegal."""
+    def test_addLayerAndNodeCollection(self):
+        """Test that concatenation of plain nc and layer is illegal."""
         nodes = nest.Create('iaf_psc_alpha', 10)
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[5, 5]))
@@ -55,7 +55,7 @@ class TestLayerGIDCollection(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestLayerGIDCollection, 'test')
+    suite = unittest.makeSuite(TestLayerNodeCollection, 'test')
     return suite
 
 

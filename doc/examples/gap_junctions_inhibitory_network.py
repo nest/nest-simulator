@@ -135,8 +135,8 @@ connections = numpy.transpose(
     [random.sample(neuron_list, 2) for _ in range(n_connection)])
 
 for indx in range(n_connection):
-    nest.Connect(nest.GIDCollection([connections[0][indx]]),
-                 nest.GIDCollection([connections[1][indx]]),
+    nest.Connect(nest.NodeCollection([connections[0][indx]]),
+                 nest.NodeCollection([connections[1][indx]]),
                  {'rule': 'one_to_one', 'make_symmetric': True},
                  {'synapse_model': 'gap_junction', 'weight': gap_weight})
 

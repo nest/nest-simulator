@@ -96,11 +96,11 @@ public:
   /**
    * get weight_recorder
    */
-  GIDCollectionDatum get_weight_recorder() const;
+  NodeCollectionDatum get_weight_recorder() const;
 
 
 private:
-  GIDCollectionDatum weight_recorder_;
+  NodeCollectionDatum weight_recorder_;
   long wr_gid_;
 };
 
@@ -116,7 +116,7 @@ CommonSynapseProperties::get_wr_gid() const
   return wr_gid_;
 }
 
-inline GIDCollectionDatum
+inline NodeCollectionDatum
 CommonSynapseProperties::get_weight_recorder() const
 {
   return weight_recorder_;

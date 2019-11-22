@@ -42,8 +42,8 @@ namespace nest
  * a value set and custom synapse type.
  *
  * \param cg The ConnectionGenerator describing the connectivity
- * \param source_gids A GIDCollection specifying the source population
- * \param target_gids A GIDCollection specifying the target population
+ * \param source_gids A NodeCollection specifying the source population
+ * \param target_gids A NodeCollection specifying the target population
  * \param params_map A Dictionary mapping the labels "weight" and
  *        "delay" to their indices in the value set
  * \param synmodel_name The name of the synapse model to use for the
@@ -51,8 +51,8 @@ namespace nest
  */
 void
 cg_connect( ConnectionGeneratorDatum& cg,
-  const GIDCollectionPTR source_gids,
-  const GIDCollectionPTR target_gids,
+  const NodeCollectionPTR source_gids,
+  const NodeCollectionPTR target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
@@ -134,7 +134,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
  * \param targets The target ranges to create the target masks from
  */
 void
-cg_set_masks( ConnectionGeneratorDatum& cg, const GIDCollectionPTR sources, const GIDCollectionPTR targets )
+cg_set_masks( ConnectionGeneratorDatum& cg, const NodeCollectionPTR sources, const NodeCollectionPTR targets )
 {
   const size_t np = kernel().mpi_manager.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks( np, ConnectionGenerator::Mask( 1, np ) );
@@ -251,7 +251,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks, RangeSet& sour
  * \returns the right border of the range
  */
 index
-cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
+cg_get_right_border( index left, size_t step, const NodeCollectionPTR gids )
 {
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
@@ -326,7 +326,7 @@ cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
  * RangeSet. Index translation is done in cg_create_masks().
  */
 void
-cg_get_ranges( RangeSet& ranges, const GIDCollectionPTR gids )
+cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR gids )
 {
   index right, left = 0;
   while ( true )

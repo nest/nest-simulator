@@ -203,7 +203,7 @@ behavior for strong weights (e.g. ``J = 5.4``).
 
         if trial == 1:
             id_stim = [senders[0][spiketimes[0] > t_stim][0]]
-            nest.Connect(stimulus, nest.GIDCollection(id_stim),
+            nest.Connect(stimulus, nest.NodeCollection(id_stim),
                          syn_spec={'weight': Jstim, 'delay': dt})
             nest.SetStatus(stimulus, {'spike_times': [t_stim]})
 

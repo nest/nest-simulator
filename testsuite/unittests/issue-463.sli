@@ -61,7 +61,7 @@ net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
 
 net2 % loop on all neurons of target subnet
 {
-        /neuron2 exch dup cvgidcollection def
+        /neuron2 exch dup cvnodecollection def
         % gets all connections to the target neuron
         /conn << /target neuron2 >> GetConnections def
 

@@ -227,13 +227,13 @@ def build_network(logger):
             'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
-        for node in nest.GetLocalGIDCollection(E_neurons):
+        for node in nest.GetLocalNodeCollection(E_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
-        for node in nest.GetLocalGIDCollection(I_neurons):
+        for node in nest.GetLocalNodeCollection(I_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
@@ -332,7 +332,7 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_neurons = nest.GetLocalGIDCollection(E_neurons)
+            local_neurons = nest.GetLocalNodeCollection(E_neurons)
         else:
             local_neurons = E_neurons
 

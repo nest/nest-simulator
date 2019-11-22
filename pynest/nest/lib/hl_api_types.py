@@ -40,7 +40,7 @@ except ImportError:
 __all__ = [
     'Connectome',
     'CreateParameter',
-    'GIDCollection',
+    'NodeCollection',
     'Mask',
     'Parameter',
 ]
@@ -106,46 +106,46 @@ def CreateParameter(parametertype, specs):
     return sli_func('CreateParameter', {parametertype: specs})
 
 
-class GIDCollectionIterator(object):
+class NodeCollectionIterator(object):
     """
-    Iterator class for `GIDCollection`.
+    Iterator class for `NodeCollection`.
 
     Returns
     -------
-    `GIDCollection`:
-        Single GID `GIDCollection` of respective iteration.
+    `NodeCollection`:
+        Single GID `NodeCollection` of respective iteration.
     """
 
-    def __init__(self, gc):
-        self._gc = gc
+    def __init__(self, nc):
+        self._nc = nc
         self._increment = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self._increment > len(self._gc) - 1:
+        if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take', self._gc._datum, [self._increment + (self._increment >= 0)])
+        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
         self._increment += 1
         return val
 
     next = __next__  # Python2.x
 
 
-class GIDCollection(object):
+class NodeCollection(object):
     """
-    Class for `GIDCollection`.
+    Class for `NodeCollection`.
 
-    `GIDCollection` represents the nodes of a network. The class supports
+    `NodeCollection` represents the nodes of a network. The class supports
     iteration, concatination, indexing, slicing, membership, length, convertion to and
     from lists, test for membership, and test for equality. By using the
     membership functions ``get()`` and ``set()``, you can get and set desired
     parameters.
 
-    A `GIDCollection` is created by the :py:func:`.Create` function, or by converting a
-    list of nodes to a `GIDCollection` with ``nest.GIDCollection(list)``.
+    A `NodeCollection` is created by the :py:func:`.Create` function, or by converting a
+    list of nodes to a `NodeCollection` with ``nest.NodeCollection(list)``.
 
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
 
@@ -156,15 +156,15 @@ class GIDCollection(object):
 
             nest.ResetKernel()
 
-            # Create GIDCollection representing nodes
-            gc = nest.Create('iaf_psc_alpha', 10)
+            # Create NodeCollection representing nodes
+            nc = nest.Create('iaf_psc_alpha', 10)
 
             # Convert from list
             gids_in = [2, 4, 6, 8]
-            new_gc = nest.GIDCollection(gids_in)
+            new_nc = nest.NodeCollection(gids_in)
 
             # Convert to list
-            gc_list =  gc.tolist()
+            nc_list =  nc.tolist()
 
             # Concatenation
             Enrns = nest.Create('aeif_cond_alpha', 600)
@@ -172,30 +172,30 @@ class GIDCollection(object):
             nrns = Enrns + Inrns
 
             # Slicing and membership
-            print(new_gc[2])
-            print(new_gc[1:2])
-            6 in new_gc
+            print(new_nc[2])
+            print(new_nc[1:2])
+            6 in new_nc
     """
 
     _datum = None
 
     def __init__(self, data):
         if isinstance(data, kernel.SLIDatum):
-            if data.dtype != "gidcollectiontype":
-                raise TypeError("Need GIDCollection Datum.")
+            if data.dtype != "nodecollectiontype":
+                raise TypeError("Need NodeCollection Datum.")
             self._datum = data
         else:
             # Data from user, must be converted to datum
-            # Data can be anything that can be converted to a GIDCollection,
+            # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            gc = sli_func('cvgidcollection', data)
-            self._datum = gc._datum
+            nc = sli_func('cvnodecollection', data)
+            self._datum = nc._datum
 
     def __iter__(self):
-        return GIDCollectionIterator(self)
+        return NodeCollectionIterator(self)
 
     def __add__(self, other):
-        if not isinstance(other, GIDCollection):
+        if not isinstance(other, NodeCollection):
             raise NotImplementedError()
         return sli_func('join', self._datum, other._datum)
 
@@ -222,15 +222,15 @@ class GIDCollection(object):
         return sli_func('MemberQ', self._datum, gid)
 
     def __eq__(self, other):
-        if not isinstance(other, GIDCollection):
-            raise NotImplementedError('Cannot compare GIDCollection to {}'.format(type(other).__name__))
+        if not isinstance(other, NodeCollection):
+            raise NotImplementedError('Cannot compare NodeCollection to {}'.format(type(other).__name__))
 
         if self.__len__() != other.__len__():
             return False
         return sli_func('eq', self, other)
 
     def __neq__(self, other):
-        if not isinstance(other, GIDCollection):
+        if not isinstance(other, NodeCollection):
             raise NotImplementedError()
         return not self == other
 
@@ -262,10 +262,10 @@ class GIDCollection(object):
         Returns
         -------
         int or float:
-            If there is a single node in the `GIDCollection`, and a single
+            If there is a single node in the `NodeCollection`, and a single
             parameter in params.
         array_like:
-            If there are multiple nodes in the `GIDCollection`, and a single
+            If there are multiple nodes in the `NodeCollection`, and a single
             parameter in params.
         dict:
             If there are multiple parameters in params. Or, if no parameters
@@ -332,15 +332,15 @@ class GIDCollection(object):
         NB! This is almost the same implementation as `SetStatus`.
 
         If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
-        can be single values or list of the same size as the `GIDCollection`.
+        can be single values or list of the same size as the `NodeCollection`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `GIDCollection`.
+            same length as the `NodeCollection`.
         kwargs : keyword argument pairs
-            Named arguments of parameters of the elements in the `GIDCollection`.
+            Named arguments of parameters of the elements in the `NodeCollection`.
 
         Raises
         ------
@@ -379,7 +379,7 @@ class GIDCollection(object):
 
     def tolist(self):
         """
-        Convert `GIDCollection` to list.
+        Convert `NodeCollection` to list.
         """
         if self.__len__() == 0:
             return []
@@ -387,7 +387,7 @@ class GIDCollection(object):
 
     def index(self, gid):
         """
-        Find the index of a GID in the `GIDCollection`.
+        Find the index of a GID in the `NodeCollection`.
 
         Parameters
         ----------
@@ -397,11 +397,11 @@ class GIDCollection(object):
         Raises
         ------
         ValueError
-            If the GID is not in the `GIDCollection`.
+            If the GID is not in the `NodeCollection`.
         """
         index = sli_func('Find', self._datum, gid)
         if index == -1:
-            raise ValueError('{} is not in GIDCollection'.format(gid))
+            raise ValueError('{} is not in NodeCollection'.format(gid))
         return index
 
     def __getattr__(self, attr):
@@ -413,7 +413,7 @@ class GIDCollection(object):
         return self.get(attr)
 
     def __setattr__(self, attr, value):
-        # `_datum` is the only property of GIDCollection that should not be
+        # `_datum` is the only property of NodeCollection that should not be
         # interpreted as a property of the model
         if attr == '_datum':
             super().__setattr__(attr, value)
@@ -861,12 +861,12 @@ class Parameter(object):
     def is_spatial(self):
         return sli_func('ParameterIsSpatial', self._datum)
 
-    def apply(self, spatial_gc, positions=None):
+    def apply(self, spatial_nc, positions=None):
         if positions is None:
-            return sli_func('Apply', self._datum, spatial_gc)
+            return sli_func('Apply', self._datum, spatial_nc)
         else:
-            if len(spatial_gc) != 1:
-                raise ValueError('The GIDCollection must contain a single GID only')
+            if len(spatial_nc) != 1:
+                raise ValueError('The NodeCollection must contain a single GID only')
             if not isinstance(positions, (list, tuple)):
                 raise TypeError('Positions must be a list or tuple of positions')
             for pos in positions:
@@ -874,4 +874,4 @@ class Parameter(object):
                     raise TypeError('Each position must be a list or tuple')
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
-            return sli_func('Apply', self._datum, {'source': spatial_gc, 'targets': positions})
+            return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})

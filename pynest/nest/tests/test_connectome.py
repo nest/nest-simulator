@@ -172,7 +172,7 @@ class TestConnectome(unittest.TestCase):
 
     def test_GetConnectionsOnSubset(self):
         """
-        Test GetConnections on sliced GIDCollection
+        Test GetConnections on sliced NodeCollection
         """
 
         nrns = nest.Create('iaf_psc_alpha', 10)

@@ -253,28 +253,28 @@ class BasicsTestCase(unittest.TestCase):
 
         # single location at center
         n = nest.FindNearestElement(l, (0., 0.))
-        self.assertEqual(n, nest.GIDCollection((5,)))
+        self.assertEqual(n, nest.NodeCollection((5,)))
 
         # two locations, one layer
         n = nest.FindNearestElement(l, ((0., 0.), (1., 1.)))
-        self.assertEqual(n, nest.GIDCollection((5, 7)))
+        self.assertEqual(n, nest.NodeCollection((5, 7)))
 
         # several closest locations, not all
         n = nest.FindNearestElement(l, (0.5, 0.5))
         self.assertEqual(len(n), 1)
-        self.assertTrue(n.get('global_id') in nest.GIDCollection((4, 5, 7, 8)))
+        self.assertTrue(n.get('global_id') in nest.NodeCollection((4, 5, 7, 8)))
 
         # several closest locations, all
         n = nest.FindNearestElement(l, (0.5, 0.5), find_all=True)
         self.assertEqual(len(n), 1)
-        self.assertEqual(n[0], nest.GIDCollection((4, 5, 7, 8)))
+        self.assertEqual(n[0], nest.NodeCollection((4, 5, 7, 8)))
 
         # complex case
         n = nest.FindNearestElement(l, ((0., 0.), (0.5, 0.5)),
                                     find_all=True)
         self.assertEqual(len(n), 2)
-        self.assertEqual(n[0], nest.GIDCollection((5,)))
-        self.assertEqual(n[1], nest.GIDCollection((4, 5, 7, 8)))
+        self.assertEqual(n[0], nest.NodeCollection((5,)))
+        self.assertEqual(n[1], nest.NodeCollection((4, 5, 7, 8)))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):
@@ -332,15 +332,15 @@ class BasicsTestCase(unittest.TestCase):
 
         t = nest.GetTargetNodes(l[0], l)
         self.assertEqual(len(t), 1)
-        self.assertEqual(t[0], nest.GIDCollection([1, 2, 4, 5]))
+        self.assertEqual(t[0], nest.NodeCollection([1, 2, 4, 5]))
 
         t = nest.GetTargetNodes(l[4], l)
         self.assertEqual(len(t), 1)
-        self.assertEqual(t[0], nest.GIDCollection([5, 6, 8, 9]))
+        self.assertEqual(t[0], nest.NodeCollection([5, 6, 8, 9]))
 
         t = nest.GetTargetNodes(l[8], l)
         self.assertEqual(len(t), 1)
-        self.assertEqual(t[0], nest.GIDCollection([1, 3, 7, 9]))
+        self.assertEqual(t[0], nest.NodeCollection([1, 3, 7, 9]))
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetTargetPositions(self):

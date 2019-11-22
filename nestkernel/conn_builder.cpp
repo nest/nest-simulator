@@ -51,8 +51,8 @@
 const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
 
 
-nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : sources_( sources )
@@ -233,8 +233,8 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
   if ( not( sources_->valid() and targets_->valid() ) )
   {
     throw KernelException(
-      "InvalidGIDCollection: "
-      "sources and targets must be valid GIDCollections" );
+      "InvalidNodeCollection: "
+      "sources and targets must be valid NodeCollections" );
   }
 }
 
@@ -571,8 +571,8 @@ nest::ConnBuilder::loop_over_targets_() const
     or parameters_requiring_skipping_.size() > 0;
 }
 
-nest::OneToOneBuilder::OneToOneBuilder( const GIDCollectionPTR sources,
-  const GIDCollectionPTR targets,
+nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
+  const NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -600,11 +600,11 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // A more efficient way of doing this might be to use GIDCollection's local_begin(). For this to work we would
+        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
         // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
         // we are not doing it at the moment. This also applies to other ConnBuilders below.
-        GIDCollection::const_iterator target_it = targets_->begin();
-        GIDCollection::const_iterator source_it = sources_->begin();
+        NodeCollection::const_iterator target_it = targets_->begin();
+        NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
         {
           assert( source_it < sources_->end() );
@@ -680,8 +680,8 @@ nest::OneToOneBuilder::disconnect_()
 
     try
     {
-      GIDCollection::const_iterator target_it = targets_->begin();
-      GIDCollection::const_iterator source_it = sources_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
       for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
         assert( source_it < sources_->end() );
@@ -737,8 +737,8 @@ nest::OneToOneBuilder::sp_connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      GIDCollection::const_iterator target_it = targets_->begin();
-      GIDCollection::const_iterator source_it = sources_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
       for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
         assert( source_it < sources_->end() );
@@ -788,8 +788,8 @@ nest::OneToOneBuilder::sp_disconnect_()
 
     try
     {
-      GIDCollection::const_iterator target_it = targets_->begin();
-      GIDCollection::const_iterator source_it = sources_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
       for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
         assert( source_it < sources_->end() );
@@ -833,7 +833,7 @@ nest::AllToAllBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        GIDCollection::const_iterator target_it = targets_->begin();
+        NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tgid = ( *target_it ).gid;
@@ -889,7 +889,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, No
     return;
   }
 
-  GIDCollection::const_iterator source_it = sources_->begin();
+  NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
     const index sgid = ( *source_it ).gid;
@@ -925,12 +925,12 @@ nest::AllToAllBuilder::sp_connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      GIDCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
         const index tgid = ( *target_it ).gid;
 
-        GIDCollection::const_iterator source_it = sources_->begin();
+        NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
           const index sgid = ( *source_it ).gid;
@@ -976,7 +976,7 @@ nest::AllToAllBuilder::disconnect_()
 
     try
     {
-      GIDCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
         const index tgid = ( *target_it ).gid;
@@ -998,7 +998,7 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        GIDCollection::const_iterator source_it = sources_->begin();
+        NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
           const index sgid = ( *source_it ).gid;
@@ -1031,12 +1031,12 @@ nest::AllToAllBuilder::sp_disconnect_()
 
     try
     {
-      GIDCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
         const index tgid = ( *target_it ).gid;
 
-        GIDCollection::const_iterator source_it = sources_->begin();
+        NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
           const index sgid = ( *source_it ).gid;
@@ -1061,8 +1061,8 @@ nest::AllToAllBuilder::sp_disconnect_()
   }
 }
 
-nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1135,7 +1135,7 @@ nest::FixedInDegreeBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        GIDCollection::const_iterator target_it = targets_->begin();
+        NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tgid = ( *target_it ).gid;
@@ -1229,8 +1229,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   }
 }
 
-nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1294,7 +1294,7 @@ nest::FixedOutDegreeBuilder::connect_()
 {
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
-  GIDCollection::const_iterator source_it = sources_->begin();
+  NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
     const index sgid = ( *source_it ).gid;
@@ -1362,8 +1362,8 @@ nest::FixedOutDegreeBuilder::connect_()
   }
 }
 
-nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1538,8 +1538,8 @@ nest::FixedTotalNumberBuilder::connect_()
 }
 
 
-nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1578,7 +1578,7 @@ nest::BernoulliBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        GIDCollection::const_iterator target_it = targets_->begin();
+        NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const index tgid = ( *target_it ).gid;
@@ -1635,7 +1635,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
   // It is not possible to create multapses with this type of BernoulliBuilder,
   // hence leave out corresponding checks.
 
-  GIDCollection::const_iterator source_it = sources_->begin();
+  NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
     const index sgid = ( *source_it ).gid;
@@ -1654,8 +1654,8 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
 }
 
 
-nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1729,7 +1729,7 @@ nest::SymmetricBernoulliBuilder::connect_()
       Node* source;
       thread source_thread;
 
-      for ( GIDCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
+      for ( NodeCollection::const_iterator tgid = targets_->begin(); tgid != targets_->end(); ++tgid )
       {
         // sample indegree according to truncated Binomial distribution
         indegree = sources_->size();
@@ -1810,8 +1810,8 @@ nest::SymmetricBernoulliBuilder::connect_()
  * @param conn_spec connectivity specs
  * @param syn_spec synapse specs
  */
-nest::SPBuilder::SPBuilder( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1863,7 +1863,7 @@ nest::SPBuilder::connect_()
  * @param targets target nodes for the newly created synapses
  */
 void
-nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
+nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets )
 {
   throw NotImplemented(
     "Connection without structural plasticity is not possible for this "

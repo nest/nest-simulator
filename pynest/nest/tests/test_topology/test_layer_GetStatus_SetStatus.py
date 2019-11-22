@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for GetStatus, SetStatus, get and set calls for layer GIDCollections.
+Tests for GetStatus, SetStatus, get and set calls for layer NodeCollections.
 """
 
 import unittest
@@ -33,7 +33,7 @@ class GetSetTestCase(unittest.TestCase):
         nest.ResetKernel()
 
     def test_LayerSetStatus(self):
-        """Test SetStatus on layer GIDCollection."""
+        """Test SetStatus on layer NodeCollection."""
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(
@@ -51,7 +51,7 @@ class GetSetTestCase(unittest.TestCase):
                           -50., -50., -50., -50.))
 
     def test_LayerSpatial(self):
-        """Test spatial parameter on layer GIDCollection."""
+        """Test spatial parameter on layer NodeCollection."""
 
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
             shape=[3, 3], extent=[2., 2.], edge_wrap=True))
@@ -100,7 +100,7 @@ class GetSetTestCase(unittest.TestCase):
         self.assertEqual(all_values['center'], (0.0, 0.0))
 
     def test_LayerGet(self):
-        """Test get function on layer GIDCollection"""
+        """Test get function on layer NodeCollection"""
 
         layer = nest.Create(
             'iaf_psc_alpha', positions=nest.spatial.grid(shape=[2, 2]))
@@ -108,7 +108,7 @@ class GetSetTestCase(unittest.TestCase):
         self.assertEqual(layer.get('V_m'), (-70., -70., -70., -70.))
 
     def test_LayerSet(self):
-        """Test set function on layer GIDCollection."""
+        """Test set function on layer NodeCollection."""
 
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(
             shape=[3, 3], extent=[2., 2.], edge_wrap=True))

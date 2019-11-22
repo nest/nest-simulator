@@ -70,12 +70,12 @@ cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "gid_collection.h":
-    cppclass GIDCollectionDatum:
-        GIDCollectionDatum(const GIDCollectionDatum&)
+cdef extern from "node_collection.h":
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum(const NodeCollectionDatum&)
 
-    cppclass GIDCollectionIteratorDatum:
-        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:

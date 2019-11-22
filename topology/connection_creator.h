@@ -100,7 +100,7 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void connect( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
 private:
   /**
@@ -138,16 +138,16 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void fixed_indegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void fixed_outdegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void fixed_outdegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
   ConnectionType type_;
   bool allow_autapses_;

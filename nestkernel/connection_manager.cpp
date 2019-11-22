@@ -330,8 +330,8 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
 
 nest::ConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
-  GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+  NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
@@ -349,8 +349,8 @@ nest::ConnectionManager::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::ConnectionManager::connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+nest::ConnectionManager::connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
@@ -724,26 +724,26 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
   const Token& syn_model_t = params->lookup( names::synapse_model );
-  GIDCollectionPTR source_a = GIDCollectionPTR( 0 );
-  GIDCollectionPTR target_a = GIDCollectionPTR( 0 );
+  NodeCollectionPTR source_a = NodeCollectionPTR( 0 );
+  NodeCollectionPTR target_a = NodeCollectionPTR( 0 );
 
   long synapse_label = UNLABELED_CONNECTION;
   updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
   {
-    source_a = getValue< GIDCollectionDatum >( source_t );
+    source_a = getValue< NodeCollectionDatum >( source_t );
     if ( not source_a->valid() )
     {
-      throw KernelException( "GetConnection requires valid source GIDCollection." );
+      throw KernelException( "GetConnection requires valid source NodeCollection." );
     }
   }
   if ( not target_t.empty() )
   {
-    target_a = getValue< GIDCollectionDatum >( target_t );
+    target_a = getValue< NodeCollectionDatum >( target_t );
     if ( not target_a->valid() )
     {
-      throw KernelException( "GetConnection requires valid target GIDCollection." );
+      throw KernelException( "GetConnection requires valid target NodeCollection." );
     }
   }
 
@@ -816,12 +816,12 @@ extend_connectome( std::deque< nest::ConnectionID >& out, std::deque< nest::Conn
 
 void
 nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
-  GIDCollectionPTR gidcoll,
+  NodeCollectionPTR nodecollection,
   std::vector< index >& neuron_gids,
   std::vector< index >& device_gids ) const
 {
-  GIDCollection::const_iterator t_id = gidcoll->begin();
-  for ( ; t_id < gidcoll->end(); ++t_id )
+  NodeCollection::const_iterator t_id = nodecollection->begin();
+  for ( ; t_id < nodecollection->end(); ++t_id )
   {
     const index gid = ( *t_id ).gid;
     if ( kernel().node_manager.get_node_or_proxy( gid, tid )->has_proxies() )
@@ -837,8 +837,8 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
 
 void
 nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome,
-  GIDCollectionPTR source,
-  GIDCollectionPTR target,
+  NodeCollectionPTR source,
+  NodeCollectionPTR target,
   synindex syn_id,
   long synapse_label ) const
 {
@@ -979,7 +979,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
         }
       }
 
-      GIDCollection::const_iterator s_id = source->begin();
+      NodeCollection::const_iterator s_id = source->begin();
       for ( ; s_id < source->end(); ++s_id )
       {
         const index source_gid = ( *s_id ).gid;

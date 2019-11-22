@@ -57,7 +57,7 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : gid_collection_( GIDCollectionPTR( 0 ) )
+    : node_collection_( NodeCollectionPTR( 0 ) )
   {
   }
 
@@ -119,15 +119,15 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector ) = 0;
+  virtual void connect( AbstractLayerPTR target, NodeCollectionPTR target_nc, ConnectionCreator& connector ) = 0;
 
   /**
    * Factory function for layers. The supplied dictionary contains
    * parameters which specify the layer type and type-specific
    * parameters.
-   * @returns pointer to GIDCollection for new layer
+   * @returns pointer to NodeCollection for new layer
    */
-  static GIDCollectionPTR create_layer( const DictionaryDatum& );
+  static NodeCollectionPTR create_layer( const DictionaryDatum& );
 
   /**
    * Return a vector with the GIDs of the nodes inside the mask.
@@ -159,19 +159,19 @@ public:
 
 protected:
   /**
-   * The GIDCollection to which the layer belongs
+   * The NodeCollection to which the layer belongs
    */
-  GIDCollectionPTR gid_collection_;
+  NodeCollectionPTR node_collection_;
 
   /**
    * Metadata for the layer for which we cache global position information
    */
-  static GIDCollectionMetadataPTR cached_ntree_md_;
+  static NodeCollectionMetadataPTR cached_ntree_md_;
 
   /**
    * Metadata for the layer for which we cache global position information
    */
-  static GIDCollectionMetadataPTR cached_vector_md_;
+  static NodeCollectionMetadataPTR cached_vector_md_;
 
   /**
    * Clear the cache for global position information
@@ -184,9 +184,9 @@ protected:
   virtual void clear_vector_cache_() const = 0;
 
   /**
-   * Gets metadata of the GIDCollection to which this layer belongs.
+   * Gets metadata of the NodeCollection to which this layer belongs.
    */
-  GIDCollectionMetadataPTR get_metadata() const;
+  NodeCollectionMetadataPTR get_metadata() const;
 };
 
 template < int D >
@@ -354,10 +354,10 @@ public:
    * are made in class ConnectionCreator.
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
-   * @param target_gc GIDCollection to the target layer.
+   * @param target_nc NodeCollection to the target layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target, NodeCollectionPTR target_nc, ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.
@@ -579,7 +579,7 @@ Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) c
 {
   if ( lid < 0 )
   {
-    throw KernelException( "GID not in GIDCollection." );
+    throw KernelException( "GID not in NodeCollection." );
   }
   return compute_displacement( from_pos, lid ).length();
 }
@@ -590,7 +590,7 @@ Layer< D >::compute_distance( const std::vector< double >& from_pos, const index
 {
   if ( lid < 0 )
   {
-    throw KernelException( "GID not in GIDCollection." );
+    throw KernelException( "GID not in NodeCollection." );
   }
   return compute_displacement( Position< D >( from_pos ), lid ).length();
 }
@@ -620,7 +620,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
-  cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
 }
 
 template < int D >
@@ -632,7 +632,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_md_ = GIDCollectionMetadataPTR( 0 );
+  cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
 }
 
 } // namespace nest

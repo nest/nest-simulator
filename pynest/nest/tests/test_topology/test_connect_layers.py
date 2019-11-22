@@ -206,7 +206,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         self._check_connections(conn_spec, 52)
 
     def test_connect_nonlayers_mask(self):
-        """Throw when connecting non-layer GIDCollections with mask."""
+        """Throw when connecting non-layer NodeCollections with mask."""
         neurons = nest.Create('iaf_psc_alpha', 20)
         conn_spec = {
             'rule': 'pairwise_bernoulli',
@@ -222,7 +222,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             nest.Connect(neurons, neurons, conn_spec)
 
     def test_connect_nonlayers_kernel(self):
-        """Throw when connecting non-layer GIDCollections with kernel."""
+        """Throw when connecting non-layer NodeCollections with kernel."""
         neurons = nest.Create('iaf_psc_alpha', 20)
         conn_spec = {
             'rule': 'fixed_outdegree',

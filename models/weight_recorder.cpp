@@ -32,7 +32,7 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "kernel_manager.h"
 #include "nest_datums.h"
 
@@ -97,21 +97,21 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
   if ( d->known( names::senders ) )
   {
     const Token& tkn = d->lookup( names::senders );
-    if ( tkn.is_a< GIDCollectionDatum >() )
+    if ( tkn.is_a< NodeCollectionDatum >() )
     {
-      senders_ = getValue< GIDCollectionDatum >( tkn );
+      senders_ = getValue< NodeCollectionDatum >( tkn );
     }
     else
     {
       if ( tkn.is_a< IntVectorDatum >() )
       {
         IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-        senders_ = GIDCollection::create( ivd );
+        senders_ = NodeCollection::create( ivd );
       }
       if ( tkn.is_a< ArrayDatum >() )
       {
         ArrayDatum ad = getValue< ArrayDatum >( tkn );
-        senders_ = GIDCollection::create( ad );
+        senders_ = NodeCollection::create( ad );
       }
     }
   }
@@ -119,21 +119,21 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
   if ( d->known( names::targets ) )
   {
     const Token& tkn = d->lookup( names::targets );
-    if ( tkn.is_a< GIDCollectionDatum >() )
+    if ( tkn.is_a< NodeCollectionDatum >() )
     {
-      targets_ = getValue< GIDCollectionDatum >( tkn );
+      targets_ = getValue< NodeCollectionDatum >( tkn );
     }
     else
     {
       if ( tkn.is_a< IntVectorDatum >() )
       {
         IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-        targets_ = GIDCollection::create( ivd );
+        targets_ = NodeCollection::create( ivd );
       }
       if ( tkn.is_a< ArrayDatum >() )
       {
         ArrayDatum ad = getValue< ArrayDatum >( tkn );
-        targets_ = GIDCollection::create( ad );
+        targets_ = NodeCollection::create( ad );
       }
     }
   }

@@ -258,8 +258,8 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : GIDCollection or tuple
-        Either a `GIDCollection` representing nodes, or a `Connectome`
+    nodes : NodeCollection or tuple
+        Either a `NodeCollection` representing nodes, or a `Connectome`
         of connection handles as returned by
         :py:func:`.GetConnections()`.
     params : str or dict or list
@@ -282,8 +282,8 @@ def SetStatus(nodes, params, val=None):
 
     """
 
-    if not isinstance(nodes, (nest.GIDCollection, nest.Connectome)):
-        raise TypeError("'nodes' must be GIDCollection or a Connectome.")
+    if not isinstance(nodes, (nest.NodeCollection, nest.Connectome)):
+        raise TypeError("'nodes' must be NodeCollection or a Connectome.")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty
@@ -294,7 +294,7 @@ def SetStatus(nodes, params, val=None):
 
     n0 = nodes[0]
     params_is_dict = isinstance(params, dict)
-    set_status_nodes = isinstance(nodes, nest.GIDCollection)
+    set_status_nodes = isinstance(nodes, nest.NodeCollection)
     set_status_local_nodes = set_status_nodes and n0.get('local')
 
     if (params_is_dict and set_status_local_nodes):
@@ -346,8 +346,8 @@ def GetStatus(nodes, keys=None, output=''):
 
     Parameters
     ----------
-    nodes : GIDCollection or tuple
-        Either a `GIDCollection` representing nodes, or a `Connectome` of
+    nodes : NodeCollection or tuple
+        Either a `NodeCollection` representing nodes, or a `Connectome` of
         connection handles as returned by :py:func:`.GetConnections()`.
     keys : str or list, optional
         string or a list of strings naming model properties.
@@ -378,8 +378,8 @@ def GetStatus(nodes, keys=None, output=''):
     :py:func:`.SetStatus`
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, nest.Connectome)):
-        raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
+    if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.Connectome)):
+        raise TypeError("The first input (nodes) must be NodeCollection or a Connectome with connection handles ")
 
     if len(nodes) == 0:
         return nodes
@@ -401,7 +401,7 @@ def GetStatus(nodes, keys=None, output=''):
     result = spp()
 
     if isinstance(result, dict):
-        # We have taken GetStatus on a layer object, or another GIDCollection with metadata, which returns a
+        # We have taken GetStatus on a layer object, or another NodeCollection with metadata, which returns a
         # dictionary from C++, so we need to turn it into a tuple for consistency.
         result = (result,)
 

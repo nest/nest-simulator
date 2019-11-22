@@ -31,7 +31,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -79,10 +79,10 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
-   * @returns GIDCollection as lock pointer
+   * @returns NodeCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  GIDCollectionPTR add_node( index m, long n = 1 );
+  NodeCollectionPTR add_node( index m, long n = 1 );
 
   /**
    * Get global id's of all nodes with the given properties.
@@ -96,9 +96,9 @@ public:
    * @param local_only bool indicating whether all nodes, or just mpi local nodes
    * should be returned.
    *
-   * @returns GIDCollection as lock pointer
+   * @returns NodeCollection as lock pointer
    */
-  GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
    * Set the state (observable dynamic variables) of a node to model defaults.
@@ -270,7 +270,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_neurons_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr );
 
   /**
    * Add device nodes.
@@ -281,7 +281,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_devices_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -293,7 +293,7 @@ private:
    * @param min_gid GID of first neuron to create.
    * @param max_gid GID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_music_nodes_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr );
 
 
 private:

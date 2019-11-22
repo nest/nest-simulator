@@ -40,7 +40,7 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_types.h"
 #include "device_node.h"
 
@@ -176,7 +176,7 @@ private:
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
     std::vector< Name > record_from_; //!< recordables to record from
-    GIDCollectionPTR targets_;        //!< nodes to be observed
+    NodeCollectionPTR targets_;       //!< nodes to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary

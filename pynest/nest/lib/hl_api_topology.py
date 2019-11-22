@@ -31,7 +31,7 @@ from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_connections import GetConnections
 from .hl_api_parallel_computing import NumProcesses, Rank
-from .hl_api_types import GIDCollection
+from .hl_api_types import NodeCollection
 
 try:
     import matplotlib as mpl
@@ -196,8 +196,8 @@ def GetPosition(nodes):
 
     Parameters
     ----------
-    nodes : GIDCollection
-        `GIDCollection` of nodes we want the positions to
+    nodes : NodeCollection
+        `NodeCollection` of nodes we want the positions to
 
     Returns
     -------
@@ -226,20 +226,20 @@ def GetPosition(nodes):
             # Reset kernel
             nest.ResetKernel
 
-            # create a GIDCollection with spatial extent
+            # create a NodeCollection with spatial extent
             s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             # retrieve positions of all (local) nodes belonging to the population
             pos = nest.GetPosition(s_nodes)
 
-            # retrieve positions of the first node in the GIDCollection
+            # retrieve positions of the first node in the NodeCollection
             pos = nest.GetPosition(s_nodes[0])
 
             # retrieve positions of a subset of nodes in the population
             pos = nest.GetPosition(s_nodes[2:18])
     """
-    if not isinstance(nodes, GIDCollection):
-        raise TypeError("nodes must be a GIDCollection with spatial extent")
+    if not isinstance(nodes, NodeCollection):
+        raise TypeError("nodes must be a NodeCollection with spatial extent")
 
     return sli_func('GetPosition', nodes)
 
@@ -262,10 +262,10 @@ def Displacement(from_arg, to_arg):
 
     Parameters
     ----------
-    from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
-        `GIDCollection` of GIDs or tuple/list of position(s)
-    to_arg : GIDCollection
-        `GIDCollection` of GIDs
+    from_arg : NodeCollection or tuple/list with tuple(s)/list(s) of floats
+        `NodeCollection` of GIDs or tuple/list of position(s)
+    to_arg : NodeCollection
+        `NodeCollection` of GIDs
 
     Returns
     -------
@@ -298,8 +298,8 @@ def Displacement(from_arg, to_arg):
             # displacment between the position (0.0., 0.0) and node 2
             print(nest.Displacement([(0.0, 0.0)], s_nodes[1]))
     """
-    if not isinstance(to_arg, GIDCollection):
-        raise TypeError("to_arg must be a GIDCollection")
+    if not isinstance(to_arg, NodeCollection):
+        raise TypeError("to_arg must be a NodeCollection")
 
     if isinstance(from_arg, np.ndarray):
         from_arg = (from_arg, )
@@ -329,10 +329,10 @@ def Distance(from_arg, to_arg):
 
     Parameters
     ----------
-    from_arg : GIDCollection or tuple/list with tuple(s)/list(s) of floats
-        `GIDCollection` of GIDs or tuple/list of position(s)
-    to_arg : GIDCollection
-        `GIDCollection` of GIDs
+    from_arg : NodeCollection or tuple/list with tuple(s)/list(s) of floats
+        `NodeCollection` of GIDs or tuple/list of position(s)
+    to_arg : NodeCollection
+        `NodeCollection` of GIDs
 
     Returns
     -------
@@ -366,8 +366,8 @@ def Distance(from_arg, to_arg):
             # distance between the position (0.0., 0.0) and node 2
             print(nest.Distance([(0.0, 0.0)], s_nodes[1]))
     """
-    if not isinstance(to_arg, GIDCollection):
-        raise TypeError("to_arg must be a GIDCollection")
+    if not isinstance(to_arg, NodeCollection):
+        raise TypeError("to_arg must be a NodeCollection")
 
     if isinstance(from_arg, np.ndarray):
         from_arg = (from_arg, )
@@ -386,32 +386,32 @@ def FindNearestElement(layer, locations, find_all=False):
     This function works for fixed grid layer only.
 
     * If `locations` is a single 2-element array giving a grid location, return a
-      `GIDCollection` of `layer` elements at the given location.
-    * If `locations` is a list of coordinates, the function returns a `GIDCollection` of the nodes at all locations.
+      `NodeCollection` of `layer` elements at the given location.
+    * If `locations` is a list of coordinates, the function returns a `NodeCollection` of the nodes at all locations.
 
     Parameters
     ----------
-    layer : GIDCollection
-        `GIDCollection` of spatially distributed GIDs
+    layer : NodeCollection
+        `NodeCollection` of spatially distributed GIDs
     locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
         2-element list of positions
     find_all : bool, default: False
         If there are several nodes with same minimal distance, return only the
         first found, if `False`.
-        If `True`, instead of returning a single `GIDCollection`, return a list of `GIDCollection`
+        If `True`, instead of returning a single `NodeCollection`, return a list of `NodeCollection`
         containing all nodes with minimal distance.
 
     Returns
     -------
-    GIDCollection:
-        `GIDCollection` of node GIDs
+    NodeCollection:
+        `NodeCollection` of node GIDs
     list:
-        list of `GIDCollection` if find_all is True
+        list of `NodeCollection` if find_all is True
 
     See also
     --------
-    :py:func:`.FindCenterElement`: Return GIDCollection of node closest to center of layers.
+    :py:func:`.FindCenterElement`: Return NodeCollection of node closest to center of layers.
     :py:func:`.GetPosition`: Return the spatial locations of nodes.
 
     Example
@@ -427,8 +427,8 @@ def FindNearestElement(layer, locations, find_all=False):
             nest.FindNearestElement(s_nodes, [3.0, 4.0], True)
     """
 
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection")
+    if not isinstance(layer, NodeCollection):
+        raise TypeError("layer must be a NodeCollection")
 
     if not len(layer) > 0:
         raise ValueError("layer cannot be empty")
@@ -457,9 +457,9 @@ def FindNearestElement(layer, locations, find_all=False):
                     minval = d[idx]
                 elif np.abs(d[idx] - minval) <= 1e-14 * minval:
                     mingids.append(layer[idx].get('global_id'))
-            result.append(GIDCollection(mingids))
+            result.append(NodeCollection(mingids))
 
-    return GIDCollection(result) if not find_all else result
+    return NodeCollection(result) if not find_all else result
 
 
 def _rank_specific_filename(basename):
@@ -493,8 +493,8 @@ def DumpLayerNodes(layer, outname):
 
     Parameters
     ----------
-    layer : GIDCollection
-        `GIDCollection` of spatially distributed GIDs
+    layer : NodeCollection
+        `NodeCollection` of spatially distributed GIDs
     outname : str
         Name of file to write to (existing files are overwritten)
 
@@ -524,8 +524,8 @@ def DumpLayerNodes(layer, outname):
             nest.DumpLayerNodes(s_nodes, 'positions.txt')
 
     """
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection")
+    if not isinstance(layer, NodeCollection):
+        raise TypeError("layer must be a NodeCollection")
 
     sli_func("""
              (w) file exch DumpLayerNodes close
@@ -551,10 +551,10 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
     Parameters
     ----------
-    source_layers : GIDCollection
-        `GIDCollection` of spatially distributed GIDs
-    target_layers : GIDCollection
-       `GIDCollection` of (spatially distributed) GIDs
+    source_layers : NodeCollection
+        `NodeCollection` of spatially distributed GIDs
+    target_layers : NodeCollection
+       `NodeCollection` of (spatially distributed) GIDs
     synapse_model : str
         NEST synapse model
     outname : str
@@ -590,10 +590,10 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             # write connectivity information to file
             nest.DumpLayerConnections(s_nodes, s_nodes, 'static_synapse', 'conns.txt')
     """
-    if not isinstance(source_layer, GIDCollection):
-        raise TypeError("source_layer must be a GIDCollection")
-    if not isinstance(target_layer, GIDCollection):
-        raise TypeError("target_layer must be a GIDCollection")
+    if not isinstance(source_layer, NodeCollection):
+        raise TypeError("source_layer must be a NodeCollection")
+    if not isinstance(target_layer, NodeCollection):
+        raise TypeError("target_layer must be a NodeCollection")
 
     sli_func("""
              /oname  Set
@@ -609,17 +609,17 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
 def FindCenterElement(layer):
     """
-    Return `GIDCollection` of node closest to center of `layer`.
+    Return `NodeCollection` of node closest to center of `layer`.
 
     Parameters
     ----------
-    layers : GIDCollection
-        `GIDCollection` of spatially distributed GIDs
+    layers : NodeCollection
+        `NodeCollection` of spatially distributed GIDs
 
     Returns
     -------
-    GIDCollection:
-        `GIDCollection` of the node closest to the center of the `layer`, as specified by `layer`
+    NodeCollection:
+        `NodeCollection` of the node closest to the center of the `layer`, as specified by `layer`
         parameters given in ``layer.spatial``. If several nodes are equally close to the center,
         an arbitrary one of them is returned.
 
@@ -637,12 +637,12 @@ def FindCenterElement(layer):
             # create a spatial population
             s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
-            # get GIDCollection of the element closest to the center of the layer
+            # get NodeCollection of the element closest to the center of the layer
             nest.FindCenterElement(s_nodes)
     """
 
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection")
+    if not isinstance(layer, NodeCollection):
+        raise TypeError("layer must be a NodeCollection")
     nearest_to_center = FindNearestElement(layer, layer.spatial['center'])[0]
     index = layer.index(nearest_to_center.get('global_id'))
     return layer[index:index+1]
@@ -658,17 +658,17 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     Parameters
     ----------
-    sources : GIDCollection
-        GIDCollection with GIDs of `sources`
-    tgt_layer : GIDCollection
-        GIDCollection with GIDs of `tgt_layer`
+    sources : NodeCollection
+        NodeCollection with GIDs of `sources`
+    tgt_layer : NodeCollection
+        NodeCollection with GIDs of `tgt_layer`
     syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
     Returns
     -------
-    tuple of GIDCollection:
-        Tuple of `GIDCollections` of target neurons fulfilling the given criteria, one `GIDCollection` per
+    tuple of NodeCollection:
+        Tuple of `NodeCollections` of target neurons fulfilling the given criteria, one `NodeCollection` per
         source GID in `sources`.
 
     See also
@@ -703,11 +703,11 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # get the GIDs of the targets of a source neuron
             nest.GetTargetNodes(s_nodes[4], s_nodes)
     """
-    if not isinstance(sources, GIDCollection):
-        raise TypeError("sources must be a GIDCollection.")
+    if not isinstance(sources, NodeCollection):
+        raise TypeError("sources must be a NodeCollection.")
 
-    if not isinstance(tgt_layer, GIDCollection):
-        raise TypeError("tgt_layer must be a GIDCollection")
+    if not isinstance(tgt_layer, NodeCollection):
+        raise TypeError("tgt_layer must be a NodeCollection")
 
     conns = GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
@@ -717,7 +717,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
         src_tgt_map[src].append(tgt)
 
     for src in src_tgt_map.keys():
-        src_tgt_map[src] = GIDCollection(list(np.unique(src_tgt_map[src])))
+        src_tgt_map[src] = NodeCollection(list(np.unique(src_tgt_map[src])))
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
@@ -725,7 +725,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
     """
-    Obtain positions of targets to a given `GIDCollection` of `sources`.
+    Obtain positions of targets to a given `NodeCollection` of `sources`.
 
     For each neuron in `sources`, this function finds all target elements
     in `tgt_layer`. If `syn_model` is not given (default), all targets are
@@ -733,10 +733,10 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     Parameters
     ----------
-    sources : GIDCollection
-        `GIDCollection` with GID(s) of source neurons
-    tgt_layer : GIDCollection
-        `GIDCollection` of tgt_layer
+    sources : NodeCollection
+        `NodeCollection` with GID(s) of source neurons
+    tgt_layer : NodeCollection
+        `NodeCollection` of tgt_layer
     syn_type : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
@@ -748,7 +748,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     See also
     --------
-    :py:func:`.GetTargetNodes`: Obtain targets of a `GIDCollection` of sources in a given target
+    :py:func:`.GetTargetNodes`: Obtain targets of a `NodeCollection` of sources in a given target
         population.
 
     Notes
@@ -777,8 +777,8 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
             # get the positions of the targets of a source neuron
             nest.GetTargetPositions(s_nodes[5], s_nodes)
     """
-    if not isinstance(sources, GIDCollection):
-        raise TypeError("sources must be a GIDCollection.")
+    if not isinstance(sources, NodeCollection):
+        raise TypeError("sources must be a NodeCollection.")
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
@@ -809,13 +809,13 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     Obtain the GIDs inside a masked area of a spatially distributed population.
 
     The function finds and returns all the GIDs inside a given mask of a
-    `layer`. The GIDs are returned as a `GIDCollection`. The function works on both 2-dimensional and
+    `layer`. The GIDs are returned as a `NodeCollection`. The function works on both 2-dimensional and
     3-dimensional masks and layers. All mask types are allowed, including combined masks.
 
     Parameters
     ----------
-    layer : GIDCollection
-        `GIDCollection` with GIDs of the `layer` to select nodes from.
+    layer : NodeCollection
+        `NodeCollection` with GIDs of the `layer` to select nodes from.
     anchor : tuple/list of double
         List containing center position of the layer. This is the point from
         where we start to search.
@@ -824,19 +824,19 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     Returns
     -------
-    GIDCollection:
-        `GIDCollection` of nodes/elements inside the mask.
+    NodeCollection:
+        `NodeCollection` of nodes/elements inside the mask.
     """
 
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection.")
+    if not isinstance(layer, NodeCollection):
+        raise TypeError("layer must be a NodeCollection.")
 
     mask_datum = mask_obj._datum
 
     gid_list = sli_func('SelectNodesByMask',
                         layer, anchor, mask_datum)
 
-    return GIDCollection(gid_list)
+    return NodeCollection(gid_list)
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
@@ -874,8 +874,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     Parameters
     ----------
-    layer : GIDCollection
-        `GIDCollection` of spatially distributed nodes
+    layer : NodeCollection
+        `NodeCollection` of spatially distributed nodes
     fig : [None | matplotlib.figure.Figure object], optional, default: None
         Matplotlib figure to plot to. If not given, a new figure is
         created.
@@ -917,8 +917,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 
-    if not isinstance(layer, GIDCollection):
-        raise TypeError("layer must be a GIDCollection.")
+    if not isinstance(layer, NodeCollection):
+        raise TypeError("layer must be a NodeCollection.")
 
     # get layer extent
     ext = layer.spatial['extent']
@@ -974,10 +974,10 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     Parameters
     ----------
-    src_nrn : GIDCollection
-        `GIDCollection` of source neuron (as single-element GIDCollection)
-    tgt_layer : GIDCollection
-        `GIDCollection` of tgt_layer
+    src_nrn : NodeCollection
+        `NodeCollection` of source neuron (as single-element NodeCollection)
+    tgt_layer : NodeCollection
+        `NodeCollection` of tgt_layer
     syn_type : [None | str], optional, default: None
         Show only targets connected with a given synapse type
     fig : [None | matplotlib.figure.Figure object], optional, default: None
@@ -1041,10 +1041,10 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 
-    if not isinstance(src_nrn, GIDCollection) or len(src_nrn) != 1:
-        raise TypeError("src_nrn must be a single element GIDCollection.")
-    if not isinstance(tgt_layer, GIDCollection):
-        raise TypeError("tgt_layer must be a GIDCollection.")
+    if not isinstance(src_nrn, NodeCollection) or len(src_nrn) != 1:
+        raise TypeError("src_nrn must be a single element NodeCollection.")
+    if not isinstance(tgt_layer, NodeCollection):
+        raise TypeError("tgt_layer must be a NodeCollection.")
 
     # get position of source
     srcpos = GetPosition(src_nrn)
@@ -1218,13 +1218,13 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
 
     A probability plot is created based on a `Parameter` and a `source`. The
     `Parameter` should have a distance dependency. The `source` must be given
-    as a `GIDCollection` with a single GID. Optionally a `mask` can also be
+    as a `NodeCollection` with a single GID. Optionally a `mask` can also be
     plotted.
 
     Parameters
     ----------
-    source : GIDCollection
-        Single GID `GIDCollection` to use as source.
+    source : NodeCollection
+        Single GID `NodeCollection` to use as source.
     parameter : Parameter object
         `Parameter` the probability is based on.
     mask : Dictionary

@@ -253,7 +253,7 @@
 {
     /spikes_record_to          save_cortical_spikes {/ascii}{/memory} ifelse def
     /voltages_record_to        save_voltages        {/ascii}{/memory} ifelse def
-    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def 
+    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def
 
     neuron_model model_params SetDefaults
     % arrays of GIDs:
@@ -274,7 +274,7 @@
 	    n_neurons layer_index get population_index get % how many
 	    Create /population Set
 
-	    % store the GIDCollection
+	    % store the NodeCollection
             neuron_GIDs [layer_index population_index] % the position
 	    population put /neuron_GIDs Set
 

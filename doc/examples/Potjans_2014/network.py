@@ -212,7 +212,7 @@ class Network:
             if self.net_dict['V0_type'] == 'optimized':
                 for thread in \
                         np.arange(nest.GetKernelStatus('local_num_threads')):
-                    local_nodes = nest.GetLocalGIDCollection(pop)
+                    local_nodes = nest.GetLocalNodeCollection(pop)
                     vp = nest.GetStatus(local_nodes)[0]['vp']
                     nest.SetStatus(
                         local_nodes, 'V_m', self.pyrngs[vp].normal(

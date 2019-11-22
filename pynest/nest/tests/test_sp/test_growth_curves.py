@@ -424,7 +424,7 @@ class TestGrowthCurve(unittest.TestCase):
         eps = 0.10
         psi = 0.10
 
-        local_nodes = nest.GetLocalGIDCollection(self.pop)
+        local_nodes = nest.GetLocalNodeCollection(self.pop)
         local_nodes.set(
             {
                 'beta_Ca': beta_ca,

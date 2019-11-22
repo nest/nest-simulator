@@ -116,17 +116,17 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     if ( tkn.is_a< TokenArray >() )
     {
       TokenArray pos = getValue< TokenArray >( tkn );
-      if ( this->gid_collection_->size() != pos.size() )
+      if ( this->node_collection_->size() != pos.size() )
       {
         std::stringstream expected;
         std::stringstream got;
-        expected << "position array with length " << this->gid_collection_->size();
+        expected << "position array with length " << this->node_collection_->size();
         got << "position array with length" << pos.size();
         throw TypeMismatch( expected.str(), got.str() );
       }
 
       positions_.clear();
-      positions_.reserve( this->gid_collection_->size() );
+      positions_.reserve( this->node_collection_->size() );
 
       for ( Token* it = pos.begin(); it != pos.end(); ++it )
       {
@@ -151,7 +151,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
       positions_.clear();
-      auto num_nodes = this->gid_collection_->size();
+      auto num_nodes = this->node_collection_->size();
       positions_.reserve( num_nodes );
 
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -234,19 +234,19 @@ FreeLayer< D >::communicate_positions_( Ins iter )
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_gid_pos;
 
-  GIDCollection::const_iterator gc_begin = this->gid_collection_->MPI_local_begin();
-  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
+  NodeCollection::const_iterator nc_begin = this->node_collection_->MPI_local_begin();
+  NodeCollection::const_iterator nc_end = this->node_collection_->end();
 
-  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
+  local_gid_pos.reserve( ( D + 1 ) * this->node_collection_->size() );
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end; ++gc_it )
+  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it )
   {
     // Push GID into array to communicate
-    local_gid_pos.push_back( ( *gc_it ).gid );
+    local_gid_pos.push_back( ( *nc_it ).gid );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_gid_pos.push_back( positions_[ ( *gc_it ).lid ][ j ] );
+      local_gid_pos.push_back( positions_[ ( *nc_it ).lid ][ j ] );
     }
   }
 

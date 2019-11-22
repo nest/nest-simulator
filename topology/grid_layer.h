@@ -175,7 +175,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     this->dims_[ i ] = static_cast< index >( new_dims[ i ] );
   }
 
-  if ( new_size != this->gid_collection_->size() )
+  if ( new_size != this->node_collection_->size() )
   {
     throw BadProperty( "Total size of layer must be unchanged." );
   }
@@ -275,11 +275,11 @@ void
 GridLayer< D >::insert_global_positions_( Ins iter )
 {
   index i = 0;
-  index lid_end = this->gid_collection_->size();
+  index lid_end = this->node_collection_->size();
 
-  GIDCollection::const_iterator gi = this->gid_collection_->begin();
+  NodeCollection::const_iterator gi = this->node_collection_->begin();
 
-  for ( ; ( gi < this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( ; ( gi < this->node_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
     *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
   }
@@ -370,7 +370,7 @@ template < int D >
 inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operator*()
 {
   return std::pair< Position< D >, index >(
-    layer_.gridpos_to_position( node_ ), layer_.gid_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
+    layer_.gridpos_to_position( node_ ), layer_.node_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
 }
 
 template < int D >

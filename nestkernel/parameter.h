@@ -35,7 +35,7 @@
 #include "nest_names.h"
 #include "nest_types.h"
 #include "nestmodule.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -173,10 +173,10 @@ public:
   virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
 
   /**
-   * Applies a parameter on a single-GID GIDCollection and given array of positions.
+   * Applies a parameter on a single-GID NodeCollection and given array of positions.
    * @returns array of result values, one per position in the TokenArray.
    */
-  std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
+  std::vector< double > apply( const NodeCollectionPTR&, const TokenArray& ) const;
 
   /**
    * Check if the Parameter is based on spatial properties.

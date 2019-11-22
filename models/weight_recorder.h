@@ -52,7 +52,7 @@ with the weight for each spike event that travels through the observed
 synapses.
 
 To only record from a subset of connected synapses, the
-weight recorder accepts GIDCollections in the parameters ``senders`` and
+weight recorder accepts NodeCollections in the parameters ``senders`` and
 ``targets``. If set, they restrict the recording of data to only
 synapses that fulfill the given criteria.
 
@@ -122,8 +122,8 @@ private:
 
   struct Parameters_
   {
-    GIDCollectionDatum senders_;
-    GIDCollectionDatum targets_;
+    NodeCollectionDatum senders_;
+    NodeCollectionDatum targets_;
 
     Parameters_();
     Parameters_( const Parameters_& );

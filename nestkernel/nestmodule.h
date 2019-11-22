@@ -54,8 +54,8 @@ class NestModule : public SLIModule
 {
 public:
   static SLIType ConnectionType;
-  static SLIType GIDCollectionType;
-  static SLIType GIDCollectionIteratorType;
+  static SLIType NodeCollectionType;
+  static SLIType NodeCollectionIteratorType;
   static SLIType ParameterType;
 
   NestModule();
@@ -107,8 +107,8 @@ public:
    * - @c t  : any token
    * - @c C  : connectiontype
    * - @c cg : connectiongeneratortype
-   * - @c g  : gid collection
-   * - @c q  : gid collection iterator
+   * - @c g  : node collection
+   * - @c q  : node collection iterator
    *
    * @subsection compoundtypes Codes for compund data types
    * - @c A  : array
@@ -375,20 +375,20 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Cfunction;
 
-  class Cvgidcollection_i_iFunction : public SLIFunction
+  class Cvnodecollection_i_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_i_ifunction;
+  } cvnodecollection_i_ifunction;
 
-  class Cvgidcollection_iaFunction : public SLIFunction
+  class Cvnodecollection_iaFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_iafunction;
+  } cvnodecollection_iafunction;
 
-  class Cvgidcollection_ivFunction : public SLIFunction
+  class Cvnodecollection_ivFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_ivfunction;
+  } cvnodecollection_ivfunction;
 
   class Cva_gFunction : public SLIFunction
   {

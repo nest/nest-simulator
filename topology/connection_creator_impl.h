@@ -39,28 +39,28 @@ namespace nest
 {
 template < int D >
 void
-ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   switch ( type_ )
   {
   case Pairwise_bernoulli_on_source:
 
-    pairwise_bernoulli_on_source_( source, target, target_gc );
+    pairwise_bernoulli_on_source_( source, target, target_nc );
     break;
 
   case Fixed_indegree:
 
-    fixed_indegree_( source, target, target_gc );
+    fixed_indegree_( source, target, target_nc );
     break;
 
   case Fixed_outdegree:
 
-    fixed_outdegree_( source, target, target_gc );
+    fixed_outdegree_( source, target, target_nc );
     break;
 
   case Pairwise_bernoulli_on_target:
 
-    pairwise_bernoulli_on_target_( source, target, target_gc );
+    pairwise_bernoulli_on_target_( source, target, target_nc );
     break;
 
   default:
@@ -174,7 +174,7 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   // Connect using pairwise Bernoulli drawing source nodes (target driven)
   // For each local target node:
@@ -202,10 +202,10 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
     {
-      GIDCollection::const_iterator target_begin = target_gc->begin();
-      GIDCollection::const_iterator target_end = target_gc->end();
+      NodeCollection::const_iterator target_begin = target_nc->begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
         Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
@@ -246,7 +246,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   // Connecting using pairwise Bernoulli drawing target nodes (source driven)
   // It is actually implemented as pairwise Bernoulli on source nodes,
@@ -271,8 +271,8 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
-  // We only need to check the first in the GIDCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Topology Connect with pairwise_bernoulli to devices are not possible." );
@@ -285,10 +285,10 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
     {
-      GIDCollection::const_iterator target_begin = target_gc->local_begin();
-      GIDCollection::const_iterator target_end = target_gc->end();
+      NodeCollection::const_iterator target_begin = target_nc->local_begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
         Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
@@ -330,7 +330,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
 
 template < int D >
 void
-ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -344,20 +344,20 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDC
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
 
-  // We only need to check the first in the GIDCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Topology Connect with fixed_indegree to devices are not possible." );
   }
 
-  GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
-  GIDCollection::const_iterator target_end = target_gc->end();
+  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_end = target_nc->end();
 
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
     Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
 
@@ -371,7 +371,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDC
 
     std::vector< std::pair< Position< D >, index > > positions;
 
-    for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
@@ -491,7 +491,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDC
     // Get (position,GID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector();
 
-    for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
@@ -601,7 +601,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, GIDC
 
 template < int D >
 void
-ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -612,17 +612,17 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, GID
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
 
-  // We only need to check the first in the GIDCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_gc->operator[]( 0 ) );
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Topology pairwise_bernoulli to devices are not possible." );
   }
 
-  GIDCollection::const_iterator target_begin = target_gc->MPI_local_begin();
-  GIDCollection::const_iterator target_end = target_gc->end();
+  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_end = target_nc->end();
 
-  for ( GIDCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
     Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
 

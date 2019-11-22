@@ -69,14 +69,14 @@ class TestConnectArrays(unittest.TestCase):
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
         self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
-    def test_connect_array_with_gc(self):
-        """Connecting one array with a GIDCollection"""
-        gc = nest.Create('iaf_psc_alpha', 4)
+    def test_connect_array_with_nc(self):
+        """Connecting one array with a NodeCollection"""
+        nc = nest.Create('iaf_psc_alpha', 4)
         gids = [1, 1, 2, 2]
         with self.assertRaises(TypeError):
-            nest.Connect(gids, gc)
+            nest.Connect(gids, nc)
         with self.assertRaises(TypeError):
-            nest.Connect(gc, gids)
+            nest.Connect(nc, gids)
 
 
 def suite():

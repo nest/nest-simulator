@@ -34,7 +34,7 @@
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
@@ -94,15 +94,15 @@ public:
   void register_conn_builder( const std::string& name );
 
   ConnBuilder* get_conn_builder( const std::string& name,
-    GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
    */
-  void connect( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
   void connect( TokenArray, TokenArray, const DictionaryDatum& );
 
@@ -190,8 +190,8 @@ public:
   ArrayDatum get_connections( const DictionaryDatum& params ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
-    GIDCollectionPTR source,
-    GIDCollectionPTR target,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
 
@@ -394,7 +394,7 @@ private:
    * GIDs of devices.
    */
   void split_to_neuron_device_vectors_( const thread tid,
-    GIDCollectionPTR gidcoll,
+    NodeCollectionPTR nodecollection,
     std::vector< index >& neuron_gids,
     std::vector< index >& device_gids ) const;
 

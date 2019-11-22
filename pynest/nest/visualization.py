@@ -42,8 +42,8 @@ def plot_network(nodes, filename, ext_conns=False,
 
     Parameters
     ----------
-    nodes : GIDCollection
-        GIDCollection containing global ids of nodes to plot
+    nodes : NodeCollection
+        NodeCollection containing global ids of nodes to plot
     filename : str
         Filename to save the plot to. Can end either in .pdf or .png to
         determine the type of the output.
@@ -61,8 +61,8 @@ def plot_network(nodes, filename, ext_conns=False,
     if len(nodes) == 0:
         nest.kernel.NESTError("nodes must at least contain one node")
 
-    if not isinstance(nodes, nest.GIDCollection):
-        raise nest.kernel.NESTError("nodes must be a GIDCollection")
+    if not isinstance(nodes, nest.NodeCollection):
+        raise nest.kernel.NESTError("nodes must be a NodeCollection")
 
     if ext_conns:
         raise NotImplementedError('ext_conns')

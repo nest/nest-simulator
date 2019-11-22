@@ -26,7 +26,7 @@
 #include "layer.h"
 
 // Includes from nestkernel:
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_datums.h"
 #include "booldatum.h"
 
@@ -109,7 +109,7 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc, ConnectionCreator& connector )
+Layer< D >::connect( AbstractLayerPTR target_layer, NodeCollectionPTR target_nc, ConnectionCreator& connector )
 {
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
@@ -119,7 +119,7 @@ Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc, 
   try
   {
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
-    connector.connect( *this, tgt, target_gc );
+    connector.connect( *this, tgt, target_nc );
   }
   catch ( std::bad_cast& e )
   {
@@ -167,7 +167,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
   do_get_global_positions_ntree_();
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
+  cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
 
   return cached_ntree_;
 }
@@ -273,7 +273,8 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( GIDCollection::const_iterator it = this->gid_collection_->MPI_local_begin(); it < this->gid_collection_->end();
+  for ( NodeCollection::const_iterator it = this->node_collection_->MPI_local_begin();
+        it < this->node_collection_->end();
         ++it )
   {
     out << ( *it ).gid << ' ';
@@ -289,8 +290,8 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
   std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector();
 
   // Dictionary with parameters for get_connections()
-  DictionaryDatum gcdict( new Dictionary );
-  def( gcdict, names::synapse_model, syn_model );
+  DictionaryDatum ncdict( new Dictionary );
+  def( ncdict, names::synapse_model, syn_model );
 
   // Avoid setting up new array for each iteration of the loop
   std::vector< index > source_array( 1 );
@@ -304,8 +305,8 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_gid;
-    def( gcdict, names::source, GIDCollectionDatum( GIDCollection::create( source_array ) ) );
-    ArrayDatum connectome = kernel().connection_manager.get_connections( gcdict );
+    def( ncdict, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
+    ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
@@ -327,7 +328,7 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const index tgid = tgt_layer->gid_collection_->find( target_gid );
+      const index tgid = tgt_layer->node_collection_->find( target_gid );
       tgt_layer->compute_displacement( source_pos, tgid ).print( out );
       out << '\n';
     }

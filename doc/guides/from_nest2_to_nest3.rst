@@ -4,7 +4,7 @@ From NEST 2.x to NEST 3.0
 NEST 3 introduces a number of new features and concepts, and some changes
 to the user interface that are not backwards compatible. One big change is
 the removal of subnets and all functions based on subnets. To organize
-neurons you should instead use the powerful GIDCollections, which will be
+neurons you should instead use the powerful NodeCollections, which will be
 presented below. Other big features include Connectome objects to
 efficiently work with connections, Parameter objects, and changes to how
 nodes with spatial information are defined and how to work with them.
@@ -14,36 +14,36 @@ This guide is based exclusively on PyNEST.
 New concepts
 ------------
 
-GIDCollections
+NodeCollections
 ~~~~~~~~~~~~~~
 
-GIDCollections are compact and efficient containers containing the global
+NodeCollections are compact and efficient containers containing the global
 ID representations of nodes. In NEST 3, when you create a population with
-``nest.Create()``, a GIDCollection is returned. And when you
+``nest.Create()``, a NodeCollection is returned. And when you
 connect two populations, you provide ``nest.Connect()`` with two
-populations in the form of GIDCollections.
+populations in the form of NodeCollections.
 
-A GIDCollection is created by
+A NodeCollection is created by
 
 - creating new nodes
-- combining two or more GIDCollections
-- slicing a GIDCollection
+- combining two or more NodeCollections
+- slicing a NodeCollection
 - providing a list of GIDs, but only GIDs of existing nodes
 
-The GIDs in a GIDCollection are sorted automatically. All GIDs in a
-GIDCollection are unique, so a GID can occur at most once per
-GIDCollection.
+The GIDs in a NodeCollection are sorted automatically. All GIDs in a
+NodeCollection are unique, so a GID can occur at most once per
+NodeCollection.
 
-A GIDCollection can be either primitive or composite. A primitive
-GIDCollection is contiguous in that it represents a continuous range of
+A NodeCollection can be either primitive or composite. A primitive
+NodeCollection is contiguous in that it represents a continuous range of
 GIDs. It is also homogeneous in that all GIDs refer to nodes of the same
-type, i.e. they have the same model. A composite GIDCollection consists of
-several primitive GIDCollections that either have different models, or
+type, i.e. they have the same model. A composite NodeCollection consists of
+several primitive NodeCollections that either have different models, or
 where the GIDs are not continuous.
 
-In basic cases, the addition of GIDCollections requires no changes to the
+In basic cases, the addition of NodeCollections requires no changes to the
 scripts. But instead of working with lists of GIDs you are working with
-GIDCollections.
+NodeCollections.
 
 
   +---------------------------------------------+----------------------------------------------+
@@ -52,19 +52,19 @@ GIDCollections.
   |                                             |                                              |
   | ::                                          | ::                                           |
   |                                             |                                              |
-  |     # A list of 10 GIDs is returned         |     # A GIDCollection object is returned     |
+  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned     |
   |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
   |                                             |                                              |
-  |     # Use lists as arguments in Connect     |     # Use GIDCollection objects as arguments |
+  |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as arguments |
   |     nest.Connect(nrns, nrns)                |     # in Connect                             |
   |                                             |     nest.Connect(nrns, nrns)                 |
   |                                             |                                              |
   +---------------------------------------------+----------------------------------------------+
 
-GIDCollections support the following operations:
+NodeCollections support the following operations:
 
 Printing
-    A compact representation of information about the GIDCollection can be printed.
+    A compact representation of information about the NodeCollection can be printed.
 
     ::
 
@@ -75,17 +75,17 @@ Printing
 
     ::
 
-        GIDCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
+        NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
 Getting the size
-    You can easily get the number of GIDs in the GIDCollection with
+    You can easily get the number of GIDs in the NodeCollection with
 
     ::
 
         len(nrns)
 
 Indexing
-    Indexing returns a new GIDCollection with a single GID
+    Indexing returns a new NodeCollection with a single GID
 
     ::
 
@@ -95,10 +95,10 @@ Indexing
 
     ::
 
-        GIDCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
+        NodeCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
 
 Slicing
-    A GIDCollection can be sliced in the same way one would slice a list,
+    A NodeCollection can be sliced in the same way one would slice a list,
     with ``start:stop:step`` inside brackets
 
     ::
@@ -109,12 +109,12 @@ Slicing
 
     ::
 
-        GIDCollection(metadata=None,
+        NodeCollection(metadata=None,
                       model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
 
 
 Joining
-    When joining two GIDCollections, NEST tries to concatenate the
+    When joining two NodeCollections, NEST tries to concatenate the
     primitives into a single primitive.
 
     ::
@@ -126,7 +126,7 @@ Joining
 
     ::
 
-        GIDCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
+        NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
 
     If the GIDs are not continuous or the models are different, a composite will be created:
 
@@ -139,15 +139,15 @@ Joining
 
     ::
 
-        GIDCollection(metadata=None,
+        NodeCollection(metadata=None,
                       model=iaf_psc_alpha, size=10, first=1, last=10;
                       model=iaf_psc_delta, size=3, first=14, last=16)
 
-    Note that joining GIDCollections that overlap or that contain metadata
+    Note that joining NodeCollections that overlap or that contain metadata
     (see section on Topology) is impossible.
 
 Iteration
-    You can iterate the GIDs in a GIDCollection
+    You can iterate the GIDs in a NodeCollection
 
     ::
 
@@ -173,7 +173,7 @@ Iteration
     the GID and the model ID.
 
 Conversion to and from lists
-    GIDCollections can be converted to lists of GIDs
+    NodeCollections can be converted to lists of GIDs
 
     ::
 
@@ -185,17 +185,17 @@ Conversion to and from lists
 
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a GIDCollection by providing a list of GIDs
+    And you can create a NodeCollection by providing a list of GIDs
 
     ::
 
-        print(nest.GIDCollection([2, 3, 4, 8]))
+        print(nest.NodeCollection([2, 3, 4, 8]))
 
     prints
 
     ::
 
-        GIDCollection(metadata=None,
+        NodeCollection(metadata=None,
                       model=iaf_psc_alpha, size=3, first=2, last=4;
                       model=iaf_psc_alpha, size=1, first=8)
 
@@ -203,15 +203,15 @@ Conversion to and from lists
     of the GIDs refer to nodes that are not created, an error is thrown.
 
 Test of equality
-    You can test if two GIDCollections are equal, i.e. that they contain the same GIDs
+    You can test if two NodeCollections are equal, i.e. that they contain the same GIDs
 
     ::
 
         nrns == nrns_2  # False
-        nrns_2 == nest.GIDCollection([11, 12, 13])  # True
+        nrns_2 == nest.NodeCollection([11, 12, 13])  # True
 
 Test of membership
-    You can test if a GIDCollection contains a certain GID
+    You can test if a NodeCollection contains a certain GID
 
     ::
 
@@ -219,7 +219,7 @@ Test of membership
         11 in nrns  # False
 
 Getting node status
-    We can get the status of the nodes in the GIDCollection. Getting the
+    We can get the status of the nodes in the NodeCollection. Getting the
     status with a single parameter returns a tuple with the values of that
     parameter for all nodes.
 
@@ -258,7 +258,7 @@ Getting node status
 
 Setting node status
     In the same way as we can ``get`` the status of nodes in a
-    GIDCollection, we can also ``set`` the status.
+    NodeCollection, we can also ``set`` the status.
 
     ::
 
@@ -270,10 +270,10 @@ Setting node status
 Connectome
 ~~~~~~~~~~
 
-Just like a GIDCollection is a container for GIDs, a Connectome is a
+Just like a NodeCollection is a container for GIDs, a Connectome is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
 Connectome is returned. Connectomes support a lot of the same operations
-as GIDCollections:
+as NodeCollections:
 
 Printing
     Printing a Connectome produces a table of source and target GIDs
@@ -343,7 +343,7 @@ Test of equality
 Getting connection parameters
     We can get the parameters of the connections in the Connectome. The
     structure of the returned values follows the same rules as ``get()``
-    for GIDCollections.
+    for NodeCollections.
 
     ::
 
@@ -608,7 +608,7 @@ Using Parameters makes it easy to set node properties
 Subnets
 -------
 
-Subnets are gone. Instead GIDCollections should be used to organize neurons.
+Subnets are gone. Instead NodeCollections should be used to organize neurons.
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |
@@ -706,12 +706,12 @@ where ``spatial_data`` can be one of the following
       extent defined, the number of dimensions has to be provided.
 
 Topology layers are no longer subnets, as subnets have been removed, but
-GIDCollections with metadata. These GIDCollections behave as normal
-GIDCollections with two exceptions:
+NodeCollections with metadata. These NodeCollections behave as normal
+NodeCollections with two exceptions:
 
-- They cannot be merged, as concatenating GIDCollections with metadata is
+- They cannot be merged, as concatenating NodeCollections with metadata is
   not allowed.
-- Setting the status of nodes and connecting layer GIDCollections can
+- Setting the status of nodes and connecting layer NodeCollections can
   use spatial information as parameters.
 
 The second point means that we can use masks and position dependent
@@ -736,8 +736,8 @@ Connecting layers
 ~~~~~~~~~~~~~~~~~
 
 Similar to creating layers, connecting layers is now done with the
-standard ``nest.Connect()`` function. Connecting GIDCollections with
-spatial data is no different from connecting GIDCollections without
+standard ``nest.Connect()`` function. Connecting NodeCollections with
+spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
 ``Connect()`` function brings with it some notable changes:
 

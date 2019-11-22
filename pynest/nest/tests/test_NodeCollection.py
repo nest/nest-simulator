@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_GIDCollection.py
+# test_NodeCollection.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-GIDCollection tests
+NodeCollection tests
 """
 
 import unittest
@@ -34,31 +34,31 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
-class TestGIDCollection(unittest.TestCase):
-    """GIDCollection tests"""
+class TestNodeCollection(unittest.TestCase):
+    """NodeCollection tests"""
 
     def setUp(self):
         nest.ResetKernel()
 
-    def test_GIDCollection_to_list(self):
-        """Conversion from GIDCollection to list"""
+    def test_NodeCollection_to_list(self):
+        """Conversion from NodeCollection to list"""
 
         n_neurons = 10
         n = nest.Create('iaf_psc_alpha', n_neurons)
         n_list = n.tolist()
         self.assertEqual(n_list, list(range(1, n_neurons + 1)))
 
-    def test_list_to_GIDCollection(self):
-        """Conversion from list to GIDCollection"""
+    def test_list_to_NodeCollection(self):
+        """Conversion from list to NodeCollection"""
 
         gids_in = [5, 10, 15, 20]
         with self.assertRaises(nest.kernel.NESTError):
-            gc = nest.GIDCollection(gids_in)
+            nc = nest.NodeCollection(gids_in)
 
         n = nest.Create('iaf_psc_alpha', 20)
         gids_in = [5, 10, 15, 20]
-        gc = nest.GIDCollection(gids_in)
-        for gid, compare in zip(gc, gids_in):
+        nc = nest.NodeCollection(gids_in)
+        for gid, compare in zip(nc, gids_in):
             self.assertEqual(gid.get('global_id'), compare)
 
         nest.ResetKernel()
@@ -66,11 +66,11 @@ class TestGIDCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', 10)
 
         gids_in = [7, 3, 8, 5, 2]
-        gc = nest.GIDCollection(gids_in)
-        self.assertEqual(gc.tolist(), [2, 3, 5, 7, 8])
+        nc = nest.NodeCollection(gids_in)
+        self.assertEqual(nc.tolist(), [2, 3, 5, 7, 8])
 
     def test_equal(self):
-        """Equality of GIDCollections"""
+        """Equality of NodeCollections"""
 
         n = nest.Create('iaf_psc_exp', 10)
         n_list = n.tolist()
@@ -84,25 +84,25 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        gc = nest.Create("iaf_psc_alpha", 10)
-        ngc = nest.GIDCollection(gc.tolist())
-        self.assertEqual(gc, ngc)
+        nc = nest.Create("iaf_psc_alpha", 10)
+        ngc = nest.NodeCollection(nc.tolist())
+        self.assertEqual(nc, ngc)
 
-        self.assertNotEqual(gc, n)
+        self.assertNotEqual(nc, n)
 
     def test_indexing(self):
-        """Index of GIDCollections"""
+        """Index of NodeCollections"""
 
         n = nest.Create('iaf_psc_alpha', 5)
-        gc_0 = nest.GIDCollection([1])
-        gc_2 = nest.GIDCollection([3])
-        gc_4 = nest.GIDCollection([5])
+        nc_0 = nest.NodeCollection([1])
+        nc_2 = nest.NodeCollection([3])
+        nc_4 = nest.NodeCollection([5])
 
-        self.assertEqual(n[0], gc_0)
-        self.assertEqual(n[2], gc_2)
-        self.assertEqual(n[4], gc_4)
-        self.assertEqual(n[-1], gc_4)
-        self.assertEqual(n[-3], gc_2)
+        self.assertEqual(n[0], nc_0)
+        self.assertEqual(n[2], nc_2)
+        self.assertEqual(n[4], nc_4)
+        self.assertEqual(n[-1], nc_4)
+        self.assertEqual(n[-3], nc_2)
         with self.assertRaises(nest.kernel.NESTError):
             n[7]
 
@@ -110,15 +110,15 @@ class TestGIDCollection(unittest.TestCase):
 
         nodes = nest.Create("iaf_psc_alpha", 10)
         counter = 1
-        for gc in nodes:
-            self.assertEqual(gc.get('global_id'), counter)
+        for nc in nodes:
+            self.assertEqual(nc.get('global_id'), counter)
             counter += 1
         for i in range(10):
-            gc = nest.GIDCollection([i+1])
-            self.assertEqual(gc, nodes[i])
+            nc = nest.NodeCollection([i+1])
+            self.assertEqual(nc, nodes[i])
 
     def test_slicing(self):
-        """Slices of GIDCollections"""
+        """Slices of NodeCollections"""
 
         n = nest.Create('iaf_psc_alpha', 10)
         n_slice = n[:5]
@@ -153,7 +153,7 @@ class TestGIDCollection(unittest.TestCase):
             n[::-3]
 
     def test_correct_index(self):
-        """Multiple GIDCOllection calls give right indexing"""
+        """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1
         compare_end = 11
         for model in nest.Models(mtype='nodes'):
@@ -165,16 +165,16 @@ class TestGIDCollection(unittest.TestCase):
             self.assertEqual(n_list, compare)
 
     def test_iterating(self):
-        """Iteration of GIDCollections"""
+        """Iteration of NodeCollections"""
 
         n = nest.Create('iaf_psc_alpha', 15)
         compare = 0
-        for gc in n:
-            self.assertEqual(gc, n[compare])
+        for nc in n:
+            self.assertEqual(nc, n[compare])
             compare += 1
 
-    def test_GIDCollection_addition(self):
-        """Addition of GIDCollections"""
+    def test_NodeCollection_addition(self):
+        """Addition of NodeCollections"""
 
         nodes_a = nest.Create("iaf_psc_alpha", 2)
         nodes_b = nest.Create("iaf_psc_alpha", 2)
@@ -220,38 +220,38 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        gc_a = nest.Create('iaf_psc_alpha', 10)
-        gc_b = nest.Create('iaf_psc_exp', 7)
-        gc_c = nest.GIDCollection([6, 8, 10, 12, 14])
+        nc_a = nest.Create('iaf_psc_alpha', 10)
+        nc_b = nest.Create('iaf_psc_exp', 7)
+        nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
 
         with self.assertRaises(nest.kernel.NESTError):
-            gc_sum = gc_a + gc_b + gc_c
+            nc_sum = nc_a + nc_b + nc_c
 
-    def test_GIDCollection_membership(self):
-        """Membership in GIDCollections"""
-        def check_membership(gc, reference, inverse_ref):
-            """Checks that all GIDs in reference are in GC, and that elements in inverse_ref are not in the GC."""
+    def test_NodeCollection_membership(self):
+        """Membership in NodeCollections"""
+        def check_membership(nc, reference, inverse_ref):
+            """Checks that all GIDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in gc, 'i={}'.format(i))
+                self.assertTrue(i in nc, 'i={}'.format(i))
             for j in inverse_ref:
-                self.assertFalse(j in gc)
+                self.assertFalse(j in nc)
 
-            self.assertFalse(reference[-1] + 1 in gc)
-            self.assertFalse(0 in gc)
-            self.assertFalse(-1 in gc)
+            self.assertFalse(reference[-1] + 1 in nc)
+            self.assertFalse(0 in nc)
+            self.assertFalse(-1 in nc)
 
-        # Primitive GIDCollection
+        # Primitive NodeCollection
         N = 10
         primitive = nest.Create('iaf_psc_alpha', N)
         check_membership(primitive, range(1, N+1), [])
 
-        # Composite GIDCollection
+        # Composite NodeCollection
         exp_N = 5
         N += exp_N
         composite = primitive + nest.Create('iaf_psc_exp', exp_N)
         check_membership(composite, range(1, N+1), [])
 
-        # Sliced GIDCollection
+        # Sliced NodeCollection
         low = 3
         high = 12
         sliced = composite[low:high]
@@ -259,46 +259,46 @@ class TestGIDCollection(unittest.TestCase):
         del inverse_reference[low:high]
         check_membership(sliced, range(low+1, high+1), inverse_reference)
 
-        # GIDCollection with step
+        # NodeCollection with step
         step = 3
         stepped = composite[::step]
         inverse_reference = list(range(1, N))
         del inverse_reference[::step]
         check_membership(stepped, range(1, N+1, step), inverse_reference)
 
-        # Sliced GIDCollection with step
+        # Sliced NodeCollection with step
         sliced_stepped = composite[low:high:step]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
         check_membership(sliced_stepped, range(low+1, high+1, step), inverse_reference)
 
-    def test_GIDCollection_index(self):
-        """GIDCollections index function"""
-        def check_index_against_list(gc, inverse_ref):
-            """Checks GC index against list index, and that elements specified in inverse_ref are not found."""
-            for i in gc.tolist():
-                self.assertEqual(gc.index(i), gc.tolist().index(i), 'i={}'.format(i))
+    def test_NodeCollection_index(self):
+        """NodeCollections index function"""
+        def check_index_against_list(nc, inverse_ref):
+            """Checks NC index against list index, and that elements specified in inverse_ref are not found."""
+            for i in nc.tolist():
+                self.assertEqual(nc.index(i), nc.tolist().index(i), 'i={}'.format(i))
             for j in inverse_ref:
                 with self.assertRaises(ValueError):
-                    gc.index(j)
+                    nc.index(j)
             with self.assertRaises(ValueError):
-                gc.index(gc.tolist()[-1] + 1)
+                nc.index(nc.tolist()[-1] + 1)
             with self.assertRaises(ValueError):
-                gc.index(0)
+                nc.index(0)
             with self.assertRaises(ValueError):
-                gc.index(-1)
+                nc.index(-1)
 
-        # Primitive GIDCollection
+        # Primitive NodeCollection
         N = 10
         primitive = nest.Create('iaf_psc_alpha', N)
         check_index_against_list(primitive, [])
 
-        # Composite GIDCollection
+        # Composite NodeCollection
         exp_N = 5
         composite = primitive + nest.Create('iaf_psc_exp', exp_N)
         check_index_against_list(composite, [])
 
-        # Sliced GIDCollection
+        # Sliced NodeCollection
         low = 3
         high = 12
         sliced = composite[low:high]
@@ -306,21 +306,21 @@ class TestGIDCollection(unittest.TestCase):
         del inverse_reference[low:high]
         check_index_against_list(sliced, inverse_reference)
 
-        # GIDCollection with step
+        # NodeCollection with step
         step = 3
         stepped = composite[::step]
         inverse_reference = list(range(1, N))
         del inverse_reference[::step]
         check_index_against_list(stepped, inverse_reference)
 
-        # Sliced GIDCollection with step
+        # Sliced NodeCollection with step
         sliced_stepped = composite[low:high:step]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
         check_index_against_list(sliced_stepped, inverse_reference)
 
-    def test_correct_len_on_GIDCollection(self):
-        """len function on GIDCollection"""
+    def test_correct_len_on_NodeCollection(self):
+        """len function on NodeCollection"""
 
         a = nest.Create('iaf_psc_exp', 10)
         self.assertEqual(len(a), 10)
@@ -333,8 +333,8 @@ class TestGIDCollection(unittest.TestCase):
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
 
-    def test_composite_GIDCollection(self):
-        """Tests composite GIDCollection with patched GIDs"""
+    def test_composite_NodeCollection(self):
+        """Tests composite NodeCollection with patched GIDs"""
 
         num_a = 10
         num_b = 15
@@ -354,10 +354,10 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(nodes_list[5], 26)
         self.assertEqual(nodes_list[19], 54)
 
-        # Test iteration of sliced GIDCollection
+        # Test iteration of sliced NodeCollection
         i = 0
         for n in nodes_step:
-            self.assertEqual(n, nest.GIDCollection([compare_list[i]]))
+            self.assertEqual(n, nest.NodeCollection([compare_list[i]]))
             i += 1
 
         n_slice_first = nodes[:10]
@@ -378,7 +378,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_composite_wrong_slice(self):
         """
         A NESTError is raised when trying to add a sliced composite and
-        GIDCollection
+        NodeCollection
         """
 
         a = nest.Create('iaf_psc_alpha', 10)
@@ -391,7 +391,7 @@ class TestGIDCollection(unittest.TestCase):
             f = d + e
 
     def test_model(self):
-        """Correct GIDCollection model"""
+        """Correct NodeCollection model"""
 
         n = nest.Create('iaf_psc_alpha')
 
@@ -406,19 +406,19 @@ class TestGIDCollection(unittest.TestCase):
         self.assertTrue(len(n) > 0)
 
         models = ['iaf_psc_alpha'] + list(models)
-        for count, gc in enumerate(n):
-            self.assertEqual(gc.get('model'), models[count])
+        for count, nc in enumerate(n):
+            self.assertEqual(nc.get('model'), models[count])
 
     def test_connect(self):
-        """Connect works with GIDCollections"""
+        """Connect works with NodeCollections"""
 
         n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(n, n, {'rule': 'one_to_one'})
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
 
-        for gc in n:
-            nest.Connect(gc, gc)
+        for nc in n:
+            nest.Connect(nc, nc)
         self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
 
         nest.ResetKernel()
@@ -430,7 +430,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_SetStatus_and_GetStatus(self):
         """
         Test that SetStatus and GetStatus works as expected with
-        GIDCollection
+        NodeCollection
         """
 
         num_nodes = 10
@@ -448,7 +448,7 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        gc = nest.Create('iaf_psc_exp', 5)
+        nc = nest.Create('iaf_psc_exp', 5)
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(n, {'V_m': -40.})
@@ -502,7 +502,7 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_GetConnections_with_slice(self):
         """
-        GetConnection with sliced works GIDCollections
+        GetConnection with sliced works NodeCollections
         """
 
         nodes = nest.Create('iaf_psc_alpha', 11)
@@ -527,7 +527,7 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_senders_and_targets(self):
         """
-        Senders and targets for weight recorder works as GIDCollection and list
+        Senders and targets for weight recorder works as NodeCollection and list
         """
 
         wr = nest.Create('weight_recorder')
@@ -554,7 +554,7 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_apply(self):
         """
-        GIDCollection apply
+        NodeCollection apply
         """
         n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.pos.x
@@ -568,7 +568,7 @@ class TestGIDCollection(unittest.TestCase):
 
     def test_apply_positions(self):
         """
-        GIDCollection apply with positions
+        NodeCollection apply with positions
         """
         n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.distance
@@ -602,7 +602,7 @@ class TestGIDCollection(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestGIDCollection, 'test')
+    suite = unittest.makeSuite(TestNodeCollection, 'test')
     return suite
 
 

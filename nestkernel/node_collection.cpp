@@ -1,5 +1,5 @@
 /*
- *  gid_collection.cpp
+ *  node_collection.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
@@ -34,23 +34,23 @@
 namespace nest
 {
 
-// function object for sorting a vector of GIDCollcetionPrimitives
+// function object for sorting a vector of NodeCollectionPrimitives
 struct PrimitiveSortObject
 {
-  bool operator()( GIDCollectionPrimitive& primitive_lhs, GIDCollectionPrimitive& primitive_rhs )
+  bool operator()( NodeCollectionPrimitive& primitive_lhs, NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 
-  bool operator()( const GIDCollectionPrimitive& primitive_lhs, const GIDCollectionPrimitive& primitive_rhs )
+  bool operator()( const NodeCollectionPrimitive& primitive_lhs, const NodeCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 } primitiveSort;
 
 
-gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
-  const GIDCollectionPrimitive& collection,
+nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
+  const NodeCollectionPrimitive& collection,
   size_t offset,
   size_t step )
   : coll_ptr_( collection_ptr )
@@ -64,12 +64,12 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
 
   if ( offset > collection.size() ) // allow == size() for end iterator
   {
-    throw KernelException( "Invalid offset into GIDCollectionPrimitive" );
+    throw KernelException( "Invalid offset into NodeCollectionPrimitive" );
   }
 }
 
-gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
-  const GIDCollectionComposite& collection,
+nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
+  const NodeCollectionComposite& collection,
   size_t part,
   size_t offset,
   size_t step )
@@ -86,33 +86,33 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
     )
   {
-    throw KernelException( "Invalid part or offset into GIDCollectionComposite" );
+    throw KernelException( "Invalid part or offset into NodeCollectionComposite" );
   }
 }
 
 void
-gc_const_iterator::print_me( std::ostream& out ) const
+nc_const_iterator::print_me( std::ostream& out ) const
 {
   out << "[[" << this << " pc: " << primitive_collection_ << ", cc: " << composite_collection_ << ", px: " << part_idx_
       << ", ex: " << element_idx_ << "]]";
 }
 
-GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs )
+NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
 {
   return lhs->operator+( rhs );
 }
 
-GIDCollection::GIDCollection()
+NodeCollection::NodeCollection()
   : fingerprint_( kernel().get_fingerprint() )
 {
 }
 
-GIDCollectionPTR
-GIDCollection::create( const IntVectorDatum& gidsdatum )
+NodeCollectionPTR
+NodeCollection::create( const IntVectorDatum& gidsdatum )
 {
   if ( gidsdatum->size() == 0 )
   {
-    return GIDCollection::create_();
+    return NodeCollection::create_();
   }
 
   std::vector< index > gids;
@@ -122,15 +122,15 @@ GIDCollection::create( const IntVectorDatum& gidsdatum )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-  return GIDCollection::create_( gids );
+  return NodeCollection::create_( gids );
 }
 
-GIDCollectionPTR
-GIDCollection::create( const TokenArray& gidsarray )
+NodeCollectionPTR
+NodeCollection::create( const TokenArray& gidsarray )
 {
   if ( gidsarray.size() == 0 )
   {
-    return GIDCollection::create_();
+    return NodeCollection::create_();
   }
 
   std::vector< index > gids;
@@ -140,30 +140,30 @@ GIDCollection::create( const TokenArray& gidsarray )
     gids.push_back( static_cast< index >( getValue< long >( gid_token ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-  return GIDCollection::create_( gids );
+  return NodeCollection::create_( gids );
 }
 
-GIDCollectionPTR
-GIDCollection::create_()
+NodeCollectionPTR
+NodeCollection::create_()
 {
-  return GIDCollectionPTR( new GIDCollectionPrimitive( 0, 0, invalid_index ) );
+  return NodeCollectionPTR( new NodeCollectionPrimitive( 0, 0, invalid_index ) );
 }
 
-GIDCollectionPTR
-GIDCollection::create_( const std::vector< index >& gids )
+NodeCollectionPTR
+NodeCollection::create_( const std::vector< index >& gids )
 {
   index current_first = gids[ 0 ];
   index current_last = current_first;
   index current_model = kernel().modelrange_manager.get_model_id( gids[ 0 ] );
 
-  std::vector< GIDCollectionPrimitive > parts;
+  std::vector< NodeCollectionPrimitive > parts;
 
   index old_gid = 0;
   for ( auto gid = ++( gids.begin() ); gid != gids.end(); ++gid )
   {
     if ( *gid == old_gid )
     {
-      throw BadProperty( "All GIDs in a GIDCollection have to be unique" );
+      throw BadProperty( "All GIDs in a NodeCollection have to be unique" );
     }
     old_gid = *gid;
 
@@ -189,21 +189,24 @@ GIDCollection::create_( const std::vector< index >& gids )
 
   if ( parts.size() == 1 )
   {
-    return GIDCollectionPTR( new GIDCollectionPrimitive( parts[ 0 ] ) );
+    return NodeCollectionPTR( new NodeCollectionPrimitive( parts[ 0 ] ) );
   }
   else
   {
-    return GIDCollectionPTR( new GIDCollectionComposite( parts ) );
+    return NodeCollectionPTR( new NodeCollectionComposite( parts ) );
   }
 }
 
 bool
-GIDCollection::valid() const
+NodeCollection::valid() const
 {
   return fingerprint_ == kernel().get_fingerprint();
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index model_id, GIDCollectionMetadataPTR meta )
+NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
+  index last,
+  index model_id,
+  NodeCollectionMetadataPTR meta )
   : first_( first )
   , last_( last )
   , model_id_( model_id )
@@ -212,7 +215,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index m
   assert( first_ <= last_ );
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index model_id )
+NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index model_id )
   : first_( first )
   , last_( last )
   , model_id_( model_id )
@@ -221,7 +224,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index m
   assert( first_ <= last_ );
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
+NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
   : first_( first )
   , last_( last )
   , model_id_( invalid_index )
@@ -242,7 +245,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   model_id_ = first_model_id;
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( const GIDCollectionPrimitive& rhs )
+NodeCollectionPrimitive::NodeCollectionPrimitive( const NodeCollectionPrimitive& rhs )
   : first_( rhs.first_ )
   , last_( rhs.last_ )
   , model_id_( rhs.model_id_ )
@@ -250,7 +253,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( const GIDCollectionPrimitive& rh
 {
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive()
+NodeCollectionPrimitive::NodeCollectionPrimitive()
   : first_( 0 )
   , last_( 0 )
   , model_id_( invalid_index )
@@ -259,7 +262,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive()
 }
 
 ArrayDatum
-GIDCollectionPrimitive::to_array() const
+NodeCollectionPrimitive::to_array() const
 {
   ArrayDatum gids;
   gids.reserve( size() );
@@ -270,52 +273,52 @@ GIDCollectionPrimitive::to_array() const
   return gids;
 }
 
-GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
+NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
   if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
   {
-    throw BadProperty( "Can only join GIDCollections with same metadata." );
+    throw BadProperty( "Can only join NodeCollections with same metadata." );
   }
   if ( not valid() or not rhs->valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
-  auto const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
+  auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
   if ( rhs_ptr ) // if rhs is Primitive
   {
     if ( overlapping( *rhs_ptr ) )
     {
-      throw BadProperty( "Cannot join overlapping GIDCollections." );
+      throw BadProperty( "Cannot join overlapping NodeCollections." );
     }
     if ( ( last_ + 1 ) == rhs_ptr->first_ and model_id_ == rhs_ptr->model_id_ )
     // if contiguous and homogeneous
     {
-      return GIDCollectionPTR( new GIDCollectionPrimitive( first_, rhs_ptr->last_, model_id_, metadata_ ) );
+      return NodeCollectionPTR( new NodeCollectionPrimitive( first_, rhs_ptr->last_, model_id_, metadata_ ) );
     }
     else if ( ( rhs_ptr->last_ + 1 ) == first_ and model_id_ == rhs_ptr->model_id_ )
     {
-      return GIDCollectionPTR( new GIDCollectionPrimitive( rhs_ptr->first_, last_, model_id_, metadata_ ) );
+      return NodeCollectionPTR( new NodeCollectionPrimitive( rhs_ptr->first_, last_, model_id_, metadata_ ) );
     }
     else // not contiguous and homogeneous
     {
-      std::vector< GIDCollectionPrimitive > primitives;
+      std::vector< NodeCollectionPrimitive > primitives;
       primitives.reserve( 2 );
       primitives.push_back( *this );
       primitives.push_back( *rhs_ptr );
-      return GIDCollectionPTR( new GIDCollectionComposite( primitives ) );
+      return NodeCollectionPTR( new NodeCollectionComposite( primitives ) );
     }
   }
   else // if rhs is not Primitive, i.e. Composite
   {
-    auto* rhs_ptr = dynamic_cast< GIDCollectionComposite* >( rhs.get() );
+    auto* rhs_ptr = dynamic_cast< NodeCollectionComposite* >( rhs.get() );
     assert( rhs_ptr );
     return rhs_ptr->operator+( *this ); // use Composite operator+
   }
 }
 
-GIDCollectionPrimitive::const_iterator
-GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
+NodeCollectionPrimitive::const_iterator
+NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
@@ -332,8 +335,8 @@ GIDCollectionPrimitive::local_begin( GIDCollectionPTR cp ) const
   }
 }
 
-GIDCollectionPrimitive::const_iterator
-GIDCollectionPrimitive::MPI_local_begin( GIDCollectionPTR cp ) const
+NodeCollectionPrimitive::const_iterator
+NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
@@ -350,8 +353,8 @@ GIDCollectionPrimitive::MPI_local_begin( GIDCollectionPTR cp ) const
   }
 }
 
-GIDCollectionPTR
-GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start, size_t stop, size_t step ) const
+NodeCollectionPTR
+NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t stop, size_t step ) const
 {
   if ( not( start < stop ) )
   {
@@ -363,32 +366,32 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start, size_t stop
   }
   if ( not valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
 
   if ( step == 1 )
   {
-    return GIDCollectionPTR( new GIDCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
+    return NodeCollectionPTR( new NodeCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
   }
   else
   {
-    return GIDCollectionPTR( new GIDCollectionComposite( *this, start, stop, step ) );
+    return NodeCollectionPTR( new NodeCollectionComposite( *this, start, stop, step ) );
   }
 }
 
 void
-GIDCollectionPrimitive::print_me( std::ostream& out ) const
+NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
   std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
 
-  out << "GIDCollection("
+  out << "NodeCollection("
       << "metadata=" << metadata << ", ";
   print_primitive( out );
   out << ")";
 }
 
 void
-GIDCollectionPrimitive::print_primitive( std::ostream& out ) const
+NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
   std::string model = model_id_ != invalid_index ? kernel().model_manager.get_model( model_id_ )->get_name() : "none";
 
@@ -405,18 +408,18 @@ GIDCollectionPrimitive::print_primitive( std::ostream& out ) const
 }
 
 bool
-GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
+NodeCollectionPrimitive::is_contiguous_ascending( NodeCollectionPrimitive& other )
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }
 
 bool
-GIDCollectionPrimitive::overlapping( const GIDCollectionPrimitive& rhs ) const
+NodeCollectionPrimitive::overlapping( const NodeCollectionPrimitive& rhs ) const
 {
   return ( ( rhs.first_ <= last_ and rhs.first_ >= first_ ) or ( rhs.last_ <= last_ and rhs.last_ >= first_ ) );
 }
 
-GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionPrimitive& primitive,
+NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive& primitive,
   size_t start,
   size_t stop,
   size_t step )
@@ -431,7 +434,7 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionPrimitive& pr
   parts_.push_back( primitive );
 }
 
-GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& comp )
+NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& comp )
   : parts_( comp.parts_ )
   , size_( comp.size_ )
   , step_( comp.step_ )
@@ -442,7 +445,7 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
 {
 }
 
-GIDCollectionComposite::GIDCollectionComposite( const std::vector< GIDCollectionPrimitive >& parts )
+NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& parts )
   : size_( 0 )
   , step_( 1 )
   , start_part_( 0 )
@@ -452,16 +455,16 @@ GIDCollectionComposite::GIDCollectionComposite( const std::vector< GIDCollection
 {
   if ( parts.size() < 1 )
   {
-    throw BadProperty( "Cannot create an empty composite GIDCollection" );
+    throw BadProperty( "Cannot create an empty composite NodeCollection" );
   }
 
-  GIDCollectionMetadataPTR meta = parts[ 0 ].get_metadata();
+  NodeCollectionMetadataPTR meta = parts[ 0 ].get_metadata();
   parts_.reserve( parts.size() );
   for ( const auto& part : parts )
   {
     if ( meta.get() and not( meta == part.get_metadata() ) )
     {
-      throw BadProperty( "all metadata in a GIDCollection must be the same" );
+      throw BadProperty( "all metadata in a NodeCollection must be the same" );
     }
     parts_.push_back( part );
     size_ += part.size();
@@ -469,7 +472,7 @@ GIDCollectionComposite::GIDCollectionComposite( const std::vector< GIDCollection
   std::sort( parts_.begin(), parts_.end(), primitiveSort );
 }
 
-GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& composite,
+NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite& composite,
   size_t start,
   size_t stop,
   size_t step )
@@ -483,7 +486,7 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
 {
   if ( stop - start < 1 )
   {
-    throw BadProperty( "Cannot create an empty composite GIDCollection." );
+    throw BadProperty( "Cannot create an empty composite NodeCollection." );
   }
   if ( start > composite.size() or stop > composite.size() )
   {
@@ -492,11 +495,11 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
 
   if ( composite.step_ > 1 or composite.stop_part_ != 0 or composite.stop_offset_ != 0 )
   {
-    // The GIDCollection is sliced
+    // The NodeCollection is sliced
     if ( size_ > 1 )
     {
-      // Creating a sliced GC with more than one GID from a sliced GC is impossible.
-      throw BadProperty( "Cannot slice a sliced composite GIDCollection." );
+      // Creating a sliced NC with more than one GID from a sliced NC is impossible.
+      throw BadProperty( "Cannot slice a sliced composite NodeCollection." );
     }
     // we have a single single GID, must just find where it is.
     const_iterator it = composite.begin() + start;
@@ -506,7 +509,7 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
   }
   else
   {
-    // The GIDCollection is not sliced
+    // The NodeCollection is not sliced
 
     // Iterate through the composite to find where to start and stop.
     // TODO: There is some room for improvement here. Can go through parts instead, similar to in find().
@@ -527,21 +530,21 @@ GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionComposite& co
   }
 }
 
-GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
+NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
   if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
-    throw BadProperty( "can only join GIDCollections with the same metadata" );
+    throw BadProperty( "can only join NodeCollections with the same metadata" );
   }
   if ( not valid() or not rhs->valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
   if ( step_ > 1 or stop_part_ != 0 or stop_offset_ != 0 )
   {
-    throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+    throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
   }
-  auto const* const rhs_ptr = dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
+  auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
   if ( rhs_ptr ) // if rhs is Primitive
   {
     // check primitives in the composite for overlap
@@ -549,21 +552,21 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     {
       if ( part_it->overlapping( *rhs_ptr ) )
       {
-        throw BadProperty( "Cannot join overlapping GIDCollections." );
+        throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
     }
-    return GIDCollectionPTR( *this + *rhs_ptr );
+    return NodeCollectionPTR( *this + *rhs_ptr );
   }
   else // rhs is Composite
   {
-    auto const* const rhs_ptr = dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
+    auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
     if ( rhs_ptr->step_ > 1 or rhs_ptr->stop_part_ != 0 or rhs_ptr->stop_offset_ != 0 )
     {
-      throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+      throw BadProperty( "Cannot add NodeCollection to a sliced composite." );
     }
 
     // check overlap between the two composites
-    const GIDCollectionComposite* shortest, *longest;
+    const NodeCollectionComposite* shortest, *longest;
     if ( size() < rhs_ptr->size() )
     {
       shortest = this;
@@ -574,15 +577,15 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
       shortest = rhs_ptr;
       longest = this;
     }
-    for ( GIDCollectionComposite::const_iterator short_it = shortest->begin(); short_it < shortest->end(); ++short_it )
+    for ( NodeCollectionComposite::const_iterator short_it = shortest->begin(); short_it < shortest->end(); ++short_it )
     {
       if ( longest->contains( ( *short_it ).gid ) )
       {
-        throw BadProperty( "Cannot join overlapping GIDCollections." );
+        throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
     }
 
-    auto* new_composite = new GIDCollectionComposite( *this );
+    auto* new_composite = new NodeCollectionComposite( *this );
     new_composite->parts_.reserve( new_composite->parts_.size() + rhs_ptr->parts_.size() );
     for ( const auto& part : rhs_ptr->parts_ )
     {
@@ -595,22 +598,22 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     {
       // If there is only a single primitive in the composite, we extract it,
       // ensuring that the composite is deleted from memory.
-      GIDCollectionPrimitive new_primitive = new_composite->parts_[ 0 ];
+      NodeCollectionPrimitive new_primitive = new_composite->parts_[ 0 ];
       delete new_composite;
-      return GIDCollectionPTR( new GIDCollectionPrimitive( new_primitive ) );
+      return NodeCollectionPTR( new NodeCollectionPrimitive( new_primitive ) );
     }
     else
     {
-      return GIDCollectionPTR( new_composite );
+      return NodeCollectionPTR( new_composite );
     }
   }
 }
 
-GIDCollectionPTR GIDCollectionComposite::operator+( const GIDCollectionPrimitive& rhs ) const
+NodeCollectionPTR NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
 {
   if ( get_metadata().get() and not( get_metadata() == rhs.get_metadata() ) )
   {
-    throw BadProperty( "can only join GIDCollections with the same metadata" );
+    throw BadProperty( "can only join NodeCollections with the same metadata" );
   }
 
   // check primitives in the composites for overlap
@@ -618,26 +621,26 @@ GIDCollectionPTR GIDCollectionComposite::operator+( const GIDCollectionPrimitive
   {
     if ( part_it->overlapping( rhs ) )
     {
-      throw BadProperty( "Cannot join overlapping GIDCollections." );
+      throw BadProperty( "Cannot join overlapping NodeCollections." );
     }
   }
 
-  std::vector< GIDCollectionPrimitive > new_parts = parts_;
+  std::vector< NodeCollectionPrimitive > new_parts = parts_;
   new_parts.push_back( rhs );
   std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
   merge_parts( new_parts );
   if ( new_parts.size() == 1 )
   {
-    return GIDCollectionPTR( new GIDCollectionPrimitive( new_parts[ 0 ] ) );
+    return NodeCollectionPTR( new NodeCollectionPrimitive( new_parts[ 0 ] ) );
   }
   else
   {
-    return GIDCollectionPTR( new GIDCollectionComposite( new_parts ) );
+    return NodeCollectionPTR( new NodeCollectionComposite( new_parts ) );
   }
 }
 
-GIDCollectionComposite::const_iterator
-GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
+NodeCollectionComposite::const_iterator
+NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
@@ -658,8 +661,8 @@ GIDCollectionComposite::local_begin( GIDCollectionPTR cp ) const
   return const_iterator( cp, *this, current_part, current_offset, num_vps * step_ );
 }
 
-GIDCollectionComposite::const_iterator
-GIDCollectionComposite::MPI_local_begin( GIDCollectionPTR cp ) const
+NodeCollectionComposite::const_iterator
+NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
@@ -682,7 +685,7 @@ GIDCollectionComposite::MPI_local_begin( GIDCollectionPTR cp ) const
 }
 
 ArrayDatum
-GIDCollectionComposite::to_array() const
+NodeCollectionComposite::to_array() const
 {
   ArrayDatum gids;
   gids.reserve( size() );
@@ -693,8 +696,8 @@ GIDCollectionComposite::to_array() const
   return gids;
 }
 
-GIDCollectionPTR
-GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
+NodeCollectionPTR
+NodeCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
 {
   if ( not( start < stop ) )
   {
@@ -706,10 +709,10 @@ GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
   }
   if ( not valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
 
-  auto new_composite = GIDCollectionComposite( *this, start, stop, step );
+  auto new_composite = NodeCollectionComposite( *this, start, stop, step );
 
   if ( step == 1 and new_composite.start_part_ == new_composite.stop_part_ )
   {
@@ -717,11 +720,11 @@ GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
     return new_composite.parts_[ new_composite.start_part_ ].slice(
       new_composite.start_offset_, new_composite.stop_offset_ );
   }
-  return GIDCollectionPTR( new GIDCollectionComposite( new_composite ) );
+  return NodeCollectionPTR( new NodeCollectionComposite( new_composite ) );
 }
 
 void
-GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& parts ) const
+NodeCollectionComposite::merge_parts( std::vector< NodeCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
   size_t last_i = 0;
@@ -732,10 +735,10 @@ GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& part
     {
       if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
       {
-        GIDCollectionPTR merged_primitivesPTR =
-          parts[ i ] + std::make_shared< GIDCollectionPrimitive >( parts[ i + 1 ] );
+        NodeCollectionPTR merged_primitivesPTR =
+          parts[ i ] + std::make_shared< NodeCollectionPrimitive >( parts[ i + 1 ] );
         auto const* const merged_primitives =
-          dynamic_cast< GIDCollectionPrimitive const* >( merged_primitivesPTR.get() );
+          dynamic_cast< NodeCollectionPrimitive const* >( merged_primitivesPTR.get() );
 
         parts[ i ] = *merged_primitives;
         parts.erase( parts.begin() + i + 1 );
@@ -748,7 +751,7 @@ GIDCollectionComposite::merge_parts( std::vector< GIDCollectionPrimitive >& part
 }
 
 bool
-GIDCollectionComposite::contains( index gid ) const
+NodeCollectionComposite::contains( index gid ) const
 {
   long lower = 0;
   long upper = parts_.size() - 1;
@@ -782,7 +785,7 @@ GIDCollectionComposite::contains( index gid ) const
 }
 
 long
-GIDCollectionComposite::find( const index gid ) const
+NodeCollectionComposite::find( const index gid ) const
 {
   if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( stop_part_ > 0 and stop_part_ != parts_.size() )
     or stop_offset_ > 0 )
@@ -818,7 +821,7 @@ GIDCollectionComposite::find( const index gid ) const
       }
       else
       {
-        auto size_accu = []( long a, const GIDCollectionPrimitive& b )
+        auto size_accu = []( long a, const NodeCollectionPrimitive& b )
         {
           return a + b.size();
         };
@@ -831,15 +834,15 @@ GIDCollectionComposite::find( const index gid ) const
 }
 
 void
-GIDCollectionComposite::print_me( std::ostream& out ) const
+NodeCollectionComposite::print_me( std::ostream& out ) const
 {
   std::string metadata = "None";
-  std::string gc = "GIDCollection(";
-  std::string space( gc.size(), ' ' );
+  std::string nc = "NodeCollection(";
+  std::string space( nc.size(), ' ' );
 
   if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) )
   {
-    // Sliced composite GIDCollection
+    // Sliced composite NodeCollection
 
     size_t current_part = 0;
     size_t current_offset = 0;
@@ -851,7 +854,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     std::vector< std::string > string_vector;
 
-    out << gc << "metadata=" << metadata << ",";
+    out << nc << "metadata=" << metadata << ",";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
       it.get_current_part_offset( current_part, current_offset );
@@ -906,8 +909,8 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
   }
   else
   {
-    // None-sliced Composite GIDCollection
-    out << gc << "metadata=" << metadata << ",";
+    // None-sliced Composite NodeCollection
+    out << nc << "metadata=" << metadata << ",";
     for ( auto it = parts_.begin(); it != parts_.end(); ++it )
     {
       if ( it == parts_.end() - 1 )

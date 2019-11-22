@@ -48,15 +48,15 @@
 % - Then:
 %     15 connections with static only
 %     20 connections with static + stdp
-%     15 connections with stdp only 
+%     15 connections with stdp only
 /build_net
 {
-  % create 100 neurons, connect (2n-1) -> 2n for n=1..50  
+  % create 100 neurons, connect (2n-1) -> 2n for n=1..50
   /iaf_psc_alpha 100 Create ;
-  /static_sources [ 1 69 2 ] Range def 
+  /static_sources [ 1 69 2 ] Range def
   /static_targets static_sources 1 add def
   /stdp_sources [ 31 99 2 ] Range def
-  /stdp_targets stdp_sources 1 add def  
+  /stdp_targets stdp_sources 1 add def
   static_sources static_targets /one_to_one /static_synapse Connect
   stdp_sources stdp_targets /one_to_one /stdp_synapse Connect
 } def
@@ -72,7 +72,7 @@
     /ctgt conns { 1 get } Map def
     /cstp conns { 3 get } Map def  % synapse type
     /syn_id synapsedict /static_synapse get def
- 
+
     csrc static_sources eq
     ctgt static_targets eq and
     cstp { syn_id eq and } Fold  % all synapses must have static type
@@ -121,13 +121,13 @@
     ResetKernel
     build_net
 
-    /ssrc_static static_sources 3 Take def 
-    /stgt_static static_targets 3 Take def 
+    /ssrc_static static_sources 3 Take def
+    /stgt_static static_targets 3 Take def
     /ssrc_stdp stdp_sources -3 Take def     % take final three to avoid
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
-    /stgt_all stgt_static stgt_stdp join def  
-    /conns << /source ssrc_all cvgidcollection >> GetConnections { cva } Map def
+    /stgt_all stgt_static stgt_stdp join def
+    /conns << /source ssrc_all cvnodecollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -142,13 +142,13 @@
     ResetKernel
     build_net
 
-    /ssrc_static static_sources 3 Take def 
-    /stgt_static static_targets 3 Take def 
+    /ssrc_static static_sources 3 Take def
+    /stgt_static static_targets 3 Take def
     /ssrc_stdp stdp_sources -3 Take def     % take final three to avoid
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
-    /stgt_all stgt_static stgt_stdp join def  
-    /conns << /target stgt_all cvgidcollection >> GetConnections { cva } Map def
+    /stgt_all stgt_static stgt_stdp join def
+    /conns << /target stgt_all cvnodecollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -164,13 +164,13 @@
     build_net
 
     % set up so that for each synapse type, last two srcs match first two tgts
-    /ssrc_static static_sources [1 3] Take def 
-    /stgt_static static_targets [2 4] Take def 
+    /ssrc_static static_sources [1 3] Take def
+    /stgt_static static_targets [2 4] Take def
     /ssrc_stdp stdp_sources [-4 -2] Take def     % take final three to avoid
     /stgt_stdp stdp_targets [-3 -1] Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
-    /stgt_all stgt_static stgt_stdp join def  
-    /conns << /source ssrc_all cvgidcollection /target stgt_all cvgidcollection >> GetConnections { cva } Map def
+    /stgt_all stgt_static stgt_stdp join def
+    /conns << /source ssrc_all cvnodecollection /target stgt_all cvnodecollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -186,15 +186,15 @@
     build_net
 
     % set up so that for each synapse type, last two srcs match first two tgts
-    /ssrc_static static_sources [1 3] Take def 
-    /stgt_static static_targets [2 4] Take def 
+    /ssrc_static static_sources [1 3] Take def
+    /stgt_static static_targets [2 4] Take def
     /ssrc_stdp stdp_sources [-4 -2] Take def     % take final three to avoid
     /stgt_stdp stdp_targets [-3 -1] Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
-    /stgt_all stgt_static stgt_stdp join def  
-    /conns 
-      << /source ssrc_all cvgidcollection /target stgt_all cvgidcollection /synapse_model /static_synapse >> 
-      GetConnections { cva } Map 
+    /stgt_all stgt_static stgt_stdp join def
+    /conns
+      << /source ssrc_all cvnodecollection /target stgt_all cvnodecollection /synapse_model /static_synapse >>
+      GetConnections { cva } Map
     def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
@@ -211,17 +211,17 @@
     << /local_num_threads 4 >> SetKernelStatus
     build_net
 
-    % NB: relative ordering of data from threads is random under OpenMP  
+    % NB: relative ordering of data from threads is random under OpenMP
     /conns << /synapse_model /static_synapse >> GetConnections { cva } Map def
 
     % SLI Sort can only sort numbers or strings.
     % To sort source-target pairs, we convert them to large numbers
-    /conns_as_nums 
-       conns 
-       { dup 0 get 1000 mul exch 1 get add } Map 
+    /conns_as_nums
+       conns
+       { dup 0 get 1000 mul exch 1 get add } Map
     def
-    /expect_as_nums 
-       [ static_sources static_targets ] 
+    /expect_as_nums
+       [ static_sources static_targets ]
        { exch 1000 mul add } MapThread
     def
 

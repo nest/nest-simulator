@@ -122,7 +122,7 @@ makes `pg` a "naked" GID.
 
     receptors = nest.GetDefaults('ht_neuron')['receptor_types']
     for pg, (rec_name, rec_wgt) in zip(p_gens, w_recep.items()):
-        nest.Connect(nest.GIDCollection([pg]), nrn,
+        nest.Connect(nest.NodeCollection([pg]), nrn,
                      syn_spec={'receptor_type': receptors[rec_name],
                                'weight': rec_wgt})
 

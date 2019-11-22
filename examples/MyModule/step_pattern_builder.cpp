@@ -78,8 +78,8 @@
    SeeAlso: Connect
 */
 
-mynest::StepPatternBuilder::StepPatternBuilder( const nest::GIDCollectionPTR sources,
-  const nest::GIDCollectionPTR targets,
+mynest::StepPatternBuilder::StepPatternBuilder( const nest::NodeCollectionPTR sources,
+  const nest::NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : nest::ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -147,8 +147,8 @@ mynest::StepPatternBuilder::connect_()
 }
 
 void
-mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
-  const nest::GIDCollection::const_iterator& end,
+mynest::StepPatternBuilder::advance_( nest::NodeCollection::const_iterator& it,
+  const nest::NodeCollection::const_iterator& end,
   size_t step )
 {
   while ( step > 0 and it < end )

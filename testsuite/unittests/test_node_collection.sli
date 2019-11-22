@@ -1,5 +1,5 @@
 /*
- *  test_gid_collection.sli
+ *  test_node_collection.sli
  *
  *  This file is part of NEST.
  *
@@ -21,14 +21,14 @@
  */
 
  /* BeginDocumentation
-Name: testsuite::test_gid_collection - test handling of gid collections
+Name: testsuite::test_node_collection - test handling of node collections
 
-Synopsis: (test_gid_collection) run
+Synopsis: (test_node_collection) run
 
 
 Description:
 
- This testscript checks that gid collections work correctly from the SLI
+ This testscript checks that node collections work correctly from the SLI
  level.
 
 Author:  November 2016, Plesser
@@ -45,10 +45,10 @@ M_PROGRESS setverbosity
 
 {
   << >> begin
-  (No gid collection without nodes) M_PROGRESS message
+  (No node collection without nodes) M_PROGRESS message
   ResetKernel
 
-  [ 1 2 3 ] cvgidcollection pop
+  [ 1 2 3 ] cvnodecollection pop
 
   end
 } fail_or_die
@@ -59,10 +59,10 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Create returns GIDCollection) M_PROGRESS message
+  (Create returns NodeCollection) M_PROGRESS message
   ResetKernel
 
-  /iaf_psc_alpha 10 Create type /gidcollectiontype eq
+  /iaf_psc_alpha 10 Create type /nodecollectiontype eq
 
   end
 } assert_or_die
@@ -71,7 +71,7 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check length of GIDCollections from Create) M_PROGRESS message
+  (Check length of NodeCollections from Create) M_PROGRESS message
   ResetKernel
 
   true
@@ -90,7 +90,7 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check that GIDCollection can be converted to array) M_PROGRESS message
+  (Check that NodeCollection can be converted to array) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
@@ -105,12 +105,12 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check array can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  (Check array can be converted to NodeCollection for existing neurons) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
   /gids [ 10 ] Range def
-  gids cvgidcollection
+  gids cvnodecollection
   cva
   gids eq
   end
@@ -120,12 +120,12 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check intvector can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  (Check intvector can be converted to NodeCollection for existing neurons) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
   /gids [ 10 ] Range def
-  gids cv_iv cvgidcollection
+  gids cv_iv cvnodecollection
   cva
   gids eq
   end
@@ -135,11 +135,11 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check unsorted array can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  (Check unsorted array can be converted to NodeCollection for existing neurons) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
-  [ 5 3 4 7 ] cvgidcollection
+  [ 5 3 4 7 ] cvnodecollection
   cva
   [ 3 4 5 7 ] eq
   end
@@ -149,12 +149,12 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check unsorted array can be converted to GIDCollection for existing neurons, multiple types) M_PROGRESS message
+  (Check unsorted array can be converted to NodeCollection for existing neurons, multiple types) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy1 Set
   /iaf_psc_exp 10 Create /dummy2 Set
-  [ 15 5 3 12 4 7 13 ] cvgidcollection
+  [ 15 5 3 12 4 7 13 ] cvnodecollection
   cva
   [ 3 4 5 7 12 13 15 ] eq
   end
@@ -254,7 +254,7 @@ pop pop
   ResetKernel
 
   /iaf_psc_alpha 10 Create
-  [ 1 2 2 ] cvgidcollection
+  [ 1 2 2 ] cvnodecollection
 
   end
 } fail_or_die
@@ -270,7 +270,7 @@ pop pop
   ResetKernel
 
   /iaf_psc_alpha 10 Create
-  [ 4 5 ] cvgidcollection
+  [ 4 5 ] cvnodecollection
   join
 
   end
@@ -290,7 +290,7 @@ pop pop
   /iaf_psc_alpha 10 Create
   /iaf_psc_exp 10 Create
   join
-  [ 4 5 11 12 ] cvgidcollection
+  [ 4 5 11 12 ] cvnodecollection
   join
 
   end
@@ -307,7 +307,7 @@ pop pop
   ResetKernel
 
   /iaf_psc_alpha 10 Create
-  [ 4 5 11 12 ] cvgidcollection
+  [ 4 5 11 12 ] cvnodecollection
   join
 
   end
@@ -324,7 +324,7 @@ pop pop
   /iaf_psc_alpha 10 Create
   /iaf_psc_exp 10 Create
   join
-  [ 11 12 ] cvgidcollection
+  [ 11 12 ] cvnodecollection
   join
 
   end
@@ -340,13 +340,13 @@ pop pop
   (Check element access) M_PROGRESS message
   ResetKernel
 
-  /gc
+  /nc
     /iaf_psc_alpha 10 Create
     /iaf_psc_exp 10 Create
   join def
 
-  true [ 0 5 10 19 ] { dup 1 add exch gc exch get eq and } Fold
-  true [ -1 -20 ] { dup 21 add exch gc exch get eq and } Fold
+  true [ 0 5 10 19 ] { dup 1 add exch nc exch get eq and } Fold
+  true [ -1 -20 ] { dup 21 add exch nc exch get eq and } Fold
   and
 
   end
@@ -428,7 +428,7 @@ pop pop
   (Test slicing with Take, primitive) M_PROGRESS message
   ResetKernel
 
-  /gc
+  /nc
   /iaf_psc_alpha 20 Create
   def
 
@@ -443,7 +443,7 @@ pop pop
   ]
   {
     begin
-      gc s
+      nc s
       Take
       cva e eq and
     end
@@ -460,7 +460,7 @@ pop pop
   (Test slicing with Take, composite) M_PROGRESS message
   ResetKernel
 
-  /gc
+  /nc
   /iaf_psc_alpha 10 Create
   /iaf_psc_exp 10 Create
   join def
@@ -476,7 +476,7 @@ pop pop
   ]
   {
     begin
-      gc s Take
+      nc s Take
       cva e eq and
     end
   }
@@ -496,13 +496,13 @@ pop pop
   /iaf_psc_exp 15 Create pop
   /iaf_psc_delta 30 Create
   join
-  [1 20 2] Take /gc Set
+  [1 20 2] Take /nc Set
 
   /expected [1 3 5 7 9 26 28 30 32 34] def
 
-  gc cva expected eq      % loops at C++ level
-  gc { } Map expected eq  % loops at SLI level
-  gc size expected length eq
+  nc cva expected eq      % loops at C++ level
+  nc { } Map expected eq  % loops at SLI level
+  nc size expected length eq
 
   and and
   end
@@ -610,16 +610,16 @@ assert_or_die
   (Element membership) M_PROGRESS message
   ResetKernel
 
-  /gc
+  /nc
   /iaf_psc_alpha 10 Create
   /iaf_psc_exp 10 Create
   join def
 
-  gc 1 InCollection
-  gc 15 InCollection and
-  gc 20 InCollection and
-  gc 21 InCollection not and
-  gc 40 InCollection not and
+  nc 1 InCollection
+  nc 15 InCollection and
+  nc 20 InCollection and
+  nc 21 InCollection not and
+  nc 40 InCollection not and
 
   end
 } assert_or_die
@@ -739,7 +739,7 @@ pop pop
 
 {
   << >> begin
-  (Check that Connect checks GC validity, first arg) M_PROGRESS message
+  (Check that Connect checks NC validity, first arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -760,7 +760,7 @@ pop pop pop pop
 
 {
   << >> begin
-  (Check that Connect checks GC validity, second arg) M_PROGRESS message
+  (Check that Connect checks NC validity, second arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -781,7 +781,7 @@ pop pop pop pop
 
 {
   << >> begin
-  (Check that GetStatus checks GC validity) M_PROGRESS message
+  (Check that GetStatus checks NC validity) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -802,7 +802,7 @@ pop
 
 {
   << >> begin
-  (Check that SetStatus checks GC validty) M_PROGRESS message
+  (Check that SetStatus checks NC validty) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -823,7 +823,7 @@ pop pop
 
 {
   << >> begin
-  (Check that join checks GC validity, first arg) M_PROGRESS message
+  (Check that join checks NC validity, first arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -889,14 +889,14 @@ pop pop
   (Element membership) M_PROGRESS message
   ResetKernel
 
-  /gc
+  /nc
   /iaf_psc_alpha 10 Create
   /iaf_psc_exp 10 Create
   join def
 
-  gc 1 MemberQ
-  gc 15 MemberQ and
-  gc 40 MemberQ not and
+  nc 1 MemberQ
+  nc 15 MemberQ and
+  nc 40 MemberQ not and
 
   end
 } assert_or_die
@@ -983,7 +983,7 @@ pop pop
 
 {
   << >> begin
-  (Check that Connect checks GC validity, first arg) M_PROGRESS message
+  (Check that Connect checks NC validity, first arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1004,7 +1004,7 @@ pop pop pop pop
 
 {
   << >> begin
-  (Check that Connect checks GC validity, second arg) M_PROGRESS message
+  (Check that Connect checks NC validity, second arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1025,7 +1025,7 @@ pop pop pop pop
 
 {
   << >> begin
-  (Check that GetStatus checks GC validity) M_PROGRESS message
+  (Check that GetStatus checks NC validity) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1046,7 +1046,7 @@ pop
 
 {
   << >> begin
-  (Check that SetStatus checks GC validty) M_PROGRESS message
+  (Check that SetStatus checks NC validty) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1067,7 +1067,7 @@ pop pop
 
 {
   << >> begin
-  (Check that join checks GC validity, first arg) M_PROGRESS message
+  (Check that join checks NC validity, first arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1088,7 +1088,7 @@ pop pop
 
 {
   << >> begin
-  (Check that join checks GC validity, second arg) M_PROGRESS message
+  (Check that join checks NC validity, second arg) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1114,9 +1114,9 @@ pop pop
 
   /a /iaf_psc_alpha 5 Create def
   /e /iaf_psc_exp 5 Create def
-  /gc a e join def
+  /nc a e join def
 
-  gc gc Connect
+  nc nc Connect
 
   << >> GetConnections length 100 eq
   << /source a /target e >> GetConnections length 25 eq
@@ -1130,7 +1130,7 @@ pop pop
 
 {
   << >> begin
-  (Check that GetConnections checks GC validity, source) M_PROGRESS message
+  (Check that GetConnections checks NC validity, source) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def
@@ -1152,7 +1152,7 @@ pop
 
 {
   << >> begin
-  (Check that GetConnections checks GC validity, target) M_PROGRESS message
+  (Check that GetConnections checks NC validity, target) M_PROGRESS message
   ResetKernel
 
   /n /iaf_psc_alpha 5 Create def

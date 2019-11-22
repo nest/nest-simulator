@@ -91,7 +91,7 @@ systemdict /GNUReadline known not {
 	/append_s /asin_d /available_is /backtrace_off /backtrace_on
 	/breakup_sa /breakup_sa_i /calibrate_node /capacity_a /capacity_s
 	/ceil_d /cos_d /cv_dv /cv_iv /cva_C /cva_d /cva_t /cvd_s /cvdict_C
-	/cvdict_M /cvgidcollection_i_i /cvgidcollection_ia /cvgidcollection_iv
+	/cvdict_M /cvnodecollection_i_i /cvnodecollection_ia /cvnodecollection_iv
 	/cvi_s /cvlit_n /cvlit_p /cvlp_p /cvn_l /cvn_s /cvs_f /cvt_a /cvx_a
 	/cvx_f /dexp_i /div_P_P /div_a_a /div_a_i /div_dd /div_di /div_dv_dv
 	/div_i_a /div_id /div_ii /div_iv_iv /double_i /drand_g /dup2_is_is

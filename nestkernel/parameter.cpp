@@ -20,7 +20,7 @@
  *
  */
 
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "node.h"
 #include "topology.h"
 
@@ -40,14 +40,14 @@ Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
 }
 
 std::vector< double >
-Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) const
+Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array ) const
 {
   std::vector< double > result;
   result.reserve( token_array.size() );
   librandom::RngPtr rng = get_global_rng();
 
-  // Get source layer from the GIDCollection
-  auto source_metadata = gc->get_metadata();
+  // Get source layer from the NodeCollection
+  auto source_metadata = nc->get_metadata();
   if ( not source_metadata.get() )
   {
     throw KernelException( "apply: not meta" );
@@ -63,8 +63,8 @@ Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) co
     throw KernelException( "apply: not valid layer" );
   }
 
-  assert( gc->size() == 1 );
-  const index source_lid = gc->operator[]( 0 ) - source_metadata->get_first_gid();
+  assert( nc->size() == 1 );
+  const index source_lid = nc->operator[]( 0 ) - source_metadata->get_first_gid();
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
@@ -92,12 +92,12 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  GIDCollectionPTR gc = node->get_gc();
-  if ( not gc.get() )
+  NodeCollectionPTR nc = node->get_nc();
+  if ( not nc.get() )
   {
-    throw KernelException( "NodePosParameter: not gc" );
+    throw KernelException( "NodePosParameter: not nc" );
   }
-  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
   if ( not meta.get() )
   {
     throw KernelException( "NodePosParameter: not meta" );

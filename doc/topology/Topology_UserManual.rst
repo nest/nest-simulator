@@ -58,7 +58,7 @@ Layers
 
 The Topology Module (just Topology for short in the remainder of this
 document) organizes neuronal networks in *layers*. Layers in NEST 3
-are GIDCollections with spatial metadata. We will first
+are NodeCollections with spatial metadata. We will first
 illustrate how Topology places elements in simple layers, where each
 element is a single model neuron.
 
@@ -369,11 +369,11 @@ Chapter \ :ref:`3 <sec:connections>`.
 
 .. _sec:subnet:
 
-Topology layer as NEST GIDCollection
+Topology layer as NEST NodeCollection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From the perspective of NEST, a Topology layer is a special type of
-*GIDCollection*. From the user perspective, the following points may
+*NodeCollection*. From the user perspective, the following points may
 be of interest:
 
 -  The GICCollection has a ``spatial`` property describing the layer
@@ -393,11 +393,11 @@ The ``spatial`` propery is read-only; changing any values will
 not change properties of the layer.
 
 -  NEST sees the elements of the layer in the same way as the
-   elements of any GIDCollection. GIDCollections created as layers can
-   therefore be used in the same ways as any standard GIDCollection.
-   However, operations requiring a GIDCollection with spatial data (e.g.
+   elements of any NodeCollection. NodeCollections created as layers can
+   therefore be used in the same ways as any standard NodeCollection.
+   However, operations requiring a NodeCollection with spatial data (e.g.
    ``Connect`` with spatial dependence, or visualization of layers) can
-   only be used on GIDCollections created as layers.
+   only be used on NodeCollections created as layers.
 
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ layer1p #}
@@ -558,8 +558,8 @@ Connecting Topology layers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Connections between Topology layers are created by calling ``Connect``, as
-with normal GIDCollections. But in addition to the usual ways one could
-connect GIDCollections, having spatial information about the nodes makes
+with normal NodeCollections. But in addition to the usual ways one could
+connect NodeCollections, having spatial information about the nodes makes
 position-based options available. In many cases when connecting layers, a
 mask will be specified. Mask specifications are described in
 Sec. \ :ref:`3.3 <sec:conn_masks>`.
@@ -1371,7 +1371,7 @@ and SLI documentation.
 |                                 | http://www.nest-simulator.org/connection_ma |
 |                                 | nagement.                                   |
 +---------------------------------+---------------------------------------------+
-| ``nest.GetNodes()``             | Returns a GIDCollection of the layer        |
+| ``nest.GetNodes()``             | Returns a NodeCollection of the layer        |
 |                                 | elements.                                   |
 |                                 |                                             |
 |                                 |                                             |

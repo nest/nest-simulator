@@ -142,8 +142,8 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
   }
-  GIDCollectionPTR sources( new GIDCollectionPrimitive() );
-  GIDCollectionPTR targets( new GIDCollectionPrimitive() );
+  NodeCollectionPTR sources( new NodeCollectionPrimitive() );
+  NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -254,8 +254,8 @@ SPManager::disconnect( const index sgid, Node* target, thread target_thread, con
  * @param syn_spec synapse specs
  */
 void
-SPManager::disconnect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+SPManager::disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {

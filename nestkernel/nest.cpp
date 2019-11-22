@@ -156,7 +156,7 @@ get_connection_status( const ConnectionDatum& conn )
     conn.get_port() );
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 create( const Name& model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )
@@ -176,15 +176,15 @@ create( const Name& model_name, const index n_nodes )
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 get_nodes( const DictionaryDatum& params, const bool local_only )
 {
   return kernel().node_manager.get_nodes( params, local_only );
 }
 
 void
-connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
@@ -401,12 +401,12 @@ is_spatial( const ParameterDatum& param )
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const GIDCollectionDatum& gc )
+apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 {
   std::vector< double > result;
-  result.reserve( gc->size() );
+  result.reserve( nc->size() );
   librandom::RngPtr rng = get_global_rng();
-  for ( auto it = gc->begin(); it < gc->end(); ++it )
+  for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
     auto node = kernel().node_manager.get_node_or_proxy( ( *it ).gid );
     result.push_back( param->value( rng, node ) );
@@ -418,11 +418,11 @@ std::vector< double >
 apply( const ParameterDatum& param, const DictionaryDatum& positions )
 {
   auto source_tkn = positions->lookup( names::source );
-  auto source_gc = getValue< GIDCollectionPTR >( source_tkn );
+  auto source_nc = getValue< NodeCollectionPTR >( source_tkn );
 
   auto targets_tkn = positions->lookup( names::targets );
   TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
-  return param->apply( source_gc, target_tkns );
+  return param->apply( source_nc, target_tkns );
 }
 
 } // namespace nest

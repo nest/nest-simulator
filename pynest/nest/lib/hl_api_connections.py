@@ -30,7 +30,7 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_nodes import Create
-from .hl_api_types import NodeCollection, Connectome, Mask, Parameter
+from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 
@@ -47,7 +47,7 @@ __all__ = [
 @check_stack
 def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
-    """Return a `Connectome` representing the connection identifiers.
+    """Return a `SynapseCollection` representing the connection identifiers.
 
     Any combination of source, target, synapse_model and
     synapse_label parameters is permitted.
@@ -67,9 +67,9 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Returns
     -------
-    Connectome:
+    SynapseCollection:
         Object representing the source-gid, target-gid, target-thread, synapse-id, port of connections, see
-        :py:class:`Connectome`.
+        :py:class:`SynapseCollection`.
 
     Notes
     -----
@@ -108,7 +108,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     conns = spp()
 
     if isinstance(conns, tuple):
-        conns = Connectome(None)
+        conns = SynapseCollection(None)
 
     return conns
 
@@ -308,7 +308,7 @@ def _connect_nonunique(syn_spec):
 
 @check_stack
 def Connect(pre, post, conn_spec=None, syn_spec=None,
-            return_connectome=False):
+            return_synapsecollection=False):
     """
     Connect pre nodes to post nodes.
 
@@ -326,8 +326,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
         Specifies synapse model, see below
-    return_connectome: bool
-        Specifies whether or not we should return a Connectome of pre and post connections
+    return_synapsecollection: bool
+        Specifies whether or not we should return a SynapseCollection of pre and post connections
 
     Raises
     ------
@@ -482,8 +482,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     # the GIDs are connected all_to_all. If the arrays contain unique
     # GIDs, a warning is issued.
     if pre_is_array_of_gids and post_is_array_of_gids and conn_spec is None:
-        if return_connectome:
-            raise ValueError("Connectome cannot be returned when connecting two arrays of GIDs")
+        if return_synapsecollection:
+            raise ValueError("SynapseCollection cannot be returned when connecting two arrays of GIDs")
         if len(numpy.unique(pre)) == len(pre) and len(numpy.unique(post)) == len(post):
             warnings.warn('Connecting two arrays of GIDs should only be done in cases where one or both the arrays '
                           'contain non-unique GIDs. Use NodeCollections when connecting two collections of '
@@ -526,7 +526,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             sps(processed_syn_spec)
         sr('Connect')
 
-    if return_connectome:
+    if return_synapsecollection:
         return GetConnections(pre, post)
 
 

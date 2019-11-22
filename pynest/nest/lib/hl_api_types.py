@@ -38,7 +38,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    'Connectome',
+    'SynapseCollection',
     'CreateParameter',
     'NodeCollection',
     'Mask',
@@ -421,33 +421,33 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class ConnectomeIterator(object):
+class SynapseCollectionIterator(object):
     """
-    Iterator class for Connectome.
+    Iterator class for SynapseCollection.
     """
 
-    def __init__(self, conn):
-        self._iter = iter(conn._datum)
+    def __init__(self, synapse_collection):
+        self._iter = iter(synapse_collection._datum)
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        return Connectome(next(self._iter))
+        return SynapseCollection(next(self._iter))
 
     next = __next__  # Python2.x
 
 
-class Connectome(object):
+class SynapseCollection(object):
     """
     Class for Connections.
 
-    Connectome represents the connections of a network. The class supports indexing, iteration, length and
+    SynapseCollection represents the connections of a network. The class supports indexing, iteration, length and
     equality. You can get and set connection parameters by using the membership functions ``get()`` and
     ``set()``, respectively. By using the membership function ``sources()`` you get an iterator over source
     nodes, while ``targets()`` returns an interator over the target nodes of the connections.
 
-    A Connectome is created by the :py:func`.GetConnections` function.
+    A SynapseCollection is created by the :py:func`.GetConnections` function.
     """
 
     _datum = None
@@ -461,7 +461,7 @@ class Connectome(object):
                     raise TypeError("Expected Connection Datum.")
             self._datum = data
         elif data is None:
-            # We can have an empty Connectome if there are no connections.
+            # We can have an empty SynapseCollection if there are no connections.
             self._datum = data
         else:
             if (not isinstance(data, kernel.SLIDatum) or
@@ -471,7 +471,7 @@ class Connectome(object):
             self._datum = [data]
 
     def __iter__(self):
-        return ConnectomeIterator(self)
+        return SynapseCollectionIterator(self)
 
     def __len__(self):
         if self._datum is None:
@@ -479,7 +479,7 @@ class Connectome(object):
         return len(self._datum)
 
     def __eq__(self, other):
-        if not isinstance(other, Connectome):
+        if not isinstance(other, SynapseCollection):
             raise NotImplementedError()
 
         if self.__len__() != other.__len__():
@@ -493,19 +493,19 @@ class Connectome(object):
         return True
 
     def __neq__(self, other):
-        if not isinstance(other, Connectome):
+        if not isinstance(other, SynapseCollection):
             raise NotImplementedError()
         return not self == other
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return Connectome(self._datum[key])
+            return SynapseCollection(self._datum[key])
         else:
-            return Connectome([self._datum[key]])
+            return SynapseCollection([self._datum[key]])
 
     def __str__(self):
         """
-        Printing a `Connectome` returns something of the form:
+        Printing a `SynapseCollection` returns something of the form:
             *--------*-------------*
             | source | 1, 1, 2, 2, |
             *--------*-------------*
@@ -542,7 +542,7 @@ class Connectome(object):
         return self.get(attr)
 
     def __setattr__(self, attr, value):
-        # `_datum` is the only property of Connectome that should not be
+        # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
         if attr == '_datum':
             super().__setattr__(attr, value)
@@ -550,14 +550,14 @@ class Connectome(object):
             self.set({attr: value})
 
     def sources(self):
-        """Return iterator containing the source GIDs of the `Connectome`."""
+        """Return iterator containing the source GIDs of the `SynapseCollection`."""
         sources = self.get('source')
         if not isinstance(sources, (list, tuple)):
             sources = (sources,)
         return iter(sources)
 
     def targets(self):
-        """Return iterator containing the target GIDs of the `Connectome`."""
+        """Return iterator containing the target GIDs of the `SynapseCollection`."""
         targets = self.get('target')
         if not isinstance(targets, (list, tuple)):
             targets = (targets,)
@@ -643,15 +643,15 @@ class Connectome(object):
         NB! This is almost the same implementation as SetStatus
 
         If `kwargs` is given, it has to be names and values of an attribute as keyword argument pairs. The values
-        can be single values or list of the same size as the `Connectome`.
+        can be single values or list of the same size as the `SynapseCollection`.
 
         Parameters
         ----------
         params : str or dict or list
             Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `Connectome`.
+            same length as the `SynapseCollection`.
         kwargs : keyword argument pairs
-            Named arguments of parameters of the elements in the `Connectome`.
+            Named arguments of parameters of the elements in the `SynapseCollection`.
 
         Raises
         ------
@@ -663,7 +663,7 @@ class Connectome(object):
 
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
-        # Connectome, or after having done a nest.ResetKernel().
+        # SynapseCollection, or after having done a nest.ResetKernel().
         if self.__len__() == 0 or GetKernelStatus()['network_size'] == 0:
             return
 

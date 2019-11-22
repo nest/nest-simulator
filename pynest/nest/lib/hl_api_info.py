@@ -259,7 +259,7 @@ def SetStatus(nodes, params, val=None):
     Parameters
     ----------
     nodes : NodeCollection or tuple
-        Either a `NodeCollection` representing nodes, or a `Connectome`
+        Either a `NodeCollection` representing nodes, or a `SynapseCollection`
         of connection handles as returned by
         :py:func:`.GetConnections()`.
     params : str or dict or list
@@ -282,8 +282,8 @@ def SetStatus(nodes, params, val=None):
 
     """
 
-    if not isinstance(nodes, (nest.NodeCollection, nest.Connectome)):
-        raise TypeError("'nodes' must be NodeCollection or a Connectome.")
+    if not isinstance(nodes, (nest.NodeCollection, nest.SynapseCollection)):
+        raise TypeError("'nodes' must be NodeCollection or a SynapseCollection.")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty
@@ -324,7 +324,7 @@ def SetStatus(nodes, params, val=None):
             "status dict must be a dict, or a list of dicts of length "
             "len(nodes)")
 
-    if isinstance(nodes, nest.Connectome):
+    if isinstance(nodes, nest.SynapseCollection):
         params = broadcast(params, len(nodes), (dict,), "params")
 
         sps(nodes)
@@ -347,7 +347,7 @@ def GetStatus(nodes, keys=None, output=''):
     Parameters
     ----------
     nodes : NodeCollection or tuple
-        Either a `NodeCollection` representing nodes, or a `Connectome` of
+        Either a `NodeCollection` representing nodes, or a `SynapseCollection` of
         connection handles as returned by :py:func:`.GetConnections()`.
     keys : str or list, optional
         string or a list of strings naming model properties.
@@ -378,8 +378,8 @@ def GetStatus(nodes, keys=None, output=''):
     :py:func:`.SetStatus`
     """
 
-    if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.Connectome)):
-        raise TypeError("The first input (nodes) must be NodeCollection or a Connectome with connection handles ")
+    if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.SynapseCollection)):
+        raise TypeError("The first input (nodes) must be NodeCollection or a SynapseCollection with connection handles")
 
     if len(nodes) == 0:
         return nodes

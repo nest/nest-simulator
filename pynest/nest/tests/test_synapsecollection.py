@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connectome.py
+# test_synapsecollection.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for the Connectome class
+Tests for the SynapseCollection class
 """
 
 import unittest
@@ -34,22 +34,22 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
-class TestConnectome(unittest.TestCase):
-    """Connectome tests"""
+class TestSynapseCollection(unittest.TestCase):
+    """SynapseCollection tests"""
 
     def setUp(self):
         nest.ResetKernel()
 
     def test_basic(self):
         """
-        Test simple Connectome.
+        Test simple SynapseCollection.
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns)
 
         get_conns = nest.GetConnections()
 
-        self.assertTrue(isinstance(get_conns, nest.Connectome))
+        self.assertTrue(isinstance(get_conns, nest.SynapseCollection))
         self.assertEqual(len(get_conns), 4)
 
         sources = get_conns.get('source')
@@ -60,7 +60,7 @@ class TestConnectome(unittest.TestCase):
 
     def test_get_set(self):
         """
-        Test get() and set() on Connectome.
+        Test get() and set() on SynapseCollection.
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns)
@@ -102,7 +102,7 @@ class TestConnectome(unittest.TestCase):
 
     def test_get(self):
         """
-        Test get() on Connectome
+        Test get() on SynapseCollection
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nrns, nrns)
@@ -269,7 +269,7 @@ class TestConnectome(unittest.TestCase):
     @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
     def test_getWithPandasOutput(self):
         """
-        Test get on Connectome with pandas output
+        Test get on SynapseCollection with pandas output
         """
         nrn = nest.Create('iaf_psc_alpha')
         nest.Connect(nrn, nrn)
@@ -333,7 +333,7 @@ class TestConnectome(unittest.TestCase):
 
     def test_empty(self):
         """
-        Test get on empty Connectome and after a ResetKernel
+        Test get on empty SynapseCollection and after a ResetKernel
         """
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 0)
@@ -351,7 +351,7 @@ class TestConnectome(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestConnectome, 'test')
+    suite = unittest.makeSuite(TestSynapseCollection, 'test')
     return suite
 
 

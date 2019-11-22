@@ -21,7 +21,7 @@ Computation times
 - **00:00.000**: :ref:`sphx_glr_auto_examples_brunel_siegert_nest.py` (``brunel_siegert_nest.py``)
 - **00:00.000**: :ref:`sphx_glr_auto_examples_clopath_synapse_small_network.py` (``clopath_synapse_small_network.py``)
 - **00:00.000**: :ref:`sphx_glr_auto_examples_clopath_synapse_spike_pairing.py` (``clopath_synapse_spike_pairing.py``)
-- **00:00.000**: :ref:`sphx_glr_auto_examples_connectome.py` (``connectome.py``)
+- **00:00.000**: :ref:`sphx_glr_auto_examples_synapsecollection.py` (``synapsecollection.py``)
 - **00:00.000**: :ref:`sphx_glr_auto_examples_correlospinmatrix_detector_two_neuron.py` (``correlospinmatrix_detector_two_neuron.py``)
 - **00:00.000**: :ref:`sphx_glr_auto_examples_cross_check_mip_corrdet.py` (``cross_check_mip_corrdet.py``)
 - **00:00.000**: :ref:`sphx_glr_auto_examples_csa_example.py` (``csa_example.py``)

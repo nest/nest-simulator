@@ -5,7 +5,7 @@ NEST 3 introduces a number of new features and concepts, and some changes
 to the user interface that are not backwards compatible. One big change is
 the removal of subnets and all functions based on subnets. To organize
 neurons you should instead use the powerful NodeCollections, which will be
-presented below. Other big features include Connectome objects to
+presented below. Other big features include SynapseCollection objects to
 efficiently work with connections, Parameter objects, and changes to how
 nodes with spatial information are defined and how to work with them.
 
@@ -267,21 +267,21 @@ Setting node status
         nrns.set({'V_m': -55., 'C_m': 150.})  # sets V_m and C_m of all nodes
 
 
-Connectome
+SynapseCollection
 ~~~~~~~~~~
 
-Just like a NodeCollection is a container for GIDs, a Connectome is a
+Just like a NodeCollection is a container for GIDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
-Connectome is returned. Connectomes support a lot of the same operations
+SynapseCollection is returned. SynapseCollections support a lot of the same operations
 as NodeCollections:
 
 Printing
-    Printing a Connectome produces a table of source and target GIDs
+    Printing a SynapseCollection produces a table of source and target GIDs
 
     ::
 
-        connectome = nest.GetConnections()
-        print(connectome)
+        synapsecollection = nest.GetConnections()
+        print(synapsecollection)
 
     prints
 
@@ -294,18 +294,18 @@ Printing
         *--------*-------------*
 
 Getting the size
-    We can get the number of connections in the Connectome with
+    We can get the number of connections in the SynapseCollection with
 
     ::
 
-        len(connectome)
+        len(synapsecollection)
 
 Indexing
-    Indexing returns a Connectome with a single connection.
+    Indexing returns a SynapseCollection with a single connection.
 
     ::
 
-        print(connectome[1])
+        print(synapsecollection[1])
 
     prints
 
@@ -318,11 +318,11 @@ Indexing
         *--------*----*
 
 Slicing
-    A Connectome can be sliced with ``start:stop:step`` inside brackets
+    A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
     ::
 
-        print(connectome[0:3:2])
+        print(synapsecollection[0:3:2])
 
     prints
 
@@ -335,22 +335,22 @@ Slicing
         *--------*-------*
 
 Iteration
-    A Connectome can be iterated, yielding single connection Connectomes.
+    A SynapseCollection can be iterated, yielding single connection SynapseCollections.
 
 Test of equality
-    Two Connectomes can be tested for equality, i.e. that they contain the same connections.
+    Two SynapseCollections can be tested for equality, i.e. that they contain the same connections.
 
 Getting connection parameters
-    We can get the parameters of the connections in the Connectome. The
+    We can get the parameters of the connections in the SynapseCollection. The
     structure of the returned values follows the same rules as ``get()``
     for NodeCollections.
 
     ::
 
-        connectome.get()  # Returns a dictionary of all parameters
-        connectome[0].get('weight')  # Returns the weight value of the first connection
-        connectome.get('delay')  # Returns a list of delays
-        connectome.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
+        synapsecollection.get()  # Returns a dictionary of all parameters
+        synapsecollection[0].get('weight')  # Returns the weight value of the first connection
+        synapsecollection.get('delay')  # Returns a list of delays
+        synapsecollection.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
 
     It is also possible to select an alternative output format with the
     ``output`` keyword. Currently it is possible to get the output in a
@@ -358,20 +358,20 @@ Getting connection parameters
 
     ::
 
-        connectome.get(output='json')  # returns a string in json format
-        connectome.get(output='pandas')  # returns a Pandas DataFrame
+        synapsecollection.get(output='json')  # returns a string in json format
+        synapsecollection.get(output='pandas')  # returns a Pandas DataFrame
 
 Setting connection parameters
-    Likewise, we can set the parameters of connections in the Connectome
+    Likewise, we can set the parameters of connections in the SynapseCollection
 
     ::
 
-        connectome.set('delay', 2.0)  # Sets all delays to 2.0
-        connectome.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
-        connectome.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
+        synapsecollection.set('delay', 2.0)  # Sets all delays to 2.0
+        synapsecollection.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
+        synapsecollection.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
 
 Getting an iterator over the sources or targets
-    Calling ``connectome.source()`` or ``connectome.target()`` returns an
+    Calling ``synapsecollection.source()`` or ``synapsecollection.target()`` returns an
     iterator over the source GIDs or target GIDs, respectively.
 
 Parameterization

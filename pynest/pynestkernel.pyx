@@ -612,7 +612,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_CONNECTION:
         datum = SLIDatum()
         (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
-        ret = nest.Connectome(datum)
+        ret = nest.SynapseCollection(datum)
     elif datum_type == SLI_TYPE_VECTOR_INT:
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
@@ -662,7 +662,7 @@ cdef inline object sli_array_to_object(ArrayDatum* dat):
             tmp[i] = datum
             # Increment
             inc(tok)
-        return nest.Connectome(tmp)
+        return nest.SynapseCollection(tmp)
     else:
         for i in range(n):
             tmp[i] = sli_datum_to_object(tok.datum())

@@ -52,7 +52,7 @@ __all__ = [
     'Cleanup',
     'Connect',
     'ConnectionRules',
-    'Connectome',
+    'SynapseCollection',
     'CopyModel',
     'Create',
     'CreateMask',

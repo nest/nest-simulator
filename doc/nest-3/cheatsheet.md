@@ -8,7 +8,7 @@ Most functions now take `NodeCollection` instead of lists, but, seeing as `Creat
 
 Functions that you have to be careful about:
 
-- `nest.GetConnections()` returns a `Connectome` object
+- `nest.GetConnections()` returns a `SynapseCollection` object
 - All topology functions are now part of `nest` and not `nest.topology`
 - `nest.GetPosition` -> no longer take list of GIDs
 - `nest.FindCenterElement` -> now returns `int` instead of `tuple`
@@ -24,8 +24,8 @@ Functions that you have to be careful about:
 
 | NEST 2.x                                                     | NEST 3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `nest.GetConnections(list=None, list=None, synapse_model=None, synapse_label=None)`  <br /><br />returns `numpy.array` | `nest.GetConnections(nest.NodeCollection=None, nest.NodeCollection=None,synapse_model=None, synapse_label=None)` <br /><br />returns `nest.Connectome` |
-| `nest.Connect(list, list, conn_spec=None, syn_spec=None, model=None)` | `nest.Connect(nest.NodeCollection, nest.NodeCollection, conn_spec=None, syn_spec=None, return_connectome=False)` <br /><br />In `syn_spec` the synapse model is given by `synapse_model`, not `model`. |
+| `nest.GetConnections(list=None, list=None, synapse_model=None, synapse_label=None)`  <br /><br />returns `numpy.array` | `nest.GetConnections(nest.NodeCollection=None, nest.NodeCollection=None,synapse_model=None, synapse_label=None)` <br /><br />returns `nest.SynapseCollection` |
+| `nest.Connect(list, list, conn_spec=None, syn_spec=None, model=None)` | `nest.Connect(nest.NodeCollection, nest.NodeCollection, conn_spec=None, syn_spec=None, return_synapsecollection=False)` <br /><br />In `syn_spec` the synapse model is given by `synapse_model`, not `model`. |
 | `nest.DataConnect(pre, params=None, model="static_synapse")` |                                                              |
 | `nest.CGConnect(list, list, cg, parameter_map=None, model="static_synapse")` | `nest.CGConnect(nest.NodeCollection, nest.NodeCollection, cg, parameter_map=None, model="static_synapse")` |
 | `nest.DisconnectOneToOne(int, int, syn_spec)`                |                                                              |
@@ -58,7 +58,7 @@ Functions that you have to be careful about:
 | NEST 2.x                                                     | NEST 3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `tp.CreateLayer(specs)`<br /><br />returns `tuple of int(s)`<br /><br /> | `nest.Create(model, params=None, positions=nest.spatial.free/grid)`<br /><br />returns `nest.NodeCollection`<br /><br />NB! Composite layers no longer possible. |
-| `tp.ConnectLayers(list, list, projections)`                  | `nest.Connect(nest.NodeCollection, nest.NodeCollection, conn_spec=None, syn_spec=None, return_connectome=False)` |
+| `tp.ConnectLayers(list, list, projections)`                  | `nest.Connect(nest.NodeCollection, nest.NodeCollection, conn_spec=None, syn_spec=None, return_synapsecollection=False)` |
 |                                                              | `layer_NodeCollection.spatial`                                |
 | `tp.GetLayer(nodes)`<br /><br />returns `tuple`              |                                                              |
 | `tp.GetElement(layers, location)`<br /><br />returns `tuple` |                                                              |
@@ -83,7 +83,7 @@ See below for more information about what you can do with the different types.
 | NEST 2.x | NEST 3.0                                                     |
 | -------- | ------------------------------------------------------------ |
 |          | `nest.NodeCollection`<br /><br />Returned from `nest.Create(...)`call. |
-|          | `nest.Connectome`<br /><br />Returned from `nest.GetConnections(...)` call |
+|          | `nest.SynapseCollection`<br /><br />Returned from `nest.GetConnections(...)` call |
 
 ### Models
 
@@ -282,7 +282,7 @@ When `output` is given, the return value is given in the form of the output spec
 
 
 
-### Connectome
+### SynapseCollection
 
 Supports:
 
@@ -302,7 +302,7 @@ nodes = nest.Create('iaf_psc_alpha', 10)
 
 nest.Connect(nodes, nodes, 'one_to_one')
 
-# Get Connectome and set weight distribution
+# Get SynapseCollection and set weight distribution
 conns = nest.GetConnections()
 conns.set('weight', [1., 2., 3., 4., 5., 6., 7., 8., 9. ,10.])
 

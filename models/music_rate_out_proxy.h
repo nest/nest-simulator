@@ -191,10 +191,14 @@ music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rpo
   // number to the local index of this connection the local index
   // equals the number of connection
 
-  if ( !S_.published_ )
+  if ( not S_.published_ )
+  {
     V_.index_map_.push_back( static_cast< int >( receptor_type ) );
+  }
   else
+  {
     throw MUSICPortAlreadyPublished( "", P_.port_name_ );
+  }
 
   return receptor_type;
 }

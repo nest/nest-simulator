@@ -76,7 +76,7 @@ nest::music_rate_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s
   //  if(d->known(names::port_name) && s.registered_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
-  if ( !s.registered_ )
+  if ( not s.registered_ )
   {
     updateValue< string >( d, names::port_name, port_name_ );
     updateValue< long >( d, names::music_channel, channel_ );
@@ -136,7 +136,7 @@ void
 nest::music_rate_in_proxy::calibrate()
 {
   // only publish the port once
-  if ( !S_.registered_ )
+  if ( not S_.registered_ )
   {
     kernel().music_manager.register_music_rate_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;

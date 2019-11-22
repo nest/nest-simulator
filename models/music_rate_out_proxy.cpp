@@ -88,8 +88,10 @@ nest::music_rate_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& 
   //  if(d->known(names::port_name) && s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
-  if ( !s.published_ )
+  if ( not s.published_ )
+  {
     updateValue< string >( d, names::port_name, port_name_ );
+  }
 }
 
 void
@@ -147,19 +149,26 @@ void
 nest::music_rate_out_proxy::calibrate()
 {
   // only publish the output port once,
-  if ( !S_.published_ )
+  if ( not S_.published_ )
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+
     if ( s == 0 )
+    {
       throw MUSICSimulationHasRun( "" );
+    }
 
     V_.MP_ = s->publishContOutput( P_.port_name_ );
 
-    if ( !V_.MP_->isConnected() )
+    if ( not V_.MP_->isConnected() )
+    {
       throw MUSICPortUnconnected( "", P_.port_name_ );
+    }
 
-    if ( !V_.MP_->hasWidth() )
+    if ( not V_.MP_->hasWidth() )
+    {
       throw MUSICPortHasNoWidth( "", P_.port_name_ );
+    }
 
     S_.port_width_ = V_.MP_->width();
 
@@ -167,8 +176,12 @@ nest::music_rate_out_proxy::calibrate()
     // beyond the width of the port
     std::vector< MUSIC::GlobalIndex >::const_iterator it;
     for ( it = V_.index_map_.begin(); it != V_.index_map_.end(); ++it )
+    {
       if ( *it > S_.port_width_ )
+      {
         throw UnknownReceptorType( *it, get_name() );
+      }
+    }
 
     // Allocate memory
     B_.data_.resize( S_.port_width_ );

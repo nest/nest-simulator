@@ -54,7 +54,9 @@ MusicRateInHandler::~MusicRateInHandler()
   if ( published_ )
   {
     if ( MP_ != 0 )
+    {
       delete MP_;
+    }
   }
 }
 
@@ -68,7 +70,9 @@ MusicRateInHandler::register_channel( int channel, nest::Node* mp )
   }
 
   if ( channelmap_[ channel ] != 0 )
+  {
     throw MUSICChannelAlreadyMapped( "MusicRateInHandler", port_name_, channel );
+  }
 
   channelmap_[ channel ] = mp;
 }
@@ -87,12 +91,12 @@ MusicRateInHandler::publish_port()
 
     MP_ = s->publishContInput( port_name_ );
 
-    if ( !MP_->isConnected() )
+    if ( not MP_->isConnected() )
     {
       throw MUSICPortUnconnected( "", port_name_ );
     }
 
-    if ( !MP_->hasWidth() )
+    if ( not MP_->hasWidth() )
     {
       throw MUSICPortHasNoWidth( "", port_name_ );
     }

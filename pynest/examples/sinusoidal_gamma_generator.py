@@ -24,7 +24,7 @@
 Sinusoidal gamma generator example
 ----------------------------------
 
-This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
+This script demonstrates the use of the :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` and its
 different parameters and modes. The source code of the model can be found in
 ``models/sinusoidal_gamma_generator.h``.
 
@@ -32,7 +32,7 @@ The script is structured into two parts, each of which generates its own
 figure. In part 1A, two generators are created with different orders of the
 underlying gamma process and their resulting PST (Peristiumulus time) and ISI
 (Inter-spike interval) histograms are plotted. Part 1B illustrates the effect
-of the ``individual_spike_trains`` switch. In Part 2, the effects of
+of the `individual_spike_trains` switch. In Part 2, the effects of
 different settings for rate, phase and frequency are demonstrated.
 
 """
@@ -59,10 +59,10 @@ nest.SetKernelStatus({'resolution': 0.01})
 
 
 ###############################################################################
-# Then we create two instances of the ``sinusoidal_gamma_generator`` with two
-# different orders of the underlying gamma process using ``Create``. Moreover,
-# we create devices to record firing rates (``Multimeter``) and spikes
-# (``spike_detector``) and connect them to the generators using ``Connect``.
+# Then we create two instances of the :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with two
+# different orders of the underlying gamma process using :py:func:`.Create`. Moreover,
+# we create devices to record firing rates (:cpp:class:`multimeter <nest::multimeter>`) and spikes
+# (:cpp:class:`spike_detector <nest::spike_detector>`) and connect them to the generators using :py:func:`.Connect`.
 
 
 g = nest.Create('sinusoidal_gamma_generator', n=2,
@@ -82,8 +82,8 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_detector`` using
-# ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
+# After simulating, the spikes are extracted from the :cpp:class:`spike_detector <nest::spike_detector>` using
+# :py:func:`.GetStatus` and plots are created with panels for the PST and ISI histograms.
 
 colors = ['b', 'g']
 
@@ -116,7 +116,7 @@ nest.SetKernelStatus({'local_num_threads': 4})
 
 
 ###############################################################################
-# First, a ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to
+# First, a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with `individual_spike_trains` set to
 # `True` is created and connected to 20 parrot neurons whose spikes are
 # recorded by a spike detector. After simulating, a raster plot of the spikes
 # is created.
@@ -142,9 +142,9 @@ plt.title('Individual spike trains for each target')
 
 #################################################################################
 # The kernel is reset again and the whole procedure is repeated for a
-# ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to `False`.
+# :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with `individual_spike_trains` set to `False`.
 # The plot shows that in this case, all neurons receive the same spike train
-# from the ``sinusoidal_gamma_generator``.
+# from the :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>`.
 
 
 nest.ResetKernel()
@@ -215,7 +215,7 @@ fig = plt.figure(figsize=(15, 10))
 
 
 ###############################################################################
-# We simulate a ``sinusoidal_gamma_generator`` with default parameter values,
+# We simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with default parameter values,
 # i.e. ``ac=0`` and the DC value being changed from 20 to 50 after `t/2` and
 # plot the number of spikes per second over time.
 
@@ -235,7 +235,7 @@ plt.ylabel('Spikes per second')
 
 
 ###############################################################################
-# We simulate a ``sinusoidal_gamma_generator`` with the DC value being changed
+# We simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with the DC value being changed
 # from 80 to 40 after `t/2` and plot the number of spikes per second over
 # time.
 
@@ -256,7 +256,7 @@ plt.title('DC rate: 80 -> 40')
 
 
 ###############################################################################
-# Next, we simulate a ``sinusoidal_gamma_generator`` with the AC value being
+# Next, we simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with the AC value being
 # changed from 40 to 20 after `t/2` and plot the number of spikes per
 # second over time.
 
@@ -282,7 +282,7 @@ plt.title('Rate Modulation: 40 -> 20')
 
 
 ##################################################################################
-# Finally, we simulate a ``sinusoidal_gamma_generator`` with a non-zero AC value
+# Finally, we simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with a non-zero AC value
 # and the DC value being changed from 80 to 40 after `t/2` and plot the
 # number of spikes per second over time.
 
@@ -309,7 +309,7 @@ plt.xlabel('Time [ms]')
 
 
 ###############################################################################
-# Simulate a ``sinusoidal_gamma_generator`` with the AC value being
+# Simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with the AC value being
 # changed from 0 to 40 after `t/2` and plot the number of spikes per
 # second over time.
 
@@ -331,7 +331,7 @@ plt.xlabel('Time [ms]')
 
 
 ###############################################################################
-# Simulate a ``sinusoidal_gamma_generator`` with a phase shift at
+# Simulate a :cpp:class:`sinusoidal_gamma_generator <nest::sinusoidal_gamma_generator>` with a phase shift at
 # `t/2` and plot the number of spikes per second over time.
 
 

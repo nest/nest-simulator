@@ -67,7 +67,7 @@ neuronparams = {'tau_m': 20.,  # membrane time constant
                 'V_m': 0.}      # initial membrane potential
 
 ###############################################################################
-# Third, the nodes are created using ``Create``. We store the returned handles
+# Third, the nodes are created using :py:func:`.Create`. We store the returned handles
 # in variables for later reference.
 
 neurons = nest.Create('iaf_psc_alpha', N)
@@ -76,7 +76,7 @@ noise = nest.Create('noise_generator')
 drive = nest.Create('ac_generator')
 
 ###############################################################################
-# Set the parameters specified above for the generators using ``SetStatus``.
+# Set the parameters specified above for the generators using :py:func:`.SetStatus`.
 
 nest.SetStatus(drive, driveparams)
 nest.SetStatus(noise, noiseparams)
@@ -92,7 +92,7 @@ nest.SetStatus(neurons, [{'I_e':
                          for n in neurons])
 
 ###############################################################################
-# Set the parameters for the ``spike_detector``: recorded data should include
+# Set the parameters for the :cpp:class:`spike_detector <nest::spike_detector>`: recorded data should include
 # the information about global IDs of spiking neurons and the time of
 # individual spikes.
 

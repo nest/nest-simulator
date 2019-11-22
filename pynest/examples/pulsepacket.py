@@ -93,10 +93,10 @@ Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 # eq.2.3).
 # It expects:
 #
-# * ``Time``: a time array or a single time point (in sec)
-# * ``Tau_s`` and ``Tau_m``: the synaptic and the membrane time constant (in sec)
-# * ``Cm``: the membrane capacity (in Farad)
-# * ``Weight``: the synaptic weight (in Ampere)
+# * `Time`: a time array or a single time point (in sec)
+# * `Tau_s` and `Tau_m`: the synaptic and the membrane time constant (in sec)
+# * `Cm`: the membrane capacity (in Farad)
+# * `Weight`: the synaptic weight (in Ampere)
 #
 # It returns the provoked membrane potential (in mV)
 
@@ -118,7 +118,7 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
 # PyNEST we called the function ``nest.sli_func()``.
 # This function expects:
 #
-# * ``Tau_s`` and ``Tau_m``: the synaptic and membrane time constant (in sec)
+# * `Tau_s` and `Tau_m`: the synaptic and membrane time constant (in sec)
 #
 # It returns the location of the maximum (in sec)
 
@@ -131,7 +131,7 @@ def find_loc_pspmax(tau_s, tau_m):
 
 ###############################################################################
 # First, we construct a Gaussian kernel for a given standard derivation
-# (``sig``) and mean value (``mu``). In this case the standard derivation is
+# (`sig`) and mean value (`mu`). In this case the standard derivation is
 # the width of the pulse packet (see [1]_).
 
 sig = Sdev
@@ -146,7 +146,7 @@ gauss = term1 * term2 * Convolution_resolution
 # Second, we calculate the PSP of a neuron due to a single spiking input.
 # (see Diesmann 2002, eq. 2.3).
 # Since we do that in discrete time steps, we first construct an array
-# (``t_psp``) that contains the time points we want to consider. Then, the
+# (`t_psp`) that contains the time points we want to consider. Then, the
 # function ``make_psp()`` (that creates the PSP) takes the time array as its
 # first argument.
 
@@ -159,7 +159,7 @@ psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 # divide the PSP by its maximum ([1]_ sec 6.1). The function
 # ``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
 # expect the maximum to occur. The function ``make_psp()`` calculates the
-# corresponding PSP value, which is our PSP amplitude (``psp_amp``).
+# corresponding PSP value, which is our PSP amplitude (`psp_amp`).
 
 t_pspmax = find_loc_pspmax(Tau_s, Tau_m)
 psp_amp = make_psp(t_pspmax, Tau_s, Tau_m, Cm, Weight)
@@ -192,7 +192,7 @@ t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
 # Gaussian distribution.
 #
 # We reset the Kernel, define the simulation resolution and set the
-# verbosity using ``set_verbosity`` to suppress info messages.
+# verbosity using :py:func:`.set_verbosity` to suppress info messages.
 
 nest.ResetKernel()
 nest.SetStatus([0], [{'resolution': simulation_resolution}])
@@ -235,12 +235,12 @@ vm = nest.Create('voltmeter', 1, vm_pars)
 # Now, we connect each pulse generator to one neuron via static synapses.
 # We want to keep all properties of the static synapse constant except the
 # synaptic weight. Therefore we change the weight with  the help of the command
-# ``SetDefaults``.
-# The command ``Connect`` connects all kinds of nodes/devices. Since multiple
+# :py:func:`.SetDefaults`.
+# The command :py:func:`.Connect` connects all kinds of nodes/devices. Since multiple
 # nodes/devices can be connected in different ways e.g., each source connects
 # to all targets, each source connects to a subset of targets or each source
 # connects to exactly one target, we have to specify the connection. In our
-# case we use the ``one_to_one`` connection routine since we connect one pulse
+# case we use the `one_to_one` connection routine since we connect one pulse
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
@@ -259,7 +259,7 @@ nest.Simulate(simtime)
 # Finally, we record the membrane potential, when it occurred and to which
 # neuron it belongs. We obtain this information using the command
 # ``nest.GetStatus(vm, 'events')[0]``. The sender and the time point of a voltage
-# data point at position x in the voltage array (``V_m``), can be found at the
+# data point at position x in the voltage array (:term:`V_m`), can be found at the
 # same position x in the sender (`senders`) and the time array (`times`).
 
 Vm = nest.GetStatus(vm, 'events')[0]['V_m']

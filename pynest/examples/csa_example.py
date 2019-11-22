@@ -67,30 +67,30 @@ except ImportError:
     sys.exit()
 
 ###############################################################################
-# To set up the connectivity, We create a ``random`` connection set with a
+# To set up the connectivity, We create a `random` connection set with a
 # probability of 0.1 and two associated values (10000.0 and 1.0) used as
 # weight and delay, respectively.
 
 cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
 ###############################################################################
-# Using the ``Create`` command from PyNEST, we create the neurons of the pre-
+# Using the :py:func:`.Create` command from PyNEST, we create the neurons of the pre-
 # and postsynaptic populations, each of which containing 16 neurons.
 
 pre = nest.Create("iaf_psc_alpha", 16)
 post = nest.Create("iaf_psc_alpha", 16)
 
 ###############################################################################
-# We can now connect the populations using the ``CGConnect`` function. It takes
-# the IDs of pre- and postsynaptic neurons (``pre`` and ``post``),
-# the connection set (``cs``) and a dictionary that maps the parameters
+# We can now connect the populations using the :py:func:`.CGConnect` function. It takes
+# the IDs of pre- and postsynaptic neurons (`pre` and `post`),
+# the connection set (`cs`) and a dictionary that maps the parameters
 # weight and delay to positions in the value set associated with the
 # connection set.
 
 nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
 
 ###############################################################################
-# To stimulate the network, we create a ``poisson_generator`` and set it up to
+# To stimulate the network, we create a :cpp:class:`poisson_generator <nest::poisson_generator>` and set it up to
 # fire with a rate of 100000 spikes per second. It is connected to the
 # neurons of the pre-synaptic population.
 
@@ -106,7 +106,7 @@ nest.Connect(vm, post, "all_to_all")
 
 ###############################################################################
 # We save the whole connection graph of the network as a PNG image using the
-# ``plot_network`` function of the ``visualization`` submodule of PyNEST.
+# ``plot_network`` function of the `visualization` submodule of PyNEST.
 
 allnodes = pg + pre + post + vm
 visualization.plot_network(allnodes, "csa_example_graph.png")

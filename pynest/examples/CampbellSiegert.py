@@ -28,7 +28,7 @@ approximation to and integrate-and-fire neuron.
 This script calculates the firing rate of an integrate-and-fire neuron
 in response to a series of Poisson generators, each specified with a
 rate and a synaptic weight. The calculated rate is compared with a
-simulation using the ``iaf_psc_alpha`` model
+simulation using the :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` model
 
 
 

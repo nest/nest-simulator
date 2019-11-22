@@ -66,7 +66,7 @@ KI = 25        # inhibitory in-degree
 
 ###############################################################################
 # Parameters specific for the neurons in the network. The  default values of
-# the reset potential ``E_L`` and the spiking threshold ``V_th`` are used to set
+# the reset potential :term:`E_L` and the spiking threshold :term:`V_th` are used to set
 # the limits of the initial potential of the neurons.
 
 
@@ -146,9 +146,9 @@ nest.Connect(nodes_in, allnodes,
              syn_spec={'weight': -g*J, 'delay': dt})
 
 ###############################################################################
-# Afterwards we create a ``poisson_generator`` that provides spikes (the external
+# Afterwards we create a :cpp:class:`poisson_generator <nest::poisson_generator>` that provides spikes (the external
 # input) to the neurons until time `T` is reached.
-# Afterwards a ``dc_generator``, which is also connected to the whole population,
+# Afterwards a :cpp:class:`dc_generator <nest::dc_generator>`, which is also connected to the whole population,
 # provides a stong hyperpolarisation step for a short time period `fade_out`.
 #
 # The `fade_out` period has to last at least twice as long as the simulation
@@ -170,7 +170,7 @@ nest.Connect(allnodes, spikedetector)
 
 
 ###############################################################################
-# We then create the ``spike_generator``, which provides the extra spike
+# We then create the :cpp:class:`spike_generator <nest::spike_generator>`, which provides the extra spike
 # (perturbation).
 
 stimulus = nest.Create("spike_generator")

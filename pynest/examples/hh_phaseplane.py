@@ -23,7 +23,7 @@
 ----------------------------------------------------------------
 
 hh_phaseplane makes a numerical phase-plane analysis of the Hodgkin-Huxley
-neuron (``hh_psc_alpha``). Dynamics is investigated in the V-n space (see remark
+neuron (:cpp:class:`hh_psc_alpha <nest::hh_psc_alpha>`). Dynamics is investigated in the V-n space (see remark
 below). A constant DC can be specified  and its influence on the nullclines
 can be studied.
 

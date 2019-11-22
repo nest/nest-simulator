@@ -217,7 +217,7 @@ nest.SetStatus(ispikes, [{"label": "brunel-py-in",
 print("Connecting devices")
 
 ###############################################################################
-# Definition of a synapse using ``CopyModel``, which expects the model name of
+# Definition of a synapse using :py:func:`.CopyModel`, which expects the model name of
 # a pre-defined synapse, the name of the customary synapse and an optional
 # parameter dictionary. The parameters defined in the dictionary will be the
 # default parameter for the customary synapse. Here we define one synapse for

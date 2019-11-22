@@ -47,8 +47,8 @@ The following parameters can be set in the status dictionary:
 Notes
 ~~~~~~~
 
-Under identical conditions, the ``tsodyks2_synapse`` produces slightly lower
-peak amplitudes than the ``tsodyks_synapse``. However, the qualitative behavior
+Under identical conditions, the :cpp:class:`tsodyks2_synapse <nest::tsodyks2_connection>` produces slightly lower
+peak amplitudes than the :cpp:class:`tsodyks_synapse <nest::tsodyks_connection>`. However, the qualitative behavior
 is identical.
 
 This compares the two synapse models.

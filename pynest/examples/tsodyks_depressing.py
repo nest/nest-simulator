@@ -28,7 +28,7 @@ potential trace of the second neuron is recorded.
 
 This example reproduces Figure 1A of [1]_.
 This example is analog to ``tsodyks_facilitating.py``, except that different
-synapse parameters are used. Here, a large facilitation parameter ``U``
+synapse parameters are used. Here, a large facilitation parameter `U`
 causes a fast saturation of the synaptic efficacy (Eq. 2.2), disabling a
 facilitating behavior.
 
@@ -95,13 +95,13 @@ syn_param = {"tau_psc": Tau_psc,
              "x": 1.0}
 
 ###############################################################################
-# Third, we reset the kernel and set the resolution using ``SetKernelStatus``.
+# Third, we reset the kernel and set the resolution using :py:func:`.SetKernelStatus`.
 
 nest.ResetKernel()
 nest.SetKernelStatus({"resolution": h})
 
 ###############################################################################
-# Fourth, the nodes are created using ``Create``. We store the returned
+# Fourth, the nodes are created using :py:func:`.Create`. We store the returned
 # handles in variables for later reference.
 
 neurons = nest.Create("iaf_psc_exp", 2)
@@ -109,8 +109,8 @@ dc_gen = nest.Create("dc_generator")
 volts = nest.Create("voltmeter")
 
 ################################################################################
-# Fifth, the ``iaf_psc_exp`` neurons, the ``dc_generator`` and the ``voltmeter``
-# are configured using ``SetStatus``, which expects a list of node handles and
+# Fifth, the :cpp:class:`iaf_psc_exp <nest::iaf_psc_exp>` neurons, the :cpp:class:`dc_generator <nest::dc_generator>` and the ``voltmeter``
+# are configured using :py:func:`.SetStatus`, which expects a list of node handles and
 # a parameter dictionary or a list of parameter dictionaries.
 
 nest.SetStatus(neurons, neuron_param)
@@ -119,10 +119,10 @@ nest.SetStatus(volts, {"label": "voltmeter", "withtime": True, "withgid": True,
                        "interval": 1.})
 
 ###############################################################################
-# Sixth, the ``dc_generator`` is connected to the first neuron
+# Sixth, the :cpp:class:`dc_generator <nest::dc_generator>` is connected to the first neuron
 # (`neurons[0]`) and the ``voltmeter`` is connected to the second neuron
-# (`neurons[1]`). The command ``Connect`` has different variants. Plain
-# ``Connect`` just takes the handles of pre- and post-synaptic nodes and uses
+# (`neurons[1]`). The command :py:func:`.Connect` has different variants. Plain
+# :py:func:`.Connect` just takes the handles of pre- and post-synaptic nodes and uses
 # the default values for weight and delay. Note that the connection
 # direction for the ``voltmeter`` reflects the signal flow in the simulation
 # kernel, because it observes the neuron instead of receiving events from it.
@@ -132,16 +132,16 @@ nest.Connect(volts, [neurons[1]])
 
 ###############################################################################
 # Seventh, the first neuron (`neurons[0]`) is connected to the second
-# neuron (`neurons[1]`).  The command ``CopyModel`` copies the
-# ``tsodyks_synapse`` model to the new name ``syn`` with parameters
-# ``syn_param``.  The manually defined model ``syn`` is used in the
-# connection routine via the ``syn_spec`` parameter.
+# neuron (`neurons[1]`).  The command :py:func:`.CopyModel` copies the
+# :cpp:class:`tsodyks_synapse <nest::tsodyks_connection>` model to the new name `syn` with parameters
+# `syn_param`.  The manually defined model `syn` is used in the
+# connection routine via the `syn_spec` parameter.
 
 nest.CopyModel("tsodyks_synapse", "syn", syn_param)
 nest.Connect([neurons[0]], [neurons[1]], syn_spec="syn")
 
 ###############################################################################
-# Finally, we simulate the configuration using the command ``Simulate``,
+# Finally, we simulate the configuration using the command :py:func:`.Simulate`,
 # where the simulation time `Tend` is passed as the argument.  We plot the
 # target neuron's membrane potential as a function of time.
 

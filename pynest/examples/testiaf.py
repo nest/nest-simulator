@@ -40,7 +40,7 @@ import pylab
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and
-# return the handles of the ``spike_detector`` and the ``voltmeter``
+# return the handles of the :cpp:class:`spike_detector <nest::spike_detector>` and the ``voltmeter``
 
 
 def build_network(dt):
@@ -64,14 +64,14 @@ def build_network(dt):
 ###############################################################################
 # The function ``build_network`` takes the resolution as argument.
 # First the Kernel is reset and the number of threads is set to zero as well
-# as the resolution to the specified value dt.  The ``iaf_psc_alpha`` is
+# as the resolution to the specified value dt.  The :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>` is
 # created and the handle is stored in the variable neuron The status of the
 # neuron is changed so it receives an external current.  Next the ``voltmeter``
-# is created and the handle stored in `vm` and the option ``withtime`` is set,
+# is created and the handle stored in `vm` and the option `withtime` is set,
 # therefore, times are given in the times vector in events. Now the
-# ``spike_detector`` is created and its handle is stored in sd.
+# :cpp:class:`spike_detector <nest::spike_detector>` is created and its handle is stored in sd.
 #
-# Voltmeter and spikedetector are then connected to the neuron. The ``Connect``
+# Voltmeter and spikedetector are then connected to the neuron. The :py:func:`.Connect`
 # function takes the handles as input.  The voltmeter is connected to the
 # neuron and the neuron to the spikedetector because the neuron sends spikes
 # to the detector and the voltmeter 'observes' the neuron.
@@ -82,7 +82,7 @@ def build_network(dt):
 
 ###########################################################################
 # First using ``build_network`` the network is build and the handles of the
-# ``spike_detector`` and the ``voltmeter`` are stored in `vm` and `sd`
+# :cpp:class:`spike_detector <nest::spike_detector>` and the ``voltmeter`` are stored in `vm` and `sd`
 
 for dt in [0.1, 0.5, 1.0]:
     print("Running simulation with dt=%.2f" % dt)
@@ -91,9 +91,9 @@ for dt in [0.1, 0.5, 1.0]:
     nest.Simulate(1000.0)
 
 ###########################################################################
-# The network is simulated using ``Simulate``, which takes the desired
+# The network is simulated using :py:func:`.Simulate`, which takes the desired
 # simulation time in milliseconds and advances the network state by this
-# amount of time. During simulation, the ``spike_detector`` counts the
+# amount of time. During simulation, the :cpp:class:`spike_detector <nest::spike_detector>` counts the
 # spikes of the target neuron and the total number is read out at the
 # end of the simulation period.
 #

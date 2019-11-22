@@ -24,8 +24,8 @@
 
 This example illustrates how to record from a model with multiple
 intrinsic currents and visualize the results. This is illustrated
-using the ``ht_neuron`` which has four intrinsic currents: ``I_NaP``,
-``I_KNa``, ``I_T``, and ``I_h``. It is a slightly simplified implementation of
+using the :cpp:class:`ht_neuron <nest::ht_neuron>` which has four intrinsic currents: `I_NaP`,
+`I_KNa`, `I_T`, and `I_h`. It is a slightly simplified implementation of
 neuron model proposed in [1]_.
 
 The neuron is driven by DC current, which is alternated
@@ -54,7 +54,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ###############################################################################
-# Additionally, we set the verbosity using ``set_verbosity`` to suppress info
+# Additionally, we set the verbosity using :py:func:`.set_verbosity` to suppress info
 # messages. We also reset the kernel to be sure to start with a clean NEST.
 
 nest.set_verbosity("M_WARNING")
@@ -87,11 +87,11 @@ dc = nest.Create('dc_generator')
 ###############################################################################
 # We create a multimeter to record
 #
-# - membrane potential ``V_m``
-# - threshold value ``theta``
-# - intrinsic currents ``I_NaP``, ``I_KNa``, ``I_T``, ``I_h``
+# - membrane potential :term:`V_m`
+# - threshold value `theta`
+# - intrinsic currents `I_NaP`, `I_KNa`, `I_T`, `I_h`
 #
-# by passing these names in the ``record_from`` list.
+# by passing these names in the `record_from` list.
 #
 # To find out which quantities can be recorded from a given neuron,
 # run::
@@ -103,7 +103,7 @@ dc = nest.Create('dc_generator')
 #   <SLILiteral: V_m>
 #
 # for each recordable quantity. You need to pass the value of the
-# ``SLILiteral``, in this case ``V_m`` in the ``record_from`` list.
+# `SLILiteral`, in this case :term:`V_m` in the `record_from` list.
 #
 # We want to record values with 0.1 ms resolution, so we set the
 # recording interval as well; the default recording resolution is 1 ms.
@@ -139,12 +139,12 @@ for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 
 ###############################################################################
 # We now fetch the data recorded by the multimeter. The data are returned as
-# a dictionary with entry ``times`` containing timestamps for all recorded
+# a dictionary with entry `times` containing timestamps for all recorded
 # data, plus one entry per recorded quantity.
 #
-# All data is contained in the ``events`` entry of the status dictionary
+# All data is contained in the `events` entry of the status dictionary
 # returned by the multimeter. Because all NEST function return arrays,
-# we need to pick out element `0` from the result of ``GetStatus``.
+# we need to pick out element `0` from the result of :py:func:`.GetStatus`.
 
 data = nest.GetStatus(mm)[0]['events']
 t = data['times']
@@ -190,7 +190,7 @@ for td, th in zip(t_dep, t_hyp):
     I_dc.extend([I_dep, I_dep, I_hyp, I_hyp])
 
 ###############################################################################
-# The following function turns a name such as ``I_NaP`` into proper TeX code
+# The following function turns a name such as `I_NaP` into proper TeX code
 # :math:`I_{\mathrm{NaP}}` for a pretty label.
 
 
@@ -226,5 +226,5 @@ except TypeError:
     Iax.legend(lines_V + lines_I, labels_V + labels_I)
 
 ###############################################################################
-# Note that ``I_KNa`` is not activated in this example because the neuron does
-# not spike. ``I_T`` has only a very small amplitude.
+# Note that `I_KNa` is not activated in this example because the neuron does
+# not spike. `I_T` has only a very small amplitude.

@@ -133,11 +133,11 @@ def plot_weight_matrices(E_neurons, I_neurons):
 #
 # We then plot the figure, specifying the properties we want. For example, we
 # can display all the weight matrices in a single figure, which requires us to
-# use ``GridSpec`` to specify the spatial arrangement of the axes.
-# A subplot is subsequently created for each connection type. Using ``imshow``,
+# use `GridSpec` to specify the spatial arrangement of the axes.
+# A subplot is subsequently created for each connection type. Using `imshow`,
 # we can visualize the weight matrix in the corresponding axis. We can also
 # specify the colormap for this image.
-# Using the ``axis_divider`` module from ``mpl_toolkits``, we can allocate a small
+# Using the `axis_divider` module from `mpl_toolkits`, we can allocate a small
 # extra space on the right of the current axis, which we reserve for a
 # colorbar.
 # We can set the title of each axis and adjust the axis subplot parameters.

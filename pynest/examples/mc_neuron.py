@@ -23,7 +23,7 @@
 Multi-compartment neuron example
 --------------------------------
 
-Simple example of how to use the three-compartment ``iaf_cond_alpha_mc``
+Simple example of how to use the three-compartment :cpp:class:`iaf_cond_alpha_mc <nest::iaf_cond_alpha_mc>`
 neuron model.
 
 Three stimulation paradigms are illustrated:
@@ -75,13 +75,13 @@ nest.SetDefaults('iaf_cond_alpha_mc',
                   })
 
 ###############################################################################
-# The nodes are created using ``Create``. We store the returned handles
+# The nodes are created using :py:func:`.Create`. We store the returned handles
 # in variables for later reference.
 
 n = nest.Create('iaf_cond_alpha_mc')
 
 ###############################################################################
-# A ``multimeter`` is created and connected to the neurons. The parameters
+# A :cpp:class:`multimeter <nest::multimeter>` is created and connected to the neurons. The parameters
 # specified for the multimeter include the list of quantities that should be
 # recorded and the time interval at which quantities are measured.
 
@@ -102,7 +102,7 @@ nest.SetStatus(cgs,
 
 ###############################################################################
 # Generators are then connected to the correct compartments. Specification of
-# the ``receptor_type`` uniquely defines the target compartment and receptor.
+# the `receptor_type` uniquely defines the target compartment and receptor.
 
 nest.Connect([cgs[0]], n, syn_spec={'receptor_type': syns['soma_curr']})
 nest.Connect([cgs[1]], n, syn_spec={'receptor_type': syns['proximal_curr']})

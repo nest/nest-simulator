@@ -64,7 +64,7 @@ nest.ResetKernel()
 
 ###############################################################################
 # First we set the random seed, adjust the kernel settings and create
-# ``hh_psc_alpha_gap`` neurons, ``spike_detector`` and ``poisson_generator``.
+# :cpp:class:`hh_psc_alpha_gap <nest::hh_psc_alpha_gap>` neurons, :cpp:class:`spike_detector <nest::spike_detector>` and :cpp:class:`poisson_generator <nest::poisson_generator>`.
 
 random.seed(1)
 
@@ -110,7 +110,7 @@ nest.Connect(pg, neurons, 'all_to_all', syn_spec={'model': 'static_synapse',
                                                   'delay': delay})
 
 ###############################################################################
-# Then the neurons are connected to the ``spike_detector`` and the initial
+# Then the neurons are connected to the :cpp:class:`spike_detector <nest::spike_detector>` and the initial
 # membrane potential of each neuron is set randomly between -40 and -80 mV.
 
 nest.Connect(neurons, sd)
@@ -119,15 +119,15 @@ for i in range(n_neuron):
     nest.SetStatus([neurons[i]], {'V_m': (-40. - 40. * random.random())})
 
 #######################################################################################
-# Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
+# Finally gap junctions are added to the network. :math:`(60*500)/2` :cpp:class:`gap_junction <nest::gap_junction>`
 # connections are added randomly resulting in an average of 60 gap-junction
-# connections per neuron. We must not use the ``fixed_indegree`` oder
-# ``fixed_outdegree`` functionality of ``nest.Connect()`` to create the
-# connections, as ``gap_junction`` connections are bidirectional connections
+# connections per neuron. We must not use the `fixed_indegree` oder
+# `fixed_outdegree` functionality of :py:func:`.Connect` to create the
+# connections, as :cpp:class:`gap_junction <nest::gap_junction>` connections are bidirectional connections
 # and we need to make sure that the same neurons are connected in both ways.
 # This is achieved by creating the connections on the Python level with the
 # `random` module of the Python Standard Library and connecting the neurons
-# using the ``make_symmetric`` flag for ``one_to_one`` connections.
+# using the `make_symmetric` flag for `one_to_one` connections.
 
 n_connection = int(n_neuron * gap_per_neuron / 2)
 connections = numpy.transpose(

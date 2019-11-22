@@ -76,7 +76,7 @@ import pylab
 nest.ResetKernel()
 
 ################################################################################
-# On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
+# On average, the ``quantal_stp_synapse`` converges to the :cpp:class:`tsodyks2_synapse <nest::tsodyks2_connection>`,
 # so we can compare the two by running multiple trials.
 #
 # First we define the number of trials as well as the number of release sites.

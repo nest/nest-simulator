@@ -88,7 +88,7 @@ def geometryFunction(topologyLayer):
     return geometry_function
 
 ###############################################################################
-# We create two layers that have 20x20 neurons of type ``iaf_psc_alpha``.
+# We create two layers that have 20x20 neurons of type :cpp:class:`iaf_psc_alpha <nest::iaf_psc_alpha>`.
 
 pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
@@ -106,12 +106,12 @@ d = csa.euclidMetric2d(g1, g2)
 ###############################################################################
 # The connection set `cs` describes a Gaussian connectivity profile with
 # ``sigma = 0.2`` and cutoff at 0.5, and two values (10000.0 and 1.0) used as
-# ``weight`` and ``delay``, respectively.
+# `weight` and `delay`, respectively.
 
 cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
 ###############################################################################
-# We can now connect the populations using the ``CGConnect`` function. It
+# We can now connect the populations using the :py:func:`.CGConnect` function. It
 # takes the IDs of pre- and postsynaptic neurons (`pop` and `pop2`),
 # the connection set (`cs`) and a dictionary that map the parameters
 # weight and delay to positions in the value set associated with the
@@ -125,7 +125,7 @@ pop2_gids = nest.GetLeaves(pop2)[0]
 nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
 ###############################################################################
-# Finally, we use the ``PlotTargets`` function to show all targets in `pop2`
+# Finally, we use the :py:func:`.PlotTargets` function to show all targets in `pop2`
 # starting at the center neuron of `pop1`.
 
 topo.PlotTargets(topo.FindCenterElement(pop1), pop2)

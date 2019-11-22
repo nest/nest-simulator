@@ -40,7 +40,7 @@ import numpy
 
 #####################################################################################
 # First,the function ``build_network`` is defined to build the network and
-# return the handles of two decision units and the ``Multimeter``
+# return the handles of two decision units and the :cpp:class:`multimeter <nest::multimeter>`
 
 def build_network(sigma, dt):
     nest.ResetKernel()
@@ -65,15 +65,15 @@ def build_network(sigma, dt):
 #####################################################################################
 # The function ``build_network`` takes the noise parameter sigma
 # and the time resolution as arguments.
-# First, the Kernel is reset and the ``use_wfr`` (waveform-relaxation) is set to
+# First, the Kernel is reset and the `use_wfr` (waveform-relaxation) is set to
 # false while the resolution is set to the specified value `dt`.
 # Two rate neurons with linear activation functions are created and the
 # handle is stored in the variables `D1` and `D2`. The output of both decision
 # units is rectified at zero.
 # The two decisions units are coupled via mutual inhibition.
 # Next the multimeter is created and the handle stored in mm and the option
-# ``record_from`` is set. The multimeter is then connected to the two units
-# in order to 'observe' them.  The ``Connect`` function takes the handles as input.
+# `record_from` is set. The multimeter is then connected to the two units
+# in order to 'observe' them.  The :py:func:`.Connect` function takes the handles as input.
 
 ##################################################################################
 # The decision making process is simulated for three different levels of noise
@@ -110,7 +110,7 @@ for i in range(9):
     nest.Simulate(100.0)
 
 ########################################################################
-# The network is simulated using ``Simulate``, which takes the desired
+# The network is simulated using :py:func:`.Simulate`, which takes the desired
 # simulation time in milliseconds and advances the network state by
 # this amount of time. After an initial period in the absence of evidence
 # for either decision, evidence is given by changing the state of each

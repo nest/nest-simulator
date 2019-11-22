@@ -115,7 +115,7 @@ p_rate = 1000.0 * nu_ex * CE
 
 ###############################################################################
 # Configuration of the simulation kernel by the previously defined time
-# resolution used in the simulation. Setting ``print_time`` to `True` prints the
+# resolution used in the simulation. Setting `print_time` to `True` prints the
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
@@ -125,12 +125,12 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
+# Configuration of the model :cpp:class:`siegert_neuron <nest::siegert_neuron>` using :py:func:`.SetDefaults`.
 
 nest.SetDefaults("siegert_neuron", neuron_params)
 
 ###############################################################################
-# Creation of the nodes using ``Create``. One rate neuron represents the
+# Creation of the nodes using :py:func:`.Create`. One rate neuron represents the
 # excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 # population assuming homogeneity of the populations.
 
@@ -140,21 +140,21 @@ siegert_in = nest.Create("siegert_neuron", 1)
 ###############################################################################
 # The Poisson drive in the SLIFN is replaced by a driving rate neuron,
 # which does not receive input from other neurons. The activity of the rate
-# neuron is controlled by setting ``mean`` to the rate of the corresponding
+# neuron is controlled by setting `mean` to the rate of the corresponding
 # poisson generator in the SLIFN.
 
 siegert_drive = nest.Create('siegert_neuron', 1, params={'mean': p_rate})
 
 ###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter
-# ``record_from`` is set to `rate` as well as the recording interval to `dt`
+# `record_from` is set to `rate` as well as the recording interval to `dt`
 
 multimeter = nest.Create(
     'multimeter', params={'record_from': ['rate'], 'interval': dt})
 
 ###############################################################################
-# Connections between ``siegert neurons`` are realized with the synapse model
-# ``diffusion_connection``. These two parameters reflect the prefactors in
+# Connections between `siegert neurons` are realized with the synapse model
+# :cpp:class:`diffusion_connection <nest::diffusion_connection>`. These two parameters reflect the prefactors in
 # front of the rate variable in eq. 27-29 in [1].
 
 ###############################################################################

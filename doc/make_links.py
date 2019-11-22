@@ -60,6 +60,8 @@ def replace_rst(keywords, replacement, dryrun=False):
     nfiles = 0
     for file in glob.glob("**/*.rst", recursive=True):
         #log.info("replacing keywords in " + file)
+        if file == file_out:
+            continue
         fnsubs = 0
         with open(file, "rt") as fin, open(file_out, "wt") as fout:
             for lineno, line in enumerate(fin):
@@ -81,36 +83,40 @@ def replace_rst(keywords, replacement, dryrun=False):
     log.info('%4d replacements in %d files', nsubs, nfiles)
 
 
-def allfuncnames(fileglob="../pynest/nest/lib/*.py"):
+def allfuncnames(*fileglob):
     '''
     search the python modules and return the function names
     '''
-    for file in glob.glob(fileglob):
-        with open(file) as f:
-            node = ast.parse(f.read())
-            functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
-            for function in functions:
-                yield function.name
+    for fglob in fileglob:
+        for file in glob.glob(fglob):
+            with open(file) as f:
+                node = ast.parse(f.read())
+                functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
+                for function in functions:
+                    yield function.name
 
-def allmodelnames(fileglob="../models/*.h"):
+def allmodelnames(*fileglob):
     '''
     get the names of all the models
     '''
-    for file in glob.glob(fileglob):
-        filename, extension = os.path.splitext( os.path.basename(file))
-        yield filename
+    for fglob in fileglob:
+        for file in glob.glob(fglob):
+            filename, extension = os.path.splitext( os.path.basename(file))
+            yield filename
 
-def allglossterms():
+def allglossterms(*fileglob):
     '''
     get all the glossary terms
     '''
     glossary_terms = re.compile('^ [a-zA-Z]')
-    with open('glossary.rst') as a, open ('topology/Topology_UserManual.rst') as b:
-        for line in a or b:
-            if glossary_terms.match(line):
-                terms = [line.strip()]
-                for term in terms:
-                    yield term
+    for fglob in fileglob:
+        for file in glob.glob(fglob):
+            with open(file) as infile:
+                for line in infile:
+                    if glossary_terms.match(line):
+                        terms = [line.strip()]
+                        for term in terms:
+                            yield term
 
 def main():
     args = docopt.docopt(__doc__)
@@ -119,9 +125,9 @@ def main():
     log.debug(pformat(args))
 
     # find all terms
-    funcnames = set(allfuncnames())
-    modelnames = set(allmodelnames())
-    glossterms = set(allglossterms())
+    funcnames = set(allfuncnames("../pynest/nest/lib/*.py", "../topology/pynest/*.py"))
+    modelnames = set(allmodelnames("../models/*.h"))
+    glossterms = set(allglossterms('glossary.rst', 'topology/Topology_UserManual.rst'))
     log.info("found %s function names", len(funcnames))
     log.info("found %s model names", len(modelnames))
     log.info("found %s glossary terms", len(glossterms))

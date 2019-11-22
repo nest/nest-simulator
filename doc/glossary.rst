@@ -56,17 +56,37 @@ Common abbreviations in NEST
  vp
    virtual process
 
-Physical units and variable names used for NEST parameters
--------------------------------------------------------------
-
-.. note::
-
-   all parameters listed here are defined as `type double` in NEST
+Physical units in NEST
+------------------------
 
 .. glossary::
 
- **time**
+ time
     milliseconds `ms`
+
+ capacitance
+    picofarads `pF`
+
+ conductance
+    nanosiemens `nS`
+
+ current
+     picoamperes `pA`
+
+  modulation frequencies
+     herz `Hz`
+
+  spike rates
+     spikes/s
+
+  voltage
+    millivolts `mV`
+
+
+Common variable names used for NEST parameters
+-----------------------------------------------
+
+.. glossary::
 
  tau_m
     Membrane time constant in ms
@@ -77,41 +97,23 @@ Physical units and variable names used for NEST parameters
  t_spike
     point in time of last spike in
 
- **capacitance**
-    picofarads `pF`
-
  C_m
     Capacitance of the membrane in pF
-
- **current**
-    picoamperes `pA`
 
  I_e
     Constant input current in pA.
 
- **conductance**
-    nanosiemens `nS`
+ g_L
+   Leak conductance in nS
 
-   g_L
-    Leak conductance in nS
+ g_K
+   Potassium peak conductance in nS.
 
-   g_K
-    Potassium peak conductance in nS.
-
-   g_Na
-    Sodium peak conductance in nS.
-
- **spike rates**
-    spikes/s
-
- **modulation frequencies**
-    herz `Hz`
+ g_Na
+   Sodium peak conductance in nS.
 
  frequency
     frequncy in Hz
-
- **voltage**
-   millivolts `mV`
 
  V_m
    Membrane potential in mV

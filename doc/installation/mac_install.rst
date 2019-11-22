@@ -1,79 +1,29 @@
-Installation on macOS
-=========================
+Manual Installation on macOS
+===============================
 
-
-On the Mac, you can install NEST either via Homebrew or manually. If you want to use PyNEST, you need to have a version of Python with some science packages installed, see the `section Python on Mac <python-on-mac>`_ for details.
-
-Installation via Homebrew
---------------------------
-
-.. note::
-
-    Note that the homebrew package is not updated with the latest NEST version.
-
-The easiest way to install NEST on a Mac is to install it via the Homebrew package manager:
-
-*  To install homebrew, follow the instructions at `brew.sh <http://brew.sh/>`_
-
-*  Then, in a terminal
-
-    * Add the homebrew/science tap by running:
-
-       .. code-block:: sh
-
-         brew tap brewsci/science
-
-    * For information on what options NEST has and what will be installed, run:
-
-       .. code-block:: sh
-
-         brew info nest
-
-    * To install nest, execute
-
-       .. code-block:: sh
-
-         brew install nest
-
-Options have to be appended, so for example, to install NEST with PyNEST run:
-
-       .. code-block:: sh
-
-         brew install nest --with-python
-
-This will install the most recent release version of NEST. To build
-NEST from the most recent sources on Github, use:
-
-       .. code-block:: sh
-
-         brew install nest --HEAD
-
-.. _mac_manual:
-
-Manual installation
---------------------
+If you want to use PyNEST, you need to have a version of Python with some science packages installed, see the `section Python on Mac <python-on-mac>`_ for details.
 
 The clang/clang++ compiler that ships with OS X/macOS does not support OpenMP threads and creates code that fails some tests. You therefore need to use **GCC** to compile NEST under OS X/macOS.
 
-Installation instructions here have been tested under OS X 10.11 *El Capitan* and macOS 10.12 *Sierra* with `Anaconda Python 2 and 3 <https://www.continuum.io/anaconda-overview>`_ and all other dependencies installed via `Homebrew <http://brew.sh>`_. See below for `Manual installation with dependencies from MacPorts`_.
+Installation instructions here have been tested under macOS 10.14 *Mojave* with `Anaconda Python 3 <https://www.continuum.io/anaconda-overview>`_ and all other dependencies installed via `Homebrew <http://brew.sh>`_. They should also work with earlier versions of macOS.
 
-*  Install Xcode from the AppStore.
+#.  Install Xcode from the AppStore.
 
-*  Install the Xcode command line tools by executing the following line in the terminal and following the instructions in the windows that will pop up:
+#.  Install the Xcode command line tools by executing the following line in the terminal and following the instructions in the windows that will pop up:
 
  .. code-block:: sh
 
         xcode-select --install
 
-*  Install dependencies via Homebrew:
+#.  Install dependencies via Homebrew:
 
  .. code-block:: sh
 
        brew install gcc cmake gsl open-mpi libtool
 
-*  Create a directory for building and installing NEST (you should always build NEST outside the source code directory; installing NEST in a "place of its own" makes it easy to remove NEST later).
+#.  Create a directory for building and installing NEST (you should always build NEST outside the source code directory; installing NEST in a "place of its own" makes it easy to remove NEST later).
 
-*  Extract the NEST tarball as a subdirectory in that directory or clone NEST from GitHub into a subdirectory:
+#.  Extract the NEST tarball as a subdirectory in that directory or clone NEST from GitHub into a subdirectory:
 
  .. code-block:: sh
 
@@ -83,13 +33,13 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
         mkdir bld
         cd bld
 
-*  Configure and build NEST inside the build directory:
+#.  Configure and build NEST inside the build directory (replacing `gcc-9` and `g++-9` with the GCC  compiler versions you installed with `brew`):
 
  .. code-block:: sh
 
         cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
-              -DCMAKE_C_COMPILER=gcc-6 \
-              -DCMAKE_CXX_COMPILER=g++-6 \
+              -DCMAKE_C_COMPILER=gcc-9 \
+              -DCMAKE_CXX_COMPILER=g++-9 \
               </path/to/NEST/src>
 
  .. code-block:: sh
@@ -100,34 +50,37 @@ Installation instructions here have been tested under OS X 10.11 *El Capitan* an
 
 To compile NEST with MPI support, add ``-Dwith-mpi=ON`` as ``cmake`` option.
 
-Manual installation with dependencies from MacPorts
-"""""""""""""""""""""""""""""""""""""""""""""""""""
+Troubleshooting
+.................
 
-The following should work if you install dependencies using MacPorts (only steps that differ from the instructions above are shown):
-
-* Install dependencies via MacPorts::
-
-        sudo port install gcc6 cmake gsl openmpi-default libtool \
-        python27 py27-cython py27-nose doxygen
-
-* Configure and build NEST inside the build directory
+If compiling NEST as described above fails with an error message like
 
  .. code-block:: sh
 
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
-              -DPYTHON_LIBRARY=/opt/local/lib/libpython2.7.dylib \
-              -DPYTHON_INCLUDE_DIR=/opt/local/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 \
-              -DCMAKE_C_COMPILER=/opt/local/bin/gcc-mp-6 \
-              -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-6 \
-              </path/to/NEST/src>
+        In file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/wait.h:110,
+                         from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/stdlib.h:66,
+                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/cstdlib:75,
+                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/bits/stl_algo.h:59,
+                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/algorithm:62,
+                         from /Users/plesser/NEST/code/src/sli/dictutils.h:27,
+                         from /Users/plesser/NEST/code/src/sli/dictutils.cc:23:
+        /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/resource.h:443:34: error: expected initializer before '__OSX_AVAILABLE_STARTING'
+          443 | int     getiopolicy_np(int, int) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
+              |                                  ^~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: sh
+ you most likely have installed a version of XCode prepared for the next version of macOS. You can attempt to fix this by running
 
-        make -j4         # -j4 builds in parallel using 4 processes
-        make install
-        make installcheck
+  .. code-block:: sh
 
-To compile NEST with MPI support, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+          sudo xcode-select -s /Library/Developer/CommandLineTools/
+
+If this does not help, you can reset to the default XCode path using
+
+  .. code-block:: sh
+
+          sudo xcode-select -r
+
+
 
 
 Python on Mac
@@ -140,4 +93,3 @@ One well-tested source is the `Anaconda <https://www.continuum.io/anaconda-overv
         conda install numpy scipy matplotlib ipython cython nose
 
 Alternatively, you should be able to install the necessary Python packages via Homebrew, but this has not been tested.
-

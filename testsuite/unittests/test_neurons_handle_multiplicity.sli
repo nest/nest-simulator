@@ -70,6 +70,8 @@ M_ERROR setverbosity
              /music_cont_out_proxy        % music device
              /music_message_in_proxy      % music device
              /music_message_out_proxy     % music device
+             /music_rate_in_proxy      % music device
+             /music_rate_out_proxy     % music device
            ] def    
 
 % The following models require connections to rport 1:

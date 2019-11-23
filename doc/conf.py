@@ -38,9 +38,6 @@ import subprocess
 
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
-from mock_kernel import convert
-# import and set mockfile to sys.modules
-import pynestkernel_mock
 
 source_suffix = ['.rst']
 
@@ -59,6 +56,9 @@ sys.path.insert(0, os.path.abspath(doc_path))
 
 
 # -- Mock pynestkernel ----------------------------------------------------
+# The mock_kernel has to be imported after setting the correct sys paths.
+from mock_kernel import convert  # noqa
+
 # on_rtd = os.environ.get('READTHEDOCS') == 'True'
 # if on_rtd:
 
@@ -74,6 +74,9 @@ with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as
     mockedmodule += convert(fin)
 
     fout.write(mockedmodule)
+
+# The pynestkernel_mock has to be imported after it is created.
+import pynestkernel_mock  # noqa
 
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
@@ -221,6 +224,7 @@ def setup(app):
     app.add_javascript("js/custom.js")
 
 # -- Options for LaTeX output ---------------------------------------------
+
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').

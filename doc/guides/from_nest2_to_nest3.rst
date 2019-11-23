@@ -50,10 +50,9 @@ NEST 3.0 supports the following functionality
 -  :ref:`Getting the size <get_size>` ``len``
 -  :ref:`Conversion to and from lists <converting_lists>`
 -  :ref:`Composing two non-overlapping NodeCollections <composing>`
--  :ref:`Testing for equality <testing_equality>` (contains the
-   same GIDs)
+-  :ref:`Testing for equality <testing_equality>`
 -  :ref:`Testing of membership <testing_membership>`
--  Access to node properties with :ref:`get_param` and  :ref:`set_param` and direct attributes (dot notation e.g.)
+-  Access to node properties with :ref:`get() <get_param>` and  :ref:`set() <set_param>`
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
 
@@ -1063,7 +1062,7 @@ metadata. In a layer-connection context, moving to the standard
   above.
 
 Usage examples
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 A grid layer connected with Gaussian distance dependent connection
 probability and rectangular mask on the target layer:

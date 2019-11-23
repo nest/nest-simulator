@@ -56,7 +56,7 @@ Troubleshooting
 If compiling NEST as described above fails with an error message like
 
  .. code-block:: sh
- 
+
         In file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/wait.h:110,
                          from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/stdlib.h:66,
                          from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/cstdlib:75,
@@ -67,20 +67,20 @@ If compiling NEST as described above fails with an error message like
         /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/resource.h:443:34: error: expected initializer before '__OSX_AVAILABLE_STARTING'
           443 | int     getiopolicy_np(int, int) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
               |                                  ^~~~~~~~~~~~~~~~~~~~~~~~
- 
+
  you most likely have installed a version of XCode prepared for the next version of macOS. You can attempt to fix this by running
- 
+
   .. code-block:: sh
-  
+
           sudo xcode-select -s /Library/Developer/CommandLineTools/
-          
+
 If this does not help, you can reset to the default XCode path using
 
   .. code-block:: sh
-  
+
           sudo xcode-select -r
 
- 
+
 
 
 Python on Mac

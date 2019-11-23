@@ -79,19 +79,19 @@ public:
   }
 
   void
-  set_first_gid( index gid )
+  set_first_node_id( index node_id )
   {
-    first_gid_ = gid;
+    first_node_id_ = node_id;
   }
   index
-  get_first_gid() const
+  get_first_node_id() const
   {
-    return first_gid_;
+    return first_node_id_;
   }
 
 private:
   const AbstractLayerPTR layer_; //!< layer object
-  index first_gid_;
+  index first_node_id_;
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );

@@ -135,11 +135,11 @@ private:
    */
   struct State_
   {
-    bool y_;               //!< output of neuron in [0,1]
-    double h_;             //!< total input current to neuron
-    double last_in_gid_;   //!< gid of the last spike being received
-    Time t_next_;          //!< time point of next update
-    Time t_last_in_spike_; //!< time point of last input spike seen
+    bool y_;                 //!< output of neuron in [0,1]
+    double h_;               //!< total input current to neuron
+    double last_in_node_id_; //!< node ID of the last spike being received
+    Time t_next_;            //!< time point of next update
+    Time t_last_in_spike_;   //!< time point of last input spike seen
 
     State_(); //!< Default initialization
 
@@ -324,7 +324,7 @@ template < class TGainfunction >
 binary_neuron< TGainfunction >::State_::State_()
   : y_( false )
   , h_( 0.0 )
-  , last_in_gid_( 0 )
+  , last_in_node_id_( 0 )
   , t_next_( Time::neg_inf() )          // mark as not initialized
   , t_last_in_spike_( Time::neg_inf() ) // mark as not intialized
 {
@@ -508,7 +508,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   // A single spike signals a transition to 0 state, two spikes in same time
   // step signal the transition to 1 state.
   //
-  // Remember the global id of the sender of the last spike being received
+  // Remember the node ID of the sender of the last spike being received
   // this assumes that several spikes being sent by the same neuron in the same
   // time step are received consecutively or are conveyed by setting the
   // multiplicity accordingly.
@@ -523,15 +523,15 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
 
 
   long m = e.get_multiplicity();
-  long gid = e.get_sender_gid();
+  long node_id = e.get_sender_node_id();
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
   { // multiplicity == 1, either a single 1->0 event or the first or second of a
     // pair of 0->1 events
-    if ( gid == S_.last_in_gid_ && t_spike == S_.t_last_in_spike_ )
+    if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
     {
-      // received twice the same gid, so transition 0->1
+      // received twice the same node ID, so transition 0->1
       // take double weight to compensate for subtracting first event
       B_.spikes_.add_value(
         e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), 2.0 * e.get_weight() );
@@ -551,7 +551,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
     B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
   }
 
-  S_.last_in_gid_ = gid;
+  S_.last_in_node_id_ = node_id;
   S_.t_last_in_spike_ = t_spike;
 }
 

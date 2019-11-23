@@ -40,7 +40,7 @@ namespace nest
 
 CommonSynapseProperties::CommonSynapseProperties()
   : weight_recorder_()
-  , wr_gid_( 0 )
+  , wr_node_id_( 0 )
 {
 }
 
@@ -72,7 +72,7 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
   }
   else if ( update_wr )
   {
-    wr_gid_ = ( *weight_recorder_ )[ 0 ];
+    wr_node_id_ = ( *weight_recorder_ )[ 0 ];
   }
 }
 

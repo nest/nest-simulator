@@ -163,7 +163,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   get_layer( node_collection )->node_collection_ = node_collection;
 
-  layer_meta->set_first_gid( node_collection->operator[]( 0 ) );
+  layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
 
   layer_local->set_status( layer_dict );
 

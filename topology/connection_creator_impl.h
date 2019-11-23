@@ -88,7 +88,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
-    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) )
+    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_node_id() ) )
     {
       continue;
     }
@@ -207,7 +207,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
         if ( not tgt->is_proxy() )
         {
@@ -290,7 +290,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
         assert( not tgt->is_proxy() );
 
@@ -359,7 +359,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
   // the network untouched if any target does not have proxies
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
+    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
     assert( not tgt->is_proxy() );
   }
@@ -373,7 +373,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
 
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
-      index target_id = ( *tgt_it ).gid;
+      index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
       thread target_thread = tgt->get_thread();
@@ -386,7 +386,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
 
-      // Get (position,GID) pairs for sources inside mask
+      // Get (position,node ID) pairs for sources inside mask
       positions.resize( std::distance( masked_source.begin( target_pos ), masked_source_end ) );
       std::copy( masked_source.begin( target_pos ), masked_source_end, positions.begin() );
 
@@ -488,12 +488,12 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
   {
     // no mask
 
-    // Get (position,GID) pairs for all nodes in source layer
+    // Get (position,node ID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector();
 
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
-      index target_id = ( *tgt_it ).gid;
+      index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
@@ -624,7 +624,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
 
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
+    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
     assert( not tgt->is_proxy() );
   }
@@ -640,15 +640,15 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
   const auto masked_target_end = masked_target.end();
 
   // We create a target positions vector here that can be updated with the
-  // position and GID pairs. This is done to avoid creating and destroying
+  // position and node ID pairs. This is done to avoid creating and destroying
   // unnecessarily many vectors.
-  std::vector< std::pair< Position< D >, index > > target_pos_gid_pairs;
-  std::vector< std::pair< Position< D >, index > > source_pos_gid_pairs = *source.get_global_positions_vector();
+  std::vector< std::pair< Position< D >, index > > target_pos_node_id_pairs;
+  std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs = *source.get_global_positions_vector();
 
-  for ( const auto& source_pos_gid_pair : source_pos_gid_pairs )
+  for ( const auto& source_pos_node_id_pair : source_pos_node_id_pairs )
   {
-    const Position< D > source_pos = source_pos_gid_pair.first;
-    const index source_id = source_pos_gid_pair.second;
+    const Position< D > source_pos = source_pos_node_id_pair.first;
+    const index source_id = source_pos_node_id_pair.second;
     const std::vector< double > source_pos_vector = source_pos.get_vector();
 
     // We create a target pos vector here that can be updated with the
@@ -659,26 +659,26 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
 
     // Find potential targets and probabilities
     librandom::RngPtr rng = get_global_rng();
-    target_pos_gid_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
-    std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_gid_pairs.begin() );
+    target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
+    std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
-    probabilities.reserve( target_pos_gid_pairs.size() );
+    probabilities.reserve( target_pos_node_id_pairs.size() );
     if ( kernel_.get() )
     {
-      for ( const auto& target_pos_gid_pair : target_pos_gid_pairs )
+      for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
       {
         // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
-        target_pos_gid_pair.first.get_vector( target_pos_vector );
+        target_pos_node_id_pair.first.get_vector( target_pos_vector );
         probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
       }
     }
     else
     {
-      probabilities.resize( target_pos_gid_pairs.size(), 1.0 );
+      probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
     }
 
-    if ( target_pos_gid_pairs.empty()
-      or ( ( not allow_multapses_ ) and ( target_pos_gid_pairs.size() < number_of_connections_ ) ) )
+    if ( target_pos_node_id_pairs.empty()
+      or ( ( not allow_multapses_ ) and ( target_pos_node_id_pairs.size() < number_of_connections_ ) ) )
     {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
@@ -690,7 +690,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
 
     // If multapses are not allowed, we must keep track of which
     // targets have been selected already.
-    std::vector< bool > is_selected( target_pos_gid_pairs.size() );
+    std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
@@ -701,7 +701,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
         --i;
         continue;
       }
-      index target_id = target_pos_gid_pairs[ random_id ].second;
+      index target_id = target_pos_node_id_pairs[ random_id ].second;
       if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
       {
         --i;
@@ -710,14 +710,14 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
 
       is_selected[ random_id ] = true;
 
-      target_pos_gid_pairs[ random_id ].first.get_vector( target_pos_vector );
+      target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
       const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
       const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
 
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
       // to desynchronized global rngs.
-      if ( not kernel().node_manager.is_local_gid( target_id ) )
+      if ( not kernel().node_manager.is_local_node_id( target_id ) )
       {
         continue;
       }

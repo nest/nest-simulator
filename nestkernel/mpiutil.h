@@ -32,7 +32,7 @@ namespace arb
 namespace shadow
 {
 
-using cell_gid_type = std::uint32_t;
+using cell_node_id_type = std::uint32_t;
 using cell_lid_type = std::uint32_t;
 struct cell_member_type;
 using time_type = float;

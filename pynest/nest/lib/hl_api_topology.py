@@ -263,9 +263,9 @@ def Displacement(from_arg, to_arg):
     Parameters
     ----------
     from_arg : NodeCollection or tuple/list with tuple(s)/list(s) of floats
-        `NodeCollection` of GIDs or tuple/list of position(s)
+        `NodeCollection` of node IDs or tuple/list of position(s)
     to_arg : NodeCollection
-        `NodeCollection` of GIDs
+        `NodeCollection` of node IDs
 
     Returns
     -------
@@ -330,9 +330,9 @@ def Distance(from_arg, to_arg):
     Parameters
     ----------
     from_arg : NodeCollection or tuple/list with tuple(s)/list(s) of floats
-        `NodeCollection` of GIDs or tuple/list of position(s)
+        `NodeCollection` of node IDs or tuple/list of position(s)
     to_arg : NodeCollection
-        `NodeCollection` of GIDs
+        `NodeCollection` of node IDs
 
     Returns
     -------
@@ -392,7 +392,7 @@ def FindNearestElement(layer, locations, find_all=False):
     Parameters
     ----------
     layer : NodeCollection
-        `NodeCollection` of spatially distributed GIDs
+        `NodeCollection` of spatially distributed node IDs
     locations : tuple(s)/list(s) of tuple(s)/list(s)
         2-element list with coordinates of a single position, or list of
         2-element list of positions
@@ -405,7 +405,7 @@ def FindNearestElement(layer, locations, find_all=False):
     Returns
     -------
     NodeCollection:
-        `NodeCollection` of node GIDs
+        `NodeCollection` of node node IDs
     list:
         list of `NodeCollection` if find_all is True
 
@@ -423,7 +423,7 @@ def FindNearestElement(layer, locations, find_all=False):
             # create a spatial population
             s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
-            # get GID of element closest to some location
+            # get node ID of element closest to some location
             nest.FindNearestElement(s_nodes, [3.0, 4.0], True)
     """
 
@@ -449,15 +449,15 @@ def FindNearestElement(layer, locations, find_all=False):
             dx = np.argmin(d)  # finds location of one minimum
             result.append(layer[dx].get('global_id'))
         else:
-            mingids = list(layer[:1])
+            minnode_ids = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    mingids = [layer[idx].get('global_id')]
+                    minnode_ids = [layer[idx].get('global_id')]
                     minval = d[idx]
                 elif np.abs(d[idx] - minval) <= 1e-14 * minval:
-                    mingids.append(layer[idx].get('global_id'))
-            result.append(NodeCollection(mingids))
+                    minnode_ids.append(layer[idx].get('global_id'))
+            result.append(NodeCollection(minnode_ids))
 
     return NodeCollection(result) if not find_all else result
 
@@ -480,21 +480,21 @@ def _rank_specific_filename(basename):
 
 def DumpLayerNodes(layer, outname):
     """
-    Write `GID` and position data of `layer` to file.
+    Write `node ID` and position data of `layer` to file.
 
-    Write `GID` and position data to `outname` file. For each node in `layer`,
+    Write `node ID` and position data to `outname` file. For each node in `layer`,
     a line with the following information is written:
         ::
 
-            GID x-position y-position [z-position]
+            node ID x-position y-position [z-position]
 
-    If `layer` contains several `GIDs`, data for all nodes in `layer` will be written to a
+    If `layer` contains several `node IDs`, data for all nodes in `layer` will be written to a
     single file.
 
     Parameters
     ----------
     layer : NodeCollection
-        `NodeCollection` of spatially distributed GIDs
+        `NodeCollection` of spatially distributed node IDs
     outname : str
         Name of file to write to (existing files are overwritten)
 
@@ -543,7 +543,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     For each connection, one line is stored, in the following format:
         ::
 
-            source_gid target_gid weight delay dx dy [dz]
+            source_node_id target_node_id weight delay dx dy [dz]
 
     where (dx, dy [, dz]) is the displacement from source to target node.
     If targets do not have positions (eg spike detectors outside any layer),
@@ -552,9 +552,9 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     Parameters
     ----------
     source_layers : NodeCollection
-        `NodeCollection` of spatially distributed GIDs
+        `NodeCollection` of spatially distributed node IDs
     target_layers : NodeCollection
-       `NodeCollection` of (spatially distributed) GIDs
+       `NodeCollection` of (spatially distributed) node IDs
     synapse_model : str
         NEST synapse model
     outname : str
@@ -614,7 +614,7 @@ def FindCenterElement(layer):
     Parameters
     ----------
     layers : NodeCollection
-        `NodeCollection` of spatially distributed GIDs
+        `NodeCollection` of spatially distributed node IDs
 
     Returns
     -------
@@ -659,9 +659,9 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     Parameters
     ----------
     sources : NodeCollection
-        NodeCollection with GIDs of `sources`
+        NodeCollection with node IDs of `sources`
     tgt_layer : NodeCollection
-        NodeCollection with GIDs of `tgt_layer`
+        NodeCollection with node IDs of `tgt_layer`
     syn_model : [None | str], optional, default: None
         Return only target positions for a given synapse model.
 
@@ -669,7 +669,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
     -------
     tuple of NodeCollection:
         Tuple of `NodeCollections` of target neurons fulfilling the given criteria, one `NodeCollection` per
-        source GID in `sources`.
+        source node ID in `sources`.
 
     See also
     --------
@@ -700,7 +700,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
             # specifications
             nest.Connect(s_nodes, s_nodes, conndict)
 
-            # get the GIDs of the targets of a source neuron
+            # get the node IDs of the targets of a source neuron
             nest.GetTargetNodes(s_nodes[4], s_nodes)
     """
     if not isinstance(sources, NodeCollection):
@@ -711,8 +711,8 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     conns = GetConnections(sources, tgt_layer, synapse_model=syn_model)
 
-    # Re-organize conns into one list per source, containing only target GIDs.
-    src_tgt_map = dict((sgid, []) for sgid in sources.tolist())
+    # Re-organize conns into one list per source, containing only target node IDs.
+    src_tgt_map = dict((snode_id, []) for snode_id in sources.tolist())
     for src, tgt in zip(conns.sources(), conns.targets()):
         src_tgt_map[src].append(tgt)
 
@@ -720,7 +720,7 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
         src_tgt_map[src] = NodeCollection(list(np.unique(src_tgt_map[src])))
 
     # convert dict to nested list in same order as sources
-    return tuple(src_tgt_map[sgid] for sgid in sources.tolist())
+    return tuple(src_tgt_map[snode_id] for snode_id in sources.tolist())
 
 
 def GetTargetPositions(sources, tgt_layer, syn_model=None):
@@ -734,7 +734,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     Parameters
     ----------
     sources : NodeCollection
-        `NodeCollection` with GID(s) of source neurons
+        `NodeCollection` with node ID(s) of source neurons
     tgt_layer : NodeCollection
         `NodeCollection` of tgt_layer
     syn_type : [None | str], optional, default: None
@@ -782,7 +782,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     # Find positions to all nodes in target layer
     pos_all_tgts = GetPosition(tgt_layer)
-    first_tgt_gid = tgt_layer[0].get('global_id')
+    first_tgt_node_id = tgt_layer[0].get('global_id')
 
     connections = GetConnections(sources, tgt_layer,
                                  synapse_model=syn_model)
@@ -793,29 +793,29 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     if isinstance(tgts, int):
         tgts = [tgts]
 
-    # Make dictionary where the keys are the source gids, which is mapped to a
+    # Make dictionary where the keys are the source node_ids, which is mapped to a
     # list with the positions of the targets connected to the source.
-    src_tgt_pos_map = dict((sgid, []) for sgid in sources.tolist())
+    src_tgt_pos_map = dict((snode_id, []) for snode_id in sources.tolist())
     for i in range(len(connections)):
-        tgt_indx = tgts[i] - first_tgt_gid
+        tgt_indx = tgts[i] - first_tgt_node_id
         src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])
 
     # Turn dict into list in same order as sources
-    return [src_tgt_pos_map[sgid] for sgid in sources.tolist()]
+    return [src_tgt_pos_map[snode_id] for snode_id in sources.tolist()]
 
 
 def SelectNodesByMask(layer, anchor, mask_obj):
     """
-    Obtain the GIDs inside a masked area of a spatially distributed population.
+    Obtain the node IDs inside a masked area of a spatially distributed population.
 
-    The function finds and returns all the GIDs inside a given mask of a
-    `layer`. The GIDs are returned as a `NodeCollection`. The function works on both 2-dimensional and
+    The function finds and returns all the node IDs inside a given mask of a
+    `layer`. The node IDs are returned as a `NodeCollection`. The function works on both 2-dimensional and
     3-dimensional masks and layers. All mask types are allowed, including combined masks.
 
     Parameters
     ----------
     layer : NodeCollection
-        `NodeCollection` with GIDs of the `layer` to select nodes from.
+        `NodeCollection` with node IDs of the `layer` to select nodes from.
     anchor : tuple/list of double
         List containing center position of the layer. This is the point from
         where we start to search.
@@ -833,10 +833,10 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    gid_list = sli_func('SelectNodesByMask',
-                        layer, anchor, mask_datum)
+    node_id_list = sli_func('SelectNodesByMask',
+                            layer, anchor, mask_datum)
 
-    return NodeCollection(gid_list)
+    return NodeCollection(node_id_list)
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
@@ -1218,13 +1218,13 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
 
     A probability plot is created based on a `Parameter` and a `source`. The
     `Parameter` should have a distance dependency. The `source` must be given
-    as a `NodeCollection` with a single GID. Optionally a `mask` can also be
+    as a `NodeCollection` with a single node ID. Optionally a `mask` can also be
     plotted.
 
     Parameters
     ----------
     source : NodeCollection
-        Single GID `NodeCollection` to use as source.
+        Single node ID `NodeCollection` to use as source.
     parameter : Parameter object
         `Parameter` the probability is based on.
     mask : Dictionary

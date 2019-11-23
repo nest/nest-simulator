@@ -49,10 +49,10 @@ def get.Connections(source=None, target=None, synape_model=None,
     Parameters
     ----------
     source : list, optional
-        Source GIDs, only connections from these
+        Source node IDs, only connections from these
         pre-synaptic neurons are returned
     target : list, optional
-        Target GIDs, only connections to these
+        Target node IDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
@@ -64,7 +64,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     -------
     array:
         Connections as 5-tuples with entries
-        (source-gid, target-gid, target-thread, synapse-id, port)
+        (source-node_id, target-node_id, target-thread, synapse-id, port)
 
     Raises
     -------

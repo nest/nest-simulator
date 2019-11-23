@@ -43,7 +43,7 @@ def plot_network(nodes, filename, ext_conns=False,
     Parameters
     ----------
     nodes : NodeCollection
-        NodeCollection containing global ids of nodes to plot
+        NodeCollection containing node IDs of nodes to plot
     filename : str
         Filename to save the plot to. Can end either in .pdf or .png to
         determine the type of the output.

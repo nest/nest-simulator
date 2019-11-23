@@ -354,7 +354,7 @@ was built correctly:
 
 -  ``nest.PrintNodes()``
 
-   which prints the GID ranges and model names of the nodes in the
+   which prints the node ID ranges and model names of the nodes in the
    network.
 
 -  Create plots using the following functions:

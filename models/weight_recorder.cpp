@@ -43,7 +43,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-// record time, gid, weight and receiver gid
+// record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()
   : RecordingDevice()
   , P_()
@@ -172,7 +172,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
@@ -203,15 +203,15 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_gid() ) )
-      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
+    if ( ( P_.senders_.get() and not P_.senders_->contains( e.get_sender_node_id() ) )
+      or ( P_.targets_.get() and not P_.targets_->contains( e.get_receiver_node_id() ) ) )
     {
       return;
     }
 
     write( e,
       { e.get_weight() },
-      { static_cast< long >( e.get_receiver_gid() ),
+      { static_cast< long >( e.get_receiver_node_id() ),
        static_cast< long >( e.get_rport() ),
        static_cast< long >( e.get_port() ) } );
   }

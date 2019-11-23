@@ -515,8 +515,8 @@ and worked examples.
    default) and synapse type (``"static_synapse"`` by default). Details
    depend on the connectivity rule. Note: Connect does not iterate over
    subnets, it only connects explicitly specified nodes. ``pre`` -
-   presynaptic neurons, given as list of GIDs ``post`` - presynaptic
-   neurons, given as list of GIDs ``conn_spec`` - name or dictionary
+   presynaptic neurons, given as list of node IDs ``post`` - presynaptic
+   neurons, given as list of node IDs ``conn_spec`` - name or dictionary
    specifying connectivity rule, see below ``syn_spec`` - name or
    dictionary specifying synapses, see below
 
@@ -571,4 +571,3 @@ References
 
 .. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.
    9(3):90–95.
-

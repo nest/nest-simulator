@@ -109,9 +109,9 @@ public:
   thread get_process_id_of_vp( const thread vp ) const;
 
   /*
-   * Return the process id of the node with the specified gid.
+   * Return the process id of the node with the specified node ID.
    */
-  thread get_process_id_of_gid( const index gid ) const;
+  thread get_process_id_of_node_id( const index node_id ) const;
 
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize
@@ -329,9 +329,9 @@ private:
 
 public:
   /**
-   * Combined storage of GID and offset information for off-grid spikes.
+   * Combined storage of node ID and offset information for off-grid spikes.
    *
-   * @note This class actually stores the GID as @c double internally.
+   * @note This class actually stores the node ID as @c double internally.
    *       This is done so that the user-defined MPI type MPI_OFFGRID_SPIKE,
    *       which we use to communicate off-grid spikes, is homogeneous.
    *       Otherwise, OpenMPI spends extreme amounts of time on packing
@@ -344,28 +344,28 @@ public:
   public:
     //! We defined this type explicitly, so that the assert function below
     //! always tests the correct type.
-    typedef unsigned int gid_external_type;
+    typedef unsigned int node_id_external_type;
 
     OffGridSpike()
-      : gid_( 0 )
+      : node_id_( 0 )
       , offset_( 0.0 )
     {
     }
-    OffGridSpike( gid_external_type gidv, double offsetv )
-      : gid_( gidv )
+    OffGridSpike( node_id_external_type node_idv, double offsetv )
+      : node_id_( node_idv )
       , offset_( offsetv )
     {
     }
 
     unsigned int
-    get_gid() const
+    get_node_id() const
     {
-      return static_cast< gid_external_type >( gid_ );
+      return static_cast< node_id_external_type >( node_id_ );
     }
     void
-    set_gid( gid_external_type gid )
+    set_node_id( node_id_external_type node_id )
     {
-      gid_ = static_cast< double >( gid );
+      node_id_ = static_cast< double >( node_id );
     }
     double
     get_offset() const
@@ -374,19 +374,19 @@ public:
     }
 
   private:
-    double gid_;    //!< GID of neuron that spiked
-    double offset_; //!< offset of spike from grid
+    double node_id_; //!< node ID of neuron that spiked
+    double offset_;  //!< offset of spike from grid
 
-    //! This function asserts that doubles can hold GIDs without loss
+    //! This function asserts that doubles can hold node IDs without loss
     static void
     assert_datatype_compatibility_()
     {
-      assert( std::numeric_limits< double >::digits > std::numeric_limits< gid_external_type >::digits );
+      assert( std::numeric_limits< double >::digits > std::numeric_limits< node_id_external_type >::digits );
 
       // the next one is doubling up, better be safe than sorry
-      const gid_external_type maxgid = std::numeric_limits< gid_external_type >::max();
-      OffGridSpike ogs( maxgid, 0.0 );
-      assert( maxgid == ogs.get_gid() );
+      const node_id_external_type maxnode_id = std::numeric_limits< node_id_external_type >::max();
+      OffGridSpike ogs( maxnode_id, 0.0 );
+      assert( maxnode_id == ogs.get_node_id() );
     }
   };
 };

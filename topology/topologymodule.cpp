@@ -295,9 +295,9 @@ TopologyModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 
   NodeCollectionDatum layer = create_layer( layer_dict );
 
-  for ( auto&& gid_triple : *layer )
+  for ( auto&& node_id_triple : *layer )
   {
-    set_node_status( gid_triple.gid, params );
+    set_node_status( node_id_triple.node_id, params );
   }
 
   i->OStack.pop( 2 );
@@ -357,24 +357,24 @@ TopologyModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 /** @BeginDocumentation
   Name: topology::Displacement - compute displacement vector
 
-  Synopsis: layer from_gid to_gid Displacement -> [double vector]
-            layer from_pos to_gid Displacement -> [double vector]
+  Synopsis: layer from_node_id to_node_id Displacement -> [double vector]
+            layer from_pos to_node_id Displacement -> [double vector]
 
   Parameters:
   layer       - NodeCollection for layer
-  from_gid    - int, gid of node in a topology layer
+  from_node_id    - int, node_id of node in a topology layer
   from_pos    - double vector, position in layer
-  to_gid      - int, gid of node in a topology layer
+  to_node_id      - int, node_id of node in a topology layer
 
   Returns:
   [double vector] - vector pointing from position "from" to position "to"
 
   Description:
-  This function returns a vector connecting the position of the "from_gid"
+  This function returns a vector connecting the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_gid" node. Nodes must be parts of topology layers.
+  "to_node_id" node. Nodes must be parts of topology layers.
 
-  The "from" position is projected into the layer of the "to_gid" node. If
+  The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
   shortest displacement vector is returned, taking into account the
   periodicity. Fixed grid layers are in this case extended so that the
@@ -435,24 +435,24 @@ TopologyModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 /** @BeginDocumentation
   Name: topology::Distance - compute distance between nodes
 
-  Synopsis: layer from_gid to_gid Distance -> double
-            layer from_pos to_gid Distance -> double
+  Synopsis: layer from_node_id to_node_id Distance -> double
+            layer from_pos to_node_id Distance -> double
 
   Parameters:
   layer       - NodeCollection for layer
-  from_gid    - int, gid of node in a topology layer
+  from_node_id    - int, node_id of node in a topology layer
   from_pos    - double vector, position in layer
-  to_gid      - int, gid of node in a topology layer
+  to_node_id      - int, node_id of node in a topology layer
 
   Returns:
   double - distance between nodes or given position and node
 
   Description:
-  This function returns the distance between the position of the "from_gid"
+  This function returns the distance between the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_gid" node. Nodes must be parts of topology layers.
+  "to_node_id" node. Nodes must be parts of topology layers.
 
-  The "from" position is projected into the layer of the "to_gid" node. If
+  The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
   shortest distance is returned, taking into account the
   periodicity. Fixed grid layers are in this case extended so that the
@@ -846,7 +846,7 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
   output stream. The file format is one line per element with the
   following contents:
 
-  GID x-position y-position [z-position]
+  node ID x-position y-position [z-position]
 
   X and y position are given as physical coordinates in the extent,
   not as grid positions. The number of decimals can be controlled by
@@ -901,7 +901,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
   in the given layer to the given output stream. The data format is one line per
   connection as follows:
 
-  source_gid target_gid weight delay displacement[x,y,z]
+  source_node_id target_node_id weight delay displacement[x,y,z]
 
   where displacement are up to three coordinates of the vector from the source
   to the target node. If targets do not have positions (eg. spike detectors
@@ -917,7 +917,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 
   topology using
   ...
-  (out.cnn) (w) file layer_gid /static_synapse PrintLayerConnections close
+  (out.cnn) (w) file layer_node_id /static_synapse PrintLayerConnections close
 
   Author: Kittel Austvoll, Hans Ekkehard Plesser
 
@@ -963,7 +963,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
   std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
-  std::vector< index > mask_gids;
+  std::vector< index > mask_node_ids;
 
   const int dim = anchor.size();
 
@@ -987,7 +987,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
     for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
           ++it )
     {
-      mask_gids.push_back( it->second );
+      mask_node_ids.push_back( it->second );
     }
   }
   else
@@ -1004,12 +1004,12 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) co
           it != ml.end();
           ++it )
     {
-      mask_gids.push_back( it->second );
+      mask_node_ids.push_back( it->second );
     }
   }
 
   i->OStack.pop( 3 );
-  i->OStack.push( mask_gids );
+  i->OStack.push( mask_node_ids );
   i->EStack.pop();
 }
 

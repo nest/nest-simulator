@@ -39,16 +39,16 @@ Author: August 2019, Stine B. Vennemo
 [1 2 4] % check for 1, 2 and 4 processes
 {
   ResetKernel
-  /iaf_psc_alpha 2 Create       % gids 1,2
-  /iaf_psc_delta 3 Create join  % gids 3,4,5
-  /iaf_psc_alpha 3 Create join  % gids 6,7,8
-  /iaf_psc_exp   3 Create join  % gids 9,10,11
+  /iaf_psc_alpha 2 Create       % node_ids 1,2
+  /iaf_psc_delta 3 Create join  % node_ids 3,4,5
+  /iaf_psc_alpha 3 Create join  % node_ids 6,7,8
+  /iaf_psc_exp   3 Create join  % node_ids 9,10,11
   /nodes Set
 
   /all_nodes_list [1 2 3 4 5 6 7 8 9 10 11 ] def
 
    % ---------------------------- local_only is false  -> we want all nodes ------------------------------------------%
-  << >> false GetNodes cva all_nodes_list eq  
+  << >> false GetNodes cva all_nodes_list eq
 
   % ---------------------- local_only is true  -> we only want local nodes on mpi process ----------------------------%
   << >> true GetNodes cva nodes LocalOnly cva eq and
@@ -71,10 +71,10 @@ Author: August 2019, Stine B. Vennemo
   [ ] /reference_list Set
   all_nodes_list
   {
-    /gid Set
+    /node_id Set
     Vm_list indx get -60. eq tau_m_list indx get 10. eq and
     {
-      reference_list gid append /reference_list Set
+      reference_list node_id append /reference_list Set
     } if
     /indx indx 1 add def
   } forall
@@ -89,10 +89,10 @@ Author: August 2019, Stine B. Vennemo
   [ ] /reference_list Set
   nodes LocalOnly cva
   {
-    /gid Set
+    /node_id Set
     Vm_list_ref indx get -60. eq
     {
-      reference_list gid append /reference_list Set
+      reference_list node_id append /reference_list Set
     } if
     /indx indx 1 add def
   } forall
@@ -106,10 +106,10 @@ Author: August 2019, Stine B. Vennemo
   ResetKernel
   << /local_num_threads 2 >> SetKernelStatus
 
-  /iaf_psc_alpha 2 Create       % gids 1,2
-  /iaf_psc_delta 3 Create join  % gids 3,4,5
-  /iaf_psc_alpha 3 Create join  % gids 6,7,8
-  /iaf_psc_exp   3 Create join  % gids 9,10,11
+  /iaf_psc_alpha 2 Create       % node_ids 1,2
+  /iaf_psc_delta 3 Create join  % node_ids 3,4,5
+  /iaf_psc_alpha 3 Create join  % node_ids 6,7,8
+  /iaf_psc_exp   3 Create join  % node_ids 9,10,11
   /nodes Set
 
   % ----------------------------- local_only is false -> we want all nodes  ------------------------------------------%
@@ -134,10 +134,10 @@ Author: August 2019, Stine B. Vennemo
   [ ] /reference_list Set
   all_nodes_list
   {
-    /gid Set
+    /node_id Set
     Vm_list indx get -60. eq tau_m_list indx get 10. eq and
     {
-      reference_list gid append /reference_list Set
+      reference_list node_id append /reference_list Set
     } if
     /indx indx 1 add def
   } forall
@@ -153,10 +153,10 @@ Author: August 2019, Stine B. Vennemo
   [ ] /reference_list Set
   nodes LocalOnly cva
   {
-    /gid Set
+    /node_id Set
     Vm_list_ref indx get -60. eq
     {
-      reference_list gid append /reference_list Set
+      reference_list node_id append /reference_list Set
     } if
     /indx indx 1 add def
   } forall
@@ -164,4 +164,3 @@ Author: August 2019, Stine B. Vennemo
   reference_list test_nodes cva eq and
 }
 distributed_collect_assert_or_die
-

@@ -294,8 +294,8 @@ Iconns = nest.GetConnections(E_ctr, RG_I, synapse_model='static_synapse')
 Itgts = Iconns.get('target')
 
 # obtain positions of targets
-Etpos = pylab.array([nest.GetPosition(RG_E[RG_E.index(tgid)]) for tgid in Etgts])
-Itpos = pylab.array([nest.GetPosition(RG_I[RG_I.index(tgid)]) for tgid in Itgts])
+Etpos = pylab.array([nest.GetPosition(RG_E[RG_E.index(tnode_id)]) for tnode_id in Etgts])
+Itpos = pylab.array([nest.GetPosition(RG_I[RG_I.index(tnode_id)]) for tnode_id in Itgts])
 
 # plot excitatory
 pylab.clf()

@@ -277,7 +277,7 @@ Layer< D >::dump_nodes( std::ostream& out ) const
         it < this->node_collection_->end();
         ++it )
   {
-    out << ( *it ).gid << ' ';
+    out << ( *it ).node_id << ' ';
     get_position( ( *it ).lid ).print( out );
     out << std::endl;
   }
@@ -301,10 +301,10 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
         ++src_iter )
   {
 
-    const index source_gid = src_iter->second;
+    const index source_node_id = src_iter->second;
     const Position< D > source_pos = src_iter->first;
 
-    source_array[ 0 ] = source_gid;
+    source_array[ 0 ] = source_node_id;
     def( ncdict, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
     ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
 
@@ -312,24 +312,24 @@ Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, 
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
+      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+        con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port() );
 
-      long target_gid = getValue< long >( result_dict, names::target );
+      long target_node_id = getValue< long >( result_dict, names::target );
       double weight = getValue< double >( result_dict, names::weight );
       double delay = getValue< double >( result_dict, names::delay );
 
       // Print source, target, weight, delay, rports
-      out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
+      out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
 
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const index tgid = tgt_layer->node_collection_->find( target_gid );
-      tgt_layer->compute_displacement( source_pos, tgid ).print( out );
+      const index tnode_id = tgt_layer->node_collection_->find( target_node_id );
+      tgt_layer->compute_displacement( source_pos, tnode_id ).print( out );
       out << '\n';
     }
   }

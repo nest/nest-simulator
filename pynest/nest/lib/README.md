@@ -11,12 +11,12 @@ rules:
    guidelines suggest to use lower case for function names. However,
    this way, it is easier for users to migrate from SLI to Python.
 
-2. Nodes are identified by their global IDs (GID) by default.
+2. Nodes are identified by their global IDs (node ID) by default.
 
-3. GIDs are always represented by a NodeCollection, e.g.
+3. node IDs are always represented by a NodeCollection, e.g.
    NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
-4. Commands that return a GID must return it as NodeCollection.
+4. Commands that return a node ID must return it as NodeCollection.
 
 5. When possible, loops over nodes should be propagated down to the
    SLI level. This minimizes the number of Python<->SLI conversions

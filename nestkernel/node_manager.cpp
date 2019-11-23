@@ -111,9 +111,9 @@ NodeManager::add_node( index model_id, long n )
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
-  const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
-  const index max_gid = min_gid + n - 1;
-  if ( max_gid < min_gid )
+  const index min_node_id = local_nodes_.at( 0 ).get_max_node_id() + 1;
+  const index max_node_id = min_node_id + n - 1;
+  if ( max_node_id < min_node_id )
   {
     LOG( M_ERROR,
       "NodeManager::add_node",
@@ -122,25 +122,25 @@ NodeManager::add_node( index model_id, long n )
     throw KernelException( "OutOfMemory" );
   }
 
-  kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
+  kernel().modelrange_manager.add_range( model_id, min_node_id, max_node_id );
 
   // clear any exceptions from previous call
   std::vector< std::shared_ptr< WrappedThreadException > >( kernel().vp_manager.get_num_threads() )
     .swap( exceptions_raised_ );
 
-  auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_gid, max_gid, model_id ) );
+  auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
 
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_gid, max_gid, nc_ptr );
+    add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
   }
   else if ( not model->one_node_per_process() )
   {
-    add_devices_( *model, min_gid, max_gid, nc_ptr );
+    add_devices_( *model, min_node_id, max_node_id, nc_ptr );
   }
   else
   {
-    add_music_nodes_( *model, min_gid, max_gid, nc_ptr );
+    add_music_nodes_( *model, min_node_id, max_node_id, nc_ptr );
   }
 
   // check if any exceptions have been raised
@@ -176,13 +176,13 @@ NodeManager::add_node( index model_id, long n )
 
 
 void
-NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
+NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
   // upper limit for number of neurons per thread; in practice, either
   // max_new_per_thread-1 or max_new_per_thread nodes will be created
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   const size_t max_new_per_thread =
-    static_cast< size_t >( std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
+    static_cast< size_t >( std::ceil( static_cast< double >( max_node_id - min_node_id + 1 ) / num_vps ) );
 
 #pragma omp parallel
   {
@@ -192,18 +192,18 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, NodeColle
     {
       model.reserve_additional( t, max_new_per_thread );
 
-      // Need to find smallest gid with:
-      //   - gid local to this vp
-      //   - gid >= min_gid
+      // Need to find smallest node ID with:
+      //   - node ID local to this vp
+      //   - node_id >= min_node_id
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_gid_vp = kernel().vp_manager.suggest_vp_for_gid( min_gid );
+      const size_t min_node_id_vp = kernel().vp_manager.suggest_vp_for_node_id( min_node_id );
 
-      size_t gid = min_gid + ( num_vps + vp - min_gid_vp ) % num_vps;
+      size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
-      while ( gid <= max_gid )
+      while ( node_id <= max_node_id )
       {
         Node* node = model.allocate( t );
-        node->set_gid_( gid );
+        node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
@@ -211,9 +211,9 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, NodeColle
         node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
-        gid += num_vps;
+        node_id += num_vps;
       }
-      local_nodes_[ t ].update_max_gid( max_gid );
+      local_nodes_[ t ].update_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -225,9 +225,9 @@ NodeManager::add_neurons_( Model& model, index min_gid, index max_gid, NodeColle
 }
 
 void
-NodeManager::add_devices_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
+NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
-  const size_t n_per_thread = max_gid - min_gid + 1;
+  const size_t n_per_thread = max_node_id - min_node_id + 1;
 
 #pragma omp parallel
   {
@@ -236,13 +236,13 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, NodeColle
     {
       model.reserve_additional( t, n_per_thread );
 
-      for ( index gid = min_gid; gid <= max_gid; ++gid )
+      for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
       {
         // keep track of number of local devices
         ++num_local_devices_;
 
         Node* node = model.allocate( t );
-        node->set_gid_( gid );
+        node->set_node_id_( node_id );
         node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
@@ -252,7 +252,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, NodeColle
 
         local_nodes_[ t ].add_local_node( *node );
       }
-      local_nodes_[ t ].update_max_gid( max_gid );
+      local_nodes_[ t ].update_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -264,7 +264,7 @@ NodeManager::add_devices_( Model& model, index min_gid, index max_gid, NodeColle
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, NodeCollectionPTR nc_ptr )
+NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
 #pragma omp parallel
   {
@@ -273,13 +273,13 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, NodeC
     {
       if ( t == 0 )
       {
-        for ( index gid = min_gid; gid <= max_gid; ++gid )
+        for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
         {
           // keep track of number of local devices
           ++num_local_devices_;
 
           Node* node = model.allocate( 0 );
-          node->set_gid_( gid );
+          node->set_node_id_( node_id );
           node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
@@ -290,7 +290,7 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid, NodeC
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).update_max_gid( max_gid );
+      local_nodes_.at( t ).update_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -316,7 +316,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 
       for ( auto node : get_local_nodes( tid ) )
       {
-        nodes_on_thread[ tid ].push_back( node.get_gid() );
+        nodes_on_thread[ tid ].push_back( node.get_node_id() );
       }
     }
 #pragma omp barrier
@@ -334,9 +334,9 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
       for ( auto node : get_local_nodes( tid ) )
       {
         bool match = true;
-        index gid = node.get_gid();
+        index node_id = node.get_node_id();
 
-        DictionaryDatum node_status = get_status( gid );
+        DictionaryDatum node_status = get_status( node_id );
         for ( Dictionary::iterator dict_entry = params->begin(); dict_entry != params->end(); ++dict_entry )
         {
           if ( node_status->known( dict_entry->first ) )
@@ -351,7 +351,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
         }
         if ( match )
         {
-          nodes.push_back( gid );
+          nodes.push_back( node_id );
         }
       }
     }
@@ -384,12 +384,12 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
 }
 
 void
-NodeManager::init_state( index GID )
+NodeManager::init_state( index node_id )
 {
-  Node* n = get_node_or_proxy( GID );
+  Node* n = get_node_or_proxy( node_id );
   if ( n == 0 )
   {
-    throw UnknownNode( GID );
+    throw UnknownNode( node_id );
   }
 
   n->init_state();
@@ -402,9 +402,9 @@ NodeManager::is_local_node( Node* n ) const
 }
 
 bool
-NodeManager::is_local_gid( index gid ) const
+NodeManager::is_local_node_id( index node_id ) const
 {
-  const thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
+  const thread vp = kernel().vp_manager.suggest_vp_for_node_id( node_id );
   return kernel().vp_manager.is_local_vp( vp );
 }
 
@@ -422,71 +422,71 @@ NodeManager::get_num_local_devices() const
 }
 
 Node*
-NodeManager::get_node_or_proxy( index gid, thread t )
+NodeManager::get_node_or_proxy( index node_id, thread t )
 {
   assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
-  assert( 0 < gid and gid <= size() );
+  assert( 0 < node_id and node_id <= size() );
 
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( node == 0 )
   {
-    return kernel().model_manager.get_proxy_node( t, gid );
+    return kernel().model_manager.get_proxy_node( t, node_id );
   }
 
   return node;
 }
 
 Node*
-NodeManager::get_node_or_proxy( index gid )
+NodeManager::get_node_or_proxy( index node_id )
 {
-  assert( 0 < gid and gid <= size() );
+  assert( 0 < node_id and node_id <= size() );
 
-  thread vp = kernel().vp_manager.suggest_vp_for_gid( gid );
+  thread vp = kernel().vp_manager.suggest_vp_for_node_id( node_id );
   if ( not kernel().vp_manager.is_local_vp( vp ) )
   {
-    return kernel().model_manager.get_proxy_node( 0, gid );
+    return kernel().model_manager.get_proxy_node( 0, node_id );
   }
 
   thread t = kernel().vp_manager.vp_to_thread( vp );
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( node == 0 )
   {
-    return kernel().model_manager.get_proxy_node( t, gid );
+    return kernel().model_manager.get_proxy_node( t, node_id );
   }
 
   return node;
 }
 
 Node*
-NodeManager::get_mpi_local_node_or_device_head( index gid )
+NodeManager::get_mpi_local_node_or_device_head( index node_id )
 {
-  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_gid( gid ) );
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_node_id( node_id ) );
 
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
   if ( node == 0 )
   {
-    return kernel().model_manager.get_proxy_node( t, gid );
+    return kernel().model_manager.get_proxy_node( t, node_id );
   }
   if ( not node->has_proxies() )
   {
-    node = local_nodes_[ 0 ].get_node_by_gid( gid );
+    node = local_nodes_[ 0 ].get_node_by_node_id( node_id );
   }
 
   return node;
 }
 
 std::vector< Node* >
-NodeManager::get_thread_siblings( index gid ) const
+NodeManager::get_thread_siblings( index node_id ) const
 {
   index num_threads = kernel().vp_manager.get_num_threads();
   std::vector< Node* > siblings( num_threads );
   for ( size_t t = 0; t < num_threads; ++t )
   {
-    Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+    Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( node == 0 )
     {
-      throw NoThreadSiblingsAvailable( gid );
+      throw NoThreadSiblingsAvailable( node_id );
     }
 
     siblings[ t ] = node;
@@ -757,25 +757,25 @@ NodeManager::check_wfr_use()
 void
 NodeManager::print( std::ostream& out ) const
 {
-  const index max_gid = size();
-  const double max_gid_width = std::floor( std::log10( max_gid ) );
-  const double gid_range_width = 6 + 2 * max_gid_width;
+  const index max_node_id = size();
+  const double max_node_id_width = std::floor( std::log10( max_node_id ) );
+  const double node_id_range_width = 6 + 2 * max_node_id_width;
 
   for ( std::vector< modelrange >::const_iterator it = kernel().modelrange_manager.begin();
         it != kernel().modelrange_manager.end();
         ++it )
   {
-    const index first_gid = it->get_first_gid();
-    const index last_gid = it->get_last_gid();
+    const index first_node_id = it->get_first_node_id();
+    const index last_node_id = it->get_last_node_id();
     const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
 
-    std::stringstream gid_range_strs;
-    gid_range_strs << std::setw( max_gid_width + 1 ) << first_gid;
-    if ( last_gid != first_gid )
+    std::stringstream node_id_range_strs;
+    node_id_range_strs << std::setw( max_node_id_width + 1 ) << first_node_id;
+    if ( last_node_id != first_node_id )
     {
-      gid_range_strs << " .. " << std::setw( max_gid_width + 1 ) << last_gid;
+      node_id_range_strs << " .. " << std::setw( max_node_id_width + 1 ) << last_node_id;
     }
-    out << std::setw( gid_range_width ) << std::left << gid_range_strs.str() << " " << mod->get_name();
+    out << std::setw( node_id_range_width ) << std::left << node_id_range_strs.str() << " " << mod->get_name();
 
     if ( it + 1 != kernel().modelrange_manager.end() )
     {
@@ -785,11 +785,11 @@ NodeManager::print( std::ostream& out ) const
 }
 
 void
-NodeManager::set_status( index gid, const DictionaryDatum& d )
+NodeManager::set_status( index node_id, const DictionaryDatum& d )
 {
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+    Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( node != 0 )
     {
       set_status_single_node_( *node, d );

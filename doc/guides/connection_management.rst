@@ -647,7 +647,7 @@ Inspecting Connections
 
 ``GetConnections(source=None, target=None, synapse_model=None)``: Return
 an array of identifiers for connections that match the given parameters.
-source and target need to be lists of global ids, model is a string
+source and target need to be lists of node IDs, model is a string
 representing a synapse model. If GetConnections is called without
 parameters, all connections in the network are returned. If a list of
 source neurons is given, only connections from these pre-synaptic
@@ -656,7 +656,7 @@ connections to these post-synaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 Each connection id is a 5-tuple or, if available, a NumPy array with the
-following five entries: source-gid, target-gid, target-thread,
+following five entries: source-node_id, target-node_id, target-thread,
 synapse-id, port.
 
 The result of ``GetConnections`` can be given as an argument to the
@@ -700,4 +700,3 @@ can then be given as arguments to the ``SetStatus()`` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
-

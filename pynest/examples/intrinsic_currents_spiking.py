@@ -113,7 +113,7 @@ mm = nest.Create('multimeter',
 #
 # Note that we need to pack the `pg` variable into a list before
 # passing it to ``Connect``, because iterating over the `p_gens` list
-# makes `pg` a "naked" GID.
+# makes `pg` a "naked" node ID.
 
 receptors = nest.GetDefaults('ht_neuron')['receptor_types']
 for index, (rec_name, rec_wgt) in enumerate(w_recep.items()):

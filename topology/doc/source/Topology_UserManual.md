@@ -902,15 +902,15 @@ reference="ch:extending"}.
   `exponential`   `a`, `c`, `tau`  $$p(d) = c + a e^{-\frac{d}{\tau}}$$
 
   `gaussian`      `p_center`,      $$p(d) = c + p_{\text{center}}  e^{-\frac{(d-\mu)^2}{2\sigma^2}}$$
-                  `sigma`, `mean`, 
-                  `c`              
+                  `sigma`, `mean`,
+                  `c`
 
   `gaussian2D`    `p_center`,      $$p(d) = c + p_{\text{center}}
                   `sigma_x`,       e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
                   `sigma_y`,                 +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}$$
-                  `mean_x`,        
-                  `mean_y`,`rho`,   
-                  `c`              
+                  `mean_x`,
+                  `mean_y`,`rho`,
+                  `c`
 
   `gamma`         `kappa`, `theta` $$p(d) = \frac{d^{\kappa-1}e^{-\frac{d}{\theta}}}{\theta^\kappa\Gamma(\kappa)}$$
 
@@ -918,10 +918,10 @@ reference="ch:extending"}.
                                    [\text{min},\text{max})$ uniformly
 
   `normal`        `mean`, `sigma`, $p \in [\text{min},\text{max})$ normal with given mean and $\sigma$
-                  `min`, `max`     
+                  `min`, `max`
 
   `lognormal`     `mu`, `sigma`,   $p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$
-                  `min`, `max`     
+                  `min`, `max`
   -------------------------------------------------------------------------------------------------------------------
 
   Table: Functions currently available in the Topology module. $d$ is the
@@ -1141,7 +1141,7 @@ distance is then given by the product of the probabilities for finding
 nodes at a certain distance with the kernel value for this distance. For
 the kernel and parameter values below we have
 $$p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
- = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.$$ {#eq:ptheo} 
+ = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.$$ {#eq:ptheo}
 The resulting distribution of distances between
 connected nodes is shown in Fig. {@fig:conn6}.
 
@@ -1270,11 +1270,11 @@ functions, please see the online Python and SLI documentation.
                                 target); see also
                                 <https://www.nest-simulator.org/connection_management>.
 
-  `nest.GetNodes()`             Applied to a layer, returns GIDs of the layer elements.
+  `nest.GetNodes()`             Applied to a layer, returns node IDs of the layer elements.
                                 For simple layers, these are the actual model neurons,
                                 for composite layers the top-level subnets.
 
-  `nest.GetLeaves()`            Applied to a layer, returns GIDs of all actual model
+  `nest.GetLeaves()`            Applied to a layer, returns node IDs of all actual model
                                 neurons, ignoring subnets.
 
   `tp.GetPosition()`            Return the spatial locations of nodes.
@@ -1293,7 +1293,7 @@ functions, please see the online Python and SLI documentation.
   `tp.FindNearestElement()`     Return the node(s) closest to the location(s) in the
                                 given layer(s).
 
-  `tp.FindCenterElement()`      Return GID(s) of node closest to center of layer(s).
+  `tp.FindCenterElement()`      Return node ID(s) of node closest to center of layer(s).
 
   `tp.Displacement()`           Obtain vector of lateral displacement between nodes,
                                 taking periodic boundary conditions into account.
@@ -1307,7 +1307,7 @@ functions, please see the online Python and SLI documentation.
                                 may be very useful to check that Topology created the
                                 correct connection structure.
 
-  `tp.SelectNodesByMask()`      Obtain GIDs of nodes/elements inside a masked area of a
+  `tp.SelectNodesByMask()`      Obtain node IDs of nodes/elements inside a masked area of a
                                 layer. Part of NEST since NEST 2.14.
   ----------------------------- --------------------------------------------------------
 
@@ -1610,7 +1610,7 @@ Module from NEST version 2.12 to 2.14.
     NEST 2.14. To specify the mask, the `major_axis`, `minor_axis` and
     (for ellipsoidal masks) `polar_axis` must be specified.
 
--   It is now possible to obtain the GIDs inside a masked area with the
+-   It is now possible to obtain the node IDs inside a masked area with the
     function SelectNodesByMask.
 
 Changes from Topology 2.0 to 2.2
@@ -1622,8 +1622,8 @@ Module from NEST version 2.0 to 2.2.
 -   Nested layers are no longer supported.
 
 -   Subnets are no longer used inside composite layers. A call to
-    GetElement for a composite layer will now return a list of GIDs for
-    the nodes at the position rather than a single subnet GID.
+    GetElement for a composite layer will now return a list of node IDs for
+    the nodes at the position rather than a single subnet node ID.
 
 -   Positions in layers may now be 3-dimensional.
 
@@ -1648,8 +1648,8 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
     functions. Please see Ch. [4](#sec:inspection){reference-type="ref"
     reference="sec:inspection"} for an overview.
 
--   All nest.topology functions now require lists of GIDs as input, not
-    \"naked\" GIDs
+-   All nest.topology functions now require lists of node IDs as input, not
+    \"naked\" node IDs
 
 -   There are a number of new functions in nest.topology, I tried to
     write good doc strings for them

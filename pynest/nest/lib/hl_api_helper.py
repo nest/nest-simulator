@@ -52,7 +52,7 @@ __all__ = [
     'is_iterable',
     'is_literal',
     'is_sequence_of_connections',
-    'is_sequence_of_gids',
+    'is_sequence_of_node_ids',
     'is_string',
     'load_help',
     'model_deprecation_warning',
@@ -279,9 +279,9 @@ def is_sequence_of_connections(seq):
     return False
 
 
-def is_sequence_of_gids(seq):
+def is_sequence_of_node_ids(seq):
     """Checks whether the argument is a potentially valid sequence of
-    GIDs (non-negative integers).
+    node IDs (non-negative integers).
 
     Parameters
     ----------
@@ -291,7 +291,7 @@ def is_sequence_of_gids(seq):
     Returns
     -------
     bool:
-        True if object is a potentially valid sequence of GIDs
+        True if object is a potentially valid sequence of node IDs
     """
 
     return all(isinstance(n, int) and n >= 0 for n in seq)

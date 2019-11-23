@@ -104,12 +104,12 @@ def compute_rate(spikes, N_rec, sim_time):
 
 
 def sort_spikes(spikes):
-    # Sorts recorded spikes by gid
-    unique_gids = sorted(np.unique(spikes['senders']))
+    # Sorts recorded spikes by node ID
+    unique_node_ids = sorted(np.unique(spikes['senders']))
     spiketrains = []
-    for gid in unique_gids:
-        spiketrains.append(spikes['times'][spikes['senders'] == gid])
-    return unique_gids, spiketrains
+    for node_id in unique_node_ids:
+        spiketrains.append(spikes['times'][spikes['senders'] == node_id])
+    return unique_node_ids, spiketrains
 
 
 def compute_cv(spiketrains):
@@ -151,8 +151,8 @@ def compute_statistics(parameters, espikes, ispikes):
     erate = compute_rate(espikes, parameters['N_rec'], parameters['sim_time'])
     irate = compute_rate(espikes, parameters['N_rec'], parameters['sim_time'])
 
-    egids, espiketrains = sort_spikes(espikes)
-    igids, ispiketrains = sort_spikes(ispikes)
+    enode_ids, espiketrains = sort_spikes(espikes)
+    inode_ids, ispiketrains = sort_spikes(ispikes)
 
     ecv = compute_cv(espiketrains)
     icv = compute_cv(ispiketrains)

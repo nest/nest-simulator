@@ -99,7 +99,7 @@ BoxMask< D >::outside( const Box< D >& b ) const
 {
   // Note: There could be some inconsistencies with the boundaries. For the
   // inside() function we had to add an epsilon because of rounding errors that
-  // can occur if GIDs are on the boundary if we have rotation. This might lead
+  // can occur if node IDs are on the boundary if we have rotation. This might lead
   // to overlap of the inside and outside functions. None of the tests have
   // picked up any problems with this potential overlap as of yet (autumn 2017),
   // so we don't know if it is an actual problem.

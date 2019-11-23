@@ -108,39 +108,39 @@ NodeCollection::NodeCollection()
 }
 
 NodeCollectionPTR
-NodeCollection::create( const IntVectorDatum& gidsdatum )
+NodeCollection::create( const IntVectorDatum& node_idsdatum )
 {
-  if ( gidsdatum->size() == 0 )
+  if ( node_idsdatum->size() == 0 )
   {
     return NodeCollection::create_();
   }
 
-  std::vector< index > gids;
-  gids.reserve( gidsdatum->size() );
-  for ( std::vector< long >::const_iterator it = gidsdatum->begin(); it != gidsdatum->end(); ++it )
+  std::vector< index > node_ids;
+  node_ids.reserve( node_idsdatum->size() );
+  for ( std::vector< long >::const_iterator it = node_idsdatum->begin(); it != node_idsdatum->end(); ++it )
   {
-    gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
+    node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( gids.begin(), gids.end() );
-  return NodeCollection::create_( gids );
+  std::sort( node_ids.begin(), node_ids.end() );
+  return NodeCollection::create_( node_ids );
 }
 
 NodeCollectionPTR
-NodeCollection::create( const TokenArray& gidsarray )
+NodeCollection::create( const TokenArray& node_idsarray )
 {
-  if ( gidsarray.size() == 0 )
+  if ( node_idsarray.size() == 0 )
   {
     return NodeCollection::create_();
   }
 
-  std::vector< index > gids;
-  gids.reserve( gidsarray.size() );
-  for ( const auto& gid_token : gidsarray )
+  std::vector< index > node_ids;
+  node_ids.reserve( node_idsarray.size() );
+  for ( const auto& node_id_token : node_idsarray )
   {
-    gids.push_back( static_cast< index >( getValue< long >( gid_token ) ) );
+    node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }
-  std::sort( gids.begin(), gids.end() );
-  return NodeCollection::create_( gids );
+  std::sort( node_ids.begin(), node_ids.end() );
+  return NodeCollection::create_( node_ids );
 }
 
 NodeCollectionPTR
@@ -150,26 +150,26 @@ NodeCollection::create_()
 }
 
 NodeCollectionPTR
-NodeCollection::create_( const std::vector< index >& gids )
+NodeCollection::create_( const std::vector< index >& node_ids )
 {
-  index current_first = gids[ 0 ];
+  index current_first = node_ids[ 0 ];
   index current_last = current_first;
-  index current_model = kernel().modelrange_manager.get_model_id( gids[ 0 ] );
+  index current_model = kernel().modelrange_manager.get_model_id( node_ids[ 0 ] );
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_gid = 0;
-  for ( auto gid = ++( gids.begin() ); gid != gids.end(); ++gid )
+  index old_node_id = 0;
+  for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
-    if ( *gid == old_gid )
+    if ( *node_id == old_node_id )
     {
-      throw BadProperty( "All GIDs in a NodeCollection have to be unique" );
+      throw BadProperty( "All node IDs in a NodeCollection have to be unique" );
     }
-    old_gid = *gid;
+    old_node_id = *node_id;
 
-    index next_model = kernel().modelrange_manager.get_model_id( *gid );
+    index next_model = kernel().modelrange_manager.get_model_id( *node_id );
 
-    if ( next_model == current_model and *gid == ( current_last + 1 ) )
+    if ( next_model == current_model and *node_id == ( current_last + 1 ) )
     {
       // node goes in Primitive
       ++current_last;
@@ -178,7 +178,7 @@ NodeCollection::create_( const std::vector< index >& gids )
     {
       // store Primitive; node goes in new Primitive
       parts.emplace_back( current_first, current_last, current_model );
-      current_first = *gid;
+      current_first = *node_id;
       current_last = current_first;
       current_model = next_model;
     }
@@ -234,9 +234,9 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
 
   // find the model_id
   const int first_model_id = kernel().modelrange_manager.get_model_id( first );
-  for ( index gid = ++first; gid <= last; ++gid )
+  for ( index node_id = ++first; node_id <= last; ++node_id )
   {
-    const int model_id = kernel().modelrange_manager.get_model_id( gid );
+    const int model_id = kernel().modelrange_manager.get_model_id( node_id );
     if ( model_id != first_model_id )
     {
       throw BadProperty( "model ids does not match" );
@@ -264,13 +264,13 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
 ArrayDatum
 NodeCollectionPrimitive::to_array() const
 {
-  ArrayDatum gids;
-  gids.reserve( size() );
+  ArrayDatum node_ids;
+  node_ids.reserve( size() );
   for ( const_iterator it = begin(); it < end(); ++it )
   {
-    gids.push_back( ( *it ).gid );
+    node_ids.push_back( ( *it ).node_id );
   }
-  return gids;
+  return node_ids;
 }
 
 NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
@@ -322,10 +322,10 @@ NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  size_t vp_first_node = kernel().vp_manager.suggest_vp_for_gid( first_ );
+  size_t vp_first_node = kernel().vp_manager.suggest_vp_for_node_id( first_ );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
-  if ( offset >= size() ) // Too few GIDs to be shared among all vps.
+  if ( offset >= size() ) // Too few node IDs to be shared among all vps.
   {
     return const_iterator( cp, *this, size() );
   }
@@ -341,9 +341,9 @@ NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
   size_t rank_first_node =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.suggest_vp_for_gid( first_ ) );
+    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.suggest_vp_for_node_id( first_ ) );
   size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
-  if ( offset > size() ) // Too few GIDs to be shared among all MPI processes.
+  if ( offset > size() ) // Too few node IDs to be shared among all MPI processes.
   {
     return const_iterator( cp, *this, size() );
   }
@@ -498,10 +498,10 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     // The NodeCollection is sliced
     if ( size_ > 1 )
     {
-      // Creating a sliced NC with more than one GID from a sliced NC is impossible.
+      // Creating a sliced NC with more than one node ID from a sliced NC is impossible.
       throw BadProperty( "Cannot slice a sliced composite NodeCollection." );
     }
-    // we have a single single GID, must just find where it is.
+    // we have a single single node ID, must just find where it is.
     const_iterator it = composite.begin() + start;
     it.get_current_part_offset( start_part_, start_offset_ );
     stop_part_ = start_part_;
@@ -579,7 +579,7 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
     }
     for ( NodeCollectionComposite::const_iterator short_it = shortest->begin(); short_it < shortest->end(); ++short_it )
     {
-      if ( longest->contains( ( *short_it ).gid ) )
+      if ( longest->contains( ( *short_it ).node_id ) )
       {
         throw BadProperty( "Cannot join overlapping NodeCollections." );
       }
@@ -644,7 +644,7 @@ NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  size_t vp_first_node = kernel().vp_manager.suggest_vp_for_gid( operator[]( 0 ) );
+  size_t vp_first_node = kernel().vp_manager.suggest_vp_for_node_id( operator[]( 0 ) );
   size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
   size_t current_part = start_part_;
@@ -667,7 +667,7 @@ NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
   size_t rank_first_node =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.suggest_vp_for_gid( operator[]( 0 ) ) );
+    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.suggest_vp_for_node_id( operator[]( 0 ) ) );
   size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
 
   size_t current_part = start_part_;
@@ -687,13 +687,13 @@ NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
 ArrayDatum
 NodeCollectionComposite::to_array() const
 {
-  ArrayDatum gids;
-  gids.reserve( size() );
+  ArrayDatum node_ids;
+  node_ids.reserve( size() );
   for ( const_iterator it = begin(); it < end(); ++it )
   {
-    gids.push_back( ( *it ).gid );
+    node_ids.push_back( ( *it ).node_id );
   }
-  return gids;
+  return node_ids;
 }
 
 NodeCollectionPTR
@@ -751,7 +751,7 @@ NodeCollectionComposite::merge_parts( std::vector< NodeCollectionPrimitive >& pa
 }
 
 bool
-NodeCollectionComposite::contains( index gid ) const
+NodeCollectionComposite::contains( index node_id ) const
 {
   long lower = 0;
   long upper = parts_.size() - 1;
@@ -759,11 +759,11 @@ NodeCollectionComposite::contains( index gid ) const
   {
     long middle = std::floor( ( lower + upper ) / 2.0 );
 
-    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
     {
       lower = middle + 1;
     }
-    else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
+    else if ( node_id < ( *( parts_[ middle ].begin() ) ).node_id )
     {
       upper = middle - 1;
     }
@@ -771,12 +771,12 @@ NodeCollectionComposite::contains( index gid ) const
     {
       if ( step_ > 1 )
       {
-        index start_gid = ( *( parts_[ middle ].begin() + start_offset_ ) ).gid;
-        index end_gid = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid;
-        index stop_gid =
-          stop_part_ != ( size_t ) middle ? end_gid : ( *( parts_[ middle ].begin() + stop_offset_ ) ).gid;
+        index start_node_id = ( *( parts_[ middle ].begin() + start_offset_ ) ).node_id;
+        index end_node_id = ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id;
+        index stop_node_id =
+          stop_part_ != ( size_t ) middle ? end_node_id : ( *( parts_[ middle ].begin() + stop_offset_ ) ).node_id;
 
-        return gid >= start_gid and ( ( gid - start_gid ) % step_ ) == 0 and gid <= stop_gid;
+        return node_id >= start_node_id and ( ( node_id - start_node_id ) % step_ ) == 0 and node_id <= stop_node_id;
       }
       return true;
     }
@@ -785,7 +785,7 @@ NodeCollectionComposite::contains( index gid ) const
 }
 
 long
-NodeCollectionComposite::find( const index gid ) const
+NodeCollectionComposite::find( const index node_id ) const
 {
   if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or ( stop_part_ > 0 and stop_part_ != parts_.size() )
     or stop_offset_ > 0 )
@@ -795,7 +795,7 @@ NodeCollectionComposite::find( const index gid ) const
     long index = 0;
     for ( const_iterator it = begin(); it < end(); ++it, ++index )
     {
-      if ( ( *it ).gid == gid )
+      if ( ( *it ).node_id == node_id )
       {
         return index;
       }
@@ -804,18 +804,18 @@ NodeCollectionComposite::find( const index gid ) const
   }
   else
   {
-    // using the same algorithm as contains(), but returns the GID if found.
+    // using the same algorithm as contains(), but returns the node ID if found.
     long lower = 0;
     long upper = parts_.size() - 1;
     while ( lower <= upper )
     {
       long middle = std::floor( ( lower + upper ) / 2.0 );
 
-      if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid < gid )
+      if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).node_id < node_id )
       {
         lower = middle + 1;
       }
-      else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
+      else if ( node_id < ( *( parts_[ middle ].begin() ) ).node_id )
       {
         upper = middle - 1;
       }
@@ -826,7 +826,7 @@ NodeCollectionComposite::find( const index gid ) const
           return a + b.size();
         };
         long sum_pre = std::accumulate( parts_.begin(), parts_.begin() + middle, ( long ) 0, size_accu );
-        return sum_pre + parts_[ middle ].find( gid );
+        return sum_pre + parts_[ middle ].find( node_id );
       }
     }
     return -1;
@@ -850,7 +850,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    GIDTriple gt;
+    NodeIDTriple gt;
 
     std::vector< std::string > string_vector;
 
@@ -867,11 +867,11 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            out << "first=" << gt.gid << ", last=" << gt.gid << ";";
+            out << "first=" << gt.node_id << ", last=" << gt.node_id << ";";
           }
           else
           {
-            out << "first=" << gt.gid << ", last=";
+            out << "first=" << gt.node_id << ", last=";
             out << primitive_last;
             if ( step_ > 1 )
             {
@@ -886,7 +886,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
       {
         ++primitive_size;
       }
-      primitive_last = ( *it ).gid;
+      primitive_last = ( *it ).node_id;
       previous_part = current_part;
     }
 
@@ -895,11 +895,11 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
-      out << "first=" << gt.gid << ", last=" << gt.gid;
+      out << "first=" << gt.node_id << ", last=" << gt.node_id;
     }
     else
     {
-      out << "first=" << gt.gid << ", last=";
+      out << "first=" << gt.node_id << ", last=";
       out << primitive_last;
       if ( step_ > 1 )
       {

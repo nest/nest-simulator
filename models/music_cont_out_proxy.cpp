@@ -251,10 +251,10 @@ nest::music_cont_out_proxy::calibrate()
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      const index tgid = ( *P_.targets_ )[ i ];
-      if ( kernel().node_manager.is_local_gid( tgid ) )
+      const index tnode_id = ( *P_.targets_ )[ i ];
+      if ( kernel().node_manager.is_local_node_id( tnode_id ) )
       {
-        kernel().connection_manager.connect( get_gid(), tgid, dummy_params, synmodel_id );
+        kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
@@ -326,7 +326,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {

@@ -155,7 +155,7 @@ private:
 
   private:
     void clear();
-    std::vector< long > senders_;                        //!< sender gids of the events
+    std::vector< long > senders_;                        //!< sender node IDs of the events
     std::vector< double > times_ms_;                     //!< times of registered events in ms
     std::vector< long > times_steps_;                    //!< times of registered events in steps
     std::vector< double > times_offset_;                 //!< offsets of registered events if time_in_steps_

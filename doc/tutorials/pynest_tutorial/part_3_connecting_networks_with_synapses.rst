@@ -18,7 +18,7 @@ sections of this primer:
 
 -  :doc:`Part 1: Neurons and simple neural
    networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>` 
+-  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 -  :doc:`Part 4: Topologically structured
    networks <part_4_topologically_structured_networks>`
 
@@ -108,10 +108,10 @@ parameters associated with the distribution can be set (for example
 
     alpha_min = 0.1
     alpha_max = 2.
-    w_min = 0.5 
+    w_min = 0.5
     w_max = 5.
 
-    syn_dict = {"model": "stdp_synapse", 
+    syn_dict = {"model": "stdp_synapse",
                 "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
                 "weight": {"distribution": "uniform", "low": w_min, "high": w_max},
                 "delay": 1.0}
@@ -388,14 +388,14 @@ handout.
 Querying Synapses
 ~~~~~~~~~~~~~~~~~
 
--  ``GetConnections(neuron, synapse_model="None"))`` 
+-  ``GetConnections(neuron, synapse_model="None"))``
 
    Return an array of connection identifiers.
 
    Parameters:
 
-   -  ``source`` - list of source GIDs
-   -  ``target`` - list of target GIDs
+   -  ``source`` - list of source node IDs
+   -  ``target`` - list of target node IDs
    -  ``synapse_model`` - string with the synapse model
 
    If GetConnections is called without parameters, all connections in
@@ -406,7 +406,7 @@ Querying Synapses
    with this synapse type are returned. Any combination of source,
    target and synapse\_model parameters is permitted. Each connection id
    is a 5-tuple or, if available, a NumPy array with the following five
-   entries: source-gid, target-gid, target-thread, synapse-id, port
+   entries: source-node_id, target-node_id, target-thread, synapse-id, port
 
    *Note:* Only connections with targets on the MPI process executing
    the command are returned.

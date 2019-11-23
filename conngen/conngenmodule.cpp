@@ -88,8 +88,8 @@ cg sources targets params syn_model ->  -
 
 Parameters:
 cg         connectiongenerator            - ConnectionGenerator
-sources    nodecollection/array/intvector  - the GIDs of the sources
-targets    nodecollection/array/intvector  - the GIDs of the targets
+sources    nodecollection/array/intvector  - the node IDs of the sources
+targets    nodecollection/array/intvector  - the node IDs of the targets
 params     dict (optional)    - A map that translates the names /weight and
                                /delay to indices in the value set
 syn_model  literal (optional) - A literal specifying the synapse model

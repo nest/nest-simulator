@@ -77,7 +77,7 @@ class BasicsTestCase(unittest.TestCase):
 
         self.assertEqual(pos, nodepos_exp)
 
-        # GetPosition on some of the GIDs
+        # GetPosition on some of the node IDs
         nodepos_exp = nest.GetPosition(l[:2])
         self.assertEqual(nodepos_exp, (pos[0], pos[1]))
 
@@ -89,22 +89,22 @@ class BasicsTestCase(unittest.TestCase):
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(shape=lshape))
 
-        # gids -> gids, all displacements must be zero here
+        # node IDs -> node IDs, all displacements must be zero here
         d = nest.Displacement(l, l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(dd == (0., 0.) for dd in d))
 
-        # single gid -> gids
+        # single node ID -> node IDs
         d = nest.Displacement(l[:1], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        # gids -> single gid
+        # node IDs -> single node ID
         d = nest.Displacement(l, l[:1])
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        # Displacement between gid 1 and 6. They are on the same y-axis, and
+        # Displacement between node ID 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the displacement on
         # x-axis should be approximately -dx, while the displacement on the
         # y-axis should be 0.
@@ -113,7 +113,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertAlmostEqual(d[0][0], -dx, 3)
         self.assertEqual(d[0][1], 0.0)
 
-        # Displacement between gid 1 and 2. They are on the same x-axis, and
+        # Displacement between node ID 1 and 2. They are on the same x-axis, and
         # directly next to each other on the y-axis, so the displacement on
         # x-axis should be 0, while the displacement on the y-axis should be
         # approximately dy.
@@ -141,17 +141,17 @@ class BasicsTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             d = nest.Displacement(l[1:3], l[2:7])
 
-        # position -> gids
+        # position -> node IDs
         d = nest.Displacement([(0.0, 0.0)], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        # position -> gids
+        # position -> node IDs
         d = nest.Displacement(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-        # positions -> gids
+        # positions -> node IDs
         d = nest.Displacement([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all(len(dd) == 2 for dd in d))
@@ -164,26 +164,26 @@ class BasicsTestCase(unittest.TestCase):
         l = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(shape=lshape))
 
-        # gids -> gids, all displacements must be zero here
+        # node IDs -> node IDs, all displacements must be zero here
         d = nest.Distance(l, l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([dd == 0. for dd in d]))
 
-        # single gid -> gids
+        # single node ID -> node IDs
         d = nest.Distance(l[:1], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        # gids -> single gid
+        # node IDs -> single node ID
         d = nest.Distance(l, l[:1])
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        # Distance between gid 1 and 6. They are on the same y-axis, and
+        # Distance between node ID 1 and 6. They are on the same y-axis, and
         # directly next to each other on the x-axis, so the distance should be
-        # approximately dx. The same is true for distance between gid 6 and 1.
+        # approximately dx. The same is true for distance between node ID 6 and 1.
         d = nest.Distance(l[:1], l[4:5])
         dx = 1. / lshape[0]
         self.assertAlmostEqual(d[0], dx, 3)
@@ -191,9 +191,9 @@ class BasicsTestCase(unittest.TestCase):
         d = nest.Distance(l[4:5], l[:1])
         self.assertAlmostEqual(d[0], dx, 3)
 
-        # Distance between gid 1 and 2. They are on the same x-axis, and
+        # Distance between node ID 1 and 2. They are on the same x-axis, and
         # directly next to each other on the y-axis, so the distance should be
-        # approximately dy. The same is true for distance between gid 2 and 1.
+        # approximately dy. The same is true for distance between node ID 2 and 1.
         d = nest.Distance(l[:1], l[1:2])
         dy = 1. / lshape[1]
         self.assertAlmostEqual(d[0], dy, 3)
@@ -224,19 +224,19 @@ class BasicsTestCase(unittest.TestCase):
         with self.assertRaises(ValueError):
             d = nest.Distance(l[1:3], l[2:7])
 
-        # position -> gids
+        # position -> node IDs
         d = nest.Distance([[0.0, 0.0], ], l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        # position -> gids
+        # position -> node IDs
         d = nest.Distance(np.array([0.0, 0.0]), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0. for dd in d]))
 
-        # positions -> gids
+        # positions -> node IDs
         d = nest.Distance([np.array([0.0, 0.0])] * len(l), l)
         self.assertEqual(len(d), len(l))
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
@@ -358,7 +358,7 @@ class BasicsTestCase(unittest.TestCase):
                                                     edge_wrap=False))
         nest.Connect(l, l, cdict, sdict)
 
-        # Simple test with one gid in the layer, should be placed in the origin
+        # Simple test with one node ID in the layer, should be placed in the origin
         p = nest.GetTargetPositions(l, l)
         self.assertTrue(p, [[(0.0, 0.0)]])
 
@@ -392,7 +392,7 @@ class BasicsTestCase(unittest.TestCase):
         pos = [(x[i], y[i]) for i in range(len(x))]
 
         for indx in range(len(pos)):
-            # 4 chosen randomly, they should all be the same, as all GIDs in
+            # 4 chosen randomly, they should all be the same, as all node IDs in
             # the layer are connected
             self.assertAlmostEqual(p[4][indx][0], pos[indx][0])
             self.assertAlmostEqual(p[4][indx][1], pos[indx][1])

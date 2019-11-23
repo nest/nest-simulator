@@ -210,7 +210,7 @@ multimeter::handle( DataLoggingReply& reply )
     }
 
     reply.set_stamp( info[ j ].timestamp );
-    // const index sender = reply.get_sender_gid();
+    // const index sender = reply.get_sender_node_id();
     // const Time stamp = reply.get_stamp();
     // const double offset = reply.get_offset();
 

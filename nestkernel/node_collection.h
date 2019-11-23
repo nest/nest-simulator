@@ -66,18 +66,18 @@ public:
   virtual void set_status( const DictionaryDatum&, bool ) = 0;
   virtual void get_status( DictionaryDatum& ) const = 0;
 
-  virtual void set_first_gid( index ) = 0;
-  virtual index get_first_gid() const = 0;
+  virtual void set_first_node_id( index ) = 0;
+  virtual index get_first_node_id() const = 0;
   virtual std::string get_type() const = 0;
 };
 
-class GIDTriple
+class NodeIDTriple
 {
 public:
-  index gid{ 0 };
+  index node_id{ 0 };
   index model_id{ 0 };
   size_t lid{ 0 };
-  GIDTriple() = default;
+  NodeIDTriple() = default;
 };
 
 /**
@@ -139,7 +139,7 @@ public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
   void get_current_part_offset( size_t&, size_t& );
 
-  GIDTriple operator*() const;
+  NodeIDTriple operator*() const;
   bool operator!=( const nc_const_iterator& rhs ) const;
   bool operator<( const nc_const_iterator& rhs ) const;
   bool operator<=( const nc_const_iterator& rhs ) const;
@@ -177,22 +177,22 @@ public:
   virtual ~NodeCollection() = default;
 
   /**
-   * Create a NodeCollection from a vector of GIDs. Results in a primitive if the
-   * GIDs are homogeneous and contiguous, or a composite otherwise.
+   * Create a NodeCollection from a vector of node IDs. Results in a primitive if the
+   * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
-   * @param gids Vector of GIDs from which to create the NodeCollection
+   * @param node_ids Vector of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  static NodeCollectionPTR create( const IntVectorDatum& gids );
+  static NodeCollectionPTR create( const IntVectorDatum& node_ids );
 
   /**
-   * Create a NodeCollection from an array of GIDs. Results in a primitive if the
-   * GIDs are homogeneous and contiguous, or a composite otherwise.
+   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
-   * @param gids Array of GIDs from which to create the NodeCollection
+   * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  static NodeCollectionPTR create( const TokenArray& gids );
+  static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
@@ -209,10 +209,10 @@ public:
   virtual void print_me( std::ostream& ) const = 0;
 
   /**
-   * Get the GID in the specified index in the NodeCollection.
+   * Get the node ID in the specified index in the NodeCollection.
    *
    * @param idx Index in the NodeCollection
-   * @return a GID
+   * @return a node ID
    */
   virtual index operator[]( size_t ) const = 0;
 
@@ -268,26 +268,26 @@ public:
   virtual const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
-   * Method that creates an ArrayDatum filled with GIDs from the NodeCollection.
+   * Method that creates an ArrayDatum filled with node IDs from the NodeCollection.
    *
-   * @return an ArrayDatum containing GIDs
+   * @return an ArrayDatum containing node IDs
    */
   virtual ArrayDatum to_array() const = 0;
 
   /**
    * Get the size of the NodeCollection.
    *
-   * @return number of GIDs in the NodeCollection
+   * @return number of node IDs in the NodeCollection
    */
   virtual size_t size() const = 0;
 
   /**
-   * Check if the NodeCollection contains a specified GID
+   * Check if the NodeCollection contains a specified node ID
    *
-   * @param gid GID to see if exists in the NodeCollection
-   * @return true if the NodeCollection contains the GID, false otherwise
+   * @param node_id node ID to see if exists in the NodeCollection
+   * @return true if the NodeCollection contains the node ID, false otherwise
    */
-  virtual bool contains( index gid ) const = 0;
+  virtual bool contains( index node_id ) const = 0;
 
   /**
    * Slices the NodeCollection to the boundaries, with an optional step
@@ -295,7 +295,7 @@ public:
    *
    * @param start Index of the NodeCollection to start at
    * @param stop Index of the NodeCollection to stop at
-   * @param step Number of places between GIDs to skip. Defaults to 1
+   * @param step Number of places between node IDs to skip. Defaults to 1
    * @return a NodeCollection pointer to the new, sliced NodeCollection.
    */
   virtual NodeCollectionPTR slice( size_t start, size_t stop, size_t step ) const = 0;
@@ -317,9 +317,9 @@ public:
   virtual bool is_range() const = 0;
 
   /**
-   * Returns index of node with given GID in NodeCollection.
+   * Returns index of node with given node ID in NodeCollection.
    *
-   * @return Index of node with given GID; -1 if node not in NodeCollection.
+   * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
   virtual long find( const index ) const = 0;
 
@@ -332,48 +332,48 @@ private:
 /**
  * Subclass for the primitive NodeCollection type.
  *
- * The primitive type contains only homogeneous and contiguous GIDs. It also
- * contains model ID and metadata of the GIDs.
+ * The primitive type contains only homogeneous and contiguous node IDs. It also
+ * contains model ID and metadata of the node IDs.
  */
 class NodeCollectionPrimitive : public NodeCollection
 {
   friend class nc_const_iterator;
 
 private:
-  index first_;                        //!< The first GID in the primitive
-  index last_;                         //!< The last GID in the primitive
-  index model_id_;                     //!< Model ID of the GIDs
-  NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the GIDs
+  index first_;                        //!< The first node ID in the primitive
+  index last_;                         //!< The last node ID in the primitive
+  index model_id_;                     //!< Model ID of the node IDs
+  NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the node IDs
 
 public:
   using const_iterator = nc_const_iterator;
 
   /**
-   * Create a primitive from a range of GIDs, with provided model ID and
+   * Create a primitive from a range of node IDs, with provided model ID and
    * metadata pointer.
    *
-   * @param first The first GID in the primitive
-   * @param last  The last GID in the primitive
-   * @param model_id Model ID of the GIDs
-   * @param meta Metadata pointer of the GIDs
+   * @param first The first node ID in the primitive
+   * @param last  The last node ID in the primitive
+   * @param model_id Model ID of the node IDs
+   * @param meta Metadata pointer of the node IDs
    */
   NodeCollectionPrimitive( index first, index last, index model_id, NodeCollectionMetadataPTR );
 
   /**
-   * Create a primitive from a range of GIDs, with provided model ID.
+   * Create a primitive from a range of node IDs, with provided model ID.
    *
-   * @param first The first GID in the primitive
-   * @param last  The last GID in the primitive
-   * @param model_id Model ID of the GIDs
+   * @param first The first node ID in the primitive
+   * @param last  The last node ID in the primitive
+   * @param model_id Model ID of the node IDs
    */
   NodeCollectionPrimitive( index first, index last, index model_id );
 
   /**
-   * Create a primitive from a range of GIDs. The model ID has to be found by
+   * Create a primitive from a range of node IDs. The model ID has to be found by
    * the constructor.
    *
-   * @param first The first GID in the primitive
-   * @param last  The last GID in the primitive
+   * @param first The first node ID in the primitive
+   * @param last  The last node ID in the primitive
    */
   NodeCollectionPrimitive( index first, index last );
 
@@ -404,13 +404,13 @@ public:
   const_iterator MPI_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
-  //! Returns an ArrayDatum filled with GIDs from the primitive.
+  //! Returns an ArrayDatum filled with node IDs from the primitive.
   ArrayDatum to_array() const override;
 
-  //! Returns total number of GIDs in the primitive.
+  //! Returns total number of node IDs in the primitive.
   size_t size() const override;
 
-  bool contains( index gid ) const override;
+  bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
@@ -422,7 +422,7 @@ public:
   long find( const index ) const override;
 
   /**
-   * Checks if GIDs in another primitive is a continuation of GIDs in this
+   * Checks if node IDs in another primitive is a continuation of node IDs in this
    * primitive.
    *
    * @param other Primitive to check for continuity
@@ -433,7 +433,7 @@ public:
   bool is_contiguous_ascending( NodeCollectionPrimitive& other );
 
   /**
-   * Checks if GIDs of another primitive is overlapping GIDs of this primitive
+   * Checks if node IDs of another primitive is overlapping node IDs of this primitive
    *
    * @param rhs Primitive to be checked.
    * @return True if the other primitive overlaps, false otherwise.
@@ -457,7 +457,7 @@ class NodeCollectionComposite : public NodeCollection
 
 private:
   std::vector< NodeCollectionPrimitive > parts_; //!< Vector of primitives
-  size_t size_;                                  //!< Total number of GIDs
+  size_t size_;                                  //!< Total number of node IDs
   size_t step_;                                  //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
@@ -530,13 +530,13 @@ public:
   const_iterator MPI_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
-  //! Returns an ArrayDatum filled with GIDs from the composite.
+  //! Returns an ArrayDatum filled with node IDs from the composite.
   ArrayDatum to_array() const override;
 
-  //! Returns total number of GIDs in the composite.
+  //! Returns total number of node IDs in the composite.
   size_t size() const override;
 
-  bool contains( index gid ) const override;
+  bool contains( index node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
@@ -558,13 +558,13 @@ inline void NodeCollection::set_metadata( NodeCollectionMetadataPTR )
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
 
-inline GIDTriple nc_const_iterator::operator*() const
+inline NodeIDTriple nc_const_iterator::operator*() const
 {
-  GIDTriple gt;
+  NodeIDTriple gt;
   if ( primitive_collection_ )
   {
-    gt.gid = primitive_collection_->first_ + element_idx_;
-    if ( gt.gid > primitive_collection_->last_ )
+    gt.node_id = primitive_collection_->first_ + element_idx_;
+    if ( gt.node_id > primitive_collection_->last_ )
     {
       throw KernelException( "Invalid NodeCollection iterator (primitive element beyond last element)" );
     }
@@ -602,7 +602,7 @@ inline GIDTriple nc_const_iterator::operator*() const
       gt.lid += part.size();
     }
 
-    gt.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
+    gt.node_id = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
     gt.lid += element_idx_;
   }
@@ -741,9 +741,9 @@ NodeCollectionPrimitive::size() const
 }
 
 inline bool
-NodeCollectionPrimitive::contains( index gid ) const
+NodeCollectionPrimitive::contains( index node_id ) const
 {
-  return first_ <= gid and gid <= last_;
+  return first_ <= node_id and node_id <= last_;
 }
 
 inline void
@@ -782,22 +782,22 @@ inline index NodeCollectionComposite::operator[]( const size_t i ) const
   if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or stop_part_ != parts_.size() or stop_offset_ > 0 )
   {
     // Composite is sliced, we use iterator arithmetic.
-    return ( *( begin() + i ) ).gid;
+    return ( *( begin() + i ) ).node_id;
   }
   else
   {
     // Composite is unsliced, we can do a more efficient search.
-    size_t tot_prev_gids = 0;
+    size_t tot_prev_node_ids = 0;
     for ( const auto& part : parts_ ) // iterate over NodeCollections
     {
-      if ( tot_prev_gids + part.size() > i ) // is i in current NodeCollection?
+      if ( tot_prev_node_ids + part.size() > i ) // is i in current NodeCollection?
       {
-        size_t local_i = i - tot_prev_gids; // get local i
+        size_t local_i = i - tot_prev_node_ids; // get local i
         return part[ local_i ];
       }
       else // i is not in current NodeCollection
       {
-        tot_prev_gids += part.size();
+        tot_prev_node_ids += part.size();
       }
     }
     // throw exception if outside of NodeCollection

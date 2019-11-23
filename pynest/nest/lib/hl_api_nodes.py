@@ -113,23 +113,23 @@ def Create(model, n=1, params=None, positions=None):
     sps(n)
     sr(cmd)
 
-    gids = spp()
+    node_ids = spp()
 
     if params is not None and params_contains_list:
         try:
-            SetStatus(gids, params)
+            SetStatus(node_ids, params)
         except:
             warnings.warn(
                 "SetStatus() call failed, but nodes have already been " +
-                "created! The GIDs of the new nodes are: {0}.".format(gids))
+                "created! The node IDs of the new nodes are: {0}.".format(node_ids))
             raise
 
-    return gids
+    return node_ids
 
 
 @check_stack
 def PrintNodes():
-    """Print the `GID` ranges and model names of all the nodes in the network."""
+    """Print the `node ID` ranges and model names of all the nodes in the network."""
 
     sr("PrintNodesToStream")
     print(spp())
@@ -141,15 +141,15 @@ def GetNodes(properties={}, local_only=False):
     Parameters
     ----------
     properties : dict, optional
-        Only global ids of nodes matching the properties given in the
+        Only node IDs of nodes matching the properties given in the
         dictionary exactly will be returned. Matching properties with float
         values (e.g. the membrane potential) may fail due to tiny numerical
         discrepancies and should be avoided. Note that when a params dict is
         present, thread parallelization is not possible, the function will
         be run thread serial.
     local_only : bool, optional
-        If True, only GIDs of nodes simulated on the local MPI process will
-        be returned. By default, global ids of nodes in the entire simulation
+        If True, only node IDs of nodes simulated on the local MPI process will
+        be returned. By default, node IDs of nodes in the entire simulation
         will be returned. This requires MPI communication and may slow down
         the script.
 

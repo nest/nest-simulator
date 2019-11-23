@@ -281,7 +281,7 @@ GridLayer< D >::insert_global_positions_( Ins iter )
 
   for ( ; ( gi < this->node_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
+    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
   }
 }
 

@@ -330,7 +330,7 @@ functions, see documentation.
     # ! from other models.
     # !
     # ! We configure multimeter to record membrane potential to membrane
-    # ! potential at certain intervals to memory only. We record the GID of
+    # ! potential at certain intervals to memory only. We record the node ID of
     # ! the recorded neurons, but not the time.
     nest.CopyModel('multimeter', 'RecordingNode',
                    params={'interval': Params['sim_interval'],

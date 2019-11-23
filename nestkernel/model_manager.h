@@ -80,7 +80,7 @@ public:
   /**
    *
    */
-  Node* get_proxy_node( thread tid, index gid );
+  Node* get_proxy_node( thread tid, index node_id );
 
   /**
    *

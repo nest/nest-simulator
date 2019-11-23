@@ -72,13 +72,13 @@ started for the first time.
 In case of multiple recordables the data can be read out (PyNEST only) of the
 receiving buffer via the following access pattern:
 
-    buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
+    buffer[ target_node_id_index ][ recordable_index] = buffer[ target_node_id_index *
     record_from.size() + recordable_index ]
 
     For example:
-    target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
+    target_node_ids = [ 2, 5, 4 ], record_from = ["V_m"] and
 
-    we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
+    we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
 Parameters:
 

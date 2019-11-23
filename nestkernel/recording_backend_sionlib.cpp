@@ -74,15 +74,15 @@ void
 nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it == devices_[ t ].end() )
   {
     DeviceEntry entry( device );
     DeviceInfo& info = entry.info;
 
-    info.gid = gid;
+    info.node_id = node_id;
     info.type = static_cast< unsigned int >( device.get_type() );
     info.name = device.get_name();
     info.label = device.get_label();
@@ -91,7 +91,7 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dict
     info.t_start = device.get_start().get_steps();
     info.t_stop = device.get_stop().get_steps();
 
-    devices_[ t ].insert( std::make_pair( gid, entry ) );
+    devices_[ t ].insert( std::make_pair( node_id, entry ) );
 
     ++num_enrolled_devices_;
   }
@@ -101,9 +101,9 @@ void
 nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it != devices_[ t ].end() )
   {
     devices_[ t ].erase( device_it );
@@ -116,9 +116,9 @@ nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& long_value_names )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
+  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it != devices_[ t ].end() )
   {
     DeviceInfo& info = device_it->second.info;
@@ -294,7 +294,7 @@ nest::RecordingBackendSIONlib::close_files_()
       device_map::value_type::iterator it;
       for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
       {
-        const index gid = it->first;
+        const index node_id = it->first;
         sion_uint64 n_rec = 0;
 
         // accumulate number of locally recorded data points over all local
@@ -302,7 +302,7 @@ nest::RecordingBackendSIONlib::close_files_()
         device_map::iterator jj;
         for ( jj = devices_.begin(); jj != devices_.end(); ++jj )
         {
-          n_rec += jj->find( gid )->second.info.n_rec;
+          n_rec += jj->find( node_id )->second.info.n_rec;
         }
 
         // accumulate number of recorded data points over all ranks
@@ -349,7 +349,7 @@ nest::RecordingBackendSIONlib::close_files_()
       const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ t ].size() );
       sion_fwrite( &n_dev, sizeof( sion_uint64 ), 1, file.sid );
 
-      sion_uint64 gid;
+      sion_uint64 node_id;
       sion_uint32 type;
       sion_int64 origin;
       sion_int64 t_start;
@@ -363,10 +363,10 @@ nest::RecordingBackendSIONlib::close_files_()
       {
         DeviceInfo& dev_info = it->second.info;
 
-        gid = static_cast< sion_uint64 >( dev_info.gid );
+        node_id = static_cast< sion_uint64 >( dev_info.node_id );
         type = static_cast< sion_uint32 >( dev_info.type );
 
-        sion_fwrite( &gid, sizeof( sion_uint64 ), 1, file.sid );
+        sion_fwrite( &node_id, sizeof( sion_uint64 ), 1, file.sid );
         sion_fwrite( &type, sizeof( sion_uint32 ), 1, file.sid );
 
         char name[ DEV_NAME_BUFFERSIZE ];
@@ -430,16 +430,16 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
-  const sion_uint64 device_gid = static_cast< sion_uint64 >( device.get_gid() );
+  const sion_uint64 device_node_id = static_cast< sion_uint64 >( device.get_node_id() );
 
-  if ( devices_[ t ].find( device_gid ) == devices_[ t ].end() )
+  if ( devices_[ t ].find( device_node_id ) == devices_[ t ].end() )
   {
     return;
   }
 
   FileEntry& file = files_[ device.get_vp() ];
   SIONBuffer& buffer = file.buffer;
-  DeviceInfo& device_info = devices_[ t ].find( device_gid )->second.info;
+  DeviceInfo& device_info = devices_[ t ].find( device_node_id )->second.info;
 
   assert( device_info.double_value_names.size() == double_values.size() );
   const sion_uint32 double_n_values = static_cast< sion_uint32 >( double_values.size() );
@@ -448,20 +448,20 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
 
   device_info.n_rec++;
 
-  // 2 * GID (device, source) + time in steps + offset (double) + number of
+  // 2 * node ID (device, source) + time in steps + offset (double) + number of
   // double values + number of long values + one double per double value +
   // one int64 per long value
   const unsigned int required_space = 2 * sizeof( sion_uint64 ) + sizeof( sion_int64 ) + sizeof( double )
     + 2 * sizeof( sion_uint32 ) + double_n_values * sizeof( double ) + long_n_values * sizeof( sion_int64 );
 
-  const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
+  const sion_uint64 sender_node_id = static_cast< sion_uint64 >( event.get_sender_node_id() );
   const sion_int64 step = static_cast< sion_int64 >( event.get_stamp().get_steps() );
   const double offset = event.get_offset();
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
-    buffer << device_gid << sender_gid << step << offset << double_n_values << long_n_values;
+    buffer << device_node_id << sender_node_id << step << offset << double_n_values << long_n_values;
     for ( const auto& val : double_values )
     {
       buffer << val;
@@ -481,7 +481,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    buffer << device_gid << sender_gid << step << offset << double_n_values << long_n_values;
+    buffer << device_node_id << sender_node_id << step << offset << double_n_values << long_n_values;
     for ( const auto& val : double_values )
     {
       buffer << val;
@@ -499,8 +499,8 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
       buffer.clear();
     }
 
-    sion_fwrite( &device_gid, sizeof( sion_uint64 ), 1, file.sid );
-    sion_fwrite( &sender_gid, sizeof( sion_uint64 ), 1, file.sid );
+    sion_fwrite( &device_node_id, sizeof( sion_uint64 ), 1, file.sid );
+    sion_fwrite( &sender_node_id, sizeof( sion_uint64 ), 1, file.sid );
     sion_fwrite( &step, sizeof( sion_int64 ), 1, file.sid );
     sion_fwrite( &offset, sizeof( double ), 1, file.sid );
     sion_fwrite( &double_n_values, sizeof( sion_uint32 ), 1, file.sid );

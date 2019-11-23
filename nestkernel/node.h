@@ -86,7 +86,7 @@ class Archiving_Node;
 
    Parameters:
    frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The global id of the node (cf. local_id)
+   global_id  integertype - The node ID of the node (cf. local_id)
    local      booltype    - Whether the node is available on the local process
    model      literaltype - The model type the node was created from
    state      integertype - The state of the node (see the help on elementstates
@@ -188,9 +188,9 @@ public:
    * Each node has a unique network ID which can be used to access
    * the Node comparable to a pointer.
    *
-   * The smallest valid GID is 1.
+   * The smallest valid node ID is 1.
    */
-  index get_gid() const;
+  index get_node_id() const;
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -731,7 +731,7 @@ public:
 
   /** Execute post-initialization actions in node models.
    * This method is called by NodeManager::add_node() on a node once
-   * is fully initialized, i.e. after gid, nc, model_id, thread, vp is
+   * is fully initialized, i.e. after node ID, nc, model_id, thread, vp is
    * set.
    */
   void set_initialized();
@@ -827,7 +827,7 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_gid_( index ); //!< Set global node id
+  void set_node_id_( index ); //!< Set global node id
 
   void set_nc_( NodeCollectionPTR );
 
@@ -884,11 +884,11 @@ protected:
 
 private:
   /**
-   * Global Element ID (GID).
+   * Global Element ID (node ID).
    *
-   * The GID is unique within the network. The smallest valid GID is 1.
+   * The node ID is unique within the network. The smallest valid node ID is 1.
    */
-  index gid_;
+  index node_id_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
@@ -968,9 +968,9 @@ Node::get_element_type() const
 }
 
 inline index
-Node::get_gid() const
+Node::get_node_id() const
 {
-  return gid_;
+  return node_id_;
 }
 
 inline NodeCollectionPTR
@@ -980,9 +980,9 @@ Node::get_nc() const
 }
 
 inline void
-Node::set_gid_( index i )
+Node::set_node_id_( index i )
 {
-  gid_ = i;
+  node_id_ = i;
 }
 
 

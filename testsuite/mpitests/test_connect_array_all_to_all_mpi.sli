@@ -53,7 +53,7 @@ ResetKernel
   /local_num_threads 2
 >> SetKernelStatus
 
-/gid1 N 1 add def            % gid1 = N + 1
+/node_id1 N 1 add def            % node_id1 = N + 1
 
 % create sources and targets
 /sources /iaf_psc_alpha N Create def
@@ -104,7 +104,7 @@ targets % loop on all neurons of target subnet
     Warr1 length N eq         % checks the size of Warr1
 	pass and /pass exch def   % updates control flag
 
-    /i1 neuron2 gid1 sub N mul def  % first index = (n2 - gid1) * N
+    /i1 neuron2 node_id1 sub N mul def  % first index = (n2 - node_id1) * N
     % get row of original weight array
     % and compare it with Warr1
     /Wdiff Warr cva i1 N getinterval Warr1 sub def

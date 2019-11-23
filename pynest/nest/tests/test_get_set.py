@@ -56,7 +56,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         C_m = nodes.get('C_m')
-        gids = nodes.get('global_id')
+        node_ids = nodes.get('global_id')
         E_L = nodes.get('E_L')
         V_m = nodes.get('V_m')
         t_ref = nodes.get('t_ref')
@@ -67,7 +67,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
-        self.assertEqual(gids, tuple(range(1, 11)))
+        self.assertEqual(node_ids, tuple(range(1, 11)))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,

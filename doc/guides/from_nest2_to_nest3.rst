@@ -28,21 +28,21 @@ A NodeCollection is created by
 - creating new nodes
 - combining two or more NodeCollections
 - slicing a NodeCollection
-- providing a list of GIDs, but only GIDs of existing nodes
+- providing a list of node IDs, but only node IDs of existing nodes
 
-The GIDs in a NodeCollection are sorted automatically. All GIDs in a
-NodeCollection are unique, so a GID can occur at most once per
+The node IDs in a NodeCollection are sorted automatically. All node IDs in a
+NodeCollection are unique, so a node ID can occur at most once per
 NodeCollection.
 
 A NodeCollection can be either primitive or composite. A primitive
 NodeCollection is contiguous in that it represents a continuous range of
-GIDs. It is also homogeneous in that all GIDs refer to nodes of the same
+node IDs. It is also homogeneous in that all node IDs refer to nodes of the same
 type, i.e. they have the same model. A composite NodeCollection consists of
 several primitive NodeCollections that either have different models, or
-where the GIDs are not continuous.
+where the node IDs are not continuous.
 
 In basic cases, the addition of NodeCollections requires no changes to the
-scripts. But instead of working with lists of GIDs you are working with
+scripts. But instead of working with lists of node IDs you are working with
 NodeCollections.
 
 
@@ -52,7 +52,7 @@ NodeCollections.
   |                                             |                                              |
   | ::                                          | ::                                           |
   |                                             |                                              |
-  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned     |
+  |     # A list of 10 node IDs is returned         |     # A NodeCollection object is returned     |
   |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
   |                                             |                                              |
   |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as arguments |
@@ -78,14 +78,14 @@ Printing
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
 Getting the size
-    You can easily get the number of GIDs in the NodeCollection with
+    You can easily get the number of node IDs in the NodeCollection with
 
     ::
 
         len(nrns)
 
 Indexing
-    Indexing returns a new NodeCollection with a single GID
+    Indexing returns a new NodeCollection with a single node ID
 
     ::
 
@@ -128,7 +128,7 @@ Joining
 
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
 
-    If the GIDs are not continuous or the models are different, a composite will be created:
+    If the node IDs are not continuous or the models are different, a composite will be created:
 
     ::
 
@@ -147,12 +147,12 @@ Joining
     (see section on Topology) is impossible.
 
 Iteration
-    You can iterate the GIDs in a NodeCollection
+    You can iterate the node IDs in a NodeCollection
 
     ::
 
-        for gid in nrns:
-            print(gid)
+        for node_id in nrns:
+            print(node_id)
 
     prints
 
@@ -170,10 +170,10 @@ Iteration
         10
 
     You can also iterate ``nrns.items()``, which yields tuples containing
-    the GID and the model ID.
+    the node ID and the model ID.
 
 Conversion to and from lists
-    NodeCollections can be converted to lists of GIDs
+    NodeCollections can be converted to lists of node IDs
 
     ::
 
@@ -185,7 +185,7 @@ Conversion to and from lists
 
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a NodeCollection by providing a list of GIDs
+    And you can create a NodeCollection by providing a list of node IDs
 
     ::
 
@@ -200,10 +200,10 @@ Conversion to and from lists
                       model=iaf_psc_alpha, size=1, first=8)
 
     Note however that the nodes have to already have been created. If any
-    of the GIDs refer to nodes that are not created, an error is thrown.
+    of the node IDs refer to nodes that are not created, an error is thrown.
 
 Test of equality
-    You can test if two NodeCollections are equal, i.e. that they contain the same GIDs
+    You can test if two NodeCollections are equal, i.e. that they contain the same node IDs
 
     ::
 
@@ -211,7 +211,7 @@ Test of equality
         nrns_2 == nest.NodeCollection([11, 12, 13])  # True
 
 Test of membership
-    You can test if a NodeCollection contains a certain GID
+    You can test if a NodeCollection contains a certain node ID
 
     ::
 
@@ -243,7 +243,7 @@ Getting node status
 
     ::
 
-        multimeter.get('events', 'senders')  # returns an array of sender GIDs
+        multimeter.get('events', 'senders')  # returns an array of sender node IDs
         multimeter.get('events', ['senders', 'times'])  # returns a dictionary with arrays
 
     It is possible to select an alternative output format with the
@@ -270,13 +270,13 @@ Setting node status
 SynapseCollection
 ~~~~~~~~~~
 
-Just like a NodeCollection is a container for GIDs, a SynapseCollection is a
+Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
 SynapseCollection is returned. SynapseCollections support a lot of the same operations
 as NodeCollections:
 
 Printing
-    Printing a SynapseCollection produces a table of source and target GIDs
+    Printing a SynapseCollection produces a table of source and target node IDs
 
     ::
 
@@ -372,7 +372,7 @@ Setting connection parameters
 
 Getting an iterator over the sources or targets
     Calling ``synapsecollection.source()`` or ``synapsecollection.target()`` returns an
-    iterator over the source GIDs or target GIDs, respectively.
+    iterator over the source node IDs or target node IDs, respectively.
 
 Parameterization
 ~~~~~~~~~~~~~~~~
@@ -597,9 +597,9 @@ Using Parameters makes it easy to set node properties
   |                                               |                                                    |
   | ::                                            | ::                                                 |
   |                                               |                                                    |
-  |     for gid in nrns:                          |     nrns.set('V_m', nest.random.uniform(-20., 20)) |
+  |     for node_id in nrns:                          |     nrns.set('V_m', nest.random.uniform(-20., 20)) |
   |         v_m = numpy.random.uniform(-20., 20.) |                                                    |
-  |         nest.SetStatus([gid], {'V_m': V_m})   |                                                    |
+  |         nest.SetStatus([node_id], {'V_m': V_m})   |                                                    |
   |                                               |                                                    |
   |                                               |                                                    |
   +-----------------------------------------------+----------------------------------------------------+
@@ -623,7 +623,7 @@ Subnets are gone. Instead NodeCollections should be used to organize neurons.
 
 Printing the network as a tree of subnets is no longer possible. The
 ``PrintNetwork()`` function has been replaced with ``PrintNodes()``, which
-prints GID ranges and model names of the nodes in the network.
+prints node ID ranges and model names of the nodes in the network.
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |

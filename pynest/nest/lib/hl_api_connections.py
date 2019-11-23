@@ -55,10 +55,10 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Parameters
     ----------
     source : NodeCollection or list, optional
-        Source GIDs, only connections from these
+        Source node IDs, only connections from these
         pre-synaptic neurons are returned
     target : NodeCollection or list, optional
-        Target GIDs, only connections to these
+        Target node IDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
@@ -68,7 +68,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Returns
     -------
     SynapseCollection:
-        Object representing the source-gid, target-gid, target-thread, synapse-id, port of connections, see
+        Object representing the source-node_id, target-node_id, target-thread, synapse-id, port of connections, see
         :py:class:`SynapseCollection`.
 
     Notes
@@ -335,7 +335,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Notes
     -----
-    It is possible to connect arrays of GIDs with nonunique GIDs by
+    It is possible to connect arrays of node IDs with nonunique node IDs by
     passing the arrays as pre and post, together with a syn_spec dictionary.
     However this should only be done if you know what you're doing. This will
     connect all nodes in pre to all nodes in post and apply the specified
@@ -476,18 +476,18 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     processed_syn_spec = _process_syn_spec(
         syn_spec, processed_conn_spec, len(pre), len(post))
 
-    pre_is_array_of_gids = isinstance(pre, (list, tuple, numpy.ndarray))
-    post_is_array_of_gids = isinstance(post, (list, tuple, numpy.ndarray))
-    # If pre and post are arrays of GIDs and no conn_spec is specified,
-    # the GIDs are connected all_to_all. If the arrays contain unique
-    # GIDs, a warning is issued.
-    if pre_is_array_of_gids and post_is_array_of_gids and conn_spec is None:
+    pre_is_array_of_node_ids = isinstance(pre, (list, tuple, numpy.ndarray))
+    post_is_array_of_node_ids = isinstance(post, (list, tuple, numpy.ndarray))
+    # If pre and post are arrays of node IDs and no conn_spec is specified,
+    # the node IDs are connected all_to_all. If the arrays contain unique
+    # node IDs, a warning is issued.
+    if pre_is_array_of_node_ids and post_is_array_of_node_ids and conn_spec is None:
         if return_synapsecollection:
-            raise ValueError("SynapseCollection cannot be returned when connecting two arrays of GIDs")
+            raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
         if len(numpy.unique(pre)) == len(pre) and len(numpy.unique(post)) == len(post):
-            warnings.warn('Connecting two arrays of GIDs should only be done in cases where one or both the arrays '
-                          'contain non-unique GIDs. Use NodeCollections when connecting two collections of '
-                          'unique GIDs.')
+            warnings.warn('Connecting two arrays of node IDs should only be done in cases where one or both the arrays '
+                          'contain non-unique node IDs. Use NodeCollections when connecting two collections of '
+                          'unique node IDs.')
         # Connect_nonunique doesn't support connecting numpy arrays
         sps(list(pre))
         sps(list(post))
@@ -555,9 +555,9 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     Parameters
     ----------
     pre : NodeCollection
-        GIDs of presynaptic nodes
+        node IDs of presynaptic nodes
     post : NodeCollection
-        GIDs of postsynaptic nodes
+        node IDs of postsynaptic nodes
     cg : connection generator
         libneurosim connection generator to use
     parameter_map : dict, optional

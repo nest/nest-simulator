@@ -158,13 +158,13 @@ NestModule::parameter_factory_( void )
    deviate generator or object
 
    Synopsis:
-   gid   dict SetStatus -> -
+   node_id   dict SetStatus -> -
    conn  dict SetStatus -> -
    rdev  dict SetStatus -> -
    obj   dict SetStatus -> -
 
    Description:
-   SetStatus changes properties of a node (specified by its gid), a connection
+   SetStatus changes properties of a node (specified by its node_id), a connection
    (specified by a connection object), a random deviate generator (see
    GetStatus_v for more) or an object as used in object-oriented programming in
    SLI (see cvo for more). Properties can be inspected with GetStatus.
@@ -228,8 +228,8 @@ NestModule::Cva_CFunction::execute( SLIInterpreter* i ) const
 {
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.top() );
   ArrayDatum ad;
-  ad.push_back( conn.get_source_gid() );
-  ad.push_back( conn.get_target_gid() );
+  ad.push_back( conn.get_source_node_id() );
+  ad.push_back( conn.get_target_node_id() );
   ad.push_back( conn.get_target_thread() );
   ad.push_back( conn.get_synapse_model_id() );
   ad.push_back( conn.get_port() );
@@ -258,8 +258,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+        con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
@@ -276,8 +276,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+        con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
@@ -296,22 +296,22 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
    random deviate generator or object
 
    Synopsis:
-   gid   GetStatus -> dict
+   node_id   GetStatus -> dict
    conn  GetStatus -> dict
    rdev  GetStatus -> dict
    obj   GetStatus -> dict
 
    Description:
    GetStatus returns a dictionary with the status information
-   for a node (specified by its gid), a connection (specified by a connection
+   for a node (specified by its node_id), a connection (specified by a connection
    object), a random deviate generator (see GetStatus_v for more) or an
    object as used in object-oriented programming in SLI (see cvo for more).
 
    The interpreter exchanges data with the network element using
    its status dictionary. To abbreviate the access pattern
-        gid GetStatus /lit get
+        node_id GetStatus /lit get
    a variant of get implicitly calls GetStatus
-        gid /lit get .
+        node_id /lit get .
    In this way network elements and dictionaries can be accessed
    with the same syntax. Sometimes access to nested data structures in
    the status dictionary is required. In this case the advanced addressing
@@ -356,7 +356,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
-    index node_id = ( *it ).gid;
+    index node_id = ( *it ).node_id;
     DictionaryDatum dict = get_node_status( node_id );
     result.push_back( dict );
   }
@@ -386,8 +386,8 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
-    conn.get_target_gid(),
+  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
     conn.get_port() );
@@ -409,8 +409,8 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
-      con_id.get_target_gid(),
+    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+      con_id.get_target_node_id(),
       con_id.get_target_thread(),
       con_id.get_synapse_model_id(),
       con_id.get_port() );
@@ -652,10 +652,10 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    Name: Create - create a number of equal nodes in the current subnet
 
    Synopsis:
-   /model          Create -> gids
-   /model n        Create -> gids
-   /model   params Create -> gids
-   /model n params Create -> gids
+   /model          Create -> node_ids
+   /model n        Create -> node_ids
+   /model   params Create -> node_ids
+   /model n params Create -> node_ids
 
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
@@ -663,7 +663,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    params - parameters for the newly created node(s)
 
    Returns:
-   gids   - NodeCollection representing nodes created
+   node_ids   - NodeCollection representing nodes created
 
    Description:
    Create generates n new network objects of the supplied model
@@ -817,7 +817,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    Synopsis:
    -  PrintNodes -> -
    Description:
-   Print GID ranges and model names of the nodes in the network. Print the
+   Print node ID ranges and model names of the nodes in the network. Print the
    information directly to screen.
 */
 
@@ -1202,9 +1202,9 @@ NestModule::Cvnodecollection_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
+  TokenArray node_ids = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  NodeCollectionDatum nodecollection( NodeCollection::create( gids ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
   i->OStack.pop();
   i->OStack.push( nodecollection );
@@ -1216,8 +1216,8 @@ NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  NodeCollectionDatum nodecollection( NodeCollection::create( gids ) );
+  IntVectorDatum node_ids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
   i->OStack.pop();
   i->OStack.push( nodecollection );
@@ -1229,10 +1229,10 @@ NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum gids = nodecollection->to_array();
+  ArrayDatum node_ids = nodecollection->to_array();
 
   i->OStack.pop();
-  i->OStack.push( gids );
+  i->OStack.push( node_ids );
   i->EStack.pop();
 }
 
@@ -1277,9 +1277,9 @@ NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
-  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+  const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const bool res = nodecollection->contains( gid );
+  const bool res = nodecollection->contains( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1290,9 +1290,9 @@ NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
-  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+  const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = nodecollection->find( gid );
+  const auto res = nodecollection->find( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1338,27 +1338,27 @@ NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::GetGID_qFunction::execute( SLIInterpreter* i ) const
+NestModule::GetNodeID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
-  index gid = ( **it ).gid;
+  index node_id = ( **it ).node_id;
 
   i->OStack.pop();
-  i->OStack.push( gid );
+  i->OStack.push( node_id );
   i->EStack.pop();
 }
 
 void
-NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
+NestModule::GetNodeIDModelID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
   NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum gm_pair;
-  const GIDTriple& gp = **it;
-  gm_pair.push_back( gp.gid );
+  const NodeIDTriple& gp = **it;
+  gm_pair.push_back( gp.node_id );
   gm_pair.push_back( gp.model_id );
 
   i->OStack.pop();
@@ -1425,10 +1425,10 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
     throw RangeCheck();
   }
 
-  const index gid = ( *nodecollection )[ idx ];
+  const index node_id = ( *nodecollection )[ idx ];
 
   i->OStack.pop( 2 );
-  i->OStack.push( gid );
+  i->OStack.push( node_id );
   i->EStack.pop();
 }
 
@@ -2033,8 +2033,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "eq_g", &eq_gfunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
   i->createcommand( ":enditerator_g", &enditerator_gfunction );
-  i->createcommand( ":getgid_q", &getgid_qfunction );
-  i->createcommand( ":getgidmodelid_q", &getgidmodelid_qfunction );
+  i->createcommand( ":getnodeid_q", &getnodeid_qfunction );
+  i->createcommand( ":getnodeidmodelid_q", &getnodeidmodelid_qfunction );
   i->createcommand( ":next_q", &next_qfunction );
   i->createcommand( ":eq_q_q", &eq_q_qfunction );
   i->createcommand( ":lt_q_q", &lt_q_qfunction );

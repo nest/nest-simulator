@@ -54,8 +54,8 @@ skip_if_not_threaded
     /local_num_threads 2
   >> SetKernelStatus
 
-  /net1 /iaf_psc_alpha N Create def % gids of sources
-  /net2 /iaf_psc_alpha N Create def % gids of targets
+  /net1 /iaf_psc_alpha N Create def % node_ids of sources
+  /net2 /iaf_psc_alpha N Create def % node_ids of targets
 
   /NC N K mul def     % number of connections
   /Dmax NC 1 add def  % maximum delay

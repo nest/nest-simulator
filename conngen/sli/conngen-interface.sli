@@ -25,10 +25,10 @@
 
   % We create the type trie for the list variants using a loop
   [/arraytype /intvectortype /nodecollectiontype] {
-    /gidlisttype Set
+    /nodeidlisttype Set
 
     % using empty parameter map and default synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype] {
       % stack: cg src trg
       cvnodecollection  % convert trg to nodecollection
       exch             % stack: cg trg src
@@ -40,7 +40,7 @@
     } bind addtotrie
 
     % using given parameter map and default synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /dictionarytype ] {
       % stack: cg src trg params
       3 2 roll         % stack: cg trg params src
       cvnodecollection  % convert src to nodecollection
@@ -53,7 +53,7 @@
     } bind addtotrie
 
     % using empty parameter map and given synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /literaltype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /literaltype ] {
       % stack: cg src trg synmodel
       3 2 roll         % stack: cg trg synmodel src
       cvnodecollection  % convert src to nodecollection
@@ -67,7 +67,7 @@
     } bind addtotrie
 
     % using given parameter map and synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype /literaltype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /dictionarytype /literaltype ] {
       % stack: cg src trg params synmodel
       4 3 roll         % stack: cg trg params synmodel src
       cvnodecollection  % convert src to nodecollection

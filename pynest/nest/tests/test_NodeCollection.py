@@ -51,22 +51,22 @@ class TestNodeCollection(unittest.TestCase):
     def test_list_to_NodeCollection(self):
         """Conversion from list to NodeCollection"""
 
-        gids_in = [5, 10, 15, 20]
+        node_ids_in = [5, 10, 15, 20]
         with self.assertRaises(nest.kernel.NESTError):
-            nc = nest.NodeCollection(gids_in)
+            nc = nest.NodeCollection(node_ids_in)
 
         n = nest.Create('iaf_psc_alpha', 20)
-        gids_in = [5, 10, 15, 20]
-        nc = nest.NodeCollection(gids_in)
-        for gid, compare in zip(nc, gids_in):
-            self.assertEqual(gid.get('global_id'), compare)
+        node_ids_in = [5, 10, 15, 20]
+        nc = nest.NodeCollection(node_ids_in)
+        for node_id, compare in zip(nc, node_ids_in):
+            self.assertEqual(node_id.get('global_id'), compare)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 10)
 
-        gids_in = [7, 3, 8, 5, 2]
-        nc = nest.NodeCollection(gids_in)
+        node_ids_in = [7, 3, 8, 5, 2]
+        nc = nest.NodeCollection(node_ids_in)
         self.assertEqual(nc.tolist(), [2, 3, 5, 7, 8])
 
     def test_equal(self):
@@ -230,7 +230,7 @@ class TestNodeCollection(unittest.TestCase):
     def test_NodeCollection_membership(self):
         """Membership in NodeCollections"""
         def check_membership(nc, reference, inverse_ref):
-            """Checks that all GIDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
+            """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
                 self.assertTrue(i in nc, 'i={}'.format(i))
             for j in inverse_ref:
@@ -334,7 +334,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(len(c), 4)
 
     def test_composite_NodeCollection(self):
-        """Tests composite NodeCollection with patched GIDs"""
+        """Tests composite NodeCollection with patched node IDs"""
 
         num_a = 10
         num_b = 15
@@ -587,7 +587,7 @@ class TestNodeCollection(unittest.TestCase):
             ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
             self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))
 
-        # Raises when passing source with multiple GIDs
+        # Raises when passing source with multiple node IDs
         with self.assertRaises(ValueError):
             param.apply(n, target)
 

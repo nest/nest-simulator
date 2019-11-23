@@ -10,7 +10,7 @@ Functions that you have to be careful about:
 
 - `nest.GetConnections()` returns a `SynapseCollection` object
 - All topology functions are now part of `nest` and not `nest.topology`
-- `nest.GetPosition` -> no longer take list of GIDs
+- `nest.GetPosition` -> no longer take list of node IDs
 - `nest.FindCenterElement` -> now returns `int` instead of `tuple`
 
 ### Nodes
@@ -18,7 +18,7 @@ Functions that you have to be careful about:
 | NEST 2.x                                                     | NEST 3.0                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `nest.Create(model, n=1, params=None)`<br /><br />returns `list` | `nest.Create(model, n=1, params=None)`<br /><br />returns `nest.NodeCollection` |
-| `nest.GetLid(gid)`<br /><br />returns `list`                 |                                                              |
+| `nest.GetLid(node_id)`<br /><br />returns `list`                 |                                                              |
 
 ### Connection
 
@@ -41,7 +41,7 @@ Functions that you have to be careful about:
 | `nest.GetLeaves(subnet, properties=None, local_only=False)`    | `nest.NodeCollection` will contain all nodes               |
 | `nest.GetNodes(subnets, properties=None, local_only=False)`    | `nest.NodeCollection` will contain all nodes.              |
 | `nest.GetChildren(subnets, properties=None, local_only=False)` | `nest.NodeCollection` will contain all nodes.              |
-| `nest.GetNetwork(gid, depth)`                                  |                                                            |
+| `nest.GetNetwork(node_id, depth)`                                  |                                                            |
 | `nest.BeginSubnet(label=None, params=None)`                    |                                                            |
 | `nest.EndSubnet()`                                             |                                                            |
 | `nest.LayoutNetwork(model, dim, label=None, params=None)`      | Use `nest.Create(model, n=1, params=None, positions=None)` |
@@ -160,7 +160,7 @@ Supports:
 - Indexing
 - Conversion to and from lists
 - Concatenation of two non-overlapping `NodeCollection`s
-- Test whether one `NodeCollection` is equal to another (contains the same GIDs)
+- Test whether one `NodeCollection` is equal to another (contains the same node IDs)
 - Test of membership
 - `len()`
 - `get` parameters
@@ -182,8 +182,8 @@ in_nodes = nest.Create('iaf_psc_exp', 20)
 nodes = ex_nodes + in_nodes
 
 # Inspect collection
-for gid, modelid in nodes.items():
-    print(gid, modelid)
+for node_id, modelid in nodes.items():
+    print(node_id, modelid)
 
 # set randomly distributed membrane potential on the exitatory nodes
 ex_nodes.set({'V_m': nest.random.uniform(65., 85.)})

@@ -1363,7 +1363,7 @@ detailed information about these functions, please see the online Python
 and SLI documentation.
 
 +---------------------------------+---------------------------------------------+
-| ``nest.PrintNodes()``           | Print the GID ranges and model names of the |
+| ``nest.PrintNodes()``           | Print the node ID ranges and model names of the |
 |                                 | nodes in the network.                       |
 +---------------------------------+---------------------------------------------+
 | ``nest.GetConnections()``       | Retrieve connections (all or for a given    |
@@ -1387,7 +1387,7 @@ and SLI documentation.
 | ``nest.FindNearestElement()``   | Return the node(s) closest to the           |
 |                                 | location(s) in the given layer(s).          |
 +---------------------------------+---------------------------------------------+
-| ``nest.FindCenterElement()``    | Return GID(s) of node closest to center of  |
+| ``nest.FindCenterElement()``    | Return node ID(s) of node closest to center of  |
 |                                 | layer(s).                                   |
 +---------------------------------+---------------------------------------------+
 | ``nest.Displacement()``         | Obtain vector of lateral displacement       |
@@ -1406,7 +1406,7 @@ and SLI documentation.
 |                                 | that Topology created the correct           |
 |                                 | connection structure.                       |
 +---------------------------------+---------------------------------------------+
-| ``nest.SelectNodesByMask()``    | Obtain GIDs of nodes/elements inside a      |
+| ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a      |
 |                                 | masked area of a layer.                     |
 |                                 |                                             |
 +---------------------------------+---------------------------------------------+
@@ -1633,7 +1633,7 @@ Module from NEST version 2.12 to 2.14.
    NEST 2.14. To specify the mask, the ``major_axis``, ``minor_axis``
    and (for ellipsoidal masks) ``polar_axis`` must be specified.
 
--  It is now possible to obtain the GIDs inside a masked area with the
+-  It is now possible to obtain the node IDs inside a masked area with the
    function SelectNodesByMask.
 
 Changes from Topology 2.0 to 2.2
@@ -1645,8 +1645,8 @@ Module from NEST version 2.0 to 2.2.
 -  Nested layers are no longer supported.
 
 -  Subnets are no longer used inside composite layers. A call to
-   GetElement for a composite layer will now return a list of GIDs for
-   the nodes at the position rather than a single subnet GID.
+   GetElement for a composite layer will now return a list of node IDs for
+   the nodes at the position rather than a single subnet node ID.
 
 -  Positions in layers may now be 3-dimensional.
 
@@ -1669,8 +1669,8 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
 -  Several other functions changed names, and there are many new
    functions. Please see Ch. \ :ref:`4 <sec:inspection>` for an overview.
 
--  All nest.topology functions now require lists of GIDs as input, not
-   "naked" GIDs
+-  All nest.topology functions now require lists of node IDs as input, not
+   "naked" node IDs
 
 -  There are a number of new functions in nest.topology, I tried to
    write good doc strings for them

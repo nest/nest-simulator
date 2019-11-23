@@ -113,7 +113,7 @@ class NodeCollectionIterator(object):
     Returns
     -------
     `NodeCollection`:
-        Single GID `NodeCollection` of respective iteration.
+        Single node ID `NodeCollection` of respective iteration.
     """
 
     def __init__(self, nc):
@@ -160,8 +160,8 @@ class NodeCollection(object):
             nc = nest.Create('iaf_psc_alpha', 10)
 
             # Convert from list
-            gids_in = [2, 4, 6, 8]
-            new_nc = nest.NodeCollection(gids_in)
+            node_ids_in = [2, 4, 6, 8]
+            new_nc = nest.NodeCollection(node_ids_in)
 
             # Convert to list
             nc_list =  nc.tolist()
@@ -218,8 +218,8 @@ class NodeCollection(object):
         else:
             raise IndexError('only integers and slices are valid indices')
 
-    def __contains__(self, gid):
-        return sli_func('MemberQ', self._datum, gid)
+    def __contains__(self, node_id):
+        return sli_func('MemberQ', self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):
@@ -385,23 +385,23 @@ class NodeCollection(object):
             return []
         return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
 
-    def index(self, gid):
+    def index(self, node_id):
         """
-        Find the index of a GID in the `NodeCollection`.
+        Find the index of a node ID in the `NodeCollection`.
 
         Parameters
         ----------
-        gid : int
+        node_id : int
             Global ID to be found.
 
         Raises
         ------
         ValueError
-            If the GID is not in the `NodeCollection`.
+            If the node ID is not in the `NodeCollection`.
         """
-        index = sli_func('Find', self._datum, gid)
+        index = sli_func('Find', self._datum, node_id)
         if index == -1:
-            raise ValueError('{} is not in NodeCollection'.format(gid))
+            raise ValueError('{} is not in NodeCollection'.format(node_id))
         return index
 
     def __getattr__(self, attr):
@@ -550,14 +550,14 @@ class SynapseCollection(object):
             self.set({attr: value})
 
     def sources(self):
-        """Return iterator containing the source GIDs of the `SynapseCollection`."""
+        """Return iterator containing the source node IDs of the `SynapseCollection`."""
         sources = self.get('source')
         if not isinstance(sources, (list, tuple)):
             sources = (sources,)
         return iter(sources)
 
     def targets(self):
-        """Return iterator containing the target GIDs of the `SynapseCollection`."""
+        """Return iterator containing the target node IDs of the `SynapseCollection`."""
         targets = self.get('target')
         if not isinstance(targets, (list, tuple)):
             targets = (targets,)
@@ -866,7 +866,7 @@ class Parameter(object):
             return sli_func('Apply', self._datum, spatial_nc)
         else:
             if len(spatial_nc) != 1:
-                raise ValueError('The NodeCollection must contain a single GID only')
+                raise ValueError('The NodeCollection must contain a single node ID only')
             if not isinstance(positions, (list, tuple)):
                 raise TypeError('Positions must be a list or tuple of positions')
             for pos in positions:

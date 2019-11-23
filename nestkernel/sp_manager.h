@@ -104,12 +104,12 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param sgid GID of the sending Node.
+   * \param snode_id node ID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
+  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );

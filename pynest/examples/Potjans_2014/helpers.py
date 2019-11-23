@@ -264,7 +264,7 @@ def read_name(path, name):
     -------
     files
         Name of all spike detectors, which are located in the path.
-    gids
+    node_ids
         Lowest and highest ids of the spike detectors.
 
     """
@@ -276,14 +276,14 @@ def read_name(path, name):
             if temp not in files:
                 files.append(temp)
 
-    # Import GIDs
-    gidfile = open(path + 'population_GIDs.dat', 'r')
-    gids = []
-    for l in gidfile:
+    # Import node IDs
+    node_idfile = open(path + 'population_nodeids.dat', 'r')
+    node_ids = []
+    for l in node_idfile:
         a = l.split()
-        gids.append([int(a[0]), int(a[1])])
+        node_ids.append([int(a[0]), int(a[1])])
     files = sorted(files)
-    return files, gids
+    return files, node_ids
 
 
 def load_spike_times(path, name, begin, end):
@@ -307,7 +307,7 @@ def load_spike_times(path, name, begin, end):
         to 'end'.
 
     """
-    files, gids = read_name(path, name)
+    files, node_ids = read_name(path, name)
     data = {}
     for i in list(range(len(files))):
         all_names = os.listdir(path)
@@ -345,15 +345,15 @@ def plot_raster(path, name, begin, end):
     None
 
     """
-    files, gids = read_name(path, name)
+    files, node_ids = read_name(path, name)
     data_all = load_spike_times(path, name, begin, end)
-    highest_gid = gids[-1][-1]
-    gids_numpy = np.asarray(gids)
-    gids_numpy_changed = abs(gids_numpy - highest_gid) + 1
-    L23_label_pos = (gids_numpy_changed[0][0] + gids_numpy_changed[1][1])/2
-    L4_label_pos = (gids_numpy_changed[2][0] + gids_numpy_changed[3][1])/2
-    L5_label_pos = (gids_numpy_changed[4][0] + gids_numpy_changed[5][1])/2
-    L6_label_pos = (gids_numpy_changed[6][0] + gids_numpy_changed[7][1])/2
+    highest_node_id = node_ids[-1][-1]
+    node_ids_numpy = np.asarray(node_ids)
+    node_ids_numpy_changed = abs(node_ids_numpy - highest_node_id) + 1
+    L23_label_pos = (node_ids_numpy_changed[0][0] + node_ids_numpy_changed[1][1])/2
+    L4_label_pos = (node_ids_numpy_changed[2][0] + node_ids_numpy_changed[3][1])/2
+    L5_label_pos = (node_ids_numpy_changed[4][0] + node_ids_numpy_changed[5][1])/2
+    L6_label_pos = (node_ids_numpy_changed[6][0] + node_ids_numpy_changed[7][1])/2
     ylabels = ['L23', 'L4', 'L5', 'L6']
     color_list = [
         '#000000', '#888888', '#000000', '#888888',
@@ -362,7 +362,7 @@ def plot_raster(path, name, begin, end):
     Fig1 = plt.figure(1, figsize=(8, 6))
     for i in list(range(len(files))):
         times = data_all[i][:, 1]
-        neurons = np.abs(data_all[i][:, 0] - highest_gid) + 1
+        neurons = np.abs(data_all[i][:, 0] - highest_node_id) + 1
         plt.plot(times, neurons, '.', color=color_list[i])
     plt.xlabel('time [ms]', fontsize=18)
     plt.xticks(fontsize=18)
@@ -397,7 +397,7 @@ def fire_rate(path, name, begin, end):
     None
 
     """
-    files, gids = read_name(path, name)
+    files, node_ids = read_name(path, name)
     data_all = load_spike_times(path, name, begin, end)
     rates_averaged_all = []
     rates_std_all = []
@@ -405,7 +405,7 @@ def fire_rate(path, name, begin, end):
         n_fil = data_all[h][:, 0]
         n_fil = n_fil.astype(int)
         count_of_n = np.bincount(n_fil)
-        count_of_n_fil = count_of_n[gids[h][0]-1:gids[h][1]]
+        count_of_n_fil = count_of_n[node_ids[h][0]-1:node_ids[h][1]]
         rate_each_n = count_of_n_fil * 1000. / (end - begin)
         rate_averaged = np.mean(rate_each_n)
         rate_std = np.std(rate_each_n)

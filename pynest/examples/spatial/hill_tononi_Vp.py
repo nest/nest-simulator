@@ -333,7 +333,7 @@ nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
 # ! from other models.
 # !
 # ! We configure multimeter to record membrane potential to membrane
-# ! potential at certain intervals to memory only. We record the GID of
+# ! potential at certain intervals to memory only. We record the node ID of
 # ! the recorded neurons, but not the time.
 nest.CopyModel('multimeter', 'RecordingNode',
                params={'interval': Params['sim_interval'],
@@ -799,15 +799,15 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 # ! the connections from the central node of various layers.
 
 # ! Connections from Retina to TpRelay
-retina_ctr_gid = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_gid.get('global_id'))
+retina_ctr_node_id = nest.FindCenterElement(retina)
+retina_ctr_index = retina.index(retina_ctr_node_id.get('global_id'))
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
-TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid.get('global_id'))
+TpRelay_ctr_node_id = nest.FindCenterElement(TpRelay)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_node_id.get('global_id'))
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 

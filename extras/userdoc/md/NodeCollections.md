@@ -15,8 +15,8 @@ The script controls the lifetime of the `NodeCollection`, i.e., a `NodeCollectio
 Consideration is given first and foremost to the Python level, since it is the primary user interface.
 
 ### Terminology
-- A `NodeCollection` is _contiguous_ if it represents a contiguous range of GIDs.
-- A `NodeCollection` is _homogeneous_ if all GIDs in the collection refer to nodes of the same type (same model ID).
+- A `NodeCollection` is _contiguous_ if it represents a contiguous range of node IDs.
+- A `NodeCollection` is _homogeneous_ if all node IDs in the collection refer to nodes of the same type (same model ID).
 - A `NodeCollection` is _primitive_ if it is contiguous and homogeneous.
 - A `NodeCollection` is _composite_ if it is not primitive.
 
@@ -26,10 +26,10 @@ The following assumptions apply to non-explicit `NodeCollection`s:
 1. `NodeCollection` objects are created rarely but looked up frequently
 1. `NodeCollection` objects are immutable
 1. `NodeCollection` objects will first and foremost be created by `Create` calls; each such call will return a primitive collection
-1. A `NodeCollection` holds information about the model ID of each GID in the collection
+1. A `NodeCollection` holds information about the model ID of each node ID in the collection
 1. A `NodeCollection` may hold additional metadata (see section on Topology below for discussion on Metadata)
-1. A GID occurs in a `NodeCollection` at most once
-1. GIDs are ordered in ascending order in a `NodeCollection`
+1. A node ID occurs in a `NodeCollection` at most once
+1. node IDs are ordered in ascending order in a `NodeCollection`
 1. If a composite `NodeCollection` contains at least one primitive `NodeCollection` with metadata, then all primitive `NodeCollection`s in the `NodeCollection` must hold the same metadata. Sameness means in this case that the metadata pointers are identical.
 1. Primitive `NodeCollection`s with metadata are never coalesced into a single primitive `NodeCollection`, even if their ranges are adjacent and they have the same model type.
 
@@ -40,7 +40,7 @@ The following assumptions apply to non-explicit `NodeCollection`s:
 
 `NodeCollection`s support the following operations:
 1. Test of membership
-1. Test whether one `NodeCollection` is equal to another (contains the same GIDs)
+1. Test whether one `NodeCollection` is equal to another (contains the same node IDs)
 1. Concatenation of two non-overlapping `NodeCollection`s
 1. Iteration
 1. Indexing
@@ -91,8 +91,8 @@ nc = nest.NodeCollection([10, 20, 30])
 Ilist = list(nc)  # Convert NodeCollection to a Python list
 
 # Iteration
-for gid in Enrns:
-    print(gid)
+for node_id in Enrns:
+    print(node_id)
 
 print(Inrns[10])  # Indexing, gives a new NodeCollection
 print(Enrns[:20])  # Slicing, gives a new NodeCollection
@@ -110,7 +110,7 @@ For minor changes to the user interface, see [#481](https://github.com/nest/nest
 - Tests can be implemented efficiently by exploiting sortedness.
 - Concatenation permitted if uniqueness is preserved and will preserve sortedness.
 - Iteration, indexing and slicing will be based on sortedness and are thus deterministic and independent of how the `NodeCollection` was constructed.
-- The operations are required to permit existing Python scripts employing operations on lists of GIDs to continue to work (`neurons = Eneurons + Ineurons`, `Connect(E_neurons[:50], spike_det)`)
+- The operations are required to permit existing Python scripts employing operations on lists of node IDs to continue to work (`neurons = Eneurons + Ineurons`, `Connect(E_neurons[:50], spike_det)`)
 
 ## Implementation
 
@@ -123,8 +123,8 @@ For minor changes to the user interface, see [#481](https://github.com/nest/nest
 Non-primitive `NodeCollection`s are represented as lists of pointers to the `NodeCollection`s they are constructed from. Any immediately adjacent `NodeCollection`s of the same node type are combined into a primitive `NodeCollection`.
 
 ### Model ID information
-- Each primitive `NodeCollection` stores the model ID of the GIDs it represents.
-- The main purpose of storing model ID information in `NodeCollection`s is to reduce GID-based lookups for model type, existence of thread-siblings, etc in connection, setting and getting routines.
+- Each primitive `NodeCollection` stores the model ID of the node IDs it represents.
+- The main purpose of storing model ID information in `NodeCollection`s is to reduce node ID-based lookups for model type, existence of thread-siblings, etc in connection, setting and getting routines.
 
 ### Metadata implementation
 

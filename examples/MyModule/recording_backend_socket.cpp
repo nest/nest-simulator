@@ -119,9 +119,9 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
 
 #pragma omp critical
   {
-    index sd_gid = device.get_gid();
-    index node_gid = event.get_sender_gid();
-    std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_gid, node_gid );
+    index sd_node_id = device.get_node_id();
+    index node_node_id = event.get_sender_node_id();
+    std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_node_id, node_node_id );
 
     // We explicitly ignore errors here by not evaluating the return
     // code of the sendto() function.

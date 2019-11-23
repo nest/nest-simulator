@@ -277,7 +277,7 @@ ModelsModule::init( SLIInterpreter* )
 
   Results are returned in the /events entry of the status dictionary,
   which contains membrane potential as vector /V_m and pertaining
-  times as vector /times and node GIDs as /senders.
+  times as vector /times and node node IDs as /senders.
 
   Remarks:
    - The voltmeter model is implemented as a multimeter preconfigured to

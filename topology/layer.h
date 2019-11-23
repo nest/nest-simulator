@@ -130,7 +130,7 @@ public:
   static NodeCollectionPTR create_layer( const DictionaryDatum& );
 
   /**
-   * Return a vector with the GIDs of the nodes inside the mask.
+   * Return a vector with the node IDs of the nodes inside the mask.
    * @param mask            mask to apply.
    * @param anchor          position to center mask in.
    * @param allow_oversized allow mask to be greater than layer
@@ -142,7 +142,7 @@ public:
   /**
    * Write layer data to stream.
    * For each node in layer, write one line to stream containing:
-   * GID x-position y-position [z-position]
+   * node ID x-position y-position [z-position]
    * @param os     output stream
    */
   virtual void dump_nodes( std::ostream& os ) const = 0;
@@ -344,7 +344,7 @@ public:
   get_global_positions_vector( const MaskDatum& mask, const Position< D >& anchor, bool allow_oversized );
 
   /**
-   * Return a vector with the GIDs of the nodes inside the mask.
+   * Return a vector with the node IDs of the nodes inside the mask.
    */
   std::vector< index >
   get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized );
@@ -362,7 +362,7 @@ public:
   /**
    * Write layer data to stream.
    * For each node in layer, write one line to stream containing:
-   * GID x-position y-position [z-position]
+   * node ID x-position y-position [z-position]
    * @param os     output stream
    */
   void dump_nodes( std::ostream& os ) const;
@@ -579,7 +579,7 @@ Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) c
 {
   if ( lid < 0 )
   {
-    throw KernelException( "GID not in NodeCollection." );
+    throw KernelException( "node ID not in NodeCollection." );
   }
   return compute_displacement( from_pos, lid ).length();
 }
@@ -590,7 +590,7 @@ Layer< D >::compute_distance( const std::vector< double >& from_pos, const index
 {
   if ( lid < 0 )
   {
-    throw KernelException( "GID not in NodeCollection." );
+    throw KernelException( "node ID not in NodeCollection." );
   }
   return compute_displacement( Position< D >( from_pos ), lid ).length();
 }

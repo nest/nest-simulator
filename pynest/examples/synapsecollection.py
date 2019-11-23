@@ -33,7 +33,7 @@ import numpy as np
 
 def makeMatrix(sources, targets, weights):
     """
-    Returns a matrix with the weights between the source and target gids.
+    Returns a matrix with the weights between the source and target node_ids.
     """
     aa = np.zeros((max(sources)+1, max(targets)+1))
 

@@ -52,7 +52,7 @@ spikes at the same time signal the 1 state. If a neuron is in the 0 or
 1 state and emits the spiking activity corresponding to the same
 state, the same state is recorded again.  Therefore, it is not only
 the transitions that are recorded. Data is recorded in memory or to
-file as for all RecordingDevices. By default, GID, time, and binary
+file as for all RecordingDevices. By default, node ID, time, and binary
 state (0 or 1) for each decoded state is recorded. The state can be
 accessed from ['events']['weight'].
 
@@ -146,7 +146,7 @@ private:
    */
   void update( Time const&, const long, const long );
 
-  index last_in_gid_;
+  index last_in_node_id_;
   SpikeEvent last_event_;
   Time t_last_in_spike_;
 };

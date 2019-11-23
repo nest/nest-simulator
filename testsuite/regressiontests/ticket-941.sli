@@ -40,110 +40,109 @@ M_ERROR setverbosity
 
 /*
   We connect connect two parrot neurons to each other using
-  different synpase types. We use a different delay for each 
+  different synpase types. We use a different delay for each
   pn1 -> pn2 connection so that we can detect actually
   existing connections by spike delays, thus cross-checking output
   from GetConnection.
-  
+
   To test actually existing connections, we drive the first
   parrot neuron with a spike generator and record from the second.
  */
- 
+
  % Helper function
- % sgid num_expected content_expect -> bool
- % content_expect is [sgid tgid thrd synid] 
+ % snode_id num_expected content_expect -> bool
+ % content_expect is [snode_id tnode_id thrd synid]
  /:check_get_conn
  {
    /expected Set
    /n_expected Set
-   /sgid Set
-   
-   << /source sgid >> GetConnections
+   /snode_id Set
+
+   << /source snode_id >> GetConnections
    dup length n_expected eq
    {
      true exch { cva 4 Take expected eq and } Fold
    }
    {
-     ;   pop dup of GetConnections result 
+     ;   pop dup of GetConnections result
      false
    }
    ifelse
  }
  def
- 
+
  % Set up basic network ----------------------------------------------------
- 
+
  << /resolution 0.1 >> SetKernelStatus
- 
+
  /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
  /pn1 /parrot_neuron Create def
  /pn2 /parrot_neuron Create def
  /sd /spike_detector Create def
- 
+
  sg pn1 << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect
  pn2 sd << /rule /one_to_one >> << /synapse_model /static_synapse >> Connect
- 
+
  % check that we have precisely two connections
- { GetKernelStatus /num_connections get 2 eq } assert_or_die 
- 
+ { GetKernelStatus /num_connections get 2 eq } assert_or_die
+
  % check they are the right connections; do not test port, it may change with implementation
- { 
+ {
    sg  1 [sg 0 get  pn1 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
    pn2 1 [pn2 0 get sd 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
    and
  } assert_or_die
- 
+
  % Add one synapse between pn1 and pn2 --------------------------------------
- 
+
  pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse /delay 1.0 >> Connect
- 
+
  % check that we now have precisely three connections
  { GetKernelStatus /num_connections get 3 eq } assert_or_die
- 
+
  % check that GetConnections reports correct outgoing connection from pn1
- { 
+ {
    pn1 1 [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
  } assert_or_die
- 
+
  % Add another synapse of same type between pn1 and pn2 ---------------------
- 
+
  pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse /delay 2.0 >> Connect
- 
+
  % check that we now have precisely four connections
  { GetKernelStatus /num_connections get 4 eq } assert_or_die
- 
+
  % check that GetConnections reports correct outgoing connection from pn1
- { 
+ {
    pn1 2 [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ] :check_get_conn
  } assert_or_die
- 
+
  % Add synapse with different type  between pn1 and pn2 -----------------------
- 
+
  pn1 pn2 << /rule /one_to_one >> << /synapse_model /static_synapse_hom_w /delay 3.0 >> Connect
- 
+
  % check that we now have precisely five connections
  { GetKernelStatus /num_connections get 5 eq } assert_or_die
- 
+
  % Simulate: we should see three spikes, 1 ms apart
- % We do this before testing GetConnections, since it is only the latter that fails 
+ % We do this before testing GetConnections, since it is only the latter that fails
  {
    10 Simulate
    sd [/events /times] get cva [ 3. 4. 5. ] eq
  } assert_or_die
- 
+
  % check that GetConnections reports correct outgoing connection from sg
  % NB: This test RELIES on the fact that SYNPASES ARE RETURNED IN ORDER OF CREATION
  %     This assumption may fail in future versions of NEST. Then, this test needs
  %     to be generalized to handle arbitrary order
- { 
+ {
    << /source pn1 >> GetConnections { cva 4 Take } Map
    dup ==
-   
+
    [ [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ]
      [pn1 0 get pn2 0 get 0 synapsedict/static_synapse :: ]
      [pn1 0 get pn2 0 get 0 synapsedict/static_synapse_hom_w :: ]
    ] eq
- } assert_or_die  
- 
+ } assert_or_die
+
 endusing
- 

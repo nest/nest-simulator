@@ -138,11 +138,11 @@ class TestRefractoryCase(unittest.TestCase):
         model : str
           Name of the neuronal model.
         sd : tuple
-            GID of the spike detector.
+            node ID of the spike detector.
         vm : tuple
-            GID of the voltmeter.
+            node ID of the voltmeter.
         neuron : tuple
-            GID of the recorded neuron.
+            node ID of the recorded neuron.
 
         Returns
         -------

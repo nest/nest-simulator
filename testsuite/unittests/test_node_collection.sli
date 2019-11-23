@@ -109,10 +109,10 @@ pop  % remove argument to failing command above
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
-  /gids [ 10 ] Range def
-  gids cvnodecollection
+  /node_ids [ 10 ] Range def
+  node_ids cvnodecollection
   cva
-  gids eq
+  node_ids eq
   end
 } assert_or_die
 
@@ -124,10 +124,10 @@ pop  % remove argument to failing command above
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
-  /gids [ 10 ] Range def
-  gids cv_iv cvnodecollection
+  /node_ids [ 10 ] Range def
+  node_ids cv_iv cvnodecollection
   cva
-  gids eq
+  node_ids eq
   end
 } assert_or_die
 
@@ -250,7 +250,7 @@ pop pop
 
 {
   << >> begin
-  (Check create with multiple equal GIDs) M_PROGRESS message
+  (Check create with multiple equal node IDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
@@ -266,7 +266,7 @@ pop pop
 
 {
   << >> begin
-  (Check join primitives with overlapping GIDs) M_PROGRESS message
+  (Check join primitives with overlapping node IDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
@@ -284,7 +284,7 @@ pop pop
 
 {
   << >> begin
-  (Check join composites with overlapping GIDs) M_PROGRESS message
+  (Check join composites with overlapping node IDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
@@ -303,7 +303,7 @@ pop pop
 
 {
   << >> begin
-  (Check join primitive with composite with overlapping GIDs) M_PROGRESS message
+  (Check join primitive with composite with overlapping node IDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
@@ -318,7 +318,7 @@ pop pop
 
 {
   << >> begin
-  (Check join composite with primitive with overlapping GIDs) M_PROGRESS message
+  (Check join composite with primitive with overlapping node IDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create

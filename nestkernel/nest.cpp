@@ -129,15 +129,15 @@ void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
-  const index source_gid = getValue< long >( conn_dict, nest::names::source );
-  const index target_gid = getValue< long >( conn_dict, nest::names::target );
+  const index source_node_id = getValue< long >( conn_dict, nest::names::source );
+  const index target_node_id = getValue< long >( conn_dict, nest::names::target );
   const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
   const port p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
-  kernel().connection_manager.set_synapse_status( source_gid, target_gid, tid, syn_id, p, dict );
+  kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -149,8 +149,8 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
-    conn.get_target_gid(),
+  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
     conn.get_port() );
@@ -408,7 +408,7 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
   librandom::RngPtr rng = get_global_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
-    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).gid );
+    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );
     result.push_back( param->value( rng, node ) );
   }
   return result;

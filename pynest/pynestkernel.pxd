@@ -86,8 +86,8 @@ cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
         ConnectionDatum(const ConnectionDatum&) except +
-        long get_source_gid()
-        long get_target_gid()
+        long get_source_node_id()
+        long get_target_node_id()
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()

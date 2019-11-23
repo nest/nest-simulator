@@ -192,7 +192,7 @@ class Network:
         # Create cortical populations.
         self.pops = []
         pop_file = open(
-            os.path.join(self.data_path, 'population_GIDs.dat'), 'w+'
+            os.path.join(self.data_path, 'population_nodeids.dat'), 'w+'
             )
         for i, pop in enumerate(self.net_dict['populations']):
             population = nest.Create(

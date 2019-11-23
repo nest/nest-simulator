@@ -84,14 +84,14 @@ public:
   Node* get_node();
 
   /**
-   * get gid of volume transmitter
+   * get node ID of volume transmitter
    */
-  long get_vt_gid() const;
+  long get_vt_node_id() const;
 
   /**
-   * get gid of weight_recorder
+   * get node ID of weight_recorder
    */
-  index get_wr_gid() const;
+  index get_wr_node_id() const;
 
   /**
    * get weight_recorder
@@ -101,19 +101,19 @@ public:
 
 private:
   NodeCollectionDatum weight_recorder_;
-  long wr_gid_;
+  long wr_node_id_;
 };
 
 inline long
-CommonSynapseProperties::get_vt_gid() const
+CommonSynapseProperties::get_vt_node_id() const
 {
   return -1;
 }
 
 inline index
-CommonSynapseProperties::get_wr_gid() const
+CommonSynapseProperties::get_wr_node_id() const
 {
-  return wr_gid_;
+  return wr_node_id_;
 }
 
 inline NodeCollectionDatum

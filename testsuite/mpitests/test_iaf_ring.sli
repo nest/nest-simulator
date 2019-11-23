@@ -30,14 +30,14 @@ Synopsis: nest_indirect test_iaf_ring  --> success
 Description:
 
  test_iaf_ring checks if spikes can travel along a chain of neurons
- and whether the result is independent of the number of machines 
+ and whether the result is independent of the number of machines
  involved in the computation.
 
  The unittest function distributed_assert_or_die can only handle the
  output of a single machine. Therefore the script collects the spikes
- of all neurons using a parrot neuron. The script does not check the 
- id of the sender, only the spike timing. A more strict test could be 
- carried out with a unittest function which merges the output of all 
+ of all neurons using a parrot neuron. The script does not check the
+ id of the sender, only the spike timing. A more strict test could be
+ carried out with a unittest function which merges the output of all
  machines.
 
  The correct sequence of spikes including their ids is documented at
@@ -89,20 +89,20 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
   simtime Simulate
 
   pn /local get
-  { 
+  {
     sd [/events/times] get cva
-  } if                                          
+  } if
 
 } distributed_invariant_assert_or_die
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Expected output of this script. 
-% An intermediate parrot neuron introduces an offset of 10 in the 
+% Expected output of this script.
+% An intermediate parrot neuron introduces an offset of 10 in the
 % spike times corresponding to the default delay of 1ms.
-%  
-% gid     spiketime
+%
+% node_id     spiketime
 % 1       30
 % 1       80
 % 2       111

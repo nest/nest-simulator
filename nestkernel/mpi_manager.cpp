@@ -139,13 +139,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Aint start_address, address;
   OffGridSpike ogs( 0, 0.0 );
 
-  // OffGridSpike.gid
+  // OffGridSpike.node_id
   offsets[ 0 ] = 0;
   source_types[ 0 ] = MPI_DOUBLE;
   blockcounts[ 0 ] = 1;
 
   // OffGridSpike.offset
-  MPI_Get_address( &( ogs.gid_ ), &start_address );
+  MPI_Get_address( &( ogs.node_id_ ), &start_address );
   MPI_Get_address( &( ogs.offset_ ), &address );
   offsets[ 1 ] = address - start_address;
   source_types[ 1 ] = MPI_DOUBLE;
@@ -511,10 +511,10 @@ nest::MPIManager::communicate_Allgather( std::vector< OffGridSpike >& send_buffe
   {
     unsigned int block_disp = pid * send_buffer_size_;
     displacements[ pid ] = disp;
-    if ( ( recv_buffer[ block_disp ] ).get_gid() == COMM_OVERFLOW_ERROR )
+    if ( ( recv_buffer[ block_disp ] ).get_node_id() == COMM_OVERFLOW_ERROR )
     {
       overflow = true;
-      recv_counts[ pid ] = ( recv_buffer[ block_disp + 1 ] ).get_gid();
+      recv_counts[ pid ] = ( recv_buffer[ block_disp + 1 ] ).get_node_id();
       if ( static_cast< unsigned int >( recv_counts[ pid ] ) > max_recv_count )
       {
         max_recv_count = recv_counts[ pid ];

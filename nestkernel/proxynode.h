@@ -60,7 +60,7 @@ public:
 
   /**
    * Construct proxy node for internal use from
-   * @param GID of represented node
+   * @param node_id of represented node
    * @param model id of represented node
    * @param vp of represented node
    */

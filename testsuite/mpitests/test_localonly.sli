@@ -27,7 +27,7 @@ only local elements.
 Synopsis: nest_indirect test_localonly.sli -> -
 
 Description:
-Test that LocalOnly returns a NodeCollection with only GIDs of nodes in the
+Test that LocalOnly returns a NodeCollection with only node IDs of nodes in the
 current MPI process.
 */
 
@@ -39,7 +39,7 @@ current MPI process.
   ResetKernel
 
   /iaf_psc_alpha 4 Create LocalOnly cva
-  % Check if all returned GIDs are local nodes.
+  % Check if all returned node IDs are local nodes.
   dup true exch {GetStatus /local get and} Fold
   2 arraystore
 }

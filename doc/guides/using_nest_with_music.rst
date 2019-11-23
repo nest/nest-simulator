@@ -69,8 +69,7 @@ continuing.
 
    import nest
 
-   nest.ll_api.sli_run("statusdict/have_music ::")
-   if not nest.ll_api.spp():
+   if not nest.ll_api.sli_func("statusdict/have_music ::"):
        import sys
 
        print("NEST was not compiled with support for MUSIC, not running.")
@@ -124,8 +123,7 @@ script, but without the spike generator.
 
   import nest
 
-  nest.ll_api.sli_run("statusdict/have_music ::")
-  if not nest.ll_api.spp():
+  if not nest.ll_api.sli_func("statusdict/have_music ::"):
       import sys
 
       print("NEST was not compiled with support for MUSIC, not running.")
@@ -155,35 +153,6 @@ first NEST process and show the same membrane potential trace.
 
 ::
 
-                  -- N E S T --
-	  Copyright (C) 2004 The NEST Initiative
-
-	 Version: nest-2.18.0
-	 Built: Oct 16 2019 06:14:48
-
-	 This program is provided AS IS and comes with
-	 NO WARRANTY. See the file LICENSE for details.
-
-	 Problems or suggestions?
-	   Visit https://www.nest-simulator.org
-
-	 Type 'nest.help()' to find out more about NEST.
-
-
-				  -- N E S T --
-	  Copyright (C) 2004 The NEST Initiative
-
-	 Version: nest-2.18.0
-	 Built: Oct 16 2019 06:14:48
-
-	 This program is provided AS IS and comes with
-	 NO WARRANTY. See the file LICENSE for details.
-
-	 Problems or suggestions?
-	   Visit https://www.nest-simulator.org
-
-	 Type 'nest.help()' to find out more about NEST.
-
 	2	1	-70
 	2	2	-70
 	2	3	-68.1559
@@ -193,6 +162,7 @@ first NEST process and show the same membrane potential trace.
 	2	7	-70
 	2	8	-65.2054
 	2	9	-62.1583
+
 	2	1	-70
 	2	2	-70
 	2	3	-68.1559
@@ -273,54 +243,52 @@ which yields the following output:
 
 ::
 
-				  -- N E S T --
-	  Copyright (C) 2004 The NEST Initiative
-
-	 Version: nest-2.18.0
-	 Built: Oct 16 2019 06:14:48
-
-	 This program is provided AS IS and comes with
-	 NO WARRANTY. See the file LICENSE for details.
-
-	 Problems or suggestions?
-	   Visit https://www.nest-simulator.org
-
-	 Type 'nest.help()' to find out more about NEST.
-
-
-	Oct 30 08:45:31 music_message_in_proxy::calibrate() [Info]:
+	Nov 23 11:18:23 music_message_in_proxy::calibrate() [Info]:
 		Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
 		ms.
 
-	Oct 30 08:45:31 NodeManager::prepare_nodes [Info]:
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
 		Preparing 1 node for simulation.
 
-	Oct 30 08:45:31 MUSICManager::enter_runtime [Info]:
+	Nov 23 11:18:23 MUSICManager::enter_runtime [Info]:
 		Entering MUSIC runtime with tick = 0.1 ms
 
-	Oct 30 08:45:31 SimulationManager::start_updating_ [Info]:
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
 		Number of local nodes: 1
 		Simulation time (ms): 10
 		Number of OpenMP threads: 1
 		Number of MPI processes: 1
 
-	Oct 30 08:45:31 SimulationManager::run [Info]:
+	Nov 23 11:18:23 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([], dtype=float64), 'messages': ()},)
+
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
+
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
+
+	Nov 23 11:18:23 SimulationManager::run [Info]:
 		Simulation finished.
 	({'messages_times': array([], dtype=float64), 'messages': ()},)
 
 	.
 	.
 
-	Oct 30 08:45:31 NodeManager::prepare_nodes [Info]:
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
 		Preparing 1 node for simulation.
 
-	Oct 30 08:45:31 SimulationManager::start_updating_ [Info]:
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
 		Number of local nodes: 1
 		Simulation time (ms): 10
 		Number of OpenMP threads: 1
 		Number of MPI processes: 1
 
-	Oct 30 08:45:31 SimulationManager::run [Info]:
+	Nov 23 11:18:23 SimulationManager::run [Info]:
 		Simulation finished.
 	({'messages_times': array([ 300.,  700.]), 'messages': ('Hello', '!')},)
 
@@ -380,52 +348,38 @@ which yields the following output:
 
 ::
 
-				  -- N E S T --
-	  Copyright (C) 2004 The NEST Initiative
-
-	 Version: nest-2.18.0
-	 Built: Oct 16 2019 06:14:48
-
-	 This program is provided AS IS and comes with
-	 NO WARRANTY. See the file LICENSE for details.
-
-	 Problems or suggestions?
-	   Visit https://www.nest-simulator.org
-
-	 Type 'nest.help()' to find out more about NEST.
-
-
-	Oct 30 08:58:16 music_cont_in_proxy::calibrate() [Info]:
+	Nov 23 11:33:26 music_cont_in_proxy::calibrate() [Info]:
 		Mapping MUSIC input port 'contdata' with width=10.
 
-	Oct 30 08:58:16 NodeManager::prepare_nodes [Info]:
+	Nov 23 11:33:26 NodeManager::prepare_nodes [Info]:
 		Preparing 1 node for simulation.
 
-	Oct 30 08:58:16 MUSICManager::enter_runtime [Info]:
+	Nov 23 11:33:26 MUSICManager::enter_runtime [Info]:
 		Entering MUSIC runtime with tick = 0.1 ms
 
-	Oct 30 08:58:17 SimulationManager::start_updating_ [Info]:
+	Nov 23 11:33:28 SimulationManager::start_updating_ [Info]:
 		Number of local nodes: 1
 		Simulation time (ms): 10
 		Number of OpenMP threads: 1
 		Number of MPI processes: 1
 
-	Oct 30 08:58:17 SimulationManager::run [Info]:
+	Nov 23 11:33:28 SimulationManager::run [Info]:
 		Simulation finished.
 	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)
 
 	.
 	.
 
-	Oct 30 08:58:17 NodeManager::prepare_nodes [Info]:
+	Nov 23 11:33:28 NodeManager::prepare_nodes [Info]:
 		Preparing 1 node for simulation.
 
-	Oct 30 08:58:17 SimulationManager::start_updating_ [Info]:
+	Nov 23 11:33:28 SimulationManager::start_updating_ [Info]:
 		Number of local nodes: 1
 		Simulation time (ms): 10
 		Number of OpenMP threads: 1
 		Number of MPI processes: 1
 
-	Oct 30 08:58:17 SimulationManager::run [Info]:
+	Nov 23 11:33:28 SimulationManager::run [Info]:
 		Simulation finished.
 	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)
+

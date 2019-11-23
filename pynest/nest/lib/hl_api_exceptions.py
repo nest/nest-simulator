@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from six import with_metaclass  # For Python 2 compatibility
+
 
 class NESTMappedException(type):
     """Metaclass for exception namespace that dynamically creates exception classes.
@@ -67,8 +69,7 @@ class NESTMappedException(type):
         return newclass
 
 
-class NESTErrors:
-    __metaclass__ = NESTMappedException
+class NESTErrors(with_metaclass(NESTMappedException)):
     """Namespace for NEST exceptions, including dynamically created classes from SLI.
 
     Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException.
@@ -94,7 +95,7 @@ class NESTErrors:
         """Base class for all exceptions coming from sli.
         """
 
-        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
+        def __init__(self, commandname, errormessage, errorname='SLIException', *args, **kwargs):
             """Initialize function.
 
             Parameters:
@@ -134,7 +135,7 @@ class NESTErrors:
           internally (used as a closure on the constructed __init__).
         """
 
-        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
+        def __init__(self, commandname, errormessage, errorname=errorname, *args, **kwargs):
             # recursively init the parent class: all of this is only needed to properly set errorname
             parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
 

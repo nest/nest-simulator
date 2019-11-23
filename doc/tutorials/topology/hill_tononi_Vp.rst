@@ -453,8 +453,8 @@ functions, see documentation.
     # ! and implement synaptic plasticity. The latter two aspects are not
     # ! relevant here.
     # !
-    # ! We just use NEST's ``static_synapse`` connector but copy it to
-    # ! synapse models ``AMPA`` and ``GABA_A`` for the sake of
+    # ! We just use NEST's :cpp:class:`static_synapse <nest::static_connection>` connector but copy it to
+    # ! synapse models `AMPA` and `GABA_A` for the sake of
     # ! explicitness. Weights and delays are set as needed in section
     # ! `Connections`_ below, as they are different from projection to
     # ! projection. De facto, the sign of the synaptic weight decides
@@ -474,7 +474,7 @@ functions, see documentation.
     # ! stead of a Gaussian distribution for the weights.
     # !
     # ! The model has two identical primary visual cortex populations,
-    # ! ``Vp_v`` and ``Vp_h``, tuned to vertical and horizonal gratings,
+    # ! `Vp_v` and `Vp_h`, tuned to vertical and horizonal gratings,
     # ! respectively. The *only* difference in the connection patterns
     # ! between the two populations is the thalamocortical input to layers
     # ! L4 and L5-6 is from a population of 8x2 and 2x8 grid locations,
@@ -612,7 +612,7 @@ functions, see documentation.
 
     # ! In this case, there is only a single connection, so we write the
     # ! dictionary itself; it is very similar to the corThalBase, and to
-    # ! show that, we copy first, then update. We need no ``targets`` entry,
+    # ! show that, we copy first, then update. We need no `targets` entry,
     # ! since Rp has only one neuron per location.
     corRet = corThalBase.copy()
     corRet.update({"sources": {"model": "L56pyr"}, "weights": 2.5})
@@ -802,7 +802,7 @@ functions, see documentation.
     # ! This recording device setup is a bit makeshift. For each population
     # ! we want to record from, we create one :cpp:class:`multimeter <nest::multimeter>`, then select
     # ! all nodes of the right model from the target population and
-    # ! connect. ``loc`` is the subplot location for the layer.
+    # ! connect. `loc` is the subplot location for the layer.
     print("Connecting: Recording devices")
     recorders = {}
     for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
@@ -820,7 +820,7 @@ functions, see documentation.
     # ! ====================
 
     # ! This simulation is set up to create a step-wise visualization of
-    # ! the membrane potential. To do so, we simulate ``sim_interval``
+    # ! the membrane potential. To do so, we simulate `sim_interval`
     # ! milliseconds at a time, then read out data from the multimeters,
     # ! clear data from the multimeters and plot the data as pseudocolor
     # ! plots.
@@ -867,7 +867,7 @@ functions, see documentation.
             pylab.title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['time'])
 
         pylab.draw()  # force drawing inside loop
-        pylab.show()  # required by ``pyreport``
+        pylab.show()  # required by `pyreport`
 
     # ! just for some information at the end
     print(nest.GetKernelStatus())

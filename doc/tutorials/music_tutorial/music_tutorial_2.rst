@@ -114,15 +114,15 @@ Finally we simulate for one second.
       from.p_out -> to.p_in [2]
 
 The MUSIC configuration file structure is straightforward. We define one
-process ``from`` and one ``to``. For each
+process `from` and one `to`. For each
 process we set the name of the binary we wish to run and the number of
 MPI processes it should use. On line 9 we finally define a connection
-from output port ``p_out`` in process
-``from`` to input port ``p_in`` in process
-``to``, with two channels.
+from output port `p_out` in process
+`from` to input port `p_in` in process
+`to`, with two channels.
 
 If our programs had taken command line options we could have added them
-with the ``args`` command:
+with the `args` command:
 
 
 
@@ -138,8 +138,8 @@ Run the simulation on the command line like this:
       mpirun -np 4 music python.music
 
 You should get a screenful of information scrolling past, and then be
-left with four new data files, named something like ``send-N-0.spikes``,
-``send-N-1.spikes``, ``receive-M-0.spikes`` and ``receive-M-1.spikes``. The names
+left with four new data files, named something like `send-N-0.spikes`,
+`send-N-1.spikes`, `receive-M-0.spikes` and `receive-M-1.spikes`. The names
 and suffixes are of course the same that we set in ``send.py`` and
 ``receive.py`` above. The first numeral is the node ID of the spike detector
 that recorded and saved the data, and the final numeral is the rank order of

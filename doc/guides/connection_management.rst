@@ -29,10 +29,10 @@ manners:
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` are lists of Global Ids defining the nodes of
+`pre` and `post` are lists of Global Ids defining the nodes of
 origin and termination.
 
-``conn_spec`` can either be a string containing the name of the
+`conn_spec` can either be a string containing the name of the
 connectivity rule (default: 'all\_to\_all') or a dictionary specifying
 the rule and the rule-specific parameters (e.g. 'indegree'), which must
 be given.
@@ -47,7 +47,7 @@ applies to nodes being specified multiple times in the source or target
 vector. Here 'multapses' set to False will result in one potential
 connection between each occurring node pair.
 
-``syn_spec`` defines the synapse type and its properties. It can be
+`syn_spec` defines the synapse type and its properties. It can be
 given as a string defining the synapse model (default:
 'static\_synapse') or as a dictionary. By using the key-word variant
 (``Connect(pre, post, syn_spec=syn_spec_dict)``), the conn\_spec can be
@@ -58,7 +58,7 @@ default. The exact usage of the synapse dictionary is described in
 Connection Rules
 ----------------
 
-Connection rules are specified using the ``conn_spec`` parameter, which
+Connection rules are specified using the `conn_spec` parameter, which
 can be a string naming a connection rule or a dictionary containing a
 rule specification. Only connection rules requiring no parameters can be
 given as strings, for all other rules, a dictionary specifying the rule
@@ -71,7 +71,7 @@ one-to-one
      :width: 200px
      :align: center
 
-The ith node in ``pre`` is connected to the ith node in ``post``. The
+The ith node in `pre` is connected to the ith node in `post`. The
 node lists pre and post have to be of the same length.
 
 Example:
@@ -105,7 +105,7 @@ all-to-all
      :width: 200px
      :align: center
 
-Each node in ``pre`` is connected to every node in ``post``. Since
+Each node in `pre` is connected to every node in `post`. Since
 'all\_to\_all' is the default, 'rule' doesn't need to specified.
 
 Example:
@@ -124,8 +124,8 @@ fixed-indegree
      :width: 200px
      :align: center
 
-The nodes in ``pre`` are randomly connected with the nodes in ``post``
-such that each node in ``post`` has a fixed ``indegree``.
+The nodes in `pre` are randomly connected with the nodes in `post`
+such that each node in `post` has a fixed `indegree`.
 
 Example:
 
@@ -145,8 +145,8 @@ fixed-outdegree
      :width: 200px
      :align: center
 
-The nodes in ``pre`` are randomly connected with the nodes in ``post``
-such that each node in ``pre`` has a fixed ``outdegree``.
+The nodes in `pre` are randomly connected with the nodes in `post`
+such that each node in `pre` has a fixed `outdegree`.
 
 Example:
 
@@ -161,8 +161,8 @@ Example:
 fixed-total-number
 ^^^^^^^^^^^^^^^^^^
 
-The nodes in ``pre`` are randomly connected with the nodes in ``post``
-such that the total number of connections equals ``N``.
+The nodes in `pre` are randomly connected with the nodes in `post`
+such that the total number of connections equals `N`.
 
 Example:
 
@@ -177,8 +177,8 @@ Example:
 pairwise-bernoulli
 ^^^^^^^^^^^^^^^^^^
 
-For each possible pair of nodes from ``pre`` and ``post``, a connection
-is created with probability ``p``.
+For each possible pair of nodes from `pre` and `post`, a connection
+is created with probability `p`.
 
 Example:
 
@@ -300,7 +300,7 @@ Example:
 specifying the 'distribution' and the distribution-specific parameters,
 whose specification is optional.
 
-Available distributions are given in the ``rdevdict``, the most common ones
+Available distributions are given in the `rdevdict`, the most common ones
 are:
 
 Distributions Keys 'normal' 'mu', 'sigma' 'normal\_clipped' 'mu',
@@ -365,8 +365,8 @@ and whose the support will end with the next release.
 This section contains the documentation for the old connection routines
 and provides a manual on how to convert the old connection routines to
 the new :py:func:`.Connect` function. The new connection routine doesn't yet
-support arrays or lists as input parameter other than ``pre`` and
-``post``. As a workaround we suggest to loop over the arrays.
+support arrays or lists as input parameter other than `pre` and
+`post`. As a workaround we suggest to loop over the arrays.
 
 One-to-one connections
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -390,8 +390,8 @@ Example old connection routine:
     delay = [0.3, 0.5]
     Connect(A, B, weight, delay)
 
-**Note:** Using :py:func:`.Connect` with any of the variables ``params``,
-``delay`` and ``model`` will break the code. As a temporary fix the
+**Note:** Using :py:func:`.Connect` with any of the variables `params`,
+`delay` and `model` will break the code. As a temporary fix the
 function ``OnToOneConnect()`` is provided which works in the same manner
 as the previous :py:func:`.Connect`. However, ``OneToOneConnect()`` won't be
 supported in the next release.
@@ -581,7 +581,7 @@ Synapse Types
 
 NEST supports multiple synapse types that are specified during
 connection setup. The default synapse type in NEST is
-``static_synapse``. Its weight does not change over time. To allow
+:cpp:class:`static_synapse <nest::static_connection>`. Its weight does not change over time. To allow
 learning and plasticity, it is possible to use other synapse types that
 implement long-term or short-term plasticity. A list of available types
 is accessible via the command *Models("synapses")*. The output of this

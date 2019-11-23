@@ -107,10 +107,10 @@ are composed according to the following scheme
 The first part is the name of the `model` (e.g. ``voltmeter`` or
 :cpp:class:`spike_detector <nest::spike_detector>`) or, if set, the `label` of the recording device. Next is
 the global id (GID) of the recording device, followed by the id of the VP
-assigned to the recorder. Spike files have the file extension ``gdf`` and
-analog recordings from the :cpp:class:`multimeter <nest::multimeter>` have ``dat`` as file extension.
+assigned to the recorder. Spike files have the file extension `gdf` and
+analog recordings from the :cpp:class:`multimeter <nest::multimeter>` have `dat` as file extension.
 
-The ``label`` and ``file_extension`` of a recording device can be set like any
+The `label` and `file_extension` of a recording device can be set like any
 other parameter of a node using :py:func:`.SetStatus`.
 
 
@@ -136,8 +136,8 @@ Spikes between neurons and devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Spike exchange to or from neurons over connections that either originate
-  or terminate at a device (e.g., ``spike_generator -> neuron`` or
-  ``neuron -> spike_detector``) bypasses the global spike exchange mechanism.
+  or terminate at a device (e.g., `spike_generator -> neuron` or
+  `neuron -> spike_detector`) bypasses the global spike exchange mechanism.
 
 * Spikes are delivered locally within the virtual process from or to a
   replica of the device. In this case, both the pre- and postsynaptic nodes are
@@ -175,7 +175,7 @@ on your machine.
 
 .. note::
 
- In some situations, `oversubscribing` (i.e., to specify a ``local_num_threads`` that is higher than available cores on your machine)
+ In some situations, `oversubscribing` (i.e., to specify a `local_num_threads` that is higher than available cores on your machine)
  can yield 20-30% improvement in simulation speed. Finding the optimal thread number for a
  specific situation might require a bit of experimenting.
 
@@ -227,7 +227,7 @@ command should look like this
     mpirun -np 128 python simulation.py
 
 Please refer to the MPI library documentation for details on the usage
-of ``mpirun``.
+of `mpirun`.
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~
@@ -244,7 +244,7 @@ commands are available:
  :py:func:`.NumProcesses`
      The number of MPI processes in the simulation
 
- ``ProcessorName``
+ `ProcessorName`
      The name of the machine. The result might differ on each process.
 
  :py:func:`.Rank`

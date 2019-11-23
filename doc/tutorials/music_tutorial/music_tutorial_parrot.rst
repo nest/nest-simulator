@@ -31,8 +31,8 @@ the receiving side. To test this, replace line 21 in
     nest.Connect(music_in, sdetector)
 
 Run this simulation and you will notice that the
-``receive-N-0.spikes`` and
-:math:``receive-N-1.spikes`` are now identical and about twice as
+`receive-N-0.spikes` and
+:math:`receive-N-1.spikes` are now identical and about twice as
 big as before. Collate the input files and compare again:
 
 .. code-block::

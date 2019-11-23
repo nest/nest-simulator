@@ -69,7 +69,7 @@ kinds of events, such as voltages and currents, are also available for
 recording devices. Synapses are not independent nodes, but are part of
 the connection. Synapse models will typically modify the weight or
 timing of the spike sent on to the neuron. All connections have a
-synapse, by default the ``static_synapse``.
+synapse, by default the :cpp:class:`static_synapse <nest::static_connection>`.
 
 .. _neuronpic:
 

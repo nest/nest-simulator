@@ -393,8 +393,8 @@ current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
 weights can be defined in a dictionary, which is passed to the
 :py:func:`.Connect` function using the keyword `syn_spec` (synapse
 specifications). In general all parameters determining the synapse can
-be specified in the synapse dictionary, such as ``"weight"``,
-``"delay"``, the synaptic model (``"model"``) and parameters specific to
+be specified in the synapse dictionary, such as `weight`,
+`delay`, the synaptic model (`model`) and parameters specific to
 the synaptic model.
 
 ::

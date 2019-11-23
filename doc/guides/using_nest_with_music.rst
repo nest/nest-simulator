@@ -52,13 +52,13 @@ spikes using a :cpp:class:`music_event_in_proxy <nest::music_event_in_proxy>`.
 
     from.spikes_out -> to.spikes_in [1]
 
-This configuration file sets up two applications, ``from`` and ``to``,
+This configuration file sets up two applications, `from` and `to`,
 which are both instances of NEST. The first runs a script to send
-spike events on the MUSIC port ``spikes_out`` to the second, which
-receives the events on the port ``spikes_in``. The width of the port is
+spike events on the MUSIC port `spikes_out` to the second, which
+receives the events on the port `spikes_in`. The width of the port is
 1.
 
-The content of ``minimalmusicsetup_sendnest.py`` is contained in the
+The content of `minimalmusicsetup_sendnest.py` is contained in the
 following listing.
 
 
@@ -102,7 +102,7 @@ connect it with the neuron.
    nest.Connect(vm, n)
 
 Finally, we  create a :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>`, which forwards the spikes it
-receives directly to the MUSIC event output port ``spikes_out``. The spike
+receives directly to the MUSIC event output port `spikes_out`. The spike
 generator is connected to the :cpp:class:`music_event_out_proxy <nest::music_event_out_proxy>` on channel 0 and the
 network is simulated for 10 milliseconds.
 
@@ -181,7 +181,7 @@ Receiving string messages
 -------------------------
 
 Currently, NEST is only able to receive messages, and unable to send string
-messages. We thus use MUSIC's ``messagesource`` program for the
+messages. We thus use MUSIC's `messagesource` program for the
 generation of messages in the following example. The configuration file
 (``msgtest.music``) is shown below
 
@@ -197,8 +197,8 @@ generation of messages in the following example. The configuration file
 
     from.out -> to.msgdata [0]
 
-This configuration file connects MUSIC's ``messagesource`` program to
-the port ``msgdata`` of a NEST instance. The ``messagesource`` program
+This configuration file connects MUSIC's `messagesource` program to
+the port `msgdata` of a NEST instance. The `messagesource` program
 needs a data file, which contains the messages and the corresponding
 time stamps. For this example, we use the data file, ``messages0.dat``:
 
@@ -216,7 +216,7 @@ The script that sets up the receiving side (``msgtest.py``)
 of the example is shown in the following script.
 
 We first import NEST and create an instance of the :cpp:class:`music_message_in_proxy <nest::music_message_in_proxy>`.
-We then set the name of the port it listens on to ``msgdata``. The network is
+We then set the name of the port it listens on to `msgdata`. The network is
 simulated  in steps of 10 ms.
 
 ::
@@ -302,7 +302,7 @@ Receiving continuous data
 As in the case of string message, NEST currently only supports receiving
 continuous data, but not sending. This means that we have to use another
 of MUSIC's test programs to generate the data for us. This time, we use
-``constsource``, which generates a sequence of numbers form 0 to w,
+`constsource`, which generates a sequence of numbers form 0 to w,
 where w is the width of the port. The MUSIC configuration file
 (``conttest.music``) is shown in the following listing:
 
@@ -336,7 +336,7 @@ The receiving side is again implemented using a
 :doc:`PyNEST <../tutorials/index>` script (``conttest.py``).
 We first import the NEST and create an instance of the
 :cpp:class:`music_cont_in_proxy <nest::music_cont_in_proxy>`. we set the name of the port
-it listens on to ``msgdata``. We then simulate the network in
+it listens on to `msgdata`. We then simulate the network in
 steps of 10 ms.
 
 ::

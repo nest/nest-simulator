@@ -82,20 +82,20 @@ as the current time is smaller than the simulation time.
             f.write("{0}\t{1:8.4f}\n".format(ev[1], ev[0]))
 
 Here is the structure for the receiving process, modelled on the C++
-code. We use a Python ``Queue``  class to implement
+code. We use a Python `Queue`  class to implement
 our event queue.
 
 The input handler function has signature
 ``(float time, int indextype, int channel_id)``. The
-:term:`time` and ``channel_id`` are the event
-times and IDs as before. The ``indextype`` is the type of
+:term:`time` and `channel_id` are the event
+times and IDs as before. The `indextype` is the type of
 the map index for this input and is ``music.Index.LOCAL``
 or ``music.Index.GLOBAL``.
 
 The ``map()`` function keyword for accepatable latency is
-``accLatency``, and the ``maxBuffered``
+`accLatency`, and the `maxBuffered`
 keyword we mentioned in the previous section is, unsurprisingly,
-``maxBuffered``. The runtime is, again, the same as for
+`maxBuffered`. The runtime is, again, the same as for
 C++.
 
 As the ``pymusic`` bindings are still quite new the

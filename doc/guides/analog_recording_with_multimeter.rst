@@ -31,7 +31,7 @@ old-style voltmeter, but with a few changes:
    **before** the multimeter is connected to any node, and cannot be
    changed afterwards.
 
--  After one has simulated a little, the ``events`` entry of the
+-  After one has simulated a little, the `events` entry of the
    multimeter status dictionary will contain one numpy array of data for
    each recordable.
 

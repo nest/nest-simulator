@@ -4,7 +4,7 @@ Practical Tips
 Start MUSIC using mpirun
 --------------------------
 
-    There is an alternative way to start a MUSIC simulation without the ``music``
+    There is an alternative way to start a MUSIC simulation without the `music`
     binary. The logic for parsing the configuration file is built into
     the library itself. So we can start each binary explicitly using
     mpirun. We give the config file name and the corresponding app label
@@ -24,7 +24,7 @@ Start MUSIC using mpirun
 
     This looks long and cumbersome, of course, but it can be useful.
     Since it’s parsed by the shell you are not limited to what the
-    ``music`` launcher can parse, but the binary can be
+    `music` launcher can parse, but the binary can be
     anything the shell can handle, including an explicit interpreter
     invocation or a shell script.
 
@@ -91,10 +91,10 @@ Build Autotool-enable project
           make
 
     Why do that? Because all files you generate when building the
-    project ends up under the ``build`` subdirectory,
+    project ends up under the `build` subdirectory,
     keeping the source directories completely clean and untouched. You
-    can have multiple builds ``debug``,
-    ``noMPI`` and so on with different build options
+    can have multiple builds `debug`,
+    `noMPI` and so on with different build options
     enabled, and you can completely clean out a build simply by deleting
     the directory.
 

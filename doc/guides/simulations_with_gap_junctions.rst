@@ -18,8 +18,8 @@ synapses gap junctions are bidirectional connections. In order to create
 required: For each created connection a second connection with the exact
 same parameters in the opposite direction is required. NEST provides the
 possibility to create both connections with a single call to
-``nest.Connect`` via the ``make_symmetric`` flag (default value:
-``False``) of the connection dictionary:
+:py:func:`.Connect` via the `make_symmetric` flag (default value:
+`False`) of the connection dictionary:
 
 .. code:: python
 
@@ -28,24 +28,24 @@ possibility to create both connections with a single call to
     a = nest.Create('hh_psc_alpha_gap')
     b = nest.Create('hh_psc_alpha_gap')
     # Create gap junction between neurons a and b
-    nest.Connect(a, b, {'rule': 'one_to_one', 'make_symmetric': True}, 
+    nest.Connect(a, b, {'rule': 'one_to_one', 'make_symmetric': True},
                        {'model': 'gap_junction', 'weight': 0.5})
 
 In this case the reverse connection is created internally. In order to
 prevent the creation of incomplete or non-symmetrical gap junctions the
 creation of gap junctions is restricted to
 
--  ``one_to_one`` connections with ``'make_symmetric': True``
--  ``all_to_all`` connections with equal source and target populations
+-  `one_to_one` connections with `make_symmetric: True`
+-  `all_to_all` connections with equal source and target populations
    and default or scalar parameters
 
 Create random connections
 -------------------------
 
-NEST random connection rules like ``fixed_total_number``,
-``fixed_indegree`` etc. cannot be employed for the creation of gap
+NEST random connection rules like `fixed_total_number`,
+`fixed_indegree` etc. cannot be employed for the creation of gap
 junctions. Therefore random connections have to be created on the Python
-level with e.g. the ``random`` module of the Python Standard Library:
+level with e.g. the `random` module of the Python Standard Library:
 
 .. code:: python
 
@@ -86,7 +86,7 @@ the Python level is the serialization of the connection procedure in
 terms of computation time and memory in distributed simulations. Each
 compute node participating in the simulation needs to draw the identical
 full set of random numbers and temporarily represent the total
-connectivity in variable ``m``. Therefore it is advisable to use the
+connectivity in variable `m`. Therefore it is advisable to use the
 internal random connection rules of NEST for the creation of connections
 whenever possible. For more details see `Hahne et al.
 2016 <http://link.springer.com/chapter/10.1007/978-3-319-50862-7_4>`__.

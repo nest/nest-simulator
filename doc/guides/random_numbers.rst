@@ -35,7 +35,7 @@ Random Numbers vs Random Deviates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 NEST distinguishes between random number generators, provided by
-``rngdict`` and random deviate generators provided by ``rdevdict``.
+`rngdict` and random deviate generators provided by `rdevdict`.
 Random *number* generators only provide double-valued numbers uniformly
 distributed on [0, 1] and uniformly distributed integers in {0, 1, ...,
 N}. Random *deviate* generators, on the other hand, provide random
@@ -59,8 +59,8 @@ changes to make to achieve greater similarity between NEST, PyNN, and
 NumPy. For most users, these changes only add new features. Only
 existing scripts using
 
--  ``uniformint``
--  ``normal_clipped``, ``normal_clipped_left``, ``normal_clipped_right``
+-  `uniformint`
+-  `normal_clipped`, `normal_clipped_left`, `normal_clipped_right`
 
 generators from NEST 2.2 need to be adapted as detailed below.
 
@@ -68,21 +68,21 @@ The changes are as follows:
 
 -  Uniform integer generator
 
-   -  renamed from ``uniformint`` to ``uniform_int``
-   -  parameters renamed to ``low`` and ``high``
+   -  renamed from `uniformint` to `uniform_int`
+   -  parameters renamed to `low` and `high`
    -  returns uniformly distributed integers from
       ``{low, low+1, …, high}``
 
 -  Uniform continuous generator
 
-   -  new generator ``uniform``
-   -  parameters ``low`` and ``high``
+   -  new generator `uniform`
+   -  parameters `low` and `high`
    -  generates numbers uniformly distributed in ``[low, high)``
 
 -  Full parameter sets for generators
 
    -  In the past, many random deviate generators returned values for
-      fixed parameters, e.g., the ``normal`` generator could only return
+      fixed parameters, e.g., the `normal` generator could only return
       zero-mean, unit-variance normal random numbers.
 
    -  Now, all parameters for each generator can be set, in particular:
@@ -97,9 +97,9 @@ The changes are as follows:
 
 -  Clipped normal generators
 
-   -  parameter names changed to ``mu`` and ``sigma``
+   -  parameter names changed to `mu`` and `sigma`
 
-   -  clipping limits now called ``low`` and ``high``
+   -  clipping limits now called `low` and `high`
 
    -  ``_left`` and ``_right`` variants removed: for one-sided clipping,
       just set the boundary you want to clip at, the other is positive
@@ -107,11 +107,11 @@ The changes are as follows:
 
 -  Clipped variants for most generators
 
-   -  For most random deviate generators, ``_clipped`` variants exist
+   -  For most random deviate generators, `_clipped` variants exist
       now.
 
-   -  For all clipped variants, one can set a lower limit (``low``,
-      default: -infinity) and an upper limit (``high``: +infinty).
+   -  For all clipped variants, one can set a lower limit (`low`,
+      default: -infinity) and an upper limit (`high`: +infinty).
 
    -  Clipped variants will then return numbers strictly in
       ``(low, high)`` for continuous distributions (e.g. normal,
@@ -130,9 +130,9 @@ The changes are as follows:
    -  To facilitate reproduction of certain publications, NEST also
       provides ``_clipped_to_boundary`` variants of most generators.
 
-   -  Clipped-to-boundary variants return the value ``low`` if a number
-      smaller than ``low`` is drawn, and ``high`` if a number larger
-      than ``high`` is drawn.
+   -  Clipped-to-boundary variants return the value `low` if a number
+      smaller than `low` is drawn, and `high` if a number larger
+      than `high` is drawn.
 
    -  We believe that these variants should *not* be used for new
       studies.
@@ -259,8 +259,8 @@ Seeding the Random Generators
 
 Each of the \\(N\_{vp}\\) random generators needs to be seeded with a
 different seed to generate a different random number sequences. We
-recommend that you choose a *master seed* ``msd`` and seed the
-\\(2N\_{vp}+1\\) generators with seeds ``msd``, ``msd+1``, ...,
+recommend that you choose a *master seed* `msd` and seed the
+\\(2N\_{vp}+1\\) generators with seeds `msd`, `msd+1`, ...,
 ``msd+2*N_vp``. Master seeds for for independent experiments must differ
 by at least \\(2N\_{vp}+1\\) . Otherwise, the same sequence(s) would
 enter in several experiments.
@@ -278,7 +278,7 @@ Python side using
     N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
     pyrngs = [numpy.random.RandomState(s) for s in range(msd, msd+N_vp)]
 
-``msd`` is the master seed, choose your own!
+`msd` is the master seed, choose your own!
 
 Seeding the global RNG
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -335,8 +335,8 @@ global RNG with MT19937 seeded with 101:
 
 The following happens here:
 
--  ``rngdict/MT19937 ::`` fetches a "factory" for MT19937 from the
-   ``rngdict``
+-  `rngdict/MT19937 ::` fetches a "factory" for MT19937 from the
+   `rngdict`
 
 -  ``101 CreateRNG`` uses the factory to create a single MT19937
    generator with seed 101
@@ -402,7 +402,7 @@ The first line generates \\([N\_{vp}\\) properly seeded NumPy RNGs as
 discussed above. The next line creates 10 nodes, while the third line
 extracts status information about each node. For local nodes, this will
 be full information, for non-local nodes we only get the following
-fields: ``local``, ``model`` and ``type``. On the fourth line, we create
+fields: `local`, `model` and `type`. On the fourth line, we create
 a list of tuples, containing global ID and virtual process number for
 all local neurons. The for loop then sets the membrane potential of each
 local neuron drawn from a uniform distribution on \\([-70, -50]\\) using
@@ -430,13 +430,13 @@ target, we create an array of \\(C\_E\\) randomly chosen weights,
 uniform on \\([0.5, 1.5\\. We then call ``RandomConvergentConnect()``
 with this weight list as argument. Note a few details:
 
--  We need to put ``tgt_gid`` into brackets as PyNEST functions always
+-  We need to put `tgt_gid` into brackets as PyNEST functions always
    expect lists of GIDs.
 
--  We need to convert the NumPy array ``weights`` to a plain Python
+-  We need to convert the NumPy array `weights` to a plain Python
    list, as most PyNEST functions currently cannot handle array input.
 
--  If we specify ``weight``, we must also provide ``delay``.
+-  If we specify `weight`, we must also provide `delay`.
 
 You can check the weights selected by
 
@@ -474,7 +474,7 @@ above.
         nest.SetStatus(conns, rweights)
 
 In this code, we first create all connections with weight 0. We then
-create ``gid_vp_map``, mapping GIDs to VP number for all local nodes.
+create `gid_vp_map`, mapping GIDs to VP number for all local nodes.
 For each node considered as source, we then find all outgoing excitatory
 connections from that node and then obtain a flat list of the targets of
 these connections. For each target we then choose a random weight as
@@ -510,7 +510,7 @@ processes in separate directories
      cd ..
 
 These directories should now have identical content, something you can
-check with ``diff``:
+check with `diff`:
 
 ::
 

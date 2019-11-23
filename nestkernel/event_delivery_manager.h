@@ -81,7 +81,7 @@ public:
   /**
    * Send a secondary event remote.
    */
-  void send_secondary( const Node& source, SecondaryEvent& e );
+  void send_secondary( Node& source, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of node source on thread t
@@ -349,6 +349,7 @@ private:
    */
   template < class EventT >
   void send_local_( Node& source, EventT& e, const long lag );
+  void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 

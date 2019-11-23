@@ -32,7 +32,7 @@ stages:
    - Staticcheck
    - MPI-Threading-Python
    - Python-Full-build
-   - GCC8Clang7
+   - Clang7
    - OsX
 
 # list of build stages to run. Stages with the same name get run in parallel.
@@ -63,16 +63,13 @@ jobs:
     - stage: Python-Full-build
       python: 2.7.13
       env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: GCC8Clang7
-      language: cpp
-      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8" xRUN_BUILD_AND_TESTSUITE=1
-    - stage: GCC8Clang7
+    - stage: Clang7
       language: cpp
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
     - stage: OsX
       os: osx
-      osx_image: xcode10.2
-      language: generic
+      osx_image: xcode10.3 # Python 3.7.5 running on macOS 10.14.4
+      language: shell # language 'python' result in errors on macOS
       env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
     
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
@@ -116,6 +113,25 @@ cache:
 
 before_install:
    - export SOURCEDIR=$PWD
+   # select the right C++ compiler version (gcc8) -- note that update-alternatives is not available on MacOS
+   - |
+     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+       ls -lh /usr/bin/g++*
+       ls -lh /usr/bin/gcc*
+       ls -lh /usr/bin/c++*
+       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20
+       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 10
+       sudo update-alternatives --auto g++
+       sudo update-alternatives --list g++
+       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20
+       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
+       sudo update-alternatives --auto gcc
+       sudo update-alternatives --list gcc
+       sudo update-alternatives --list c++
+       sudo update-alternatives --auto c++
+       g++ --version
+       /usr/bin/c++ --version
+     fi
    - |
      if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -127,10 +143,29 @@ before_install:
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools
-         if [ $TRAVIS_BUILD_STAGE_NAME = "Gcc8clang7" ]; then pyenv global 3.6.7; fi
-         if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
-         pip install -U pip
-         pip install -U setuptools
+         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then 
+           pyenv install --list
+           pyenv global 3.6.7
+         fi
+         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+           brew --version
+           brew update
+           brew info python
+           export PATH="/usr/local/opt/python/libexec/bin:$PATH"  # To use homebrew's Python
+           brew tap brewsci/science
+           brew tap brewsci/bio
+           brew install coreutils gsl open-mpi automake autoconf libtool
+           brew unlink gcc
+           brew install gcc@8
+           brew link gcc@8
+           brew list
+           brew leaves
+           brew cask list
+         fi
+         if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+           pip install --upgrade pip setuptools
+         fi
+         
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create

@@ -34,14 +34,14 @@
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
-  const index s_gid,
+  const index source_gid,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& p,
   const double d,
   const double w )
 {
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   assert( lid < target_to_devices_[ tid ].size() );
   assert( syn_id < target_to_devices_[ tid ][ lid ].size() );
 
@@ -74,11 +74,11 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 
 inline void
 nest::TargetTableDevices::send_to_device( const thread tid,
-  const index s_gid,
+  const index source_gid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
 {
-  const index lid = kernel().vp_manager.gid_to_lid( s_gid );
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
   for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
         it != target_to_devices_[ tid ][ lid ].end();
         ++it )
@@ -86,6 +86,23 @@ nest::TargetTableDevices::send_to_device( const thread tid,
     if ( *it != NULL )
     {
       ( *it )->send_to_all( tid, cm, e );
+    }
+  }
+}
+
+inline void
+nest::TargetTableDevices::send_to_device( const thread tid,
+  const index source_gid,
+  SecondaryEvent& e,
+  const std::vector< ConnectorModel* >& cm )
+{
+  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
+  const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+  for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end(); ++cit )
+  {
+    if ( target_to_devices_[ tid ][ lid ][ *cit ] != NULL )
+    {
+      target_to_devices_[ tid ][ lid ][ *cit ]->send_to_all( tid, cm, e );
     }
   }
 }

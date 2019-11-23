@@ -4,14 +4,14 @@ NEST Installation Instructions
 Standard Installation Instructions
 ------------------------------------
 
-**These installation instructions should work for most of our users, who do not need
-custom configurations for their systems. If you want to compile NEST from source, see
-section** :ref:`advanced_install`.
+**These installation instructions should work for most users, who do
+not need custom configurations for their systems. If you want to
+compile NEST from source, see section** :ref:`advanced_install`.
 
 .. tabs::
 
 
-   .. tab:: Ubuntu PPA
+   .. tab:: Debian/Ubuntu PPA
 
        Install NEST via the PPA repository.
 
@@ -28,46 +28,117 @@ section** :ref:`advanced_install`.
 
            sudo apt-get install nest
 
+   .. tab:: NeuroFedora
+
+       The NeuroFedora team has generously provided the latest
+       versions of NEST on their platform. As that is available in the
+       standard Fedora platform repositories, it can simply be
+       installed using ``dnf``:
+
+       .. code-block:: bash
+
+           sudo dnf install python3-nest
+
+       Find out more on the NeuroFedora site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.       
+
+
+   .. tab:: Conda (Linux/macOS)
+
+       1. Create your conda environment and install NEST. We recommend
+          that you **create a dedicated environment for NEST**, which
+          should ensure there are no conflicts with previously
+          installed packages.
+
+          .. pull-quote::
+        
+	     We strongly recommend that you **install all programs**
+             you'll need, (such as ``ipython`` or ``jupyter-lab``) in
+             the environment (ENVNAME) **at the same time**, by
+             **appending them to the command below**.
+
+             Installing packages later may override previously
+             installed dependencies and potentially break packages!
+             See `managing environments in the Conda documentation
+             <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_
+             for more information.
+
+          Without OpenMPI:
+
+          .. code-block:: sh
+
+             conda create --name ENVNAME -c conda-forge nest-simulator
+
+          With OpenMPI:
+
+          .. code-block:: sh
+
+             conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
+
+          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
+
+       2. Activate your environment:
+
+          .. code-block:: sh
+
+             conda activate ENVNAME
+
+	     
+In addition to native installations from ready-made packages, we
+provide containerized versions of NEST in several formats:
+
+.. tabs::
+	  
    .. tab:: Docker (Linux/macOS)
 
+       Docker provides an isolated container to run applications. The
+       NEST Docker container includes a complete install of NEST and
+       is set up so you can create, modify, and run Juptyer Notebooks
+       and save them on your host machine.  (See the Note below for
+       alternative ways to use the Docker container.)
 
-       Docker provides an isolated container to run applications. The NEST Docker container includes a complete install
-       of NEST and is set up so you can create, modify, and run Juptyer Notebooks and save them on your host machine.
-       (See the Note below for alternative ways to use the Docker container.)
+       1. If you do not have Docker installed, follow the Docker
+          installation instructions for your system here:
+          https://docs.docker.com/install/.
 
-       1. If you do not have Docker installed, follow the Docker installation instructions for your system
-          here: https://docs.docker.com/install/.
+          If you are using **Linux**, we **strongly recommend** you
+          also create a Docker group to manage Docker as a non-root
+          user. See instructions on the Docker website:
+          https://docs.docker.com/install/linux/linux-postinstall/
 
-          If you are using **Linux**, we **strongly recommend** you also create a Docker group to manage
-          Docker as a non-root user. See instructions on the Docker website: https://docs.docker.com/install/linux/linux-postinstall/
 
-
-       2. Create a directory or change into a directory that you want to use for your Jupyter Notebooks.
+       2. Create a directory or change into a directory that you want
+          to use for your Jupyter Notebooks.
 
        .. code-block:: bash
 
            mkdir my_nest_scripts
            cd my_nest_scripts
 
-       3. Run the Docker container. Replace the ``<version>`` with one of the latest NEST versions (e.g., ``2.18.0``) or use ``latest`` for the
-          most recent build from the source code.
+       3. Run the Docker container. Replace the ``<version>`` with one
+          of the latest NEST versions (e.g., ``2.18.0``) or use
+          ``latest`` for the most recent build from the source code.
 
        .. code-block:: bash
 
            docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
 
 
-       4. Once completed, a link to a Jupyter Notebook will be generated, as shown below. You can then copy and paste the link into your browser.
+       4. Once completed, a link to a Jupyter Notebook will be
+          generated, as shown below. You can then copy and paste the
+          link into your browser.
 
            .. image:: ../../_static/img/docker_link.png
               :align: center
               :width: 1000px
 
 
-       5. You can now use the Jupyter Notebook as you normally would. Anything saved in the Notebook will be placed in the directory you started the Notebook from.
+       5. You can now use the Jupyter Notebook as you normally
+          would. Anything saved in the Notebook will be placed in the
+          directory you started the Notebook from.
 
-       6. You can shutdown the Notebook in the terminal by typing :kbd:`Ctl-c` twice.
-          Once the Notebook is shutdown the container running NEST is removed.
+       6. You can shutdown the Notebook in the terminal by typing
+          :kbd:`Ctrl-c` twice.  Once the Notebook is shutdown the
+          container running NEST is removed.
 
 
        .. note::
@@ -88,41 +159,6 @@ section** :ref:`advanced_install`.
 
           See the `README <https://github.com/nest/nest-docker>`_ to find out more, but note some functionality, such as DISPLAY, will not be available.
 
-   .. tab:: Conda (Linux/macOS)
-
-       1. Create your conda environment and install NEST. We recommend that you **create a dedicated
-          environment for NEST**, which should ensure there are no conflicts with previously
-          installed packages.
-
-       .. pull-quote::
-
-          We strongly recommend that you **install all programs** you'll need,
-          (such as ``ipython`` or ``jupyter-lab``) in the environment (ENVNAME) **at the same time**, by **appending them to the command below**.
-
-          Installing packages later may override previously installed dependencies and potentially break packages!
-          See `managing environments in the Conda documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ for more information.
-
-       WITHOUT openmpi:
-
-       .. code-block:: sh
-
-          conda create --name ENVNAME -c conda-forge nest-simulator
-
-       WITH openmpi:
-
-       .. code-block:: sh
-
-          conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
-
-       Where the syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
-
-
-       2. Activate your environment:
-
-       .. code-block:: sh
-
-          conda activate ENVNAME
-
    .. tab:: Live Media (cross-platform)
 
        We have live media (.ova) if you want to run NEST in a virtual machine. This option is suitable for Windows users, since we don't support
@@ -131,12 +167,6 @@ section** :ref:`advanced_install`.
        :ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virutal machine <livemedia>` .
 
 
-   .. tab:: NeuroFedora
-
-       The NeuroFedora team has generously provided the latest versions of NEST on their platform.
-
-       Find out more on their site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.
-       A. Sinha also provided some helpful FAQs, `which you can find here <https://www.nest-simulator.org/mailinglist/hyperkitty/search?mlist=users%40nest-simulator.org&q=fedora>`_.
 
 
 **Once NEST is installed, you can run it in Python, IPython, or Jupyter Notebook**

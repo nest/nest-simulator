@@ -36,7 +36,7 @@
 """
 
 
-def get.Connections(source=None, target=None, synape_model=None,
+ def GetConnections(source=None, target=None, synape_model=None,
                     synapse_label=None):
     """Return an array of connection identifiers
     [[ In a single 'summary line', state what the function does ]]

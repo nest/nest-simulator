@@ -169,15 +169,15 @@ functions, see documentation.
     # ! arbitrary, and in practice one would have far more configurable
     # ! parameters. We restrict ourselves to:
     # !
-    # ! - Network size in neurons ``N``, each layer is ``N x N``.
-    # ! - Network size in subtended visual angle ``visSize``, in degree.
-    # ! - Temporal frequency of drifting grating input ``f_dg``, in Hz.
+    # ! - Network size in neurons `N`, each layer is `N x N`.
+    # ! - Network size in subtended visual angle `visSize`, in degree.
+    # ! - Temporal frequency of drifting grating input `f_dg`, in Hz.
     # ! - Spatial wavelength and direction of drifting grating input,
-    # !   ``lambda_dg`` and ``phi_dg``, in degree/radian.
+    # !   `lambda_dg` and `phi_dg`, in degree/radian.
     # ! - Background firing rate of retinal nodes and modulation amplitude,
-    # !   ``retDC`` and ``retAC``, in Hz.
-    # ! - Simulation duration ``simtime``; actual simulation is split into
-    # !   intervals of ``sim_interval`` length, so that the network state
+    # !   `retDC` and `retAC`, in Hz.
+    # ! - Simulation duration `simtime`; actual simulation is split into
+    # !   intervals of `sim_interval` length, so that the network state
     # !   can be visualized in those intervals. Times are in ms.
     Params = {'N': 40,
               'visSize': 8.0,
@@ -294,13 +294,13 @@ functions, see documentation.
     # ! slightly more complicated initialization than all other elements of
     # ! the network:
     # !
-    # ! - Average firing rate ``rate``, firing rate modulation depth ``amplitude``,
+    # ! - Average firing rate `rate`, firing rate modulation depth `amplitude`,
     # !   and temporal modulation frequency :term:`frequency` are the same for all
     # !   retinal nodes and are set directly below.
-    # ! - The temporal phase ``phase`` of each node depends on its position in
+    # ! - The temporal phase `phase` of each node depends on its position in
     # !   the grating and can only be assigned after the retinal layer has
     # !   been created. We therefore specify a function for initalizing the
-    # !   ``phase``. This function will be called for each node.
+    # !   `phase`. This function will be called for each node.
     def phaseInit(pos, lam, alpha):
         '''Initializer function for phase of drifting grating nodes.
 
@@ -449,7 +449,7 @@ functions, see documentation.
     # ! neuron models in NEST and we set them in section `Neuron models`_
     # ! above. When we refer to *synapse models* in NEST, we actually mean
     # ! connectors which store information about connection weights and
-    # ! delays, as well as port numbers at the target neuron (``rport``)
+    # ! delays, as well as port numbers at the target neuron (`rport`)
     # ! and implement synaptic plasticity. The latter two aspects are not
     # ! relevant here.
     # !

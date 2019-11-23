@@ -287,7 +287,7 @@ convenient.
 
 This dictionary contains an entry named `events` which holds the
 recorded data. It is itself a dictionary with the entries :term:`V_m` and
-``times``, which we store separately in ``Vms`` and ``ts``, in the
+`times`, which we store separately in `Vms` and `ts`, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
 first just printing `dmm` to the screen to give you a better

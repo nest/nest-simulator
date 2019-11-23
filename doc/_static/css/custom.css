@@ -2,6 +2,13 @@ t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
     color: #f63;
 }
 
+p {
+    margin-bottom: 12px;
+}
+
+.wy-nav-content {
+    max-width: 950px;
+}
 
 .wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
    content: url(../../_static/img/nest_logo.png);
@@ -114,6 +121,27 @@ code.descclassname {
 
 }
 
+.wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
+    margin-bottom: 12px;
+}
+
+.rst-content dl:not(.docutils) dt {
+    background: #ff663336;
+    border-top: solid 3px #ff6633;
+    color: black;
+}
+
+.rst-content .pull-quote {
+    background: #f0f3f3;
+    padding: 0.5em;
+    border: 1px solid #ff6633;
+    border-radius: 5px;
+}
+
+.rst-content kbd {
+    background-color: lightgray;
+}
+
 .rst-content .admonition {
     background: #e0e0e0;
 
@@ -129,4 +157,3 @@ code.descclassname {
    .wy-table-responsive {
       overflow: visible !important;
    }
-}

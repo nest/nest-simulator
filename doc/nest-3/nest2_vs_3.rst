@@ -436,9 +436,9 @@ for spatially distributed nodes.
 |       | nest.spatial_distributions.gaussian(nest.Parameter,        |
 |       | mean=0.0, std=1.0) *returns* nest.Parameter                |
 +-------+------------------------------------------------------------+
-|       | nest.spatial_distributions.gaussian2D(nest.Parameter, y,   |
-|       | mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0)     |
-|       | *returns* nest.Parameter                                   |
+|       | nest.spatial_distributions.gaussian2D(nest.Parameter,      |
+|       | nest.Parameter, mean_x=0.0, mean_y=0.0, std_x=1.0,         |
+|       | std_y=1.0, rho=0.0) *returns* nest.Parameter               |
 +-------+------------------------------------------------------------+
 |       | nest.spatial_distributions.gamma(nest.Parameter, kappa=1.0 |
 |       | theta=1.0) *returns* nest.Parameter                        |

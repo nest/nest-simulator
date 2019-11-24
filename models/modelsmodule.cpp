@@ -282,7 +282,7 @@ ModelsModule::init( SLIInterpreter* )
   /withgid are set, respectively.
 
   Accumulator mode:
-  Voltmeter can operate in accumulator mode. In this case, values for all
+  A voltmeter can operate in accumulator mode. In this case, values for all
   recorded variables are added across all recorded nodes (but kept separate in
   time). This can be useful to record average membrane potential in a
   population.

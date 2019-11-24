@@ -71,10 +71,10 @@ def build_network(dt):
 # therefore, times are given in the times vector in events. Now the
 # ``spike_detector`` is created and its handle is stored in sd.
 #
-# Voltmeter and spikedetector are then connected to the neuron. The ``Connect``
-# function takes the handles as input.  The voltmeter is connected to the
-# neuron and the neuron to the spikedetector because the neuron sends spikes
-# to the detector and the voltmeter 'observes' the neuron.
+# The voltmeter and spike detector are then connected to the neuron. The
+# ``Connect`` function takes the handles as input.  The voltmeter is connected
+# to the neuron and the neuron to the spikedetector because the neuron sends
+# spikes to the detector and the voltmeter 'observes' the neuron.
 
 ###############################################################################
 # The neuron is simulated for three different resolutions and then the

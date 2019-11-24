@@ -25,6 +25,21 @@ def UserDocExtractor(modelfiles, basedir="..", nameext='.h'):
                 print("WARNING: No documentation found for model " + model)
     return tagdict
 
+import itertools
+
+def make_hierarchy(tags, basetag):
+    if not basetag: return tags
+    baseitems = set(tags[basetag])
+    tree = dict()
+    subtags = [t for t in tags.keys() if t != basetag]
+    for subtag in subtags:
+        docs = set(tags[subtag]).intersection(baseitems)
+        if docs:
+            tree[subtag] = docs
+
+    return {basetag: tree}
+
+
 if __name__ == '__main__':
     models_with_documentation = (
         "models/multimeter",
@@ -37,4 +52,12 @@ if __name__ == '__main__':
     )
 
     tags = UserDocExtractor(models_with_documentation)
-    pprint(tags)
+
+    print("TOP")
+    pprint(make_hierarchy(tags, ''))
+    print("DEVICE")
+    pprint(make_hierarchy(tags, 'device'))
+    print("BACKEND")
+    pprint(make_hierarchy(tags, 'backend'))
+    print("SPIKES")
+    pprint(make_hierarchy(tags, 'spikes'))

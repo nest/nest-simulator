@@ -29,8 +29,8 @@ Synopsis: (test_voltmeter_reset) run -> dies if assertion fails
 Description:
   The voltmeter records from iaf_psc_alpha to memory, checks if proper number
   of data points is acquired, deleted on reset, and recorded again on further
- simulation. This test ascertains that also data stored in the derived recorder
- class, not only in RecordingDevice, is reset.
+  simulation. This test ascertains that also data stored in the derived recorder
+  class, not only in RecordingDevice, is reset.
 
 Author: August 2008, Plesser
 SeeAlso: multimeter, testsuite::test_spike_det_reset

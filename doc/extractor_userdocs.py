@@ -77,12 +77,13 @@ def UserDocExtractor(
             log.info("creating output directory "+outdir)
             os.mkdir(outdir)
         outname = os.path.basename(os.path.splitext(filename)[0]) + replace_ext
-        with open(os.path.join(outdir, outname), "w") as outfile:
-            outfile.write(match.group('doc'))
-            log.info("extracted user documentation from " + filename)
         tags = [t.strip() for t in match.group('tags').split(',')]
         for tag in tags:
             tagdict.setdefault(tag, list()).append(outname)
+        with open(os.path.join(outdir, outname), "w") as outfile:
+            outfile.write("* " + "\n* ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
+            outfile.write(match.group('doc'))
+            log.info("extracted user documentation from " + filename)
     log.info("%4d tags found", len(tagdict))
     log.info("     "+pformat(list(tagdict.keys())))
     nfiles = len(set.union(*[set(x) for x in tagdict.values()]))
@@ -145,6 +146,8 @@ def rst_index(hierarchy, underlines = '=-~'):
     -------
     String with pretty index.
     """
+    mktitle = lambda t, ul: t+'\n'+ul*len(t)+'\n'
+    mkitem = lambda t: "* :doc:`%s`" % os.path.splitext(t)[0]
     output = list()
     for tags, items in sorted(hierarchy.items()):
         if isinstance(tags, str):
@@ -154,25 +157,34 @@ def rst_index(hierarchy, underlines = '=-~'):
         if title:
             if title != title.upper():
                 title = title.title()  # title-case any tag that is not an acronym
-            output.append(title)
-            output.append(underlines[0]*len(title))
-            output.append("")
+            output.append(mktitle(title, underlines[0]))
         if isinstance(items, dict):
             output.append(rst_index(items, underlines[1:]))
         else:
             for item in items:
-                output.append("* %s" % item)
+                output.append(mkitem(item))
             output.append("")
     return "\n".join(output)
 
 
+def reverse_dict(tags):
+    """
+    return the reversed dict-of-list
+    """
+    revdict = dict()
+    for tag, items in tags.items():
+        for item in items:
+            revdict.setdefault(item, list()).append(tag)
+    return revdict
+
 def CreateTagIndices(tags, outdir="from_cpp/"):
     taglist = list(tags.keys())
-    taglist.remove('')
+    if "" in taglist:
+        taglist.remove('')
     indexfiles = list()
     for current_tags in chain(*[combinations(taglist, L) for L in range(len(taglist)-1)]):
         current_tags = sorted(current_tags)
-        indexname = "index_%s.rst" % ("_".join(current_tags))
+        indexname = "index%s.rst" % "".join(["_"+x for x in current_tags])
 
         hier = make_hierarchy(tags.copy(), *current_tags)
         if not any(hier.values()):

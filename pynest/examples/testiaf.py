@@ -61,6 +61,7 @@ def build_network(dt):
 
     return vm, sd
 
+
 ###############################################################################
 # The function ``build_network`` takes the resolution as argument.
 # First the Kernel is reset and the number of threads is set to zero as well
@@ -116,5 +117,3 @@ for dt in [0.1, 0.5, 1.0]:
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")
     pylab.ylabel("V_m (mV)")
-
-

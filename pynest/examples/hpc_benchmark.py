@@ -63,10 +63,10 @@ per second.
 References
 ~~~~~~~~~~~~
 
-.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent plasticity in balanced random
-       networks. Neural Comput 19(6):1437-67
-.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
-       neuroscience. Front. Neuroinform. 6:26
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+       plasticity in balanced random networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
 
@@ -83,7 +83,6 @@ import nest.raster_plot
 
 M_INFO = 10
 M_ERROR = 30
-
 
 
 ###############################################################################
@@ -103,7 +102,6 @@ params = {
     'path_name': '.',       # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
-
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
@@ -137,7 +135,6 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 tau_syn = 0.32582722403722841
 
 
-
 brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
@@ -160,10 +157,10 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-###############################################################################
-# Note that Kunkel et al. (2014) report different values. The values
-# in the paper were used for the benchmarks on K, the values given
-# here were used for the benchmark on JUQUEEN.
+    ####################################################################
+    # Note that Kunkel et al. (2014) report different values. The values
+    # in the paper were used for the benchmarks on K, the values given
+    # here were used for the benchmark on JUQUEEN.
 
     'randomize_Vm': True,
     'mean_potential': 5.7,
@@ -191,6 +188,7 @@ brunel_params = {
 
 ###############################################################################
 # Function Section
+
 
 def build_network(logger):
     """Builds the network including setting of simulation and neuron
@@ -438,6 +436,7 @@ def get_local_nodes(nodes):
         else:
             i += 1
 
+
 class Logger(object):
     """Logger context manager used to properly log memory and timing
     information from network simulations.
@@ -479,6 +478,7 @@ class Logger(object):
     def __exit__(self, exc_type, exc_val, traceback):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
+
 
 if __name__ == '__main__':
     run_simulation()

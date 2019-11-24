@@ -38,9 +38,10 @@ import nest
 import pylab
 import numpy
 
-#####################################################################################
-# First,the function ``build_network`` is defined to build the network and
-# return the handles of two decision units and the ``multimeter``
+##########################################################################
+# First,the function ``build_network`` is defined to build the network
+# and return the handles of two decision units and the ``multimeter``
+
 
 def build_network(sigma, dt):
     nest.ResetKernel()
@@ -62,23 +63,24 @@ def build_network(sigma, dt):
     return D1, D2, mm
 
 
-#####################################################################################
+###########################################################################
 # The function ``build_network`` takes the noise parameter sigma
 # and the time resolution as arguments.
-# First, the Kernel is reset and the ``use_wfr`` (waveform-relaxation) is set to
-# false while the resolution is set to the specified value `dt`.
-# Two rate neurons with linear activation functions are created and the
-# handle is stored in the variables `D1` and `D2`. The output of both decision
-# units is rectified at zero.
-# The two decisions units are coupled via mutual inhibition.
-# Next the multimeter is created and the handle stored in mm and the option
-# ``record_from`` is set. The multimeter is then connected to the two units
-# in order to 'observe' them.  The ``Connect`` function takes the handles as input.
+# First, the Kernel is reset and the ``use_wfr`` (waveform-relaxation)
+# is set to false while the resolution is set to the specified value
+# `dt`.  Two rate neurons with linear activation functions are created
+# and the handle is stored in the variables `D1` and `D2`. The output
+# of both decision units is rectified at zero.  The two decisions
+# units are coupled via mutual inhibition.  Next the multimeter is
+# created and the handle stored in mm and the option ``record_from``
+# is set. The multimeter is then connected to the two units in order
+# to 'observe' them.  The ``Connect`` function takes the handles as
+# input.
 
-##################################################################################
-# The decision making process is simulated for three different levels of noise
-# and three differences in evidence for a given decision. The activity of both
-# decision units is plotted for each scenario.
+###########################################################################
+# The decision making process is simulated for three different levels
+# of noise and three differences in evidence for a given decision. The
+# activity of both decision units is plotted for each scenario.
 
 fig_size = [14, 8]
 fig_rows = 3

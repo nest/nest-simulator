@@ -94,13 +94,12 @@ def write_rst_files(doc, tags, outdir, outname):
     """
     Write raw rst to a file and generate a wrapper with index
     """
-    outnameraw = "%s_raw%s" % os.path.splitext(outname)
-    with open(os.path.join(outdir, outnameraw), "w") as outfile:
-        outfile.write(doc)
     with open(os.path.join(outdir, outname), "w") as outfile:
-        outfile.write(":doc:`index` : ")
-        outfile.write(" ~ ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
-        outfile.write(".. include:: %s\n" % outnameraw)
+        outfile.write(doc)
+    #with open(os.path.join(outdir, outname), "w") as outfile:
+    #    outfile.write(":doc:`index` : ")
+    #    outfile.write(" ~ ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
+    #    outfile.write(".. include:: %s\n" % outnameraw)
 
 
 def make_hierarchy(tags, *basetags):
@@ -161,8 +160,6 @@ def rst_index(hierarchy, underlines = '=-~'):
     mktitle = lambda t, ul: t+'\n'+ul*len(t)+'\n'
     mkitem = lambda t: "* :doc:`%s`" % os.path.splitext(t)[0]
     output = list()
-    if len(hierarchy.keys()) > 1:
-        output.append(mktitle("Tag-Index", "#"))
     for tags, items in sorted(hierarchy.items()):
         if isinstance(tags, str):
             title = tags

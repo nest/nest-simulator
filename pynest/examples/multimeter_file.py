@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Multimeter to file example
---------------------------
+Example of multimeter recording to file
+---------------------------------------
 
 This file demonstrates recording from an ``iaf_cond_alpha`` neuron using a
 multimeter and writing data to file.

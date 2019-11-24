@@ -40,7 +40,7 @@ import numpy
 
 #####################################################################################
 # First,the function ``build_network`` is defined to build the network and
-# return the handles of two decision units and the ``Multimeter``
+# return the handles of two decision units and the ``multimeter``
 
 def build_network(sigma, dt):
     nest.ResetKernel()

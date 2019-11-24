@@ -181,8 +181,8 @@ Topology is now integrated into NEST and no longer a separate module.
 | tp.ConnectLayers(list, list,                   | :green:`nest.Connect`\ (\                          |
 | projections)                                   | :green:`nest.NodeCollection`,                      |
 |                                                | :green:`nest.NodeCollection`, conn_spec=None,      |
-|                                                | syn_spec=None,                                     |
-|                                                | :green:`return_SynapseCollection`=False)           |
+|                                                | syn_spec=None, :green:`return_SynapseCollection`   |
+|                                                | =False)                                            |
 +------------------------------------------------+----------------------------------------------------+
 |                                                | :green:`spatial_NodeCollection.spatial`            |
 |                                                | *returns*                                          |

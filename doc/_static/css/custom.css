@@ -106,11 +106,11 @@ code.descclassname {
     background: rgba(255, 165, 0, 0.1);
 }
 
-.rst-content dl:not(.docutils) dt {
+/*.rst-content dl:not(.docutils) dt {
    float: left;
    border-top: None;
    background: None;
-}
+}*/
 
 .rst-content .admonition-title::before {
     display:none;

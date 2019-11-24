@@ -5,7 +5,7 @@ NEST 2.X vs. NEST 3.0 conversion reference guide
    :local:
    :depth: 2
 
-* This conversion guide provides the changes to functions or their output between NEST 2.x and NEST 3.0
+* This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 
@@ -39,24 +39,26 @@ Supress output on startup
 
 .. _node_ref:
 
-Nodes
-~~~~~~~~
+Functions related to creation and retrieval of nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------------------+---------------------------------+
-| NEST 2.x                        | NEST 3.0                        |
-+=================================+=================================+
-| nest.Create(model, n=1, params= | nest.Create(model, n=1, params= |
-| None) *returns*                 | None) *returns*                 |
-| list                            | :darkgreen:`nest.NodeCollection`|
-+---------------------------------+---------------------------------+
-| nest.GetLid(gid) *returns*      |                                 |
-| list                            |                                 |
-+---------------------------------+---------------------------------+
++---------------------------------+-------------------------------------+
+| NEST 2.x                        | NEST 3.0                            |
++=================================+=====================================+
+| nest.Create(model, n=1, params= | nest.Create(model, n=1, params=     |
+| None) *returns*                 | None) *returns*                     |
+| list                            | :darkgreen:`nest.NodeCollection`    |
++---------------------------------+-------------------------------------+
+| nest.GetLid(gid) *returns*      | :green:`nest.GetLocalNodeConnection(|
+| list                            | nest.NodeConnection)`               |
+|                                 | *returns the MPI local nodes*       |
+|                                 | *in a new* nest.NodeCollection.     |
++---------------------------------+-------------------------------------+
 
 .. _conn_ref:
 
-Connection
-~~~~~~~~~~
+Functions related to connection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------+
 | NEST 2.x                                    | NEST 3.0                                     |
@@ -70,21 +72,25 @@ Connection
 | nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.NodeCollection`,   |
 | =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=     |
 |                                             | None, syn_spec=None,                         |
-|                                             | :green:`return_SynapseCollection` =False     |
+|                                             | :green:`return_SynapseCollection`=False)     |
 |                                             | *In syn_spec the synapse model*              |
 |                                             | *is given by synapse_model,*                 |
 |                                             | *not model.*                                 |
 +---------------------------------------------+----------------------------------------------+
-| nest.DataConnect(pre, params=None,          |                                              |
-| model="static_synapse")                     |                                              |
+| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(list, list,               |
+| model="static_synapse")                     | conn_spec=None, syn_spec=None,               |
+|                                             | return_SynapseCollection=False)              |
+|                                             | *You should only use nest.Connect with lists*|
+|                                             | *if you have lists with non-unique node IDs.*|
 +---------------------------------------------+----------------------------------------------+
 | nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`, |
 | parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,            |
 | _synapse')                                  | parameter_map=None,                          |
-|                                             | :green:`synapse_model` ='static_synapse')    |
+|                                             | :green:`synapse_model`='static_synapse')     |
 +---------------------------------------------+----------------------------------------------+
-| nest.DisconnectOneToOne(int, int,           |                                              |
-| syn_spec)                                   |                                              |
+| nest.DisconnectOneToOne(int, int,           | nest.Disconnect(:green:`nest.NodeCollection`,|
+| syn_spec)                                   | :green:`nest.NodeCollection`,                |
+|                                             | syn_spec='static_synapse')                   |
 +---------------------------------------------+----------------------------------------------+
 | nest.Disconnect(list, list, conn_spec=      | nest.Disconnect(:green:`nest.NodeCollection`,|
 | 'one_to_one', syn_spec='static_synapse')    | :green:`nest.NodeCollection`, conn_spec=     |
@@ -94,10 +100,10 @@ Connection
 
 .. _subnet_ref:
 
-Subnets
-~~~~~~~
+Functions related to subnets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**The subnets module is removed in NEST 3.0!**
+**The subnet module is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |
@@ -112,8 +118,8 @@ Subnets
 | nest.GetLeaves(subnet, properties      | :green:`nest.NodeCollection` will contain  |
 | =None, local_only=False)               | all nodes                                  |
 +----------------------------------------+--------------------------------------------+
-| nest.GetNodes(subnets, properties      | :green:`nest.NodeCollection` will contain  |
-| =None, local_only=False)               | all nodes                                  |
+| nest.GetNodes(subnets, properties      | GetNodes(properties={}, local_only=False)  |
+| =None, local_only=False)               | *returns* :darkgreen:nest.NodeCollection   |
 +----------------------------------------+--------------------------------------------+
 | nest.GetChildren(subnets, properties   | :green:`nest.NodeCollection` will contain  |
 | =None, local_only=False)               | all nodes                                  |
@@ -132,28 +138,32 @@ Subnets
 
 .. _info_ref:
 
-Info
-~~~~
+Functions related to setting and getting parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+---------------------------------------------+
 | NEST 2.x                              | NEST 3.0                                    |
 +=======================================+=============================================+
 | nest.SetStatus(list/tuple,            | nest.SetStatus(:green:`nest.NodeCollection`,|
 | params, val=None)                     | params, val=None) *Can*                     |
-|                                       | *also use* nodes.set(params) *or*           |
-|                                       | conns.set(params)                           |
+|                                       | *also use* :green:`nodes.set(params)`,      |
+|                                       | :green:`nodes.parameter = value`,           |
+|                                       | :green:`conns.set(params)` *or*             |
+|                                       | :green:`conns.parameter = value`            |
 +---------------------------------------+---------------------------------------------+
 | nest.GetStatus(list/tuple,            | nest.GetStatus(:green:`nest.NodeCollection`,|
 | keys=None)                            | keys=None) *Can*                            |
-|                                       | *also use* nodes.get(keys=None) *or*        |
-|                                       | conns.get(keys=None)                        |
+|                                       | *also use* :green:`nodes.get(keys=None)`,   |
+|                                       | :green:`nodes.parameter`,                   |
+|                                       | :green:`conns.get(keys=None)` *or*          |
+|                                       | :green:`conns.parameter`                    |
 +---------------------------------------+---------------------------------------------+
 
 .. _topo_ref:
 
 
-Topology
-~~~~~~~~
+Function related to spatially distributed nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Topology is now integrated into NEST and no longer a separate module.
 
@@ -170,16 +180,18 @@ Topology is now integrated into NEST and no longer a separate module.
 +------------------------------------------------+----------------------------------------------------+
 | tp.ConnectLayers(list, list,                   | :green:`nest.Connect`\ (\                          |
 | projections)                                   | :green:`nest.NodeCollection`,                      |
-|                                                | :green:`nest.NodeCollection`, conn_spec= None,     |
+|                                                | :green:`nest.NodeCollection`, conn_spec=None,      |
 |                                                | syn_spec=None, :green:`return_SynapseCollection`   |
-|                                                | = False)                                           |
+|                                                | =False)                                            |
 +------------------------------------------------+----------------------------------------------------+
-|                                                | :green:`layer_NodeCollection.spatial`              |
+|                                                | :green:`spatial_NodeCollection.spatial`            |
+|                                                | *returns*                                          |
+|                                                | *Dictionary with spatial properties*               |
 +------------------------------------------------+----------------------------------------------------+
-| tp.GetLayer(nodes) *returns*                   |                                                    |
-| tuple                                          |                                                    |
+| tp.GetLayer(nodes) *returns*                   | :green:`nest.NodeCollection` will represent the    |
+| tuple                                          | spatially distributed nodes                        |
 +------------------------------------------------+----------------------------------------------------+
-| tp.GetElement(layers, location)                |                                                    |
+| tp.GetElement(layers, location)                | :green:`nest.NodeCollection` will contain all nodes|
 | *returns*                                      |                                                    |
 | tuple                                          |                                                    |
 +------------------------------------------------+----------------------------------------------------+
@@ -207,7 +219,7 @@ Topology is now integrated into NEST and no longer a separate module.
 | tp.FindNearestElement(tuple/list,              | :green:`nest`.FindNearestElement(\                 |
 | locations, find_all=True)                      | :green:`nest.NodeCollection`, locations,           |
 | *returns*                                      | find_all=True) *returns*                           |
-| tuple                                          | tuple                                              |
+| tuple                                          | :darkgreen:`nest.NodeCollection`                   |
 +------------------------------------------------+----------------------------------------------------+
 | tp.DumpLayerNodes(tuple, outname)              | :green:`nest`.DumpLayerNodes(\                     |
 |                                                | :green:`nest.NodeCollection`, outname)             |
@@ -219,23 +231,23 @@ Topology is now integrated into NEST and no longer a separate module.
 +------------------------------------------------+----------------------------------------------------+
 | tp.FindCenterElement(tuple)                    | :green:`nest`.FindCenterElement(\                  |
 | *returns*                                      | :green:`nest.NodeCollection`) *returns*            |
-| tuple                                          | :darkgreen:`int`                                   |
+| tuple                                          | :darkgreen:`nest.NodeCollection`                   |
 +------------------------------------------------+----------------------------------------------------+
-| tp.GetTargetNodes(tuple, tuple,                | :green:`nest`.GetTargetNodes(tuple,                |
-| tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`, syn_model=None)      |
-| *returns*                                      | *returns*                                          |
-| tuple of list(s) of int(s)                     | tuple of list(s) of int(s)                         |
+| tp.GetTargetNodes(tuple, tuple,                | :green:`nest`.GetTargetNodes(\                     |
+| tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`,                      |
+| *returns*                                      | :green:`nest.NodeCollection`, syn_model=None)      |
+| tuple of list(s) of int(s)                     | *returns* tuple of :darkgreen:`nest.NodeConnection`|
 +------------------------------------------------+----------------------------------------------------+
 | tp.GetTargetPositions(tuple, tuple,            | :green:`nest`.GetTargetPositions(\                 |
 | tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`,                      |
-| *returns*                                      | :green:`nest.NodeCollection`, syn_model=None)      |
-| tuple of tuple(s) of tuple(s)                  | *returns* list of list(s) of tuple(s) of           |
-| of floats                                      | floats                                             |
+| *returns*                                      | :green:`nest.NodeCollection`,                      |
+| tuple of tuple(s) of tuple(s)                  | :green:`synapse_model`=None) *returns* list of     |
+| of floats                                      | list(s) of tuple(s) of floats                      |
 +------------------------------------------------+----------------------------------------------------+
 | tp.SelectNodesByMask(tuple, anchor,            | :green:`nest`.SelectNodesByMaks(\                  |
 | mask_obj) *returns*                            | :green:`nest.NodeCollection`, anchor, mask_obj)    |
 | list                                           | *returns*                                          |
-|                                                | list                                               |
+|                                                | :darkgreen:`nest.NodeConnection`                   |
 +------------------------------------------------+----------------------------------------------------+
 | tp.PlotLayer(tuple, fig=None,                  | :green:`nest`.PlotLayer(\                          |
 | nodecolor='b', nodesize=20)                    | :green:`nest.NodeCollection`, fig=None,            |
@@ -253,15 +265,18 @@ Topology is now integrated into NEST and no longer a separate module.
 | matplotlib.figure.Figure                       | *returns* matplotlib.figure.Figure                 |
 | object                                         | object                                             |
 +------------------------------------------------+----------------------------------------------------+
-| tp.PlotKernel(ax, int, mask, ke                | :green:`nest`.PlotKernel(ax,                       |
-| rn=None, mask_color='red', kernel              | :green:`nest.NodeCollection`, mask, kern=None,     |
-| _color='red')                                  | mask_color='red', kernel_color='red')              |
+| tp.PlotKernel(ax, int, mask,                   | :green:`nest.PlotProbabilityParameter` (           |
+| kern=None, mask_color='red',                   | :green:`nest.NodeCollection`,                      |
+| kernel_color='red')                            | :green:`parameter=None`, mask=None,                |
+|                                                | :green:`edges=[-0.5, 0.5, -0.5, 0.5]`,             |
+|                                                | :green:`shape=[100, 100]`, ax=None,                |
+|                                                | :green:`prob_cmap` ='Greens', mask_color='yellow') |
 +------------------------------------------------+----------------------------------------------------+
 
 .. _connrules:
 
-Connection rules
-^^^^^^^^^^^^^^^^
+Spatially distributed connection rules
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ====================================== =================================================
 NEST 2.x                               NEST 3.0
@@ -272,20 +287,28 @@ divergent                              pairwise_bernoulli
 divergent *and* num_connections        fixed_outdegree
 ====================================== =================================================
 
-Models
-~~~~~~
+
+Functions related to simulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-------------------------+--------------------------------------------+
+| NEST 2.x                | NEST 3.0                                   |
++=========================+============================================+
+| nest.ResetNetwork()     | Use nest.ResetKernel() instead             |
++-------------------------+--------------------------------------------+
+
+
+Functions related to models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 No Change
 
-Simulation
-~~~~~~~~~~
+
+Functions related to parallel computing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 No Change
 
-Parallel Computing
-~~~~~~~~~~~~~~~~~~
-
-No Change
 
 Parameters
 ~~~~~~~~~~
@@ -300,20 +323,20 @@ Parameters can now be used to set node and connection parameters.
 
 :green:`random`
 ^^^^^^^^^^^^^^^^
+The random module contains random distributions that can be used to set node
+and connection parameters, as well as positions for spatially distributed nodes.
 
 +-------+------------------------------------------------------------+
 | NEST  | NEST 3.0                                                   |
 | 2.x   |                                                            |
 +=======+============================================================+
-|       | nest.random.exponential(scale=1.0) *returns*               |
+|       | nest.random.exponential(beta=1.0) *returns*                |
 |       | nest.Parameter                                             |
 +-------+------------------------------------------------------------+
-|       | nest.random.lognormal(mean=0.0, sigma=1.0, min=None, max=N |
-|       | one, dimension=None) *returns*                             |
+|       | nest.random.lognormal(mean=0.0, std=1.0) *returns*         |
 |       | nest.Parameter                                             |
 +-------+------------------------------------------------------------+
-|       | nest.random.normal(loc=0.0, scale=1.0, min=None, max=None, |
-|       | redraw=False) *returns*                                    |
+|       | nest.random.normal(mean=0.0, std=1.0) *returns*            |
 |       | nest.Parameter                                             |
 +-------+------------------------------------------------------------+
 |       | nest.random.uniform(min=0.0, max=1.0) *returns*            |
@@ -324,13 +347,15 @@ Parameters can now be used to set node and connection parameters.
 
 :green:`spatial`
 ^^^^^^^^^^^^^^^^^
+The spatial module contains parameters related to spatial positions for the
+nodes.
 
 +-------+----------------------------------------------------------------+
 | NEST  | NEST 3.0                                                       |
 | 2.x   |                                                                |
 +=======+================================================================+
-|       | nest.spatial.dimension_distance.x  nest.spatial.dimension      |
-|       | _distance.y  nest.spatial.dimension_distance.z                 |
+|       | nest.spatial.distance.x  nest.spatial.distance.y               | 
+|       | nest.spatial.distance.z                                        |
 |       | *returns*                                                      |
 |       | nest.Parameter                                                 |
 +-------+----------------------------------------------------------------+
@@ -340,8 +365,8 @@ Parameters can now be used to set node and connection parameters.
 |       | num_dimensions=None) *returns*                                 |
 |       | nest.Parameter                                                 |
 +-------+----------------------------------------------------------------+
-|       | nest.spatial.grid(rows, columns, depth=None, center=None,      |
-|       | extent=None, edge_wrap=False) *returns*                        |
+|       | nest.spatial.grid(shape, center=None, extent=None,             |
+|       | edge_wrap=False) *returns*                                     |
 |       | nest.Parameter                                                 |
 +-------+----------------------------------------------------------------+
 |       | nest.spatial.pos.x  nest.spatial.pos.y  nest.spatial.pos.z     |
@@ -361,22 +386,36 @@ Parameters can now be used to set node and connection parameters.
 
 :green:`math`
 ^^^^^^^^^^^^^
+The math module contains parameters for mathematical expressions. The mathematical
+expressions all take a nest.Parameter.
 
-+----------+-------------------------------+
-| NEST 2.X | NEST 3.0                      |
-+==========+===============================+
-|          | nest.math.exp(nest.Parameter) |
-+----------+-------------------------------+
-|          | nest.math.sin(nest.Parameter) |
-+----------+-------------------------------+
-|          | nest.math.cos(nest.Parameter) |
-+----------+-------------------------------+
-
++----------+--------------------------------------------+
+| NEST 2.X | NEST 3.0                                   |
++==========+============================================+
+|          | nest.math.exp(nest.Parameter)              |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
+|          | nest.math.sin(nest.Parameter)              |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
+|          | nest.math.cos(nest.Parameter)              |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
+|          | nest.math.min(nest.Parameter, value)       |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
+|          | nest.math.max(nest.Parameter, value)       |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
+|          | nest.math.redraw(nest.Parameter, min, max) |
+|          | *returns* nest.Parameter                   |
++----------+--------------------------------------------+
 
 .. _logic_param:
 
 :green:`logic`
 ^^^^^^^^^^^^^^
+The logic module contains logical expressions between nest.Parameter's.
 
 +-------+------------------------------------------------------------------+
 | NEST  | NEST 3.0                                                         |
@@ -389,25 +428,28 @@ Parameters can now be used to set node and connection parameters.
 
 .. _distr_param:
 
-:green:`distributions`
-^^^^^^^^^^^^^^^^^^^^^^^^
+:green:`spatial_distributions`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The spatial_distributions module contains random distributions that take a spatial
+parameter as input and applies the distribution on the parameter. They are used
+for spatially distributed nodes.
 
 +-------+------------------------------------------------------------+
 | NEST  | NEST 3.0                                                   |
 | 2.x   |                                                            |
 +=======+============================================================+
-|       | nest.distributions.exponential(nest.Parameter| a=1.0| tau= |
-|       | 1.0)                                                       |
+|       | nest.spatial_distributions.exponential(nest.Parameter,     |
+|       | beta=1.0) *returns* nest.Parameter                         |
 +-------+------------------------------------------------------------+
-|       | nest.distributions.gaussian(nest.Parameter, p_center=1.0,  |
-|       | mean=0.0, std_deviation=1.0)                               |
+|       | nest.spatial_distributions.gaussian(nest.Parameter,        |
+|       | mean=0.0, std=1.0) *returns* nest.Parameter                |
 +-------+------------------------------------------------------------+
-|       | nest.distributions.gaussian2D(nest.Parameter, y, p_center= |
-|       | 1.0, mean_x=0.0, mean_y=0.0, std_deviation_x=1.0,          |
-|       | std_deviation_y=1.0, rho=0.0)                              |
+|       | nest.spatial_distributions.gaussian2D(nest.Parameter,      |
+|       | nest.Parameter, mean_x=0.0, mean_y=0.0, std_x=1.0,         |
+|       | std_y=1.0, rho=0.0) *returns* nest.Parameter               |
 +-------+------------------------------------------------------------+
-|       | nest.distributions.gamma(nest.Parameter, alpha=1.0, theta= |
-|       | 1.0)                                                       |
+|       | nest.spatial_distributions.gamma(nest.Parameter, kappa=1.0 |
+|       | theta=1.0) *returns* nest.Parameter                        |
 +-------+------------------------------------------------------------+
 
 

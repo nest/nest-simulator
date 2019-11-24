@@ -23,7 +23,7 @@ cmake_minimum_required( VERSION 3.1 )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
-set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
+set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
 ################################################################################
 ##################         All User Defined options           ##################

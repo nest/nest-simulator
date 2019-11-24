@@ -3,7 +3,7 @@ Upstream-Name: nest-simulator
 Source: https://github.com/nest/nest-simulator/archive/master.zip
 
 Files: debian/*
-Copyright: 2019 The NEST Initiative <nest_user@nest-initiative.org>
+Copyright: 2019 The NEST Initiative <users@nest-simulator.org>
 License: GPL-2
  NEST is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

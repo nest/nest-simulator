@@ -287,20 +287,28 @@ divergent                              pairwise_bernoulli
 divergent *and* num_connections        fixed_outdegree
 ====================================== =================================================
 
+
+Functions related to simulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-------------------------+--------------------------------------------+
+| NEST 2.x                | NEST 3.0                                   |
++=========================+============================================+
+| nest.ResetNetwork()     | Use nest.ResetKernel() instead             |
++-------------------------+--------------------------------------------+
+
+
 Functions related to models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 No Change
 
-Functions related to simulation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-No Change
 
 Functions related to parallel computing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 No Change
+
 
 Parameters
 ~~~~~~~~~~

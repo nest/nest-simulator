@@ -27,18 +27,41 @@ def UserDocExtractor(modelfiles, basedir="..", nameext='.h'):
 
 import itertools
 
-def make_hierarchy(tags, basetag):
-    if not basetag: return tags
-    baseitems = set(tags[basetag])
+def make_hierarchy(tags, *basetags):
+    if not basetags: return tags
+
+    # items having all given basetags
+    baseitems = set.intersection(*[set(items) for tag,items in tags.items() if tag in basetags])
     tree = dict()
-    subtags = [t for t in tags.keys() if t != basetag]
+    subtags = [t for t in tags.keys() if not t in basetags]
     for subtag in subtags:
         docs = set(tags[subtag]).intersection(baseitems)
         if docs:
             tree[subtag] = docs
+    remaining = baseitems.difference(set.union(*tree.values()))
+    if remaining:
+        tree[''] = remaining
+    return {basetags: tree}
 
-    return {basetag: tree}
-
+def rst_index(hierarchy, underlines = '=-~'):
+    for tags, items in sorted(hierarchy.items()):
+        if isinstance(tags, str):
+            title = tags
+        else:
+            title = " & ".join(tags)
+        if title:
+            if title == title.upper():
+                print(title)
+            else:
+                print(title.title())
+            print(underlines[0]*len(title))
+            print("")
+        if isinstance(items, dict):
+            rst_index(items, underlines[1:])
+        else:
+            for item in items:
+                print("* %s" % item)
+            print()
 
 if __name__ == '__main__':
     models_with_documentation = (
@@ -53,11 +76,22 @@ if __name__ == '__main__':
 
     tags = UserDocExtractor(models_with_documentation)
 
-    print("TOP")
-    pprint(make_hierarchy(tags, ''))
-    print("DEVICE")
+    print("---------------------------------------- TOP ----------------------------")
+    pprint(make_hierarchy(tags))
+    print("---------------------------------------- DEVICE ---------------------------")
     pprint(make_hierarchy(tags, 'device'))
-    print("BACKEND")
-    pprint(make_hierarchy(tags, 'backend'))
-    print("SPIKES")
+    print("---------------------------------------- BACKEND & DEVICE --------------------------")
+    pprint(make_hierarchy(tags, 'device', 'backend'))
+    print("---------------------------------------- SPIKES ----------------------------")
     pprint(make_hierarchy(tags, 'spikes'))
+
+    print("\n\nFormatted")
+    print("---------------------------------------- DEVICE ---------------------------")
+    rst_index(make_hierarchy(tags, 'device'))
+
+    print("---------------------------------------- BACKEND & DEVICE --------------------------")
+    rst_index(make_hierarchy(tags, 'device', 'backend'))
+
+    print("---------------------------------------- BACKEND --------------------------")
+    rst_index(make_hierarchy(tags, 'backend'))
+

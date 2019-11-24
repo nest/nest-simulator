@@ -42,7 +42,7 @@ This provides a more compact and flexible container for node handles.
    topology or subnets.
 
 
-NEST 3.0 supports the following functionality
+NodeCollection supports the following functionality
 
 -  :ref:`Indexing <indexing>`
 -  :ref:`Iteration <iterating>`
@@ -51,9 +51,9 @@ NEST 3.0 supports the following functionality
 -  :ref:`Conversion to and from lists <converting_lists>`
 -  :ref:`Composing two non-overlapping NodeCollections <composing>`
 -  :ref:`Testing for equality <testing_equality>` (contains the
-   same GIDs)
+   same node IDs)
 -  :ref:`Testing of membership <testing_membership>`
--  Access to node properties with :ref:`get_param` and  :ref:`set_param` and direct attributes (dot notation e.g.)
+-  :ref:`get_param` and  :ref:`set_param` to access node properties, or use :ref:`direct attributes <direct_attributes>` (dot notation e.g.)
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
 
@@ -63,11 +63,11 @@ NEST 3.0 supports the following functionality
   |                                             |                                              |
   | ::                                          | ::                                           |
   |                                             |                                              |
-  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned     |
+  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned    |
   |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
   |                                             |                                              |
-  |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as arguments |
-  |     nest.Connect(nrns, nrns)                |     # in Connect                             |
+  |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as          |
+  |     nest.Connect(nrns, nrns)                |     # arguments in Connect                   |
   |                                             |     nest.Connect(nrns, nrns)                 |
   |                                             |                                              |
   +---------------------------------------------+----------------------------------------------+
@@ -76,7 +76,7 @@ NEST 3.0 supports the following functionality
 
 
 Printing
-    A compact representation of information about the NodeCollection can be printed.
+    A compact representation of information about the NodeCollection can be printed
 
 
    >>>  nrns = nest.Create('iaf_psc_alpha', 10)
@@ -86,7 +86,7 @@ Printing
 .. _indexing:
 
 Indexing
-    Indexing returns a new NodeCollection with a single GID
+    Indexing returns a new NodeCollection with a single node
 
 
 
@@ -96,10 +96,10 @@ Indexing
 .. _iterating:
 
 Iteration
-    You can iterate the GIDs in a NodeCollection
+    You can iterate the nodes in a NodeCollection and receive a single element NodeCollection
 
-     >>>   for gid in nrns:
-     >>>       print(gid)
+     >>>   for node in nrns:
+     >>>       print(node.global_id)
            1
            2
            3
@@ -110,9 +110,6 @@ Iteration
            8
            9
            10
-
-    You can also iterate ``nrns.items()``, which yields tuples containing
-    the GID and the model ID.
 
 .. _slicing:
 
@@ -129,7 +126,7 @@ Slicing
 .. _get_size:
 
 Getting the size
-    You can easily get the number of GIDs in the NodeCollection with
+    You can easily get the number of nodes in the NodeCollection with
 
    >>>  len(nrns)
         10
@@ -137,21 +134,23 @@ Getting the size
 .. _converting_lists:
 
 Conversion to and from lists
-    NodeCollections can be converted to lists of GIDs
+    NodeCollections can be converted to lists of node IDs
 
 
-    >>>  list(nrns)
+    >>>  nrns.tolist()
          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a NodeCollection by providing a list of GIDs
+    And you can create a NodeCollection by providing a list, tuple, numpy array or range of node IDs
 
     >>>  print(nest.NodeCollection([2, 3, 4, 8]))
          NodeCollection(metadata=None,
-                      model=iaf_psc_alpha, size=3, first=2, last=4;
-                      model=iaf_psc_alpha, size=1, first=8)
+                        model=iaf_psc_alpha, size=3, first=2, last=4;
+                        model=iaf_psc_alpha, size=1, first=8)
+    >>>  print(nest.NodeCollection(range(1,4)))
+         NodeCollection(metadata=None, model=iaf_psc_alpha, size=3, first=1, last=3)
 
-    Note however that the nodes have to already have been created. If any
-    of the GIDs refer to nodes that are not created, an error is thrown.
+    Note however that the nodes have to be already created. If any
+    of the node IDs refer to nodes that are not created, an error is thrown.
 
 .. _composing:
 
@@ -165,21 +164,21 @@ Composing
     >>>  print(nrns + nrns_2)
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
 
-    If the GIDs are not continuous or the models are different, a composite will be created:
+    If the node IDs are not continuous or the models are different, a composite will be created:
 
     >>>  nrns_3 = nest.Create('iaf_psc_delta', 3)
     >>>  print(nrns + nrns_3)
          NodeCollection(metadata=None,
-                      model=iaf_psc_alpha, size=10, first=1, last=10;
-                      model=iaf_psc_delta, size=3, first=14, last=16)
+                        model=iaf_psc_alpha, size=10, first=1, last=10;
+                        model=iaf_psc_delta, size=3, first=14, last=16)
 
     Note that composing NodeCollections that overlap or that contain metadata
-    (see section on Topology) is impossible.
+    (see section on :ref:`spatially distributed nodes <topo_changes>`) is impossible.
 
 .. _testing_equality:
 
 Test of equality
-    You can test if two NodeCollections are equal, i.e. that they contain the same GIDs
+    You can test if two NodeCollections are equal, i.e. that they contain the same node IDs
 
     >>>  nrns == nrns_2
          False
@@ -189,22 +188,46 @@ Test of equality
 .. _testing_membership:
 
 Test of membership
-    You can test if a NodeCollection contains a certain GID
+    You can test if a NodeCollection contains a certain ID
 
     >>>  2 in nrns
          True
     >>>  11 in nrns
          False
 
+.. _direct_attributes:
+
+Direct attributes
+    You can directly get and set parameters of your NodeCollection
+    
+    >>> nrns.V_m = [-70., -60., -50., -40., -30., -20., -10., -20., -30., -40.]
+    >>> nrns.V_m
+        (-70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, -20.0, -30.0, -40.0)
+    >>> nrns.C_m = 111.
+    >>> nrns.C_m 
+        (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
+
+    If your nodes are spatially distributed (see :ref:`spatially distributed nodes <topo_changes>`),
+    you can also get the spatial properties of the nodes
+
+    >>> spatial_nodes.spatial
+        {'center': (0.0, 0.0),
+         'edge_wrap': False,
+         'extent': (1.0, 1.0),
+         'network_size': 4,
+         'shape': (2, 2)}
+
+
 .. _get_param:
 
 Get the node status
 ~~~~~~~~~~~~~~~~~~~~~~
 
-``get()`` Returns all parameters in the collection in a dictionary
-with lists.
+``get()`` returns the parameters in the collection. You can call ``get()`` in
+several ways.
 
-Get the parameters of the first 3 nodes
+To get all parameters in the collection, use ``get()`` without any function arguments.
+This returns a dictionary with tuples.
 
 >>>    nodes_exp = nest.Create('iaf_psc_exp', 5)
 >>>    nodes_exp[:3].get()
@@ -247,125 +270,86 @@ Get the parameters of the first 3 nodes
         'V_th': (-55.0, -55.0, -55.0),
         'vp': (0, 0, 0)}
 
-
-* ``nodes.get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``
+To get specific parameters in the collection, use
+``get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``.
 
 Get the parameters `V_m` and `V_reset` of all nodes
 
 >>>    nodes = nest.Create('iaf_psc_alpha', 10, {'V_m': -55.})
 >>>    nodes.get(['V_m', 'V_reset'])
        {'V_m': (-55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0),
-        'V_reset': (-65.0,
-         -64.0,
-         -63.0,
-         -62.0,
-         -61.0,
-         -60.0,
-         -59.0,
-         -58.0,
-         -57.0,
-         -56.0)}
+        'V_reset': (-70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0,
+         -70.0)}
 
+To get a specific parameter from the collection, you can use ``get(parameter_name)``.
+This will return a tuple with the values of that parameter.
 
+>>>    nodes.get('t_ref')
+       (2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0)
 
-You can also specify the output format (pandas, JSON currently
-implemented):
+If you have a single-node NodeCollection, ``get()`` will return a dictionary with
+single values or a single value, depending on how it is called.
 
-* ``nodes.get(output)``
-* ``nodes.get(parameter_name, output)``
-* ``nodes.get([parameter_name_1, parameter_name_2, ... , parameter_name_n], output)``
-* ``nodes.get(parameter_name, property_name, output)``
-* ``nodes.get(parameter_name, [property_name_1, ... , property_name_n], output)``
+>>>    nodes[0].get(['V_m', 'V_reset'])
+       {'V_m': -55.0, 'V_reset': -70.0}
+>>>    nodes[0].get('t_ref')
+       2.0
+
+To select fields at a deeper hierarchy level, use ``get(parameter_name, property_name)``,
+this will return an array. You can also use ``get(parameter_name, [property_name_1, ..., property_name_n])``
+and get a dictionary with arrays.
+
+>>>    sd = nest.Create('spike_detector')
+>>>    sd.get('events', 'senders')
+       array([], dtype=int64)
+
+Lastly, you can specify the output format (pandas, JSON currently implemented). The
+output format can be specified for all the different ``get()`` versions above.
+
+>>>    nodes[0].get(['V_m', 'V_reset'], output='json')
+       '{"V_m": -55.0, "V_reset": -70.0}'
+
 
 .. _set_param:
 
 Set the node status
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-`set()`` the values of a parameter by iterating over each node
+``set()`` sets the values of a parameter by iterating over each node.
 
-* ``nodes.set(parameter_name, parameter_value)``
-* ``nodes.set(parameter_name, [parameter_val_1, parameter_val_2, ... , parameter_val_n])``
-* ``nodes.set(parameter_dict)``
-* ``nodes.set([parameter_dict_1, parameter_dict_2, ... , parameter_dict_n])``
+As with ``get()``, you can set parameters in different ways.
 
-Examples
-^^^^^^^^
+To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
+keyword of the parameter_dict is the parameter name. The value could be a list
+the size of the NodeCollection, a single value, or a ``nest.Parameter``.
 
->>>    nodes.set({'V_reset': [-65.0 + n for n in range(10)]})
->>>    nodes.get(['V_m', 'V_reset'])
-       {'V_m': (-55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0, -55.0),
-        'V_reset': (-65.0,
-         -64.0,
-         -63.0,
-         -62.0,
-         -61.0,
-         -60.0,
-         -59.0,
-         -58.0,
-         -57.0,
-         -56.0)}
+>>> nodes[:3].set({'V_m': [-70., -80., -90.], 'C_m': 333.})
 
-    We can get the status of the nodes in the NodeCollection. Getting the
-    status with a single parameter returns a tuple with the values of that
-    parameter for all nodes.
+You could also set a single parameter by using ``nodes.set(parameter_name=parameter)``.
+As parameter, you can either send in a single value, a list the size of the NodeCollection,
+or a ``nest.Parameter``
 
+>>> nodes.set(t_ref=3.0)
+>>> nodes[:3].set(t_ref=[3.0, 4.0, 5.0])
+>>> nodes.set(t_ref=nest.random.uniform())
 
-    >>>  nrns.get('V_m')
-         (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0,
-         -70.0, -70.0)
+Note that some parameters, like `global_id`, cannot be set.
 
-    If more than one parameter is provided, e.g.
-
-    ::
-
-        nrns.get(['C_m', 'V_m'])
-
-    a dictionary is returned with parameters as keys and tuples
-    of the values. To get all parameters in a dictionary, call
-    ``nrns.get()`` without any arguments. Selecting fields at a deeper
-    hierarchy level is also possible
-
-    ::
-
-        multimeter.get('events', 'senders')  # returns an array of sender GIDs
-        multimeter.get('events', ['senders', 'times'])  # returns a dictionary with arrays
-
-    It is possible to select an alternative output format with the
-    ``output`` keyword. Currently it is possible to get the output in a
-    json format, or a Pandas format (if Pandas is installed).
-
-    ::
-
-        nrns.get(output='json')  # returns a string in json format
-        nrns.get(output='pandas')  # returns a Pandas DataFrame
-
-
-Setting node status
-    In the same way as we can ``get`` the status of nodes in a
-    NodeCollection, we can also ``set`` the status.
-
-    ::
-
-        nrns.set('V_m', -55.)  # sets V_m of all nodes
-        nrns.set('V_m', [-50., -51., ...])  # sets different V_m for each node
-        nrns.set({'V_m': -55., 'C_m': 150.})  # sets V_m and C_m of all nodes
-
-We can create a composite NodeCollection (i.e., a non-contiguous or non-homogenous NodeCollection) from a list
-
-    >>>  gc = nest.NodeCollection([1, 3, 7])
-    >>>  print(gc)
-         NodeCollection(metadata=None,
-               model=iaf_psc_alpha, size=1, first=1;
-               model=iaf_psc_alpha, size=1, first=3;
-               model=iaf_psc_alpha, size=1, first=7)
 
 .. _SynapseCollection:
 
 New functionality for handling connections (synapses)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Just like a NodeCollection is a container for GIDs, a SynapseCollection is a
+Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
 SynapseCollection is returned. SynapseCollections support a lot of the same operations
 as NodeCollections.
@@ -377,8 +361,10 @@ as NodeCollections.
 -  :ref:`Slicing <conn_slicing>`
 -  :ref:`Getting the size <conn_size>` ``len``
 -  :ref:`Testing for equality <conn_testing_equality>`
--  :ref:`get_param` parameters
--  :ref:`set_param` parameters
+-  :ref:`Get connection parameters <conn_get>`
+-  :ref:`Set connection parameters <conn_set>`
+-  :ref:`Setting and getting attributes directly <conn_direct_attributes>`
+-  :ref:`Iterator of sources and targets <conn_s_t_iterator>`
 
 .. seealso::
 
@@ -386,10 +372,11 @@ as NodeCollections.
 
 
 Printing
-    Printing a SynapseCollection produces a table of source and target GIDs
+    Printing a SynapseCollection produces a table of source and target node IDs
 
-    >>>  SynapseCollection = nest.GetConnections()
-    >>>  print(SynapseCollection)
+    >>>  nest.Connect(nodes[:2], nodes[:2])
+    >>>  synColl = nest.GetConnections()
+    >>>  print(synColl)
          *--------*-------------*
          | source | 1, 1, 2, 2, |
          *--------*-------------*
@@ -399,9 +386,9 @@ Printing
 .. _conn_indexing:
 
 Indexing
-    Indexing returns a SynapseCollection with a single connection.
+    Indexing returns a single connection SynapseCollection.
 
-    >>>  print(SynapseCollection[1])
+    >>>  print(synColl[1])
          *--------*----*
          | source | 1, |
          *--------*----*
@@ -412,18 +399,26 @@ Indexing
 .. _conn_iterating:
 
 Iteration
-    A SynapseCollection can be iterated, yielding single connection SynapseCollections.
+    A SynapseCollection can be iterated, yielding a single connection SynapseCollections.
+
+    >>>  for conn in synColl:
+    >>>      print(conn.source)
+         1
+         1
+         2
+         2
+
 
 .. _conn_slicing:
 
 Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
-    >>>  print(SynapseCollection[0:3:2])
+    >>>  print(synColl[0:3:2])
          *--------*-------*
-         | source | 1, 1, |
+         | source | 1, 2, |
          *--------*-------*
-         | target | 10, 8,|
+         | target | 1, 1, |
          *--------*-------*
 
 .. _conn_size:
@@ -431,19 +426,8 @@ Slicing
 Getting the size
     We can get the number of connections in the SynapseCollection with
 
-
-    .. code-block:: ipython
-
-        nest.ResetKernel()
-
-        positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-        layer = nest.Create('iaf_psc_alpha', 10, positions=positions)
-
-        nest.Connect(layer, layer)
-        SynapseCollection = nest.GetConnections()
-
-    >>>    len(SynapseCollection)
-           100
+    >>>  len(synColl)
+         4
 
 
 .. _conn_testing_equality:
@@ -451,43 +435,97 @@ Getting the size
 Test of equality
     Two SynapseCollections can be tested for equality, i.e. that they contain the same connections.
 
+    >>>  synColl == synColl
+         True
+    >>>  synColl[:2] == synColl[2:]
+         False
+
+
 .. _conn_get:
 
 Getting connection parameters
-    We can get the parameters of the connections in the SynapseCollection. The
-    structure of the returned values follows the same rules as ``get()``
-    for NodeCollections.
+    Just as with NodeCollection, you can get parameters of the connections with
+    ``get()``. The same function arguments as for :ref:`NodeCollections get() <get_param>`
+    applies here. The returned values also follow the same rules. 
 
-    ::
+    If you call ``get()`` without any input variables, a dictionary with all parameters is
+    returned as a list if number of connections is bigger than 1 and a single integer if
+    number of connections is 1.
 
-        SynapseCollection.get()  # Returns a dictionary of all parameters
-        SynapseCollection[0].get('weight')  # Returns the weight value of the first connection
-        SynapseCollection.get('delay')  # Returns a list of delays
-        SynapseCollection.get(['weight', 'delay'])  # Returns a dictionary with weights and delays
+    >>>  synColl.get()
+         {'delay': [1.0, 1.0, 1.0, 1.0],
+          'port': [0, 1, 2, 3],
+          'receptor': [0, 0, 0, 0],
+          'sizeof': [32, 32, 32, 32],
+          'source': [1, 1, 2, 2],
+          'synapse_id': [0, 0, 0, 0],
+          'synapse_model': ['static_synapse',
+           'static_synapse',
+           'static_synapse',
+           'static_synapse'],
+          'target': [1, 2, 1, 2],
+          'target_thread': [0, 0, 0, 0],
+          'weight': [1.0, 1.0, 1.0, 1.0]}
+
+    Calling ``get(parameter_name)`` will return a list of parameter values, while
+    ``get([parameter_name_1, ... , parameter_name_n])`` returns a dictionary with
+    the values.
+
+    >>>  synColl.get('weight')
+         [1.0, 1.0, 1.0, 1.0]
+
+    >>>  synColl[2].get(['source', 'target'])
+         {'source': 2, 'target': 1}
 
     It is also possible to select an alternative output format with the
     ``output`` keyword. Currently it is possible to get the output in a
     json format, or a Pandas format (if Pandas is installed).
 
-    ::
-
-        SynapseCollection.get(output='json')  # returns a string in json format
-        SynapseCollection.get(output='pandas')  # returns a Pandas DataFrame
-
 .. _conn_set:
 
 Setting connection parameters
-    Likewise, we can set the parameters of connections in the SynapseCollection
+    Likewise, you can set the parameters of connections in the SynapseCollection.
+    Again the same rules as with ``set()`` on NodeCollection applies, see :ref:`NodeCollection set() <set_param>`
+    for more.
 
-    ::
+    If you want to set several parameters at once, use ``set(parameter_dictionary)``.
+    You can use a single value, a list, or a ``nest.Parameter`` as values. If a single value is given,
+    the value is set on all connections.
 
-        SynapseCollection.set('delay', 2.0)  # Sets all delays to 2.0
-        SynapseCollection.set('delay', [1.0, 2.0, 3.0, 4.0])  # Sets specific delays for each connection
-        SynapseCollection.set({'weight': 1.5, 'delay': 2.0})  # Sets all weights to 1.5 and all delays to 2.0
+    >>>  synColl.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
 
-Getting an iterator over the sources or targets
-    Calling ``SynapseCollection.source()`` or ``SynapseCollection.target()`` returns an
-    iterator over the source GIDs or target GIDs, respectively.
+    Updating a single parameter is done by calling ``set(parameter_name=parameter_value)``.
+    Again you can use a single value, a list, or a ``nest.Parameter`` as value.
+
+    >>>  synColl.set(weight=3.7)
+
+    >>>  synColl.set(weight=[4.0, 4.5, 5.0, 5.5])
+
+    Note that some parameters, like `source` and `target`, cannot be set.
+
+.. _conn_direct_attributes:
+
+Setting and getting attributes directly
+    You can also directly get and set parameters of your SynapseCollection
+    
+    >>>  synColl.weight = 5.
+    >>>  synColl.weight
+         [5.0, 5.0, 5.0, 5.0]
+    >>>  synColl.delay = [5.1, 5.2, 5.3, 5.4]
+    >>>  synColl.delay
+         [5.1, 5.2, 5.3, 5.4]
+
+    If you use a list to set the parameter, the list needs to be the same length
+    as the SynapseCollection.
+
+.. _conn_s_t_iterator:
+
+Iterator of sources and targets
+    Calling ``SynapseCollection.sources()`` or ``SynapseCollection.targets()`` returns an
+    iterator over the source IDs or target IDs, respectively.
+
+    >>>  print([s*3 for s in synColl.sources()])
+         [3, 3, 6, 6]
 
 .. _param_ex:
 
@@ -502,40 +540,59 @@ probabilities, weights and delays. The Parameters can be combined in
 different ways, and they can be used with some mathematical functions that
 are provided by NEST.
 
+The following parameters and functionalities are provided:
+
+-  :ref:`Random parameters <random_ex>`
+-  :ref:`Spatial parameters <spatial_ex>`
+-  :ref:`Spatially distributed parameters <distrib_ex>`
+-  :ref:`Mathematical functions <math_ex>`
+-  :ref:`Clipping, redrawing, and conditional parameters <logic>`
+-  :ref:`Combination of parameters <combine_ex>`
+
 
 .. _random_ex:
 
 Random parameters
 ^^^^^^^^^^^^^^^^^
+The random module contains random distributions that can be used to set node
+and connection parameters, as well as positions for spatially distributed nodes.
 
-  +--------------------------------+-----------------------------------+
-  | Parameter                      | Description                       |
-  +================================+===================================+
-  | ``nest.random.uniform()``      | Draws samples based on a          |
-  |                                | uniform distribution.             |
-  +--------------------------------+-----------------------------------+
-  | ``nest.random.normal()``       | Draws samples based on a          |
-  |                                | normal distribution.              |
-  +--------------------------------+-----------------------------------+
-  | ``nest.random.exponential()``  | Draws samples based on a          |
-  |                                | exponential distribution.         |
-  +--------------------------------+-----------------------------------+
-  | ``nest.random.lognormal()``    | Draws samples based on a          |
-  |                                | lognormal distribution.           |
-  +--------------------------------+-----------------------------------+
+  +--------------------------------------------------+--------------------------------------------+
+  | Parameter                                        | Description                                |
+  +==================================================+============================================+
+  |  ::                                              |                                            |                                  
+  |                                                  |                                            |
+  |     nest.random.uniform(min=0.0, max=1.0)        | Draws samples based on a                   |
+  |                                                  | uniform distribution.                      |
+  +--------------------------------------------------+--------------------------------------------+
+  |  ::                                              |                                            |
+  |                                                  |                                            |
+  |     nest.random.normal(mean=0.0, std=1.0)        | Draws samples based on a                   |
+  |                                                  | normal distribution.                       |
+  +--------------------------------------------------+--------------------------------------------+
+  |  ::                                              |                                            |
+  |                                                  |                                            |
+  |     nest.random.exponential(beta=1.0)            | Draws samples based on a                   |
+  |                                                  | exponential distribution.                  |
+  +--------------------------------------------------+--------------------------------------------+
+  |  ::                                              |                                            |
+  |                                                  |                                            |
+  |     nest.random.lognormal(mean=0.0, std=1.0)     | Draws samples based on a                   |
+  |                                                  | lognormal distribution.                    |
+  +--------------------------------------------------+--------------------------------------------+
 
 For every value to be generated, samples are drawn from a distribution. The distribution uses
 NEST's random number generator, and are therefore thread-safe. Note that
-arguments can be passed to each of them to control the parameters of the
+arguments can be passed to each of the distributions above to control the parameters of the
 distribution.
 
 .. code-block:: ipython
 
     nest.ResetKernel()
 
-    n = nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(loc=-60., scale=10.)})
+    n = nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60., std=10.)})
 
-    gids = n.get('global_id')
+    gids = n.global_id
     v_m = n.get('V_m')
     fig, ax = plt.subplots(figsize=(12, 6),
                            gridspec_kw={'width_ratios':
@@ -552,167 +609,162 @@ distribution.
 .. image:: ../nest-3/NEST3_13_0.png
 
 
-.. code-block:: ipython
-
-    nest.ResetKernel()
-
-    n = nest.Create('iaf_psc_alpha', 10000, {'V_m': -60 + 2*nest.random.exponential() + nest.random.normal()})
-
-    gids = n.get('global_id')
-    v_m = n.get('V_m')
-    fig, ax = plt.subplots(figsize=(12, 6),
-                           gridspec_kw={'width_ratios': [3, 1]},
-                           ncols=2,
-                           sharey=True)
-    ax[0].plot(gids, v_m, '.', alpha=0.5, ms=3.5)
-    ax[0].set_xlabel('GID');
-    ax[1].hist(v_m, bins=40, orientation='horizontal');
-    ax[1].set_xlabel('num. nodes');
-    ax[0].set_ylabel('V_m');
-
-
-
-.. image:: ../nest-3/NEST3_14_0.png
-
-
 .. _spatial_ex:
 
 Spatial parameters
 ^^^^^^^^^^^^^^^^^^
+  The spatial module contains parameters related to spatial positions of the
+  nodes.
+
+  To create spatially distributed nodes (see section on :ref:`spatially distributed nodes <topo_changes>` for more),
+  use ``ǹest.spatial.grid()`` or ``nest.spatial.free``.
+
+  +----------------------------------------------------+-------------------------------------------------------+
+  | Parameter                                          | Description                                           |
+  +====================================================+=======================================================+
+  |  ::                                                |                                                       |
+  |                                                    | Create spatially positioned nodes distributed on a    |
+  |     nest.spatial.grid(shape, center=None,          | grid with dimensions given by `shape`.                |
+  |         extent=None, edge_wrap=False)              |                                                       |
+  +----------------------------------------------------+-------------------------------------------------------+
+  |  ::                                                |                                                       |
+  |                                                    | Create spatially positioned nodes distributed freely  |
+  |     nest.spatial.free(pos, extent=None,            | in space with dimensions given by `pos` or            |
+  |         edge_wrap=False, num_dimensions=None)      | `num_dimensions`.                                     |
+  |                                                    |                                                       |
+  +----------------------------------------------------+-------------------------------------------------------+
+
+  .. code-block:: ipython
+
+    grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
+    nest.PlotLayer(grid_nodes);
+
+  .. image:: ../nest-3/NEST3_23_0.png
+
+
+  .. code-block:: ipython
+
+    free_nodes = nest.Create('iaf_psc_alpha', 100,
+                             positions=nest.spatial.free(nest.random.uniform(min=0., max=10.),
+                                                         num_dimensions=2))
+    nest.PlotLayer(free_nodes);
+
+  .. image:: ../nest-3/NEST3_24_0.png
+
+
+  After you have created your spatially distributed nodes, you can use spatial parameters to set
+  node or connection parameters.
 
   +----------------------------------+-------------------------------------------------------------------------+
   | Parameter                        | Description                                                             |
   +==================================+=========================================================================+
-  | | ``nest.spatial.pos.x``         | | Position of a neuron, on the x, y, and z axis.                        |
-  | | ``nest.spatial.pos.y``         | | Can be used to set node properties, but not for connecting.           |
-  | | ``nest.spatial.pos.z``         |                                                                         |
+  |  ::                              |                                                                         |
+  |                                  |                                                                         |
+  |     nest.spatial.pos.x           | | Position of a neuron, on the x, y, and z axis.                        |
+  |     nest.spatial.pos.y           | | Can be used to set node properties, but not for connecting.           |
+  |     nest.spatial.pos.z           |                                                                         |
   +----------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.source_pos.x``  | | Position of the source neuron, on the x, y, and z axis.               |
-  | | ``nest.spatial.source_pos.y``  | | Can only be used when connecting.                                     |
-  | | ``nest.spatial.source_pos.z``  |                                                                         |
+  |  ::                              |                                                                         |
+  |                                  |                                                                         |
+  |     nest.spatial.source_pos.x    | | Position of the source neuron, on the x, y, and z axis.               |
+  |     nest.spatial.source_pos.y    | | Can only be used when connecting.                                     |
+  |     nest.spatial.source_pos.z    |                                                                         |
   +----------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.target_pos.x``  |                                                                         |
-  | | ``nest.spatial.target_pos.y``  | | Position of the target neuron, on the x, y, and z axis.               |
-  | | ``nest.spatial.target_pos.z``  | | Can only be used when connecting.                                     |
+  |  ::                              |                                                                         |
+  |                                  |                                                                         |
+  |     nest.spatial.target_pos.x    |                                                                         |
+  |     nest.spatial.target_pos.y    | | Position of the target neuron, on the x, y, and z axis.               |
+  |     nest.spatial.target_pos.z    | | Can only be used when connecting.                                     |
   +----------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.distance``      | | Distance between two nodes. Can only be used when connecting.         |
+  |  ::                              |                                                                         |
+  |                                  |                                                                         |
+  |     nest.spatial.distance        | | Distance between two nodes. Can only be used when connecting.         |
   +----------------------------------+-------------------------------------------------------------------------+
-  | | ``nest.spatial.distance.x``    |                                                                         |
-  | | ``nest.spatial.distance.y``    | | Distance on the x, y and z axis between the source and target neuron. |
-  | | ``nest.spatial.distance.z``    | | Can only be used when connecting.                                     |
+  |  ::                              |                                                                         |
+  |                                  |                                                                         |
+  |     nest.spatial.distance.x      |                                                                         |
+  |     nest.spatial.distance.y      | | Distance on the x, y and z axis between the source and target neuron. |
+  |     nest.spatial.distance.z      | | Can only be used when connecting.                                     |
   +----------------------------------+-------------------------------------------------------------------------+
 
   These Parameters represent positions of neurons or distances between two
   neurons. To set node parameters, only the node position can be used. The
   others can only be used when connecting.
 
-.. code-block:: ipython
 
-    grid_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=10, columns=8))
-    nest.PlotLayer(grid_layer);
-
-
-.. image:: ../nest-3/NEST3_23_0.png
-
-
-.. code-block:: ipython
-
-    free_layer = nest.Create('iaf_psc_alpha', 100, positions=nest.spatial.free(nest.random.uniform(min=0., max=10.), num_dimensions=2))
-    nest.PlotLayer(free_layer);
-
-
-.. image:: ../nest-3/NEST3_24_0.png
-
-
-.. code-block:: ipython
+  .. code-block:: ipython
 
     nest.ResetKernel()
 
     positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 10000)])
-    layer = nest.Create('iaf_psc_alpha', positions=positions)
+    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
     parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
-    layer.set({'V_m': parameter})
+    spatial_nodes.set({'V_m': parameter})
 
-    node_pos = np.array(nest.GetPosition(layer))
+    node_pos = np.array(nest.GetPosition(spatial_nodes))
     node_pos[:,1]
-    v_m = layer.get('V_m');
+    v_m = spatial_nodes.get('V_m');
 
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(node_pos[:,0], v_m, '.', ms=3.5)
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
 
-
-
-.. image:: ../nest-3/NEST3_25_0.png
+  .. image:: ../nest-3/NEST3_25_0.png
 
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
 
-With these functions, you can recreate for example a Gaussian kernel as a
-parameter:
+
 
 .. _distrib_ex:
 
-Distribution functions
-^^^^^^^^^^^^^^^^^^^^^^^^
+Spatial distribution functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The spatial_distributions module contains random distributions that take a spatial
+parameter as input and applies the distribution on the parameter. They are used
+for spatially distributed nodes.
 
+  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
+  | Parameter                                         | Description                                                                                        |
+  +===================================================+====================================================================================================+
+  |  ::                                               | .. math::                                                                                          |
+  |                                                   |      p(x) = \exp{\left(-\frac{x}{\beta}\right)}                                                    |
+  |     nest.spatial_distributions.exponential(x,     |                                                                                                    |
+  |         beta=1.0)                                 |                                                                                                    |
+  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
+  |  ::                                               | .. math::                                                                                          |
+  |                                                   |      p(x) = \exp{\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)}                                        |
+  |     nest.spatial_distributions.gaussian(x,        |                                                                                                    |
+  |         mean=0.0, std=1.0)                        |                                                                                                    |
+  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
+  |  ::                                               | .. math::                                                                                          |
+  |                                                   |      p(x) = \exp{\left(-\frac{\frac{(x-\mu_x)^2}{2\sigma_x^2} - \frac{(y-\mu_y)^2}{2\sigma_y^2} +  |
+  |     nest.spatial_distributions.gaussian2D(x, y,   |      2\rho\frac{(x-\mu_x)(y-\mu_y)}{2\sigma_x*\sigma_y}}{2(1-\rho^2)}\right)}                      |
+  |         mean_x=0.0, mean_y=0.0, std_x=1.0,        |                                                                                                    |
+  |         std_y=1.0, rho=0.0)                       |                                                                                                    |
+  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
+  |  ::                                               | .. math::                                                                                          |
+  |                                                   |      p(x) = \frac{x^{\kappa-1}e^{-\frac{x}{\theta}}}{\theta^\kappa\Gamma(\kappa)}                  |
+  |     nest.spatial_distributions.gamma(x, kappa=1.0,|                                                                                                    |
+  |         theta=1.0)                                |                                                                                                    |
+  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
 
-nest.distributions.exponential()
-     takes `x`, `a`, and `tau` as arguments
-
-.. math::
-
-     p(x) = a e^{-\frac{x}{\tau}}
-
-
-nest.distributions.gaussian()
-     takes `x`, `p_center`, `mean`, and `std_deviation` as arguments
-
-
-
-.. math::
-        p(x) = p_{\text{center}}  e^{-\frac
-        {(x-\text{mean})^2}{2\text{std_deviation}^2}}
-
-
-
-nest.distributions.gaussian2D()
-     takes `x`, `y`, `p_center`, `mean_x`, `mean_y`, `std_deviation_x`, `std_deviation_y`, and `rho` as arguments
-
-
-.. math::
-
-   p(x) = p_{\text{center}}
-   e^{-\frac{\frac{(x-\text{mean_x})^2}
-   {\text{std_deviation_x}^2}-\frac{
-   (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2
-   \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}
-   {\text{std_deviation_x}\text{std_deviation_y}}}
-   {2(1-\rho^2)}}
-
-
-
-nest.distributions.gamma()
-    takes `x`, `alpha`, and `theta` as arguments.
-
-
- .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}
-            {\theta}}}{\theta^\alpha\Gamma(\alpha)}
+Note that ``x`` and ``y`` are ``nest.Parameter`` types.
 
 With these functions, you can, for example, recreate a Gaussian kernel as a parameter:
 
 
-  +------------------------------------------------------------+-----------------------------------------------------------------+
-  | NEST 2.x                                                   | NEST 3.0                                                        |
-  +------------------------------------------------------------+-----------------------------------------------------------------+
-  |  ::                                                        |  ::                                                             |
-  |                                                            |                                                                 |
-  |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.spatial_distributions.gaussian(                |
-  |                                                            |         nest.spatial.distance, p_center=1.0, std_deviation=1.0) |
-  |                                                            |                                                                 |
-  +------------------------------------------------------------+-----------------------------------------------------------------+
+  +------------------------------------------------+-----------------------------------------------------------------+
+  | NEST 2.x                                       | NEST 3.0                                                        |
+  +------------------------------------------------+-----------------------------------------------------------------+
+  |  ::                                            |  ::                                                             |
+  |                                                |                                                                 |
+  |     kernel = {"gaussian": {"p_center": 2.0,    |     param = 2*nest.spatial_distributions.gaussian(              |
+  |                            "sigma": 1.0}}      |         nest.spatial.distance, std=1.0)                         |
+  |                                                |                                                                 |
+  +------------------------------------------------+-----------------------------------------------------------------+
 
 
 .. code-block:: ipython
@@ -723,13 +775,13 @@ With these functions, you can, for example, recreate a Gaussian kernel as a para
     middle_node = N//2
 
     positions = nest.spatial.free([[x, 0.] for x in np.linspace(0, 1.0, N)])
-    layer = nest.Create('iaf_psc_alpha', positions=positions)
+    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
-    parameter = nest.distributions.exponential(nest.spatial.distance, a=1.0, tau=0.15)
+    parameter = nest.spatial_distributions.exponential(nest.spatial.distance, beta_Ca=0.15)
 
     # Iterate connection to get statistical connection data
     for _ in range(2000):
-        nest.Connect(layer[middle_node], layer,
+        nest.Connect(spatial_nodes[middle_node], spatial_nodes,
                      conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': parameter})
 
@@ -739,28 +791,34 @@ With these functions, you can, for example, recreate a Gaussian kernel as a para
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
     plt.xticks(bars[1] + 0.5,np.arange(1, N+1))
-    ax.set_title('Connections from node with GID {}'.format(layer[middle_node].get('global_id')))
+    ax.set_title('Connections from node with GID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target GID')
     ax.set_ylabel('Num. connections');
 
-
-
 .. image:: ../nest-3/NEST3_34_0.png
+
+
 
 .. _math_ex:
 
 Mathematical functions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-  +----------------------------+-------------------------------------------+
-  | Parameter                  | Description                               |
-  +----------------------------+-------------------------------------------+
-  | ``nest.random.exp()``      | Calculates the exponential of a Parameter |
-  +----------------------------+-------------------------------------------+
-  | ``nest.random.cos()``      | Calculates the cosine of a Parameter      |
-  +----------------------------+-------------------------------------------+
-  | ``nest.random.sin()``      | Calculates the sine of a Parameter        |
-  +----------------------------+-------------------------------------------+
+  +----------------------------+---------------------------------------------+
+  | Parameter                  | Description                                 |
+  +============================+=============================================+
+  | ::                         |                                             |
+  |                            |                                             |
+  |     nest.random.exp(x)     | | Calculates the exponential of a Parameter |
+  +----------------------------+---------------------------------------------+
+  | ::                         |                                             |
+  |                            |                                             |
+  |     nest.random.cos(x)     | | Calculates the cosine of a Parameter      |
+  +----------------------------+---------------------------------------------+
+  | ::                         |                                             |
+  |                            |                                             |
+  |     nest.random.sin(x)     | | Calculates the sine of a Parameter        |
+  +----------------------------+---------------------------------------------+
 
 The mathematical functions take a parameter object as argument, and return
 a new parameter which applies the mathematical function on the Parameter
@@ -771,18 +829,18 @@ given as argument.
     nest.ResetKernel()
 
     positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 100)])
-    layer = nest.Create('iaf_psc_alpha', positions=positions)
+    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
     parameter = -60 + nest.math.exp(nest.spatial.pos.x**4)
     # Also available:
     #   - nest.math.sin()
     #   - nest.math.cos()
 
-    layer.set({'V_m': parameter})
+    spatial_nodes.set({'V_m': parameter})
 
-    node_pos = np.array(nest.GetPosition(layer))
+    node_pos = np.array(nest.GetPosition(spatial_nodes))
     node_pos[:,1]
-    v_m = layer.get('V_m');
+    v_m = spatial_nodes.get('V_m');
 
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(node_pos[:,0], v_m, '.', ms=6.5)
@@ -798,50 +856,36 @@ given as argument.
 Clipping, redraw, and conditionals
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-  +------------------------------+-------------------------------------------------------+
-  | Parameter                    | Description                                           |
-  +------------------------------+-------------------------------------------------------+
-  | ``nest.math.min()``          | | If a value from the Parameter is above a threshold, |
-  |                              | | the value is replaced with the value of the         |
-  |                              | | threshold.                                          |
-  +------------------------------+-------------------------------------------------------+
-  | ``nest.math.max()``          | | If a value from the Parameter is beneath a          |
-  |                              | | threshold, the value is replaced with the value of  |
-  |                              | | the threshold.                                      |
-  +------------------------------+-------------------------------------------------------+
-  | ``nest.math.redraw()``       | | If a value from the Parameter is outside of the     |
-  |                              | | limits given, the value is redrawn. Throws an error |
-  |                              | | if a suitable value is not found after a certain    |
-  |                              | | number of redraws.                                  |
-  +------------------------------+-------------------------------------------------------+
-  | ``nest.logic.conditional()`` | | Given a condition, yields one value or another      |
-  |                              | | based on if the condition evaluates to true or      |
-  |                              | | false.                                              |
-  +------------------------------+-------------------------------------------------------+
+  +----------------------------------------------------+-----------------------------------------------------+
+  | Parameter                                          | Description                                         |
+  +====================================================+=====================================================+
+  | ::                                                 |                                                     |
+  |                                                    |                                                     |
+  |     nest.math.min(x, value)                        | If a value from the Parameter is above a threshold, |
+  |                                                    | the value is replaced with the value of the         |
+  |                                                    | threshold.                                          |
+  +----------------------------------------------------+-----------------------------------------------------+
+  | ::                                                 |                                                     |
+  |                                                    |                                                     |
+  |     nest.math.max(x, value)                        | If a value from the Parameter is beneath a          |
+  |                                                    | threshold, the value is replaced with the value of  |
+  |                                                    | the threshold.                                      |
+  +----------------------------------------------------+-----------------------------------------------------+
+  | ::                                                 |                                                     |
+  |                                                    |                                                     |
+  |     nest.math.redraw(x, min, max)                  | If a value from the Parameter is outside of the     |
+  |                                                    | limits given, the value is redrawn. Throws an error |
+  |                                                    | if a suitable value is not found after a certain    |
+  |                                                    | number of redraws.                                  |
+  +----------------------------------------------------+-----------------------------------------------------+
+  | ::                                                 |                                                     |
+  |                                                    |                                                     |
+  |     nest.logic.conditional(x, val_true, val_false) | Given a condition, yields one value or another      |
+  |                                                    | based on if the condition evaluates to true or      |
+  |                                                    | false.                                              |
+  +----------------------------------------------------+-----------------------------------------------------+
 
-.. code-block:: ipython
-
-    nest.ResetKernel()
-
-    positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 50)])
-    layer = nest.Create('iaf_psc_alpha', positions=positions)
-
-    layer.set({'V_m': nest.logic.conditional(nest.spatial.pos.x < 0.5,
-                                             -55 + 10*nest.spatial.pos.x,
-                                             -55)})
-
-    node_pos = np.array(nest.GetPosition(layer))
-    node_pos[:,1]
-    v_m = layer.get('V_m');
-
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(node_pos[:,0], v_m, 'o')
-    ax.set_xlabel('Node position on x-axis')
-    ax.set_ylabel('V_m');
-
-
-
-.. image:: ../nest-3/NEST3_26_0.png
+Note that ``x`` is a ``nest.Parameter``.
 
 The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a Parameter. Essentially they work like the standard ``min()`` and
@@ -877,6 +921,32 @@ statement. Three arguments are required:
     # A heaviside step function with uniformly distributed input values.
     nest.logic.conditional(nest.random.uniform(min=-1., max=1.) < 0., 0., 1.)
 
+.. code-block:: ipython
+
+    nest.ResetKernel()
+
+    positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 50)])
+    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
+
+    spatial_nodes.set(V_m=nest.logic.conditional(nest.spatial.pos.x < 0.5,
+                                                 -55 + 10*nest.spatial.pos.x,
+                                                 -55))
+
+    node_pos = np.array(nest.GetPosition(spatial_nodes))
+    node_pos[:,1]
+    v_m = spatial_nodes.get('V_m');
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(node_pos[:,0], v_m, 'o')
+    ax.set_xlabel('Node position on x-axis')
+    ax.set_ylabel('V_m');
+
+
+
+.. image:: ../nest-3/NEST3_26_0.png
+
+
+.. _combine_ex:
 
 Combine parameters
 ^^^^^^^^^^^^^^^^^^^^
@@ -886,7 +956,7 @@ can be added together, subtracted, multiplied with each other, or one can
 be divided by the other. They also support being raised to the power of a
 number, but they can only be raised to the power of an integer or a
 floating point number. Parameters can therefore be combined in almost any
-way. In fact the distribution functions in ``nest.distributions`` are just
+way. In fact the distribution functions in ``nest.spatial_distributions`` are just
 arithmetic expressions defined in Python.
 
 Some examples:
@@ -916,7 +986,7 @@ Using parameters makes it easy to set node properties
   |                                               |                                                    |
   | ::                                            | ::                                                 |
   |                                               |                                                    |
-  |     for gid in nrns:                          |     nrns.set('V_m', nest.random.uniform(-20., 20)) |
+  |     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
   |         v_m = numpy.random.uniform(-20., 20.) |                                                    |
   |         nest.SetStatus([gid], {'V_m': V_m})   |                                                    |
   |                                               |                                                    |
@@ -926,59 +996,88 @@ Using parameters makes it easy to set node properties
 What's changed?
 ----------------
 
+With NEST 3.0, we no longer support Python 2.
+
+.. _param_changes:
+
+Model parameter changes and changed functionalities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use term synapse_model throughout:
+    As all PyNEST functions that used to take the list returned by ``Create`` now use the NodeCollection
+    returned by ``Create``, there shouldn't be too many changes on the PyNEST level. One important
+    change though, is that we now use ``synapse_model`` throughout to reference the synapse model.
+
+    Most importantly, this will change your ``Connect`` call, where instead of passing the synapse
+    model with the ``model`` key, you should now use the ``synapse_model`` key.
+
+    >>>  nrns = nest.Create('iaf_psc_alpha', 3)
+    >>>  nest.Connect(nrns, nrns, 'one_to_one', syn_spec={'synapse_model': 'stdp_synapse'})
+
+    Simillarly, ``GetDefaults`` used to return an entry called ``synapsemodel``. It now returns and entry
+    called ``synapse_model``.
+
+Use allow_offgrid_times throughout:
+    In the model ``spike_generator``, the parameter ``allow_offgrid_spikes`` is renamed 
+    ``allow_offgrid_times`` for consistency with other models.
+
+Use unit ms instead of number of simulation steps:
+    The ``structural_plasticity_update_interval`` now has the unit ms instead of
+    number of simulation steps.
+
+
 .. _topo_changes:
 
 Topology module
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 -  All topology functions are now part of ``nest`` and not
    ``nest.topology``
 -  You can use the ``Create`` and ``Connect`` functions for spatial  networks, same as you would for non-spatial
    network
--  ``nest.GetPosition`` -> now takes a NodeCollection instead of a list of GIDs
--  ``nest.FindCenterElement`` -> now returns ``int`` instead of
-   ``tuple``
+-  All former topology functions that used to take a layer ID, now take a NodeCollection
+-  All former topology functions that used to return node/layer IDs now return a NodeCollection
 
 .. note::
 
    See the reference section :ref:`topo_ref` in our conversion guide for all changes made to functions
 
-Much of the functionality of Topology has been moved to the standard
+All of the functionality of Topology has been moved to the standard
 functions. In fact, there is no longer a Topology module in PyNEST. The
 functions that are specific for Topology are now in the ``nest`` module.
 
-Create layers
-^^^^^^^^^^^^^^^
+Create spatially distributed nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creating layers is now done with the standard ``nest.Create()`` function.
-Arguments of layer creation have also been changed to make creating
+Creating spatially distributed nodes are now done with the standard ``nest.Create()`` function.
+Arguments of node creation have also been changed to make creating
 populations with and without spatial information more unified. To create
 nodes with spatial positions, ``nest.Create()`` must be provided with the
 ``positions`` argument
 
 ::
 
-    layer = nest.Create(model, positions=spatial_data)
+    spatial_nodes = nest.Create(model, positions=spatial_data)
 
 where ``spatial_data`` can be one of the following
 
-``nest.spatial.grid()``
-    This creates a grid layer, with a prescribed number of rows and
-    columns, and a specified extent. Some example grid layer
+- ``nest.spatial.grid()``
+    This creates nodes on a grid, with a prescribed number of rows and
+    columns, and, if specified, an extent and center. Some example grid spatial nodes
     specifications:
 
     ::
 
-        nest.spatial.grid(rows=5, columns=4, extent=[2., 2.])  # 5x4 grid in a 2x2 square
-        nest.spatial.grid(rows=4, columns=5, center=[1., 1.])  # 4x5 grid in the default 1x1 square, with shifted center
-        nest.spatial.grid(rows=4, columns=5, edge_wrap=True)  # 4x5 grid with periodic boundary conditions
-        nest.spatial.grid(rows=2, columns=3, depth=4)  # 3D 2x3x4 grid
+        nest.spatial.grid(shape=[5, 4], extent=[2., 2.])  # 5x4 grid in a 2x2 square
+        nest.spatial.grid(shape=[4, 5], center=[1., 1.])  # 4x5 grid in the default 1x1 square, with shifted center
+        nest.spatial.grid(shape=[4, 5], edge_wrap=True)  # 4x5 grid with periodic boundary conditions
+        nest.spatial.grid(shape=[2, 3, 4])  # 3D 2x3x4 grid
 
-``nest.spatial.free()``
-    This creates a free layer. The first argument to
-    ``nest.spatial.free()`` can be either a NEST Parameter that generates
+- ``nest.spatial.free()``
+    This creates nodes positioned freely in space. The first argument to
+    ``nest.spatial.free()`` can either be a NEST Parameter that generates
     the positions, or an explicit list of positions. Some example free
-    layer specifications:
+    spatial nodes specifications:
 
     ::
 
@@ -991,23 +1090,30 @@ where ``spatial_data`` can be one of the following
                           num_dimensions=3,       # in 3D
                           edge_wrap=True)         # with periodic boundary conditions
 
-    Note the following
+Note the following
 
-    - For positions generated from NEST Parameters, the number of neurons
-      has to be provided in ``nest.Create()``.
-    - The extent is calculated from the positions of the nodes, but can be
-      set explicitly.
-    - If possible, NEST tries to deduce the number of dimensions. But if
-      the positions are generated from NEST Parameters, and there is no
-      extent defined, the number of dimensions has to be provided.
+- For positions generated from NEST Parameters, the number of neurons
+  has to be provided in ``nest.Create()``.
+- The extent is calculated from the positions of the nodes, but can be
+  set explicitly.
+- If possible, NEST tries to deduce the number of dimensions. But if
+  the positions are generated from NEST Parameters, and there is no
+  extent defined, the number of dimensions has to be provided.
 
-Topology layers are no longer subnets, as subnets have been removed, but
+  ::
+
+      spatial_nodes = nest.Create('iaf_psc_alpha', n=5,
+                                  positions=nest.spatial.free(nest.random.uniform(),
+                                                              num_dimensions=3))
+
+
+Spatially positioned nodes are no longer subnets, as subnets have been removed, but
 NodeCollections with metadata. These NodeCollections behave as normal
 NodeCollections with two exceptions:
 
 - They cannot be merged, as concatenating NodeCollections with metadata is
   not allowed.
-- Setting the status of nodes and connecting layer NodeCollections can
+- When setting the status of nodes and connecting spatially distributed NodeCollections you can
   use spatial information as parameters.
 
 The second point means that we can use masks and position dependent
@@ -1017,21 +1123,60 @@ a value based on the nodes' position on the x-axis:
 
 ::
 
-    layer = nest.Create('iaf_psc_alpha', 10
+    snodes = nest.Create('iaf_psc_alpha', 10
                         positions=nest.spatial.free(
                             nest.random.uniform(min=-10., max=10.), num_dimensions=2))
-    layer.set('V_m', -60. + nest.spatial.pos.x)
+    snodes.set('V_m', -60. + nest.spatial.pos.x)
 
-It is also no longer possible to create composite layers, i.e. layers with
-multiple nodes in each position. To reproduce this, we now have to create
-multiple layers.
 
-.. TODO: Composite layer replacement recommendation/example
+Composite layers:
+    It is no longer possible to create composite layers, i.e. layers with
+    multiple nodes in each position. To reproduce this, we now create
+    multiple spatially distributed NodeCollections.
 
-Connect layers
-^^^^^^^^^^^^^^^^^^
+      +-------------------------------------------+----------------------------------------------------------------------+
+      | NEST 2.x                                  | NEST 3.0                                                             |
+      +===========================================+======================================================================+
+      |                                           |                                                                      |
+      | ::                                        | ::                                                                   |
+      |                                           |                                                                      |
+      |     l = tp.CreateLayer(                   |     sn_iaf = nest.Create('iaf_psc_alpha'                             |
+      |             {'rows': 1,                   |                          positions=nest.spatial.grid(                |
+      |              'columns': 2,                |                              shape=[1, 2]))                          |
+      |              'elements':                  |                                                                      |
+      |                  ['iaf_cond_alpha',       |     sn_poi = nest.Create('poisson_generator',                        |
+      |                   'poisson_generator']})  |                           positions=nest.spatial.grid(               |
+      |                                           |                               shape=[1, 3]))                         |
+      |     Use l when connecting, setting        |                                                                      |
+      |     parameters etc.                       |     Use sn_iaf and sn_poi when connecting,                           |
+      |                                           |     setting parameters etc.                                          |
+      +-------------------------------------------+----------------------------------------------------------------------+
 
-Similar to creating layers, connecting layers is now done with the
+
+Retrieving spatial information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+To retrieve the spatial information from your nodes, spatially structured NodeCollections have
+a ``.spatial`` parameter that will retrieve all spatial information as a dictionary.
+
+>>>  spatial_nodes.spatial
+     {'center': (0.41717460937798023, 0.3541409997269511, 0.5058779059909284),
+      'edge_wrap': False,
+      'extent': (0.6786768797785043, 0.4196595948189497, 0.8852582329884171),
+      'network_size': 5,
+      'positions': ((0.1951471883803606, 0.24431120231747627, 0.5770208276808262),
+       (0.34431440755724907, 0.46397079713642597, 0.8201442817226052),
+       (0.17783616948872805, 0.4038907829672098, 0.16324878949671984),
+       (0.3796140942722559, 0.2643292499706149, 0.848507022485137),
+       (0.6565130492672324, 0.38219101540744305, 0.4020354822278023))}
+
+Note that if you have specified your positions as a NEST Parameter, NEST will convert that
+to a list with lists, and this is what you will get when calling ``.spatial``. 
+
+
+Connect spatially distributed nodes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Similar to creating nodes with spatial distributions, connecting is now done with the
 standard ``nest.Connect()`` function. Connecting NodeCollections with
 spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
@@ -1049,11 +1194,11 @@ metadata. In a layer-connection context, moving to the standard
   ``divergent`` with ``num_connections``  ``fixed_outdegree``
   ======================================= ==================================================
 
-  ``use_on_source`` here refers to if the mask and connection probability
-  should be applied to the source neuron instead of the target neuron.
+  ``use_on_source`` here refers to whether the mask and connection probability
+  should be applied to the source neuron or the target neuron.
   This is only required for ``pairwise_bernoulli``, as ``fixed_indegree``
   and ``fixed_outdegree`` implicitly states if we are using the source or
-  target layer as a driver.
+  target nodes.
 
 - The connection probability specification ``kernel``  is renamed to ``p``
   to fit with ``pairwise_bernoulli``, and is only possible for the
@@ -1076,13 +1221,13 @@ probability and rectangular mask on the target layer:
   |                                                         |                                                                      |
   |     l = tp.CreateLayer(                                 |     l = nest.Create('iaf_psc_alpha',                                 |
   |         {'columns': nc, 'rows': nr,                     |                     positions=nest.spatial.grid(                     |
-  |          'elements': 'iaf_psc_alpha',                   |                         rows=nr, columns=nc,                         |
+  |          'elements': 'iaf_psc_alpha',                   |                         shape=[nr, nc],                              |
   |          'extent': [2., 2.]})                           |                         extent=[2., 2.]))                            |
   |                                                         |                                                                      |
   |     conn_dict = {'connection_type': 'divergent',        |     conn_dict = {'rule': 'pairwise_bernoulli',                       |
   |                  'kernel': {'gaussian':                 |                  'p': nest.spatial_distributions.gaussian(           |
   |                             {'p_center': 1.,            |                      nest.spatial.distance,                          |
-  |                              'sigma': 1.}},             |                      p_center=1., std_deviation=1.),                 |
+  |                              'sigma': 1.}},             |                      std=1.),                                        |
   |                  'mask': {'rectangular':                |                  'mask': {'rectangular':                             |
   |                           {'lower_left': [-0.5, -0.5],  |                           {'lower_left': [-0.5, -0.5],               |
   |                            'upper_right': [0.5, 0.5]}}} |                            'upper_right': [0.5, 0.5]}}}              |
@@ -1107,11 +1252,11 @@ probability and delay, and random weights from a normal distribution:
   |                         'elements': 'iaf_psc_alpha'})            |     conn_dict = {'rule': 'fixed_outdegree',                         |
   |                                                                  |                  'outdegree': 50,                                   |
   |     conn_dict = {'connection_type': 'divergent',                 |                  'p': 1. - 0.5*nest.spatial.distance,               |
-  |                  'number_of_connections': 50,                    |                  'weight': nest.random.normal(min=-1., max=1.),     |
+  |                  'number_of_connections': 50,                    |                  'weight': nest.random.normal(mean=0., std=1.),     |
   |                  'kernel': {'linear':                            |                  'delay': 1.5*nest.spatial.distance,                |
   |                             {'a': -0.5, 'c': 1.}},               |                  'multapses': True,                                 |
   |                  'weights': {'normal':                           |                  'autapses': False}                                 |
-  |                              {'min': -1.0, 'max': 1.0}},         |     nest.Connect(l, l, conn_dict)                                   |
+  |                              {'mean': 0.0, 'sigma': 1.0}},       |     nest.Connect(l, l, conn_dict)                                   |
   |                  'delays': {'linear': {'a': 1.5, 'c': 0.}},      |                                                                     |
   |                  'allow_multapses': True,                        |                                                                     |
   |                  'allow_autapses': False}                        |                                                                     |
@@ -1119,13 +1264,14 @@ probability and delay, and random weights from a normal distribution:
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
 
+
 What's removed?
 -----------------
 
 .. subnet_rm::
 
 Subnets
-~~~~~~~~~~
+~~~~~~~
 
 Subnets are gone. Instead NodeCollections should be used to organize neurons.
 
@@ -1142,7 +1288,7 @@ Subnets are gone. Instead NodeCollections should be used to organize neurons.
 
 Printing the network as a tree of subnets is no longer possible. The
 ``PrintNetwork()`` function has been replaced with ``PrintNodes()``, which
-prints GID ranges and model names of the nodes in the network.
+prints ID ranges and model names of the nodes in the network.
 
   +----------------------------------------------+---------------------------------------+
   | NEST 2.x                                     | NEST 3.0                              |
@@ -1156,4 +1302,50 @@ prints GID ranges and model names of the nodes in the network.
   |                                              |                                       |
   +----------------------------------------------+---------------------------------------+
 
+.. model_rm::
 
+Models
+~~~~~~
+
+With NEST 3.0, some models have been removed. They all have alternative models that can
+be used instead.
+
+  +----------------------------------------------+-----------------------------------------------+
+  | Removed model                                | Replacement model                             |
+  +==============================================+===============================================+
+  | iaf_neuron                                   | iaf_psc_alpha                                 |
+  +----------------------------------------------+-----------------------------------------------+
+  | aeif_cond_alpha_RK5                          | aeif_cond_alpha                               |
+  +----------------------------------------------+-----------------------------------------------+
+  | iaf_psc_alpha_presc                          | iaf_psc_alpha_ps                              |
+  +----------------------------------------------+-----------------------------------------------+
+  | iaf_psc_delta_canon                          | iaf_psc_delta_ps                              |
+  +----------------------------------------------+-----------------------------------------------+
+  | subnet                                       | no longer needed, use NodeCollection instead  |
+  +----------------------------------------------+-----------------------------------------------+
+
+
+.. function_rm::
+
+Functions
+~~~~~~~~~
+
+Some functions have also been removed. The removed functions where either related to subnets,
+or they can be replaced by using other functions with indexing into a NodeCollection.
+The removed functions are (see also :doc:`../nest-3/nest2_vs_3` for a full list of functions that have changed):
+
+- BeginSubnet
+- ChangeSubnet
+- CurrentSubnet
+- DataConnect
+- DisconnectOneToOne
+- EndSubnet
+- GetChildren
+- GetElement
+- GetLayer
+- GetLeaves
+- GetLID
+- GetNetwork
+- LayoutNetwork
+- ResetNetwork
+- RestoreNodes (have never existed on PyNEST level, it was just a SLI function)

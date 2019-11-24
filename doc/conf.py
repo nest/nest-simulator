@@ -45,7 +45,6 @@ import subprocess
 
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
-from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -63,22 +62,22 @@ source_parsers = {
 # -- Checking for pandoc --------------------------------------------------
 
 try:
-    print(check_output(['pandoc', '--version']))
-except CalledProcessError:
+    print(subprocess.check_output(['pandoc', '--version']))
+except subprocess.CalledProcessError:
     print("No pandoc on %s" % os.environ['PATH'])
 
-
-for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
-    for f in files:
-        if f.endswith('.md'):
+def ConvertMarkdownFiles():
+    for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
+        for f in files:
+            if not f.endswith('.md'):
+                continue
             ff = os.path.join(dirpath, f)
             print(ff)
             fb = os.path.basename(f)[:-3]
             print(fb)
             fo = fb + ".rst"
             args = ['pandoc', ff, '-o', fo]
-            # check_output(args)
-            # check_output(args)
+            subprocess.check_output(args)
 
 # -- General configuration ------------------------------------------------
 
@@ -227,6 +226,17 @@ github_doc_root = ''
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 
+from extractor_userdocs import ExtractUserDocs, relative_glob
+def config_inited_handler(app, config):
+    ExtractUserDocs(
+        relative_glob("models/*.h",
+                      "nestkernel/*.h",
+                      basedir='..'),
+        outdir="from_cpp/"
+    )
+    ConvertMarkdownFiles()
+
+
 def setup(app):
     # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
@@ -240,6 +250,10 @@ def setup(app):
         'enable_eval_rst': True
     }, True)
     app.add_transform(AutoStructify)
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -298,18 +312,4 @@ texinfo_documents = [
 #    html_theme = 'alabaster'
 # else:
 #    html_theme = 'nat'
-
-models_with_documentation = (
-    "models/multimeter",
-    "models/spike_detector",
-    "models/weight_recorder",
-    "nestkernel/recording_backend_ascii",
-    "nestkernel/recording_backend_memory",
-    "nestkernel/recording_backend_screen",
-    "nestkernel/recording_backend_sionlib",
-)
-
-from extractor_userdocs import UserDocExctractor
-
-UserDocExtractor(models_with_documentation)
 

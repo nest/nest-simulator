@@ -1,6 +1,20 @@
 import re
-from pprint import pprint
+from pprint import pformat
 import os
+import glob
+import json
+from itertools import chain, combinations
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
+def relative_glob(*pattern, basedir=os.curdir, **kwargs):
+    tobase = os.path.relpath(basedir, os.curdir)
+    tohere = os.path.relpath(os.curdir, basedir)
+    # prefix all patterns with basedir and expand
+    names = chain(*[glob.glob(os.path.join(tobase, pat), **kwargs) for pat in pattern])
+    # remove prefix from all expanded names
+    return [name[len(tobase)+1:] for name in names]
 
 def UserDocExtractor(
         filenames,
@@ -50,23 +64,30 @@ def UserDocExtractor(
     """
     userdoc_re = re.compile(r'BeginUserDocs:?\s*(?P<tags>(\w+(,\s*)?)*)\n+(?P<doc>(.|\n)*)EndUserDocs')
     tagdict = dict()    # map tags to lists of documents
+    nfiles_total = 0
     for filename in filenames:
+        nfiles_total += 1
         match = None
         with open(os.path.join(basedir, filename)) as infile:
             match = userdoc_re.search(infile.read())
         if not match:
-            print("WARNING: No user documentation found in " + filename)
+            log.warning("No user documentation found in " + filename)
             continue
         if not os.path.exists(outdir):
-            print("INFO: creating output directory "+outdir)
+            log.info("creating output directory "+outdir)
             os.mkdir(outdir)
-        outname = os.path.basename(filename) + replace_ext
+        outname = os.path.basename(os.path.splitext(filename)[0]) + replace_ext
         with open(os.path.join(outdir, outname), "w") as outfile:
             outfile.write(match.group('doc'))
-            print("INFO: extracted user documentation from " + filename)
+            log.info("extracted user documentation from " + filename)
         tags = [t.strip() for t in match.group('tags').split(',')]
         for tag in tags:
             tagdict.setdefault(tag, list()).append(outname)
+    log.info("%4d tags found", len(tagdict))
+    log.info("     "+pformat(list(tagdict.keys())))
+    nfiles = len(set.union(*[set(x) for x in tagdict.values()]))
+    log.info("%4d files in input", nfiles_total)
+    log.info("%4d files with documentation", nfiles)
     return tagdict
 
 def make_hierarchy(tags, *basetags):
@@ -145,43 +166,57 @@ def rst_index(hierarchy, underlines = '=-~'):
     return "\n".join(output)
 
 
-from itertools import chain, combinations
-
-def main():
-    models_with_documentation = (
-        "models/multimeter.h",
-        "models/spike_detector.h",
-        "models/weight_recorder.h",
-        "nestkernel/recording_backend_ascii.h",
-        "nestkernel/recording_backend_memory.h",
-        "nestkernel/recording_backend_screen.h",
-        "nestkernel/recording_backend_sionlib.h",
-    )
-
-    outdir = "from_cpp"
-    tags = UserDocExtractor(models_with_documentation, outdir=outdir)
-
-    pprint(tags)
-    print("%4d tags in" % len(tags))
-    print("%4d files" % len(set.union(*[set(x) for x in tags.values()])))
-
+def CreateTagIndices(tags, outdir="from_cpp/"):
     taglist = list(tags.keys())
     taglist.remove('')
-    indexcount = 0
+    indexfiles = list()
     for current_tags in chain(*[combinations(taglist, L) for L in range(len(taglist)-1)]):
         current_tags = sorted(current_tags)
         indexname = "index_%s.rst" % ("_".join(current_tags))
 
         hier = make_hierarchy(tags.copy(), *current_tags)
         if not any(hier.values()):
-            #print("index %s is empyt!" % str(current_tags))
+            log.debug("index %s is empyt!", str(current_tags))
             continue
-        print("generating index for %s..." % (current_tags,))
+        log.debug("generating index for %s...", str(current_tags))
         indextext = rst_index(hier)
         with open(os.path.join(outdir, indexname), 'w') as outfile:
             outfile.write(indextext)
-        indexcount += 1
-    print("%4d index files generated" % indexcount)
+        indexfiles.append(indexname)
+    log.info("%4d index files generated", len(indexfiles))
+    return indexfiles
+
+
+class JsonWriter(object):
+    """
+    Helper class to have a unified data output interface.
+    """
+    def __init__(self, outdir):
+        self.outdir = outdir
+        log.info("writing JSON files to %s", self.outdir)
+
+    def write(self, obj, name):
+        """
+        Store the given object with the given name.
+        """
+        outname = os.path.join(self.outdir, name + ".json")
+        with open(outname, 'w') as outfile:
+            json.dump(obj, outfile)
+            log.info("data saved as " + outname)
+
+
+def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
+    """
+    Extract and build all user documentation and build tag indices.
+    """
+    data = JsonWriter(outdir)
+    # Gather all information and write RSTs
+    tags = UserDocExtractor(listoffiles, basedir=basedir, outdir=outdir)
+    data.write(tags, "tags")
+
+    indexfiles = CreateTagIndices(tags, outdir=outdir)
+    data.write(indexfiles, "indexfiles")
+
 
 if __name__ == '__main__':
-    main()
+    ExtractUserDocs(relative_glob("models/*.h", "nestkernel/*.h", basedir='..'), outdir="from_cpp/")

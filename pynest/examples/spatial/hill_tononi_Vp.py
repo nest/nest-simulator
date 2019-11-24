@@ -67,7 +67,7 @@
 # ! #. Synaptic delays follow a Gaussian distribution in the HT
 # !    model. This implies actually a Gaussian distributions clipped at
 # !    some small, non-zero delay, since delays must be
-# !    positive. Currently, there is a bug in the module when using clipped 
+# !    positive. Currently, there is a bug in the module when using clipped
 # !    Gaussian distribution. We therefore draw delays from a
 # !    uniform distribution.
 # !

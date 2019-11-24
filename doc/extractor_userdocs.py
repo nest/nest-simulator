@@ -62,10 +62,14 @@ def UserDocExtractor(
     Dictionary mapping tags to lists of documentation filenames (relative to
     `outdir`).
     """
+    if not os.path.exists(outdir):
+        log.info("creating output directory "+outdir)
+        os.mkdir(outdir)
     userdoc_re = re.compile(r'BeginUserDocs:?\s*(?P<tags>(\w+(,\s*)?)*)\n+(?P<doc>(.|\n)*)EndUserDocs')
     tagdict = dict()    # map tags to lists of documents
     nfiles_total = 0
     for filename in filenames:
+        log.info("extracting user documentation from %s...", filename)
         nfiles_total += 1
         match = None
         with open(os.path.join(basedir, filename)) as infile:
@@ -73,23 +77,31 @@ def UserDocExtractor(
         if not match:
             log.warning("No user documentation found in " + filename)
             continue
-        if not os.path.exists(outdir):
-            log.info("creating output directory "+outdir)
-            os.mkdir(outdir)
         outname = os.path.basename(os.path.splitext(filename)[0]) + replace_ext
         tags = [t.strip() for t in match.group('tags').split(',')]
         for tag in tags:
             tagdict.setdefault(tag, list()).append(outname)
-        with open(os.path.join(outdir, outname), "w") as outfile:
-            outfile.write("* " + "\n* ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
-            outfile.write(match.group('doc'))
-            log.info("extracted user documentation from " + filename)
+        write_rst_files(match.group('doc'), tags, outdir, outname)
+
     log.info("%4d tags found", len(tagdict))
     log.info("     "+pformat(list(tagdict.keys())))
     nfiles = len(set.union(*[set(x) for x in tagdict.values()]))
     log.info("%4d files in input", nfiles_total)
     log.info("%4d files with documentation", nfiles)
     return tagdict
+
+def write_rst_files(doc, tags, outdir, outname):
+    """
+    Write raw rst to a file and generate a wrapper with index
+    """
+    outnameraw = "%s_raw%s" % os.path.splitext(outname)
+    with open(os.path.join(outdir, outnameraw), "w") as outfile:
+        outfile.write(doc)
+    with open(os.path.join(outdir, outname), "w") as outfile:
+        outfile.write(":doc:`index` : ")
+        outfile.write(" ~ ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
+        outfile.write(".. include:: %s\n" % outnameraw)
+
 
 def make_hierarchy(tags, *basetags):
     """
@@ -149,6 +161,8 @@ def rst_index(hierarchy, underlines = '=-~'):
     mktitle = lambda t, ul: t+'\n'+ul*len(t)+'\n'
     mkitem = lambda t: "* :doc:`%s`" % os.path.splitext(t)[0]
     output = list()
+    if len(hierarchy.keys()) > 1:
+        output.append(mktitle("Tag-Index", "#"))
     for tags, items in sorted(hierarchy.items()):
         if isinstance(tags, str):
             title = tags

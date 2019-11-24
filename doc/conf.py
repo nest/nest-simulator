@@ -47,6 +47,7 @@ from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from mock import Mock as MagicMock
 
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -225,13 +226,10 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
-
-from extractor_userdocs import ExtractUserDocs, relative_glob
+from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
-        relative_glob("models/*.h",
-                      "nestkernel/*.h",
-                      basedir='..'),
+        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
         outdir="from_cpp/"
     )
     ConvertMarkdownFiles()

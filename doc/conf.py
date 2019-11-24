@@ -37,6 +37,7 @@ import pip
 import subprocess
 
 from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 
@@ -213,6 +214,7 @@ def setup(app):
     app.add_javascript("js/custom.js")
 
 # -- Options for LaTeX output ---------------------------------------------
+
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').

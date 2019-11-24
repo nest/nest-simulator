@@ -308,10 +308,6 @@ class TestGrowthCurve(unittest.TestCase):
         self.se_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
 
-        if sys.version_info >= (3, 3):
-            start = time.process_time()
-        else:
-            start = time.clock()
         for t_i, t in enumerate(self.sim_steps):
             for n_i, n in enumerate(self.local_nodes):
                 self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
@@ -319,10 +315,6 @@ class TestGrowthCurve(unittest.TestCase):
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
-        if sys.version_info >= (3, 3):
-            start = time.process_time()
-        else:
-            start = time.clock()
         tmp = nest.GetStatus(self.spike_detector, 'events')[0]
         spikes_all = tmp['times']
         senders_all = tmp['senders']

@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Testsuite for Topology PyNEST Interface.
+Testsuite for spatially distributed functions.
 
-This testsuite mainly tests the PyNEST interface to the
-topology module, not the underlying topology module functions.
+This testsuite mainly tests the part of the PyNEST interface
+that relates to spatially distributed nodes.
 
 It also tests the visualization functions that are available
 in PyNEST only.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# hl_api_topology.py
+# hl_api_spatial.py
 #
 # This file is part of NEST.
 #
@@ -1207,7 +1207,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
                                             ec=edge_color, alpha=alpha, lw=line_width)
                 mask_patches.append(patch)
     else:
-        raise ValueError('Mask type cannot be plotted with this version of PyTopology.')
+        raise ValueError('Mask type cannot be plotted with this version of PyNEST.')
     return mask_patches
 
 

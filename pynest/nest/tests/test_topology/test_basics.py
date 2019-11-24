@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for basic topology hl_api functions.
+Tests for basic hl_api_spatial functions.
 """
 
 import unittest

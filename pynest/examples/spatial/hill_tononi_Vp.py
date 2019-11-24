@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # ! ===========================================
-# ! NEST Topology Module: A Case-Based Tutorial
+# ! NEST Spatial Example: A Case-Based Tutorial
 # ! ===========================================
 # !
 # ! :Author: Hans Ekkehard Plesser
@@ -41,8 +41,8 @@
 # ! ============
 # !
 # ! This tutorial shows you how to implement a simplified version of the
-# ! Hill-Tononi model of the early visual pathway using the NEST Topology
-# ! module.  The model is described in the paper
+# ! Hill-Tononi model of the early visual pathway using NEST. The model
+# ! is described in the paper
 # !
 # !   S. L. Hill and G. Tononi.
 # !   Modeling Sleep and Wakefulness in the Thalamocortical System.
@@ -67,8 +67,8 @@
 # ! #. Synaptic delays follow a Gaussian distribution in the HT
 # !    model. This implies actually a Gaussian distributions clipped at
 # !    some small, non-zero delay, since delays must be
-# !    positive. Currently, there is a bug in the Topology module when
-# !    using clipped Gaussian distribution. We therefore draw delays from a
+# !    positive. Currently, there is a bug in the module when using clipped 
+# !    Gaussian distribution. We therefore draw delays from a
 # !    uniform distribution.
 # !
 # ! #. Some further adaptations are given at the appropriate locations in
@@ -81,7 +81,7 @@
 # !    tutorial
 # !
 # ! Preparations_
-# !    Neccessary steps to use NEST and the Topology Module
+# !    Neccessary steps to use NEST
 # !
 # ! `Configurable Parameters`_
 # !    Define adjustable network parameters
@@ -481,9 +481,9 @@ nest.CopyModel('static_synapse', 'GABA_A')
 # ! **Note:** Hill & Tononi state that their model spans 8 degrees of
 # ! visual angle and stimuli are specified according to this. On the
 # ! other hand, all connection patterns are defined in terms of cell
-# ! grid positions. Since the NEST Topology Module defines connection
-# ! patterns in terms of the extent given in degrees, we need to apply
-# ! the following scaling factor to all lengths in connections:
+# ! grid positions. Since the NEST defines connection patterns in terms
+# ! of the extent given in degrees, we need to apply the following
+# ! scaling factor to all lengths in connections:
 dpc = Params['visSize'] / (Params['N'] - 1)
 
 # ! We will collect all same-orientation cortico-cortical connections in

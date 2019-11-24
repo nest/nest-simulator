@@ -30,23 +30,14 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
+
 import re
 
 import pip
 
-# pip.main(['install', 'Sphinx==1.5.6'])
-# pip.main(['install', 'sphinx-gallery'])
-
-# import sphinx_gallery
 import subprocess
 
-# import shlex
-# import recommonmark
-
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -81,21 +72,6 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
             # check_output(args)
 
 # -- General configuration ------------------------------------------------
-
-# import errors on libraries that depend on C modules
-# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
-# compile-with-readthedocs-when-youre-using-numpy-and-scipy/
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
@@ -116,6 +92,7 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # ]
 
 extensions = [
+    'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
@@ -125,19 +102,12 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'breathe',
+    'sphinx_tabs.tabs'
 ]
 
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
-# sphinx_gallery_conf = {
-#    'doc_module': ('sphinx_gallery', 'numpy'),
-#    # path to your examples scripts
-#    'examples_dirs': '../pynest/examples',
-#    # path where to save gallery generated examples
-#    'gallery_dirs': 'auto_examples',
-#    'backreferences_dir': False
-# }
 
 subprocess.call('doxygen', shell=True)
 
@@ -146,13 +116,16 @@ mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-# The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-# source_suffix = '.rst'
+sphinx_gallery_conf = {
+     # 'doc_module': ('sphinx_gallery', 'numpy'),
+     # path to your examples scripts
+     'examples_dirs': '../pynest/examples',
+     # path where to save gallery generated examples
+     'gallery_dirs': 'auto_examples',
+     # 'backreferences_dir': False
+     'plot_gallery': 'False'
+}
 
-# The master toctree document.
 master_doc = 'contents'
 
 # General information about the project.

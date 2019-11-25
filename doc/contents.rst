@@ -19,7 +19,7 @@ Table of Contents
    topology/index
    guides/index
    getting_help
-   ref_material/index
+   ref_material/pynest_apis
 
 .. toctree::
    :maxdepth: 2

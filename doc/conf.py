@@ -31,7 +31,6 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 
-# import sphinx_gallery
 import pip
 
 import subprocess
@@ -59,9 +58,6 @@ sys.path.insert(0, os.path.abspath(doc_path))
 # The mock_kernel has to be imported after setting the correct sys paths.
 from mock_kernel import convert  # noqa
 
-# on_rtd = os.environ.get('READTHEDOCS') == 'True'
-# if on_rtd:
-
 # create mockfile
 
 excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
@@ -85,8 +81,6 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # -- General configuration ------------------------------------------------
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
-
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
@@ -265,6 +259,4 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-#    html_theme = 'alabaster'
-# else:
-#    html_theme = 'nat'
+

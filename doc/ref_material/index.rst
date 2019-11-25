@@ -10,7 +10,3 @@ Reference Material
 
 * The `Command Index <https://www.nest-simulator.org/helpindex/>`_ contains a list of all SLI and C++ related reference material.
 
-
-
-
-

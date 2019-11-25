@@ -19,13 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 One neuron example
 ------------------
 
 This script simulates a neuron driven by a constant external current
 and records its membrane potential.
-'''
+
+See Also
+~~~~~~~~
+
+:doc:`twoneurons`
+
+"""
+
+#######################################################################
 # First, we import all necessary modules for simulation, analysis and
 # plotting. Additionally, we set the verbosity to suppress info
 # messages and reset the kernel.
@@ -39,44 +47,54 @@ import nest
 import nest.voltage_trace
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
-# Second, the nodes (neurons and devices) are created using `Create()`.
+
+#######################################################################
+# Second, the nodes (neurons and devices) are created using ``Create``.
 # We store the returned handles in variables for later reference.
-# The `Create` function also allow you to create multiple nodes
-# e.g. nest.Create('iaf_psc_alpha',5)
-# Also default parameters of the model can be configured using 'Create'
+# The ``Create`` function also allow you to create multiple nodes
+# e.g. ``nest.Create('iaf_psc_alpha',5)``
+# Also default parameters of the model can be configured using ``Create``
 # by including a list of parameter dictionaries
-# e.g. `nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`
-# or `nest.Create("voltmeter", [{"withgid": True, "withtime": True}])`.
+# e.g. ``nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])``
+# or ``nest.Create("voltmeter", [{"withgid": True, "withtime": True}])``.
 # In this example we will configure these parameters in an additional
 # step, which is explained in the third section.
 
 neuron = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
+
+#######################################################################
 # Third, the neuron and the voltmeter are configured using
-# `SetStatus()`, which expects a list of node handles and a list of
+# ``SetStatus``, which expects a list of node handles and a list of
 # parameter dictionaries.
-# In this example we use `SetStatus()` to configure the constant
+# In this example we use ``SetStatus`` to configure the constant
 # current input to the neuron. We also want to record the global id of
 # the observed nodes and set the withgid flag of the voltmeter to
 # True.
 
 nest.SetStatus(neuron, "I_e", 376.0)
 nest.SetStatus(voltmeter, [{"withgid": True}])
+
+#######################################################################
 # Fourth, the neuron is connected to the voltmeter. The command
-# `Connect()` has different variants. Plain `Connect()` just takes the
+# ``Connect`` has different variants. Plain ``Connect`` just takes the
 # handles of pre- and post-synaptic nodes and uses the default values
 # for weight and delay. Note that the connection direction for the voltmeter is
 # reversed compared to the spike detector, because it observes the
-# neuron instead of receiving events from it. Thus, `Connect()`
+# neuron instead of receiving events from it. Thus, ``Connect``
 # reflects the direction of signal flow in the simulation kernel
 # rather than the physical process of inserting an electrode into the
 # neuron. The latter semantics is presently not available in NEST.
 
 nest.Connect(voltmeter, neuron)
-# Now we simulate the network using `Simulate()`, which takes the
+
+#######################################################################
+# Now we simulate the network using ``Simulate``, which takes the
 # desired simulation time in milliseconds.
 
 nest.Simulate(1000.0)
+
+#######################################################################
 # Finally, we plot the neuron's membrane potential as a function of
 # time.
 

@@ -25,7 +25,7 @@ at the command prompt. You should then see something like this:
 
    Problems or suggestions?
      Website     : https://www.nest-initiative.org
-     Mailing list: nest_user@nest-initiative.org
+     Mailing list: users@nest-simulator.org
 
    Type 'help' to get more information.
    Type 'quit' or CTRL-D to quit NEST.

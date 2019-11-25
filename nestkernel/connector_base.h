@@ -262,12 +262,10 @@ public:
     C_[ lcid ].set_status( dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
-
-  Connector< ConnectionT >&
+  void
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );
-    return *this;
   }
 
   void

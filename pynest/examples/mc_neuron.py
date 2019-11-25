@@ -27,13 +27,13 @@ Simple example of how to use the three-compartment ``iaf_cond_alpha_mc``
 neuron model.
 
 Three stimulation paradigms are illustrated:
+
  - externally applied current, one compartment at a time
  - spikes impinging on each compartment, one at a time
  - rheobase current injected to soma causing output spikes
 
 Voltage and synaptic conductance traces are shown for all compartments.
 
-KEYWORDS: iaf_cond_alpha_mc
 """
 
 ##############################################################################
@@ -75,13 +75,13 @@ nest.SetDefaults('iaf_cond_alpha_mc',
                   })
 
 ###############################################################################
-# The nodes are created using `Create`. We store the returned handles
+# The nodes are created using ``Create``. We store the returned handles
 # in variables for later reference.
 
 n = nest.Create('iaf_cond_alpha_mc')
 
 ###############################################################################
-# A `multimeter` is created and connected to the neurons. The parameters
+# A ``multimeter`` is created and connected to the neurons. The parameters
 # specified for the multimeter include the list of quantities that should be
 # recorded and the time interval at which quantities are measured.
 
@@ -102,7 +102,7 @@ nest.SetStatus(cgs,
 
 ###############################################################################
 # Generators are then connected to the correct compartments. Specification of
-# the `receptor_type` uniquely defines the target compartment and receptor.
+# the ``receptor_type`` uniquely defines the target compartment and receptor.
 
 nest.Connect([cgs[0]], n, syn_spec={'receptor_type': syns['soma_curr']})
 nest.Connect([cgs[1]], n, syn_spec={'receptor_type': syns['proximal_curr']})
@@ -158,8 +158,8 @@ t = rec['times']
 
 ###############################################################################
 # We plot the time traces of the membrane potential and the state of each
-# membrane potential for soma, proximal and distal dendrites (V_m.s, V_m.p and
-# V_m.d).
+# membrane potential for soma, proximal, and distal dendrites (`V_m.s`, `V_m.p`
+# and `V_m.d`).
 
 pylab.figure()
 pylab.subplot(211)

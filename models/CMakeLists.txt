@@ -107,6 +107,9 @@ set( models_sources
     static_connection.h
     static_connection_hom_w.h
     stdp_connection.h
+    stdp_nn_pre-centered_connection.h
+    stdp_nn_restr_connection.h
+    stdp_nn_symm_connection.h
     stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
     stdp_connection_hom.h stdp_connection_hom.cpp
     stdp_dopa_connection.h stdp_dopa_connection.cpp

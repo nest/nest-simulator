@@ -259,4 +259,3 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-

@@ -19,9 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 Mock pynestkernel.pyx into dummy python file.
-'''
+"""
 
 import ast
 import re
@@ -38,14 +38,15 @@ def has_return(ast_func):
 
 
 def convert(infile):
-    '''
+    """Turn cython file into python
+
     Munge the cython file into parsable python and return the converted
     result as a string.
 
     The conversion is not correct but it can then be parsed by ast and
     thus coverted to a fully mocked file with dummy classes and fuctions
     (either pass or return MagicMock)
-    '''
+    """
     res, res_tmp = "", ""
 
     cdef_in_classes_re = re.compile(r'    +cdef')

@@ -216,10 +216,10 @@ nest::RecordingBackendArbor::prepare()
     arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root ) + 1; // arbor has a pre-exchange
 
   // set min_delay
-  DictionaryDatum dict_in( new Dictionary );
-  ( *dict_in )[ "min_delay" ] = min_delay;
-  ( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
-  kernel().set_status( dict_in );
+  //DictionaryDatum dict_in( new Dictionary );
+  //( *dict_in )[ "min_delay" ] = min_delay;
+  //( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
+  //kernel().set_status( dict_in );
 
   // Arbor has an initial exchange before time 0
   std::vector< arb::shadow::spike > empty_spikes;

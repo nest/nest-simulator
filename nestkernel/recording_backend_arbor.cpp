@@ -111,6 +111,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
   {
     throw BadProperty( "Only spike detectors can record to recording backend 'arbor'." );
   }
+  enrolled_ = true;
 }
 
 void
@@ -170,7 +171,7 @@ nest::RecordingBackendArbor::exchange_( std::vector< arb::shadow::spike >& local
 {
   // static int step = 0;
   // std::cerr << "NEST: n: " << step++ << std::endl;
-  // std::cerr << "NEST: Output spikes" << std::endl;
+  std::cerr << "NEST: Output spikes" << std::endl;
   arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
   // std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
   steps_left_--;
@@ -183,13 +184,13 @@ nest::RecordingBackendArbor::prepare()
   {
     return;
   }
+  std::cerr << "****************RecordingBackendArbor::prepare***********" << std::endl;
 
   if ( prepared_ )
   {
     throw BackendPrepared( "RecordingBackendArbor" );
   }
   prepared_ = true;
-
   //  INITIALISE MPI
   arbor_->info = arb::shadow::get_comm_info( false, kernel().mpi_manager.get_communicator() );
 
@@ -197,12 +198,12 @@ nest::RecordingBackendArbor::prepare()
   DictionaryDatum dict_out( new Dictionary );
   kernel().get_status( dict_out );
   const float nest_min_delay = ( *dict_out )[ "min_delay" ];
-  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ];
-
+  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ];  // Gives size 0 if nest_kernel_reset is called
+  std::cerr << "****************RecordingBackendArbor:: send_nr_cells***********" << num_nest_cells << std::endl;
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
   num_arbor_cells_ = arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
-  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root );
+  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root ); // This call works and sends correctly
 
   // hand shake #2: communications step size synchronized
   const float arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );

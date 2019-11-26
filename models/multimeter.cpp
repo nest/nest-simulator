@@ -27,7 +27,7 @@
 
 namespace nest
 {
-Multimeter::Multimeter()
+multimeter::multimeter()
   : DeviceNode()
   , device_( *this, RecordingDevice::MULTIMETER, "dat", true, true )
   , P_()
@@ -37,7 +37,7 @@ Multimeter::Multimeter()
 {
 }
 
-Multimeter::Multimeter( const Multimeter& n )
+multimeter::multimeter( const multimeter& n )
   : DeviceNode( n )
   , device_( *this, n.device_ )
   , P_( n.P_ )
@@ -48,7 +48,7 @@ Multimeter::Multimeter( const Multimeter& n )
 }
 
 port
-Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
@@ -60,14 +60,14 @@ Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   return p;
 }
 
-nest::Multimeter::Parameters_::Parameters_()
+nest::multimeter::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , offset_( Time::ms( 0. ) )
   , record_from_()
 {
 }
 
-nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
+nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , offset_( p.offset_ )
   , record_from_( p.record_from_ )
@@ -75,13 +75,13 @@ nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::Multimeter::Buffers_::Buffers_()
+nest::multimeter::Buffers_::Buffers_()
   : has_targets_( false )
 {
 }
 
 void
-nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
+nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::interval ] = interval_.get_ms();
   ( *d )[ names::offset ] = offset_.get_ms();
@@ -94,7 +94,7 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
 {
   if ( b.has_targets_
     && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
@@ -160,21 +160,21 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 }
 
 void
-Multimeter::init_state_( const Node& np )
+multimeter::init_state_( const Node& np )
 {
-  const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
+  const multimeter& asd = dynamic_cast< const multimeter& >( np );
   device_.init_state( asd.device_ );
   S_.data_.clear();
 }
 
 void
-Multimeter::init_buffers_()
+multimeter::init_buffers_()
 {
   device_.init_buffers();
 }
 
 void
-Multimeter::calibrate()
+multimeter::calibrate()
 {
   device_.calibrate();
   V_.new_request_ = false;
@@ -182,19 +182,19 @@ Multimeter::calibrate()
 }
 
 void
-Multimeter::post_run_cleanup()
+multimeter::post_run_cleanup()
 {
   device_.post_run_cleanup();
 }
 
 void
-Multimeter::finalize()
+multimeter::finalize()
 {
   device_.finalize();
 }
 
 void
-Multimeter::update( Time const& origin, const long from, const long )
+multimeter::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice.
      For each subsequent slice, we collect all data generated during the
@@ -224,7 +224,7 @@ Multimeter::update( Time const& origin, const long from, const long )
 }
 
 void
-Multimeter::handle( DataLoggingReply& reply )
+multimeter::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
@@ -300,7 +300,7 @@ Multimeter::handle( DataLoggingReply& reply )
 }
 
 void
-Multimeter::print_value_( const std::vector< double >& values )
+multimeter::print_value_( const std::vector< double >& values )
 {
   if ( values.size() < 1 )
   {
@@ -317,7 +317,7 @@ Multimeter::print_value_( const std::vector< double >& values )
 
 
 void
-Multimeter::add_data_( DictionaryDatum& d ) const
+multimeter::add_data_( DictionaryDatum& d ) const
 {
   // re-organize data into one vector per recorded variable
   for ( size_t v = 0; v < P_.record_from_.size(); ++v )
@@ -341,7 +341,7 @@ Multimeter::add_data_( DictionaryDatum& d ) const
 }
 
 bool
-Multimeter::is_active( Time const& T ) const
+multimeter::is_active( Time const& T ) const
 {
   const long stamp = T.get_steps();
 

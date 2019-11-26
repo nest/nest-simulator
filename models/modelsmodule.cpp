@@ -261,7 +261,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-  kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
@@ -286,7 +286,7 @@ ModelsModule::init( SLIInterpreter* )
   /withgid are set, respectively.
 
   Accumulator mode:
-  Voltmeter can operate in accumulator mode. In this case, values for all
+  A voltmeter can operate in accumulator mode. In this case, values for all
   recorded variables are added across all recorded nodes (but kept separate in
   time). This can be useful to record average membrane potential in a
   population.
@@ -339,7 +339,7 @@ ModelsModule::init( SLIInterpreter* )
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
   ( *vmdict )[ names::record_from ] = ad;
   const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< Multimeter >( name, vmdict, false );
+  kernel().model_manager.register_preconf_node_model< multimeter >( name, vmdict, false );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );

@@ -47,7 +47,6 @@ __all__ = [
 def sysinfo():
     """Print information on the platform on which NEST was compiled.
 
-    KEYWORDS: info
     """
 
     sr("sysinfo")
@@ -62,7 +61,6 @@ def version():
     str
         The version of NEST
 
-    KEYWORDS: info
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
@@ -73,7 +71,6 @@ def version():
 def authors():
     """Print the authors of NEST.
 
-    KEYWORDS: info
     """
 
     sr("authors")
@@ -85,7 +82,6 @@ def helpdesk():
 
     Use the system default browser.
 
-    KEYWORDS: info
     """
 
     if sys.version_info < (2, 7, 8):
@@ -133,9 +129,8 @@ def help(obj=None, pager=None, return_text=False):
     Returns
     -------
     None or str
-        The help text of the object if `return_text` is ``True``.
+        The help text of the object if `return_text` is `True`.
 
-    KEYWORDS: info
     """
     hlpobj = obj
     if hlpobj is not None:
@@ -172,7 +167,6 @@ def get_argv():
     tuple
         Argv, as seen by NEST
 
-    KEYWORDS: info
     """
 
     sr('statusdict')
@@ -193,7 +187,6 @@ def message(level, sender, text):
     text : str
         Text to be sent in the message
 
-    KEYWORDS: info
     """
 
     sps(level)
@@ -207,19 +200,19 @@ def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
 
     Parameters of nodes or connections, given in `nodes`, is set as specified
-    by `params`. If `val` is given, `params` has to be a ``string`` with the
+    by `params`. If `val` is given, `params` has to be a `string` with the
     name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
     Parameters
     ----------
     nodes : list or tuple
-        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
+        Either a list of global ids of nodes, or a tuple of connection
         handles as returned by `GetConnections`.
     params : str or dict or list
-        Dictionary of parameters or ``list`` of dictionaries of parameters of
+        Dictionary of parameters or list of dictionaries of parameters of
         same length as `nodes`. If `val` is given, this has to be the name of
-        a model property as a ``str``.
+        a model property as a str.
     val : str, optional
         If given, params has to be the name of a model property.
 
@@ -233,7 +226,6 @@ def SetStatus(nodes, params, val=None):
     -------
     GetStatus
 
-    KEYWORDS:
     """
 
     if not is_coercible_to_sli_array(nodes):
@@ -273,18 +265,18 @@ def SetStatus(nodes, params, val=None):
 def GetStatus(nodes, keys=None, output=''):
     """Return the parameter dictionaries of nodes or connections.
 
-    If `keys` is given, a ``list`` of values is returned instead. `keys` may
-    also be a ``list``, in which case the returned ``list`` contains lists of
+    If `keys` is given, a list of values is returned instead. `keys` may
+    also be a list, in which case the returned list contains lists of
     values.
 
     Parameters
     ----------
     nodes : list or tuple
-        Either a ``list`` of global ids of nodes, or a ``tuple`` of connection
+        Either a list of global ids of nodes, or a tuple of connection
         handles as returned by `GetConnections`.
     keys : str or list, optional
-        ``string`` or a ``list`` of strings naming model properties.
-        `GetDefaults` then returns a single value or a ``list`` of values
+        string or a list of strings naming model properties.
+        `GetDefaults` then returns a single value or a list of values
         belonging to the keys given.
     output : str, optional
         Whether the returned data should be in a selected format
@@ -295,10 +287,10 @@ def GetStatus(nodes, keys=None, output=''):
     dict :
         All parameters
     type :
-        If `keys` is a ``string``, the corrsponding default parameter is
+        If `keys` is a string, the corrsponding default parameter is
         returned.
     list :
-        If keys is a ``list`` of strings, a ``list`` of corrsponding default
+        If keys is a list of strings, a list of corrsponding default
         parameters is returned.
     str :
         If `output` is `json`, returns parameters in JSON format.
@@ -312,7 +304,6 @@ def GetStatus(nodes, keys=None, output=''):
     -------
     SetStatus
 
-    KEYWORDS:
     """
 
     if not is_coercible_to_sli_array(nodes):

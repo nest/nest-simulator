@@ -75,7 +75,7 @@ def getConnections(source=None, target=None, synape_model=None, synapse_label=No
 
     Returns
     -------
-    array:
+    list:
         Connections as 5-tuples with entries
         (source-gid, target-gid, target-thread, synapse-id, port)
 

@@ -12,6 +12,7 @@ Table of Contents
    download
    installation/index
    getting_started
+   troubleshooting
    tutorials/index
    models/index
    examples/index

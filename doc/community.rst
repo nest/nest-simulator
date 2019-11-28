@@ -19,7 +19,7 @@ Open video meeting for users and developers
 --------------------------------------------
 
 Every two weeks, we have an open video meeting to discuss current issues and developments in NEST.
-We welcome our users to join who may have questions regarding their implementations or issues they want help solving.
+We welcome users with questions regarding their implementations or issues they want help solving to join.
 This is an opportunity to have discussions in real time with developers.
 
 Information for dates and how to join can be found on `our GitHub wiki <https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference>`_
@@ -40,5 +40,4 @@ Become a NEST member
 
 If you would like to be actively involved in the NEST Initiative and support its
 goals, please see our `member page <https://www.nest-initiative.org/membership>`_.
-
 

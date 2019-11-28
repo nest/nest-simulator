@@ -73,7 +73,12 @@ def UserDocExtractor(
         nfiles_total += 1
         match = None
         with open(os.path.join(basedir, filename)) as infile:
-            match = userdoc_re.search(infile.read())
+            text = infile.read()
+            assert not ("beginuserdocs" in text.lower() and 'BeginUserDocs' not in text), 'Wrong capitalization of BeginUserDocs'
+            if "BeginUserDocs" in text:
+                if not "EndUserDocs" in text:
+                    assert "EndUserDocs" in text, 'BeginUserDocs found, but no EndUserDocs'
+                match = userdoc_re.search(infile.read())
         if not match:
             log.warning("No user documentation found in " + filename)
             continue

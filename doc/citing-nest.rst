@@ -13,7 +13,7 @@ Jordan, Jakob et al. (2019). **NEST 2.18.0** Zenodo. https://doi.org/10.5281/zen
 
 Linssen, Charl et al. (2018). **NEST 2.16.0** Zenodo. http://doi.org/10.5281/zenodo.1400175
 
-Peyser, Alexander et al. (2017). **NEST 2.14.0** Zenodo. http://dx.doi.org/10.5281/zenodo.882971
+Peyser, Alexander et al. (2017). **NEST 2.14.0** Zenodo. https://dx.doi.org/10.5281/zenodo.882971
 
 Kunkel, Susanne et al. (2017). **NEST 2.12.0** Zenodo. http://dx.doi.org/10.5281/zenodo.259534
 
@@ -38,4 +38,3 @@ Here is a suitable BibTeX entry:
       pages   = {1430},
       number  = {4}
     }
-

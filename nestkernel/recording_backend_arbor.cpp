@@ -169,11 +169,7 @@ nest::RecordingBackendArbor::cleanup()
 void
 nest::RecordingBackendArbor::exchange_( std::vector< arb::shadow::spike >& local_spikes )
 {
-  // static int step = 0;
-  // std::cerr << "NEST: n: " << step++ << std::endl;
-  std::cerr << "NEST: Output spikes" << std::endl;
   arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
-  // std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
   steps_left_--;
 }
 
@@ -184,7 +180,6 @@ nest::RecordingBackendArbor::prepare()
   {
     return;
   }
-  std::cerr << "****************RecordingBackendArbor::prepare***********" << std::endl;
 
   if ( prepared_ )
   {
@@ -199,7 +194,7 @@ nest::RecordingBackendArbor::prepare()
   kernel().get_status( dict_out );
   const float nest_min_delay = ( *dict_out )[ "min_delay" ];
   const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ];  // Gives size 0 if nest_kernel_reset is called
-  std::cerr << "****************RecordingBackendArbor:: send_nr_cells***********" << num_nest_cells << std::endl;
+  
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
   num_arbor_cells_ = arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
@@ -215,7 +210,14 @@ nest::RecordingBackendArbor::prepare()
   steps_left_ = arbor_steps_ =
     arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root ) + 1; // arbor has a pre-exchange
 
-  // set min_delay
+  // TODO:
+  // In an ideal world we would se thte set min_delay here. But after setting the update in delay we would need to reset the kernel
+  // which results in losing the connection. With this in mind we check if the delays received are equal and fail hard of not. 
+  if (min_delay != nest_min_delay)
+  {
+    throw BadParameter( "RecordingBackendArbor: min_delay Arbor and NEST are not equal");
+  }
+  // Ideally the following section would be used to set the delays dynamically.
   //DictionaryDatum dict_in( new Dictionary );
   //( *dict_in )[ "min_delay" ] = min_delay;
   //( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];

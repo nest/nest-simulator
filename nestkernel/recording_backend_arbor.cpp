@@ -151,12 +151,10 @@ nest::RecordingBackendArbor::cleanup()
       return;
     }
 
-    if ( not prepared_ )
-    {
-      throw BackendNotPrepared( "RecordingBackendArbor" );
-    }
     prepared_ = false;
 
+	// sanity check if (two) simulator ran for the correct amount of step.
+	// This assures that the other side is in sync (MPI)
     if ( steps_left_ != 0 )
     {
       throw UnmatchedSteps( steps_left_, arbor_steps_ );

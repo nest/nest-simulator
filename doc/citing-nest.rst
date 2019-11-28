@@ -1,5 +1,5 @@
 Cite NEST
-==========
+=========
 
 Please cite NEST if you use it in your work. You can :doc:`let us know <community>` about your publications that used NEST, and we
 will add them to our `publication list <https://www.nest-simulator.org/publications/>`_; this will help make them

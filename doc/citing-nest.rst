@@ -9,7 +9,7 @@ For the full citation and additional formats follow the doi Zenodo link.
 
 Cite the version you used in your work:
 
-Jordan, Jakob et al. (2019). **NEST 2.18.0** Zenodo. http://doi.org/10.5281/zenodo.2605422
+Jordan, Jakob et al. (2019). **NEST 2.18.0** Zenodo. https://doi.org/10.5281/zenodo.2605422
 
 Linssen, Charl et al. (2018). **NEST 2.16.0** Zenodo. http://doi.org/10.5281/zenodo.1400175
 
@@ -38,5 +38,4 @@ Here is a suitable BibTeX entry:
       pages   = {1430},
       number  = {4}
     }
-
 

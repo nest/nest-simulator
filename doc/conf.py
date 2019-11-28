@@ -124,12 +124,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'breathe',
 ]
 
-breathe_projects = {"EXTRACT_MODELS": "./xml/"}
-
-breathe_default_project = "EXTRACT_MODELS"
 # sphinx_gallery_conf = {
 #    'doc_module': ('sphinx_gallery', 'numpy'),
 #    # path to your examples scripts
@@ -138,8 +134,6 @@ breathe_default_project = "EXTRACT_MODELS"
 #    'gallery_dirs': 'auto_examples',
 #    'backreferences_dir': False
 # }
-
-subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 

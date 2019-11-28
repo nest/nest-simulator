@@ -262,9 +262,14 @@ nest::RecordingBackendArbor::post_run_hook()
   // nothing to do
 }
 
-
 void
 nest::RecordingBackendArbor::post_step_hook()
+{
+  collect_and_exchange_spikes_();
+}
+
+void
+nest::RecordingBackendArbor::collect_and_exchange_spikes_()
 {
 #pragma omp single
   {

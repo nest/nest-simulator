@@ -17,7 +17,7 @@ Peyser, Alexander et al. (2017). **NEST 2.14.0** Zenodo. https://dx.doi.org/10.5
 
 Kunkel, Susanne et al. (2017). **NEST 2.12.0** Zenodo. https://dx.doi.org/10.5281/zenodo.259534
 
-Bos, Hannah et al. (2015). **NEST 2.10.0** Zenodo. http://dx.doi.org/10.5281/zenodo.44222
+Bos, Hannah et al. (2015). **NEST 2.10.0** Zenodo. https://dx.doi.org/10.5281/zenodo.44222
 
 Eppler, Jochen Martin et al. (2015). **NEST 2.8.0** Zenodo. http://dx.doi.org/10.5281/zenodo.32969
 

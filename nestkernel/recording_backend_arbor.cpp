@@ -259,6 +259,13 @@ nest::RecordingBackendArbor::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendArbor::post_run_hook()
 {
+  // nothing to do
+}
+
+
+void
+nest::RecordingBackendArbor::post_step_hook()
+{
 #pragma omp single
   {
     auto& buffers = arbor_->spike_buffers;
@@ -279,12 +286,6 @@ nest::RecordingBackendArbor::post_run_hook()
 
     exchange_( local_spikes );
   }
-}
-
-void
-nest::RecordingBackendArbor::post_step_hook()
-{
-  // nothing to do
 }
 
 void

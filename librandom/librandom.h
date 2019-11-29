@@ -68,6 +68,7 @@ struct BaseRDist
     throw KernelException( msg.c_str() );
   }
 
+//TODO: lrand()
   virtual int irand()
   {
     std::string msg = String::compose( "Function irand() not implemented for "

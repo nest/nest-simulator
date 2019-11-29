@@ -68,7 +68,7 @@ public:
 
   /**
    * Get global random number client.
-   * This RNG must be used in a synchronized fashion from all threads.
+   * This RNG must be used in a synchronized fashion from all virtual processes.
    **/
   random::BaseRNG& get_grng() const;
 
@@ -84,7 +84,7 @@ private:
   DictionaryDatum rngdict_;
 
   /** */
-  DictionaryDatum rdistdict_
+  DictionaryDatum rdistdict_;
 
   Name rng_type_;
   std::vector< random::BaseRNG* > rng_types;

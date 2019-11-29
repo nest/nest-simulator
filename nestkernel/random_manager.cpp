@@ -65,6 +65,7 @@ void
 nest::RandomManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::rng_seed, rng_seed_ );
+
   def< long >( d, names::rng_type, rng_type_ );
 
   ArrayDatum rng_types;
@@ -73,6 +74,8 @@ nest::RandomManager::get_status( DictionaryDatum& d )
     rng_types.push_back( rng.first );
   }
   def< ArrayDatum >( d, names::rng_types, rng_types );
+
+
 }
 
 void
@@ -126,6 +129,11 @@ nest::RandomManager::create_rngs_()
 
 #omp parallel
   {
+    // TODO: draw seeds from a well-defined RNG. For that use a 64-bit seed
+    // with the 32 low bits corresponding to the number of vps and the high
+    // ones being the ones specified by the user
+
+    // TODO: Create a VPManager::get_vp() function that combines the two lines below
     index tid = kernel().vp_manager.get_thread_id();
     seed = rng_seed_ + kernel().vp_manager.thread_to_vp( tid );
     trngs_[ tid ] = rng_types_[ rng_type_ ].clone( seed );

@@ -39,11 +39,15 @@ class ConnectLayersTestCase(unittest.TestCase):
             'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
 
     def _check_connections(self, conn_spec, expected_num_connections):
+        """Helper function which asserts that connecting with the specified conn_spec gives
+        the expected number of connections."""
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
 
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
+        """Helper function which asserts that connecting with or without allowing autapses gives
+        the expected number of autapses."""
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
@@ -58,6 +62,8 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertEqual(n_autapses, expected_num_autapses)
 
     def _assert_connect_layers_multapses(self, multapses):
+        """Helper function which asserts that connecting with or without allowing multapses
+        gives the expected number of multapses."""
         conn_spec = {
             'rule': 'fixed_indegree',
             'indegree': 10,
@@ -75,6 +81,8 @@ class ConnectLayersTestCase(unittest.TestCase):
             self.assertEqual(num_nonunique_conns, 0)
 
     def _assert_connect_sliced(self, pre, post):
+        """Helper function which asserts that connecting with ConnectLayers on the SLI level
+        gives the expected number of connections."""
         # Using distance based probability with zero weight to
         # use ConnectLayers to connect on the SLI level.
         p = 1.0 + 0.*nest.spatial.distance
@@ -89,6 +97,8 @@ class ConnectLayersTestCase(unittest.TestCase):
                          'pre length={}, post length={}'.format(len(pre), len(post)))
 
     def _reset_and_create_sliced(self, positions):
+        """Helper function which resets the kernel and creates a layer and
+        a variation of sliced instances of that layer."""
         nest.ResetKernel()
         kwargs = ({'positions': positions} if isinstance(positions, nest.spatial.grid) else
                   {'n': 20, 'positions': positions})

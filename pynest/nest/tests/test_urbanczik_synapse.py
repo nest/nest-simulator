@@ -151,8 +151,9 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         prrt_nrn = nest.Create('parrot_neuron')
 
         # excitiatory input to the dendrite
+        pre_syn_spike_times = np.array([1.0, 98.0])
         sg_prox = nest.Create('spike_generator', params={
-                              'spike_times': [1.0, 98.0]})
+                              'spike_times': pre_syn_spike_times})
 
         # excitatory input to the soma
         spike_times_soma_inp = np.arange(10.0, 50.0, resolution)
@@ -229,14 +230,14 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         C_m_prox = nrn_params['proximal']['C_m']
         tau_L = C_m_prox / g_L_prox
         E_L_prox = nrn_params['proximal']['E_L']
-        t0 = 1.0
+        t0 = 1.2
         alpha_response = (np.heaviside(t - t0, 0.5)*tau_s*(np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
                           (g_L_prox*(tau_L - tau_s)))
 
         # compute PI(t)
         if len(spike_times_soma) > 0:
             t = np.around(t, 4)
-            spike_times_soma = np.around(spike_times_soma, 4)
+            spike_times_soma = np.around(spike_times_soma + 0.2, 4)
             idx = np.nonzero(np.in1d(t, spike_times_soma))[0]
             rate[idx] -= 1.0 / resolution
 
@@ -250,13 +251,16 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         integrated_w_change = np.cumsum(w_change_low_pass)*resolution
         syn_weight_comp = init_w + integrated_w_change
 
-        realtive_error = (
-            (weights[-1] - syn_weight_comp[-1]) / (weights[-1] - init_w))
-
         '''
         comparison between Nest and python implementation
         '''
-        self.assertTrue(abs(realtive_error) < 0.03)
+        # extract the weight computed in python at the times of the presynaptic spikes
+        idx = np.nonzero(np.in1d(np.around(t, 4), np.around(pre_syn_spike_times + resolution, 4)))[0]
+        syn_w_comp_at_spike_times = syn_weight_comp[idx]
+        realtive_error = (
+            (weights[-1] - syn_w_comp_at_spike_times[-1]) / (weights[-1] - init_w))
+
+        self.assertTrue(abs(realtive_error) < 0.001)
 
 
 def suite():

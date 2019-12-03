@@ -297,7 +297,7 @@ ModelsModule::init( SLIInterpreter* )
   // register all connection models
   register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
   register_connection_model< ClopathConnection >(
-    "clopath_synapse", default_connection_model_flags | Register_Connection_Model_Flags::REQUIRES_CLOPATH_ARCHIVING );
+    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
@@ -316,14 +316,14 @@ ModelsModule::init( SLIInterpreter* )
 
   // register secondary connection models
   register_secondary_connection_model< GapJunction >( "gap_junction",
-    Register_Connection_Model_Flags::REQUIRES_SYMMETRIC | Register_Connection_Model_Flags::SUPPORTS_WFR );
+    RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
 
   register_secondary_connection_model< RateConnectionInstantaneous >(
-    "rate_connection_instantaneous", Register_Connection_Model_Flags::SUPPORTS_WFR );
+    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
   register_secondary_connection_model< RateConnectionDelayed >(
-    "rate_connection_delayed", Register_Connection_Model_Flags::HAS_DELAY );
+    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
   register_secondary_connection_model< DiffusionConnection >(
-    "diffusion_connection", Register_Connection_Model_Flags::SUPPORTS_WFR );
+    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
 }
 
 } // namespace nest

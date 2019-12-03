@@ -57,7 +57,7 @@ void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-enum class Register_Connection_Model_Flags : unsigned
+enum class RegisterConnectionModelFlags : unsigned
 {
   REGISTER_HPC = 1 << 0,
   REGISTER_LBL = 1 << 1,
@@ -69,31 +69,31 @@ enum class Register_Connection_Model_Flags : unsigned
 };
 
 template <>
-struct EnableBitMaskOperators< Register_Connection_Model_Flags >
+struct EnableBitMaskOperators< RegisterConnectionModelFlags >
 {
   static const bool enable = true;
 };
 
-const Register_Connection_Model_Flags default_connection_model_flags = Register_Connection_Model_Flags::REGISTER_HPC
-  | Register_Connection_Model_Flags::REGISTER_LBL | Register_Connection_Model_Flags::IS_PRIMARY
-  | Register_Connection_Model_Flags::HAS_DELAY;
+const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
+  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
+  | RegisterConnectionModelFlags::HAS_DELAY;
 
-const Register_Connection_Model_Flags default_secondary_connection_model_flags =
-  Register_Connection_Model_Flags::SUPPORTS_WFR | Register_Connection_Model_Flags::HAS_DELAY;
+const RegisterConnectionModelFlags default_secondary_connection_model_flags =
+  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
 
 /**
  * Register connection model (i.e. an instance of a class inheriting from `Connection`).
  */
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name,
-  const Register_Connection_Model_Flags flags = default_connection_model_flags );
+  const RegisterConnectionModelFlags flags = default_connection_model_flags );
 
 /**
  * Register secondary connection models (e.g. gap junctions, rate-based models).
  */
 template < template < typename > class ConnectorModelT >
 void register_secondary_connection_model( const std::string& name,
-  const Register_Connection_Model_Flags flags = default_secondary_connection_model_flags );
+  const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
 
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 

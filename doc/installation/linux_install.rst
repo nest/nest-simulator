@@ -3,8 +3,8 @@ Ubuntu/Debian Installation
 
 .. _standard:
 
-Standard Installation
-------------------------
+Installation from source
+--------------------------
 
 The following are the basic steps to compile and install NEST from source code:
 
@@ -14,8 +14,6 @@ The following are the basic steps to compile and install NEST from source code:
 .. code-block:: bash
 
     sudo apt-get install -y \
-    build-essential \
-    cmake \
     cython \
     libgsl-dev \
     libltdl-dev \
@@ -55,8 +53,12 @@ The following are the basic steps to compile and install NEST from source code:
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
+.. note::
+    If you want to use Python 3, add the configuration option
+    ``cmake -Dwith-python=3 -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>``
 
 .. note::  ``/install/path`` should be an absolute path
+
 
 
 * Compile and install NEST:
@@ -69,7 +71,7 @@ The following are the basic steps to compile and install NEST from source code:
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
-.. admonition:: Important!
+.. admonition:: IMPORTANT!
 
  If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 

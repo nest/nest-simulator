@@ -8,53 +8,53 @@ NEST Example Networks
 .. toctree::
    :maxdepth: 1
 
-   one_neuron
-   one_neuron_with_noise
-   twoneurons
-   balancedneuron
-   testiaf
-   repeated_stimulation
-   multimeter_file
-   sensitivity_to_perturbation
-   plot_weight_matrices
-   if_curve
-   pulsepacket
-   correlospinmatrix_detector_two_neuron
-   cross_check_mip_corrdet
-   CampbellSiegert
-   BrodyHopfield
-   hh_psc_alpha
-   hh_phaseplane
-   structural_plasticity
-   gap_junctions_two_neurons
-   gap_junctions_inhibitory_network
-   gif_population
-   gif_pop_psc_exp
-   brette_gerstner_fig_2c
-   brette_gerstner_fig_3d
-   mc_neuron
-   tsodyks_depressing
-   tsodyks_facilitating
-   evaluate_tsodyks2_synapse
-   evaluate_quantal_stp_synapse
-   intrinsic_currents_spiking
-   intrinsic_currents_subthreshold
-   lin_rate_ipn_network
-   rate_neuron_dm
-   precise_spiking
-   sinusoidal_poisson_generator
-   sinusoidal_gamma_generator
-   clopath_synapse_spike_pairing
-   clopath_synapse_small_network
-   brunel_alpha_numpy
-   brunel_alpha_nest
-   brunel_delta_nest
-   brunel_siegert_nest
-   brunel_exp_multisynapse_nest
-   brunel_alpha_evolution_strategies
-   csa_example
-   csa_topology_example
-   hpc_benchmark
+   ../auto_examples/one_neuron
+   ../auto_examples/one_neuron_with_noise
+   ../auto_examples/twoneurons
+   ../auto_examples/balancedneuron
+   ../auto_examples/testiaf
+   ../auto_examples/repeated_stimulation
+   ../auto_examples/multimeter_file
+   ../auto_examples/sensitivity_to_perturbation
+   ../auto_examples/plot_weight_matrices
+   ../auto_examples/if_curve
+   ../auto_examples/pulsepacket
+   ../auto_examples/correlospinmatrix_detector_two_neuron
+   ../auto_examples/cross_check_mip_corrdet
+   ../auto_examples/CampbellSiegert
+   ../auto_examples/BrodyHopfield
+   ../auto_examples/hh_psc_alpha
+   ../auto_examples/hh_phaseplane
+   ../auto_examples/structural_plasticity
+   ../auto_examples/gap_junctions_two_neurons
+   ../auto_examples/gap_junctions_inhibitory_network
+   ../auto_examples/gif_population
+   ../auto_examples/gif_pop_psc_exp
+   ../auto_examples/brette_gerstner_fig_2c
+   ../auto_examples/brette_gerstner_fig_3d
+   ../auto_examples/mc_neuron
+   ../auto_examples/tsodyks_depressing
+   ../auto_examples/tsodyks_facilitating
+   ../auto_examples/evaluate_tsodyks2_synapse
+   ../auto_examples/evaluate_quantal_stp_synapse
+   ../auto_examples/intrinsic_currents_spiking
+   ../auto_examples/intrinsic_currents_subthreshold
+   ../auto_examples/lin_rate_ipn_network
+   ../auto_examples/rate_neuron_dm
+   ../auto_examples/precise_spiking
+   ../auto_examples/sinusoidal_poisson_generator
+   ../auto_examples/sinusoidal_gamma_generator
+   ../auto_examples/clopath_synapse_spike_pairing
+   ../auto_examples/clopath_synapse_small_network
+   ../auto_examples/brunel_alpha_numpy
+   ../auto_examples/brunel_alpha_nest
+   ../auto_examples/brunel_delta_nest
+   ../auto_examples/brunel_siegert_nest
+   ../auto_examples/brunel_exp_multisynapse_nest
+   ../auto_examples/brunel_alpha_evolution_strategies
+   ../auto_examples/csa_example
+   ../auto_examples/csa_topology_example
+   ../auto_examples/hpc_benchmark
 
 
 
@@ -119,12 +119,12 @@ input. This can be defined in the file ``stimulus_params.py``.
 
 .. toctree::
 
-   Potjans_2014/example
-   Potjans_2014/network
-   Potjans_2014/helpers
-   Potjans_2014/network_params
-   Potjans_2014/stimulus_params
-   Potjans_2014/sim_params
+   ../auto_examples/Potjans_2014/example
+   ../auto_examples/Potjans_2014/network
+   ../auto_examples/Potjans_2014/helpers
+   ../auto_examples/Potjans_2014/network_params
+   ../auto_examples/Potjans_2014/stimulus_params
+   ../auto_examples/Potjans_2014/sim_params
 
 .. _sphx_glr_auto_examples_music_cont_out_proxy_example:
 
@@ -151,7 +151,7 @@ values are forwarded through MUSIC to the receiver.
 
 .. toctree::
 
-    music_cont_out_proxy_example/nest_script
-    music_cont_out_proxy_example/receiver_script
+    ../auto_examples/music_cont_out_proxy_example/nest_script
+    ../auto_examples/music_cont_out_proxy_example/receiver_script
 
 

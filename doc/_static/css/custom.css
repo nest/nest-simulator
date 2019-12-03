@@ -2,6 +2,13 @@ t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
     color: #f63;
 }
 
+p {
+    margin-bottom: 12px;
+}
+
+.wy-nav-content {
+    max-width: 950px;
+}
 
 .wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
    content: url(../../_static/img/nest_logo.png);
@@ -99,12 +106,6 @@ code.descclassname {
     background: rgba(255, 165, 0, 0.1);
 }
 
-.rst-content dl:not(.docutils) dt {
-   float: left;
-   border-top: None;
-   background: None;
-}
-
 .rst-content .admonition-title::before {
     display:none;
 }
@@ -112,6 +113,27 @@ code.descclassname {
 .rst-content .admonition-title {
     background: #ffae18;
 
+}
+
+.wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
+    margin-bottom: 12px;
+}
+
+.rst-content dl:not(.docutils) dt {
+    background: #ff663336;
+    border-top: solid 3px #ff6633;
+    color: black;
+}
+
+.rst-content .pull-quote {
+    background: #f0f3f3;
+    padding: 0.5em;
+    border: 1px solid #ff6633;
+    border-radius: 5px;
+}
+
+.rst-content kbd {
+    background-color: lightgray;
 }
 
 .rst-content .admonition {
@@ -129,4 +151,3 @@ code.descclassname {
    .wy-table-responsive {
       overflow: visible !important;
    }
-}

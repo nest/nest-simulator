@@ -38,6 +38,8 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -75,206 +77,6 @@ try:
 except ImportError:
     pass
 
-class NESTMappedException(type):
-    """Metaclass for exception namespace that dynamically creates exception classes.
-
-    If a class (self) of this (meta)-type has an unknown attribute requested, __getattr__ defined
-    below gets called, creating a class with that name (the error name) and with an __init__ taking
-    commandname and errormessage (as created in the source) which is a closure on the parent and
-    errorname as well, with a parent of default type (self.default_parent) or
-    self.parents[errorname] if defined. """
-
-    def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of self.default_parent or
-        self.parents[errorname] if one is defined.
-
-        This __getattr__ function also stores the class permanently as an attribute of self for
-        re-use where self is actually the class that triggered the getattr (the class that
-        NESTMappedException is a metaclass of). """
-
-        # Dynamic class construction, first check if we know its parent
-        if errorname in self.parents:
-            parent = getattr(self, self.parents[errorname])
-        else: # otherwise, get the default (SLIException)
-            parent = self.default_parent
-
-        # and now dynamically construct the new class
-        # not NESTMappedException, since that would mean the metaclass would let the new class inherit
-        # this __getattr__, allowing unintended dynamic construction of attributes
-        newclass = type(
-            self.__name__ + '.' + errorname,
-            (parent,),
-            {
-                '__init__': self.init(parent, errorname),
-                '__doc__':
-                """Dynamically created exception {} from {}.
-
-                Created for the namespace: {}.
-                Parent exception: {}.
-                """.format(errorname, self.source, self.__name__, parent.__name__)
-            }
-        )
-
-        # Cache for reuse: __getattr__ should now not get called if requested again
-        setattr(self, errorname, newclass)
-
-        # And now we return the exception
-        return newclass
-
-class NESTErrors(metaclass=NESTMappedException):
-    """Namespace for NEST exceptions, including dynamically created classes from SLI.
-
-    Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException.
-    """
-
-    class NESTError(Exception):
-        """Base exception class for all NEST exceptions.
-        """
-
-        def __init__(self, message, *args, **kwargs):
-            """Initializer for NESTError base class.
-
-            Parameters:
-            -----------
-            message: full error message to report.
-            *args, **kwargs: passed through to Exception base class.
-            """
-
-            Exception.__init__(self, message, *args, **kwargs)
-            self.message = message
-
-    class SLIException(NESTError):
-        """Base class for all exceptions coming from sli.
-        """
-
-        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
-            """Initialize function.
-
-            Parameters:
-            -----------
-            errorname: error name from SLI.
-            commandname: command name from SLI.
-            errormessage: message from SLI.
-            *args, **kwargs: passed through to NESTErrors.NESTError base class.
-            """
-            message = "{} in {}{}".format(errorname, commandname, errormessage)
-            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
-
-            self.errorname   = errorname
-            self.commandname = commandname
-            self.errormessage  = errormessage
-
-    class PyNESTError(NESTError):
-        """Exceptions produced from Python/Cython code.
-        """
-        pass
-
-    @staticmethod
-    def init(parent, errorname):
-        """ Static class method to construct init's for SLIException children.
-
-        Construct our new init with closure on errorname (as a default value) and parent.
-        The default value allows the __init__ to be chained and set by the leaf child.
-        This also moves the paramerization of __init__ away from the class construction logic
-        and next to the SLIException init.
-
-        Parameters:
-        ----------
-        parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
-            because of the dynamic creation of the function
-             (used as a closure on the constructed __init__).
-        errorname: the class name for information purposes
-          internally (used as a closure on the constructed __init__).
-        """
-
-        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
-            # recursively init the parent class: all of this is only needed to properly set errorname
-            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
-
-        docstring = \
-            """Initialization function.
-
-            Parameters:
-            -----------
-            commandname: sli command name.
-            errormessage: sli error message.
-            errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set when creating an instance)
-            *args, **kwargs: passed through to base class.
-
-            self will be a descendant of {}.
-            """.format(errorname, parent.__name__)
-
-        try:
-            __init__.__doc__ = docstring
-        except AttributeError:
-            __init__.__func__.__doc__ = docstring
-
-        return __init__
-
-    # source: the dynamically created exceptions come from SLI
-    # default_parent: the dynamically created exceptions are descended from SLIExcepton
-    # parents: unless they happen to be mapped in this list to another exception descended from SLIException
-    #          these should be updated when new exceptions in sli are created that aren't directly descended
-    #          from SLIException (but nothing bad will happen, it's just that otherwise they'll be directly
-    #          descended from SLIException instead of an intermediate exception; they'll still be constructed
-    #          and useable)
-    source = "SLI"
-    default_parent = SLIException
-    parents = {
-        'TypeMismatch': 'InterpreterError',
-        'SystemSignal': 'InterpreterError',
-        'RangeCheck': 'InterpreterError',
-        'ArgumentType': 'InterpreterError',
-        'BadParameterValue': 'SLIException',
-        'DictError': 'InterpreterError',
-        'UndefinedName': 'DictError',
-        'EntryTypeMismatch': 'DictError',
-        'StackUnderflow': 'InterpreterError',
-        'IOError': 'SLIException',
-        'UnaccessedDictionaryEntry': 'DictError',
-        'UnknownModelName': 'KernelException',
-        'NewModelNameExists': 'KernelException',
-        'UnknownModelID': 'KernelException',
-        'ModelInUse': 'KernelException',
-        'UnknownSynapseType': 'KernelException',
-        'UnknownNode': 'KernelException',
-        'NoThreadSiblingsAvailable': 'KernelException',
-        'LocalNodeExpected': 'KernelException',
-        'NodeWithProxiesExpected': 'KernelException',
-        'UnknownReceptorType': 'KernelException',
-        'IncompatibleReceptorType': 'KernelException',
-        'UnknownPort': 'KernelException',
-        'IllegalConnection': 'KernelException',
-        'InexistentConnection': 'KernelException',
-        'UnknownThread': 'KernelException',
-        'BadDelay': 'KernelException',
-        'UnexpectedEvent': 'KernelException',
-        'UnsupportedEvent': 'KernelException',
-        'BadProperty': 'KernelException',
-        'BadParameter': 'KernelException',
-        'DimensionMismatch': 'KernelException',
-        'DistributionError': 'KernelException',
-        'SubnetExpected': 'KernelException',
-        'SimulationError': 'KernelException',
-        'InvalidDefaultResolution': 'KernelException',
-        'InvalidTimeInModel': 'KernelException',
-        'StepMultipleRequired': 'KernelException',
-        'TimeMultipleRequired': 'KernelException',
-        'GSLSolverFailure': 'KernelException',
-        'NumericalInstability': 'KernelException',
-        'KeyError': 'KernelException',
-        'MUSICPortUnconnected': 'KernelException',
-        'MUSICPortHasNoWidth': 'KernelException',
-        'MUSICPortAlreadyPublished': 'KernelException',
-        'MUSICSimulationHasRun': 'KernelException',
-        'MUSICChannelUnknown': 'KernelException',
-        'MUSICPortUnknown': 'KernelException',
-        'MUSICChannelAlreadyMapped': 'KernelException'
-    }
-
-
-# So we don't break any code that currently catches a nest.NESTError
-NESTError = NESTErrors.NESTError
 
 cdef class SLIDatum(object):
 
@@ -623,12 +425,18 @@ cdef inline object sli_datum_to_object(Datum* dat):
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
 
-    cdef tmp = [None] * dat.size()
+    # the size of dat has to be explicitly cast to int to avoid
+    # compiler warnings (#1318) during cythonization
+    cdef tmp = [None] * int(dat.size())
 
-    cdef size_t i
+    # i and n have to be cast to size_t (unsigned long int) to avoid
+    # compiler warnings (#1318) in the for loop below
+    cdef size_t i, n
     cdef Token* tok = dat.begin()
 
-    for i in range(len(tmp)):
+    n = len(tmp)
+
+    for i in range(n):
         tmp[i] = sli_datum_to_object(tok.datum())
         inc(tok)
 

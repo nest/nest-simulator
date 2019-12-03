@@ -231,7 +231,7 @@ namespace nest
  *       init_buffers() merely closes the stream if close_on_reset_ is true.
  *
  *  @todo Some aspects of RecordingDevice behavior depend on the type of device:
- *        Multimeter needs to have its data cleared on n_events==0 and provides
+ *        multimeter needs to have its data cleared on n_events==0 and provides
  *        an accumulator mode which is administered by RecordingDevice. To tell
  *        recording device about this deviating behavior, we mark the type of
  *        "owning device" with an enum flag on construction. This is not very

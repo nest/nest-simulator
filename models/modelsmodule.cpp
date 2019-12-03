@@ -243,8 +243,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-  kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
-  kernel().model_manager.register_node_model< Voltmeter >( "voltmeter" );
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );

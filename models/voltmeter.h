@@ -62,7 +62,7 @@ times as vector /times and node GIDs as /senders, if /withtime and
 /withgid are set, respectively.
 
 Accumulator mode:
-Voltmeter can operate in accumulator mode. In this case, values for all
+voltmeter can operate in accumulator mode. In this case, values for all
 recorded variables are added across all recorded nodes (but kept separate in
 time). This can be useful to record average membrane potential in a
 population.
@@ -110,12 +110,12 @@ Sends: DataLoggingRequest
 
 SeeAlso: Device, RecordingDevice, multimeter
 */
-class Voltmeter : public Multimeter
+class voltmeter : public multimeter
 {
 
 public:
-  Voltmeter();
-  Voltmeter( const Voltmeter& );
+  voltmeter();
+  voltmeter( const voltmeter& );
 };
 
 } // Namespace

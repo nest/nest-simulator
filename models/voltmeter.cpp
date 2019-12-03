@@ -27,8 +27,8 @@
 
 namespace nest
 {
-Voltmeter::Voltmeter()
-  : Multimeter()
+voltmeter::voltmeter()
+  : multimeter()
 {
   DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
   ArrayDatum ad;
@@ -37,8 +37,8 @@ Voltmeter::Voltmeter()
   set_status( vmdict );
 }
 
-Voltmeter::Voltmeter( const Voltmeter& n )
-  : Multimeter( n )
+voltmeter::voltmeter( const voltmeter& n )
+  : multimeter( n )
 {
 }
 }

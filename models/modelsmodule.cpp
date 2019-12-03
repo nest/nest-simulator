@@ -321,8 +321,8 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >( "gap_junction",
-    RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
+  register_secondary_connection_model< GapJunction >(
+    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
 
   register_secondary_connection_model< RateConnectionInstantaneous >(
     "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );

@@ -58,7 +58,6 @@ def Simulate(t):
     --------
     RunManager, ResumeSimulation
 
-    KEYWORDS:
     """
 
     sps(float(t))
@@ -73,6 +72,9 @@ def Run(t):
     ----------
     t : float
         Time to simulate in ms
+
+    Notes
+    ------
 
     Call between `Prepare` and `Cleanup` calls, or within a
     ``with RunManager`` clause.
@@ -89,7 +91,6 @@ def Run(t):
     --------
     Prepare, Cleanup, RunManager, Simulate
 
-    KEYWORDS:
     """
 
     sps(float(t))
@@ -107,7 +108,6 @@ def Prepare():
     --------
     Run, Cleanup
 
-    KEYWORDS:
     """
 
     sr('Prepare')
@@ -124,7 +124,6 @@ def Cleanup():
     --------
     Run, Prepare
 
-    KEYWORDS:
     """
     sr('Cleanup')
 
@@ -147,7 +146,6 @@ def RunManager():
     --------
     Prepare, Run, Cleanup, Simulate
 
-    KEYWORDS:
     """
 
     Prepare()
@@ -162,19 +160,20 @@ def ResetKernel():
     """Reset the simulation kernel.
 
     This will destroy the network as well as all custom models created with
-    CopyModel(). Calling this function is equivalent to restarting NEST.
+    :py:func:`.CopyModel`. Calling this function is equivalent to restarting NEST.
 
     In particular,
+
     * all network nodes
     * all connections
     * all user-defined neuron and synapse models
     are deleted, and
+
     * time
     * random generators
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-    KEYWORDS:
    """
 
     sr('ResetKernel')
@@ -193,7 +192,6 @@ def SetKernelStatus(params):
     --------
     GetKernelStatus
 
-    KEYWORDS:
     """
 
     sps(params)
@@ -207,7 +205,7 @@ def GetKernelStatus(keys=None):
     Parameters
     ----------
     keys : str or list, optional
-        Single parameter name or ``list`` of parameter names
+        Single parameter name or `list` of parameter names
 
     Returns
     -------
@@ -227,7 +225,6 @@ def GetKernelStatus(keys=None):
     --------
     SetKernelStatus
 
-    KEYWORDS:
     """
 
     sr('GetKernelStatus')
@@ -268,7 +265,6 @@ def Install(module_name):
 
         nest.Install("mymodule")
 
-    KEYWORDS:
     """
 
     return sr("(%s) Install" % module_name)
@@ -287,7 +283,6 @@ def SetStructuralPlasticityStatus(params):
     --------
     GetStructuralPlasticityStatus
 
-    KEYWORDS:
     """
 
     sps(params)
@@ -307,7 +302,6 @@ def GetStructuralPlasticityStatus(keys=None):
     --------
     SetStructuralPlasticityStatus
 
-    KEYWORDS:
     """
 
     sps({})
@@ -331,7 +325,6 @@ def EnableStructuralPlasticity():
     --------
     DisableStructuralPlasticity
 
-    KEYWORDS:
     """
 
     sr('EnableStructuralPlasticity')
@@ -345,6 +338,5 @@ def DisableStructuralPlasticity():
     --------
     EnableStructuralPlasticity
 
-    KEYWORDS:
     """
     sr('DisableStructuralPlasticity')

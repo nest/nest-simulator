@@ -30,14 +30,9 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-import re
 
 import pip
 
-# pip.main(['install', 'Sphinx==1.5.6'])
-# pip.main(['install', 'sphinx-gallery'])
-
-# import sphinx_gallery
 import subprocess
 
 # import shlex
@@ -47,20 +42,23 @@ from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from mock import Mock as MagicMock
 
+from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
+
+source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('./..'))
-sys.path.insert(0, os.path.abspath('./../topology'))
-sys.path.insert(0, os.path.abspath('./../pynest/nest'))
 
-source_suffix = ['.rst', '.md']
-source_parsers = {
-    '.md': CommonMarkParser
-}
+doc_path = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.abspath(doc_path + "/..")
 
-# -- Checking for pandoc --------------------------------------------------
+sys.path.insert(0, os.path.abspath(root_path))
+sys.path.insert(0, os.path.abspath(root_path + '/topology'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
+sys.path.insert(0, os.path.abspath(doc_path))
 
 try:
     print(subprocess.check_output(['pandoc', '--version']))
@@ -80,42 +78,35 @@ def ConvertMarkdownFiles():
             args = ['pandoc', ff, '-o', fo]
             subprocess.check_output(args)
 
+# -- Mock pynestkernel ----------------------------------------------------
+# The mock_kernel has to be imported after setting the correct sys paths.
+from mock_kernel import convert  # noqa
+
+# create mockfile
+
+excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
+infile = root_path + "/pynest/pynestkernel.pyx"
+outfile = doc_path + "/pynestkernel_mock.py"
+
+with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
+    mockedmodule = fexc.read() + "\n\n"
+    mockedmodule += "from mock import MagicMock\n\n"
+    mockedmodule += convert(fin)
+
+    fout.write(mockedmodule)
+
+# The pynestkernel_mock has to be imported after it is created.
+import pynestkernel_mock  # noqa
+
+sys.modules["nest.pynestkernel"] = pynestkernel_mock
+sys.modules["nest.kernel"] = pynestkernel_mock
+
+
 # -- General configuration ------------------------------------------------
-
-# import errors on libraries that depend on C modules
-# http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-
-# compile-with-readthedocs-when-youre-using-numpy-and-scipy/
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return MagicMock()
-
-
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot', 'pandas']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-# extensions = [
-#    'sphinx.ext.autodoc',
-#    'sphinx.ext.napoleon',
-#    'sphinx.ext.autosummary',
-#    'sphinx.ext.doctest',
-#    'sphinx.ext.intersphinx',
-#    'sphinx.ext.todo',
-#    'sphinx.ext.coverage',
-#    'sphinx.ext.mathjax',
-#    'sphinx_gallery.gen_gallery',
-# ]
-
 extensions = [
+    'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
@@ -125,19 +116,12 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'breathe',
+    'sphinx_tabs.tabs'
 ]
 
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
-# sphinx_gallery_conf = {
-#    'doc_module': ('sphinx_gallery', 'numpy'),
-#    # path to your examples scripts
-#    'examples_dirs': '../pynest/examples',
-#    # path where to save gallery generated examples
-#    'gallery_dirs': 'auto_examples',
-#    'backreferences_dir': False
-# }
 
 subprocess.call('doxygen', shell=True)
 
@@ -146,13 +130,16 @@ mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-# The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-# source_suffix = '.rst'
+sphinx_gallery_conf = {
+     # 'doc_module': ('sphinx_gallery', 'numpy'),
+     # path to your examples scripts
+     'examples_dirs': '../pynest/examples',
+     # path where to save gallery generated examples
+     'gallery_dirs': 'auto_examples',
+     # 'backreferences_dir': False
+     'plot_gallery': 'False'
+}
 
-# The master toctree document.
 master_doc = 'contents'
 
 # General information about the project.
@@ -234,9 +221,20 @@ def config_inited_handler(app, config):
     )
     ConvertMarkdownFiles()
 
+    
+nitpick_ignore = [('py:class', 'None'),
+                  ('py:class', 'optional'),
+                  ('py:class', 's'),
+                  ('cpp:identifier', 'CommonSynapseProperties'),
+                  ('cpp:identifier', 'Connection<targetidentifierT>'),
+                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'DeviceNode'),
+                  ('cpp:identifier', 'Node'),
+                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'MessageHandler'),
+                  ('cpp:identifer', 'CommonPropertiesHomW')]
 
 def setup(app):
-    # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
@@ -255,6 +253,7 @@ def setup(app):
 
 
 # -- Options for LaTeX output ---------------------------------------------
+
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -303,11 +302,4 @@ texinfo_documents = [
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-# -- Options for readthedocs ----------------------------------------------
-# on_rtd = os.environ.get('READTHEDOCS') == 'True'
-# if on_rtd:
-#    html_theme = 'alabaster'
-# else:
-#    html_theme = 'nat'
 

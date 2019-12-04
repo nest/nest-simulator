@@ -69,8 +69,7 @@ continuing.
 
    import nest
 
-   nest.sli_run("statusdict/have_music ::")
-   if not nest.spp():
+   if not nest.ll_api.sli_func("statusdict/have_music ::"):
        import sys
 
        print("NEST was not compiled with support for MUSIC, not running.")
@@ -124,8 +123,7 @@ script, but without the spike generator.
 
   import nest
 
-  nest.sli_run("statusdict/have_music ::")
-  if not nest.spp():
+  if not nest.ll_api.sli_func("statusdict/have_music ::"):
       import sys
 
       print("NEST was not compiled with support for MUSIC, not running.")
@@ -155,27 +153,25 @@ first NEST process and show the same membrane potential trace.
 
 ::
 
-    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
-    -70
-    -70
-    -68.1559
-    -61.9174
-    -70
-    -70
-    -70
-    -65.2054
-    -62.1583
+	2	1	-70
+	2	2	-70
+	2	3	-68.1559
+	2	4	-61.9174
+	2	5	-70
+	2	6	-70
+	2	7	-70
+	2	8	-65.2054
+	2	9	-62.1583
 
-    NEST v1.9.svn (C) 1995-2008 The NEST Initiative
-    -70
-    -70
-    -68.1559
-    -61.9174
-    -70
-    -70
-    -70
-    -65.2054
-    -62.1583
+	2	1	-70
+	2	2	-70
+	2	3	-68.1559
+	2	4	-61.9174
+	2	5	-70
+	2	6	-70
+	2	7	-70
+	2	8	-65.2054
+	2	9	-62.1583
 
 Receiving string messages
 -------------------------
@@ -247,54 +243,54 @@ which yields the following output:
 
 ::
 
-               -- N E S T 2 beta --
-              Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
-       Version 1.9-svn Sep 22 2010 16:50:01
+	Nov 23 11:18:23 music_message_in_proxy::calibrate() [Info]:
+		Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
+		ms.
 
-    This program is provided AS IS and comes with
-    NO WARRANTY. See the file LICENSE for details.
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Problems or suggestions?
-      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
-      Mailing list: nest_user@nest-initiative.org
+	Nov 23 11:18:23 MUSICManager::enter_runtime [Info]:
+		Entering MUSIC runtime with tick = 0.1 ms
 
-    Type 'nest.help()' to find out more about NEST.
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:09:12 Simulate [Info]:
-        Simulating 10 ms.
+	Nov 23 11:18:23 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([], dtype=float64), 'messages': ()},)
 
-    Sep 23 16:09:12 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:09:12 music_message_in_proxy::calibrate() [Info]:
-        Mapping MUSIC input port 'msgdata' with width=0 and acceptable latency=0
-        ms.
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:09:12 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Nov 23 11:18:23 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([], dtype=float64), 'messages': ()},)
 
-    Sep 23 16:09:12 Scheduler::resume [Info]:
-        Entering MUSIC runtime with tick = 0.1 ms
+	.
+	.
 
-    Sep 23 16:09:12 Scheduler::resume [Info]:
-        Simulation finished.
-    [{'messages': [], 'message_times': array([], dtype=float64)}]
+	Nov 23 11:18:23 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    :
+	Nov 23 11:18:23 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:13:36 Simulate [Info]:
-        Simulating 10 ms.
-
-    Sep 23 16:13:36 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
-
-    Sep 23 16:13:36 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
-
-    Sep 23 16:13:36 Scheduler::resume [Info]:
-        Simulation finished.
-    [{'messages': ['Hello', '!'], 'message_times': array([ 300.,  700.])}]
+	Nov 23 11:18:23 SimulationManager::run [Info]:
+		Simulation finished.
+	({'messages_times': array([ 300.,  700.]), 'messages': ('Hello', '!')},)
 
 Receiving continuous data
 -------------------------
@@ -308,29 +304,15 @@ where w is the width of the port. The MUSIC configuration file
 
 ::
 
-    stoptime=0.01
-
-    [from]
-      binary=./minimalmusicsetup_sendnest.py
-      np=1
-
-    [to]
-      binary=./minimalmusicsetup_receivenest.py
-      np=1
-
-    from.spikes_out -> to.spikes_in [1]
-
-::
-
     stoptime=1.0
     [from]
-    np=1
-    binary=./cont_out.py
+      np=1
+      binary=constsource
     [to]
-    np=1
-    binary=./cont_in.py
+      np=1
+      binary=./conttest.py
 
-    from.cont_out -> to.cont_in [10]
+    from.contdata -> to.contdata [10]
 
 The receiving side is again implemented using a
 :doc:`PyNEST <../tutorials/index>` script (``conttest.py``).
@@ -366,51 +348,38 @@ which yields the following output:
 
 ::
 
-               -- N E S T 2 beta --
-              Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
-       Version 1.9-svn Sep 22 2010 16:50:01
+	Nov 23 11:33:26 music_cont_in_proxy::calibrate() [Info]:
+		Mapping MUSIC input port 'contdata' with width=10.
 
-    This program is provided AS IS and comes with
-    NO WARRANTY. See the file LICENSE for details.
+	Nov 23 11:33:26 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Problems or suggestions?
-      Website     : <a class="external free" href="https://www.nest-initiative.org" rel="nofollow">https://www.nest-initiative.org</a>
-      Mailing list: nest_user@nest-initiative.org
+	Nov 23 11:33:26 MUSICManager::enter_runtime [Info]:
+		Entering MUSIC runtime with tick = 0.1 ms
 
-    Type 'nest.help()' to find out more about NEST.
+	Nov 23 11:33:28 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:49:09 Simulate [Info]:
-        Simulating 10 ms.
+	Nov 23 11:33:28 SimulationManager::run [Info]:
+		Simulation finished.
+	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)
 
-    Sep 23 16:49:09 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
+	.
+	.
 
-    Sep 23 16:49:09 music_cont_in_proxy::calibrate() [Info]:
-        Mapping MUSIC input port 'contdata' with width=10.
+	Nov 23 11:33:28 NodeManager::prepare_nodes [Info]:
+		Preparing 1 node for simulation.
 
-    Sep 23 16:49:09 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
+	Nov 23 11:33:28 SimulationManager::start_updating_ [Info]:
+		Number of local nodes: 1
+		Simulation time (ms): 10
+		Number of OpenMP threads: 1
+		Number of MPI processes: 1
 
-    Sep 23 16:49:09 Scheduler::resume [Info]:
-        Entering MUSIC runtime with tick = 0.1 ms
-
-    Sep 23 16:49:09 Scheduler::resume [Info]:
-        Simulation finished.
-    [array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])]
-
-    :
-
-    Sep 23 16:47:24 Simulate [Info]:
-        Simulating 10 ms.
-
-    Sep 23 16:47:24 Scheduler::prepare_nodes [Info]:
-        Please wait. Preparing elements.
-
-    Sep 23 16:47:24 Scheduler::prepare_nodes [Info]:
-        Simulating 1 nodes.
-
-    Sep 23 16:47:24 Scheduler::resume [Info]:
-        Simulation finished.
-    [array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])]
+	Nov 23 11:33:28 SimulationManager::run [Info]:
+		Simulation finished.
+	(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]),)
 

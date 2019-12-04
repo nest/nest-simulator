@@ -63,10 +63,10 @@ per second.
 References
 ~~~~~~~~~~~~
 
-.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent plasticity in balanced random
-       networks. Neural Comput 19(6):1437-67
-.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
-       neuroscience. Front. Neuroinform. 6:26
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+       plasticity in balanced random networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
 
@@ -156,7 +156,7 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-    ###############################################################################
+    ####################################################################
     # Note that Kunkel et al. (2014) report different values. The values
     # in the paper were used for the benchmarks on K, the values given
     # here were used for the benchmark on JUQUEEN.

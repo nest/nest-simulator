@@ -65,6 +65,7 @@ try:
 except subprocess.CalledProcessError:
     print("No pandoc on %s" % os.environ['PATH'])
 
+
 def ConvertMarkdownFiles():
     for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
         for f in files:
@@ -214,6 +215,8 @@ github_doc_root = ''
 intersphinx_mapping = {'https://docs.python.org/': None}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+
+
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
@@ -302,4 +305,3 @@ texinfo_documents = [
      author, 'NESTsimulator', 'One line description of project.',
      'Miscellaneous'),
 ]
-

@@ -380,7 +380,7 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
-    Prints message if no help is available for hlpobj.
+    Prints message if no help is available for `hlpobj`.
 
     Parameters
     ----------

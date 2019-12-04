@@ -19,40 +19,53 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This template demonstrates how a docstring should look.
+"""[[ This template demonstrates how to create a docstring for the PyNEST API.
 
-   It is based on the NumPy style docstring and uses reStructured text mark
-   up. Extra annotations are marked with brackets like this
-   [[ remove content ]].  Copy this docstring and replace the text to fit
-   your function, but do not change the headings and keep the order. The
-   bracketed sections should be removed completely from the final version.
+   If you have modified an API, please ensure you update the docstring!
 
+   The format is based on `NumPy style docstring
+   <https://numpydoc.readthedocs.io/en/latest/format.html>`_ and uses
+   reStructuredText markup. Please review the syntax rules if you are
+   unfamiliar with either reStructuredText or NumPy style docstrings.
+
+   Copy this file and replace the sample text with a description of the API.
+   The double bracketed sections [[ ]], which provide explanations, should be
+   completely removed from your final version - Including this entire
+   docstring!
+   ]]
 """
 
 
-def get.Connections(source=None, target=None, synape_model=None,
-                    synapse_label=None):
+def getConnections(source=None, target=None, synape_model=None, synapse_label=None):
     """Return an array of connection identifiers
+    [[ In a single 'summary line', state what the function does ]]
+    [[ All functions should have a docstring with at least a summary line ]]
+
+    [[ Below summary line (separated by new line), there should be an extended
+       summary section that should be used to clarify functionality.]]
 
     Any combination of source, target, synapse_model and
     synapse_label parameters is permitted.
 
-    [[ Deprecation warnings should appear directly after a brief description
-      It should state  what version the object was deprecated, when it will be
-      removed and what recommend way obtains the same functionality]]
+    [[ Deprecation warnings should appear directly after the extended summary.
+      It should state in what version the object was deprecated, when it will
+      be removed and what recommend way obtains the same functionality]]
 
     .. deprecated:: 1.6.0
 
             `ndobj_old` will be removed in NumPy 2.0.0, it is replaced by
             `ndobj_new` because the latter works also with array subclasses.
 
+    [[ For all headings ensure the underline --- is at least the length of the
+    heading ]]
+
     Parameters
     ----------
     source : list, optional
-        Source node IDs, only connections from these
+        Source GIDs, only connections from these
         pre-synaptic neurons are returned
     target : list, optional
-        Target node IDs, only connections to these
+        Target GIDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
@@ -62,9 +75,9 @@ def get.Connections(source=None, target=None, synape_model=None,
 
     Returns
     -------
-    array:
+    list:
         Connections as 5-tuples with entries
-        (source-node_id, target-node_id, target-thread, synapse-id, port)
+        (source-gid, target-gid, target-thread, synapse-id, port)
 
     Raises
     -------
@@ -76,7 +89,7 @@ def get.Connections(source=None, target=None, synape_model=None,
     Details on the connectivity. [[ Here details regarding the code or further
     explanations can be included. This section may include mathematical
     equations, written in LaTeX format. You can include references to relevant
-    papers using the reStructured format ]]
+    papers using the reStructuredText syntax. Do not include model formulas ]]
 
     The discrete-time Fourier time-convolution [1]_ property states that
 
@@ -88,6 +101,8 @@ def get.Connections(source=None, target=None, synape_model=None,
     The value of :math:`\omega` is larger than 5.
 
 
+
+    [[ The See Also section should include 2 or 3 related functions. ]]
 
     See Also
     ---------
@@ -103,15 +118,9 @@ def get.Connections(source=None, target=None, synape_model=None,
        journal followed by volume and page range. Include the doi if
        applicable.]]
 
-    .. [1] Bonewald LF. 2011. The amazing osteocyte. Journal of Bone and
+    .. [1] Bonewald LF. (2011). The amazing osteocyte. Journal of Bone and
            Mineral Research 26(2):229–238. DOI: 10.1002/jbmr.320.
-
-    [[Keywords that idenfity important aspects of the function but not the
-     function name itself can be included in a comma separated list. These
-     terms will help us increase discoverability of related documents ]]
-
-    KEYWORDS: Important terms, Comma Separated
-    """
+       """
 
     # [[ in line comments should be used to explain why this code is here]]
     # This code was included because of bug Y when running X

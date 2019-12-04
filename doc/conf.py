@@ -224,7 +224,6 @@ def config_inited_handler(app, config):
     )
     ConvertMarkdownFiles()
 
-    
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -236,6 +235,7 @@ nitpick_ignore = [('py:class', 'None'),
                   ('cpp:identifier', 'Clopath_Archiving_Node'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
+
 
 def setup(app):
     app.add_stylesheet('css/custom.css')

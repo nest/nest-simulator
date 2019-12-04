@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# conf.py
+# extractor_userdocs.py
 #
 # This file is part of NEST.
 #
@@ -181,8 +181,10 @@ def rst_index(hierarchy, underlines='=-~'):
     """
     def mktitle(t, ul):
         return t+'\n'+ul*len(t)+'\n'
+
     def mkitem(t):
         return "* :doc:`%s`" % os.path.splitext(t)[0]
+
     output = list()
     for tags, items in sorted(hierarchy.items()):
         if isinstance(tags, str):

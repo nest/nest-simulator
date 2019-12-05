@@ -30,6 +30,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -102,7 +103,6 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  const double RESOLUTION_TOLERANCE = 1e-14;
   if ( updateValue< double >( d, names::time, time ) )
   {
     if ( time != 0.0 )
@@ -177,7 +177,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd * tics_per_ms + RESOLUTION_TOLERANCE, &integer_part ) > 2 * RESOLUTION_TOLERANCE )
+      else if ( !is_integer( resd * tics_per_ms ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -213,7 +213,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd / Time::get_ms_per_tic() + RESOLUTION_TOLERANCE, &integer_part ) > 2 * RESOLUTION_TOLERANCE )
+      else if ( !is_integer( resd / Time::get_ms_per_tic() ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",

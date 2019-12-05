@@ -33,7 +33,7 @@ namespace nest
  *
  * .. code-block:: C++
  *
- *    enum class My_Flags : unsigned
+ *    enum class MyFlags : unsigned
  *    {
  *        FIRST_FLAG = 1 << 0,
  *        SECOND_FLAG = 1 << 1,
@@ -41,23 +41,34 @@ namespace nest
  *        FOURTH_FLAG = 1 << 3
  *    };
  *
- * Then, enable the bitfield operators for this enum class:
+ * To prevent template substitution from enabling bitfield operators on *every* enum class, we use the enable_if
+ * mechanism (see https://en.cppreference.com/w/cpp/language/sfinae).
+ *
+ * A templated struct `EnableBitMaskOperators` is defined, that, regardless of the template type, contains a single
+ * static constant member `enable`, set to false. This is the "default", as the template may be specialised with any
+ * type. However, we can override this behaviour by explicitly providing a template specialisation of
+ * `EnableBitMaskOperators` for a particular type--namely, our bitfield enum class `MyFlags`--with a static constant
+ * member by the same name but with value set to true. If we then want to ask during function definition of bitmask
+ * operations whether they should be defined for an arbitrary type `T`, all we have to do is specalise
+ * `EnableBitMaskOperators` by this type `T`, and check the value of its `enable` member using `enable_if`.
+ *
+ * To enable the bitfield operators for our `MyFlags` class, we thus specialise the template:
  *
  * .. code-block:: C++
  *
  *    template <>
- *    struct EnableBitMaskOperators< My_Flags >
+ *    struct EnableBitMaskOperators< MyFlags >
  *    {
  *        static const bool enable = true;
  *    };
  *
- * Finally, instantiate a bitfield and do some operations on it, for example:
+ * Finally, we can instantiate a bitfield and do some operations on it, for example:
  *
  * .. code-block:: C++
  *
- *    My_Flags my_flags = My_Flags::FIRST_FLAG | My_Flags::FOURTH_FLAG;
- *    my_flags |= My_Flags::THIRD_FLAG;
- *    if (enumFlagSet(my_flags, My_Flags::FOURTH_FLAG))
+ *    MyFlags my_flags = MyFlags::FIRST_FLAG | MyFlags::FOURTH_FLAG;
+ *    my_flags |= MyFlags::THIRD_FLAG;
+ *    if ( enumFlagSet( my_flags, MyFlags::FOURTH_FLAG ) )
  *    {
  *        std::cout << "Fourth flag is set!" << std::endl;
  *    }

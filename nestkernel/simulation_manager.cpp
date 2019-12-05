@@ -102,6 +102,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
+  double eps = 1e-10;
   if ( updateValue< double >( d, names::time, time ) )
   {
     if ( time != 0.0 )
@@ -176,7 +177,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd * tics_per_ms, &integer_part ) != 0 )
+      else if ( std::modf( resd * tics_per_ms + eps, &integer_part ) > 2 * eps )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -212,7 +213,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd / Time::get_ms_per_tic(), &integer_part ) != 0 )
+      else if ( std::modf( resd / Time::get_ms_per_tic() + eps, &integer_part ) > 2 * eps )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",

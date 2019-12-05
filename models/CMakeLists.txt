@@ -77,7 +77,6 @@ set( models_sources
     mip_generator.h mip_generator.cpp
     modelsmodule.h modelsmodule.cpp
     multimeter.h multimeter.cpp
-    voltmeter.h voltmeter.cpp
     music_cont_in_proxy.h music_cont_in_proxy.cpp
     music_cont_out_proxy.h music_cont_out_proxy.cpp
     music_event_in_proxy.h music_event_in_proxy.cpp
@@ -124,6 +123,7 @@ set( models_sources
     tsodyks2_connection.h
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
+    voltmeter.h voltmeter.cpp
     volume_transmitter.h volume_transmitter.cpp
     vogels_sprekeler_connection.h
     weight_recorder.h weight_recorder.cpp

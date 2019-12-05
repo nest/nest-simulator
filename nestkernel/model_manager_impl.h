@@ -81,8 +81,6 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-// we're templating this function with a class template, e.g.
-// BernoulliConnection< targetidentifierT >
 template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )

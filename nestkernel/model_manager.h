@@ -188,6 +188,9 @@ public:
    * This limits the number of thread local neurons to 65,536. No support for
    * different receptor types. Otherwise identical to non-hpc version.
    *
+   * When called, this function should be specialised by a class template,
+   * e.g. `BernoulliConnection< targetidentifierT >`
+   *
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < template < typename targetidentifierT > class ConnectionT >

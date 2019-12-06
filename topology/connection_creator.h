@@ -97,7 +97,9 @@ public:
   /**
    * Connect two layers.
    * @param source source layer.
+   * @param source NodeCollection of the source.
    * @param target target layer.
+   * @param target NodeCollection of the target.
    */
   template < int D >
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );

@@ -54,6 +54,7 @@ protected:
   /**
    * Communicate positions across MPI processes
    * @param iter Insert iterator which will receive pairs of Position,node ID
+   * @param node_collection NodeCollection of the layer
    */
   template < class Ins >
   void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );

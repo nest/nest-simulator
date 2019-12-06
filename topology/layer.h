@@ -115,8 +115,10 @@ public:
   /**
    * Connect this layer to the given target layer. The actual connections
    * are made in class ConnectionCreator.
+   * @param source_nc NodeCollection of the source layer
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
+   * @param target_nc NodeCollection of the target layer
    * @param connector connection properties
    */
   virtual void connect( NodeCollectionPTR source_nc,
@@ -137,6 +139,7 @@ public:
    * @param mask            mask to apply.
    * @param anchor          position to center mask in.
    * @param allow_oversized allow mask to be greater than layer
+   * @param node_collection NodeCollection of the layer
    * @returns nodes in layer inside mask.
    */
   virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
@@ -444,6 +447,7 @@ public:
    * @param mask            The mask to apply to the layer
    * @param allow_oversized If true, allow larges masks than layers when using
    *                        periodic b.c.
+   * @param node_collection NodeCollection of the layer
    */
   MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized, NodeCollectionPTR node_collection );
 
@@ -454,10 +458,9 @@ public:
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
    * @param mask            The mask to apply to the layer
-   * @param allow_oversized If true, allow larges masks than layers when using
-   * periodic b.c.
-   * @param target          The layer which the given mask is defined for
-   * (target layer)
+   * @param allow_oversized If true, allow larges masks than layers when using periodic b.c.
+   * @param target          The layer which the given mask is defined for (target layer)
+   * @param node_collection NodeCollection of the layer
    */
   MaskedLayer( Layer< D >& layer,
     const MaskDatum& mask,

@@ -39,25 +39,25 @@ M_ERROR setverbosity
 
 % Test setting valid resolution 
 {
-  ResetKernel
-  
-  0 << /resolution 0.102 /tics_per_ms 1000.0 >> SetStatus
-  0 GetStatus
-  /res {/resolution get} def
-  /delta {res 0.102 sub} def
-  delta 1e-15 leq
+  /target_resolution 0.102 def
 
+  ResetKernel
+  0 << /resolution target_resolution /tics_per_ms 1000.0 >> SetStatus
+  0 /resolution get
+  target_resolution
+  sub abs
+  1e-15 leq
 } assert_or_die
 
 % Test setting invalid resolution 
 {
-  ResetKernel
-  
-  0 << /resolution 0.1002 /tics_per_ms 1000.0 >> SetStatus
-  0 GetStatus
-  /res {/resolution get} def
-  /delta {res 0.1002 sub} def
-  delta 1e-15 leq
+  /target_resolution 0.1002 def
 
+  ResetKernel
+  0 << /resolution target_resolution /tics_per_ms 1000.0 >> SetStatus
+  0 /resolution get
+  target_resolution
+  sub abs
+  1e-15 leq
 } fail_or_die
 

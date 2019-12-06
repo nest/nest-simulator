@@ -196,7 +196,7 @@ nest::RecordingBackendArbor::prepare()
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
   num_arbor_cells_ = arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
-  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root ); // This call works and sends correctly
+  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root ); 
 
   // hand shake #2: communications step size synchronized
   const float arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );

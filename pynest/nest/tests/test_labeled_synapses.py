@@ -62,7 +62,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.urbanczik_connections = [
             'urbanczik_synapse',
-            'urbanczik_synapse_lbl'
+            'urbanczik_synapse_lbl',
+            'urbanczik_synapse_hpc'
         ]
 
         # create neurons that accept all synapse connections (especially gap

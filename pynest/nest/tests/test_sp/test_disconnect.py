@@ -62,8 +62,10 @@ class TestDisconnectSingle(unittest.TestCase):
             'diffusion_connection_lbl',
             'clopath_synapse',
             'clopath_synapse_lbl',
+            'clopath_synapse_hpc',
             'urbanczik_synapse',
             'urbanczik_synapse_lbl',
+            'urbanczik_synapse_hpc'
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):

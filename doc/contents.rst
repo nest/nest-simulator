@@ -19,13 +19,14 @@ Table of Contents
    topology/index
    guides/index
    getting_help
-   ref_material/index
+   ref_material/pynest_apis
 
 .. toctree::
    :maxdepth: 2
    :caption: Getting Involved
 
    community
+   contribute/index
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
    NEST-Initiative <https://www.nest-initiative.org/>

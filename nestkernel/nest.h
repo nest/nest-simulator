@@ -27,6 +27,7 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from librandom:
@@ -55,6 +56,46 @@ void reset_network();
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
+
+enum class RegisterConnectionModelFlags : unsigned
+{
+  REGISTER_HPC = 1 << 0,
+  REGISTER_LBL = 1 << 1,
+  IS_PRIMARY = 1 << 2,
+  HAS_DELAY = 1 << 3,
+  SUPPORTS_WFR = 1 << 4,
+  REQUIRES_SYMMETRIC = 1 << 5,
+  REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
+  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
+};
+
+template <>
+struct EnableBitMaskOperators< RegisterConnectionModelFlags >
+{
+  static const bool enable = true;
+};
+
+const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
+  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
+  | RegisterConnectionModelFlags::HAS_DELAY;
+
+const RegisterConnectionModelFlags default_secondary_connection_model_flags =
+  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
+
+/**
+ * Register connection model (i.e. an instance of a class inheriting from `Connection`).
+ */
+template < template < typename > class ConnectorModelT >
+void register_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_connection_model_flags );
+
+/**
+ * Register secondary connection models (e.g. gap junctions, rate-based models).
+ */
+template < template < typename > class ConnectorModelT >
+void register_secondary_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+
 void print_network( index gid, index depth, std::ostream& out = std::cout );
 
 librandom::RngPtr get_vp_rng_of_gid( index target );

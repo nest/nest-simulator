@@ -109,7 +109,10 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayerPTR target_layer, NodeCollectionPTR target_nc, ConnectionCreator& connector )
+Layer< D >::connect( NodeCollectionPTR source_nc,
+  AbstractLayerPTR target_layer,
+  NodeCollectionPTR target_nc,
+  ConnectionCreator& connector )
 {
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
@@ -119,7 +122,7 @@ Layer< D >::connect( AbstractLayerPTR target_layer, NodeCollectionPTR target_nc,
   try
   {
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
-    connector.connect( *this, tgt, target_nc );
+    connector.connect( *this, source_nc, tgt, target_nc );
   }
   catch ( std::bad_cast& e )
   {
@@ -129,9 +132,9 @@ Layer< D >::connect( AbstractLayerPTR target_layer, NodeCollectionPTR target_nc,
 
 template < int D >
 std::shared_ptr< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree()
+Layer< D >::get_global_positions_ntree( NodeCollectionPTR node_collection )
 {
-  if ( cached_ntree_md_ == get_metadata() )
+  if ( cached_ntree_md_ == node_collection->get_metadata() )
   {
     assert( cached_ntree_.get() );
     return cached_ntree_;
@@ -142,12 +145,15 @@ Layer< D >::get_global_positions_ntree()
   cached_ntree_ =
     std::shared_ptr< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
 
-  return do_get_global_positions_ntree_();
+  return do_get_global_positions_ntree_( node_collection );
 }
 
 template < int D >
 std::shared_ptr< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D > lower_left, Position< D > extent )
+Layer< D >::get_global_positions_ntree( std::bitset< D > periodic,
+  Position< D > lower_left,
+  Position< D > extent,
+  NodeCollectionPTR node_collection )
 {
   clear_ntree_cache_();
   clear_vector_cache_();
@@ -164,7 +170,7 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
 
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, extent, periodic ) );
 
-  do_get_global_positions_ntree_();
+  do_get_global_positions_ntree_( node_collection );
 
   // Do not use cache since the periodic bits and extents were altered.
   cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
@@ -174,9 +180,9 @@ Layer< D >::get_global_positions_ntree( std::bitset< D > periodic, Position< D >
 
 template < int D >
 std::shared_ptr< Ntree< D, index > >
-Layer< D >::do_get_global_positions_ntree_()
+Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
 {
-  if ( cached_vector_md_ == get_metadata() )
+  if ( cached_vector_md_ == node_collection->get_metadata() )
   {
     // Convert from vector to Ntree
 
@@ -192,21 +198,21 @@ Layer< D >::do_get_global_positions_ntree_()
   else
   {
 
-    insert_global_positions_ntree_( *cached_ntree_ );
+    insert_global_positions_ntree_( *cached_ntree_, node_collection );
   }
 
   clear_vector_cache_();
 
-  cached_ntree_md_ = get_metadata();
+  cached_ntree_md_ = node_collection->get_metadata();
 
   return cached_ntree_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >*
-Layer< D >::get_global_positions_vector()
+Layer< D >::get_global_positions_vector( NodeCollectionPTR node_collection )
 {
-  if ( cached_vector_md_ == get_metadata() )
+  if ( cached_vector_md_ == node_collection->get_metadata() )
   {
     assert( cached_vector_ );
     return cached_vector_;
@@ -216,7 +222,7 @@ Layer< D >::get_global_positions_vector()
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( cached_ntree_md_ == get_metadata() )
+  if ( cached_ntree_md_ == node_collection->get_metadata() )
   {
     // Convert from NTree to vector
 
@@ -230,21 +236,24 @@ Layer< D >::get_global_positions_vector()
   }
   else
   {
-    insert_global_positions_vector_( *cached_vector_ );
+    insert_global_positions_vector_( *cached_vector_, node_collection );
   }
 
   clear_ntree_cache_();
 
-  cached_vector_md_ = get_metadata();
+  cached_vector_md_ = node_collection->get_metadata();
 
   return cached_vector_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-Layer< D >::get_global_positions_vector( const MaskDatum& mask, const Position< D >& anchor, bool allow_oversized )
+Layer< D >::get_global_positions_vector( const MaskDatum& mask,
+  const Position< D >& anchor,
+  bool allow_oversized,
+  NodeCollectionPTR node_collection )
 {
-  MaskedLayer< D > masked_layer( *this, mask, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, allow_oversized, node_collection );
   std::vector< std::pair< Position< D >, index > > positions;
 
   for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( anchor ); iter != masked_layer.end();
@@ -258,9 +267,12 @@ Layer< D >::get_global_positions_vector( const MaskDatum& mask, const Position< 
 
 template < int D >
 std::vector< index >
-Layer< D >::get_global_nodes( const MaskDatum& mask, const std::vector< double >& anchor, bool allow_oversized )
+Layer< D >::get_global_nodes( const MaskDatum& mask,
+  const std::vector< double >& anchor,
+  bool allow_oversized,
+  NodeCollectionPTR node_collection )
 {
-  MaskedLayer< D > masked_layer( *this, mask, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, mask, allow_oversized, node_collection );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i = masked_layer.begin( anchor ); i != masked_layer.end(); ++i )
   {
@@ -287,7 +299,8 @@ template < int D >
 void
 Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model )
 {
-  std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector();
+  std::vector< std::pair< Position< D >, index > >* src_vec =
+    get_global_positions_vector( node_collection_ ); // TODO: this may give wrong connections
 
   // Dictionary with parameters for get_connections()
   DictionaryDatum ncdict( new Dictionary );

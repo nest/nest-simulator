@@ -343,7 +343,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ConnectionCreator connector( connection_dict );
   ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
-  source->connect( target, target_nc, connector );
+  source->connect( source_nc, target, target_nc, connector );
 }
 
 void

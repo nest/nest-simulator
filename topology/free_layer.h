@@ -56,10 +56,11 @@ protected:
    * @param iter Insert iterator which will receive pairs of Position,node ID
    */
   template < class Ins >
-  void communicate_positions_( Ins iter );
+  void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );
 
-  void insert_global_positions_ntree_( Ntree< D, index >& tree );
-  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec );
+  void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+    NodeCollectionPTR node_collection );
 
   /// Vector of positions.
   std::vector< Position< D > > positions_;
@@ -229,15 +230,15 @@ FreeLayer< D >::get_position( index lid ) const
 template < int D >
 template < class Ins >
 void
-FreeLayer< D >::communicate_positions_( Ins iter )
+FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
   // This array will be filled with node ID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_node_id_pos;
 
-  NodeCollection::const_iterator nc_begin = this->node_collection_->MPI_local_begin();
-  NodeCollection::const_iterator nc_end = this->node_collection_->end();
+  NodeCollection::const_iterator nc_begin = node_collection->MPI_local_begin();
+  NodeCollection::const_iterator nc_end = node_collection->end();
 
-  local_node_id_pos.reserve( ( D + 1 ) * this->node_collection_->size() );
+  local_node_id_pos.reserve( ( D + 1 ) * node_collection->size() );
 
   for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it )
   {
@@ -275,10 +276,10 @@ FreeLayer< D >::communicate_positions_( Ins iter )
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree )
+FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection )
 {
 
-  communicate_positions_( std::inserter( tree, tree.end() ) );
+  communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
 // Helper function to compare node IDs used for sorting (Position,node ID) pairs
@@ -291,10 +292,11 @@ node_id_less( const std::pair< Position< D >, index >& a, const std::pair< Posit
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec )
+FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+  NodeCollectionPTR node_collection )
 {
 
-  communicate_positions_( std::back_inserter( vec ) );
+  communicate_positions_( std::back_inserter( vec ), node_collection );
 
   // Sort vector to ensure consistent results
   std::sort( vec.begin(), vec.end(), node_id_less< D > );

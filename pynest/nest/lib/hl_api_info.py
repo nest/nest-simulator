@@ -50,7 +50,6 @@ __all__ = [
 def sysinfo():
     """Print information on the platform on which NEST was compiled.
 
-    KEYWORDS: info
     """
 
     sr("sysinfo")
@@ -65,7 +64,6 @@ def version():
     str
         The version of NEST
 
-    KEYWORDS: info
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
@@ -76,7 +74,6 @@ def version():
 def authors():
     """Print the authors of NEST.
 
-    KEYWORDS: info
     """
 
     sr("authors")
@@ -88,7 +85,6 @@ def helpdesk():
 
     Use the system default browser.
 
-    KEYWORDS: info
     """
 
     if sys.version_info < (2, 7, 8):
@@ -136,9 +132,8 @@ def help(obj=None, pager=None, return_text=False):
     Returns
     -------
     None or str
-        The help text of the object if `return_text` is ``True``.
+        The help text of the object if `return_text` is `True`.
 
-    KEYWORDS: info
     """
     hlpobj = obj
     if hlpobj is not None:
@@ -175,7 +170,6 @@ def get_argv():
     tuple
         Argv, as seen by NEST
 
-    KEYWORDS: info
     """
 
     sr('statusdict')
@@ -196,7 +190,6 @@ def message(level, sender, text):
     text : str
         Text to be sent in the message
 
-    KEYWORDS: info
     """
 
     sps(level)
@@ -230,12 +223,12 @@ def get_verbosity():
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Parameters
     ----------
@@ -252,7 +245,7 @@ def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
 
     Parameters of nodes or connections, given in `nodes`, is set as specified
-    by `params`. If `val` is given, `params` has to be a string with the
+    by `params`. If `val` is given, `params` has to be a `string` with the
     name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
@@ -272,7 +265,7 @@ def SetStatus(nodes, params, val=None):
     Raises
     ------
     TypeError
-        If `nodes` is not a list of nodes or synapses, or if the
+        If `nodes` is not a NodeCollection of nodes, a SynapseCollection of synapses, or if the
         number of parameters don't match the number of nodes or
         synapses.
 
@@ -374,7 +367,7 @@ def GetStatus(nodes, keys=None, output=''):
         If `nodes` or `keys` are on the wrong form.
 
     See Also
-    -------
+    --------
     :py:func:`.SetStatus`
     """
 

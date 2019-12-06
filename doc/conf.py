@@ -31,66 +31,56 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 
-import re
-
 import pip
 
 import subprocess
 
 from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
+
+source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('./..'))
-sys.path.insert(0, os.path.abspath('./../topology'))
-sys.path.insert(0, os.path.abspath('./../pynest/nest'))
 
-source_suffix = ['.rst', '.md']
-source_parsers = {
-    '.md': CommonMarkParser
-}
+doc_path = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.abspath(doc_path + "/..")
 
-# -- Checking for pandoc --------------------------------------------------
-
-try:
-    print(check_output(['pandoc', '--version']))
-except CalledProcessError:
-    print("No pandoc on %s" % os.environ['PATH'])
+sys.path.insert(0, os.path.abspath(root_path))
+sys.path.insert(0, os.path.abspath(root_path + '/topology'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
+sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
+sys.path.insert(0, os.path.abspath(doc_path))
 
 
-for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
-    for f in files:
-        if f.endswith('.md'):
-            ff = os.path.join(dirpath, f)
-            print(ff)
-            fb = os.path.basename(f)[:-3]
-            print(fb)
-            fo = fb + ".rst"
-            args = ['pandoc', ff, '-o', fo]
-            # check_output(args)
-            # check_output(args)
+# -- Mock pynestkernel ----------------------------------------------------
+# The mock_kernel has to be imported after setting the correct sys paths.
+from mock_kernel import convert  # noqa
+
+# create mockfile
+
+excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
+infile = root_path + "/pynest/pynestkernel.pyx"
+outfile = doc_path + "/pynestkernel_mock.py"
+
+with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
+    mockedmodule = fexc.read() + "\n\n"
+    mockedmodule += "from mock import MagicMock\n\n"
+    mockedmodule += convert(fin)
+
+    fout.write(mockedmodule)
+
+# The pynestkernel_mock has to be imported after it is created.
+import pynestkernel_mock  # noqa
+
+sys.modules["nest.pynestkernel"] = pynestkernel_mock
+sys.modules["nest.kernel"] = pynestkernel_mock
+
 
 # -- General configuration ------------------------------------------------
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-# needs_sphinx = '1.0'
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-# extensions = [
-#    'sphinx.ext.autodoc',
-#    'sphinx.ext.napoleon',
-#    'sphinx.ext.autosummary',
-#    'sphinx.ext.doctest',
-#    'sphinx.ext.intersphinx',
-#    'sphinx.ext.todo',
-#    'sphinx.ext.coverage',
-#    'sphinx.ext.mathjax',
-#    'sphinx_gallery.gen_gallery',
-# ]
-
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
@@ -199,23 +189,26 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
+nitpick_ignore = [('py:class', 'None'),
+                  ('py:class', 'optional'),
+                  ('py:class', 's'),
+                  ('cpp:identifier', 'CommonSynapseProperties'),
+                  ('cpp:identifier', 'Connection<targetidentifierT>'),
+                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'DeviceNode'),
+                  ('cpp:identifier', 'Node'),
+                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'MessageHandler'),
+                  ('cpp:identifer', 'CommonPropertiesHomW')]
+
 
 def setup(app):
-    # app.add_stylesheet('css/my_styles.css')
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/custom.js")
-    app.add_javascript("js/copybutton.js")
-    app.add_config_value('recommonmark_config', {
-        'auto_toc_tree_section': 'Contents',
-        'enable_inline_math': True,
-        'enable_auto_doc_ref': True,
-        'enable_eval_rst': True
-    }, True)
-    app.add_transform(AutoStructify)
-
 
 # -- Options for LaTeX output ---------------------------------------------
+
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
@@ -266,34 +259,3 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-# on_rtd = os.environ.get('READTHEDOCS') == 'True'
-# if on_rtd:
-#    html_theme = 'alabaster'
-# else:
-#    html_theme = 'nat'
-
-models_with_documentation = (
-    "models/multimeter",
-    "models/spike_detector",
-    "models/weight_recorder",
-    "nestkernel/recording_backend_ascii",
-    "nestkernel/recording_backend_memory",
-    "nestkernel/recording_backend_screen",
-    "nestkernel/recording_backend_sionlib",
-)
-
-pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
-for model in models_with_documentation:
-    with open("../%s.h" % model) as f:
-        match = re.search(pattern, f.read())
-        if match:
-            rst_dir = "from_cpp/"
-            if not os.path.exists(rst_dir):
-                os.mkdir(rst_dir)
-            rst_fname = rst_dir + os.path.basename(model) + ".rst"
-            rst_file = open(rst_fname, "w")
-            rst_file.write(match.group(1))
-            rst_file.close()
-            print("Wrote model documentation for model " + model)
-        else:
-            print("No documentation found for model " + model)

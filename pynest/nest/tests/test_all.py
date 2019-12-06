@@ -45,6 +45,8 @@ from . import test_errors
 from . import test_events
 from . import test_facetshw_stdp
 from . import test_getconnections
+from . import test_glif_cond
+from . import test_glif_psc
 from . import test_helper_functions
 from . import test_json
 from . import test_labeled_synapses
@@ -99,6 +101,8 @@ def suite():
     suite.addTest(test_events.suite())
     suite.addTest(test_facetshw_stdp.suite())
     suite.addTest(test_getconnections.suite())
+    suite.addTest(test_glif_cond.suite())
+    suite.addTest(test_glif_psc.suite())
     suite.addTest(test_helper_functions.suite())
     suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())

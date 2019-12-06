@@ -20,16 +20,17 @@
 set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
-    aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
     aeif_cond_beta_multisynapse.h aeif_cond_beta_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
     aeif_psc_delta.h aeif_psc_delta.cpp
+    aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
     binary_neuron.h
+    clopath_connection.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp
@@ -46,8 +47,12 @@ set( models_sources
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
+    glif_cond.h glif_cond.cpp     
+    glif_psc.h glif_psc.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
+    hh_cond_beta_gap_traub.h hh_cond_beta_gap_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp
+    hh_psc_alpha_clopath.h hh_psc_alpha_clopath.cpp
     hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp
     ht_connection.h
     ht_neuron.h ht_neuron.cpp
@@ -55,6 +60,7 @@ set( models_sources
     iaf_chs_2007.cpp iaf_chs_2007.h
     iaf_cond_alpha.h iaf_cond_alpha.cpp
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
+    iaf_cond_beta.h iaf_cond_beta.cpp
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
@@ -100,6 +106,9 @@ set( models_sources
     static_connection.h
     static_connection_hom_w.h
     stdp_connection.h
+    stdp_nn_pre-centered_connection.h
+    stdp_nn_restr_connection.h
+    stdp_nn_symm_connection.h
     stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
     stdp_connection_hom.h stdp_connection_hom.cpp
     stdp_dopa_connection.h stdp_dopa_connection.cpp
@@ -107,6 +116,7 @@ set( models_sources
     stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp
     stdp_triplet_connection.h
     step_current_generator.h step_current_generator.cpp
+    step_rate_generator.h step_rate_generator.cpp
     tanh_rate.h tanh_rate.cpp
     threshold_lin_rate.h threshold_lin_rate.cpp
     tsodyks2_connection.h

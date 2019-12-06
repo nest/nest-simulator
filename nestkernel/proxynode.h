@@ -31,12 +31,17 @@ namespace nest
 class SpikeEvent;
 class CurrentEvent;
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: proxynode - Proxy to provide Nodes on remote machines
+
 Description:
+
 Remarks:
+
 Parameters:
+
 References:
+
 Author: June 2005, Jochen Martin Eppler
 */
 
@@ -55,12 +60,11 @@ public:
 
   /**
    * Construct proxy node for internal use from
-   * @param GID of represented node
-   * @param GID of parent of represented node
+   * @param node_id of represented node
    * @param model id of represented node
    * @param vp of represented node
    */
-  proxynode( index, index, index, index );
+  proxynode( index, index, index );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -71,7 +75,6 @@ public:
    * happily live without.
    */
   using Node::handle;
-
   using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -91,10 +94,7 @@ public:
   {
   }
 
-  void
-  get_status( DictionaryDatum& ) const
-  {
-  }
+  void get_status( DictionaryDatum& ) const;
 
   /**
    * Proxy nodes have no properties.
@@ -110,6 +110,12 @@ public:
   }
 
   bool is_proxy() const;
+
+  thread
+  get_thread() const
+  {
+    assert( false );
+  }
 
 private:
   void

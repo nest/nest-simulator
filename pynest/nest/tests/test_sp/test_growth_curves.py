@@ -26,7 +26,9 @@ from numpy import testing
 import unittest
 import nest
 import time
-HAVE_OPENMP = nest.sli_func("is_threaded")
+import sys
+
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
 class SynapticElementIntegrator(object):
@@ -269,10 +271,9 @@ class TestGrowthCurve(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
         nest.SetKernelStatus({"total_num_virtual_procs": 4})
-        nest.ResetNetwork()
         nest.set_verbosity('M_DEBUG')
 
-        self.sim_time = 10000
+        self.sim_time = 10000.0
         self.sim_step = 100
 
         nest.SetKernelStatus(
@@ -287,8 +288,6 @@ class TestGrowthCurve(unittest.TestCase):
 
         # build
         self.pop = nest.Create('iaf_psc_alpha', 10)
-        local_nodes = nest.GetNodes([0], {'model': 'iaf_psc_alpha'}, True)
-        self.local_nodes = local_nodes[0]
         self.spike_detector = nest.Create('spike_detector')
         nest.Connect(self.pop, self.spike_detector, 'all_to_all')
         noise = nest.Create('poisson_generator')
@@ -298,28 +297,26 @@ class TestGrowthCurve(unittest.TestCase):
     def simulate(self):
         self.sim_steps = numpy.arange(0, self.sim_time, self.sim_step)
         self.ca_nest = numpy.zeros(
-            (len(self.local_nodes), len(self.sim_steps)))
+            (len(self.pop), len(self.sim_steps)))
         self.ca_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
         self.se_nest = numpy.zeros(
-            (len(self.local_nodes), len(self.sim_steps)))
+            (len(self.pop), len(self.sim_steps)))
         self.se_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
 
-        start = time.clock()
         for t_i, t in enumerate(self.sim_steps):
-            for n_i, n in enumerate(self.local_nodes):
+            for n_i in range(len(self.pop)):
                 self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
-                    [n], ('Ca', 'synaptic_elements'))[0]
+                    self.pop[n_i], ('Ca', 'synaptic_elements'))[0]
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
-        start = time.clock()
         tmp = nest.GetStatus(self.spike_detector, 'events')[0]
         spikes_all = tmp['times']
         senders_all = tmp['senders']
-        for n_i, n in enumerate(self.local_nodes):
-            spikes = spikes_all[senders_all == n]
+        for n_i, n in enumerate(self.pop):
+            spikes = spikes_all[senders_all == n.get('global_id')]
             [sei.reset() for sei in self.se_integrator]
             spike_i = 0
             for t_i, t in enumerate(self.sim_steps):
@@ -343,7 +340,7 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         nest.SetStatus(
-            self.local_nodes,
+            self.pop,
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -372,12 +369,12 @@ class TestGrowthCurve(unittest.TestCase):
             0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484
         ])
 
+        pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.local_nodes:
-                testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 10], expected[
-                        self.pop.index(n)],
-                    decimal=8)
+            testing.assert_almost_equal(
+                self.se_nest[pop_as_list.index(n), 10], expected[
+                    pop_as_list.index(n)],
+                decimal=8)
 
     def test_gaussian_growth_curve(self):
         beta_ca = 0.0001
@@ -386,7 +383,7 @@ class TestGrowthCurve(unittest.TestCase):
         eta = 0.05
         eps = 0.10
         nest.SetStatus(
-            self.local_nodes,
+            self.pop,
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -399,6 +396,7 @@ class TestGrowthCurve(unittest.TestCase):
                 }
             }
         )
+        print("hjelp")
         self.se_integrator.append(
             GaussianNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
                                eta=eta, eps=eps, growth_rate=growth_rate))
@@ -412,12 +410,12 @@ class TestGrowthCurve(unittest.TestCase):
             0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598
         ])
 
+        pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.local_nodes:
-                testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 30], expected[
-                        self.pop.index(n)],
-                    decimal=5)
+            testing.assert_almost_equal(
+                self.se_nest[pop_as_list.index(n), 30], expected[
+                    pop_as_list.index(n)],
+                decimal=5)
 
     def test_sigmoid_growth_curve(self):
         beta_ca = 0.0001
@@ -425,8 +423,9 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         psi = 0.10
-        nest.SetStatus(
-            self.local_nodes,
+
+        local_nodes = nest.GetLocalNodeCollection(self.pop)
+        local_nodes.set(
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -437,8 +436,8 @@ class TestGrowthCurve(unittest.TestCase):
                         'eps': eps, 'psi': 0.1, 'z': 0.0
                     }
                 }
-            }
-        )
+            })
+
         self.se_integrator.append(
             SigmoidNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
                               eps=eps, psi=psi, growth_rate=growth_rate))
@@ -452,12 +451,11 @@ class TestGrowthCurve(unittest.TestCase):
             0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
         ])
 
-        for n in self.pop:
-            if n in self.local_nodes:
-                testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 30], expected[
-                        self.pop.index(n)],
-                    decimal=5)
+        local_pop_as_list = list(local_nodes)
+        for count, n in enumerate(self.pop):
+            loc = self.se_nest[local_pop_as_list.index(n), 30]
+            ex = expected[count]
+            testing.assert_almost_equal(loc, ex, decimal=5)
 
 
 def suite():

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multiple_multimeter - test support for multiple multimeters
 
 Synopsis: (test_multiple_multimeter.sli) run -> dies if assertion fails
@@ -119,7 +119,7 @@ M_ERROR setverbosity
         /mm2 /multimeter mmd Create def	
         mm1 n Connect
         mm2 n Connect
-        [mm1 mm2] { /m Set << /source [m] >> GetConnections
+        [mm1 mm2] { /m Set << /source m >> GetConnections
                     arrayload 1 eq assert /receptor get } Map
         [1 2] eq
       }

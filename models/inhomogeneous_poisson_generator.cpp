@@ -39,6 +39,8 @@
 #include <cmath>
 #include <limits>
 
+#include "dict_util.h"
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
@@ -56,8 +58,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::get(
-  DictionaryDatum& d ) const
+nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_rates = rate_times_.size();
   std::vector< double_t >* times_ms = new std::vector< double_t >();
@@ -68,14 +69,12 @@ nest::inhomogeneous_poisson_generator::Parameters_::get(
   }
 
   ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::rate_values ] =
-    DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
+  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::
-  assert_valid_rate_time_and_insert( const double_t t )
+nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double_t t )
 {
   Time t_rate;
 
@@ -98,8 +97,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::
     else
     {
       std::stringstream msg;
-      msg << "inhomogeneous_poisson_generator: Time point " << t
-          << " is not representable in current resolution.";
+      msg << "inhomogeneous_poisson_generator: Time point " << t << " is not representable in current resolution.";
       throw BadProperty( msg.str() );
     }
   }
@@ -112,13 +110,10 @@ nest::inhomogeneous_poisson_generator::Parameters_::
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::set(
-  const DictionaryDatum& d,
-  Buffers_& b )
+nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* node )
 {
   const bool times = d->known( names::rate_times );
-  const bool rates = updateValue< std::vector< double_t > >(
-    d, names::rate_values, rate_values_ );
+  const bool rates = updateValue< std::vector< double_t > >( d, names::rate_values, rate_values_ );
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
@@ -126,8 +121,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set(
   {
     const bool flag_offgrid = d->lookup( names::allow_offgrid_times );
 
-    if ( flag_offgrid != allow_offgrid_times_
-      and not( times or rate_times_.empty() ) )
+    if ( flag_offgrid != allow_offgrid_times_ and not( times or rate_times_.empty() ) )
     {
       throw BadProperty(
         "Option can only be set together with rate times "
@@ -144,15 +138,18 @@ nest::inhomogeneous_poisson_generator::Parameters_::set(
     throw BadProperty( "Rate times and values must be reset together." );
   }
 
-  // if empty parameters given, return here
+  // if neither times or rates are given, return here
   if ( not( times or rates ) )
   {
     return;
   }
 
-  // from here on we are sure the passed arguments are not empty
-  const std::vector< double_t > d_times =
-    getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
+  const std::vector< double_t > d_times = getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
+
+  if ( d_times.empty() )
+  {
+    return;
+  }
 
   if ( d_times.size() != rate_values_.size() )
   {
@@ -193,7 +190,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set(
  * ---------------------------------------------------------------- */
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , B_()
@@ -201,9 +198,8 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
 {
 }
 
-nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator(
-  const inhomogeneous_poisson_generator& n )
-  : Node( n )
+nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , B_( n.B_ )
@@ -217,8 +213,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator(
 void
 nest::inhomogeneous_poisson_generator::init_state_( const Node& proto )
 {
-  const inhomogeneous_poisson_generator& pr =
-    downcast< inhomogeneous_poisson_generator >( proto );
+  const inhomogeneous_poisson_generator& pr = downcast< inhomogeneous_poisson_generator >( proto );
 
   device_.init_state( pr.device_ );
 }
@@ -243,12 +238,9 @@ nest::inhomogeneous_poisson_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::inhomogeneous_poisson_generator::update( Time const& origin,
-  const long from,
-  const long to )
+nest::inhomogeneous_poisson_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( P_.rate_times_.size() == P_.rate_values_.size() );
 
@@ -260,8 +252,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin,
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
-  while ( B_.idx_ < P_.rate_times_.size()
-    and P_.rate_times_[ B_.idx_ ].get_steps() <= first )
+  while ( B_.idx_ < P_.rate_times_.size() and P_.rate_times_[ B_.idx_ ].get_steps() <= first )
   {
     ++B_.idx_;
   }
@@ -273,8 +264,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin,
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class StimulatingDevice.
-    if ( B_.idx_ < P_.rate_times_.size()
-      and curr_time + 1 == P_.rate_times_[ B_.idx_ ].get_steps() )
+    if ( B_.idx_ < P_.rate_times_.size() and curr_time + 1 == P_.rate_times_[ B_.idx_ ].get_steps() )
     {
       B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0; // scale the rate to ms^-1
       ++B_.idx_;
@@ -292,9 +282,8 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin,
 void
 nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( B_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dev_.ldev( rng );
+  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

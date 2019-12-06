@@ -1,0 +1,56 @@
+/*
+ *  test_ginzburg_and_mcculloch.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+ 
+/** @BeginDocumentation
+ Name: testsuite::test_ginzburg_and_mcculloch
+  
+ Synopsis: (test_ginzburg_and_mcculloch) run -> NEST exits if test fails
+  
+ Description:
+ This test ensures that we are able to connect a ginzburg_neuron with a
+ mcculloch_pitts_neuron and that we can then run a simulation.
+  
+ Author: Stine B. Vennemo
+ FirstVersion: May 2018
+ SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+ResetKernel
+
+/ginzburg /ginzburg_neuron Create def
+/mcculloch /mcculloch_pitts_neuron Create def
+
+ginzburg mcculloch Connect
+
+GetKernelStatus /num_connections get 1 eq assert_or_die
+
+100. Simulate
+
+GetKernelStatus /local_spike_counter get 1 geq assert_or_die
+
+endusing

@@ -38,17 +38,24 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "nest_types.h"
-#include "node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
+@ingroup Devices
+@ingroup music
+
 
 Name: music_cont_in_proxy - A device which receives continuous data from MUSIC.
 
 Description:
+
 A music_cont_in_proxy can be used to receive continuous data from
 remote MUSIC applications in NEST.
 
@@ -58,37 +65,35 @@ connect and send data. The music_cont_in_proxy can queried using
 GetStatus to retrieve the messages.
 
 Parameters:
+
 The following properties are available in the status dictionary:
-
-port_name      - The name of the MUSIC input port to listen to (default:
-                 cont_in)
-port_width     - The width of the MUSIC input port
-data           - The data received on the port as vector of doubles
-published      - A bool indicating if the port has been already published
-                 with MUSIC
-
+\verbatim embed:rst
+=========== ======= ========================================================
+ port_name  string  The name of the MUSIC input port to listen to (default:
+                    cont_in)
+ port_width integer The width of the MUSIC input port
+ data       list    The data received on the port
+ published  boolean A bool indicating if the port has been already published
+                    with MUSIC
+=========== ======= ========================================================
+\endverbatim
 The parameter port_name can be set using SetStatus.
 
 Examples:
-/music_cont_in_proxy Create /mcip Set
-10 Simulate
-mcip GetStatus /data get /gaze_directions Set
+
+    /music_cont_in_proxy Create /mcip Set
+    10 Simulate
+    mcip GetStatus /data get /gaze_directions Set
 
 Author: Jochen Martin Eppler
+
 FirstVersion: July 2010
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 */
-
-namespace nest
-{
-/**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
- */
-class music_cont_in_proxy : public Node
+class music_cont_in_proxy : public DeviceNode
 {
 
 public:
@@ -130,7 +135,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 

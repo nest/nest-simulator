@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_1to2_ex - sli script for test of min_delay
 
 Synopsis: (test_iaf_1to2_ex) run -> compare with reference data
@@ -89,12 +89,12 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
 
  
-  0 << 
+  << 
     /local_num_threads 1   
     /resolution h
     /min_delay min_delay
     /max_delay delay
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_psc_alpha Create /neuron1 Set
   /iaf_psc_alpha Create /neuron2 Set
@@ -103,10 +103,10 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
 
   /voltmeter Create /vm Set
-  vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+  vm << /time_in_steps true /interval h >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
 
 
   /static_synapse 
@@ -132,7 +132,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
   {First test_times exch MemberQ } Select    % those with reference 
 
  d eq                                        % compare data
- 0 GetStatus /min_delay get min_delay eq   % compare kernel setting
+ GetKernelStatus /min_delay get min_delay eq   % compare kernel setting
  and
 
 end

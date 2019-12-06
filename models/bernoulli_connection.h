@@ -20,46 +20,6 @@
  *
  */
 
-/* BeginDocumentation
-  Name: bernoulli_synapse - Static synapse with stochastic transmission.
-
-  Description:
-    Spikes are transmitted by bernoulli_synapse following a Bernoulli trial with
-    success probability p_transmit. This synaptic mechanism was inspired by the
-    results described in [1] of greater transmission probability for stronger
-    excitatory connections and it was previously applied in [2] and [3].
-
-    bernoulli_synapse does not support any kind of plasticity. It simply stores
-    the parameters target, weight, transmission probability, delay and
-    receiver port for each connection.
-
-  Parameters:
-    p_transmit double - Transmission probability, must be between 0 and 1
-
-  FirstVersion: June 2017
-  Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
-
-  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-  DoubleDataEvent, DataLoggingRequest
-
-  SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
-
-  References:
-
-    [1] Sandrine Lefort, Christian Tomm, J.-C. Floyd Sarria, Carl C.H. Petersen,
-  The Excitatory Neuronal Network of the C2 Barrel Column in Mouse Primary
-  Somatosensory Cortex, Neuron, Volume 61, Issue 2, 29 January 2009, Pages
-  301-316, DOI: 10.1016/j.neuron.2008.12.020.
-
-    [2] Jun-nosuke Teramae, Yasuhiro Tsubo & Tomoki Fukai, Optimal spike-based
-  communication in excitable networks with strong-sparse and weak-dense links,
-  Scientific Reports 2, Article number: 485 (2012), DOI: 10.1038/srep00485
-
-    [3] Yoshiyuki Omura, Milena M. Carvalho, Kaoru Inokuchi, Tomoki Fukai, A
-  Lognormal Recurrent Network Model for Burst Generation during Hippocampal
-  Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601,
-  DOI: 10.1523/JNEUROSCI.4944-14.2015
-*/
 
 #ifndef BERNOULLI_CONNECTION_H
 #define BERNOULLI_CONNECTION_H
@@ -71,13 +31,57 @@
 namespace nest
 {
 
-/**
- * Class representing a Bernoulli connection. A Bernoulli connection has the
- * properties weight, transmission probability, delay and receiver port.
- * A suitable Connector containing these connections can be obtained from
- * the template GenericConnector.
- */
+/** @BeginDocumentation
+@ingroup Synapses
+@ingroup static
 
+Name: bernoulli_synapse - Static synapse with stochastic transmission.
+
+Description:
+
+Spikes are transmitted by bernoulli_synapse following a Bernoulli trial with
+success probability p_transmit. This synaptic mechanism was inspired by the
+results described in [1] of greater transmission probability for stronger
+excitatory connections and it was previously applied in [2] and [3].
+
+bernoulli_synapse does not support any kind of plasticity. It simply stores
+the parameters target, weight, transmission probability, delay and
+receiver port for each connection.
+
+Parameters:
+\verbatim embed:rst
+=========== ====== ===================================================
+ p_transmit real   Transmission probability, must be between 0 and 1
+=========== ====== ===================================================
+\endverbatim
+
+FirstVersion: June 2017
+
+Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
+
+Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+           DoubleDataEvent, DataLoggingRequest
+
+SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
+
+References:
+
+\verbatim embed:rst
+.. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
+       neuronal network of the C2 barrel column in mouse primary
+       somatosensory cortex. Neuron, 61(2):301-316.
+       DOI: https://doi.org/10.1016/j.neuron.2008.12.020.
+
+.. [2] Teramae J, Tsubo Y, Fukai T (2012). Optimal spike-based communication
+       in excitable networks with strong-sparse and weak-dense  links,
+       Scientific Reports 2,485. DOI: https://doi.org/10.1038/srep00485
+
+.. [3] Omura Y, Carvalho MM, Inokuchi K, Fukai T (2015). A lognormal recurrent
+       network model for burst generation during hippocampal sharp waves.
+       Journal of Neuroscience, 35(43):14585-14601.
+       DOI: https://doi.org/10.1523/JNEUROSCI.4944-14.2015
+\endverbatim
+*/
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >
 {
@@ -131,18 +135,14 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, thread t, const CommonSynapseProperties& )
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
@@ -162,7 +162,7 @@ public:
     {
       e_spike.set_multiplicity( n_spikes_out );
       e.set_weight( weight_ );
-      e.set_delay( get_delay_steps() );
+      e.set_delay_steps( get_delay_steps() );
       e.set_receiver( *get_target( t ) );
       e.set_rport( get_rport() );
       e();
@@ -199,8 +199,7 @@ BernoulliConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

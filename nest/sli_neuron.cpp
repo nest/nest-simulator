@@ -127,16 +127,13 @@ nest::sli_neuron::calibrate()
 
   if ( not state_->known( names::calibrate ) )
   {
-    std::string msg = String::compose(
-      "Node %1 has no /calibrate function in its status dictionary.",
-      get_gid() );
+    std::string msg = String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_node_id() );
     throw BadProperty( msg );
   }
 
   if ( not state_->known( names::update ) )
   {
-    std::string msg = String::compose(
-      "Node %1 has no /update function in its status dictionary", get_gid() );
+    std::string msg = String::compose( "Node %1 has no /update function in its status dictionary", get_node_id() );
     throw BadProperty( msg );
   }
 
@@ -153,24 +150,20 @@ nest::sli_neuron::calibrate()
 void
 nest::sli_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   ( *state_ )[ names::t_origin ] = origin.get_steps();
 
   if ( state_->known( names::error ) )
   {
-    std::string msg =
-      String::compose( "Node %1 still has its error state set.", get_gid() );
+    std::string msg = String::compose( "Node %1 still has its error state set.", get_node_id() );
     throw KernelException( msg );
   }
 
   for ( long lag = from; lag < to; ++lag )
   {
-    ( *state_ )[ names::in_spikes ] =
-      B_.in_spikes_.get_value( lag ); // in spikes arriving at right border
-    ( *state_ )[ names::ex_spikes ] =
-      B_.ex_spikes_.get_value( lag ); // ex spikes arriving at right border
+    ( *state_ )[ names::in_spikes ] = B_.in_spikes_.get_value( lag ); // in spikes arriving at right border
+    ( *state_ )[ names::ex_spikes ] = B_.ex_spikes_.get_value( lag ); // ex spikes arriving at right border
     ( *state_ )[ names::currents ] = B_.currents_.get_value( lag );
     ( *state_ )[ names::t_lag ] = lag;
 
@@ -217,8 +210,7 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
     assert( state->known( names::global_id ) );
     index g_id = ( *state )[ names::global_id ];
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
-    std::string msg =
-      String::compose( "Error in %1 with global id %2.", model, g_id );
+    std::string msg = String::compose( "Error in %1 with node ID %2.", model, g_id );
     throw KernelException( msg );
   }
 
@@ -228,18 +220,16 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
 void
 nest::sli_neuron::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -247,15 +237,13 @@ nest::sli_neuron::handle( SpikeEvent& e )
 void
 nest::sli_neuron::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double I = e.get_current();
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
 }
 
 void

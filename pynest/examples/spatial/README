@@ -1,0 +1,23 @@
+NEST Topology Module Examples
+
+These scripts were originally created for the 
+
+NEST Topology BCCN Tutorial @ CNS*09
+
+Updated 
+- August 2009 to new module organization in PyNEST per NEST 1.9.r8375 or later.
+- May 2010 to new FindConnections scheme in PyNEST per NEST 1.9.r8411 or later.
+- October 2010 to new Topology Python interface per NEST 1.9.r8990 or later. 
+- December 2012 to Topology3 Interface
+- January 2013 to new GetConnections scheme per NEST 2.2 or later.
+- November 2014 to NEST 2.6.
+
+All scripts should be run using ipython -pylab.
+
+Otherwise, you may need to add pylab.show() commands to draw the figures.
+
+You can find a somewhat outdated version of the tutorial on the NEST Website
+
+https://www.nest-initiative.org
+
+Hans Ekkehard Plesser, UMB

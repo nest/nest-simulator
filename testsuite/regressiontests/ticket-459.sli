@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::ticket-459 - test that changing the leak reversal potential leaves all other neuron parameters else unchanged
 
 Synopsis: (ticket-459.sli) run -> dies if assertion fails
@@ -62,12 +62,12 @@ M_ERROR setverbosity
   forall
   nrn infdict SetStatus
 
-  nrn GetStatus /pre Set
+  nrn GetStatus 0 get /pre Set
   pre /E_L get /ELorig Set
 
   ELorig 1.0 add /ELnew Set   
   nrn << /E_L ELnew >> SetStatus
-  nrn GetStatus /post Set
+  nrn GetStatus 0 get /post Set
 
   pre keys post keys eq assert
   % compare all numeric pre-post values, except changed E_L

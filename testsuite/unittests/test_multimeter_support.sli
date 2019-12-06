@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter_support - test if multimeter support works in neurons
 
 Synopsis: (test_multimeter_support.sli) run -> dies if assertion fails
@@ -52,7 +52,7 @@ M_ERROR setverbosity
   {
      /recordables get /recs Set
      /n model Create def
-     /mm /multimeter << /record_from recs /withtime false >> Create def
+     /mm /multimeter << /record_from recs >> Create def
      mm n Connect
      10.0 Simulate
      mm /events get [ recs ] get { cva length 9 eq } Map

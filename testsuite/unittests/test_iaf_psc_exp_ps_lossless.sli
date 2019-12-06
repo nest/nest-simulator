@@ -1,0 +1,312 @@
+/*
+ *  test_iaf_psc_exp_ps_lossless.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /** @BeginDocumentation
+    Name: testsuite::test_iaf_psc_exp_ps_lossless - sli script for overall test of iaf_psc_exp_ps_lossless model
+
+    Synopsis: (test_iaf_psc_exp_ps_lossless) run -> compares response to current step with reference data and tests lossless spike detection
+
+    Description:
+    test_iaf_psc_exp_ps_lossless.sli is an overall test of the iaf_psc_exp_ps_lossless model connected
+    to some useful devices.
+
+    The first part of this test is exactly the same as test_iaf_psc_exp_ps,
+    demonstrating the numerical equivalency of both models in usual conditions.
+    The only difference between the models, which is tested in the second part,
+    is the detection of double threshold crossings during a simulation step 
+    (so the membrane potential is again below V_th at the end of the step)
+    by the lossless model.
+
+    A DC current is injected into the neuron using a current generator 
+    device. The membrane potential as well as the spiking activity are 
+    recorded by corresponding devices.
+
+    It can be observed how the current charges the membrane, a spike
+    is emitted, the neuron becomes absolute refractory, and finally
+    starts to recover.
+
+    The timing of the various events on the simulation grid is of 
+    particular interest and crucial for the consistency of the 
+    simulation scheme.
+
+    Although 0.1 cannot be represented in the IEEE double data type, it
+    is safe to simulate with a resolution (computation step size) of 0.1
+    ms because by default nest is built with a timebase enabling exact
+    representation of 0.1 ms.
+
+    The expected output is documented and briefly commented at the end of 
+    the script.
+
+    Other test programs discuss the various aspects of this script in detail,
+    see the SeeAlso key below.
+
+
+    The second part tests wether the lossless spike detection algorithm [1] is
+    working correctly.
+
+    The algorithm checks whether a spike is emitted on the basis of the neurons position 
+    in state space. There are 4 regions in state space (see [1]): NS1, NS2, S1 and S2.
+    S1 corresponds to threshold crossings that would also be detected by the lossy 
+    implementation /iaf_psc_exp_ps. S2 corresponds to crossings that would be missed.
+    The lossless model detects both.
+
+    The test brings 3 neurons into the state space regions NS2, S1 and S2,
+    which is done by keeping their membrane potential close to threshold and then 
+    sending a single spike to them, which, received via different synaptic weights,
+    sets the synaptic current such that the neurons are in the respective region.
+    The existence and precise times of the resulting spikes are compared to reference data.
+
+    If you need to reproduce the reference data, ask the authors of [1] for the script
+    regions_algorithm.py which they used to generate Fig. 6. Here you can adjust the
+    parameters as whished and obtain the respective regions. 
+    
+
+    References:
+    [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
+        (2018) Perfect Detection of Spikes in the Linear Sub-threshold
+        Dynamics of Point Neurons. Front. Neuroinform. 11:75.
+        doi: 10.3389/fninf.2017.00075
+
+    Author:  Jeyashree Krishnan, 2017, and Christian Keup, 2018
+    SeeAlso: iaf_psc_exp, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc, testsuite::iaf_psc_exp_ps
+*/
+
+
+(unittest) run
+/unittest using
+
+0.1 /h Set
+
+ResetKernel
+
+<< 
+  /local_num_threads 1 
+  /resolution h
+>> SetKernelStatus
+
+/iaf_psc_exp_ps_lossless Create /neuron Set
+
+/dc_generator Create /dc_gen Set
+dc_gen << /amplitude 1000. >> SetStatus
+
+/voltmeter << /time_in_steps true /interval h >> Create /vm Set
+
+/spike_detector Create /sp_det Set
+
+
+dc_gen neuron 1.0 h Connect
+vm neuron     1.0 h Connect
+neuron sp_det 1.0 h Connect
+
+8 Simulate
+
+sp_det /events get /times get First stack    % prints spike time
+
+{                                             % reference data
+ dup Transpose First /test_times Set         % times of reference 
+                               
+ vm [/events [/times /V_m]] get cva   % array of recorded data
+  6 ToUnitTestPrecision                      % to precision of reference
+  Transpose           dup ==                       % all recorded tuples
+  {First test_times exch MemberQ } Select    % those with reference
+ eq                                          % compare
+}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Expected output of this program:
+%
+% The output send to std::cout is a superposition of the output of
+% the voltmeter and the spike detector. Both, voltmeter and spike
+% detector are connected to the same neuron.
+%
+% time (in steps)  voltage (in mV)
+[
+[ 1       -70      ] %<----- The earliest time dc_gen can be switched on.
+[ 2       -70      ] %<----- The DC current arrives at the neuron, it is
+[ 3       -69.602  ] %<-     reflected in the neuron's state variable y0,
+[ 4       -69.2079 ] %  |    (initial condition) but has not yet affected
+[ 5       -68.8178 ] %  |    the membrane potential.
+[ 6       -68.4316 ] %  |
+[ 7       -68.0492 ] %   --- the effect of the DC current is visible in the
+[ 8       -67.6706 ] %       membrane potential
+[ 9       -67.2958 ] %
+[ 10      -66.9247 ] %
+%
+% ...
+%
+[ 45      -56.0204 ] %
+[ 46      -55.7615 ] %
+[ 47      -55.5051 ] %
+[ 48      -55.2513 ] %
+[ 49      -55.0001 ] %
+[ 50      -70      ] % <---- The membrane potential crossed threshold in the
+[ 51      -70      ] %       step 4.9 ms -> 5.0 ms. The membrane potential is 
+[ 52      -70      ] %       reset (no super-threshold values can be observed).
+[ 53      -70      ] %       The precise spike time is reported at 4.90004 ms.
+[ 54      -70      ] %
+[ 55      -70      ] %
+[ 56      -70      ] %
+[ 57      -70      ] %
+[ 58      -70      ] %
+[ 59      -70      ] %
+[ 60      -70      ] %
+[ 61      -70      ] %
+[ 62      -70      ] %
+[ 63      -70      ] %
+[ 64      -70      ] %
+[ 65      -70      ] %
+[ 66      -70      ] %
+[ 67      -70      ] %
+[ 68      -70      ] %
+[ 69      -70      ] %
+[ 70      -69.6021 ] % <---- Since the neuron uses precise spike times that are not
+[ 71      -69.2081 ] %       locked to the grid, the refractory period ended after 
+[ 72      -68.818  ] %       2.0 ms during the timestep 6.9 ms -> 7.0 ms. The membrane 
+[ 73      -68.4317 ] %       potential has already started to increase again.
+[ 74      -68.0493 ] %       
+[ 75      -67.6707 ] %
+[ 76      -67.2959 ] %
+[ 77      -66.9248 ] %
+[ 78      -66.5574 ] % 
+[ 79      -66.1936 ] % <--
+]                    %    |
+%                         |
+%                          - The simulation was run for 8.0 ms. However, in the step
+%                            7.9 ms -> 8.0 ms the voltmeter necessarily receives the
+%                            voltages that occurred at time 7.9 ms (delay h). This 
+%                            results in different end times of the recorded voltage 
+%                            traces at different resolutions. In the current 
+%                            simulation kernel there is no general cure for this 
+%                            problem. One workaround is to end the simulation script
+%                            with "h Simulate", thereby making the script resolution
+%                            dependent.
+%
+
+exch assert_or_die
+
+
+
+
+%%%%%%%%%
+%
+% Beginning of 2nd part. Testing the spike detection algorithm 
+%
+
+ResetKernel
+
+reset
+
+(unittest) run
+/unittest using
+
+<< 
+  /local_num_threads 1 
+  /resolution 1.     % low resolution is crucial.
+>> SetKernelStatus
+
+/iaf_psc_exp_ps_lossless << 
+      /tau_m 100.
+      /tau_syn_ex 1.
+      /tau_syn_in 1.
+      /C_m 250.
+      /V_th -49.
+   >> SetDefaults
+
+% 3 neurons that will test the detection of different types of threshold crossing
+/iaf_psc_exp_ps_lossless Create /nrn_nospike Set
+/iaf_psc_exp_ps_lossless Create /nrn_missingspike Set
+/iaf_psc_exp_ps_lossless Create /nrn_spike Set
+
+
+%syn weights of trigger spike that will put the nrn in the different state space regions
+55. /I_nospike Set
+70. /I_missingspike Set
+90. /I_spike Set
+
+%send one trigger spike to the nrns at specified time:
+
+/spike_generator << /precise_times true /spike_times [3.0] >> Create  /sp_gen  Set
+
+sp_gen nrn_nospike I_nospike 1. Connect
+sp_gen nrn_missingspike I_missingspike 1. Connect
+sp_gen nrn_spike I_spike 1. Connect
+
+
+%external current to keep nrns close to threshold:
+
+/dc_generator << /amplitude 52.5 >> Create  /dc_gen Set
+
+dc_gen nrn_nospike 1. 1. Connect
+dc_gen nrn_missingspike 1. 1. Connect
+dc_gen nrn_spike 1. 1. Connect
+
+
+%read out spike response of nrns:
+
+/spike_detector Create /det_nospike Set
+nrn_nospike det_nospike Connect
+
+/spike_detector Create /det_missingspike Set
+nrn_missingspike det_missingspike Connect
+
+/spike_detector Create /det_spike Set
+nrn_spike det_spike Connect
+
+
+2 Simulate
+
+% set nrns close to threshold
+nrn_nospike << /V_m -49.001 >> SetStatus
+nrn_missingspike << /V_m -49.001 >> SetStatus
+nrn_spike << /V_m -49.001 >> SetStatus
+
+% swich off ext. current. This effect will reach the nrns at 3.0 due to syn delay,
+% so that the external current will be zero when the trigger spike arrives at 4.0 . 
+dc_gen << /amplitude 0. >> SetStatus  
+
+10 Simulate
+
+
+% get spike times
+
+det_nospike /events get /times get cva    % array of spike times (this one should be empty)
+  Total                                   % sum of array elements. works also for empty array
+  6 ToUnitTestPrecision
+  /time_nospike Set
+
+det_missingspike /events get /times get cva
+  Total
+  6 ToUnitTestPrecision
+  /time_missingspike Set
+
+det_spike /events get /times get cva
+  Total
+  6 ToUnitTestPrecision
+  /time_spike Set
+
+
+{ time_nospike 0 eq } assert_or_die
+{ time_missingspike 4.01442 eq } assert_or_die
+{ time_spike 4.00659 eq } assert_or_die
+
+

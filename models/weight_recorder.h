@@ -23,80 +23,78 @@
 #ifndef WEIGHT_RECORDER_H
 #define WEIGHT_RECORDER_H
 
-
 // C++ includes:
 #include <vector>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
-#include "nest_types.h"
-#include "node.h"
-#include "recording_device.h"
 #include "kernel_manager.h"
+#include "nest_types.h"
+#include "recording_device.h"
 
 /* BeginDocumentation
 
-Name: weight_recorder - Device for detecting single spikes.
+Recording weights from synapses
+###############################
 
-Description:
-The weight_recorder device is a recording device. It is used to record
-weights from synapses. Data is recorded in memory or to file as for all
-RecordingDevices.
-By default, source GID, target GID, time and weight of each spike is recorded.
+The change in synaptic weights over time is a key observable property in
+studies of plasticity in neuronal network models. To access this information, the
+``weight_recorder`` can be used. In contrast to other recording
+devices, which are connected to a specific set of neurons, the weight
+recorder is instead set as a parameter in the synapse model.
 
-In order to record only from a subset of connected synapses, the
-weight_recorder accepts the parameters 'senders' and 'targets', with which the
-recorded data is limited to the synapses with the corresponding source or target
-gid.
+After assigning an instance of a weight recorder to the synapse model
+by setting its ``weight_recorder`` property, the weight
+recorder collects the global IDs of source and target neurons together
+with the weight for each spike event that travels through the observed
+synapses.
 
-The weight recorder can also record weights with full precision
-from neurons emitting precisely timed spikes. Set /precise_times to
-achieve this.
+To only record from a subset of connected synapses, the
+weight recorder accepts NodeCollections in the parameters ``senders`` and
+``targets``. If set, they restrict the recording of data to only
+synapses that fulfill the given criteria.
 
-Data is not necessarily written to file in chronological order.
+::
 
-Receives: WeightRecordingEvent
+   >>> wr = nest.Create('weight_recorder')
+   >>> nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr})
 
-SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
-*/
+   >>> pre = nest.Create("iaf_psc_alpha", 10)
+   >>> post = nest.Create("iaf_psc_alpha", 10)
 
+   >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+
+
+EndDocumentation */
 
 namespace nest
 {
-/**
- * Weight recorder class.
- *
- * This class manages weight recording for normal and precise spikes. It
- * receives events via its handle(WeightRecordingEvent&) method, buffers them,
- *and
- * stores them via its RecordingDevice in the update() method.
- *
- * @ingroup Devices
- */
-class weight_recorder : public Node
+
+class weight_recorder : public RecordingDevice
 {
 
 public:
   weight_recorder();
   weight_recorder( const weight_recorder& );
 
-  void set_has_proxies( const bool hp );
   bool
   has_proxies() const
   {
-    return has_proxies_;
-  }
-  bool
-  potential_global_receiver() const
-  {
     return false;
   }
-  void set_local_receiver( const bool lr );
+
   bool
   local_receiver() const
   {
-    return local_receiver_;
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
   }
 
   /**
@@ -112,35 +110,20 @@ public:
 
   port handles_test_event( WeightRecorderEvent&, rport );
 
+  Type get_type() const;
   SignalType receives_signal() const;
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( Node const& );
-  void init_buffers_();
   void calibrate();
-  void post_run_cleanup();
-  void finalize();
   void update( Time const&, const long, const long );
-
-  struct Buffers_
-  {
-    std::vector< WeightRecorderEvent > events_;
-  };
-
-  RecordingDevice device_;
-  Buffers_ B_;
-
-  bool user_set_precise_times_;
-  bool has_proxies_;
-  bool local_receiver_;
 
   struct Parameters_
   {
-    std::vector< long > senders_;
-    std::vector< long > targets_;
+    NodeCollectionDatum senders_;
+    NodeCollectionDatum targets_;
 
     Parameters_();
     Parameters_( const Parameters_& );
@@ -151,18 +134,6 @@ private:
   Parameters_ P_;
 };
 
-inline void
-weight_recorder::set_has_proxies( const bool hp )
-{
-  has_proxies_ = hp;
-}
-
-inline void
-weight_recorder::set_local_receiver( const bool lr )
-{
-  local_receiver_ = lr;
-}
-
 inline port
 weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
 {
@@ -171,18 +142,6 @@ weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
-}
-
-inline void
-weight_recorder::post_run_cleanup()
-{
-  device_.post_run_cleanup();
-}
-
-inline void
-weight_recorder::finalize()
-{
-  device_.finalize();
 }
 
 inline SignalType

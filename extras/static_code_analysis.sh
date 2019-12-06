@@ -21,7 +21,7 @@
 
 
 # This shell script is part of the NEST Travis CI build and test environment.
-# It performs the static code analysis and is invoked by 'build.sh'.
+# It performs the static code analysis and is invoked by 'travis_build.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
 #
@@ -54,11 +54,14 @@ PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
+# PEP8 rules.
+PEP8_MAX_LINE_LENGTH=120
+
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
 # Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/hashtable-common.h libnestutil/libc_allocator_with_realloc.h libnestutil/sparseconfig.h libnestutil/sparsetable.h libnestutil/template_util.h libnestutil/type_traits.h"
+FILES_TO_IGNORE="libnestutil/compose.hpp"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -108,6 +111,14 @@ if $RUNS_ON_TRAVIS; then
     print_msg "MSGBLD1040: " "IGNORE_MSG_PEP8 is set. PEP8 messages will not cause the build to fail."
   fi
 fi
+
+
+export NEST_SOURCE=$PWD
+print_msg "MSGBLD1050: " "Running check for copyright headers"
+copyright_check_errors=`python extras/check_copyright_headers.py`
+print_msg "MSGBLD1060: " "Running sanity check for Name definition and usage"
+unused_names_errors=`python extras/check_unused_names.py`
+
 
 # Perfom static code analysis.
 c_files_with_errors=""
@@ -163,7 +174,7 @@ for f in $FILE_NAMES; do
       # CPPCHECK
       if $PERFORM_CPPCHECK; then
         print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
-        $CPPCHECK --enable=all --inconclusive --std=c++03 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
+        $CPPCHECK --enable=all --language=c++ --std=c++11 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
         # Remove the header, the first line.
         tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
         if [ -s "${f_base}_cppcheck.txt" ]; then
@@ -210,7 +221,7 @@ for f in $FILE_NAMES; do
       fi
 
       # Add the file to the list of files with format errors.
-      if $vera_failed || $cppcheck_failed || $clang_format_failed; then
+      if (! $IGNORE_MSG_VERA && $vera_failed) || (! $IGNORE_MSG_CPPCHECK && $cppcheck_failed) || (! $IGNORE_MSG_CLANG_FORMAT && $clang_format_failed); then
         c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;
@@ -230,7 +241,7 @@ for f in $FILE_NAMES; do
             IGNORES=$PEP8_IGNORES
             ;;
         esac
-        if ! pep8_result=`$PEP8 --ignore=$IGNORES $f` ; then
+        if ! pep8_result=`$PEP8 --max-line-length=$PEP8_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pep8_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PEP8] $line"
@@ -250,7 +261,12 @@ for f in $FILE_NAMES; do
   esac
 done
 
-if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]; then
+nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
+if [ $nlines_copyright_check \> 1 ] || \
+   [ "x$unused_names_errors" != "x" ] || \
+   [ "x$c_files_with_errors" != "x" ] || \
+   [ "x$python_files_with_errors" != "x" ]; then
+
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   print_msg "MSGBLD0220: " "+                 STATIC CODE ANALYSIS DETECTED PROBLEMS !                    +"
@@ -267,6 +283,18 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
     fi
   fi
 
+  if [ $nlines_copyright_check \> 1 ]; then
+      print_msg "MSGBLD0220: " "Files with erroneous copyright headers:"
+      echo -e $copyright_check_errors | sed -e 's/^ *//'
+      print_msg "" ""
+  fi
+
+  if [ "x$unused_names_errors" != "x" ]; then
+      print_msg "MSGBLD0220: " "Files with unused/ill-defined Name objects:"
+      echo -e $unused_names_errors | sed -e 's/^ *//'
+      print_msg "" ""     
+  fi
+
   if [ "x$python_files_with_errors" != "x" ]; then
     print_msg "MSGBLD0220: " "Python files with formatting errors:"
     for f in $python_files_with_errors; do
@@ -279,8 +307,10 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
   fi
   
   if ! $RUNS_ON_TRAVIS; then
-    print_msg "" "For other problems, please correct your code according to the [VERA], [CPPC], [DIFF], and [PEP8] messages above."
+      print_msg "" "For detailed problem descriptions, consult the tagged messages above."
+      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
+  exit 1
 else
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

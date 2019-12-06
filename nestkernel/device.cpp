@@ -73,9 +73,7 @@ nest::Device::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const DictionaryDatum& d,
-  const Name& name,
-  Time& value )
+nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
          doesn't support Time objects. We thus read the value in ms into
@@ -90,7 +88,7 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d,
   if ( updateValue< double >( d, name, val ) )
   {
     const Time t = Time::ms( val );
-    if ( t.is_finite() && not t.is_grid_time() )
+    if ( t.is_finite() and not t.is_grid_time() )
     {
       throw BadProperty( name.toString() +  " must be a multiple "
                                  "of the simulation resolution." );
@@ -131,12 +129,6 @@ nest::Device::Device( const Device& n )
 /* ----------------------------------------------------------------
  * Device initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::Device::init_parameters( const Device& proto )
-{
-  P_ = Parameters_( proto.P_ ); // force recalibration of Time objects
-}
 
 void
 nest::Device::calibrate()

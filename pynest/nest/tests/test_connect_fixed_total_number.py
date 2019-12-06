@@ -23,8 +23,6 @@ import numpy as np
 import unittest
 import scipy.stats
 
-from . import compatibility
-
 from . import test_connect_helpers as hf
 from .test_connect_parameters import TestParams
 
@@ -51,12 +49,12 @@ class TestFixedTotalNumber(TestParams):
     def testErrorMessages(self):
         got_error = False
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = True
-        conn_params['multapses'] = False
+        conn_params['allow_autapses'] = True
+        conn_params['allow_multapses'] = False
         conn_params['N'] = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except:
+        except hf.nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
@@ -73,8 +71,8 @@ class TestFixedTotalNumber(TestParams):
 
     def testStatistics(self):
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = True
-        conn_params['multapses'] = True
+        conn_params['allow_autapses'] = True
+        conn_params['allow_multapses'] = True
         conn_params['N'] = self.N
         for fan in ['in', 'out']:
             expected = hf.get_expected_degrees_totalNumber(
@@ -94,13 +92,13 @@ class TestFixedTotalNumber(TestParams):
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue(p > self.stat_dict['alpha2'])
 
-    def testAutapses(self):
+    def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 3
 
         # test that autapses exist
         conn_params['N'] = N * N * N
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -108,11 +106,14 @@ class TestFixedTotalNumber(TestParams):
         M = hf.gather_data(M)
         if M is not None:
             self.assertTrue(np.sum(np.diag(M)) > N)
-        hf.nest.ResetKernel()
+
+    def testAutapsesFalse(self):
+        conn_params = self.conn_dict.copy()
+        N = 3
 
         # test that autapses were excluded
         conn_params['N'] = N * (N - 1)
-        conn_params['autapses'] = False
+        conn_params['allow_autapses'] = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist

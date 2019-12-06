@@ -32,6 +32,14 @@ function( NEST_PROCESS_WITH_OPTIMIZE )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_VERSION_SUFFIX )
+  if ( with-version-suffix )
+    foreach ( flag ${with-version-suffix} )
+      set( NEST_VERSION_SUFFIX "${flag}" PARENT_SCOPE )
+    endforeach ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_DEBUG )
   if ( with-debug )
     if ( with-debug STREQUAL "ON" )
@@ -44,10 +52,30 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
+  if ( NOT with-intel-compiler-flags )
+    set( with-intel-compiler-flags "-fp-model strict" )
+  endif ()
+  if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+  foreach ( flag ${with-intel-compiler-flags} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
+  endforeach ()
+  endif ()
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    foreach ( flag ${with-intel-compiler-flags} )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
+    endforeach ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      set( with-warning "-Wall" )
+      if ( NOT k-computer STREQUAL "ON" )
+        set( with-warning "-Wall" )
+      else()
+        set( with-warning "" )
+      endif()
     endif ()
     foreach ( flag ${with-warning} )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
@@ -107,7 +135,8 @@ function( NEST_PROCESS_K_COMPUTER )
     set( IS_K ON PARENT_SCOPE )
     # need alternative tokens command to compile NEST
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" PARENT_SCOPE )
+    # FCC accepts GNU flags when -Xg is supplied
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -149,6 +178,11 @@ endfunction()
 function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
+
+    if ( with-readline )
+      message( FATAL_ERROR "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
+    endif ()
+
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
@@ -158,6 +192,13 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       # be used, so we'll add both to the preference list.
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
+
+    if ( Fugaku )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Bstatic" PARENT_SCOPE )
+    else()
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static" PARENT_SCOPE )
+    endif()
+
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )
 
@@ -266,7 +307,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" PARENT_SCOPE )
+      set( LTDL_ROOT_DIR "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )
@@ -343,7 +384,7 @@ function( NEST_PROCESS_WITH_PYTHON )
     # Localize the Python interpreter
     if ( ${with-python} STREQUAL "ON" )
       find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )  
+    elseif ( ${with-python} STREQUAL "2" )
       find_package( PythonInterp 2 REQUIRED )
     elseif ( ${with-python} STREQUAL "3" )
       find_package( PythonInterp 3 REQUIRED )
@@ -353,9 +394,9 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
+      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
 
-      # Localize Python lib/header files and make sure that their version matches 
+      # Localize Python lib/header files and make sure that their version matches
       # the Python interpreter version !
       find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )
@@ -411,6 +452,8 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." )
     endif ()
   endif ()
 endfunction()
@@ -504,6 +547,63 @@ function( NEST_PROCESS_WITH_MUSIC )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_SIONLIB )
+  set( HAVE_SIONLIB OFF )
+  if ( with-sionlib )
+    if ( NOT ${with-sionlib} STREQUAL "ON" )
+      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "cmake sucks" )
+    endif()
+
+    if ( NOT HAVE_MPI )
+      message( FATAL_ERROR "SIONlib requires -Dwith-mpi=ON." )
+    endif ()
+
+    find_package( SIONlib )
+    include_directories( ${SIONLIB_INCLUDE} )
+
+    # is linked in nestkernel/CMakeLists.txt
+    if ( SIONLIB_FOUND )
+      set( HAVE_SIONLIB ON CACHE INTERNAL "cmake sucks" )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    # Needs Boost version >=1.58.0 to use Boost sorting
+    find_package( Boost 1.58.0 COMPONENTS unit_test_framework )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_TARGET_BITS_SPLIT )
+  if ( target-bits-split )
+    # set to value according to defines in config.h
+    if ( ${target-bits-split} STREQUAL "standard" )
+      set( TARGET_BITS_SPLIT 0 PARENT_SCOPE )
+    elseif ( ${target-bits-split} STREQUAL "hpc" )
+      set( TARGET_BITS_SPLIT 1 PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "Invalid target-bits-split selected." )
+    endif()
+  endif()
+endfunction()
+
 function( NEST_DEFAULT_MODULES )
     # requires HAVE_LIBNEUROSIM set
     # Static modules
@@ -519,3 +619,15 @@ function( NEST_DEFAULT_MODULES )
     endforeach ()
     set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
 endfunction()
+
+function( NEST_PROCESS_WITH_MPI4PY )
+  if ( HAVE_MPI AND HAVE_PYTHON )
+    include( FindPythonModule )
+    find_python_module(mpi4py)
+
+    if ( HAVE_MPI4PY )
+      include_directories( "${PY_MPI4PY}/include" )
+    endif ()
+
+  endif ()
+endfunction ()

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_psp - sli script for test of iaf_psc_alpha spike input
 
 Synopsis: (test_iaf_psp) run -> compare response with reference data
@@ -84,10 +84,10 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_dc_aligned_delay, testsuite::t
 ResetKernel
 
 
-0 << 
+<< 
        /local_num_threads 1   
        /resolution h
-     >> SetStatus
+     >> SetKernelStatus
 
 
 /spike_generator Create /sg Set
@@ -105,11 +105,11 @@ sg <<
 
 
 /voltmeter Create /vm Set
-vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+sd << /time_in_steps true >> SetStatus
 
 
 sg neuron 100.0  delay Connect

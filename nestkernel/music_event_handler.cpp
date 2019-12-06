@@ -45,9 +45,7 @@ MusicEventHandler::MusicEventHandler()
 {
 }
 
-MusicEventHandler::MusicEventHandler( std::string portname,
-  double acceptable_latency,
-  int max_buffered )
+MusicEventHandler::MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered )
   : music_port_( 0 )
   , music_perm_ind_( 0 )
   , published_( false )
@@ -73,7 +71,7 @@ MusicEventHandler::~MusicEventHandler()
 }
 
 void
-MusicEventHandler::register_channel( int channel, nest::Node* mp )
+MusicEventHandler::register_channel( size_t channel, nest::Node* mp )
 {
   if ( channel >= channelmap_.size() )
   {
@@ -95,8 +93,7 @@ MusicEventHandler::publish_port()
 {
   if ( not published_ )
   {
-    music_port_ =
-      kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
+    music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
@@ -117,26 +114,22 @@ MusicEventHandler::publish_port()
     // the maximum channel mapped - 1 == size of channelmap
     if ( channelmap_.size() > music_port_width )
     {
-      throw MUSICChannelUnknown(
-        "MusicEventHandler", portname_, channelmap_.size() - 1 );
+      throw MUSICChannelUnknown( "MusicEventHandler", portname_, channelmap_.size() - 1 );
     }
 
     // create the permutation index mapping
-    music_perm_ind_ =
-      new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
+    music_perm_ind_ = new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
     // map the port
     if ( max_buffered_ >= 0 )
     {
-      music_port_->map(
-        music_perm_ind_, this, acceptable_latency_s, max_buffered_ );
+      music_port_->map( music_perm_ind_, this, acceptable_latency_s, max_buffered_ );
     }
     else
     {
       music_port_->map( music_perm_ind_, this, acceptable_latency_s );
     }
 
-    std::string msg = String::compose(
-      "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
+    std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
       portname_,
       music_port_width,
       acceptable_latency_ );
@@ -167,11 +160,10 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
         Time T = Time::ms( eventqueue_[ channel ].top() );
 
         if ( T > origin + Time::step( from ) - Time::ms( acceptable_latency_ )
-          && T <= origin + Time::step( from + to ) )
+          and T <= origin + Time::step( from + to ) )
         {
           nest::SpikeEvent se;
-          se.set_offset(
-            Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
+          se.set_offset( Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
           se.set_stamp( T );
 
           // deliver to the proxy for this channel

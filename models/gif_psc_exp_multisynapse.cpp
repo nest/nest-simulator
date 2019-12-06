@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -48,8 +49,7 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< gif_psc_exp_multisynapse >
-  gif_psc_exp_multisynapse::recordablesMap_;
+RecordablesMap< gif_psc_exp_multisynapse > gif_psc_exp_multisynapse::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
@@ -136,22 +136,22 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
+nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::E_L, E_L_ );
-  updateValue< double >( d, names::g_L, g_L_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::Delta_V, Delta_V_ );
-  updateValue< double >( d, names::V_T_star, V_T_star_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
+  updateValueParam< double >( d, names::g_L, g_L_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
+  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
+  if ( updateValueParam< double >( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -235,8 +235,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
-  const Parameters_& p ) const
+nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
@@ -244,20 +243,17 @@ nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
-  const Parameters_& p )
+nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
 {
-  updateValue< double >( d, names::V_m, V_ );
+  updateValueParam< double >( d, names::V_m, V_, node );
 }
 
-nest::gif_psc_exp_multisynapse::Buffers_::Buffers_(
-  gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( gif_psc_exp_multisynapse& n )
   : logger_( n )
 {
 }
 
-nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&,
-  gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, gif_psc_exp_multisynapse& n )
   : logger_( n )
 {
 }
@@ -275,8 +271,7 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
   recordablesMap_.create();
 }
 
-nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse(
-  const gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -291,8 +286,7 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse(
 void
 nest::gif_psc_exp_multisynapse::init_state_( const Node& proto )
 {
-  const gif_psc_exp_multisynapse& pr =
-    downcast< gif_psc_exp_multisynapse >( proto );
+  const gif_psc_exp_multisynapse& pr = downcast< gif_psc_exp_multisynapse >( proto );
   S_ = pr.S_;
 }
 
@@ -361,13 +355,10 @@ nest::gif_psc_exp_multisynapse::calibrate()
  */
 
 void
-nest::gif_psc_exp_multisynapse::update( Time const& origin,
-  const long from,
-  const long to )
+nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -401,18 +392,15 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
       // effect of synaptic currents (sum_syn_pot) is added here
-      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_
-        + V_.P31_ * P_.E_L_ + sum_syn_pot;
+      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_ + sum_syn_pot;
 
-      const double lambda =
-        P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
+      const double lambda = P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand()
-          < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
+        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
 
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -452,27 +440,23 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
 void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
-  assert( ( e.get_rport() > 0 )
-    && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
+  assert( e.get_delay_steps() > 0 );
+  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
 nest::gif_psc_exp_multisynapse::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

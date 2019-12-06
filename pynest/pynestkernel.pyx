@@ -38,6 +38,9 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+import nest
+from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -51,6 +54,8 @@ cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
+cdef string SLI_TYPE_NODECOLLECTION = b"nodecollectiontype"
+cdef string SLI_TYPE_NODECOLLECTIONITERATOR = b"nodecollectioniteratortype"
 
 
 DEF CONN_ELMS = 5
@@ -73,10 +78,6 @@ try:
     import numpy
     HAVE_NUMPY = True
 except ImportError:
-    pass
-
-
-class NESTError(Exception):
     pass
 
 
@@ -167,18 +168,26 @@ cdef class NESTEngine(object):
 
         self.pEngine = NULL
 
+    def set_communicator(self, comm):
+        # extract mpi_comm from mpi4py
+        if nest_has_mpi4py():
+            c_set_communicator(comm)
+        else:
+            raise NESTError("set_communicator: "
+                            "NEST not compiled with MPI4PY")
+
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:
-            raise NESTError("engine already initialized")
+            raise NESTErrors.PyNESTError("engine already initialized")
 
         cdef int argc = <int> len(argv)
         if argc <= 0:
-            raise NESTError("argv can't be empty")
+            raise NESTErrors.PyNESTError("argv can't be empty")
 
         # Create c-style argv arguments from sys.argv
         cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
         if argv_chars is NULL:
-            raise NESTError("couldn't allocate argv_char")
+            raise NESTErrors.PyNESTError("couldn't allocate argv_char")
         try:
             # argv must be null terminated. openmpi depends on this
             argv_chars[argc] = NULL
@@ -198,7 +207,7 @@ cdef class NESTEngine(object):
                         &argv_chars,
                         deref(self.pEngine),
                         modulepath_bytes)
-            
+
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
             # Convert back from utf8 char* to utf8 str in both python2 & 3
@@ -211,7 +220,7 @@ cdef class NESTEngine(object):
     def run(self, cmd):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
         cdef string cmd_bytes
         cmd_bytes = cmd.encode('utf-8')
         self.pEngine.execute(cmd_bytes)
@@ -219,16 +228,16 @@ cdef class NESTEngine(object):
     def push(self, obj):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
         self.pEngine.OStack.push(python_object_to_datum(obj))
 
     def pop(self):
 
         if self.pEngine is NULL:
-            raise NESTError("engine uninitialized")
+            raise NESTErrors.PyNESTError("engine uninitialized")
 
         if self.pEngine.OStack.empty():
-            raise NESTError("interpreter stack is empty")
+            raise NESTErrors.PyNESTError("interpreter stack is empty")
 
         cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
 
@@ -238,27 +247,6 @@ cdef class NESTEngine(object):
 
         return ret
 
-    def push_connection_datums(self, conns):
-
-        cdef ConnectionDatum* cdt = NULL
-        cdef ArrayDatum* connectome = new ArrayDatum()
-
-        try:
-            connectome.reserve(len(conns))
-
-            for cnn in conns:
-                if isinstance(cnn, dict):
-                    cdt = new ConnectionDatum(ConnectionID(cnn[CONN_NAME_SRC], cnn[CONN_NAME_THREAD], cnn[CONN_NAME_SYN], cnn[CONN_NAME_PRT]))
-                else:
-                    cdt = new ConnectionDatum(ConnectionID(cnn[0], cnn[1], cnn[2], cnn[3], cnn[4]))
-
-                connectome.push_back(<Datum*> cdt)
-
-            self.pEngine.OStack.push(<Datum*> connectome)
-
-        except:
-            del connectome
-            raise
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 
@@ -307,12 +295,18 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_NODECOLLECTION.decode():
+            ret = <Datum*> new NodeCollectionDatum(deref(<NodeCollectionDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_NODECOLLECTIONITERATOR.decode():
+            ret = <Datum*> new NodeCollectionIteratorDatum(deref(<NodeCollectionIteratorDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_CONNECTION.decode():
+            ret = <Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
         else:
-            raise NESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
+            raise NESTErrors.PyNESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
         ret = unpackConnectionGeneratorDatum(<PyObject*> obj)
         if ret is NULL:
-            raise NESTError("failed to unpack passed connection generator object")
+            raise NESTErrors.PyNESTError("failed to unpack passed connection generator object")
     else:
 
         try:
@@ -343,15 +337,22 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTError("only vectors of integers or floats are supported")
+                raise NESTError.PyNESTError("only vectors of integers or floats are supported")
+
+        if ret is NULL:
+            try:
+                if isinstance( obj._datum, SLIDatum ) or isinstance( obj._datum[0], SLIDatum):
+                    ret = python_object_to_datum( obj._datum )
+            except:
+                pass
 
         if ret is not NULL:
             return ret
         else:
-            raise NESTError("unknown Python type: {0}".format(type(obj)))
+            raise NESTErrors.PyNESTError("unknown Python type: {0}".format(type(obj)))
 
     if ret is NULL:
-        raise NESTError("conversion resulted in a null pointer")
+        raise NESTErrors.PyNESTError("conversion resulted in a null pointer")
 
     return ret
 
@@ -368,7 +369,7 @@ cdef inline Datum* python_buffer_to_datum(numeric_buffer_t buff, vector_value_t 
     elif vector_value_t is double:
         dat = <Datum*> new DoubleVectorDatum(vector_ptr)
     else:
-        raise NESTError("unsupported specialization: {0}".format(vector_value_t))
+        raise NESTErrors.PyNESTError("unsupported specialization: {0}".format(vector_value_t))
 
     n = len(buff)
 
@@ -383,10 +384,11 @@ cdef inline Datum* python_buffer_to_datum(numeric_buffer_t buff, vector_value_t 
 cdef inline object sli_datum_to_object(Datum* dat):
 
     if dat is NULL:
-        raise NESTError("datum is a null pointer")
+        raise NESTErrors.PyNESTError("datum is a null pointer")
 
     cdef string obj_str
     cdef object ret = None
+    cdef ignore_none = False
 
     cdef string datum_type = dat.gettypename().toString()
 
@@ -397,46 +399,76 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
+        ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
-        ret = SLILiteral(obj_str.decode())
+        ret = obj_str.decode()
+        if ret == 'None':
+            ret = None
+            ignore_none = True
     elif datum_type == SLI_TYPE_ARRAY:
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:
         ret = sli_dict_to_object(<DictionaryDatum*> dat)
     elif datum_type == SLI_TYPE_CONNECTION:
-        ret = sli_connection_to_object(<ConnectionDatum*> dat)
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
+        ret = nest.SynapseCollection(datum)
     elif datum_type == SLI_TYPE_VECTOR_INT:
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
     elif datum_type == SLI_TYPE_MASK:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        ret = nest.Mask(datum)
     elif datum_type == SLI_TYPE_PARAMETER:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        ret = nest.Parameter(datum)
+    elif datum_type == SLI_TYPE_NODECOLLECTION:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new NodeCollectionDatum(deref(<NodeCollectionDatum*> dat)), SLI_TYPE_NODECOLLECTION.decode())
+        ret = nest.NodeCollection(datum)
+    elif datum_type == SLI_TYPE_NODECOLLECTIONITERATOR:
         ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        (<SLIDatum> ret)._set_datum(<Datum*> new NodeCollectionIteratorDatum(deref(<NodeCollectionIteratorDatum*> dat)), SLI_TYPE_NODECOLLECTIONITERATOR.decode())
     else:
-        raise NESTError("unknown SLI type: {0}".format(datum_type.decode()))
+        raise NESTErrors.PyNESTError("unknown SLI type: {0}".format(datum_type.decode()))
 
-    if ret is None:
-        raise NESTError("conversion resulted in a None object")
+    if ret is None and not ignore_none:
+        raise NESTErrors.PyNESTError("conversion resulted in a None object")
 
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
 
-    cdef tmp = [None] * dat.size()
+    # the size of dat has to be explicitly cast to int to avoid
+    # compiler warnings (#1318) during cythonization
+    cdef tmp = [None] * int(dat.size())
 
-    cdef size_t i
+    # i and n have to be cast to size_t (unsigned long int) to avoid
+    # compiler warnings (#1318) in the for loop below
+    cdef size_t i, n
     cdef Token* tok = dat.begin()
 
-    for i in range(len(tmp)):
-        tmp[i] = sli_datum_to_object(tok.datum())
-        inc(tok)
+    n = len(tmp)
+    if not n:
+        return ()
 
-    return tuple(tmp)
+    if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
+        for i in range(n):
+            datum = SLIDatum()
+            (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
+            tmp[i] = datum
+            # Increment
+            inc(tok)
+        return nest.SynapseCollection(tmp)
+    else:
+        for i in range(n):
+            tmp[i] = sli_datum_to_object(tok.datum())
+            inc(tok)
+        return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 
@@ -454,21 +486,6 @@ cdef inline object sli_dict_to_object(DictionaryDatum* dat):
         inc(dt)
 
     return tmp
-
-cdef inline object sli_connection_to_object(ConnectionDatum* dat):
-
-    cdef array.array arr
-    cdef long[CONN_ELMS] CONN_ARR
-
-    arr = array.clone(ARRAY_LONG, CONN_ELMS, False)
-    CONN_ARR[0] = dat.get_source_gid()
-    CONN_ARR[1] = dat.get_target_gid()
-    CONN_ARR[2] = dat.get_target_thread()
-    CONN_ARR[3] = dat.get_synapse_model_id()
-    CONN_ARR[4] = dat.get_port()
-    memcpy(arr.data.as_longs, &CONN_ARR, CONN_ELMS * sizeof(long))
-
-    return arr
 
 cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ = 0):
 
@@ -488,7 +505,7 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
         if HAVE_NUMPY:
             ret_dtype = numpy.float_
     else:
-        raise NESTError("unsupported specialization")
+        raise NESTErrors.PyNESTError("unsupported specialization")
 
     memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(vector_value_t))
 

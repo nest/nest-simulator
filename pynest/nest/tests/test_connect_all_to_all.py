@@ -24,10 +24,10 @@ import unittest
 import numpy as np
 import scipy.stats
 from . import test_connect_helpers as hf
-from .test_connect_parameters import TestParams
+from . test_connect_parameters import TestParams
 
 
-@hf.nest.check_stack
+@hf.nest.ll_api.check_stack
 class TestAllToAll(TestParams):
 
     # specify connection pattern
@@ -38,8 +38,6 @@ class TestAllToAll(TestParams):
     N2 = 7
     N1_array = 500
     N2_array = 10
-
-    # def testErrorMessages(self):
 
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)
@@ -65,6 +63,7 @@ class TestAllToAll(TestParams):
                     1, self.N1_array * self.N2_array + 1
                 ).reshape(self.N2_array, self.N1_array) * 0.1
             syn_params[label] = self.param_array
+            hf.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N1_array, N2=self.N2_array)
             M_nest = hf.get_weighted_connectivity_matrix(
@@ -72,7 +71,7 @@ class TestAllToAll(TestParams):
             hf.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayWithoutAutapses(self):
-        self.conn_dict['autapses'] = False
+        self.conn_dict['allow_autapses'] = False
         for label in ['weight', 'delay']:
             syn_params = {}
             if label == 'weight':
@@ -104,7 +103,7 @@ class TestAllToAll(TestParams):
 
     def testInputArrayToStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
-        syn_params = {'model': 'stdp_synapse'}
+        syn_params = {'synapse_model': 'stdp_synapse'}
         values = [
             np.arange(self.N1 * self.N2, dtype=float).reshape(self.N2, self.N1)
             for i in range(6)
@@ -121,12 +120,12 @@ class TestAllToAll(TestParams):
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 20
-        hf.nest.ResetKernel()
+        hf.nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
         self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
-        syn_params = {'model': 'static_synapse'}
+        syn_params = {'synapse_model': 'static_synapse'}
         syn_params['receptor_type'] = {
             'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)

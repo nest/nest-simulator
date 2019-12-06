@@ -29,7 +29,7 @@ import nest
 import numpy
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed outdegree and parameter arrays"""
 
@@ -51,7 +51,8 @@ class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
-        syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
+        syn_dict = {'synapse_model': 'static_synapse',
+                    'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_outdegree', 'outdegree': K}
 
         # connects source to target subnet
@@ -61,14 +62,15 @@ class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
 
             # gets all connections from the source neuron
             conns = nest.GetConnections(source=net1[i:i+1])
+            weight = conns.get('weight')
+            delay = conns.get('delay')
 
             Warr1 = []  # creates empty weight array
 
             # loop on synapses that connect from source neuron
             for j in range(len(conns)):
-                c = conns[j:j+1]
-                w = nest.GetStatus(c, 'weight')[0]  # gets synaptic weight
-                d = nest.GetStatus(c, 'delay')[0]   # gets synaptic delay
+                w = weight[j]  # gets synaptic weight
+                d = delay[j]   # gets synaptic delay
 
                 self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
@@ -93,6 +95,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

@@ -43,7 +43,7 @@ namespace nest
 {
 class AbstractMask;
 
-typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
+typedef sharedPtrDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
 
 
 /**

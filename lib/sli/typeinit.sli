@@ -31,7 +31,7 @@
 
 /def_ /def load def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: def - define a variable or function
 Synopsis: /name obj def -> -
           /name [/type1 .. /typen] any def -> -
@@ -149,7 +149,7 @@ SeeAlso: bind, type, Set, undef
   [/literaltype /arraytype /anytype] /:def_ load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: trieinfo - print the function variants of a type-trie.
 Synopsis: ostream trieinfo -> -
 */
@@ -202,7 +202,7 @@ def
   [/doubletype  /doubletype]  /div_dd load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: max - return the greater of two values
 
 Synopsis: val1 val2 max -> result
@@ -239,7 +239,7 @@ SeeAlso: min, gt, lt, geq, leq
   [/doubletype  /doubletype]  /max_d_d load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: min - return the smaller of two values
 
 Synopsis: val1 val2 min -> result
@@ -434,7 +434,6 @@ def
 /forall trie
   [/arraytype      /proceduretype] /forall_a    load addtotrie
   [/stringtype     /proceduretype] /forall_s    load addtotrie
-  [/iteratortype   /proceduretype] /forall_iter load addtotrie
   [/dictionarytype /proceduretype] /forall_di   load addtotrie
 def
 
@@ -509,7 +508,6 @@ def
 /size trie
  [/arraytype  ]    /size_a load addtotrie
  [/stringtype ]    /size_s load addtotrie
- [/iteratortype ]  /size_iter load addtotrie
 def
 
 /reserve trie
@@ -522,7 +520,7 @@ def
  [/stringtype /integertype]    /:resize_s load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: empty - Tests if a string or array is empty.
 Synopsis: array empty -> array  bool
           string empty-> string bool
@@ -543,7 +541,7 @@ def
 def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: references - Returns the number of references to a reference counted object.
 Synopsis: array references -> array  integer
           dict  references -> dict   integer
@@ -556,7 +554,7 @@ Examples: << /x 0 >> dup references -> dict dict 2
  [/arraytype  ]    /references_a load addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: cvx - convert array/string to procedure 
 
 Synopsis: array/string cvx -> <proceduretype>
@@ -578,8 +576,7 @@ SeeAlso: cst, cv1d, cv2d, cva, cvd, cvi, cvlit, cvn, cvs, cvt_a
 [/anytype]    {}           addtotrie % ignore all other types
 def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
    Name: cvi - Convert double/string to integer
 
@@ -618,8 +615,7 @@ BeginDocumentation
  [/stringtype] /cvi_s load addtotrie
 def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
    Name: cvd - Convert integer/string to double
 
@@ -671,7 +667,7 @@ def
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: eval - evaluate a string of SLI code
 Synopsis: string eval -> obj1 ... objn
 
@@ -707,7 +703,7 @@ SeeAlso: cvx, exec, cst, token
 } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: token -  read a token from a stream or string
 Synopsis: string token -> post any true
 			  false	  
@@ -733,7 +729,7 @@ SeeAlso: token_s, token_is
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: symbol -  read a symbol from a string
 Synopsis: string symbol -> post any true
                            false	  
@@ -756,7 +752,7 @@ SeeAlso: token
 
 /symbol trie [/stringtype] /symbol_s load addtotrie def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: good - check good status of a stream
  Synopsis: streamhandle good -> streamhandle true
                              -> streamhandle false
@@ -773,7 +769,7 @@ SeeAlso: token
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: eof - check eof status of a stream
  Synopsis: streamhandle eof -> streamhandle true
                             -> streamhandle false
@@ -790,7 +786,7 @@ def
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: close - close a stream
  Synopsis: stream close -> -
  Description: This function closes a stream. This may be an istream
@@ -829,7 +825,7 @@ def
 def
 %%%%%
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: abs - absolute value
  Synopsis:  value abs -> value
            
@@ -862,7 +858,7 @@ def
  [/doubletype]  { abs_d } addtotrie
 def 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: neg - reverse sign of value
  Synopsis:  value neg -> value
            
@@ -886,7 +882,7 @@ def
  [/booltype]    /not_b load addtotrie
 def 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
    Name: cva - Converts argument to an array
 
@@ -895,7 +891,6 @@ def
              array        cva -> array
              intvector    cva -> array
              doublevector cva -> array
-             iterator     cva -> array
 
    Description: cva converts the argument to an array. The 
    array is shaped close to a form usable to recreate the original
@@ -909,7 +904,6 @@ def
    [ << /a 1 >> << /b 2>>] cva --> [[/a 1] [/b 2]]
    [1 3 -5 2] cv_iv cva        --> [1 3 -5 2]
    [1. 3. -5. 2.] cv_dv cva    --> [1. 3. -5. 2.]
-   [2 10] RangeIterator cva    --> [2 3 4 5 6 7 8 9 10]
 
    Author:   Marc-oliver Gewaltig
 
@@ -955,7 +949,6 @@ def
 [/intvectortype] /intvector2array load addtotrie
 [/doublevectortype] /doublevector2array load addtotrie
 [/arraytype] { {dup type /cva load triematches {cva} if} Map } addtotrie
-[/iteratortype] { {} Map } addtotrie
 def
 
 
@@ -971,8 +964,7 @@ def
 [/istreamtype] /getline_is load addtotrie
 def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
    Name: cvlit - Convert name/string/procedure to literal/array
 
@@ -1010,8 +1002,7 @@ BeginDocumentation
 [/literaltype] {}  addtotrie
 def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
    Name: cvn - Convert literal/string to name
 
@@ -1108,7 +1099,7 @@ def
 /if_ /if load def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: variant - return specific variant of function
 Synopsis: funcname signature variant -> anytype  true
                                false
@@ -1238,7 +1229,7 @@ def
 def 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: typebind - optimizes procedure for certain data type
 Synopsis: proc dict typebind -> proc
                                

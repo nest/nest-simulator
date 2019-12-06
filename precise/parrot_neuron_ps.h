@@ -32,11 +32,15 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/* BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
 precise spike times.
 
 Description:
+
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
 trains to a group of neurons. The poisson_generator sends a different
@@ -59,10 +63,7 @@ two parrot neurons spiking at desired times by, e.g., a
 stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
 Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset). If this node is
-connected to a spike_detector, the property "precise_times" of the
-spike_detector has to be set to true in order to record the offsets
-in addition to the on-grid spike times.
+to target nodes (on-grid spike time plus offset).
 
 Sends: SpikeEvent
 
@@ -70,9 +71,6 @@ Receives: SpikeEvent
 
 Author: adapted from parrot_neuron by Kunkel
 */
-
-namespace nest
-{
 class parrot_neuron_ps : public Archiving_Node
 {
 public:
@@ -93,7 +91,6 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  // uses off_grid events
   bool
   is_off_grid() const
   {
@@ -125,10 +122,7 @@ private:
 };
 
 inline port
-parrot_neuron_ps::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

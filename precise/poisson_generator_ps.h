@@ -31,52 +31,44 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
-
-/*BeginDocumentation
-Name: poisson_generator_ps - simulate neuron firing with Poisson processes
-(with arbitrary dead time) statistics and exact timing
-Description:
-
-  The poisson_generator_ps generator simulates a neuron firing with Poisson
-  statistics (with dead time), ie, exponentially distributed interspike
-  intervals plus constant dead time, spike events have exact timing
-  (i.e. not binned).
-
-Parameters:
-   The following parameters appear in the element's status dictionary:
-
-   rate     - mean firing rate. (double, var)
-   dead_time - minimal time between two spikes. (double, var)
-
-Remarks:
-   - This generator must be connected to all its targets using the
-     same synapse model. Failure to do so will only be detected at
-     runtime.
-   - This generator has only been validated in a very basic manner.
-
-   Sends: SpikeEvent
-
-SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
-*/
 
 namespace nest
 {
 
-/**
- * Poisson generator (with dead time) with precisely timed spikes.
- *
- * This Poisson process (with dead time) generator sends different spike
- * trains to all its targets.
- * All spikes are sent individually with offsets identifying their precise
- * times.
- *
- * @ingroup Devices
- */
-class poisson_generator_ps : public Node
+/** @BeginDocumentation
+Name: poisson_generator_ps - simulate neuron firing with Poisson processes
+(with arbitrary dead time) statistics and exact timing
+
+Description:
+
+The poisson_generator_ps generator simulates a neuron firing with Poisson
+statistics (with dead time), ie, exponentially distributed interspike
+intervals plus constant dead time, spike events have exact timing
+(i.e. not binned).
+
+Parameters:
+
+The following parameters appear in the element's status dictionary:
+
+rate     - mean firing rate. (double, var)
+dead_time - minimal time between two spikes. (double, var)
+
+Remarks:
+
+- This generator must be connected to all its targets using the
+  same synapse model. Failure to do so will only be detected at
+  runtime.
+- This generator has only been validated in a very basic manner.
+
+Sends: SpikeEvent
+
+SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
+*/
+class poisson_generator_ps : public DeviceNode
 {
 
 public:
@@ -88,11 +80,18 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
 
   using Node::event_hook;
 
@@ -144,8 +143,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -195,10 +194,7 @@ private:
 };
 
 inline port
-poisson_generator_ps::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -232,7 +228,14 @@ inline void
 poisson_generator_ps::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
+
+  // If the rate is changed, the event_hook must handle the interval from
+  // the rate change to the first subsequent spike.
+  if ( d->known( names::rate ) )
+  {
+    B_.next_spike_.assign( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
+  }
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::test_count_connections - Test connection counting for total
 number of connections and specific types of connections.
@@ -38,11 +38,11 @@ connections is 20000 and the number of stdp connections is 10000.
 Author: Susanne Kunkel, 2013-03-25
 */
 
-% don't run this test if we didn't compile with OpenMP 
-statusdict/threading :: (openmp) eq not {statusdict/exitcodes/success :: quit_i} if
-
 (unittest) run
 /unittest using
+
+% don't run this test if we didn't compile with OpenMP
+skip_if_not_threaded
 
 M_ERROR setverbosity
 
@@ -52,20 +52,18 @@ M_ERROR setverbosity
 /ConnExpected N C mul def
 
 ResetKernel
-0 << /total_num_virtual_procs N_VP >> SetStatus
-  
-/net /iaf_psc_alpha [ N ] LayoutNetwork def
-/nodes net GetGlobalNodes def
-/local_nodes net GetLocalNodes def
 
-nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
+<< /total_num_virtual_procs N_VP >> SetKernelStatus
 
-{ 0 /num_connections get ConnExpected eq } assert_or_die
+/nodes /iaf_psc_alpha N Create def 
+
+nodes nodes << /rule /fixed_indegree /indegree C >> Connect
+{ GetKernelStatus /num_connections get ConnExpected eq } assert_or_die
 { /static_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
-nodes local_nodes << /rule /fixed_indegree /indegree C >> << /model /stdp_synapse >> Connect
+nodes nodes << /rule /fixed_indegree /indegree C >> << /synapse_model /stdp_synapse >> Connect
 
-{ 0 /num_connections get ConnExpected 2 mul eq } assert_or_die
+{ GetKernelStatus /num_connections get ConnExpected 2 mul eq } assert_or_die
 { /stdp_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
 endusing

@@ -2,14 +2,15 @@
 
 [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.882971.svg)](http://dx.doi.org/10.5281/zenodo.882971)
-[![Latest Version](https://img.shields.io/badge/latest%20version-2.14.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.14.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2605422.svg)](https://doi.org/10.5281/zenodo.2605422)
+[![Latest Version](https://img.shields.io/badge/latest%20version-2.18.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.18.0)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
 morphology of individual neurons. The development of NEST is coordinated by the
-NEST Initiative. General information on the NEST Initiative, can be found at
-it's homepage at http://www.nest-initiative.org.
+NEST Initiative. General information on the NEST Initiative can be found at
+its homepage at https://www.nest-initiative.org.
 
 NEST is ideal for networks of spiking neurons of any size, for example:
 
@@ -19,12 +20,12 @@ NEST is ideal for networks of spiking neurons of any size, for example:
   balanced random networks,
 - Models of learning and plasticity.
 
-For copyright information please refer to the LICENSE file and to the
+For copyright information please refer to the `LICENSE` file and to the
 information header in the source files.
 
 ## How do I use NEST?
 
-You can use NEST either via Python (PyNEST) or as a stand alone application
+You can use NEST either via Python (PyNEST) or as a stand-alone application
 (nest). PyNEST provides a set of commands to the Python interpreter which give
 you access to NEST's simulation kernel. With these commands, you describe and
 run your network simulation. You can also complement PyNEST with PyNN, a
@@ -52,12 +53,12 @@ NEST is extensible and new models for neurons, synapses, and devices can be
 added.
 
 To get started with NEST, please see the [Documentation Page for
-Tutorials](http://nest-simulator.org/documentation/).
+Tutorials](https://www.nest-simulator.org/documentation/).
 
 ## Why should I use NEST?
 
 To learn more about the capabilities of NEST, please read the complete [feature
-summary](http://nest-simulator.org/features/).
+summary](https://www.nest-simulator.org/features/).
 
 - NEST provides over 50 neuron models many of which have been published. Choose
   from simple integrate-and-fire neurons with current or conductance based
@@ -101,8 +102,8 @@ you received in the NEST sources.
 
 - You can run the `help` command in the NEST interpreter to find documentation
   and learn more about available commands.
-- For queries regarding NEST usage, please use the [nest-users mailing
-  list](http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user).
+- For queries regarding NEST usage, please use the [NEST users mailing
+  list](https://www.nest-initiative.org/mailinglist/).
 - Information on the Python bindings to NEST can be found in
   `${prefix}/share/doc/nest/README.md`.
 - For those looking to extend NEST a [developer
@@ -112,21 +113,29 @@ you received in the NEST sources.
 
 Please cite NEST if you use it in your work.
 
+If you use NEST 2.18.0, please cite it as **Jordan, Jakob et al. (2019)
+NEST 2.18.0. Zenodo. 10.5281/zenodo.2605422**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.2605422).
+
+If you use NEST 2.16.0, please cite it as **Linssen, Charl et al. (2018)
+NEST 2.16.0. Zenodo. 10.5281/zenodo.1400175**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.1400175).
+
 If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
 NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.882971).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.882971).
 
 If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
 NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.259534).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.259534).
 
 If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
 NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.44222).
 
 If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
 NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
-in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.32969).
 
 For all versions below NEST v2.8.0 and for citing NEST without referring to a
 specific version, please use: [Gewaltig M-O & Diesmann M (2007) NEST (Neural
@@ -148,17 +157,10 @@ Here is a suitable BibTeX entry:
 ```
 
 Please get in touch with us about your publications that used NEST, we will add
-them to our [publication list](http://www.nest-simulator.org/publications), thus
+them to our [publication list](https://www.nest-simulator.org/publications), thus
 making them visible to potential readers.
 
 ## Editor support
-
-Emacs users may use the SLI mode, which provides syntax highlighting
-for SLI. To install it, add the following lines to your `.emacs` file:
-```
-  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/postscript-sli")
-  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/sli")
-```
 
 A simple syntax file for VIM users has been provided. Copy it to your vim
 configuration folder to make it available to VIM:

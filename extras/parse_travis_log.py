@@ -21,11 +21,11 @@
 
 """
 This Python script is part of the NEST Travis CI build and test environment.
-It parses the Travis CI build log file 'build.sh.log' (The name is hard-wired
-in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
+It parses the Travis CI build log file 'travis_build.sh.log' (The name is
+hard-wired in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
 
 NOTE: Please note that the parsing process is coupled to shell script
-      'build.sh' and relies on the message numbers "MSGBLDnnnn'.
+      'travis_build.sh' and relies on the message numbers "MSGBLDnnnn'.
       It does not rely on the messages texts itself except for file names.
 """
 
@@ -563,7 +563,7 @@ def get_num_msgs_for_file(file_name, summary):
 
     num_msgs = 0
     if summary is not None:
-        for message, occurrences in summary[file_name].iteritems():
+        for message, occurrences in summary[file_name].items():
             num_msgs += occurrences
 
     return num_msgs
@@ -594,8 +594,8 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
        summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
-        # If this assertion raises an exception, please check build.sh which
-        # runs the Travis CI build.
+        # If this assertion raises an exception, please check travis_build.sh
+        # which runs the Travis CI build.
         assert (summary_format.keys() == summary_cppcheck.keys())
         assert (summary_format.keys() == summary_vera.keys())
 
@@ -615,17 +615,17 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
                 if num_msgs_vera > 0:
                     file_table.append(['VERA++ (MSGBLD0135):', 'Count'])
-                    for message, count in summary_vera[file].iteritems():
+                    for message, count in summary_vera[file].items():
                         file_table.append([str(message), str(count)])
 
                 if num_msgs_cppcheck > 0:
                     file_table.append(['Cppcheck (MSGBLD0155):', 'Count'])
-                    for message, count in summary_cppcheck[file].iteritems():
+                    for message, count in summary_cppcheck[file].items():
                         file_table.append([str(message), str(count)])
 
                 if num_msgs_format > 0:
                     file_table.append(['clang-format (MSGBLD0175):', 'Count'])
-                    for message, count in summary_format[file].iteritems():
+                    for message, count in summary_format[file].items():
                         file_table.append([str(message), str(count)])
 
                 table = AsciiTable(file_table)
@@ -644,7 +644,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
                 file_table = [['+ + + ' + file + ' + + +', '']]
 
                 file_table.append(['PEP8 (MSGBLD0195):', 'Count'])
-                for message, count in summary_pep8[file].iteritems():
+                for message, count in summary_pep8[file].items():
                     file_table.append([str(message), str(count)])
 
                 table = AsciiTable(file_table)
@@ -705,9 +705,6 @@ def errors_table(summary):
 
 
 def printable_summary(list_of_changed_files,
-                      status_vera_init,
-                      status_cppcheck_init,
-                      status_format_init,
                       status_cmake_configure,
                       status_make,
                       status_make_install,
@@ -733,12 +730,6 @@ def printable_summary(list_of_changed_files,
     Parameters
     ----------
     list_of_changed_files:   List of changed source files.
-    status_vera_init:        Status of the VERA++ initialization: True, False
-                             or None
-    status_cppcheck_init:    Status of the cppcheck initialization: True, False
-                             or None
-    status_format_init:      Status of the clang-format initialization: True,
-                             False or None
     status_cmake_configure:  Status of the 'CMake configure': True, False or
                              None
     status_make:             Status of the 'make': True, False or None
@@ -803,12 +794,6 @@ def printable_summary(list_of_changed_files,
     summary_table = [
         ['Changed Files :', ''],
         ['', 'No files have been changed.'],
-        ['Tools Initialization :', ''],
-        ['VERA++', convert_bool_value_to_status_string(status_vera_init)],
-        ['Cppcheck',
-         convert_bool_value_to_status_string(status_cppcheck_init)],
-        ['clang-format',
-         convert_bool_value_to_status_string(status_format_init)],
         ['Static Code Analysis :', ''],
         ['VERA++',
          convert_summary_to_status_string(summary_vera, ignore_vera) +
@@ -866,10 +851,7 @@ def printable_summary(list_of_changed_files,
     return build_summary
 
 
-def build_return_code(status_vera_init,
-                      status_cppcheck_init,
-                      status_format_init,
-                      status_cmake_configure,
+def build_return_code(status_cmake_configure,
                       status_make,
                       status_make_install,
                       status_tests,
@@ -880,17 +862,13 @@ def build_return_code(status_vera_init,
                       ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
-                      ignore_pep8):
+                      ignore_pep8,
+                      skip_code_analysis,
+                      skip_installcheck):
     """Depending in the build results, create a return code.
 
     Parameters
     ----------
-    status_vera_init:       Status of the VERA++ initialization: True, False
-                            or None
-    status_cppcheck_init:   Status of the cppcheck initialization: True, False
-                            or None
-    status_format_init:     Status of the clang-format initialization: True,
-                            False or None
     status_cmake_configure: Status of the 'CMake configure': True, False
                             or None
     status_make:            Status of the 'make': True, False or None
@@ -912,22 +890,23 @@ def build_return_code(status_vera_init,
                             fail: True, False
     ignore_pep8:            PEP8 messages will not cause the build to
                             fail: True, False
+    skip_code_analysis:     build ran w/o static code analysis: True, False
+    skip_installcheck:      build ran w/o executing the test suite: True, False
 
     Returns
     -------
     0 (success) or 1.
     """
-    if ((status_vera_init is None or status_vera_init) and
-       (status_cppcheck_init is None or status_cppcheck_init) and
-       (status_format_init is None or status_format_init) and
-       (status_cmake_configure) and
-       (status_make) and
-       (status_make_install) and
-       (status_tests) and
-       (ignore_vera or get_num_msgs(summary_vera) == 0) and
-       (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
-       (ignore_format or get_num_msgs(summary_format) == 0) and
-       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)):
+    if ((status_cmake_configure) and                                                           # noqa
+        (status_make) and                                                                      # noqa
+        (status_make_install) and                                                              # noqa
+        (skip_installcheck or status_tests) and                                                # noqa
+        (skip_code_analysis or ((ignore_vera or get_num_msgs(summary_vera) == 0) and           # noqa
+                                (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and   # noqa
+                                (ignore_format or get_num_msgs(summary_format) == 0) and       # noqa
+                                (ignore_pep8 or get_num_msgs(summary_pep8) == 0))              # noqa
+        )                                                                                      # noqa
+       ):                                                                                      # noqa
 
         return 0
     else:
@@ -945,19 +924,13 @@ if __name__ == '__main__':
         list_of_changed_files(log_filename, "MSGBLD0070",
                               "MSGBLD0100", "MSGBLD0095")
 
+    skip_code_analysis = is_message_in_logfile(log_filename, "MSGBLD0225")
+    skip_installcheck = is_message_in_logfile(log_filename, "MSGBLD0305")
+
     # The NEST Travis CI build consists of several steps and sections.
     # Each section is enclosed in a start- and an end-message.
     # By checking these message-pairs it can be verified whether a section
     # passed through successfully, failed or was skipped.
-    status_vera_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0010", "MSGBLD0020")
-
-    status_cppcheck_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0030", "MSGBLD0040")
-
-    status_format_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0050", "MSGBLD0060")
-
     status_cmake_configure = \
         is_message_pair_in_logfile(log_filename, "MSGBLD0230", "MSGBLD0240")
 
@@ -993,10 +966,7 @@ if __name__ == '__main__':
 
     # Determine the build result to tell Travis CI whether the build was
     # successful or not.
-    exit_code = build_return_code(status_vera_init,
-                                  status_cppcheck_init,
-                                  status_format_init,
-                                  status_cmake_configure,
+    exit_code = build_return_code(status_cmake_configure,
                                   status_make,
                                   status_make_install,
                                   status_tests,
@@ -1007,7 +977,9 @@ if __name__ == '__main__':
                                   ignore_vera,
                                   ignore_cppcheck,
                                   ignore_format,
-                                  ignore_pep8)
+                                  ignore_pep8,
+                                  skip_code_analysis,
+                                  skip_installcheck)
 
     # Only after a successful build, Travis CI will upload the build artifacts
     # to Amazon S3.
@@ -1017,9 +989,6 @@ if __name__ == '__main__':
          exit_code == 0)
 
     print(printable_summary(changed_files,
-                            status_vera_init,
-                            status_cppcheck_init,
-                            status_format_init,
                             status_cmake_configure,
                             status_make,
                             status_make_install,

@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: test_tsodyks_facilitating - sli script for overall test of tsodyks synapse models
 
 Synopsis:(test_tsodyks_facilitating) run -> compare cout with comments in file
@@ -139,11 +139,10 @@ def
   
   % set resolution and limits on delays
   % limits must be set BEFORE connecting any elements
-  0
   <<
     /resolution h
     /local_num_threads local_num_threads
-  >> SetStatus
+  >> SetKernelStatus
 
   /sg /spike_generator << /spike_times input_train >> Create def
   /pn /parrot_neuron Create def
@@ -164,10 +163,7 @@ def
 
   /vm 
     /voltmeter 
-    << /withtime true
-       /to_memory true
-       /interval 25.0
-    >>
+    << /interval 25.0 >>
   Create def
 
   synapse_model 
@@ -182,7 +178,7 @@ def
   >> SetDefaults
 
   sg pn Connect   % pn required, devices cannot project to plastic synapses
-  pn neuron synapse_model Connect
+  pn neuron << >> synapse_model Connect
   vm neuron Connect
 
   T_sim Simulate

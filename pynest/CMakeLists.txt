@@ -90,6 +90,27 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
       )
 
+  file( GLOB pynest_random "nest/random/*" )
+  install( FILES ${pynest_random}
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/random
+      )
+
+  install( DIRECTORY nest/spatial/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial
+      )
+
+  install( DIRECTORY nest/math/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/math
+      )
+
+  install( DIRECTORY nest/logic/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/logic
+      )
+
+  install( DIRECTORY nest/spatial_distributions/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
+      )
+
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST

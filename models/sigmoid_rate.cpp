@@ -34,11 +34,11 @@ nonlinearities_sigmoid_rate::get( DictionaryDatum& d ) const
 }
 
 void
-nonlinearities_sigmoid_rate::set( const DictionaryDatum& d )
+nonlinearities_sigmoid_rate::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::g, g_ );
-  updateValue< double >( d, names::beta, beta_ );
-  updateValue< double >( d, names::theta, theta_ );
+  updateValueParam< double >( d, names::g, g_, node );
+  updateValueParam< double >( d, names::beta, beta_, node );
+  updateValueParam< double >( d, names::theta, theta_, node );
 }
 
 /*

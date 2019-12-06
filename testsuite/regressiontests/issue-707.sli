@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::issue-707
 
 Synopsis: (issue-707) run -> NEST exits if test fails
@@ -52,14 +52,14 @@ skip_if_without_gsl
 
   /gap_junction << /weight_recorder wr >> SetDefaults
 
-  [neuron_in] [neuron_out]
+  neuron_in neuron_out
   << /rule /one_to_one /make_symmetric true >>
-  << /model /gap_junction /weight 2.0 >>
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 
   10 Simulate
 
-  wr GetStatus /events get /weights get 1 get
+  wr /events get /weights get 1 get
 
   2.0 eq
 }

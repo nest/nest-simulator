@@ -1,3 +1,4 @@
+
 # .travis.yaml
 #
 # This file is part of NEST.
@@ -18,144 +19,199 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This is the Travis CI top-level script to setup and run the NEST build and test environment. 
+# This is the Travis CI top-level script to setup and run the NEST
+# build and test environment.
 
+language: python
 
-language: minimal
-
-# Required for Ubuntu Trusty (14.04 LTS).
+# Using the Sudo-enabled Ubuntu Xenial (16.04 LTS).
 sudo: required
-dist: trusty
-#https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
+dist: xenial
 
-env:
-  matrix:
-    # We don't have to run a full matrix here, because most of the options are
-    # independent. This means we only need a minimal and maximal configuration
-    # and some additional jobs for interdependent options.
-    # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-    - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
-matrix:
-  # Do notify immediately about it when a job of a build fails.
-  fast_finish: true
+stages:
+   - Staticcheck
+   - MPI-Threading-Python
+   - Python-Full-build
+   - Clang7
+   - OsX
+
+# list of build stages to run. Stages with the same name get run in parallel.
+
+jobs:
+  include:
+    - stage: Staticcheck
+      python: 3.6.7
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
+    - stage: MPI-Threading-Python
+      python: 3.6.7
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
+    - stage: MPI-Threading-Python
+      python: 3.6.7
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
+    - stage: MPI-Threading-Python
+      python: 3.6.7
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
+    - stage: MPI-Threading-Python
+      python: 3.6.7
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
+    - stage: MPI-Threading-Python
+      python: 3.6.7
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only Python
+    - stage: Python-Full-build
+      python: 3.6.7
+      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
+    - stage: Clang7
+      language: cpp
+      env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
+    - stage: OsX
+      os: osx
+      osx_image: xcode10.3 # Python 3.7.5 running on macOS 10.14.4
+      language: shell      # language 'python' results in errors on macOS
+      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
+
+#https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
+addons:
+   apt:
+    sources:
+     - r-packages-trusty
+     - ubuntu-toolchain-r-test
+     - llvm-toolchain-trusty-7
+    packages:
+     - gcc-8
+     - g++-8
+     - clang-7
+     - build-essential
+     - cmake
+     - libltdl-dev
+     - libreadline6-dev
+     - libncurses5-dev
+     - libgsl0-dev
+     - python-all-dev
+     - ipython
+     - pkg-config
+     - openmpi-bin
+     - libopenmpi-dev
+     - python-nose
+     - libpcre3
+     - libpcre3-dev
+     - llvm-3.6-dev
+     - jq
+     - pep8
+     - libboost-filesystem-dev
+     - libboost-regex-dev
+     - libboost-wave-dev
+     - libboost-python-dev
+     - libboost-program-options-dev
+     - libboost-test-dev
+     - python-mpi4py
 cache:
-  directory:
-    - $HOME/.cache
+   directory:
+     - $HOME/.cache
 
 before_install:
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - export SOURCEDIR=$PWD
-  - cd $HOME/build
-  - echo $PATH
+   - export SOURCEDIR=$PWD
+   # select the right C++ compiler version (gcc8) -- note that update-alternatives is not available on MacOS
+   - |
+     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+       ls -lh /usr/bin/g++*
+       ls -lh /usr/bin/gcc*
+       ls -lh /usr/bin/c++*
+       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 20
+       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 10
+       sudo update-alternatives --auto g++
+       sudo update-alternatives --list g++
+       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 20
+       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
+       sudo update-alternatives --auto gcc
+       sudo update-alternatives --list gcc
+       sudo update-alternatives --list c++
+       sudo update-alternatives --auto c++
+       g++ --version
+       /usr/bin/c++ --version
+     fi
+   - |
+     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+         echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+         echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+         echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+         echo ${MATRIX_EVAL}
+         eval "${MATRIX_EVAL}"
+         cp extras/install_csa-libneurosim.sh $HOME
+         cp extras/install_music.sh $HOME
+         cp extras/install_sionlib.sh $HOME
+         cd $HOME/build
+         echo $PATH
+         # Upgrade pip and setuptools
+         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then
+           pyenv install --list
+           pyenv global 3.6.7
+         fi
+         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+           brew --version
+           brew update
+           brew info python
+           export PATH="/usr/local/opt/python/libexec/bin:$PATH"  # To use homebrew's Python
+           brew tap brewsci/science
+           brew tap brewsci/bio
+           brew install coreutils gsl open-mpi automake autoconf libtool
+           brew unlink gcc
+           brew install gcc@8
+           brew link gcc@8
+           brew list
+           brew leaves
+           brew cask list
+         fi
+         if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+           pip install --upgrade pip setuptools
+         fi
 
-  # Update package repository status (-qq is more quiet).
-  - sudo rm -rf /var/lib/apt/lists/*
-  - ls /etc/apt/sources.list.d/
-  - sudo apt-get update -qq
-
-  # Remove automatically all unused packages.
-  - sudo apt-get autoremove
-
-  # Install packages required by NEST.
-  # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
-
-  # Install pip and Cython.
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - sudo python get-pip.py
-  - sudo pip install -U setuptools
-  - pip install --user cython==0.23.4
-
-  # Install package terminaltables required by parse_travis_log.py to create the build summary.
-  - sudo pip install terminaltables
-
-  # Install OpenMPI.
-  - sudo apt-get install -y openmpi-bin libopenmpi-dev
-
-  # Install nose framework for the Python testsuite.
-  # (Please note that the nose-capturestderr plugin is needed to suppress NEST output to stderr which may interfere 
-  #  with the nosetests output hindering correct log-parsing. stdout it captured by default.)
-  - sudo apt-get install -y python-nose
-  - sudo pip install "nose-capturestderr==1.2"
-
-  # Install boost libraries required for VERA++ static code analysis.
-  - sudo apt-get install -y libboost-filesystem-dev libboost-program-options-dev libboost-regex-dev libboost-wave-dev libboost-python-dev
-
-  # Install pep8 for static code analysis.
-  - sudo apt-get install -y pep8
-
-  # Required for building cppcheck-1.69.
-  - sudo apt-get install -y libpcre3 libpcre3-dev
-
-  # Install jq to process JSON output from GitHub API.
-  - sudo apt-get install -y jq
-
-  # Install libneurosim
-  - git clone https://github.com/INCF/libneurosim.git
-  - pushd libneurosim
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
-  - make
-  - make install
-  - popd
-
-  # Install csa
-  - git clone https://github.com/INCF/csa.git
-  - pushd csa
-  - ./autogen.sh
-  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
-  - make
-  - make install
-  - popd
-
-  # Install MUSIC
-  - sudo apt-get install -y python-mpi4py
-  - git clone https://github.com/INCF/MUSIC.git music
-  - pushd music
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/music.install
-  - make
-  - make install
-  - popd
-
-  # Change directory back to the NEST source code directory.
-  - cd $SOURCEDIR
+         # Installing additional packages using pip as they only have
+         # outdated versions in the Travis package whitelist.
+         # terminaltables is required by parse_travis_log.py to create
+         # the build summary.
+         pip install cython scipy matplotlib terminaltables
+         pip install numpy==1.16.5
+     fi
 
 install:
-  - which cython
-  - cython --version
-  - which python
-  - python --version
-  - which pip
-  - which nosetests
-  - nosetests --version
-  - nosetests --plugins
-  - which cmake
-  - cmake --version
+   - |
+     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+         which cython
+         cython --version
+         which python
+         python --version
+         which pip
+         pip list
+         if [ "$TRAVIS_OS_NAME" = "linux" ]; then which nosetests; nosetests --version; nosetests --plugins; fi
+         which cmake
+         cmake --version
+         echo ${CC}
+         echo ${CXX}
+     fi
 
 before_script:
-  - chmod +x build.sh
+   # Change directory back to the NEST source code directory.
+   - cd $SOURCEDIR
+   - chmod +x extras/travis_build.sh
 
 script:
-  - set -o pipefail
-  - ./build.sh 2>&1 | tee build.sh.log
-  - python extras/parse_travis_log.py build.sh.log
+   - set -o pipefail
+   - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
+   - |
+     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+        python extras/parse_travis_log.py travis_build.sh.log ;
+     fi
 
 before_deploy:
-  - cd $TRAVIS_BUILD_DIR/build
-  - tar -zcvf reports.tar.gz ./reports
-  - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
-  - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - |
+     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+         cd $TRAVIS_BUILD_DIR/build
+         tar -zcvf reports.tar.gz ./reports
+         tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
+         mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
+         mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+         mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+     fi
 
 # S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
 deploy:
@@ -170,6 +226,7 @@ deploy:
   on:
     repo: nest/nest-simulator
     branch: master
+    condition: xRUN_BUILD_AND_TESTSUITE = 1
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control

@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_multisynapse_models - test properties of multisynapse models
 
    Synopsis: (test_multisynapse_models) run
@@ -68,10 +68,10 @@ models
 {
   exch dup ==
   { 
-    Create dup << /receptor_type 1 >> Connect
+    Create dup << >> << /receptor_type 1 >> Connect
     
     1 add  % index + 1 == num expected connections
-    0 /num_connections get eq
+    GetKernelStatus /num_connections get eq
   } assert_or_die
 } forallindexed
 
@@ -90,7 +90,7 @@ models
     sdict begin
     [ /E_rev /tau_syn /tau_rise /tau_decay ]
     {
-      dup n exch known { [] def } { pop } ifelse
+      dup n 0 get exch known { [] def } { pop } ifelse
     } forall
     end
     n sdict SetStatus 

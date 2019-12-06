@@ -41,12 +41,16 @@
 // Includes from precise:
 #include "slice_ring_buffer.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; canoncial implementation;
 bisectioning method for approximation of threshold crossing.
 
 Description:
+
 iaf_psc_exp_ps is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses the bisectioning method to approximate the timing of a threshold
@@ -69,33 +73,35 @@ details. Subthreshold dynamics are integrated using exact integration
 between events [3].
 
 Parameters:
-  The following parameters can be set in the status dictionary.
-  E_L           double - Resting membrane potential in mV.
-  C_m           double - Capacitance of the membrane in pF.
-  tau_m         double - Membrane time constant in ms.
-  tau_syn_ex    double - Excitatory synaptic time constant in ms.
-  tau_syn_in    double - Inhibitory synaptic time constant in ms.
-  t_ref         double - Duration of refractory period in ms.
-  V_th          double - Spike threshold in mV.
-  I_e           double - Constant input current in pA.
-  V_min         double - Absolute lower value for the membrane potential in mV.
-  V_reset       double - Reset value for the membrane potential in mV.
+
+The following parameters can be set in the status dictionary.
+E_L           double - Resting membrane potential in mV.
+C_m           double - Capacitance of the membrane in pF.
+tau_m         double - Membrane time constant in ms.
+tau_syn_ex    double - Excitatory synaptic time constant in ms.
+tau_syn_in    double - Inhibitory synaptic time constant in ms.
+t_ref         double - Duration of refractory period in ms.
+V_th          double - Spike threshold in mV.
+I_e           double - Constant input current in pA.
+V_min         double - Absolute lower value for the membrane potential in mV.
+V_reset       double - Reset value for the membrane potential in mV.
 
 Remarks:
-  Please note that this node is capable of sending precise spike times
-  to target nodes (on-grid spike time plus offset). If this node is
-  connected to a spike_detector, the property "precise_times" of the
-  spike_detector has to be set to true in order to record the offsets
-  in addition to the on-grid spike times.
 
-Remarks:
-  If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-  will numerically behave as if tau_m is equal to tau_syn_ex or
-  tau_syn_in, respectively, to avoid numerical instabilities.
-  For details, please see IAF_Neruons_Singularity.ipynb in the
-  NEST source code (docs/model_details).
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time and offset).
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
 
 References:
+
   [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
       integration with continuous spike times in discrete time neural network
       simulations. Neural Comput 19, 47-79
@@ -111,18 +117,8 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_exp, iaf_psc_alpha_canon
+SeeAlso: iaf_psc_exp, iaf_psc_alpha_ps
 */
-
-namespace nest
-{
-
-/**
- * Leaky iaf neuron, exponential PSC synapses, canonical implementation.
- * @note Inherit privately from Node, so no classes can be derived
- * from this one.
- * @todo Implement current input in consistent way.
- */
 class iaf_psc_exp_ps : public Archiving_Node
 {
 public:
@@ -159,7 +155,8 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool is_off_grid() const // uses off_grid events
+  bool
+  is_off_grid() const
   {
     return true;
   }
@@ -219,10 +216,7 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin,
-    const long lag,
-    const double t0,
-    const double dt );
+  void emit_spike_( const Time& origin, const long lag, const double t0, const double dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -232,9 +226,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
@@ -291,7 +283,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -319,7 +311,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -393,10 +385,7 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -424,8 +413,7 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -447,10 +435,10 @@ iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

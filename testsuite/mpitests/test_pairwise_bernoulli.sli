@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_pairwise_bernoulli - Test correct connection with many targets
     Synopsis: (test_pairwise_bernoulli) run -> - 
 
@@ -42,7 +42,7 @@
 % targets and inverse looping is used. 
 [1 4]
 {
-  /nrns 1 /iaf_psc_alpha 4 Create cvgidcollection def
+  /nrns /iaf_psc_alpha 4 Create def
   
   nrns nrns << /rule /pairwise_bernoulli /p 1.0 >> Connect
   

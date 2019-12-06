@@ -34,6 +34,7 @@
 #include <string>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -69,8 +70,7 @@ integrand1( double x, void* p )
   }
   else
   {
-    return exp( -( x - y_th ) * ( x - y_th ) )
-      * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
+    return exp( -( x - y_th ) * ( x - y_th ) ) * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
   }
 }
 
@@ -146,15 +146,15 @@ nest::siegert_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d )
+nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::theta, theta_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::tau, tau_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::tau_syn, tau_syn_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::mean, mean_, node );
+  updateValueParam< double >( d, names::theta, theta_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::tau, tau_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::tau_syn, tau_syn_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
   if ( V_reset_ >= theta_ )
   {
@@ -189,9 +189,9 @@ nest::siegert_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::siegert_neuron::State_::set( const DictionaryDatum& d )
+nest::siegert_neuron::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, r_ ); // Rate
+  updateValueParam< double >( d, names::rate, r_, node ); // Rate
 }
 
 nest::siegert_neuron::Buffers_::Buffers_( siegert_neuron& n )
@@ -216,6 +216,7 @@ nest::siegert_neuron::siegert_neuron()
 {
   recordablesMap_.create();
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
@@ -225,6 +226,12 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , B_( n.B_, *this )
 {
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  gsl_w_ = gsl_integration_workspace_alloc( 1000 );
+}
+
+nest::siegert_neuron::~siegert_neuron()
+{
+  gsl_integration_workspace_free( gsl_w_ );
 }
 
 /* ----------------------------------------------------------------
@@ -232,17 +239,12 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
  * ---------------------------------------------------------------- */
 
 double
-nest::siegert_neuron::siegert1( double theta_shift,
-  double V_reset_shift,
-  double mu,
-  double sigma )
+nest::siegert_neuron::siegert1( double theta_shift, double V_reset_shift, double mu, double sigma )
 {
   double y_th;
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -274,27 +276,19 @@ nest::siegert_neuron::siegert1( double theta_shift,
     }
   }
 
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
 }
 
 double
-nest::siegert_neuron::siegert2( double theta_shift,
-  double V_reset_shift,
-  double mu,
-  double sigma )
+nest::siegert_neuron::siegert2( double theta_shift, double V_reset_shift, double mu, double sigma )
 {
   double y_th;
   y_th = ( theta_shift - mu ) / sigma;
   double y_r;
   y_r = ( V_reset_shift - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
   double result, error;
 
@@ -316,10 +310,7 @@ nest::siegert_neuron::siegert2( double theta_shift,
     }
   }
 
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
+  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
@@ -335,16 +326,17 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // function (Fourcaud & Brunel, 2002)
   double alpha = 2.0652531522312172;
 
-  double theta_shift =
-    P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r_shift =
-    P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double theta_shift = P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift = P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
-  if ( abs( mu - 0. ) < 1e-12 )
+  // Catch cases where neurons get no input.
+  // Use (Brunel, 2000) eq. (22) to estimate
+  // firing rate to be ~ 1e-16
+  if ( ( theta_shift - mu ) > 6. * sigma )
   {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
+  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
   {
     return siegert1( theta_shift, V_r_shift, mu, sigma );
   }
@@ -381,8 +373,7 @@ nest::siegert_neuron::init_buffers_()
 void
 nest::siegert_neuron::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -396,13 +387,9 @@ nest::siegert_neuron::calibrate()
  */
 
 bool
-nest::siegert_neuron::update_( Time const& origin,
-  const long from,
-  const long to,
-  const bool called_from_wfr_update )
+nest::siegert_neuron::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
@@ -418,8 +405,7 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive =
-      siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
+    double drive = siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
     if ( not called_from_wfr_update )
@@ -430,8 +416,7 @@ nest::siegert_neuron::update_( Time const& origin,
     else // check convergence of waveform relaxation
     {
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded =
-        wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr_update iteration
       B_.last_y_values[ lag ] = S_.r_;
     }
@@ -464,14 +449,17 @@ nest::siegert_neuron::update_( Time const& origin,
 void
 nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
 {
+  const double drift = e.get_drift_factor();
+  const double diffusion = e.get_diffusion_factor();
+
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {
-    double value = e.get_coeffvalue( it );
-    B_.drift_input_[ i ] += e.get_drift_factor() * value;
-    B_.diffusion_input_[ i ] += e.get_diffusion_factor() * value;
+    const double value = e.get_coeffvalue( it );
+    B_.drift_input_[ i ] += drift * value;
+    B_.diffusion_input_[ i ] += diffusion * value;
     ++i;
   }
 }

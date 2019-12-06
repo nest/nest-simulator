@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_min_delay_set - sli script for testing explicit specification of min_delay
 
 Synopsis: (test_iaf_min_delay_set) run -> compares results for different min_delays
@@ -58,12 +58,12 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
 
   ResetKernel
 
-  0 <<
+  <<
     /local_num_threads 1
     /resolution h
     /min_delay min_del
     /max_delay delay
-  >> SetStatus
+  >> SetKernelStatus
 
   /static_synapse <<
     /delay delay  
@@ -75,7 +75,6 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
   dc_gen <<  /amplitude 1000. >> SetStatus
 
   /voltmeter Create /vm Set
-  vm << /withtime true >> SetStatus
 
   % must connect with explicit delay to assure
   % consistency as min_delay varies      

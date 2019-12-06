@@ -29,7 +29,7 @@
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
    
 Name: message - Display an information message
 
@@ -124,6 +124,7 @@ Remarks:
                               M_DEBUG      = 5
                               M_STATUS     = 7
                               M_INFO       = 10
+                              M_PROGRESS   = 15
                               M_DEPRECATED = 18
                               M_WARNING    = 20
                               M_ERROR      = 30
@@ -143,6 +144,7 @@ systemdict begin %this is unnessessary, if misc_helpers.sli is called from sli-i
   /M_DEBUG      5 def
   /M_STATUS     7 def
   /M_INFO       10 def
+  /M_PROGRESS   15 def
   /M_DEPRECATED 18 def
   /M_WARNING    20 def
   /M_ERROR      30 def
@@ -164,7 +166,7 @@ end %systemdict
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
    
 Name:  setverbosity - Set verbosity level for message
        shutupto - Set quiet level for message
@@ -250,7 +252,7 @@ def
 /*
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
    
    Name: trim - Delete leading/trailing elements in a container.
    
@@ -394,7 +396,7 @@ bind def
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
    
    Name: breakup - Break a string or an array at given Substrings or SubArrays, or to given lengths.
    
@@ -476,7 +478,7 @@ bind def
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
    
    Name: reverse - Reverse a string or array.
    
@@ -543,7 +545,7 @@ def
 }
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: searchif - check wether a substring is contained within a string  
    Synopsis: string1 string2 searchif -> bool
              array1  array2  searchif -> bool
@@ -581,8 +583,7 @@ def
 [/arraytype  /arraytype] /searchif_sa load addtotrie
 def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
 
 Name: oldgetline - "old", ignorant version of getline
 
@@ -616,7 +617,7 @@ SeeAlso: getline, readline
 
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: ignore - ignore any waiting data on an istream
 
@@ -663,7 +664,7 @@ addtotrie
 def
 
 %----------------------------------------------------------------------------
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: CyclicValue - project a cyclic value onto it's norm interval (e.g. angle on [0,360))
 
@@ -786,7 +787,7 @@ SeeAlso: mod, floor
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: SLIFunctionWrapper - Define a SLI function with lots of comfort.
 
@@ -1178,7 +1179,7 @@ SeeAlso: def, raiseerror, setverbosity, SFWdumpparameters
     } bind def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: SFWdumpparameters - Dump parameters of a SLIFunctionWrapper routine.
 
 Synopsis: SWFdumpparameters -> -
@@ -1230,7 +1231,7 @@ SeeAlso: SLIFunctionWrapper
     } def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: pageoutput - Display the output of a procedure through "page".
 
 Synopsis: {procedure} pageoutput -> result_of_procedure

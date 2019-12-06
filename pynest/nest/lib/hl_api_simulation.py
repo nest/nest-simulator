@@ -23,18 +23,41 @@
 Functions for simulation control
 """
 
-from .hl_api_helper import *
 from contextlib import contextmanager
+
+from ..ll_api import *
+from .hl_api_helper import *
+
+__all__ = [
+    'Cleanup',
+    'DisableStructuralPlasticity',
+    'EnableStructuralPlasticity',
+    'GetKernelStatus',
+    'GetStructuralPlasticityStatus',
+    'Install',
+    'Prepare',
+    'ResetKernel',
+    'Run',
+    'RunManager',
+    'SetKernelStatus',
+    'SetStructuralPlasticityStatus',
+    'Simulate',
+]
 
 
 @check_stack
 def Simulate(t):
-    """Simulate the network for t milliseconds.
+    """Simulate the network for `t` milliseconds.
 
     Parameters
     ----------
     t : float
         Time to simulate in ms
+
+    See Also
+    --------
+    RunManager, ResumeSimulation
+
     """
 
     sps(float(t))
@@ -43,21 +66,31 @@ def Simulate(t):
 
 @check_stack
 def Run(t):
-    """Simulate the network for t milliseconds.
+    """Simulate the network for `t` milliseconds.
 
     Parameters
     ----------
     t : float
         Time to simulate in ms
 
-    Call between Prepare and Cleanup calls, or within an
-    with RunManager: clause
+    Notes
+    ------
+
+    Call between `Prepare` and `Cleanup` calls, or within a
+    ``with RunManager`` clause.
+
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
-    Prepare() must be called before to calibrate, etc; Cleanup() afterward to
-    close files, cleanup handles and so on. After Cleanup(), Prepare() can and
-    must be called before more Run() calls.
-    Any calls to set_status between Prepare() and Cleanup() have undefined
-    behavior.
+
+    `Prepare` must be called before `Run` to calibrate the system, and
+    `Cleanup` must be called after `Run` to close files, cleanup handles, and
+    so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
+    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
+    undefined behaviour.
+
+    See Also
+    --------
+    Prepare, Cleanup, RunManager, Simulate
+
     """
 
     sps(float(t))
@@ -66,10 +99,15 @@ def Run(t):
 
 @check_stack
 def Prepare():
-    """Prepares network before a Run call. Not needed for Simulate.
+    """Calibrate the system before a `Run` call. Not needed for `Simulate`.
 
-    See Run(t), Cleanup(). Call before any sequence of Runs(). Do all
-    set_status calls before Prepare().
+    Call before the first `Run` call, or before calling `Run` after changing
+    the system, calling `SetStatus` or `Cleanup`.
+
+    See Also
+    --------
+    Run, Cleanup
+
     """
 
     sr('Prepare')
@@ -77,26 +115,37 @@ def Prepare():
 
 @check_stack
 def Cleanup():
-    """Cleans up resources after a Run call. Not needed for Simulate.
+    """Cleans up resources after a `Run` call. Not needed for `Simulate`.
 
-    See Run(t), Prepare().
     Closes state for a series of runs, such as flushing and closing files.
-    A Prepare() is needed after a Cleanup() before any more calls to Run().
+    A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.
+
+    See Also
+    --------
+    Run, Prepare
+
     """
     sr('Cleanup')
 
 
 @contextmanager
 def RunManager():
-    """ContextManager for Run.
+    """ContextManager for `Run`
 
-    Calls Prepare() before a series of Run() calls,
-    and  adds a Cleanup() at end.
+    Calls `Prepare` before a series of `Run` calls, and calls `Cleanup` at end.
 
-    So:
-    with RunManager():
-        for i in range(10):
-            Run()
+    E.g.:
+
+    .. code-block:: python
+
+        with RunManager():
+            for i in range(10):
+                Run()
+
+    See Also
+    --------
+    Prepare, Run, Cleanup, Simulate
+
     """
 
     Prepare()
@@ -107,30 +156,27 @@ def RunManager():
 
 
 @check_stack
-def ResumeSimulation():
-    """Resume an interrupted simulation.
-    """
-
-    sr("ResumeSimulation")
-
-
-@check_stack
 def ResetKernel():
     """Reset the simulation kernel.
 
     This will destroy the network as well as all custom models created with
-    CopyModel(). Calling this function is equivalent to restarting NEST.
-    """
+    :py:func:`.CopyModel`. Calling this function is equivalent to restarting NEST.
+
+    In particular,
+
+    * all network nodes
+    * all connections
+    * all user-defined neuron and synapse models
+    are deleted, and
+
+    * time
+    * random generators
+    are reset. The only exception is that dynamically loaded modules are not
+    unloaded. This may change in a future version of NEST.
+
+   """
 
     sr('ResetKernel')
-
-
-@check_stack
-def ResetNetwork():
-    """Reset all nodes and connections to their original state.
-    """
-
-    sr('ResetNetwork')
 
 
 @check_stack
@@ -142,14 +188,14 @@ def SetKernelStatus(params):
     params : dict
         Dictionary of parameters to set.
 
-    See also
+    See Also
     --------
     GetKernelStatus
+
     """
 
-    sps(0)
     sps(params)
-    sr('SetStatus')
+    sr('SetKernelStatus')
 
 
 @check_stack
@@ -159,7 +205,7 @@ def GetKernelStatus(keys=None):
     Parameters
     ----------
     keys : str or list, optional
-        Single parameter name or list of parameter names
+        Single parameter name or `list` of parameter names
 
     Returns
     -------
@@ -173,22 +219,23 @@ def GetKernelStatus(keys=None):
     Raises
     ------
     TypeError
+        If `keys` are of the wrong type.
+
+    See Also
+    --------
+    SetKernelStatus
+
     """
 
-    sr('0 GetStatus')
+    sr('GetKernelStatus')
     status_root = spp()
 
-    sr('/subnet GetDefaults')
-    status_subnet = spp()
-
-    d = dict((k, v) for k, v in status_root.items() if k not in status_subnet)
-
     if keys is None:
-        return d
+        return status_root
     elif is_literal(keys):
-        return d[keys]
+        return status_root[keys]
     elif is_iterable(keys):
-        return tuple(d[k] for k in keys)
+        return tuple(status_root[k] for k in keys)
     else:
         raise TypeError("keys should be either a string or an iterable")
 
@@ -204,16 +251,20 @@ def Install(module_name):
 
     Returns
     -------
-    NEST module identifier, required for unloading.
-
-    Example
-    -------
-    nest.Install("mymodule")
+    handle
+        NEST module identifier, required for unloading
 
     Notes
     -----
-    Dynamically linked modules are searched in the LD_LIBRARY_PATH
-    (DYLD_LIBRARY_PATH under OSX).
+    Dynamically linked modules are searched in the ``LD_LIBRARY_PATH``
+    (``DYLD_LIBRARY_PATH`` under OSX).
+
+    **Example**
+
+    .. code-block: python
+
+        nest.Install("mymodule")
+
     """
 
     return sr("(%s) Install" % module_name)
@@ -227,6 +278,11 @@ def SetStructuralPlasticityStatus(params):
     ----------
     params : dict
         Dictionary of structural plasticity parameters to set
+
+    See Also
+    --------
+    GetStructuralPlasticityStatus
+
     """
 
     sps(params)
@@ -235,13 +291,17 @@ def SetStructuralPlasticityStatus(params):
 
 @check_stack
 def GetStructuralPlasticityStatus(keys=None):
-    """Get the current structural plasticity parameters for the network
-    simulation.
+    """Get the current structural plasticity parameters
 
     Parameters
     ---------
     keys : str or list, optional
         Keys indicating the values of interest to be retrieved by the get call
+
+    See Also
+    --------
+    SetStructuralPlasticityStatus
+
     """
 
     sps({})
@@ -260,6 +320,11 @@ def GetStructuralPlasticityStatus(keys=None):
 @check_stack
 def EnableStructuralPlasticity():
     """Enable structural plasticity for the network simulation
+
+    See Also
+    --------
+    DisableStructuralPlasticity
+
     """
 
     sr('EnableStructuralPlasticity')
@@ -268,5 +333,10 @@ def EnableStructuralPlasticity():
 @check_stack
 def DisableStructuralPlasticity():
     """Disable structural plasticity for the network simulation
+
+    See Also
+    --------
+    EnableStructuralPlasticity
+
     """
     sr('DisableStructuralPlasticity')

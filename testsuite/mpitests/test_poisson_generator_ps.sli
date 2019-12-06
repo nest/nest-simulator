@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_poisson_generator_ps - Test parallel generation of Poissonian trains
 
 Synopsis: nest_indirect test_poisson_generator_ps.sli -> -
@@ -43,21 +43,17 @@ skip_if_not_threaded
 [1 2 4]
 {
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /pg /poisson_generator_ps << /rate 1000. >> Create def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  [pg] pnet Connect
-  pnet [sd] Connect
+  pnet { pg exch Connect } forall
+  pnet { sd Connect } forall
   
   10. Simulate
 

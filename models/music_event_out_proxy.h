@@ -35,17 +35,23 @@
 #include <music.hh>
 
 // Includes from nestkernel:
+#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
-#include "node.h"
 
-/* BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
+@ingroup Devices
+@ingroup music
 
 Name: music_event_out_proxy - Device to forward spikes to remote applications
                               using MUSIC.
 
 Description:
+
 A music_event_out_proxy is used to send spikes to a remote application that
 also uses MUSIC.
 
@@ -56,31 +62,36 @@ music_channel of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC output_port to forward events to
-                 (default: event_out)
-port_width     - The width of the MUSIC input port
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+\verbatim embed:rst
+=========== ======= ========================================================
+ port_name  string  The name of the MUSIC output_port to forward events to
+                    (default: event_out)
+ port_width integer The width of the MUSIC input port
+ published  boolean A bool indicating if the port has been already published
+                    with MUSIC
+=========== ======= ========================================================
+\endverbatim
 
 The parameter port_name can be set using SetStatus.
 
 Examples:
-/iaf_psc_alpha Create /n Set
-/music_event_out_proxy Create /meop Set
-n meop << /music_channel 2 >> Connect
+
+    /iaf_psc_alpha Create /n Set
+    /music_event_out_proxy Create /meop Set
+    n meop << /music_channel 2 >> Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
+
 FirstVersion: March 2009
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
 */
-
-namespace nest
-{
-class music_event_out_proxy : public Node
+class music_event_out_proxy : public DeviceNode
 {
 
 public:
@@ -140,7 +151,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 

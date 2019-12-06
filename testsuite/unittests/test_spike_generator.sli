@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_spike_generator - sli script to test spike_generator device
 
    Synopsis: (test_spike_generator) run
@@ -93,10 +93,10 @@ fail_or_die
 % if precise_times is set to false
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -117,10 +117,10 @@ fail_or_die
 %
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -132,7 +132,7 @@ fail_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -148,10 +148,10 @@ assert_or_die
 %    ---> spikes at steps 10 (==1.0ms), 20 (==2.0ms) and 30 (==3.0ms)
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -162,7 +162,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -178,10 +178,10 @@ assert_or_die
 %    ---> error, spike time 1.05 not within tic/2 of step
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -200,22 +200,22 @@ assert_or_die
 %         30 (time within tic/2 of step moved to step)
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
         /spike_times [1.0 1.05 3.0001]   % in ms
-        /allow_offgrid_spikes true  
+        /allow_offgrid_times true  
         /origin 0.0                        % in ms
         /start 0.0                         % in ms  
         /stop  6.0                         % in ms
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -234,11 +234,11 @@ assert_or_die
 %         step 31, offset 0.0999
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
       /off_grid_spiking true  
-  >> SetStatus
+  >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -250,7 +250,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -271,10 +271,10 @@ assert_or_die
 %         not in the future and should not be emitted
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
         
   /spike_generator Create /sg Set
   /spike_detector Create /sd Set
@@ -299,11 +299,11 @@ assert_or_die
 %         that respect the offset (precise-timing model neurons)
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
       /off_grid_spiking true  
-  >> SetStatus
+  >> SetKernelStatus
      
   /spike_generator Create /sg Set
   sg <<
@@ -313,7 +313,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd Connect
 
   10.0 Simulate
@@ -334,10 +334,10 @@ assert_or_die
 %    ---> spike at step 101, spike shifted into the future; spike at 110 not shifted
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
      
   /spike_generator Create /sg Set
   sg <<
@@ -347,7 +347,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /precise_times true /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -370,10 +370,10 @@ assert_or_die
 %    ---> spike at step 101, spike shifted into the future; spike at 110 not shifted
 {
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1
       /resolution 0.1
-  >> SetStatus
+  >> SetKernelStatus
      
   /spike_generator Create /sg Set
   sg <<
@@ -383,7 +383,7 @@ assert_or_die
   >> SetStatus
   
   /spike_detector Create /sd Set
-  sd << /precise_times true /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
   sg sd 1.0 1.0 Connect
 
   10.0 Simulate
@@ -402,8 +402,8 @@ assert_or_die
 (----------------------- 3.6 ------------------------------) ==
 
 
-% ensure exclusivity between /precise_times and /allow_offgrid_spikes and /shift_now_spikes
-{ /spike_generator << /precise_times true /allow_offgrid_spikes true >> Create } fail_or_die
+% ensure exclusivity between /precise_times and /allow_offgrid_times and /shift_now_spikes
+{ /spike_generator << /precise_times true /allow_offgrid_times true >> Create } fail_or_die
 (----------------------- 4 ------------------------------) ==
 
 
@@ -414,7 +414,7 @@ assert_or_die
 % test set-get
 {
   ResetKernel  
-  0 << /local_num_threads 1 /resolution 0.1 >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /spike_generator << /spike_times [ 0.1 10.0 10.5 10.50001 ] >> Create
   /spike_times get cva 5 ToUnitTestPrecision
@@ -427,10 +427,10 @@ assert_or_die
 
 {
   ResetKernel  
-  0 << /local_num_threads 1 /resolution 0.1 >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /spike_generator << /spike_times [ 0.1 10.0 10.5 10.50001 10.55 ] 
-                      /allow_offgrid_spikes true >> Create
+                      /allow_offgrid_times true >> Create
   /spike_times get cva 5 ToUnitTestPrecision
   [0.1 10.0 10.5 10.5 10.6 ] 5 ToUnitTestPrecision pstack
   eq
@@ -440,7 +440,7 @@ assert_or_die
 
 {
   ResetKernel  
-  0 << /local_num_threads 1 /resolution 0.1 >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /spike_generator << /spike_times [ 0.1 10.0 10.5 10.50001 10.55 ] 
                       /precise_times true >> Create
@@ -453,7 +453,7 @@ assert_or_die
 
 {
   ResetKernel  
-  0 << /local_num_threads 1 /resolution 0.1 >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /spike_generator << /spike_times [ 0.0 10.0 10.5 10.50001 ] 
                       /shift_now_spikes true >> Create
@@ -473,11 +473,11 @@ assert_or_die
 
   ResetKernel
 
-  0 << 
+  << 
          /local_num_threads 1
          /resolution h
 	 /off_grid_spiking true
-      >> SetStatus
+      >> SetKernelStatus
       
   /spike_generator Create /sg Set
   sg <<
@@ -489,7 +489,7 @@ assert_or_die
      >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /withgid true /time_in_steps false >> SetStatus
+  sd << /time_in_steps false >> SetStatus
 
   sg sd 1.0 1.0 Connect
 

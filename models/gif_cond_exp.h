@@ -42,123 +42,150 @@
 
 #include "nest.h"
 
-/* BeginDocumentation
-  Name: gif_cond_exp - Conductance-based generalized integrate-and-fire neuron
-  model according to Mensi et al. (2012) and Pozzorini et al. (2015).
-
-  Description:
-
-  gif_psc_exp is the generalized integrate-and-fire neuron according to
-  Mensi et al. (2012) and Pozzorini et al. (2015), with post-synaptic
-  conductances in the form of truncated exponentials.
-
-  This model features both an adaptation current and a dynamic threshold for
-  spike-frequency adaptation. The membrane potential (V) is described by the
-  differential equation:
-
-  C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
-
-  where each eta_i is a spike-triggered current (stc), and the neuron model can
-  have arbitrary number of them.
-  Dynamic of each eta_i is described by:
-
-  tau_eta_i*d{eta_i}/dt = -eta_i
-
-  and in case of spike emission, its value increased by a constant (which can be
-  positive or negative):
-
-  eta_i = eta_i + q_eta_i  (in case of spike emission).
-
-  Neuron produces spikes STOCHASTICALLY according to a point process with the
-  firing intensity:
-
-  lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]
-
-  where V_T(t) is a time-dependent firing threshold:
-
-  V_T(t) = V_T_star + gamma_1(t) + gamma_2(t) + ... + gamma_m(t)
-
-  where gamma_i is a kernel of spike-frequency adaptation (sfa), and the neuron
-  model can have arbitrary number of them.
-  Dynamic of each gamma_i is described by:
-
-  tau_gamma_i*d{gamma_i}/dt = -gamma_i
-
-  and in case of spike emission, its value increased by a constant (which can be
-  positive or negative):
-
-  gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
-
-  Note that in the current implementation of the model (as described in [1] and
-  [2]) the values of eta_i and gamma_i are affected immediately after spike
-  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
-  the model using experimental data, requires a different set of eta_i and
-  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
-  One can easily convert between q_eta/gamma of these two approaches:
-  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
-  The same formula applies for q_gamma.
-
-  The shape of synaptic conductance is exponential.
-
-  Parameters:
-  The following parameters can be set in the status dictionary.
-
-  Membrane Parameters:
-    C_m        double - Capacity of the membrane in pF
-    t_ref      double - Duration of refractory period in ms.
-    V_reset    double - Reset value after a spike in mV.
-    E_L        double - Leak reversal potential in mV.
-    g_L        double - Leak conductance in nS.
-    I_e        double - Constant external input current in pA.
-
-  Spike adaptation and firing intensity parameters:
-    q_stc      vector of double - Values added to spike-triggered currents (stc)
-                                  after each spike emission in nA.
-    tau_stc    vector of double - Time constants of stc variables in ms.
-    q_sfa      vector of double - Values added to spike-frequency adaptation
-                                  (sfa) after each spike emission in mV.
-    tau_sfa    vector of double - Time constants of sfa variables in ms.
-    Delta_V    double - Stochasticity level in mV.
-    lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
-    V_T_star   double - Base threshold in mV
-
-  Synaptic parameters
-    E_ex       double - Excitatory reversal potential in mV.
-    tau_syn_ex double - Decay time of excitatory synaptic conductance in ms.
-    E_in       double - Inhibitory reversal potential in mV.
-    tau_syn_in double - Decay time of the inhibitory synaptic conductance in ms.
-
-  Integration parameters
-    gsl_error_tol  double - This parameter controls the admissible error of the
-                            GSL integrator. Reduce it if NEST complains about
-                            numerical instabilities.
-
-  References:
-
-  [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
-  Parameter extraction and classification of three cortical neuron types
-  reveals two distinct adaptation mechanisms. J. Neurophysiol., 107(6),
-  1756-1775.
-
-  [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
-  Automated High-Throughput Characterization of Single Neurons by Means of
-  Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.
-
-  Sends: SpikeEvent
-
-  Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-  Author: March 2016, Setareh
-  SeeAlso: pp_psc_delta, gif_cond_exp_multisynapse, gif_psc_exp,
-  gif_psc_exp_multisynapse
-
-*/
 
 namespace nest
 {
 
 extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
+/** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup cond
+
+Name: gif_cond_exp - Conductance-based generalized integrate-and-fire neuron
+model according to Mensi et al. (2012) and Pozzorini et al. (2015).
+
+Description:
+
+gif_psc_exp is the generalized integrate-and-fire neuron according to
+Mensi et al. (2012) and Pozzorini et al. (2015), with post-synaptic
+conductances in the form of truncated exponentials.
+
+This model features both an adaptation current and a dynamic threshold for
+spike-frequency adaptation. The membrane potential (V) is described by the
+differential equation:
+@f[ C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+    - \eta_n(t) + I(t) @f]
+
+where each \f$ \eta_i \f$ is a spike-triggered current (stc), and the neuron
+model can have arbitrary number of them.
+Dynamic of each \f$ \eta_i \f$ is described by:
+@f[ \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i  @f]
+
+and in case of spike emission, its value increased by a constant (which can be
+positive or negative):
+
+@f[ \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).} @f]
+
+Neuron produces spikes STOCHASTICALLY according to a point process with the
+firing intensity:
+
+@f[ \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V  @f]
+
+where \f$ V_T(t) \f$ is a time-dependent firing threshold:
+
+@f[ V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t) @f]
+
+where \f$ \gamma_i \f$ is a kernel of spike-frequency adaptation (sfa), and the
+neuron model can have arbitrary number of them.
+Dynamic of each \f$ \gamma_i \f$ is described by:
+@f[
+\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+@f]
+and in case of spike emission, its value increased by a constant (which can be
+positive or negative):
+@f[
+\gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
+@f]
+
+Note:
+
+In the current implementation of the model (as described in [1] and
+[2]), the values of \f$ \eta_i \f$ and \f$ \gamma_i \f$ are affected
+immediately after spike emission. However, GIF toolbox
+(http://wiki.epfl.ch/giftoolbox) which fits the model using experimental data,
+requires a different set of \f$ \eta_i \f$ and \f$ \gamma_i\f$ . It applies the
+jump of \f$ \eta_i \f$ and \f$ \gamma_i \f$ after the refractory period. One can
+easily convert between \f$ q_\eta/\gamma \f$ of these two approaches:
+\f$ q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+ \tau_\eta )) \f$ The same formula applies for \f$ q_{\gamma} \f$.
+
+The shape of synaptic conductance is exponential.
+
+Parameters:
+
+The following parameters can be set in the status dictionary.
+
+\verbatim embed:rst
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     pF      Capacity of the membrane
+ t_ref   ms      Duration of refractory period
+ V_reset mV      Reset value for V_m after a spike
+ E_L     mV      Leak reversal potential
+ g_L     nS      Leak conductance
+ I_e     pA      Constant external input current
+======== ======= =======================================
+
+=========  =================  ===============================================
+**Spike adaptation and firing intensity parameters**
+-----------------------------------------------------------------------------
+ q_stc      list of nA        Values added to spike-triggered currents (stc)
+                              after each spike emission
+ tau_stc    list of ms        Time constants of stc variables
+ q_sfa      list of mV        Values added to spike-frequency adaptation
+                              (sfa) after each spike emission
+ tau_sfa    list of ms        Time constants of sfa variables
+ Delta_V    mV                Stochasticity level
+ lambda_0   real              Stochastic intensity at firing threshold V_T i
+                              n 1/s.
+ V_T_star   mV                Base threshold
+=========  =================  ===============================================
+
+=========== ======= ===========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+ E_ex       mV      Excitatory reversal potential
+ tau_syn_ex ms      Decay time of excitatory synaptic conductance
+ E_in       mV      Inhibitory reversal potential
+ tau_syn_in ms      Decay time of the inhibitory synaptic conductance
+=========== ======= ===========================================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol real    This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
+
+References:
+
+\verbatim embed:rst
+.. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
+       Parameter extraction and classification of three cortical neuron types
+       reveals two distinct adaptation mechanisms. Journal of
+       Neurophysiology, 107(6):1756-1775.
+       DOI: https://doi.org/10.1152/jn.00408.2011
+.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015).
+       Automated high-throughput characterization of single neurons by means of
+       simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
+       DOI: https://doi.org/10.1371/journal.pcbi.1004275
+\endverbatim
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author: March 2016, Setareh
+
+SeeAlso: pp_psc_delta, gif_cond_exp_multisynapse, gif_psc_exp,
+gif_psc_exp_multisynapse
+
+*/
 class gif_cond_exp : public Archiving_Node
 {
 
@@ -250,8 +277,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -274,8 +301,8 @@ private:
     double neuron_state_[ STATE_VEC_SIZE ];
 
     double I_stim_; //!< This is piecewise constant external current
-    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double stc_; //!< Spike-triggered current.
+    double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
+    double stc_;    //!< Spike-triggered current.
 
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
@@ -288,7 +315,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -315,10 +342,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
   };
@@ -330,8 +356,7 @@ private:
    */
   struct Variables_
   {
-    std::vector< double >
-      P_sfa_; // decay terms of spike-triggered current elements
+    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
     librandom::RngPtr rng_; // random number generator of my own thread
@@ -382,10 +407,7 @@ private:
 };
 
 inline port
-gif_cond_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+gif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -436,10 +458,10 @@ gif_cond_exp::get_status( DictionaryDatum& d ) const
 inline void
 gif_cond_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

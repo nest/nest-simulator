@@ -29,6 +29,9 @@
 
 #include "archiving_node.h"
 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
 // Includes from sli:
 #include "dictutils.h"
 
@@ -45,6 +48,7 @@ nest::Archiving_Node::Archiving_Node()
   , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
+  , max_delay_( 0 )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -63,6 +67,8 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , tau_minus_inv_( n.tau_minus_inv_ )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
   , tau_minus_triplet_inv_( n.tau_minus_triplet_inv_ )
+  , max_delay_( n.max_delay_ )
+  , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -73,7 +79,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
 }
 
 void
-Archiving_Node::register_stdp_connection( double t_first_read )
+Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input input, so that we savely increment the incoming number of
@@ -81,66 +87,81 @@ Archiving_Node::register_stdp_connection( double t_first_read )
   // For details see bug #218. MH 08-04-22
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
-        runner != history_.end() && runner->t_ <= t_first_read;
+        runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );
         ++runner )
   {
     ( runner->access_counter_ )++;
   }
 
   n_incoming_++;
+
+  max_delay_ = std::max( delay, max_delay_ );
 }
 
 double
 nest::Archiving_Node::get_K_value( double t )
 {
+  // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
-    return Kminus_;
+    trace_ = 0.;
+    return trace_;
   }
+
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t > history_[ i ].t_ )
+    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
-      return ( history_[ i ].Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      trace_ = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      return trace_;
     }
-    i--;
+    --i;
   }
-  return 0;
+
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
+  trace_ = 0.;
+  return trace_;
 }
 
 void
 nest::Archiving_Node::get_K_values( double t,
   double& K_value,
+  double& nearest_neighbor_K_value,
   double& triplet_K_value )
 {
   // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
     triplet_K_value = triplet_Kminus_;
+    nearest_neighbor_K_value = Kminus_;
     K_value = Kminus_;
     return;
   }
-  // case
+
+  // search for the latest post spike in the history buffer that came strictly
+  // before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
-    if ( t > history_[ i ].t_ )
+    if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
-      triplet_K_value = ( history_[ i ].triplet_Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
-      K_value = ( history_[ i ].Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      triplet_K_value =
+        ( history_[ i ].triplet_Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
+      K_value = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+      nearest_neighbor_K_value = std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ );
       return;
     }
-    i--;
+    --i;
   }
 
-  // we only get here if t< time of all spikes in history)
-
-  // return 0.0 for both K values
+  // this case occurs when the trace was requested at a time precisely at or
+  // before the first spike in the history
   triplet_K_value = 0.0;
+  nearest_neighbor_K_value = 0.0;
   K_value = 0.0;
 }
 
@@ -156,21 +177,20 @@ nest::Archiving_Node::get_history( double t1,
     *start = *finish;
     return;
   }
-  else
+  std::deque< histentry >::reverse_iterator runner = history_.rbegin();
+  const double t2_lim = t2 + kernel().connection_manager.get_stdp_eps();
+  const double t1_lim = t1 + kernel().connection_manager.get_stdp_eps();
+  while ( runner != history_.rend() and runner->t_ >= t2_lim )
   {
-    std::deque< histentry >::iterator runner = history_.begin();
-    while ( ( runner != history_.end() ) && ( runner->t_ <= t1 ) )
-    {
-      ++runner;
-    }
-    *start = runner;
-    while ( ( runner != history_.end() ) && ( runner->t_ <= t2 ) )
-    {
-      ( runner->access_counter_ )++;
-      ++runner;
-    }
-    *finish = runner;
+    ++runner;
   }
+  *finish = runner.base();
+  while ( runner != history_.rend() and runner->t_ >= t1_lim )
+  {
+    runner->access_counter_++;
+    ++runner;
+  }
+  *start = runner.base();
 }
 
 void
@@ -183,10 +203,16 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
   if ( n_incoming_ )
   {
     // prune all spikes from history which are no longer needed
-    // except the penultimate one. we might still need it.
+    // only remove a spike if:
+    // - its access counter indicates it has been read out by all connected
+    //   STDP synapses, and
+    // - there is another, later spike, that is strictly more than
+    //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
-      if ( history_.front().access_counter_ >= n_incoming_ )
+      const double next_t_sp = history_[ 1 ].t_;
+      if ( history_.front().access_counter_ >= n_incoming_
+        and t_sp_ms - next_t_sp > max_delay_ + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }
@@ -196,11 +222,8 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
       }
     }
     // update spiking history
-    Kminus_ =
-      Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
-    triplet_Kminus_ = triplet_Kminus_
-        * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ )
-      + 1.0;
+    Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
+    triplet_Kminus_ = triplet_Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
     last_spike_ = t_sp_ms;
     history_.push_back( histentry( last_spike_, Kminus_, triplet_Kminus_, 0 ) );
   }
@@ -222,20 +245,19 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_Ca, tau_Ca_ );
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
+  def< double >( d, names::post_trace, trace_ );
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif
 
   synaptic_elements_d = DictionaryDatum( new Dictionary );
   def< DictionaryDatum >( d, names::synaptic_elements, synaptic_elements_d );
-  for ( std::map< Name, SynapticElement >::const_iterator it =
-          synaptic_elements_map_.begin();
+  for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
     synaptic_element_d = DictionaryDatum( new Dictionary );
-    def< DictionaryDatum >(
-      synaptic_elements_d, it->first, synaptic_element_d );
+    def< DictionaryDatum >( synaptic_elements_d, it->first, synaptic_element_d );
     it->second.get( synaptic_element_d );
   }
 }
@@ -253,7 +275,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_Ca, new_tau_Ca );
   updateValue< double >( d, names::beta_Ca, new_beta_Ca );
 
-  if ( new_tau_minus <= 0.0 || new_tau_minus_triplet <= 0.0 )
+  if ( new_tau_minus <= 0.0 or new_tau_minus_triplet <= 0.0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -287,18 +309,15 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
 
   if ( d->known( names::synaptic_elements_param ) )
   {
-    const DictionaryDatum synaptic_elements_dict =
-      getValue< DictionaryDatum >( d, names::synaptic_elements_param );
+    const DictionaryDatum synaptic_elements_dict = getValue< DictionaryDatum >( d, names::synaptic_elements_param );
 
-    for ( std::map< Name, SynapticElement >::iterator it =
-            synaptic_elements_map_.begin();
+    for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
           it != synaptic_elements_map_.end();
           ++it )
     {
       if ( synaptic_elements_dict->known( it->first ) )
       {
-        const DictionaryDatum synaptic_elements_a =
-          getValue< DictionaryDatum >( synaptic_elements_dict, it->first );
+        const DictionaryDatum synaptic_elements_a = getValue< DictionaryDatum >( synaptic_elements_dict, it->first );
         it->second.set( synaptic_elements_a );
       }
     }
@@ -312,17 +331,12 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
-  synaptic_elements_d =
-    getValue< DictionaryDatum >( d, names::synaptic_elements );
+  synaptic_elements_d = getValue< DictionaryDatum >( d, names::synaptic_elements );
 
-  for ( Dictionary::const_iterator i = synaptic_elements_d->begin();
-        i != synaptic_elements_d->end();
-        ++i )
+  for ( Dictionary::const_iterator i = synaptic_elements_d->begin(); i != synaptic_elements_d->end(); ++i )
   {
-    insert_result = synaptic_elements_map_.insert(
-      std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
-    ( insert_result.first->second )
-      .set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
+    insert_result = synaptic_elements_map_.insert( std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
+    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
   }
 }
 
@@ -403,13 +417,11 @@ nest::Archiving_Node::get_synaptic_elements() const
 {
   std::map< Name, double > n_map;
 
-  for ( std::map< Name, SynapticElement >::const_iterator it =
-          synaptic_elements_map_.begin();
+  for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
-    n_map.insert( std::pair< Name, double >(
-      it->first, get_synaptic_elements( it->first ) ) );
+    n_map.insert( std::pair< Name, double >( it->first, get_synaptic_elements( it->first ) ) );
   }
   return n_map;
 }
@@ -419,8 +431,7 @@ nest::Archiving_Node::update_synaptic_elements( double t )
 {
   assert( t >= Ca_t_ );
 
-  for ( std::map< Name, SynapticElement >::iterator it =
-          synaptic_elements_map_.begin();
+  for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
@@ -434,8 +445,7 @@ nest::Archiving_Node::update_synaptic_elements( double t )
 void
 nest::Archiving_Node::decay_synaptic_elements_vacant()
 {
-  for ( std::map< Name, SynapticElement >::iterator it =
-          synaptic_elements_map_.begin();
+  for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {

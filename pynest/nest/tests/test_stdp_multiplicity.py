@@ -27,7 +27,7 @@ import math
 import numpy as np
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
     """
     Test correct handling of spike multiplicity in STDP.
@@ -128,10 +128,10 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # create spike_generators with these times
             pre_sg = nest.Create("spike_generator",
                                  params={"spike_times": pre_times,
-                                         'allow_offgrid_spikes': True})
+                                         'allow_offgrid_times': True})
             post_sg = nest.Create("spike_generator",
                                   params={"spike_times": post_times,
-                                          'allow_offgrid_spikes': True})
+                                          'allow_offgrid_times': True})
             pre_sg_ps = nest.Create("spike_generator",
                                     params={"spike_times": pre_times,
                                             'precise_times': True})
@@ -155,8 +155,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
                          syn_spec={"delay": delay})
 
             # create spike detector --- debugging only
-            spikes = nest.Create("spike_detector",
-                                 params={'precise_times': True})
+            spikes = nest.Create("spike_detector")
             nest.Connect(
                 pre_parrot + post_parrot +
                 pre_parrot_ps + post_parrot_ps,
@@ -168,25 +167,25 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # not repeated postsynaptically.
             nest.Connect(
                 pre_parrot, post_parrot,
-                syn_spec={'model': 'stdp_synapse', 'receptor_type': 1})
+                syn_spec={'synapse_model': 'stdp_synapse', 'receptor_type': 1})
             nest.Connect(
                 pre_parrot_ps, post_parrot_ps,
-                syn_spec={'model': 'stdp_synapse', 'receptor_type': 1})
+                syn_spec={'synapse_model': 'stdp_synapse', 'receptor_type': 1})
 
             # get STDP synapse and weight before protocol
             syn = nest.GetConnections(source=pre_parrot,
                                       synapse_model="stdp_synapse")
-            w_pre = nest.GetStatus(syn)[0]['weight']
+            w_pre = syn.get('weight')
             syn_ps = nest.GetConnections(source=pre_parrot_ps,
                                          synapse_model="stdp_synapse")
-            w_pre_ps = nest.GetStatus(syn)[0]['weight']
+            w_pre_ps = syn_ps.get('weight')
 
             sim_time = max(pre_times + post_times) + 5 * delay
             nest.Simulate(sim_time)
 
             # get weight post protocol
-            w_post = nest.GetStatus(syn)[0]['weight']
-            w_post_ps = nest.GetStatus(syn_ps)[0]['weight']
+            w_post = syn.get('weight')
+            w_post_ps = syn_ps.get('weight')
 
             assert w_post != w_pre, "Plain parrot weight did not change."
             assert w_post_ps != w_pre_ps, "Precise parrot \

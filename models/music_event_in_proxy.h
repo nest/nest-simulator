@@ -33,15 +33,21 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 
-/*BeginDocumentation
+namespace nest
+{
+
+/** @BeginDocumentation
+@ingroup Devices
+@ingroup music
 
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:
+
 A music_event_in_proxy can be used to pass spikes to nodes within NEST
 which are received from another application.
 
@@ -54,41 +60,41 @@ on the same port, but each channel can only listened to by a
 single proxy.
 
 Parameters:
+
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC input port to listen to (default:
-                 event_in)
-music_channel  - The MUSIC global index on the input port to listen to
-registered     - A bool indicating if the port has been already registered
-                 with the corresponding MUSIC event handler
+\verbatim embed:rst
+============== ======== =======================================================
+ port_name     string   The name of the MUSIC input port to listen to (default:
+                        event_in)
+ music_channel integer  The MUSIC global index on the input port to listen to
+ registered    boolean  A bool indicating if the port has been already
+                        registered with the corresponding MUSIC event handler
+============== ======== =======================================================
+\endverbatim
 
 The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
 Examples:
-/music_event_in_proxy Create /meip Set
-meip << /music_channel 2 >> SetStatus
-/iaf_psc_alpha Create /n Set
-(event_in) 0.2 SetAcceptableLatency
-meip n Connect
+
+    /music_event_in_proxy Create /meip Set
+    meip << /music_channel 2 >> SetStatus
+    /iaf_psc_alpha Create /n Set
+    (event_in) 0.2 SetAcceptableLatency
+    meip n Connect
 
 Author: Moritz Helias, Jochen Martin Eppler
+
 FirstVersion: October 2008
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
 music_message_in_proxy
 */
-
-namespace nest
-{
-/**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
- */
-class music_event_in_proxy : public Node
+class music_event_in_proxy : public DeviceNode
 {
 
 public:
@@ -99,7 +105,7 @@ public:
   has_proxies() const
   {
     return false;
-  } // a copy on each process
+  }
   bool
   one_node_per_process() const
   {
@@ -170,10 +176,7 @@ private:
 };
 
 inline port
-music_event_in_proxy::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -59,6 +59,7 @@ nest::music_event_in_proxy::Parameters_::Parameters_( const Parameters_& op )
 }
 
 nest::music_event_in_proxy::State_::State_()
+  : registered_( false )
 {
 }
 
@@ -75,8 +76,7 @@ nest::music_event_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  State_& s )
+nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   if ( not s.registered_ )
   {
@@ -92,8 +92,7 @@ nest::music_event_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_event_in_proxy::State_::set( const DictionaryDatum&,
-  const Parameters_& )
+nest::music_event_in_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
 {
 }
 
@@ -103,15 +102,14 @@ nest::music_event_in_proxy::State_::set( const DictionaryDatum&,
  * ---------------------------------------------------------------- */
 
 nest::music_event_in_proxy::music_event_in_proxy()
-  : Node()
+  : DeviceNode()
   , P_()
   , S_()
 {
 }
 
-nest::music_event_in_proxy::music_event_in_proxy(
-  const music_event_in_proxy& n )
-  : Node( n )
+nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n )
+  : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
@@ -142,8 +140,7 @@ nest::music_event_in_proxy::calibrate()
   // register my port and my channel at the scheduler
   if ( not S_.registered_ )
   {
-    kernel().music_manager.register_music_event_in_proxy(
-      P_.port_name_, P_.channel_, this );
+    kernel().music_manager.register_music_event_in_proxy( P_.port_name_, P_.channel_, this );
     S_.registered_ = true;
   }
 }
@@ -179,7 +176,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    kernel().event_delivery_manager.send_local( t, *this, e );
+    kernel().connection_manager.send_from_device( t, local_device_id_, e );
   }
 }
 

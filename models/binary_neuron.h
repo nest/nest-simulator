@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "numerics.h"
+#include "dict_util.h"
 
 // Includes from librandom:
 #include "exp_randomdev.h"
@@ -123,8 +124,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -134,16 +135,16 @@ private:
    */
   struct State_
   {
-    bool y_;               //!< output of neuron in [0,1]
-    double h_;             //!< total input current to neuron
-    double last_in_gid_;   //!< gid of the last spike being received
-    Time t_next_;          //!< time point of next update
-    Time t_last_in_spike_; //!< time point of last input spike seen
+    bool y_;                 //!< output of neuron in [0,1]
+    double h_;               //!< total input current to neuron
+    double last_in_node_id_; //!< node ID of the last spike being received
+    Time t_next_;            //!< time point of next update
+    Time t_last_in_spike_;   //!< time point of last input spike seen
 
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -172,7 +173,7 @@ private:
    */
   struct Variables_
   {
-    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::RngPtr rng_;           //!< random number generator of my own thread
     librandom::ExpRandomDev exp_dev_; //!< random deviate generator
   };
 
@@ -214,10 +215,7 @@ private:
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -227,8 +225,7 @@ binary_neuron< TGainfunction >::send_test_event( Node& target,
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&,
-  rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -239,8 +236,7 @@ binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&,
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -251,8 +247,7 @@ binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&,
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -293,10 +288,10 @@ template < class TGainfunction >
 inline void
 binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -308,12 +303,11 @@ binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  gain_.set( d );
+  gain_.set( d, this );
 }
 
 template < typename TGainfunction >
-RecordablesMap< nest::binary_neuron< TGainfunction > >
-  nest::binary_neuron< TGainfunction >::recordablesMap_;
+RecordablesMap< nest::binary_neuron< TGainfunction > > nest::binary_neuron< TGainfunction >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -330,7 +324,7 @@ template < class TGainfunction >
 binary_neuron< TGainfunction >::State_::State_()
   : y_( false )
   , h_( 0.0 )
-  , last_in_gid_( 0 )
+  , last_in_node_id_( 0 )
   , t_next_( Time::neg_inf() )          // mark as not initialized
   , t_last_in_spike_( Time::neg_inf() ) // mark as not intialized
 {
@@ -349,9 +343,9 @@ binary_neuron< TGainfunction >::Parameters_::get( DictionaryDatum& d ) const
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
+binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::tau_m, tau_m_ );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -360,8 +354,7 @@ binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d,
-  const Parameters_& ) const
+binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::h, h_ ); // summed input
   def< double >( d, names::S, y_ ); // binary_neuron output state
@@ -369,8 +362,7 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d,
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&,
-  const Parameters_& )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
 {
 }
 
@@ -381,8 +373,7 @@ binary_neuron< TGainfunction >::Buffers_::Buffers_( binary_neuron& n )
 }
 
 template < class TGainfunction >
-binary_neuron< TGainfunction >::Buffers_::Buffers_( const Buffers_&,
-  binary_neuron& n )
+binary_neuron< TGainfunction >::Buffers_::Buffers_( const Buffers_&, binary_neuron& n )
   : logger_( n )
 {
 }
@@ -456,12 +447,9 @@ binary_neuron< TGainfunction >::calibrate()
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::update( Time const& origin,
-  const long from,
-  const long to )
+binary_neuron< TGainfunction >::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -514,13 +502,13 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   // The following logic implements the encoding:
   // A single spike signals a transition to 0 state, two spikes in same time
   // step signal the transition to 1 state.
   //
-  // Remember the global id of the sender of the last spike being received
+  // Remember the node ID of the sender of the last spike being received
   // this assumes that several spikes being sent by the same neuron in the same
   // time step are received consecutively or are conveyed by setting the
   // multiplicity accordingly.
@@ -535,39 +523,35 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
 
 
   long m = e.get_multiplicity();
-  long gid = e.get_sender_gid();
+  long node_id = e.get_sender_node_id();
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
   { // multiplicity == 1, either a single 1->0 event or the first or second of a
     // pair of 0->1 events
-    if ( gid == S_.last_in_gid_ && t_spike == S_.t_last_in_spike_ )
+    if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
     {
-      // received twice the same gid, so transition 0->1
+      // received twice the same node ID, so transition 0->1
       // take double weight to compensate for subtracting first event
-      B_.spikes_.add_value( e.get_rel_delivery_steps(
-                              kernel().simulation_manager.get_slice_origin() ),
-        2.0 * e.get_weight() );
+      B_.spikes_.add_value(
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), 2.0 * e.get_weight() );
     }
     else
     {
       // count this event negatively, assuming it comes as single event
       // transition 1->0
-      B_.spikes_.add_value( e.get_rel_delivery_steps(
-                              kernel().simulation_manager.get_slice_origin() ),
-        -e.get_weight() );
+      B_.spikes_.add_value(
+        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
     }
   }
   else // multiplicity != 1
     if ( m == 2 )
   {
     // count this event positively, transition 0->1
-    B_.spikes_.add_value( e.get_rel_delivery_steps(
-                            kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() );
+    B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );
   }
 
-  S_.last_in_gid_ = gid;
+  S_.last_in_node_id_ = node_id;
   S_.t_last_in_spike_ = t_spike;
 }
 
@@ -575,7 +559,7 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();
@@ -583,9 +567,7 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added
   // both contributions are directly added to the variable h
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 

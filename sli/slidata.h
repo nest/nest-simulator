@@ -444,24 +444,6 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class RangeIterator_aFunction : public SLIFunction
-{
-public:
-  RangeIterator_aFunction()
-  {
-  }
-  void execute( SLIInterpreter* ) const;
-};
-
-class IteratorSize_iterFunction : public SLIFunction
-{
-public:
-  IteratorSize_iterFunction()
-  {
-  }
-  void execute( SLIInterpreter* ) const;
-};
-
 class Cvn_sFunction : public SLIFunction
 {
 public:
@@ -482,8 +464,7 @@ public:
 
 //---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
-/* BeginDocumentation
-
+/** @BeginDocumentation
 Name: cvi_s - convert string to integer
 
 Synopsis: string cvi_s -> integer
@@ -518,7 +499,7 @@ public:
 
 //---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: cvd_s - convert string to double
 

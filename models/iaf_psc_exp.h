@@ -34,103 +34,125 @@
 
 namespace nest
 {
-/* BeginDocumentation
-   Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
-                       PSCs.
 
-   Description:
-   iaf_psc_expp is an implementation of a leaky integrate-and-fire model
-   with exponential shaped postsynaptic currents (PSCs) according to [1].
-   Thus, postsynaptic currents have an infinitely short rise time.
+/** @BeginDocumentation
 
-   The threshold crossing is followed by an absolute refractory period (t_ref)
-   during which the membrane potential is clamped to the resting potential
-   and spiking is prohibited.
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
 
-   The linear subthresold dynamics is integrated by the Exact
-   Integration scheme [2]. The neuron dynamics is solved on the time
-   grid given by the computation step size. Incoming as well as emitted
-   spikes are forced to that grid.
+Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
+                   PSCs.
 
-   An additional state variable and the corresponding differential
-   equation represents a piecewise constant external current.
+Description:
 
-   The general framework for the consistent formulation of systems with
-   neuron like dynamics interacting by point events is described in
-   [2]. A flow chart can be found in [3].
+iaf_psc_exp is an implementation of a leaky integrate-and-fire model
+with exponential shaped postsynaptic currents (PSCs) according to [1].
+Thus, postsynaptic currents have an infinitely short rise time.
 
-   Remarks:
-   The present implementation uses individual variables for the
-   components of the state vector and the non-zero matrix elements of
-   the propagator.  Because the propagator is a lower triangular matrix
-   no full matrix multiplication needs to be carried out and the
-   computation can be done "in place" i.e. no temporary state vector
-   object is required.
+The threshold crossing is followed by an absolute refractory period (t_ref)
+during which the membrane potential is clamped to the resting potential
+and spiking is prohibited.
 
-   The template support of recent C++ compilers enables a more succinct
-   formulation without loss of runtime performance already at minimal
-   optimization levels. A future version of iaf_psc_exp will probably
-   address the problem of efficient usage of appropriate vector and
-   matrix objects.
+The linear subthresold dynamics is integrated by the Exact
+Integration scheme [2]. The neuron dynamics is solved on the time
+grid given by the computation step size. Incoming as well as emitted
+spikes are forced to that grid.
 
-   Parameters:
-   The following parameters can be set in the status dictionary.
+An additional state variable and the corresponding differential
+equation represents a piecewise constant external current.
 
-   E_L          double - Resting membrane potential in mV.
-   C_m          double - Capacity of the membrane in pF
-   tau_m        double - Membrane time constant in ms.
-   tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
-   tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref        double - Duration of refractory period (V_m = V_reset) in ms.
-   V_m          double - Membrane potential in mV
-   V_th         double - Spike threshold in mV.
-   V_reset      double - Reset membrane potential after a spike in mV.
-   I_e          double - Constant input current in pA.
-   t_spike      double - Point in time of last spike in ms.
+The general framework for the consistent formulation of systems with
+neuron like dynamics interacting by point events is described in
+[2]. A flow chart can be found in [3].
+
+Spiking in this model can be either deterministic (delta=0) or stochastic (delta
+> 0). In the stochastic case this model implements a type of spike response
+model with escape noise [4, 5].
 
 Remarks:
 
-   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-   will numerically behave as if tau_m is equal to tau_syn_ex or
-   tau_syn_in, respectively, to avoid numerical instabilities.
-   For details, please see IAF_neurons_singularity.ipynb in the
-   NEST source code (docs/model_details).
+The present implementation uses individual variables for the
+components of the state vector and the non-zero matrix elements of
+the propagator.  Because the propagator is a lower triangular matrix
+no full matrix multiplication needs to be carried out and the
+computation can be done "in place" i.e. no temporary state vector
+object is required.
 
-   iaf_psc_exp can handle current input in two ways: Current input
-   through receptor_type 0 are handled as stepwise constant current
-   input as in other iaf models, i.e., this current directly enters
-   the membrane potential equation. Current input through
-   receptor_type 1, in contrast, is filtered through an exponential
-   kernel with the time constant of the excitatory synapse,
-   tau_syn_ex. For an example application, see [4].
+The template support of recent C++ compilers enables a more succinct
+formulation without loss of runtime performance already at minimal
+optimization levels. A future version of iaf_psc_exp will probably
+address the problem of efficient usage of appropriate vector and
+matrix objects.
 
-   References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
-   in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
-   Neuroscience, 2000, Vol. 20 RC50 p. 1-5
-   [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-   systems with applications to neuronal modeling. Biologial Cybernetics
-   81:381-402.
-   [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-   analysis of synchronous spiking in cortical neural networks.
-   Neurocomputing 38-40:565-571.
-   [4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a
-   metastable state driven by colored noise.
-   Physical Review E 92:052119
+Parameters:
 
-   Sends: SpikeEvent
+The following parameters can be set in the status dictionary.
 
-   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+\verbatim embed:rst
+===========  =======  ========================================================
+ E_L          mV      Resting membrane potential
+ C_m          pF      Capacity of the membrane
+ tau_m        ms      Membrane time constant
+ tau_syn_ex   ms      Time constant of postsynaptic excitatory currents
+ tau_syn_in   ms      Time constant of postsynaptic inhibitory currents
+ t_ref        ms      Duration of refractory period (V_m = V_reset)
+ V_m          mV      Membrane potential in mV
+ V_th         mV      Spike threshold in mV
+ V_reset      mV      Reset membrane potential after a spike
+ I_e          pA      Constant input current
+ t_spike      ms      Point in time of last spike
+===========  =======  ========================================================
+\endverbatim
 
-   SeeAlso: iaf_psc_exp_ps
 
-   FirstVersion: March 2006
-   Author: Moritz Helias
+Remarks:
+
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_neurons_singularity.ipynb in the
+NEST source code (docs/model_details).
+
+iaf_psc_exp can handle current input in two ways: Current input
+through receptor_type 0 are handled as stepwise constant current
+input as in other iaf models, i.e., this current directly enters
+the membrane potential equation. Current input through
+receptor_type 1, in contrast, is filtered through an exponential
+kernel with the time constant of the excitatory synapse,
+tau_syn_ex. For an example application, see [6].
+
+References:
+
+\verbatim embed:rst
+.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses. The Journal of Neuroscience,
+       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
+.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
+       metastable state driven by colored noise. Physical Review E 92:052119
+       DOI: https://doi.org/10.1103/PhysRevE.92.052119
+\endverbatim
+=======
+
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+SeeAlso: iaf_psc_exp_ps
+
+FirstVersion: March 2006
+
+Author: Moritz Helias
 */
-
-/**
- * Leaky integrate-and-fire neuron with exponential PSCs.
- */
 class iaf_psc_exp : public Archiving_Node
 {
 
@@ -166,6 +188,9 @@ private:
 
   void update( const Time&, const long, const long );
 
+  // intensity function
+  double phi_() const;
+
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp >;
   friend class UniversalDataLogger< iaf_psc_exp >;
@@ -177,7 +202,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double Tau_;
 
@@ -206,6 +230,12 @@ private:
     /** Time constant of inhibitory synaptic current in ms. */
     double tau_in_;
 
+    /** Stochastic firing intensity at threshold in 1/s. **/
+    double rho_;
+
+    /** Width of threshold region in mV. **/
+    double delta_;
+
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -213,7 +243,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -243,7 +273,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double );
+    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -291,6 +321,8 @@ private:
     double weighted_spikes_in_;
 
     int RefractoryCounts_;
+
+    librandom::RngPtr rng_; //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -347,10 +379,7 @@ private:
 
 
 inline port
-nest::iaf_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -407,10 +436,10 @@ iaf_psc_exp::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -421,6 +450,13 @@ iaf_psc_exp::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+}
+
+inline double
+iaf_psc_exp::phi_() const
+{
+  assert( P_.delta_ > 0. );
+  return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
 }
 
 } // namespace

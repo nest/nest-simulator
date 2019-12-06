@@ -19,16 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-correlospinmatrix_detector example
------------------------------------
+"""Correlospinmatrix detector example
+----------------------------------------
 
 This scripts simulates two connected binary neurons, similar
-as in Ginzburg & Sompolinsky (1994) PRE, 50(4) p. 3771. Fig. 1.
-It measures and plots the auto- and cross covariance funcitons
+as in [1]_. It measures and plots the auto- and cross covariance functions
 of the individual neurons and between them, repsectively.
 
-'''
+References
+~~~~~~~~~~~~
+
+.. [1] Ginzburg and Sompolinsky (1994). Theory of correlations in stochastic neural netoworks. 50(4) p. 3175. Fig. 1.
+
+
+"""
 
 import pylab as pl
 import nest

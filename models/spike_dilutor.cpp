@@ -26,6 +26,9 @@
 #include "gslrandomgen.h"
 #include "random_datums.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -60,9 +63,9 @@ nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
+nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::p_copy, p_copy_ );
+  updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 || p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );
@@ -74,14 +77,14 @@ nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::spike_dilutor::spike_dilutor()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {
@@ -119,8 +122,7 @@ nest::spike_dilutor::calibrate()
 void
 nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -131,8 +133,7 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
     }
 
     // generate spikes of mother process for each time slice
-    unsigned long n_mother_spikes =
-      static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
+    unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
@@ -182,7 +183,6 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }

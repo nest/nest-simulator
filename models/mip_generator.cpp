@@ -26,6 +26,9 @@
 #include "gslrandomgen.h"
 #include "random_datums.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -69,10 +72,10 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
+nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ );
-  updateValue< double >( d, names::p_copy, p_copy_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
+  updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "Rate must be non-negative." );
@@ -82,12 +85,10 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Copy probability must be in [0, 1]." );
   }
 
-  bool reset_rng =
-    updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
+  bool reset_rng = updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
 
   // order important to avoid short-circuitung
-  reset_rng =
-    updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
+  reset_rng = updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
   if ( reset_rng )
   {
     rng_->seed( mother_seed_ );
@@ -99,14 +100,14 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::mip_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::mip_generator::mip_generator( const mip_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ ) // also causes deep copy of random nnumber generator
 {
@@ -137,8 +138,7 @@ nest::mip_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda(
-    Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
 }
 
 
@@ -149,8 +149,7 @@ nest::mip_generator::calibrate()
 void
 nest::mip_generator::update( Time const& T, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )

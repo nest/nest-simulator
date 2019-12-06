@@ -42,56 +42,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
-Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
-                       model.
-
-Description:
-iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses. Incoming spike events induce a post-synaptic change
-of conductance modelled by an alpha function. The alpha function
-is normalised such that an event of weight 1.0 results in a peak current of 1 nS
-at t = tau_syn.
-
-Parameters:
-The following parameters can be set in the status dictionary.
-
-V_m        double - Membrane potential in mV
-E_L        double - Leak reversal potential in mV.
-C_m        double - Capacity of the membrane in pF
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-E_ex       double - Excitatory reversal potential in mV.
-E_in       double - Inhibitory reversal potential in mV.
-g_L        double - Leak conductance in nS;
-tau_syn_ex double - Rise time of the excitatory synaptic alpha function in ms.
-tau_syn_in double - Rise time of the inhibitory synaptic alpha function in ms.
-I_e        double - Constant input current in pA.
-
-Sends: SpikeEvent
-
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-References:
-
-Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
-
-Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
-Synaptic background activity influences spatiotemporal integration in
-single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
-11569-11573.
-
-Kuhn, Aertsen, Rotter (2004) Neuronal Integration of Synaptic Input in
-the Fluctuation- Driven Regime. Jneurosci 24(10) 2345-2356
-
-Author: Schrader, Plesser
-
-SeeAlso: iaf_cond_exp, iaf_cond_alpha_mc
-*/
-
 namespace nest
 {
 /**
@@ -106,16 +56,80 @@ namespace nest
  */
 extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
-/**
- * Integrate-and-fire neuron model with two conductance-based synapses.
- *
- * @note Per 2009-04-17, this class has been revised to our newest
- *       insights into class design. Please use THIS CLASS as a reference
- *       when designing your own models with nonlinear dynamics.
- *       One weakness of this class is that it distinguishes between
- *       inputs to the two synapses by the sign of the synaptic weight.
- *       It would be better to use receptor_types, cf iaf_cond_alpha_mc.
- */
+/** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup cond
+
+Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
+                       model.
+
+Description:
+
+iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
+conductance-based synapses. Incoming spike events induce a post-synaptic change
+of conductance modelled by an alpha function. The alpha function
+is normalised such that an event of weight 1.0 results in a peak current of 1 nS
+at \f$ t = tau_{syn} \f$.
+
+Parameters:
+
+The following parameters can be set in the status dictionary.
+
+\verbatim embed:rst
+=========== ======= ===========================================================
+ V_m        mV      Membrane potential
+ E_L        mV      Leak reversal potential
+ C_m        pF      Capacity of the membrane
+ t_ref      ms      Duration of refractory period
+ V_th       mV      Spike threshold
+ V_reset    mV      Reset potential of the membrane
+ E_ex       mV      Excitatory reversal potential
+ E_in       mV      Inhibitory reversal potential
+ g_L        nS      Leak conductance
+ tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
+ I_e        pA      Constant input current
+=========== ======= ===========================================================
+\endverbatim
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Remarks:
+
+ @note Per 2009-04-17, this class has been revised to our newest
+        insights into class design. Please use THIS CLASS as a reference
+        when designing your own models with nonlinear dynamics.
+        One weakness of this class is that it distinguishes between
+        inputs to the two synapses by the sign of the synaptic weight.
+        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
+
+References:
+
+\verbatim embed:rst
+.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
+       model for the large, fluctuating synaptic conductance state typical of
+       neocortical neurons in vivo. Journal of Computational Neuroscience,
+       16:159-175.
+       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
+.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
+       activity influences spatiotemporal integration in single pyramidal
+       cells.  Proceedings of the National Academy of Science USA,
+       88(24):11569-11573.
+       DOI: https://doi.org/10.1073/pnas.88.24.11569
+.. [3] Kuhn A, Rotter S (2004) Neuronal integration of synaptic input in
+       the fluctuation- driven regime. Journal of Neuroscience,
+       24(10):2345-2356
+       DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
+\endverbatim
+
+Author: Schrader, Plesser
+
+SeeAlso: iaf_cond_exp, iaf_cond_alpha_mc
+
+*/
 class iaf_cond_alpha : public Archiving_Node
 {
 
@@ -185,8 +199,8 @@ private:
 
     Parameters_(); //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // State variables class --------------------------------------------
@@ -204,7 +218,6 @@ private:
 public:
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -232,7 +245,7 @@ public:
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, eg, check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
 private:
@@ -241,8 +254,8 @@ private:
   /**
    * Buffers of the model.
    * Buffers are on par with state variables in terms of persistence,
-   * i.e., initalized only upon first Simulate call after ResetKernel
-   * or ResetNetwork, but are implementation details hidden from the user.
+   * i.e., initalized only upon first Simulate call after ResetKernel,
+   * but are implementation details hidden from the user.
    */
   struct Buffers_
   {
@@ -263,10 +276,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -337,10 +349,7 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_alpha::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -368,8 +377,7 @@ iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -391,10 +399,10 @@ iaf_cond_alpha::get_status( DictionaryDatum& d ) const
 inline void
 iaf_cond_alpha::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

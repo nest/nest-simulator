@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <memory>
 
 // Includes from librandom:
 #include "randomgen.h"
@@ -121,7 +122,7 @@ class RandomDev;
  * A safe pointer that should be used instead of RandomDev*
  * in user code to manage random number generators.
  */
-typedef lockPTR< RandomDev > RdvPtr;
+typedef std::shared_ptr< RandomDev > RdvPtr;
 
 
 /**
@@ -212,14 +213,12 @@ protected:
 
 inline double RandomDev::operator()( void )
 {
-  assert( rng_.valid() );
   return ( *this )( rng_ );
 }
 
 inline long
 RandomDev::ldev( void )
 {
-  assert( rng_.valid() );
   return this->ldev( rng_ );
 }
 

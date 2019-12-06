@@ -73,8 +73,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   // a min delay that is one step too small. We can detect this by an
   // additional test.
   double delay_tmp = 0.0;
-  bool min_delay_updated =
-    updateValue< double >( d, names::min_delay, delay_tmp );
+  bool min_delay_updated = updateValue< double >( d, names::min_delay, delay_tmp );
   Time new_min_delay;
   if ( min_delay_updated )
   {
@@ -87,8 +86,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   }
 
   // For the maximum delay, we always round up, using ms_stamp
-  bool max_delay_updated =
-    updateValue< double >( d, names::max_delay, delay_tmp );
+  bool max_delay_updated = updateValue< double >( d, names::max_delay, delay_tmp );
   Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
@@ -96,22 +94,19 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
     throw BadProperty( "Both min_delay and max_delay have to be specified" );
   }
 
-  if ( min_delay_updated && max_delay_updated )
+  if ( min_delay_updated and max_delay_updated )
   {
     if ( kernel().connection_manager.get_num_connections() > 0 )
     {
-      throw BadProperty(
-        "Connections already exist. Please call ResetKernel first" );
+      throw BadProperty( "Connections already exist. Please call ResetKernel first" );
     }
     else if ( new_min_delay < Time::get_resolution() )
     {
-      throw BadDelay( new_min_delay.get_ms(),
-        "min_delay must be greater than or equal to resolution." );
+      throw BadDelay( new_min_delay.get_ms(), "min_delay must be greater than or equal to resolution." );
     }
     else if ( new_max_delay < new_min_delay )
     {
-      throw BadDelay( new_min_delay.get_ms(),
-        "min_delay must be smaller than or equal to max_delay." );
+      throw BadDelay( new_min_delay.get_ms(), "min_delay must be smaller than or equal to max_delay." );
     }
     else
     {
@@ -130,19 +125,16 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 
   if ( new_delay < Time::get_resolution().get_steps() )
   {
-    throw BadDelay(
-      new_delay_ms, "Delay must be greater than or equal to resolution" );
+    throw BadDelay( new_delay_ms, "Delay must be greater than or equal to resolution" );
   }
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    const bool bad_min_delay =
-      new_delay < kernel().connection_manager.get_min_delay();
-    const bool bad_max_delay =
-      new_delay > kernel().connection_manager.get_max_delay();
-    if ( bad_min_delay || bad_max_delay )
+    const bool bad_min_delay = new_delay < kernel().connection_manager.get_min_delay();
+    const bool bad_max_delay = new_delay > kernel().connection_manager.get_max_delay();
+    if ( bad_min_delay or bad_max_delay )
     {
       throw BadDelay( new_delay_ms,
         "Minimum and maximum delay cannot be changed "
@@ -189,33 +181,29 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 }
 
 void
-nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
-  delay new_delay2 )
+nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1, delay new_delay2 )
 {
   const delay ldelay = std::min( new_delay1, new_delay2 );
   const delay hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
   {
-    throw BadDelay( Time::delay_steps_to_ms( ldelay ),
-      "Delay must be greater than or equal to resolution" );
+    throw BadDelay( Time::delay_steps_to_ms( ldelay ), "Delay must be greater than or equal to resolution" );
   }
 
   if ( kernel().simulation_manager.has_been_simulated() )
   {
-    const bool bad_min_delay =
-      ldelay < kernel().connection_manager.get_min_delay();
-    const bool bad_max_delay =
-      hdelay > kernel().connection_manager.get_max_delay();
+    const bool bad_min_delay = ldelay < kernel().connection_manager.get_min_delay();
+    const bool bad_max_delay = hdelay > kernel().connection_manager.get_max_delay();
     if ( bad_min_delay )
     {
-      throw BadDelay( Time::delay_steps_to_ms( ldelay ),
-        "Minimum delay cannot be changed after Simulate has been called." );
+      throw BadDelay(
+        Time::delay_steps_to_ms( ldelay ), "Minimum delay cannot be changed after Simulate has been called." );
     }
     if ( bad_max_delay )
     {
-      throw BadDelay( Time::delay_steps_to_ms( hdelay ),
-        "Maximum delay cannot be changed after Simulate has been called." );
+      throw BadDelay(
+        Time::delay_steps_to_ms( hdelay ), "Maximum delay cannot be changed after Simulate has been called." );
     }
   }
 

@@ -37,15 +37,16 @@
 namespace mynest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: pif_psc_alpha - Perfect integrate-and-fire neuron model with alpha PSC
                       synapse.
 
 Description:
 pif_psc_alpha implements a non-leaky integrate-and-fire neuron with
-with alpha-function shaped synaptic currents. The threshold crossing is
-followed by an absolute refractory period during which the membrane potential
-is clamped to the resting potential, while synaptic currents evolve normally.
+alpha-function shaped synaptic currents. The threshold crossing is
+followed by an absolute refractory period during which the membrane
+potential is clamped to the resting potential, while synaptic currents
+evolve normally.
 
 The dynamics of the neuron are defined by
 
@@ -87,10 +88,6 @@ Hans Ekkehard Plesser, based on iaf_psc_alpha
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_psc_alpha
 */
-
-/**
- * Non-leaky integrate-and-fire neuron with alpha-shaped PSCs.
- */
 class pif_psc_alpha : public nest::Archiving_Node
 {
 public:
@@ -121,7 +118,7 @@ public:
   /**
    * Used to validate that we can send SpikeEvent to desired target:port.
    */
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool );
+  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool ) override;
 
   /**
    * @defgroup mynest_handle Functions handling incoming events.
@@ -129,32 +126,32 @@ public:
    * defining @c handle() and @c connect_sender() for the given event.
    * @{
    */
-  void handle( nest::SpikeEvent& );         //! accept spikes
-  void handle( nest::CurrentEvent& );       //! accept input current
-  void handle( nest::DataLoggingRequest& ); //! allow recording with multimeter
+  void handle( nest::SpikeEvent& ) override;         //! accept spikes
+  void handle( nest::CurrentEvent& ) override;       //! accept input current
+  void handle( nest::DataLoggingRequest& ) override; //! allow recording with multimeter
 
-  nest::port handles_test_event( nest::SpikeEvent&, nest::port );
-  nest::port handles_test_event( nest::CurrentEvent&, nest::port );
-  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
+  nest::port handles_test_event( nest::SpikeEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::CurrentEvent&, nest::port ) override;
+  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port ) override;
   /** @} */
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   //! Reset parameters and state of neuron.
 
   //! Reset state of neuron.
-  void init_state_( const Node& proto );
+  void init_state_( const Node& proto ) override;
 
   //! Reset internal buffers of neuron.
-  void init_buffers_();
+  void init_buffers_() override;
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void calibrate();
+  void calibrate() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );
+  void update( nest::Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< pif_psc_alpha >;
@@ -165,8 +162,7 @@ private:
    *
    * These are the parameters that can be set by the user through @c SetStatus.
    * They are initialized from the model prototype when the node is created.
-   * Parameters do not change during calls to @c update() and are not reset by
-   * @c ResetNetwork.
+   * Parameters do not change during calls to @c update().
    *
    * @note Parameters_ need neither copy constructor nor @c operator=(), since
    *       all its members are copied properly by the default copy constructor
@@ -203,8 +199,7 @@ private:
    * These are the state variables that are advanced in time by calls to
    * @c update(). In many models, some or all of them can be set by the user
    * through @c SetStatus. The state variables are initialized from the model
-   * prototype when the node is created. State variables are reset by @c
-   * ResetNetwork.
+   * prototype when the node is created.
    *
    * @note State_ need neither copy constructor nor @c operator=(), since
    *       all its members are copied properly by the default copy constructor
@@ -249,7 +244,7 @@ private:
    * Ususally buffers for incoming spikes and data logged for analog recorders.
    * Buffers must be initialized by @c init_buffers_(), which is called before
    * @c calibrate() on the first call to @c Simulate after the start of NEST,
-   * ResetKernel or ResetNetwork.
+   * ResetKernel.
    * @node Buffers_ needs neither constructor, copy constructor or assignment
    *       operator, since it is initialized by @c init_nodes_(). If Buffers_
    *       has members that cannot destroy themselves, Buffers_ will need a
@@ -325,10 +320,7 @@ private:
 };
 
 inline nest::port
-mynest::pif_psc_alpha::send_test_event( nest::Node& target,
-  nest::port receptor_type,
-  nest::synindex,
-  bool )
+mynest::pif_psc_alpha::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
 {
   // You should usually not change the code in this function.
   // It confirms that the target of connection @c c accepts @c SpikeEvent on
@@ -339,8 +331,7 @@ mynest::pif_psc_alpha::send_test_event( nest::Node& target,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -354,8 +345,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::SpikeEvent&,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able
@@ -369,8 +359,7 @@ mynest::pif_psc_alpha::handles_test_event( nest::CurrentEvent&,
 }
 
 inline nest::port
-mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr,
-  nest::port receptor_type )
+mynest::pif_psc_alpha::handles_test_event( nest::DataLoggingRequest& dlr, nest::port receptor_type )
 {
   // You should usually not change the code in this function.
   // It confirms to the connection management system that we are able

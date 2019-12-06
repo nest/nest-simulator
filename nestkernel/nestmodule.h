@@ -26,16 +26,23 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
+#include "sharedptrdatum.h"
+
+#include "generic_factory.h"
+
+#include "generic_factory.h"
 
 namespace nest
 {
 class Node;
+class Parameter;
 
 /**
  * SLI interface of the NEST kernel.
@@ -47,7 +54,9 @@ class NestModule : public SLIModule
 {
 public:
   static SLIType ConnectionType;
-  static SLIType GIDCollectionType;
+  static SLIType NodeCollectionType;
+  static SLIType NodeCollectionIteratorType;
+  static SLIType ParameterType;
 
   NestModule();
   ~NestModule();
@@ -56,6 +65,15 @@ public:
 
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
+
+  static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
+
+  using ParameterFactory = GenericFactory< Parameter >;
+  using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;
+
+  template < class T >
+  static bool register_parameter( const Name& name );
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -89,7 +107,8 @@ public:
    * - @c t  : any token
    * - @c C  : connectiontype
    * - @c cg : connectiongeneratortype
-   * - @c g  : gid collection
+   * - @c g  : node collection
+   * - @c q  : node collection iterator
    *
    * @subsection compoundtypes Codes for compund data types
    * - @c A  : array
@@ -98,8 +117,8 @@ public:
    *
    * @section conventions Conventions
    * -# All interface functions expect and return nodes as vectors
-   *    of GIDs (Vi).
-   * -# Functions must document how they loop over GID vectors and
+   *    of node IDs (Vi).
+   * -# Functions must document how they loop over node ID vectors and
    *    how the function is applied to subnets provided as
    *    arguments.
    * -# Functions that do not require overloading on the SLI level,
@@ -129,35 +148,11 @@ public:
 
   //@{
 
-  class ChangeSubnet_iFunction : public SLIFunction
+  class GetStatus_gFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } changesubnet_ifunction;
-
-  class CurrentSubnetFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } currentsubnetfunction;
-
-  class GetNodes_i_D_b_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getnodes_i_D_b_bfunction;
-
-  class GetLeaves_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getleaves_i_D_bfunction;
-
-  class GetChildren_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getchildren_i_D_bfunction;
+  } getstatus_gfunction;
 
   class GetStatus_iFunction : public SLIFunction
   {
@@ -177,6 +172,18 @@ public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
 
+  class GetMetadata_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getmetadata_gfunction;
+
+  class GetKernelStatus_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getkernelstatus_function;
+
   class SetStatus_idFunction : public SLIFunction
   {
   public:
@@ -188,6 +195,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } setstatus_CDfunction;
+
+  class SetKernelStatus_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setkernelstatus_Dfunction;
 
   class Cva_CFunction : public SLIFunction
   {
@@ -255,29 +268,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } create_l_ifunction;
 
-  class RestoreNodes_aFunction : public SLIFunction
+  class GetNodes_D_b : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } restorenodes_afunction;
-
-  class DataConnect_i_D_sFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_i_D_sfunction;
-
-  class DataConnect_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_afunction;
-
-  class Disconnect_i_i_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } disconnect_i_i_lfunction;
+  } getnodes_D_bfunction;
 
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
@@ -291,27 +286,32 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
 
+  class Connect_nonunique_ia_ia_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_nonunique_ia_ia_Dfunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } resetkernelfunction;
 
-  class ResetNetworkFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resetnetworkfunction;
-
   class MemoryInfoFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } memoryinfofunction;
 
-  class PrintNetworkFunction : public SLIFunction
+  class PrintNodesFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } printnetworkfunction;
+  } printnodesfunction;
+
+  class PrintNodesToStreamFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } printnodestostreamfunction;
 
   class RankFunction : public SLIFunction
   {
@@ -327,11 +327,6 @@ public:
   {
     void execute( SLIInterpreter* ) const;
   } setfakenumprocesses_ifunction;
-
-  class SetNumRecProcesses_iFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } setnumrecprocesses_ifunction;
 
   class SyncProcessesFunction : public SLIFunction
   {
@@ -370,11 +365,6 @@ public:
   } mpiabort_ifunction;
 #endif
 
-  class GetVpRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getvprngfunction;
-
   class GetGlobalRngFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -385,25 +375,100 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Cfunction;
 
-  class Cvgidcollection_i_iFunction : public SLIFunction
+  class Cvnodecollection_i_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_i_ifunction;
+  } cvnodecollection_i_ifunction;
 
-  class Cvgidcollection_iaFunction : public SLIFunction
+  class Cvnodecollection_iaFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_iafunction;
+  } cvnodecollection_iafunction;
 
-  class Cvgidcollection_ivFunction : public SLIFunction
+  class Cvnodecollection_ivFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_ivfunction;
+  } cvnodecollection_ivfunction;
+
+  class Cva_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cva_gfunction;
 
   class Size_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } size_gfunction;
+
+  class ValidQ_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } validq_gfunction;
+
+  class Join_g_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } join_g_gfunction;
+
+  class MemberQ_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } memberq_g_ifunction;
+
+  class Find_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } find_g_ifunction;
+
+  class eq_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_gfunction;
+
+  class BeginIterator_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } beginiterator_gfunction;
+
+  class EndIterator_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } enditerator_gfunction;
+
+  class GetNodeID_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } getnodeid_qfunction;
+
+  class GetNodeIDModelID_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } getnodeidmodelid_qfunction;
+
+  class Next_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } next_qfunction;
+
+  class Eq_q_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_q_qfunction;
+
+  class Lt_q_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } lt_q_qfunction;
+
+  class Get_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } get_g_ifunction;
+
+  class Take_g_aFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } take_g_afunction;
 
 #ifdef HAVE_MUSIC
   class SetAcceptableLatencyFunction : public SLIFunction
@@ -441,8 +506,144 @@ public:
     void execute( SLIInterpreter* ) const;
   } disablestructuralplasticity_function;
 
+  class SetStdpEps_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setstdpeps_dfunction;
+
+  class Mul_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } mul_P_Pfunction;
+
+  class Div_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } div_P_Pfunction;
+
+  class Add_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } add_P_Pfunction;
+
+  class Sub_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sub_P_Pfunction;
+
+  class Compare_P_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } compare_P_P_Dfunction;
+
+  class Conditional_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } conditional_P_P_Pfunction;
+
+  class Min_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } min_P_dfunction;
+
+  class Max_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } max_P_dfunction;
+
+  class Redraw_P_d_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } redraw_P_d_dfunction;
+
+  class Exp_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } exp_Pfunction;
+
+  class Sin_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sin_Pfunction;
+
+  class Cos_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cos_Pfunction;
+
+  class Pow_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } pow_P_dfunction;
+
+  class Dimension2d_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension2d_P_Pfunction;
+
+  class Dimension3d_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension3d_P_P_Pfunction;
+
+  class CreateParameter_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createparameter_Dfunction;
+
+  class GetValue_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getvalue_Pfunction;
+
+  class IsSpatial_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } isspatial_Pfunction;
+
+  class Apply_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_Dfunction;
+
+  class Apply_P_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_gfunction;
+
+private:
+  static ParameterFactory& parameter_factory_();
+
   //@}
 };
+
+template < class T >
+inline bool
+NestModule::register_parameter( const Name& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
 
 } // namespace
 

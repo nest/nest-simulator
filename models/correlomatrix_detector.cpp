@@ -27,6 +27,9 @@
 #include <functional> // for bind2nd
 #include <numeric>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -70,10 +73,8 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
 nest::correlomatrix_detector::State_::State_()
   : n_events_( 1, 0 )
   , incoming_()
-  , covariance_( 1,
-      std::vector< std::vector< double > >( 1, std::vector< double >() ) )
-  , count_covariance_( 1,
-      std::vector< std::vector< long > >( 1, std::vector< long >() ) )
+  , covariance_( 1, std::vector< std::vector< double > >( 1, std::vector< double >() ) )
+  , count_covariance_( 1, std::vector< std::vector< long > >( 1, std::vector< long >() ) )
 {
 }
 
@@ -95,8 +96,7 @@ nest::correlomatrix_detector::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::n_events ] =
-    IntVectorDatum( new std::vector< long >( n_events_ ) );
+  ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
 
   ArrayDatum* C = new ArrayDatum;
   ArrayDatum* CountC = new ArrayDatum;
@@ -106,10 +106,8 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
     ArrayDatum* CountC_i = new ArrayDatum;
     for ( size_t j = 0; j < covariance_[ i ].size(); ++j )
     {
-      C_i->push_back( new DoubleVectorDatum(
-        new std::vector< double >( covariance_[ i ][ j ] ) ) );
-      CountC_i->push_back( new IntVectorDatum(
-        new std::vector< long >( count_covariance_[ i ][ j ] ) ) );
+      C_i->push_back( new DoubleVectorDatum( new std::vector< double >( covariance_[ i ][ j ] ) ) );
+      CountC_i->push_back( new IntVectorDatum( new std::vector< long >( count_covariance_[ i ][ j ] ) ) );
     }
     C->push_back( *C_i );
     CountC->push_back( *CountC_i );
@@ -119,14 +117,13 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
-  const correlomatrix_detector& n )
+nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const correlomatrix_detector& n, Node* node )
 {
   bool reset = false;
   double t;
   long N;
 
-  if ( updateValue< long >( d, names::N_channels, N ) )
+  if ( updateValueParam< long >( d, names::N_channels, N, node ) )
   {
     if ( N < 1 )
     {
@@ -139,25 +136,25 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( updateValue< double >( d, names::delta_tau, t ) )
+  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
+  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
+  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
+  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -170,8 +167,7 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
 
   if ( not tau_max_.is_multiple_of( delta_tau_ ) )
   {
-    throw TimeMultipleRequired(
-      n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
+    throw TimeMultipleRequired( n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
   }
 
   if ( delta_tau_.get_steps() % 2 != 1 )
@@ -183,9 +179,7 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
 }
 
 void
-nest::correlomatrix_detector::State_::set( const DictionaryDatum&,
-  const Parameters_&,
-  bool )
+nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* node )
 {
 }
 
@@ -211,10 +205,8 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
     count_covariance_[ i ].resize( p.N_channels_ );
     for ( long j = 0; j < p.N_channels_; ++j )
     {
-      covariance_[ i ][ j ].resize(
-        1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
-      count_covariance_[ i ][ j ].resize(
-        1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
+      covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
+      count_covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
     }
   }
 }
@@ -231,13 +223,11 @@ nest::correlomatrix_detector::correlomatrix_detector()
 {
   if ( not P_.delta_tau_.is_step() )
   {
-    throw InvalidDefaultResolution(
-      get_name(), names::delta_tau, P_.delta_tau_ );
+    throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
   }
 }
 
-nest::correlomatrix_detector::correlomatrix_detector(
-  const correlomatrix_detector& n )
+nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detector& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -257,8 +247,7 @@ nest::correlomatrix_detector::correlomatrix_detector(
 void
 nest::correlomatrix_detector::init_state_( const Node& proto )
 {
-  const correlomatrix_detector& pr =
-    downcast< correlomatrix_detector >( proto );
+  const correlomatrix_detector& pr = downcast< correlomatrix_detector >( proto );
 
   device_.init_state( pr.device_ );
   S_ = pr.S_;
@@ -308,9 +297,8 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // find first appearence of element which is greater than spike_i
     const Spike_ sp_i( spike_i, e.get_multiplicity() * e.get_weight(), sender );
-    SpikelistType::iterator insert_pos = std::find_if( S_.incoming_.begin(),
-      S_.incoming_.end(),
-      std::bind2nd( std::greater< Spike_ >(), sp_i ) );
+    SpikelistType::iterator insert_pos = std::find_if(
+      S_.incoming_.begin(), S_.incoming_.end(), std::bind( std::greater< Spike_ >(), std::placeholders::_1, sp_i ) );
 
     // insert before the position we have found
     // if no element greater found, insert_pos == end(), so append at the end of
@@ -318,14 +306,12 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     S_.incoming_.insert( insert_pos, sp_i );
 
     SpikelistType& otherSpikes = S_.incoming_;
-    const double tau_edge =
-      P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
+    const double tau_edge = P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 
     // throw away all spikes which are too old to
     // enter the correlation window
     const delay min_delay = kernel().connection_manager.get_min_delay();
-    while ( not otherSpikes.empty()
-      && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
+    while ( not otherSpikes.empty() && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
     {
       otherSpikes.pop_front();
     }
@@ -343,9 +329,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
       S_.n_events_[ sender ]++; // count this spike
 
-      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin();
-            spike_j != otherSpikes.end();
-            ++spike_j )
+      for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
         size_t bin;
         long other = spike_j->receptor_channel_;
@@ -364,36 +348,29 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
         if ( sender_ind <= other_ind )
         {
-          bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps()
-                                    - std::abs( spike_i - spike_j->timestep_ ) )
+          bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
                         / P_.delta_tau_.get_steps() );
         }
         else
         {
-          bin = std::floor( ( 0.5 * P_.delta_tau_.get_steps()
-                              + std::abs( spike_i - spike_j->timestep_ ) )
+          bin = std::floor( ( 0.5 * P_.delta_tau_.get_steps() + std::abs( spike_i - spike_j->timestep_ ) )
             / P_.delta_tau_.get_steps() );
         }
 
         if ( bin < S_.covariance_[ sender_ind ][ other_ind ].size() )
         {
           // weighted histogram
-          S_.covariance_[ sender_ind ][ other_ind ][ bin ] +=
-            e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-          if ( bin == 0
-            && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
+          S_.covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
+          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
           {
             S_.covariance_[ other_ind ][ sender_ind ][ bin ] +=
               e.get_multiplicity() * e.get_weight() * spike_j->weight_;
           }
           // pure (unweighted) count histogram
-          S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] +=
-            e.get_multiplicity();
-          if ( bin == 0
-            && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
+          S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity();
+          if ( bin == 0 && ( spike_i - spike_j->timestep_ != 0 || other != sender ) )
           {
-            S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] +=
-              e.get_multiplicity();
+            S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] += e.get_multiplicity();
           }
         }
       }

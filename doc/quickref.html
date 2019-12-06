@@ -354,16 +354,8 @@ facilities.</p>
       <td>Simulate n milliseconds.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/ResumeSimulation.html">ResumeSimulation</a></td>
-      <td>Resume an interrupted simulation.</td>
-    </tr>
-    <tr>
       <td width="25%"><a href="help/cc/ResetKernel.html">ResetKernel</a></td>
       <td>Put the simulation kernel back to its initial state.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/ResetNetwork.html">ResetNetwork</a></td>
-      <td>Reset the dynamic state of the network.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/sli/reset.html">reset</a></td>
@@ -444,10 +436,6 @@ properties.</p>
       <td width="25%"><a href="help/cc/Create.html">Create</a></td>
       <td>Create network elements in the current subnet.</td>
     </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/LayoutNetwork.html">LayoutNetwork</a></td>
-      <td>Create a nested multi-dimensional network structure in the current subnet.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -485,15 +473,15 @@ properties.</p>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_psc_alpha.html">hh_psc_alpha</a></td>
-      <td>Hodgkin Huxley neuron model.</td>
+      <td>Hodgkin-Huxley neuron model.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_psc_alpha_gap.html">hh_psc_alpha_gap</a></td>
-      <td>Hodgkin Huxley neuron model with gap-junction support.</td>
+      <td>Hodgkin-Huxley neuron model with gap-junction support.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/hh_cond_exp_traub.html">hh_cond_exp_traub</a></td>
-      <td>Hodgin Huxley based model, Traub modified.</td>
+      <td>Hodgkin-Huxley model for Brette et al (2007) review.</td>
     </tr>
   </tbody>
 </table>
@@ -610,10 +598,6 @@ connected to their targets like a neuron.</p>
       <td width="25%"><a href="help/sli/Connect.html">Connect</a></td>
       <td>Connect two network nodes.</td>
     </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/DataConnect.html">DataConnect</a></td>
-      <td>Build connections from explicit specifications.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -628,10 +612,6 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/cc/topology::ConnectLayers.html">topology::ConnectLayers</a></td>
       <td>Connect two layers.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/topology::GetElement.html">topology::GetElement</a></td>
-      <td>Return node GID at specified layer position.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/cc/topology::GetPosition.html">topology::GetPosition</a></td>
@@ -663,44 +643,8 @@ connected to their targets like a neuron.</p>
 <table class="commands">
   <tbody>
     <tr>
-      <td width="25%"><a href="help/cc/CurrentSubnet.html">CurrentSubnet</a></td>
-      <td>Return the GID of the current network node.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/ChangeSubnet.html">ChangeSubnet</a></td>
-      <td>Change the curent working subnet to a specified position.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/PrintNetwork.html">PrintNetwork</a></td>
-      <td>Print network tree in readable form.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/NetworkDimensions.html">NetworkDimensions</a></td>
-      <td>Returns an array with the dimensions of a structured subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalNodes.html">GetGlobalNodes</a></td>
-      <td>Return IDs of all nodes of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalLeaves.html">GetGlobalLeaves</a></td>
-      <td>Return IDs of all leaves of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetGlobalChildren.html">GetGlobalChildren</a></td>
-      <td>Return IDs of all immediate child nodes of a subnet.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalNodes.html">GetLocalNodes</a></td>
-      <td>Return IDs of all nodes of a subnet local to the MPI process executing the command.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalLeaves.html">GetLocalLeaves</a></td>
-      <td>Return IDs of all leaves of a subnet local to the MPI process executing the command.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/GetLocalChildren.html">GetLocalChildren</a></td>
-      <td>Return IDs of all immediate child nodes of a subnet local to the MPI process executing the command.</td>
+      <td width="25%"><a href="help/cc/PrintNodes.html">PrintNodes</a></td>
+      <td>Print node ID ranges and model names of the nodes in the network.</td>
     </tr>
   </tbody>
 </table>
@@ -747,10 +691,6 @@ connected to their targets like a neuron.</p>
     <tr>
       <td width="25%"><a href="help/cc/ResetKernel.html">ResetKernel</a></td>
       <td>Put the simulation kernel back to its initial state.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/ResetNetwork.html">ResetNetwork</a></td>
-      <td>Reset the dynamic state of the network.</td>
     </tr>
     <tr>
       <td width="25%"><a href="help/sli/reset.html">reset</a></td>
@@ -3461,7 +3401,7 @@ not be restored to the state before the procedure was called.</p>
 </table>
 
 <p style="text-align:center">
-  &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+  &copy; 2004 <a href="https://www.nest-initiative.org">The NEST Initiative</a>
 </p>
 
 </body>

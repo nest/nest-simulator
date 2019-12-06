@@ -26,7 +26,7 @@ import numpy
 import unittest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class QuantalSTPSynapseTestCase(unittest.TestCase):
     """Compare quantal_stp_synapse with its deterministic equivalent."""
 
@@ -73,7 +73,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
 
         voltmeter = nest.Create("voltmeter", 2)
-        nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})
+
         t_tot = 1500.
 
         # the following is a dry run trial so that the synapse dynamics is
@@ -82,8 +82,8 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Simulate(t_tot)
 
         # Now we connect the voltmeters
-        nest.Connect([voltmeter[0]], [neuron[0]])
-        nest.Connect([voltmeter[1]], [neuron[1]])
+        nest.Connect(voltmeter[:1], neuron[:1])
+        nest.Connect(voltmeter[1:], neuron[1:])
 
         for t in range(n_trials):
             t_net = nest.GetKernelStatus('time')
@@ -92,9 +92,9 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-        vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-        vm_reference = numpy.array(nest.GetStatus(
-            [voltmeter[0]], 'events')[0]['V_m'])
+        vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+        vm_reference = numpy.array(nest.GetStatus(voltmeter[0],
+                                                  'events')[0]['V_m'])
 
         assert(len(vm) % n_trials == 0)
         n_steps = int(len(vm) / n_trials)

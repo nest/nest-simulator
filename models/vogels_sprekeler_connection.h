@@ -23,39 +23,6 @@
 #ifndef VOGELS_SPREKELER_CONNECTION_H
 #define VOGELS_SPREKELER_CONNECTION_H
 
-/* BeginDocumentation
-  Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
-  dependent
-   plasticity with constant depression.
-
-  Description:
-   vogels_sprekeler_synapse is a connector to create synapses with symmetric
-   spike time dependent plasticity and constant depression (as defined in [1]).
-   The learning rule is symmetric, i.e., the synapse is strengthened
-   irrespective of the order of the pre and post-synaptic spikes. Each
-   pre-synaptic spike also causes a constant depression of the synaptic weight
-   which differentiates this rule from other classical stdp rules.
-
-  Parameters:
-   tau        double - Time constant of STDP window, potentiation in ms
-   Wmax       double - Maximum allowed weight
-   eta        double - learning rate
-   alpha      double - constant depression (= 2 * tau * target firing rate in
-  [1])
-
-  Transmits: SpikeEvent
-
-  References:
-  [1] Vogels et al. (2011) Inhibitory Plasticity Balances Excitation and
-      Inhibition in Sensory Pathways and Memory Networks.
-      Science Vol. 334, Issue 6062, pp. 1569-1573
-      DOI: 10.1126/science.1211095
-
-  FirstVersion: January 2016
-  Author: Ankur Sinha
-  SeeAlso: synapsedict
-*/
-
 // C-header for math.h since copysign() is in C99 but not C++98
 #include <math.h>
 #include "connection.h"
@@ -63,6 +30,50 @@
 namespace nest
 {
 
+/** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+
+Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
+dependent
+plasticity with constant depression.
+
+Description:
+vogels_sprekeler_synapse is a connector to create synapses with symmetric
+spike time dependent plasticity and constant depression (as defined in [1]).
+The learning rule is symmetric, i.e., the synapse is strengthened
+irrespective of the order of the pre and post-synaptic spikes. Each
+pre-synaptic spike also causes a constant depression of the synaptic weight
+which differentiates this rule from other classical stdp rules.
+
+Parameters:
+
+\verbatim embed:rst
+======  ======  =========================================================
+ tau    ms      Time constant of STDP window, potentiation
+ Wmax   real    Maximum allowed weight
+ eta    real    Learning rate
+ alpha  real    Constant depression (= 2 * tau * target firing rate in
+                [1])
+======  ======  =========================================================
+\endverbatim
+
+Transmits: SpikeEvent
+
+References:
+
+\verbatim embed:rst
+.. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
+       inhibition in sensory pathways and memory networks. Science,
+       334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
+\endverbatim
+
+FirstVersion: January 2016
+
+Author: Ankur Sinha
+
+SeeAlso: synapsedict
+*/
 // connections are templates of target identifier type (used for pointer /
 // target index addressing)
 // derived from generic connection template
@@ -114,10 +125,7 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -134,17 +142,13 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double t_lastspike,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike - get_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_delay(), get_delay() );
   }
 
   void
@@ -175,6 +179,8 @@ private:
   double eta_;
   double Wmax_;
   double Kplus_;
+
+  double t_lastspike_;
 };
 
 
@@ -187,10 +193,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  double t_lastspike,
-  const CommonSynapseProperties& )
+VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -204,8 +207,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history(
-    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // presynaptic neuron j, post synaptic neuron i
   // Facilitation for each post synaptic spike
@@ -213,12 +215,11 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   double minus_dt;
   while ( start != finish )
   {
-    minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     ++start;
-    if ( minus_dt == 0 )
-    {
-      continue;
-    }
+    // get_history() should make sure that
+    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_ ) );
   }
 
@@ -227,20 +228,21 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // Facilitation and constant depression
   // Getting kvalue at required time already for deferred processing, so no
   // need to transform it to the current time, and so, no exponential required
-  weight_ =
-    facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  weight_ = facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
   weight_ = depress_( weight_ );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
   // use accessor functions (inherited from Connection< >) to obtain delay in
   // steps and rport
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 
   // exponential part for the decay, addition of one for each spike
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_ ) + 1.0;
+
+  t_lastspike_ = t_spike;
 }
 
 
@@ -253,6 +255,7 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
   , eta_( 0.001 )
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
@@ -266,13 +269,13 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
   , eta_( rhs.eta_ )
   , Wmax_( rhs.Wmax_ )
   , Kplus_( rhs.Kplus_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -286,9 +289,7 @@ VogelsSprekelerConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -298,9 +299,9 @@ VogelsSprekelerConnection< targetidentifierT >::set_status(
   updateValue< double >( d, names::Wmax, Wmax_ );
   updateValue< double >( d, names::Kplus, Kplus_ );
 
-  // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  // if the weight_ is not 0, we check to ensure that weight_ and Wmax_ are of
+  // the same sign
+  if ( weight_ != 0 and ( std::signbit( weight_ ) != std::signbit( Wmax_ ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

@@ -1,0 +1,93 @@
+
+body {
+	font-family: Helvetica, Arial, sans-serif;
+	margin-left: 40px;
+	margin-right: 40px;
+	margin-top: 80px;
+}
+
+th {
+   padding-left: 5px;
+   padding-right: 5px;
+   background: #e0e0e0;
+}
+td {
+   padding-left: 5px;
+   padding-right: 5px;
+}
+table {
+   border: 1px solid #e0e0e0;
+   margin: 20px;
+}
+div#TOC a {
+	color: #006491; /* MidnightBlue */
+}
+div#TOC > ul > li > a { /* first level toc links */
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+div.figure {
+	text-align: center;
+}
+p.caption {
+	font-size: 0.9em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	color: #808080;
+	font-style: italic;
+	text-align: left;
+}
+math {
+	font-size: 1.15em;
+}
+a {
+	color: #FF6633;
+	text-decoration: none;
+}
+
+h1.title {
+	color: #FF6633;
+	text-align: center;
+	border-bottom: none;
+}
+
+h1.subtitle {
+	color: #404040;
+	font-size: 1.2em;
+	text-align: center;
+	border-bottom: none;
+}
+
+h2.author {
+	display: inline;
+	margin-left: 20px;
+	margin-right: 20px;
+	font-size: 12pt;
+	color: #404040;
+	font-weight: normal;
+}
+
+div#header {
+	text-align: center;
+	justify-content: center;
+}
+
+h3.date {
+	text-align: center;
+}
+
+h1 {
+	margin-top: 60px;
+	border-bottom: 1px solid gray;
+}
+
+pre {
+	background: #eeeeee;
+	padding: 5px;
+}
+
+dt {
+	font-weight: bold;
+}

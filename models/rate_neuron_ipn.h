@@ -41,34 +41,56 @@
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
-
 namespace nest
 {
 
-/**
- * Base class for rate model with input noise.
- *
- * This template class needs to be instantiated with a class
- * containing the following functions:
- *  - input (nonlinearity that is applied to the input)
- *  - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- *  - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
- *
- * The boolean parameter linear_summation determines whether the input function
- * is applied to the summed up incoming connections (= True, default value) or
- * to each input individually (= False). In case of multiplicative coupling the
- * nonlinearity is applied separately to the summed excitatory and inhibitory
- * inputs if linear_summation=True.
- *
- * References:
- *
- * Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- * Bolten, M., Helias, M. and Diesmann, M. (2017).
- * Integration of Continuous-Time Dynamics in a
- * Spiking Neural Network Simulator.
- * Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
- *
- * @see lin_rate, tanh_rate, threshold_lin_rate
+/** @BeginDocumentation
+@ingroup Neurons
+@ingroup rate
+
+Name: rate_neuron_ipn - Base class for rate model with input noise.
+
+Description:
+
+Base class for rate model with input noise of the form
+@f[
+\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+                + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
+@f]
+or
+@f[
+\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+                + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
+                \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) \\
+                + \text{mult_coupling_in}( X_i(t) ) \cdot \\
+                \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt \\
+                + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
+@f]
+This template class needs to be instantiated with a class
+containing the following functions:
+ - input (nonlinearity that is applied to the input, either psi or phi)
+ - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
+ - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter linear_summation determines whether the input function
+is applied to the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+In case of multiplicative coupling the nonlinearity is applied separately
+to the summed excitatory and inhibitory inputs if linear_summation=True.
+
+References:
+
+\verbatim embed:rst
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
+       Diesmann M (2017). Integration of continuous-time dynamics in a
+       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+\endverbatim
+
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
  */
 template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
@@ -134,18 +156,17 @@ private:
    */
   struct Parameters_
   {
-
     /** Time constant in ms. */
     double tau_;
 
     /** Passive decay rate in ms. */
     double lambda_;
 
-    /** Gaussian white noise standard deviation. */
-    double std_;
+    /** Noise parameter. */
+    double sigma_;
 
-    /** Gaussian white noise mean.*/
-    double mean_;
+    /** Mean input.*/
+    double mu_;
 
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
@@ -166,7 +187,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -188,7 +209,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -205,20 +226,16 @@ private:
     // RateConnectionDelayed from excitatory neurons
     RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
     // RateConnectionDelayed from inhibitory neurons
-    std::vector< double >
-      instant_rates_ex_; //!< buffer for rate vector received
+    std::vector< double > instant_rates_ex_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous from excitatory neurons
-    std::vector< double >
-      instant_rates_in_; //!< buffer for rate vector received
+    std::vector< double > instant_rates_in_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous from inhibitory neurons
-    std::vector< double >
-      last_y_values; //!< remembers y_values from last wfr_update
+    std::vector< double > last_y_values;  //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in
     // order to apply the same random
     // numbers in each iteration when wfr
     // is used
-    UniversalDataLogger< rate_neuron_ipn >
-      logger_; //!< Logger for all analog data
+    UniversalDataLogger< rate_neuron_ipn > logger_; //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -268,18 +285,14 @@ private:
 
 template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TNonlinearities >::update( Time const& origin,
-  const long from,
-  const long to )
+rate_neuron_ipn< TNonlinearities >::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }
 
 template < class TNonlinearities >
 inline bool
-rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin,
-  const long from,
-  const long to )
+rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
   State_ old_state = S_; // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
@@ -290,9 +303,7 @@ rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin,
 
 template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TNonlinearities >::handles_test_event(
-  InstantaneousRateConnectionEvent&,
-  rport receptor_type )
+rate_neuron_ipn< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -303,9 +314,7 @@ rate_neuron_ipn< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TNonlinearities >::handles_test_event(
-  DelayedRateConnectionEvent&,
-  rport receptor_type )
+rate_neuron_ipn< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -316,8 +325,7 @@ rate_neuron_ipn< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+rate_neuron_ipn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -343,9 +351,9 @@ inline void
 rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -357,7 +365,7 @@ rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

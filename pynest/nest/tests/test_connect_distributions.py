@@ -23,7 +23,7 @@ import unittest
 import nest
 from . import test_connect_helpers as hf
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 class TestDists(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestDists(unittest.TestCase):
     label = 'weight'
     # defauly synapse dictionary
     model = 'static_synapse'
-    syn_dict = {'model': model}
+    syn_dict = {'synapse_model': model}
     # sizes of populations
     Ndist1 = 40
     Ndist2 = 40
@@ -42,8 +42,8 @@ class TestDists(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.sr("statusdict/threading :: (no) eq not")
-        if not nest.spp():
+        nest.ll_api.sr("statusdict/threading :: (no) eq not")
+        if not nest.ll_api.spp():
             # no multi-threading
             nest.SetKernelStatus({'grng_seed': 120,
                                   'rng_seeds': [576]})
@@ -55,8 +55,8 @@ class TestDists(unittest.TestCase):
         pass
 
     def setUpNetwork(self, conn_params=None, syn_dict=None):
-        conn_params['autapses'] = False
-        conn_params['multapses'] = False
+        conn_params['allow_autapses'] = False
+        conn_params['allow_multapses'] = False
         self.pop1 = nest.Create('iaf_psc_alpha', self.Ndist1)
         self.pop2 = nest.Create('iaf_psc_alpha', self.Ndist2)
         nest.Connect(self.pop1, self.pop2, conn_params, syn_dict)
@@ -261,9 +261,11 @@ class TestDists(unittest.TestCase):
         self.assertTrue(is_dist)
 
 
-if __name__ == '__main__':
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestDists)
-    unittest.TextTestRunner(verbosity=2).run(suite)
-    # suite = unittest.TestSuite()
-    # suite.addTest(TestDists('testGslBinomialDist'))
-    # unittest.TextTestRunner().run(suite)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

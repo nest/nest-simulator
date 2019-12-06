@@ -32,6 +32,7 @@
 #define ARCHIVING_NODE_H
 
 // C++ includes:
+#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
@@ -88,7 +89,7 @@ public:
 
   /**
    * \fn int get_synaptic_elements_vacant(Name n)
-   * get the number of synaptic elements of type n which are available
+   * Get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
   int get_synaptic_elements_vacant( Name n ) const;
@@ -128,23 +129,46 @@ public:
 
   /**
    * \fn double get_K_value(long t)
-   * return the Kminus value at t (in ms).
+   * return the Kminus (synaptic trace) value at t (in ms). When the trace is
+   * requested at the exact same time that the neuron emits a spike, the trace
+   * value as it was just before the spike is returned.
    */
   double get_K_value( double t );
 
   /**
-   * write the Kminus and triplet_Kminus values at t (in ms) to
-   * the provided locations.
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& nearest_neighbor_Kminus,
+   *   double& triplet_Kminus )
+   * write the Kminus (eligibility trace for STDP),
+   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
+   *   like Kminus, but increased to 1, rather than by 1, on a spike
+   *   occurrence),
+   * and triplet_Kminus
+   * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
+  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
 
-  void get_K_values( double t, double& Kminus, double& triplet_Kminus );
+  /**
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& triplet_Kminus )
+   * The legacy version of the function, kept for compatibility
+   * after changing the function signature in PR #865.
+   * @throws UnexpectedEvent
+   */
+  void
+  get_K_values( double t, double& Kminus, double& triplet_Kminus )
+  {
+    double nearest_neighbor_Kminus_to_discard;
+    get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, triplet_Kminus );
+  }
 
   /**
    * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
-
   double get_triplet_K_value( const std::deque< histentry >::iterator& iter );
 
   /**
@@ -165,7 +189,7 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read );
+  void register_stdp_connection( double t_first_read, double delay );
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
@@ -195,12 +219,12 @@ protected:
    */
   void clear_history();
 
-private:
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
   // read the spikehistory for a given point in time
   size_t n_incoming_;
 
+private:
   // sum exp(-(t-ti)/tau_minus)
   double Kminus_;
 
@@ -213,6 +237,9 @@ private:
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
+
+  double max_delay_;
+  double trace_;
 
   double last_spike_;
 

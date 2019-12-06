@@ -38,8 +38,7 @@ Vose::Vose( std::vector< double > dist )
 
   // We accept distributions that do not sum to 1.
   double sum = 0.0;
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
-        ++it )
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
   {
     sum += *it;
   }
@@ -49,8 +48,7 @@ Vose::Vose( std::vector< double > dist )
 
   index i = 0;
 
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
-        ++it )
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
   {
     if ( *it <= sum / n )
     {
@@ -63,8 +61,7 @@ Vose::Vose( std::vector< double > dist )
   }
 
   // Generate aliases
-  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() );
-        ++small )
+  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() ); ++small )
   {
 
     small->tails = large->heads; // 'tails' is the alias

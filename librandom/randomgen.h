@@ -111,9 +111,9 @@
  * double drand()              [0, 1)
  *        ()                   [0, 1)
  * double drandpos()           (0, 1)
- * ulong  ulrand(N)            [0, N-1]
+ * unsigned long  ulrand(N)            [0, N-1]
  *
- * void   seed(N)              seed the RNG, N: ulong
+ * void   seed(N)              seed the RNG, N: unsigned long
  * -------------------------------------------------------
  * @endverbatim
  *
@@ -195,8 +195,7 @@
 #include <cmath>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
+#include <memory>
 
 // Includes from librandom:
 #include "librandom_names.h"
@@ -211,12 +210,12 @@ namespace librandom
 class RandomGen;
 
 /**
- * Common lock-pointer type for RNG
+ * Common shared_ptr type for RNG
  *
- * A safe pointer that should be used instead of RandomGen*
+ * A smart pointer that should be used instead of RandomGen*
  * in user code to manage random number generators.
  */
-typedef lockPTR< RandomGen > RngPtr;
+typedef std::shared_ptr< RandomGen > RngPtr;
 
 /**
  * Abstract base class for all random generator objects
@@ -350,7 +349,7 @@ RandomGen::drandpos( void )
 inline unsigned long
 RandomGen::ulrand( const unsigned long n )
 {
-  // no check for size of n required, since n is ulong
+  // no check for size of n required, since n is unsigned long
   return static_cast< unsigned long >( std::floor( n * drand() ) );
 }
 }

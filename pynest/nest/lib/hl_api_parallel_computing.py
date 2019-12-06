@@ -23,7 +23,17 @@
 Functions for parallel computing
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
+
+__all__ = [
+    'NumProcesses',
+    'Rank',
+    'SetAcceptableLatency',
+    'SetMaxBuffered',
+    'SyncProcesses',
+]
 
 
 @check_stack
@@ -34,6 +44,16 @@ def Rank():
     -------
     int:
         MPI rank of the local process
+
+    Note
+    ----
+    DO NOT USE `Rank()` TO EXECUTE ANY FUNCTION IMPORTED FROM THE `nest`
+    MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
+
+    This will lead to unpredictable behavior. Symptoms may be an
+    error message about non-synchronous global random number generators
+    or deadlocks during simulation. In the worst case, the simulation
+    may complete but generate nonsensical results.
     """
 
     sr("Rank")
@@ -55,26 +75,8 @@ def NumProcesses():
 
 
 @check_stack
-def SetNumRecProcesses(nrp):
-    """Set the number of recording MPI processes.
-
-    Usually, spike detectors are distributed over all processes and record
-    from local neurons only. If a number of processes is dedicated to spike
-    detection, each spike detector is hosted on one of these processes and
-    records globally from all simulating processes.
-
-    Parameters
-    ----------
-    nrp : int
-        Number of recording MPI processes
-    """
-
-    sr("%d SetNumRecProcesses" % nrp)
-
-
-@check_stack
 def SetAcceptableLatency(port_name, latency):
-    """Set the acceptable latency (in ms) for a MUSIC port.
+    """Set the acceptable `latency` (in ms) for a MUSIC port.
 
     Parameters
     ----------
@@ -104,3 +106,11 @@ def SetMaxBuffered(port_name, size):
     sps(kernel.SLILiteral(port_name))
     sps(size)
     sr("SetMaxBuffered")
+
+
+@check_stack
+def SyncProcesses():
+    """Synchronize all MPI processes.
+    """
+
+    sr("SyncProcesses")

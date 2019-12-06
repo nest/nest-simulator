@@ -37,25 +37,31 @@
 
 namespace nest
 {
-/* BeginDocumentation
+
+/** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingreoup psc
+
 Name: iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
                                  multiple ports.
 
 Description:
 
- iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
- On the postsynapic side, there can be arbitrarily many synaptic
- time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
+iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
+On the postsynapic side, there can be arbitrarily many synaptic
+time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
 
- This can be reached by specifying separate receptor ports, each for
- a different time constant. The port number has to match the respective
- "receptor_type" in the connectors.
+This can be reached by specifying separate receptor ports, each for
+a different time constant. The port number has to match the respective
+"receptor_type" in the connectors.
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
+
 SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
 iaf_psc_alpha_multisynapse
 */
@@ -106,7 +112,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double Tau_;
 
@@ -144,7 +149,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   }; // Parameters_
 
   // ----------------------------------------------------------------
@@ -194,7 +199,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double );
+    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
   }; // State_
 
   // ----------------------------------------------------------------
@@ -258,8 +263,7 @@ private:
   DynamicRecordablesMap< iaf_psc_exp_multisynapse > recordablesMap_;
 
   // Data Access Functor getter
-  DataAccessFunctor< iaf_psc_exp_multisynapse > get_data_access_functor(
-    size_t elem );
+  DataAccessFunctor< iaf_psc_exp_multisynapse > get_data_access_functor( size_t elem );
   inline double
   get_state_element( size_t elem )
   {
@@ -291,10 +295,7 @@ iaf_psc_exp_multisynapse::Parameters_::n_receptors_() const
 }
 
 inline port
-iaf_psc_exp_multisynapse::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -303,8 +304,7 @@ iaf_psc_exp_multisynapse::send_test_event( Node& target,
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -314,8 +314,7 @@ iaf_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
 }
 
 inline port
-iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -20,48 +20,6 @@
  *
  */
 
-
-/* BeginDocumentation
-Name: gap_junction - Synapse type for gap-junction connections.
-
-Description:
- gap_junction is a connector to create gap junctions between pairs
- of neurons. Gap junctions are bidirectional connections.
- In order to create one accurate gap-junction connection between
- neurons i and j two NEST connections are required: For each created
- connection a second connection with the exact same parameters in
- the opposite direction is required. NEST provides the possibility
- to create both connections with a single call to Connect via
- the make_symmetric flag:
-
- i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
-
- The value of the parameter "delay" is ignored for connections of
- type gap_junction.
-
-Transmits: GapJunctionEvent
-
-References:
-
- Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
- Bolten, M., Frommer, A. and Diesmann, M.,
- A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations,
- Front. Neuroinform. 9:22. (2015),
- doi: 10.3389/fninf.2015.00022
-
- Mancilla, J. G., Lewis, T. J., Pinto, D. J.,
- Rinzel, J., and Connors, B. W.,
- Synchronization of electrically coupled pairs
- of inhibitory interneurons in neocortex,
- J. Neurosci. 27, 2058-2073 (2007),
- doi: 10.1523/JNEUROSCI.2715-06.2007
-
-Author: Jan Hahne, Moritz Helias, Susanne Kunkel
-SeeAlso: synapsedict, hh_psc_alpha_gap
-*/
-
-
 #ifndef GAP_JUNCTION_H
 #define GAP_JUNCTION_H
 
@@ -69,10 +27,49 @@ SeeAlso: synapsedict, hh_psc_alpha_gap
 
 namespace nest
 {
-/**
- * Class representing a gap-junction connection. A gap-junction connection
- * has the properties weight, delay and receiver port.
- */
+
+/** @BeginDocumentation
+@ingroup Synapses
+@ingroup gap
+
+Name: gap_junction - Synapse type for gap-junction connections.
+
+Description:
+
+gap_junction is a connector to create gap junctions between pairs
+of neurons. Gap junctions are bidirectional connections.
+In order to create one accurate gap-junction connection between
+neurons i and j two NEST connections are required: For each created
+connection a second connection with the exact same parameters in
+the opposite direction is required. NEST provides the possibility
+to create both connections with a single call to Connect via
+the make_symmetric flag:
+
+    i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
+
+The value of the parameter "delay" is ignored for connections of
+type gap_junction.
+
+Transmits: GapJunctionEvent
+
+References:
+
+\verbatim embed:rst
+.. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
+       M (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal network simulations. Frontiers in
+       Neuroinformatics 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+
+.. [2] Mancilla JG, Lewis,TJ, Pinto DJ, Rinzel J, Connors BW (2007).
+       Synchronization of electrically coupled pairs of inhibitory
+       interneurons in neocortex. Journal of Neuroscience 27:2058-2073.
+       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
+\endverbatim
+
+Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+
+SeeAlso: synapsedict, hh_psc_alpha_gap
+*/
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {
@@ -102,18 +99,13 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport(
-      t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -121,10 +113,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
-   * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
+  send( Event& e, thread t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -166,8 +157,7 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

@@ -20,6 +20,8 @@
  *
  */
 
+#include <memory>
+
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -38,7 +40,7 @@
 
 #include "step_pattern_builder.h"
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: step_pattern - Rule connecting sources and targets with a step pattern
 
    Synopsis:
@@ -58,7 +60,7 @@
 
    Example:
 
-   /n /iaf_psc_alpha 10 Create 1 exch cvgidcollection def
+   /n /iaf_psc_alpha 10 Create def
    n n << /rule /step_pattern /source_step 4 /target_step 3 >> Connect
    << >> GetConnections ==
 
@@ -76,9 +78,8 @@
    SeeAlso: Connect
 */
 
-mynest::StepPatternBuilder::StepPatternBuilder(
-  const nest::GIDCollection& sources,
-  const nest::GIDCollection& targets,
+mynest::StepPatternBuilder::StepPatternBuilder( const nest::NodeCollectionPTR sources,
+  const nest::NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : nest::ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -111,33 +112,28 @@ mynest::StepPatternBuilder::connect_()
       // allocate pointer to thread-specific random generator
       librandom::RngPtr rng = nest::kernel().rng_manager.get_rng( tid );
 
-      for ( nest::GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
-            tgid = advance_( tgid, targets_->end(), target_step_ ) )
+      for ( auto target_it = targets_->begin(); target_it < targets_->end();
+            advance_( target_it, targets_->end(), target_step_ ) )
       {
-        for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
-              sgid = advance_( sgid, sources_->end(), source_step_ ) )
+        for ( auto source_it = sources_->begin(); source_it < sources_->end();
+              advance_( source_it, sources_->end(), source_step_ ) )
         {
-          if ( not autapses_ and *sgid == *tgid )
+          if ( not allow_autapses_ and ( *source_it ).node_id == ( *target_it ).node_id )
           {
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( ( *source_it ).node_id, ( *source_it ).node_id, tid, 1 ) )
           {
-            for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
+            for ( size_t i = 0; i < sources_->size(); ++i )
             {
               skip_conn_parameter_( tid );
             }
             continue;
           }
-          nest::Node* const target =
-            nest::kernel().node_manager.get_node( *tgid, tid );
+          nest::Node* const target = nest::kernel().node_manager.get_node_or_proxy( ( *target_it ).node_id, tid );
           const nest::thread target_thread = target->get_thread();
-          single_connect_( *sgid, *target, target_thread, rng );
+          single_connect_( ( *source_it ).node_id, *target, target_thread, rng );
         }
       }
     }
@@ -145,22 +141,19 @@ mynest::StepPatternBuilder::connect_()
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( tid ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      exceptions_raised_.at( tid ) = std::make_shared< WrappedThreadException >( err );
     }
   }
 }
 
-nest::GIDCollection::const_iterator&
-mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
-  const nest::GIDCollection::const_iterator& end,
+void
+mynest::StepPatternBuilder::advance_( nest::NodeCollection::const_iterator& it,
+  const nest::NodeCollection::const_iterator& end,
   size_t step )
 {
-  while ( step > 0 and it != end )
+  while ( step > 0 and it < end )
   {
     --step;
     ++it;
   }
-
-  return it;
 }

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_gif_pop_psc_exp - sli script for test of gif_pop_psc_exp
 
 Synopsis: (test_gif_pop_psc_exp) run -> compare mean and variance of population rate of the model with desired values
@@ -61,9 +61,7 @@ T 1 sub res div start_step sub int /remaining_step Set
     102.0 /expected_var Set
 
     ResetKernel
-    0 << 
-       /resolution res
-      >> SetStatus
+    << /resolution res >> SetKernelStatus
 
     /gif_pop_psc_exp Create /node Set
 
@@ -94,7 +92,7 @@ T 1 sub res div start_step sub int /remaining_step Set
 
     T Simulate
     
-    vm GetStatus /events get /n_events get
+    vm /events get /n_events get
     {} forall remaining_step arraystore /nspike Set % removing initial elements
     clear
 

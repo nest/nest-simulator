@@ -40,11 +40,11 @@ try:
 except ImportError:
     HAVE_NUMPY = False
 
-nest.sli_run("statusdict/have_libneurosim ::")
-HAVE_LIBNEUROSIM = nest.sli_pop()
+nest.ll_api.sli_run("statusdict/have_libneurosim ::")
+HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 @unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
 @unittest.skipIf(
     not HAVE_LIBNEUROSIM,
@@ -74,12 +74,12 @@ class CSATestCase(unittest.TestCase):
         for i in range(n_neurons):
             # We expect all connections from sources to have the
             # correct targets
-            conns = nest.GetStatus(nest.GetConnections([sources[i]]))
+            conns = nest.GetStatus(nest.GetConnections(sources[i]))
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i])
+            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
 
             # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections([targets[i]]))
+            conns = nest.GetStatus(nest.GetConnections(targets[i]))
             self.assertEqual(len(conns), 0)
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
@@ -104,12 +104,12 @@ class CSATestCase(unittest.TestCase):
         for i in range(n_neurons):
             # We expect all connections from sources to have the
             # correct targets
-            conns = nest.GetStatus(nest.GetConnections([sources[i]]))
+            conns = nest.GetStatus(nest.GetConnections(sources[i]))
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i])
+            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
 
             # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections([targets[i]]))
+            conns = nest.GetStatus(nest.GetConnections(targets[i]))
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_params(self):
@@ -135,14 +135,14 @@ class CSATestCase(unittest.TestCase):
         for i in range(n_neurons):
             # We expect all connections from sources to have the
             # correct targets, weights and delays
-            conns = nest.GetStatus(nest.GetConnections([sources[i]]))
+            conns = nest.GetStatus(nest.GetConnections(sources[i]))
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i])
+            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
             self.assertEqual(conns[0]["weight"], weight)
             self.assertEqual(conns[0]["delay"], delay)
 
             # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections([targets[i]]))
+            conns = nest.GetStatus(nest.GetConnections(targets[i]))
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_synmodel(self):
@@ -165,13 +165,13 @@ class CSATestCase(unittest.TestCase):
         for i in range(n_neurons):
             # We expect all connections to have the correct targets
             # and the non-standard synapse model set
-            conns = nest.GetStatus(nest.GetConnections([sources[i]]))
+            conns = nest.GetStatus(nest.GetConnections(sources[i]))
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i])
+            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
             self.assertEqual(conns[0]["synapse_model"], synmodel)
 
             # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections([targets[i]]))
+            conns = nest.GetStatus(nest.GetConnections(targets[i]))
             self.assertEqual(len(conns), 0)
 
     def test_CSA_error_unknown_nodes(self):
@@ -186,7 +186,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownNode exception if
         # unknown nodes are given
-        self.assertRaisesRegex(nest.NESTError, "UnknownNode",
+        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownNode",
                                nest.CGConnect, nonnodes, nonnodes, cs)
 
     def test_CSA_error_unknown_synapse(self):
@@ -204,7 +204,7 @@ class CSATestCase(unittest.TestCase):
 
         # We expect CGConnect to fail with an UnknownSynapseType
         # exception if an unknown synapse model is given
-        self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType",
+        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.CGConnect, sources, targets, cs,
                                model="nonexistent_synapse")
 

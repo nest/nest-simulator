@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-481 - Ensure that poisson_generator_ps delivers spikes to more than one node
 
@@ -64,7 +64,7 @@ M_ERROR setverbosity
 
  /dt -3 dexp def  % 0.125 ms
  /Vref -70.0 def
- 0 << /tics_per_ms 1.0 dt div round /resolution dt >> SetStatus
+ << /tics_per_ms 1.0 dt div round /resolution dt >> SetKernelStatus
 
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n1 Set
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n2 Set
@@ -73,8 +73,8 @@ M_ERROR setverbosity
  /voltmeter << /interval dt >>                         Create /vm1 Set
  /voltmeter << /interval dt >>                         Create /vm2 Set
 
- pg n1 syn1 Connect
- pg n2 syn2 Connect
+ pg n1 << >> syn1 Connect
+ pg n2 << >> syn2 Connect
    
  vm1 n1 Connect
  vm2 n2 Connect  
@@ -89,7 +89,7 @@ M_ERROR setverbosity
  ResetKernel
 
   % this case always went well  
-  /iaf_psc_delta_canon /static_synapse /static_synapse Run
+  /iaf_psc_delta_ps /static_synapse /static_synapse Run
   and
 } debugging { exec = } { assert_or_die } ifelse
 
@@ -98,7 +98,7 @@ M_ERROR setverbosity
   ResetKernel
 
   /static_synapse /hoo CopyModel
-  /iaf_psc_delta_canon /hoo /hoo Run
+  /iaf_psc_delta_ps /hoo /hoo Run
   and
 } debugging { exec = } { assert_or_die } ifelse
 
@@ -110,7 +110,7 @@ M_ERROR setverbosity
 
   /static_synapse /foo CopyModel
   /static_synapse /goo CopyModel
-  /iaf_psc_delta_canon /foo /goo Run
+  /iaf_psc_delta_ps /foo /goo Run
   and
 } debugging { exec = } { fail_or_die } ifelse
 

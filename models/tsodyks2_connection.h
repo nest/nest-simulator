@@ -23,66 +23,6 @@
 #ifndef TSODYKS2_CONNECTION_H
 #define TSODYKS2_CONNECTION_H
 
-
-/* BeginDocumentation
-  Name: tsodyks2_synapse - Synapse type with short term plasticity.
-
-  Description:
-   This synapse model implements synaptic short-term depression and short-term
-   facilitation according to [1] and [2]. It solves Eq (2) from [1] and
-   modulates U according to eq. (2) of [2].
-
-   This connection merely scales the synaptic weight, based on the spike history
-   and the parameters of the kinetic model. Thus, it is suitable for all types
-   of synaptic dynamics, that is current or conductance based.
-
-   The parameter A_se from the publications is represented by the
-   synaptic weight. The variable x in the synapse properties is the
-   factor that scales the synaptic weight.
-
-   Parameters:
-     The following parameters can be set in the status dictionary:
-     U          double - probability of release increment (U1) [0,1],
-                         default=0.5
-     u          double - Maximum probability of release (U_se) [0,1],
-                         default=0.5
-     x          double - current scaling factor of the weight, default=U
-     tau_rec    double - time constant for depression in ms, default=800 ms
-     tau_fac    double - time constant for facilitation in ms, default=0 (off)
-
-  Remarks:
-
-     Under identical conditions, the tsodyks2_synapse produces
-     slightly lower peak amplitudes than the tsodyks_synapse. However,
-     the qualitative behavior is identical. The script
-     test_tsodyks2_synapse.py in the examples compares the two synapse
-     models.
-
-
-  References:
-   [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical
-       pyramidal neurons depends on neurotransmitter release probability.
-       PNAS, 94(2), 719-23.
-   [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-       temporal information by activity-dependent synapses. Journal of
-       neurophysiology, 87(1), 140-8.
-   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-       Neural networks, 15(2), 155-61.
-
-  Transmits: SpikeEvent
-
-  FirstVersion: October 2011
-  Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
-  SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
-*/
-
-
-/**
- * Class representing a synapse with Tsodyks short term plasticity, based on the
- * iterative formula. A suitable Connector containing these connections can be
- * obtained from the template GenericConnector.
- */
-
 // C++ includes:
 #include <cmath>
 
@@ -92,6 +32,74 @@
 namespace nest
 {
 
+/** @BeginDocumentation
+@ingroup Synapses
+@ingroup stp
+
+Name: tsodyks2_synapse - Synapse type with short term plasticity.
+
+Description:
+
+This synapse model implements synaptic short-term depression and short-term
+facilitation according to [1] and [2]. It solves Eq (2) from [1] and
+modulates U according to eq. (2) of [2].
+
+This connection merely scales the synaptic weight, based on the spike history
+and the parameters of the kinetic model. Thus, it is suitable for all types
+of synaptic dynamics, that is current or conductance based.
+
+The parameter A_se from the publications is represented by the
+synaptic weight. The variable x in the synapse properties is the
+factor that scales the synaptic weight.
+
+Parameters:
+
+The following parameters can be set in the status dictionary:
+
+\verbatim embed:rst
+========  ======  ========================================================
+ U        real    Maximum probability of release (U1) [0,1], default=0.5
+ u        real    Maximum probability of release (U_se) [0,1],
+                  default=0.5
+ x        real    Current scaling factor of the weight, default=U
+ tau_fac  ms      Time constant for facilitation, default = 0(off)
+ tau_rec  ms      Time constant for depression, default = 800ms
+========  ======  ========================================================
+\endverbatim
+
+ Remarks:
+
+Under identical conditions, the tsodyks2_synapse produces
+slightly lower peak amplitudes than the tsodyks_synapse. However,
+the qualitative behavior is identical. The script
+test_tsodyks2_synapse.py in the examples compares the two synapse
+models.
+
+
+References:
+
+\verbatim embed:rst
+.. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
+       pyramidal neurons depends on neurotransmitter release probability.
+       PNAS, 94(2):719-23.
+       DOI: https://doi.org/10.1073/pnas.94.2.719
+.. [2] Fuhrman, G, Segev I, Markram H, Tsodyks MV (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 87(1):140-8.
+       DOI: https://doi.org/10.1152/jn.00258.2001
+.. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
+       Neural Networks, 15(2):155-61.
+       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
+\endverbatim
+
+Transmits: SpikeEvent
+
+FirstVersion: October 2011
+
+Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
+
+SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
+*/
 template < typename targetidentifierT >
 class Tsodyks2Connection : public Connection< targetidentifierT >
 {
@@ -140,13 +148,9 @@ public:
   /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
-   * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    double t_lastspike,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -164,11 +168,7 @@ public:
 
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -183,11 +183,12 @@ public:
 
 private:
   double weight_;
-  double U_;       //!< unit increment of a facilitating synapse
-  double u_;       //!< dynamic value of probability of release
-  double x_;       //!< current fraction of the synaptic weight
-  double tau_rec_; //!< [ms] time constant for recovery
-  double tau_fac_; //!< [ms] time constant for facilitation
+  double U_;           //!< unit increment of a facilitating synapse
+  double u_;           //!< dynamic value of probability of release
+  double x_;           //!< current fraction of the synaptic weight
+  double tau_rec_;     //!< [ms] time constant for recovery
+  double tau_fac_;     //!< [ms] time constant for facilitation
+  double t_lastspike_; //!< time point of last spike emitted
 };
 
 
@@ -195,18 +196,14 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param p The port under which this connection is stored in the Connector.
- * \param t_lastspike Time point of last spike emitted
  */
 template < typename targetidentifierT >
 inline void
-Tsodyks2Connection< targetidentifierT >::send( Event& e,
-  thread t,
-  double t_lastspike,
-  const CommonSynapseProperties& )
+Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
-
-  double h = e.get_stamp().get_ms() - t_lastspike;
+  const double t_spike = e.get_stamp().get_ms();
+  const double h = t_spike - t_lastspike_;
   double x_decay = std::exp( -h / tau_rec_ );
   double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
@@ -218,9 +215,11 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e,
   e.set_receiver( *target );
   e.set_weight( x_ * u_ * weight_ );
   // send the spike to the target
-  e.set_delay( get_delay_steps() );
+  e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
@@ -232,12 +231,12 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
   , x_( 1 )
   , tau_rec_( 800.0 )
   , tau_fac_( 0.0 )
+  , t_lastspike_( 0.0 )
 {
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
-  const Tsodyks2Connection& rhs )
+Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -245,6 +244,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
   , x_( rhs.x_ )
   , tau_rec_( rhs.tau_rec_ )
   , tau_fac_( rhs.tau_fac_ )
+  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 
@@ -266,8 +266,7 @@ Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

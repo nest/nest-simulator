@@ -1,0 +1,134 @@
+/*
+ *  test_cond_exp_models.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+M_WARNING setverbosity
+
+/T 5 def  % Time to simulate
+
+% Some models don't have a known resting potential, and thus get a drift in
+% some tests. In these cases, instead of checking that the potential is
+% unchanged, we check that the drift is not too large.
+/inaccurate_rest_pot_diff_limit
+<<
+  /hh_cond_exp_traub 6.0e-2
+  /aeif_cond_exp 5.4e-7
+>> def
+
+/get_vm
+{
+  Create /n Set
+  /param_ex Set
+  /param_in Set
+  /sg_weight Set
+
+  /e_ex n GetStatus 0 get param_ex get def
+  /e_in n GetStatus 0 get param_in get def
+
+  n << /E_ex e_ex /E_in e_in >> SetStatus
+  /sg /spike_generator Create def
+  sg << /spike_times [1.0] >> SetStatus
+  sg n sg_weight 1.0 Connect
+  T Simulate
+  n GetStatus 0 get /V_m get
+} def
+
+
+modeldict keys
+{
+  dup cvs dup (cond_exp) searchif exch (multisynapse) searchif not and
+  {
+    /model Set
+
+    % Reference value
+    /n model Create def
+    T Simulate
+    /vm_ref n GetStatus 0 get /V_m get def
+
+    {
+      % Default parameters, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_in /E_ex model get_vm
+      lt dup
+    } assert_or_die
+
+    {
+      % Default parameters, with inhibitory input
+      ResetKernel
+      vm_ref
+      -5.0 /E_in /E_ex model get_vm
+      gt
+    } assert_or_die
+
+    {
+      % Flipped parameters, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_ex /E_in model get_vm
+      gt
+    } assert_or_die
+
+    {
+      % Flipped parameters, with inhibitory input
+      ResetKernel
+      vm_ref
+      -5.0 /E_ex /E_in model get_vm
+      lt
+    } assert_or_die
+
+    {
+      % E_ex = E_in = E_L, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_L /E_L model get_vm
+
+      inaccurate_rest_pot_diff_limit keys model MemberQ
+      {
+        sub abs inaccurate_rest_pot_diff_limit model get lt
+      }
+      {
+        eq
+      } ifelse
+    } assert_or_die
+
+    {
+      % E_ex = E_in = E_L, with inhibitory input
+      ResetKernel
+      vm_ref
+      -5.0 /E_L /E_L model get_vm
+
+      inaccurate_rest_pot_diff_limit keys model MemberQ
+      {
+        sub abs inaccurate_rest_pot_diff_limit model get lt
+      }
+      {
+        eq
+      } ifelse
+    } assert_or_die
+  }
+  {
+    pop
+  } ifelse
+} forall

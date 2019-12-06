@@ -99,9 +99,7 @@ DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
 DynamicLoaderModule::~DynamicLoaderModule()
 {
   // unload all loaded modules
-  for ( vecDynModules::iterator it = dyn_modules.begin();
-        it != dyn_modules.end();
-        ++it )
+  for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
   {
     if ( it->handle != NULL )
     {
@@ -138,14 +136,14 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/*
-  BeginDocumentation
+/** @BeginDocumentation
   Name: Install - Load a dynamic module to extend the functionality.
+
   Description:
+
   Synopsis: (module_name) Install -> handle
 */
-DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction(
-  vecDynModules& dyn_modules )
+DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
 }
@@ -155,11 +153,9 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  if ( kernel().model_manager.has_user_models()
-    or kernel().model_manager.has_user_prototypes() )
+  if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
   {
-    throw DynamicModuleManagementError(
-      "Modules cannot be installed after CopyModel has been called" );
+    throw DynamicModuleManagementError( "Modules cannot be installed after CopyModel has been called" );
   }
 
   sDynModule new_module;
@@ -173,11 +169,9 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // check if module already loaded
   // this check can happen here, since we are comparing dynamically loaded
   // modules based on the name given to the Install command
-  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module )
-    != dyn_modules_.end() )
+  if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module ) != dyn_modules_.end() )
   {
-    throw DynamicModuleManagementError(
-      "Module '" + new_module.name + "' is loaded already." );
+    throw DynamicModuleManagementError( "Module '" + new_module.name + "' is loaded already." );
   }
 
   // call lt_dlerror() to reset any error messages hanging around
@@ -191,8 +185,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     std::string msg = "Module '" + new_module.name + "' could not be opened.";
     if ( errstr )
     {
-      msg += "\nThe dynamic loader returned the following error: '"
-        + std::string( errstr ) + "'.";
+      msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
     }
     msg += "\n\nPlease check LD_LIBRARY_PATH (OSX: DYLD_LIBRARY_PATH)!";
     throw DynamicModuleManagementError( msg );
@@ -216,7 +209,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // modules. We can only perform it after we have loaded the module.
   if ( std::find_if( DynamicLoaderModule::getLinkedModules().begin(),
          DynamicLoaderModule::getLinkedModules().end(),
-         std::bind2nd( std::ptr_fun( has_name ), pModule->name() ) )
+         std::bind( has_name, std::placeholders::_1, pModule->name() ) )
     != DynamicLoaderModule::getLinkedModules().end() )
   {
     lt_dlclose( hModule ); // close module again
@@ -290,17 +283,13 @@ DynamicLoaderModule::init( SLIInterpreter* i )
       dl_error = lt_dlsetsearchpath( path );
       if ( dl_error )
       {
-        LOG( M_ERROR,
-          "DynamicLoaderModule::init",
-          "Could not set dynamic module path." );
+        LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
       }
     }
   }
   else
   {
-    LOG( M_ERROR,
-      "DynamicLoaderModule::init",
-      "Could not initialize libltdl. No dynamic modules will be avaiable." );
+    LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be avaiable." );
   }
 }
 
@@ -317,16 +306,10 @@ void
 DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 {
 
-  for ( vecLinkedModules::iterator it = getLinkedModules().begin();
-        it != getLinkedModules().end();
-        ++it )
+  for ( vecLinkedModules::iterator it = getLinkedModules().begin(); it != getLinkedModules().end(); ++it )
   {
-    interpreter.message( SLIInterpreter::M_STATUS,
-      "DynamicLoaderModule::initLinkedModules",
-      "adding linked module" );
-    interpreter.message( SLIInterpreter::M_STATUS,
-      "DynamicLoaderModule::initLinkedModules",
-      ( *it )->name().c_str() );
+    interpreter.message( SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", "adding linked module" );
+    interpreter.message( SLIInterpreter::M_STATUS, "DynamicLoaderModule::initLinkedModules", ( *it )->name().c_str() );
     interpreter.addlinkedusermodule( *it );
   }
 }

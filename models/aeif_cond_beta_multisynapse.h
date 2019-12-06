@@ -42,121 +42,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
- Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
-                                      integrate-and-fire neuron model according
-                                      to Brette and Gerstner (2005) with
-                                      multiple synaptic rise time and decay
-                                      time constants, and synaptic conductance
-                                      modeled by a beta function.
-
- Description:
-
- aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
- integrate-and-fire neuron model. It allows an arbitrary number of synaptic
- rise time and decay time constants. Synaptic conductance is modeled by a
- beta function, as described by A. Roth and M.C.W. van Rossum
- in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
- Chapter 6.
-
- The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
- the synaptic rise time and decay time, respectively. The synaptic
- reversal potentials are supplied by the array "E_rev". The port numbers
- are automatically assigned in the range from 1 to n_receptors.
- During connection, the ports are selected with the property "receptor_type".
-
- The membrane potential is given by the following differential equation:
- C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
-           - w + I_e
-
- where:
- I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
-
- the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
- and the differential equation for the spike-adaptation current w is:
-
- tau_w * dw/dt = a(V - E_L) - w
-
- When the neuron fires a spike, the adaptation current w <- w + b.
-
-Parameters:
-The following parameters can be set in the status dictionary.
-
-Dynamic state variables:
-  V_m        double - Membrane potential in mV
-  w          double - Spike-adaptation current in pA.
-
-Membrane Parameters:
-  C_m        double - Capacity of the membrane in pF
-  t_ref      double - Duration of refractory period in ms.
-  V_reset    double - Reset value for V_m after a spike. In mV.
-  E_L        double - Leak reversal potential in mV.
-  g_L        double - Leak conductance in nS.
-  I_e        double - Constant external input current in pA.
-  Delta_T    double - Slope factor in mV
-  V_th       double - Spike initiation threshold in mV
-  V_peak     double - Spike detection threshold in mV.
-
-Adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
-  tau_w      double - Adaptation time constant in ms
-
-Synaptic parameters
-  E_rev      double vector - Reversal potential in mV.
-  tau_rise  double vector - Rise time of synaptic conductance in ms (beta
-                      function).
-  tau_decay double vector - Decay time of synaptic conductance in ms (beta
-                      function).
-
-Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the
-                          GSL integrator. Reduce it if NEST complains about
-                          numerical instabilities.
-
- Examples:
-
- import nest
- import numpy as np
-
- neuron = nest.Create('aeif_cond_beta_multisynapse')
- nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
-                         'tau_decay':[50.0,20.0,20.0,20.0],
-                         'tau_rise':[10.0,10.0,1.0,1.0]})
-
- spike = nest.Create('spike_generator', params = {'spike_times':
-                                                 np.array([10.0])})
-
- voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
-
- delays=[1.0, 300.0, 500.0, 700.0]
- w=[1.0, 1.0, 1.0, 1.0]
- for syn in range(4):
-     nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                           'receptor_type': 1 + syn,
-                                           'weight': w[syn],
-                                           'delay': delays[syn]})
-
- nest.Connect(voltmeter, neuron)
-
- nest.Simulate(1000.0)
- dmm = nest.GetStatus(voltmeter)[0]
- Vms = dmm["events"]["V_m"]
- ts = dmm["events"]["times"]
- import pylab
- pylab.figure(2)
- pylab.plot(ts, Vms)
- pylab.show()
-
- Sends: SpikeEvent
-
- Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
- author: Bruno Golosio 07/10/2016
- SeeAlso: aeif_cond_alpha_multisynapse
- */
-
 namespace nest
 {
 /**
@@ -169,14 +54,146 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/**
- * Conductance based exponential integrate-and-fire neuron model according to
- * Brette and Gerstner
- * (2005) with multiple ports.
- */
+/** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup aeif
+@ingroup cond
+
+Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
+                                     integrate-and-fire neuron model according
+                                     to Brette and Gerstner (2005) with
+                                     multiple synaptic rise time and decay
+                                     time constants, and synaptic conductance
+                                     modeled by a beta function.
+
+Description:
+
+aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
+integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+rise time and decay time constants. Synaptic conductance is modeled by a
+beta function, as described by A. Roth and M.C.W. van Rossum
+in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
+Chapter 6.
+
+The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
+the synaptic rise time and decay time, respectively. The synaptic
+reversal potentials are supplied by the array "E_rev". The port numbers
+are automatically assigned in the range from 1 to n_receptors.
+During connection, the ports are selected with the property "receptor_type".
+
+The membrane potential is given by the following differential equation:
+@f[
+ C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
+ + I_{syn_{tot}}(V, t) - w + I_e
+@f]
+
+where:
+
+@f[ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) , @f]
+
+the synapse i is excitatory or inhibitory depending on the value of
+\f$ E_{rev,i} \f$
+and the differential equation for the spike-adaptation current w is:
+
+@f[ \tau_w * dw/dt = a(V - E_L) - w @f]
+
+When the neuron fires a spike, the adaptation current w <- w + b.
+
+Parameters:
+The following parameters can be set in the status dictionary.
+
+\verbatim embed:rst
+======== ======= =======================================
+**Dynamic state variables:**
+--------------------------------------------------------
+ V_m     mV      Membrane potential
+ w       pA      Spike-adaptation current
+======== ======= =======================================
+
+======== ======= =======================================
+**Membrane Parameters**
+--------------------------------------------------------
+ C_m     pF      Capacity of the membrane
+ t_ref   ms      Duration of refractory period
+ V_reset mV      Reset value for V_m after a spike
+ E_L     mV      Leak reversal potential
+ g_L     nS      Leak conductance
+ I_e     pA      Constant external input current
+ Delta_T mV      Slope factor
+ V_th    mV      Spike initiation threshold
+ V_peak  mV      Spike detection threshold
+======== ======= =======================================
+
+======== ======= ==================================
+**Spike adaptation parameters**
+---------------------------------------------------
+ a       ns      Subthreshold adaptation
+ b       pA      Spike-triggered adaptation
+ tau_w   ms      Adaptation time constant
+======== ======= ==================================
+
+======== ============= ========================================================
+**Synaptic parameters**
+-------------------------------------------------------------------------------
+E_rev    list of mV    Reversal potential
+tau_syn  list of ms    Time constant of synaptic conductance
+======== ============= ========================================================
+
+============= ======= =========================================================
+**Integration parameters**
+-------------------------------------------------------------------------------
+gsl_error_tol real    This parameter controls the admissible error of the
+                      GSL integrator. Reduce it if NEST complains about
+                      numerical instabilities.
+============= ======= =========================================================
+\endverbatim
+
+Examples:
+
+    import nest
+    import numpy as np
+
+    neuron = nest.Create('aeif_cond_beta_multisynapse')
+    nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
+    nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
+                            'tau_decay':[50.0,20.0,20.0,20.0],
+                            'tau_rise':[10.0,10.0,1.0,1.0]})
+
+    spike = nest.Create('spike_generator', params = {'spike_times':
+                                                    np.array([10.0])})
+
+    voltmeter = nest.Create('voltmeter')
+
+    delays=[1.0, 300.0, 500.0, 700.0]
+    w=[1.0, 1.0, 1.0, 1.0]
+    for syn in range(4):
+        nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                              'receptor_type': 1 + syn,
+                                              'weight': w[syn],
+                                              'delay': delays[syn]})
+
+    nest.Connect(voltmeter, neuron)
+
+    nest.Simulate(1000.0)
+    dmm = nest.GetStatus(voltmeter)[0]
+    Vms = dmm["events"]["V_m"]
+    ts = dmm["events"]["times"]
+    import pylab
+    pylab.figure(2)
+    pylab.plot(ts, Vms)
+    pylab.show()
+
+Sends: SpikeEvent
+
+Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author: Bruno Golosio 07/10/2016
+
+SeeAlso: aeif_cond_alpha_multisynapse
+*/
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 
@@ -185,8 +202,7 @@ public:
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   virtual ~aeif_cond_beta_multisynapse();
 
-  friend int
-  aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -255,8 +271,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -275,7 +291,6 @@ private:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state vector State_::y_.
      * This enum identifies the elements of the vector. It must be public to be
@@ -304,7 +319,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
 
   }; // State_
 
@@ -331,10 +346,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver
@@ -390,8 +404,7 @@ private:
   DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
 
   // Data Access Functor getter
-  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor(
-    size_t elem );
+  DataAccessFunctor< aeif_cond_beta_multisynapse > get_data_access_functor( size_t elem );
   inline double
   get_state_element( size_t elem )
   {
@@ -406,10 +419,7 @@ private:
 };
 
 inline port
-aeif_cond_beta_multisynapse::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+aeif_cond_beta_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -418,8 +428,7 @@ aeif_cond_beta_multisynapse::send_test_event( Node& target,
 }
 
 inline port
-aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&,
-  rport receptor_type )
+aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -429,8 +438,7 @@ aeif_cond_beta_multisynapse::handles_test_event( CurrentEvent&,
 }
 
 inline port
-aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+aeif_cond_beta_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

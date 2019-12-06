@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-475 - Ensure that data collection across threads works
 
@@ -40,7 +40,7 @@ M_INFO setverbosity
 
 
 {
-  /spike_detector << /withtime false >> Create 
+  /spike_detector Create 
 %  sd ShowStatus
   %10 Simulate
  % sd GetStatus

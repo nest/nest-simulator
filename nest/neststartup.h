@@ -48,15 +48,10 @@ Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
 class SLIInterpreter;
 
 #ifdef _IS_PYNEST
-
 #define CYTHON_DEREF( x ) ( *x )
 #define CYTHON_ADDR( x ) ( &x )
-
 #include <string>
-int neststartup( int* argc,
-  char*** argv,
-  SLIInterpreter& engine,
-  std::string modulepath = "" );
+int neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath = "" );
 #else  // #ifdef _IS_PYNEST
 int neststartup( int* argc, char*** argv, SLIInterpreter& engine );
 #endif // #ifdef _IS_PYNEST
@@ -64,5 +59,22 @@ int neststartup( int* argc, char*** argv, SLIInterpreter& engine );
 void nestshutdown( int exitcode );
 
 SLIInterpreter& get_engine();
+
+#ifdef _IS_PYNEST
+#include <Python.h>
+// Call only with GIL
+void set_communicator( PyObject* );
+
+inline bool
+nest_has_mpi4py()
+{
+#ifdef HAVE_MPI4PY
+  return true;
+#else
+  return false;
+#endif // HAVE_MPI4PY
+}
+
+#endif // _IS_PYNEST
 
 #endif // #ifndef NEST_STARTUP_H

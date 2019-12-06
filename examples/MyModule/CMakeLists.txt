@@ -18,6 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required( VERSION 2.8.12 )
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+include( ProcessDependencies )
 
 # This CMakeLists.txt is configured to build your external module for NEST. For
 # illustrative reasons this module is called 'my' (change SHORT_NAME to your
@@ -37,13 +39,25 @@ set( SHORT_NAME my )
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )
 
-# 2) Add all your sources here
+# 2) Add all your sources here and specify dependencies, e.g., link libraries
 set( MODULE_SOURCES
-    mymodule.h mymodule.cpp
-    pif_psc_alpha.cpp pif_psc_alpha.h
-    drop_odd_spike_connection.h
-    step_pattern_builder.h step_pattern_builder.cpp
-    )
+     mymodule.h mymodule.cpp
+     pif_psc_alpha.cpp pif_psc_alpha.h
+     drop_odd_spike_connection.h
+     step_pattern_builder.h step_pattern_builder.cpp
+     recording_backend_socket.h recording_backend_socket.cpp
+   )
+
+check_have_sfml_audio()
+if ( HAVE_SFML_AUDIO )
+  list( APPEND MODULE_SOURCES   
+        recording_backend_soundclick.h recording_backend_soundclick.cpp
+      )
+  set( USER_LINK_LIBRARIES sfml-audio )
+  add_definitions( -DHAVE_SFML_AUDIO )
+else ()
+  message( "-- Skip build of recording backend >SoundClick<. sfml-audio is not installed." )
+endif ()
 
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
@@ -95,6 +109,22 @@ endif ()
 set( CMAKE_CXX_COMPILER "${NEST_COMPILER}" )
 
 project( ${MODULE_NAME} CXX )
+
+# Get the Python executable (for help generation).
+execute_process(
+    COMMAND ${NEST_CONFIG} --python-executable
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE PYTHON_EXECUTABLE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the Python executable (for help generation).
+execute_process(
+    COMMAND ${NEST_CONFIG} --python-version
+    RESULT_VARIABLE RES_VAR
+    OUTPUT_VARIABLE PYTHON_VERSION_STRING
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 # Get the install prefix.
 execute_process(
@@ -199,7 +229,7 @@ set( CPACK_GENERATOR TGZ )
 set( CPACK_SOURCE_GENERATOR TGZ )
 
 set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "NEST Module ${MODULE_NAME}" )
-set( CPACK_PACKAGE_VENDOR "NEST Initiative (http://www.nest-initiative.org/)" )
+set( CPACK_PACKAGE_VENDOR "NEST Initiative (https://www.nest-initiative.org/)" )
 
 set( CPACK_PACKAGE_VERSION_MAJOR ${MODULE_VERSION_MAJOR} )
 set( CPACK_PACKAGE_VERSION_MINOR ${MODULE_VERSION_MINOR} )
@@ -233,11 +263,21 @@ add_custom_target( dist
     COMMENT "Creating a source distribution from ${MODULE_NAME}..."
     )
 
+# check the user link libraries whether installed or not
+foreach( LINKLIB ${USER_LINK_LIBRARIES} )
+  find_library( LIB_${LINKLIB} ${LINKLIB} )
+  if( NOT LIB_${LINKLIB} )
+    message(FATAL_ERROR "ERROR: " ${LINKLIB} " library not found")
+  else()  
+    message( "-- " ${LINKLIB} " library found")
+  endif()
+endforeach()
 
 if ( BUILD_SHARED_LIBS )
   # When building shared libraries, also create a module for loading at runtime
   # with the `Install` command.
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
+  target_link_libraries(${MODULE_NAME}_module ${USER_LINK_LIBRARIES})
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
       COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
@@ -267,31 +307,40 @@ install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
-# Install help.
-if ( NOT CMAKE_CROSSCOMPILING )
-  add_custom_target( generate_help ALL )
-  # Extract help from all source files in the source code, put them in
-  # doc/help and generate a local help index in the build directory containing
-  # links to the help files.
-  add_custom_command( TARGET generate_help POST_BUILD
-    COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
-    COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"
-    WORKING_DIRECTORY "${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator"
-    COMMENT "Extracting help information; this may take a litte while."
-    )
-  # Copy the local doc/help directory to the global installation
-  # directory for documentation.
-  install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/help"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-    )
-  # Update the global help index to contain all help files that are
-  # located in the global installation directory for documentation.
-  install( CODE
-    "execute_process(
-      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
-    )"
-    )
+# Install help --- based on doc/CMakeLists.txt
+# Install only if Py >= 2.7.8 and NEST was installed with help
+if ( ( NOT CMAKE_CROSSCOMPILING ) 
+     AND PYTHON_EXECUTABLE 
+     AND ( ${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7" )
+     AND ( IS_DIRECTORY ${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DOCDIR}/help )
+   )
+
+    # Extract help from all source files in the source code, put
+    # them in doc/help and generate a local help index in the
+    # build directory containing links to the help files.
+    install( CODE
+      "execute_process(
+         COMMAND ${PYTHON_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
+         WORKING_DIRECTORY \"${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
+         )"
+      )
+  
+    # Copy the local doc/help directory to the global installation
+    # directory for documentation.
+    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+      OPTIONAL
+      )
+  
+    # Update the global help index to include all help files in
+    # the global installation directory for documentation.
+    install( CODE
+      "execute_process(
+         COMMAND ${PYTHON_EXECUTABLE} -B generate_helpindex.py \"${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DOCDIR}\"
+         WORKING_DIRECTORY \"${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
+         )"
+      )
+
 endif ()
 
 
@@ -306,6 +355,7 @@ message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
 message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
+message( "User link libraries  : ${USER_LINK_LIBRARIES}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )

@@ -38,7 +38,7 @@ PROJECT_NAME           = NEST
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = @NEST_VERSION_VERSION@
+PROJECT_NUMBER         = @NEST_VERSION_STRING@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @PROJECT_SOURCE_DIR@/doc/doxygen
+OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@/doc/doxygen
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -743,7 +743,8 @@ WARN_LOGFILE           = doxygen.log
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT		=	@PROJECT_SOURCE_DIR@/conngen \
+INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
+			@PROJECT_SOURCE_DIR@/conngen \
 			@PROJECT_SOURCE_DIR@/doc \
 			@PROJECT_SOURCE_DIR@/examples \
 			@PROJECT_SOURCE_DIR@/extras \
@@ -896,7 +897,7 @@ FILTER_SOURCE_PATTERNS =
 # (index.html). This can be useful if you have a project on for instance GitHub
 # and want to reuse the introduction page also for the doxygen output.
 
-USE_MDFILE_AS_MAINPAGE =
+USE_MDFILE_AS_MAINPAGE = README.md
 
 #---------------------------------------------------------------------------
 # Configuration options related to source browsing

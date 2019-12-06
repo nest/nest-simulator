@@ -27,7 +27,7 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ErrorTestCase(unittest.TestCase):
     """Tests if errors are handled correctly"""
 
@@ -38,7 +38,7 @@ class ErrorTestCase(unittest.TestCase):
             raise exc(msg)
 
         message = "test"
-        exception = nest.NESTError
+        exception = nest.kernel.NESTError
 
         self.assertRaisesRegex(
             exception, message, raise_custom_exception, exception, message)
@@ -49,7 +49,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "StackUnderflow", nest.sli_run, 'clear ;')
+            nest.kernel.NESTError, "StackUnderflow", nest.ll_api.sr, 'clear ;')
 
     def test_DivisionByZero(self):
         """Division by zero"""
@@ -57,15 +57,62 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
+            nest.kernel.NESTError, "DivisionByZero", nest.ll_api.sr, '1 0 div')
+
+    def test_InvalidNodeCollection(self):
+        """Invalid NodeCollection"""
+
+        nest.ResetKernel()
+
+        nc1 = nest.Create('iaf_psc_alpha', 10)
+        nc2 = nest.Create('iaf_psc_alpha', 10)
+        nc3 = nest.Create('iaf_psc_exp', 10)
+        nc_c = nc1 + nc3
+
+        nest.ResetKernel()
+
+        def add_test_primitive():
+            return nc1 + nc2
+
+        def add_test_composite():
+            return nc1 + nc3
+
+        def add_test_pc():
+            return nc_c + nc2
+
+        def slice_test_primitive():
+            return nc1[8:9]
+
+        def slice_test_composite():
+            return nc_c[8:9]
+
+        self.assertRaisesRegexp(
+            nest.kernel.NESTError, "InvalidNodeCollection", add_test_primitive)
+
+        self.assertRaisesRegexp(
+            nest.kernel.NESTError, "InvalidNodeCollection", add_test_composite)
+
+        self.assertRaisesRegexp(
+            nest.kernel.NESTError, "InvalidNodeCollection", add_test_pc)
+
+        self.assertRaisesRegexp(nest.kernel.NESTError,
+                                "InvalidNodeCollection",
+                                slice_test_primitive)
+
+        self.assertRaisesRegexp(nest.kernel.NESTError,
+                                "InvalidNodeCollection",
+                                slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
+        nc = nest.Create('iaf_psc_alpha', 10)
+        nest.ResetKernel()
+
+        self.assertRaisesRegexp(
+            nest.kernel.NESTError, "UnknownNode", nest.NodeCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""
@@ -73,7 +120,7 @@ class ErrorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         self.assertRaisesRegex(
-            nest.NESTError, "UnknownModelName", nest.Create, -1)
+            nest.kernel.NESTError, "UnknownModelName", nest.Create, -1)
 
 
 def suite():
@@ -84,6 +131,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

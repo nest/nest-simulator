@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_fudge - sli script to test normalization of PSP for iaf_psc_alpha model
 
 Synopsis: (test_iaf_fudge) run -> compares response to spike input step with reference data 
@@ -73,16 +73,16 @@ cout (V_max_unit=) <- V_max <- pop
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 /iaf_psc_alpha Create /neuron Set
 neuron << /tau_m tau_m /tau_syn_ex tau_syn /tau_syn_in tau_syn /C_m C_m >> SetStatus
 
 /voltmeter Create /vm Set
-vm << /withtime true /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 /spike_generator Create /sg Set
 sg << /precise_times false /spike_times [h] >> SetStatus

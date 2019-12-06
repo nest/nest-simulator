@@ -297,10 +297,12 @@ Layer< D >::dump_nodes( std::ostream& out ) const
 
 template < int D >
 void
-Layer< D >::dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model )
+Layer< D >::dump_connections( std::ostream& out,
+  NodeCollectionPTR node_collection,
+  AbstractLayerPTR target_layer,
+  const Token& syn_model )
 {
-  std::vector< std::pair< Position< D >, index > >* src_vec =
-    get_global_positions_vector( node_collection_ ); // TODO: this may give wrong connections
+  std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector( node_collection );
 
   // Dictionary with parameters for get_connections()
   DictionaryDatum ncdict( new Dictionary );

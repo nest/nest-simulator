@@ -161,9 +161,14 @@ public:
    * the given layer to the given output stream. For distributed simulations
    * this function will dump the connections with local targets only.
    * @param out output stream
+   * @param node_collection NodeCollection of the layer
+   * @param target_layer Target layer
    * @param synapse_id type of connection
    */
-  virtual void dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model ) = 0;
+  virtual void dump_connections( std::ostream& out,
+    NodeCollectionPTR node_collection,
+    AbstractLayerPTR target_layer,
+    const Token& syn_model ) = 0;
 
 protected:
   /**
@@ -391,9 +396,14 @@ public:
    * simulations this function will dump the connections with local targets
    * only.
    * @param out output stream
+   * @param node_collection NodeCollection of the layer
+   * @param target_layer Target layer
    * @param synapse_id type of connection
    */
-  void dump_connections( std::ostream& out, AbstractLayerPTR target_layer, const Token& syn_model );
+  void dump_connections( std::ostream& out,
+    NodeCollectionPTR node_collection,
+    AbstractLayerPTR target_layer,
+    const Token& syn_model );
 
 protected:
   /**

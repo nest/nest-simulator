@@ -368,7 +368,7 @@ dump_layer_connections( const Token& syn_model,
 
   if ( out->good() )
   {
-    source_layer->dump_connections( *out, target_layer, syn_model );
+    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
   }
 }
 

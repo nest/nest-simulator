@@ -8,14 +8,14 @@ import sys
 
 print("Getting comm")
 from mpi4py import MPI
-comm = MPI.COMM_WORLD.Split(0) # is nest
+comm = MPI.COMM_WORLD.Split(0)  # is nest
 
 print("Getting nest")
 import nest
 
 
 nest.set_communicator(comm)
-nest.SetKernelStatus({'recording_backends': {'arbor':{}}})
+nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 
 print("Building network")
 pg = nest.Create('poisson_generator', params={'rate': 10.0})
@@ -25,7 +25,7 @@ pg = nest.Create('poisson_generator', params={'rate': 10.0})
 parrots = nest.Create('parrot_neuron', 100)
 nest.Connect(pg, parrots)
 
-sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})			  
+sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})		  
 nest.Connect(parrots, sd2)
 
 status = nest.GetKernelStatus()

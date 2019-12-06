@@ -177,7 +177,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( !is_integer( resd * tics_per_ms ) )
+      else if ( not is_integer( resd * tics_per_ms ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -213,7 +213,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( !is_integer( resd / Time::get_ms_per_tic() ) )
+      else if ( not is_integer( resd / Time::get_ms_per_tic() ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",

@@ -1,0 +1,63 @@
+/*
+ *  issue-1305.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/** @BeginDocumentation
+
+Name: testsuite::issue-1305 Ensure that small simulation timesteps can be set without errors.
+
+Synopsis: (issue-1305) run -> NEST exits if test fails
+
+Description:
+This ticket ensures that NEST can set small resolutions and deals with rounding errors correctly.
+
+Author: Philipp Weidel, 2019-12-06 based on material by Hans E Plesser, Jafet Diaz
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Test setting valid resolution 
+{
+  ResetKernel
+  
+  0 << /resolution 0.102 /tics_per_ms 1000.0 >> SetStatus
+  0 GetStatus
+  /res {/resolution get} def
+  /delta {res 0.102 sub} def
+  delta 1e-15 leq
+
+} assert_or_die
+
+% Test setting invalid resolution 
+{
+  ResetKernel
+  
+  0 << /resolution 0.1002 /tics_per_ms 1000.0 >> SetStatus
+  0 GetStatus
+  /res {/resolution get} def
+  /delta {res 0.1002 sub} def
+  delta 1e-15 leq
+
+} fail_or_die
+

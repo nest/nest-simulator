@@ -1,5 +1,5 @@
 /*
- *  run_all.cpp
+ *  nest_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,25 @@
  *
  */
 
-#define BOOST_TEST_MODULE cpptests
-#define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
 
-// Includes from cpptests
-#include "test_block_vector.h"
-#include "test_enum_bitfield.h"
-#include "test_sort.h"
-#include "test_streamers.h"
-#include "test_target_fields.h"
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+
+namespace nest
+{
+
+template < template < typename > class ConnectorModelT >
+void
+register_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+{
+  kernel().model_manager.register_connection_model< ConnectorModelT >( name, flags );
+}
+
+template < template < typename > class ConnectorModelT >
+void
+register_secondary_connection_model( const std::string& name, const RegisterConnectionModelFlags flags )
+{
+  kernel().model_manager.register_secondary_connection_model< ConnectorModelT >( name, flags );
+}
+}

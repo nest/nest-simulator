@@ -952,7 +952,7 @@ are also Parameters drawing values from random distributions.
   |                                              | | x,               |                                                      |
   |                                              | | y,               |    p(x) = p_{\text{center}}                          |
   |                                              | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
-  | ``nest.spatial_distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}+\frac{                 |
   |                                              | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
   |                                              | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
   |                                              | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |

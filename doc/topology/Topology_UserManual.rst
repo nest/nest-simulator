@@ -938,49 +938,43 @@ are also Parameters drawing values from random distributions.
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
   +==============================================+====================+======================================================+
-  |                                              |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
+  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
   | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
-  |                                              | | a,               |                                                      |
-  |                                              | | tau              |                                                      |
+  |                                              | | beta             |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              | | x,               | .. math::                                            |
-  | ``nest.spatial_distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
-  |                                              | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
-  |                                              | | std_deviation    |                                                      |
+  | ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
+  |                                              | | std              |     {2\text{std}^2}}                                 |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math::                                            |
   |                                              | | x,               |                                                      |
-  |                                              | | y,               |    p(x) = p_{\text{center}}                          |
-  |                                              | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
-  | ``nest.spatial_distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}+\frac{                 |
-  |                                              | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
-  |                                              | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
-  |                                              | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
+  |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
+  |                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
+  |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
+  |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
-  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
-  |                                              | | alpha,           |                                                      |
-  |                                              | | theta            |                                                      |
+  |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
+  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
+  |                                              | | kappa            |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | :math:`p\in [\text{min},\text{max})` uniformly       |
   | ``nest.random.uniform()``                    | | min,             |                                                      |
   |                                              | | max              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | normal with given mean and :math:`\sigma`            |
-  | ``nest.random.normal()``                     | | mean,            |                                                      |
-  |                                              | | std,             |                                                      |
+  |                                              |                    |                                                      |
+  | ``nest.random.normal()``                     | | mean,            | normal with given mean and standard deviation        |
+  |                                              | | std              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    |                                                      |
   | ``nest.random.exponential()``                | | beta             | exponential with a given scale, :math:`\beta`        |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | :math:`p \in [\text{min},\text{max})` lognormal      |
-  |                                              | | mean,            | with given :math:`\mu` and :math:`\sigma`            |
-  | ``nest.random.lognormal()``                  | | sigma,           |                                                      |
-  |                                              | | min,             |                                                      |
-  |                                              | | max,             |                                                      |
-  |                                              | | dimension        |                                                      |
+  |                                              |                    | lognormal with given mean and standard               |
+  | ``nest.random.lognormal()``                  | | mean,            | deviation, std                                       |
+  |                                              | | std              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
 
 .. _fig_conn4:

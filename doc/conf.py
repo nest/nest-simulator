@@ -31,6 +31,8 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 import sys
 import os
 
+import re
+
 import pip
 
 import subprocess
@@ -259,3 +261,29 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
+
+models_with_documentation = (
+    "models/multimeter",
+    "models/spike_detector",
+    "models/weight_recorder",
+    "nestkernel/recording_backend_ascii",
+    "nestkernel/recording_backend_memory",
+    "nestkernel/recording_backend_screen",
+    "nestkernel/recording_backend_sionlib",
+)
+
+pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
+for model in models_with_documentation:
+    with open("../%s.h" % model) as f:
+        match = re.search(pattern, f.read())
+        if match:
+            rst_dir = "from_cpp/"
+            if not os.path.exists(rst_dir):
+                os.mkdir(rst_dir)
+            rst_fname = rst_dir + os.path.basename(model) + ".rst"
+            rst_file = open(rst_fname, "w")
+            rst_file.write(match.group(1))
+            rst_file.close()
+            print("Wrote model documentation for model " + model)
+        else:
+            print("No documentation found for model " + model)

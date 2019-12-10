@@ -54,16 +54,16 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict, list or `Parameter`, optional
+    params : dict, list or Parameter, optional
         Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n or a `Parameter`. If omitted, the model's defaults are used.
-    positions: :py:class:`spatial.grid` or :py:class:`spatial.free` object, optional
+        dictionaries with size n or a :py:class:`.Parameter`. If omitted, the model's defaults are used.
+    positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional
         Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
 
     Returns
     -------
     NodeCollection:
-        Object representing global IDs of created nodes, see :py:class:`NodeCollection` for more.
+        Object representing the IDs of created nodes, see :py:class:`.NodeCollection` for more.
 
     Raises
     ------
@@ -129,7 +129,7 @@ def Create(model, n=1, params=None, positions=None):
 
 @check_stack
 def PrintNodes():
-    """Print the `node ID` ranges and model names of all the nodes in the network."""
+    """Print the `node ID` ranges and `model names` of all the nodes in the network."""
 
     sr("PrintNodesToStream")
     print(spp())
@@ -171,7 +171,7 @@ def GetLocalNodeCollection(nc):
 
     Parameters
     ----------
-    nc: `NodeCollection`
+    nc: NodeCollection
         `NodeCollection` for which to get local nodes
 
     Returns

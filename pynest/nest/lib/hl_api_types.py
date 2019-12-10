@@ -55,7 +55,7 @@ def CreateParameter(parametertype, specs):
     parametertype : string
         Parameter type with or without distance dependency.
         Can be one of the following: 'constant', 'linear', 'exponential', 'gaussian', 'gaussian2D',
-                                     'uniform', 'normal', 'lognormal', 'distance', 'position'
+        'uniform', 'normal', 'lognormal', 'distance', 'position'
     specs : dict
         Dictionary specifying the parameters of the provided
         `parametertype`, see **Parameter types**.
@@ -69,7 +69,7 @@ def CreateParameter(parametertype, specs):
     Notes
     -----
     - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
-    instance :py:func:`..random.uniform`.
+    instance :py:func:`.uniform`.
 
     **Parameter types**
 
@@ -143,7 +143,7 @@ class NodeCollection(object):
     `NodeCollection` represents the nodes of a network. The class supports
     iteration, concatination, indexing, slicing, membership, length, convertion to and
     from lists, test for membership, and test for equality. By using the
-    membership functions ``get()`` and ``set()``, you can get and set desired
+    membership functions :py:func:`get()` and :py:func:`set()`, you can get and set desired
     parameters.
 
     A `NodeCollection` is created by the :py:func:`.Create` function, or by converting a
@@ -254,12 +254,13 @@ class NodeCollection(object):
         ----------
         params : str or list, optional
             Parameters to get from the nodes. It must be one of the following:
+
             - A single string.
             - A list of strings.
             - One or more strings, followed by a string or list of strings.
               This is for hierarchical addressing.
-         output : str, ['pandas','json'], optional
-             Whether the returned data should be in a Pandas DataFrame or in a
+        output : str, ['pandas','json'], optional
+             If the returned data should be in a Pandas DataFrame or in a
              JSON serializable format.
 
         Returns
@@ -445,10 +446,10 @@ class SynapseCollection(object):
     """
     Class for Connections.
 
-    SynapseCollection represents the connections of a network. The class supports indexing, iteration, length and
-    equality. You can get and set connection parameters by using the membership functions ``get()`` and
-    ``set()``, respectively. By using the membership function ``sources()`` you get an iterator over source
-    nodes, while ``targets()`` returns an interator over the target nodes of the connections.
+    `SynapseCollection` represents the connections of a network. The class supports indexing, iteration, length and
+    equality. You can get and set connection parameters by using the membership functions :py:func:`get()` and
+    :py:func:`set()`. By using the membership function :py:func:`sources()` you get an iterator over
+    source nodes, while :py:func:`targets()` returns an interator over the target nodes of the connections.
 
     A SynapseCollection is created by the :py:func:`.GetConnections` function.
     """
@@ -553,14 +554,14 @@ class SynapseCollection(object):
             self.set({attr: value})
 
     def sources(self):
-        """Return iterator containing the source node IDs of the `SynapseCollection`."""
+        """Returns iterator containing the source node IDs of the `SynapseCollection`."""
         sources = self.get('source')
         if not isinstance(sources, (list, tuple)):
             sources = (sources,)
         return iter(sources)
 
     def targets(self):
-        """Return iterator containing the target node IDs of the `SynapseCollection`."""
+        """Returns iterator containing the target node IDs of the `SynapseCollection`."""
         targets = self.get('target')
         if not isinstance(targets, (list, tuple)):
             targets = (targets,)
@@ -570,9 +571,9 @@ class SynapseCollection(object):
         """
         Return a parameter dictionary of the connections.
 
-        If keys is a string, a list of values is returned, unless we have a
+        If `keys` is a string, a list of values is returned, unless we have a
         single connection, in which case the single value is returned.
-        keys may also be a list, in which case a dictionary with a list of
+        `keys` may also be a list, in which case a dictionary with a list of
         values is returned.
 
         Parameters
@@ -580,9 +581,9 @@ class SynapseCollection(object):
         keys : str or list, optional
             String or a list of strings naming model properties. get
             then returns a single value or a dictionary with lists of values
-            belonging to the keys given.
+            belonging to the given `keys`.
         output : str, ['pandas','json'], optional
-            Whether the returned data should be in a Pandas DataFrame or in a
+            If the returned data should be in a Pandas DataFrame or in a
             JSON serializable format.
 
         Returns

@@ -43,7 +43,6 @@ import numpy
 # and return the handles of two decision units and the ``multimeter``
 
 
-
 def build_network(sigma, dt):
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})

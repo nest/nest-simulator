@@ -32,27 +32,29 @@
 
 
 macro(get_version_info)
-   execute_process(
-        COMMAND "git" "rev-parse" "--short" "HEAD"
-        OUTPUT_VARIABLE NEST_VERSION_GITHASH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    )
+	if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+	   execute_process(
+			COMMAND "git" "rev-parse" "--short" "HEAD"
+			OUTPUT_VARIABLE NEST_VERSION_GITHASH
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		)
 
-    execute_process(
-        COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"
-        OUTPUT_VARIABLE NEST_VERSION_BRANCH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    )
+		execute_process(
+			COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"
+			OUTPUT_VARIABLE NEST_VERSION_BRANCH
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		)
 
-    if (NEST_VERSION_SUFFIX)
-        set(versionsuffix "-${NEST_VERSION_SUFFIX}")
-    endif()
+		if (NEST_VERSION_SUFFIX)
+			set(versionsuffix "-${NEST_VERSION_SUFFIX}")
+		endif()
 
-    if (NEST_VERSION_GITHASH)
-        set(githash "@${NEST_VERSION_GITHASH}")
-    endif()
+		if (NEST_VERSION_GITHASH)
+			set(githash "@${NEST_VERSION_GITHASH}")
+		endif()
+	endif()
 
     if (NOT NEST_VERSION_BRANCH)
         set(NEST_VERSION_BRANCH "UNKNOWN")

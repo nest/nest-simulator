@@ -53,35 +53,37 @@ def CreateParameter(parametertype, specs):
     Parameters
     ----------
     parametertype : string
-                    Parameter type with or without distance dependency.
-                    Can be one of the following: 'constant', 'linear', 'exponential', 'gaussian', 'gaussian2D',
-                                                 'uniform', 'normal', 'lognormal', 'distance', 'position'
+        Parameter type with or without distance dependency.
+        Can be one of the following: 'constant', 'linear', 'exponential', 'gaussian', 'gaussian2D',
+                                     'uniform', 'normal', 'lognormal', 'distance', 'position'
     specs : dict
-            Dictionary specifying the parameters of the provided
-            `parametertype`, see **Parameter types**.
+        Dictionary specifying the parameters of the provided
+        `parametertype`, see **Parameter types**.
 
 
     Returns
     -------
-    `Parameter`:
+    ``Parameter``:
         Object representing the parameter
 
     Notes
     -----
     - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
-    instance :py:func:`.random.uniform`.
+    instance :py:func:`..random.uniform`.
 
     **Parameter types**
 
     Some available parameter types (`parametertype` parameter), their function and
     acceptable keys for their corresponding specification dictionaries
 
-    - Constant
+    * Constant
         ::
+
             'constant' :
                 {'value' : float} # constant value
-    - Randomization
+    * Randomization
         ::
+
             # random parameter with uniform distribution in [min,max)
             'uniform' :
                 {'min' : float, # minimum value, default: 0.0
@@ -152,6 +154,7 @@ class NodeCollection(object):
     Example
     -------
         ::
+
             import nest
 
             nest.ResetKernel()
@@ -447,7 +450,7 @@ class SynapseCollection(object):
     ``set()``, respectively. By using the membership function ``sources()`` you get an iterator over source
     nodes, while ``targets()`` returns an interator over the target nodes of the connections.
 
-    A SynapseCollection is created by the :py:func`.GetConnections` function.
+    A SynapseCollection is created by the :py:func:`.GetConnections` function.
     """
 
     _datum = None
@@ -848,6 +851,7 @@ class Parameter(object):
         Example
         -------
             ::
+
                 import nest
 
                 # normal distribution parameter

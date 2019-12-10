@@ -69,11 +69,11 @@ def CreateMask(masktype, specs, anchor=None):
     node in the driver population. Several mask types are available. Examples
     are the grid region, the rectangular, circular or doughnut region.
 
-    The command ``CreateMask`` creates a `Mask` object which may be combined
+    The command :py:func:`.CreateMask` creates a `Mask` object which may be combined
     with other `Mask` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    `Mask` objects can be passed to :py:func:`.Connect` in a connection dictionary with the key `'mask'`.
+    ``Mask`` objects can be passed to :py:func:`.Connect` in a connection dictionary with the key `'mask'`.
 
     Parameters
     ----------
@@ -104,13 +104,14 @@ def CreateMask(masktype, specs, anchor=None):
     -----
     - All angles must be given in degrees.
 
-    Mask types
-    ----------
+    **Mask types**
+
     Available mask types (`masktype`) and their corresponding parameter
     dictionaries:
 
-    - 2D free and grid-based layers
+    * 2D free and grid-based layers
         ::
+
             'rectangular' :
                 {'lower_left'   : [float, float],
                  'upper_right'  : [float, float],
@@ -129,8 +130,9 @@ def CreateMask(masktype, specs, anchor=None):
                  'azimuth_angle' : float,   # default: 0.0,
                  'anchor' : [float, float], # default: [0.0, 0.0]}
 
-    - 3D free and grid-based layers
+    * 3D free and grid-based layers
         ::
+
             'box' :
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
@@ -148,7 +150,7 @@ def CreateMask(masktype, specs, anchor=None):
                  'polar_angle' : float,     # default: 0.0,
                  'anchor' : [float, float, float], # default: [0.0, 0.0, 0.0]}}
 
-    - 2D grid-based layers only
+    * 2D grid-based layers only
         ::
 
             'grid' :
@@ -159,12 +161,12 @@ def CreateMask(masktype, specs, anchor=None):
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
             ::
+
                 'anchor' :
                     {'row' : float,
                      'column' : float}
 
-    Example
-    -------
+    **Example**
         ::
 
             import nest
@@ -1225,7 +1227,7 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
     ----------
     source : NodeCollection
         Single node ID `NodeCollection` to use as source.
-    parameter : Parameter object
+    parameter : Parameter
         `Parameter` the probability is based on.
     mask : Dictionary
         Optional specification of a connection mask. Connections will only

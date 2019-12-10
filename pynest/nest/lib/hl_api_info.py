@@ -202,12 +202,12 @@ def message(level, sender, text):
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Returns
     -------

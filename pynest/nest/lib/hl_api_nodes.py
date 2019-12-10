@@ -169,8 +169,8 @@ def GetLocalNodeCollection(nc):
     This function returns the local nodes of a `NodeCollection`. If there are no
     local elements, an empty `NodeCollection` is returned.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     nc: `NodeCollection`
         `NodeCollection` for which to get local nodes
 

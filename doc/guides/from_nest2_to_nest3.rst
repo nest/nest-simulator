@@ -446,7 +446,7 @@ Spatial parameters
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
   +==============================================+====================+======================================================+
-  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}               |
+  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
   | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
   |                                              | | beta             |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
@@ -457,7 +457,7 @@ Spatial parameters
   |                                              |                    | .. math::                                            |
   |                                              | | x,               |                                                      |
   |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
-  |                                              | | mean_x,          |    {\text{std_x}^2}-\frac{                           |
+  |                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
   | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
   |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
   |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |

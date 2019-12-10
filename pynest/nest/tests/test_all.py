@@ -46,6 +46,8 @@ from . import test_errors
 from . import test_events
 from . import test_facetshw_stdp
 from . import test_getconnections
+from . import test_glif_cond
+from . import test_glif_psc
 from . import test_helper_functions
 from . import test_json
 from . import test_labeled_synapses
@@ -68,6 +70,7 @@ from . import test_split_simulation
 from . import test_stack
 from . import test_status
 from . import test_stdp_multiplicity
+from . import test_stdp_nn_synapses
 from . import test_stdp_triplet_synapse
 from . import test_threads
 from . import test_use_gid_in_filename
@@ -101,6 +104,8 @@ def suite():
     suite.addTest(test_events.suite())
     suite.addTest(test_facetshw_stdp.suite())
     suite.addTest(test_getconnections.suite())
+    suite.addTest(test_glif_cond.suite())
+    suite.addTest(test_glif_psc.suite())
     suite.addTest(test_helper_functions.suite())
     suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())
@@ -118,6 +123,7 @@ def suite():
     suite.addTest(test_rate_neuron_communication.suite())
     suite.addTest(test_refractory.suite())
     suite.addTest(test_siegert_neuron.suite())
+    suite.addTest(test_stdp_nn_synapses.suite())
     suite.addTest(test_sp.suite())
     suite.addTest(test_split_simulation.suite())
     suite.addTest(test_stack.suite())

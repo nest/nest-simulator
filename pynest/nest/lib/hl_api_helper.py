@@ -379,7 +379,7 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
-    Prints message if no help is available for hlpobj.
+    Prints message if no help is available for `hlpobj`.
 
     Parameters
     ----------
@@ -511,12 +511,12 @@ def show_help_with_pager(hlpobj, pager=None):
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Returns
     -------
@@ -534,12 +534,12 @@ def get_verbosity():
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Parameters
     ----------

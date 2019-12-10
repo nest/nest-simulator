@@ -28,18 +28,22 @@ approximation to and integrate-and-fire neuron.
 This script calculates the firing rate of an integrate-and-fire neuron
 in response to a series of Poisson generators, each specified with a
 rate and a synaptic weight. The calculated rate is compared with a
-simulation using the iaf_psc_alpha model
-
-Sven Schrader, Nov 2008, Siegert implementation by Tom Tetzlaff
-
-See Also
-~~~~~~~~~~
+simulation using the ``iaf_psc_alpha`` model
 
 
-:Authors:
-    Sven Schrader
 
-KEYWORDS:
+References:
+~~~~~~~~~~~~
+
+ .. [1] Papoulis A (1991). Probability, Random Variables, and
+        Stochastic Processes, McGraw-Hill
+ .. [2] Siegert AJ (1951). On the first passage time probability problem,
+        Phys Rev 81: 617-623
+
+Authors
+~~~~~~~~
+
+S. Schrader, Siegert implentation by T. Tetzlaff
 """
 
 ###############################################################################
@@ -93,13 +97,7 @@ assert(len(weights) == len(rates))
 
 ###############################################################################
 # In the following we analytically compute the firing rate of the neuron
-# based on Campbell's theorem [1] and Siegerts approximation [2].
-#
-# References:
-# .. [1] Papoulis A (1991) Probability, Random Variables, and
-#        Stochastic Processes, McGraw-Hill
-# .. [2] Siegert AJ (1951) **On the first passage time probability problem**,
-#        Phys Rev 81: 617-623
+# based on Campbell's theorem [1]_ and Siegerts approximation [2]_.
 
 for rate, weight in zip(rates, weights):
 
@@ -198,7 +196,7 @@ nest.Simulate(simtime)
 ###############################################################################
 # Here we read out the recorded membrane potential. The first 500 steps are
 # omitted so initial transients do not perturb our results. We then print the
-#  results from theory and simulation.
+# results from theory and simulation.
 
 v_free = nest.GetStatus(vm, 'events')[0]['V_m'][500:-1]
 print('mean membrane potential (actual / calculated): {0} / {1}'

@@ -22,12 +22,15 @@ SuSe::
 
     sudo zypper install virtualbox
 
+
+Windows users can follow instructions on the website (see above).
+
 NEST image setup
 ------------------
 
 * Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_
 
-* Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-2.14.0.ova" (**File** > **Import Appliance**)
+* Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-2.XX.0.ova" (**File** > **Import Appliance**)
 
 * Once imported, you can run the NEST image
 

@@ -20,10 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-pynest microcircuit helpers
+Pynest microcircuit helpers
 ---------------------------
 
 Helper functions for the simulation and evaluation of the microcircuit.
+
+Authors
+~~~~~~~~
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """

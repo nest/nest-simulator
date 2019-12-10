@@ -69,7 +69,6 @@ def Models(mtype="all", sel=None):
       integer label (``'synapse_label'``) to created synapses at the cost
       of increased memory requirements.
 
-    KEYWORDS: models
     """
 
     if mtype not in ("all", "nodes", "synapses"):
@@ -102,7 +101,6 @@ def ConnectionRules():
     tuple
         Available connection rules
 
-    KEYWORDS: models
     """
 
     sr('connruledict')
@@ -125,7 +123,6 @@ def SetDefaults(model, params, val=None):
     val : str, optional
         If given, `params` has to be the name of a model property.
 
-    KEYWORDS: models
     """
 
     if val is not None:
@@ -162,25 +159,12 @@ def GetDefaults(model, keys=None, output=''):
         If keys is a list of strings, a list of corrsponding default parameters
         is returned.
     str :
-        If `output` is `json`, returns parameters in JSON format.
+        If `output` is ``json``, returns parameters in JSON format.
 
     Raises
     ------
     TypeError
 
-    Notes
-    -----
-    **Example**
-
-    .. code_block:: python
-
-        >>> nest.GetDefaults('iaf_psc_alpha', 'V_m')
-        -70.0
-
-        >>> nest.GetDefaults('iaf_psc_alpha', ['V_m', 'V_th'])
-        (-70.0, -55.0)
-
-    KEYWORDS: models
     """
 
     if keys is None:
@@ -217,7 +201,6 @@ def CopyModel(existing, new, params=None):
         Default parameters assigned to the copy. Not provided parameters are
         taken from the existing model.
 
-    KEYWORDS: models
     """
 
     model_deprecation_warning(existing)

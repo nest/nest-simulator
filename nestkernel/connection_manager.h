@@ -252,6 +252,7 @@ public:
    * Send event e to all device targets of source source_gid
    */
   void send_to_devices( const thread tid, const index source_gid, Event& e );
+  void send_to_devices( const thread tid, const index source_gid, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of source device ldid (local device id)

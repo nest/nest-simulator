@@ -33,12 +33,12 @@
 
 macro(get_version_info)
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-       execute_process(
-           COMMAND "git" "rev-parse" "--short" "HEAD"
-           OUTPUT_VARIABLE NEST_VERSION_GITHASH
-           OUTPUT_STRIP_TRAILING_WHITESPACE
-           WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-       )
+        execute_process(
+            COMMAND "git" "rev-parse" "--short" "HEAD"
+            OUTPUT_VARIABLE NEST_VERSION_GITHASH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        )
 
         execute_process(
             COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"

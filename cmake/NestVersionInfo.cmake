@@ -32,6 +32,7 @@
 
 
 macro(get_version_info)
+
     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
         execute_process(
             COMMAND "git" "rev-parse" "--short" "HEAD"

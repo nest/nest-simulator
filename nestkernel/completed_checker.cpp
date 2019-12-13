@@ -67,6 +67,7 @@ CompletedChecker::all_true() const
 bool
 CompletedChecker::any_false() const
 {
+#pragma omp barrier
   for ( size_t i = 0; i < size_; ++i )
   {
     if ( not a_[ i ] )
@@ -80,6 +81,7 @@ CompletedChecker::any_false() const
 bool
 CompletedChecker::any_true() const
 {
+#pragma omp barrier
   for ( size_t i = 0; i < size_; ++i )
   {
     if ( a_[ i ] )

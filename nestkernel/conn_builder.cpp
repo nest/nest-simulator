@@ -1376,8 +1376,12 @@ nest::FixedTotalNumberBuilder::connect_()
   librandom::BinomialRandomDev bino( grng, 0, 0 );
 #endif
 
-  for ( int k = 0; k < M; k++ )
+  for ( int k = 0; k < M - 1; k++ )
   {
+    if ( N_ == sum_partitions )
+    {
+      break;
+    }
     if ( number_of_targets_on_vp[ k ] > 0 )
     {
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
@@ -1390,6 +1394,9 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
+
+  // Number of connections on last process is N_ - connections on other vp's
+  num_conns_on_vp[ M - 1 ] = N_ - sum_partitions;
 
 // end code adapted from gsl 1.8
 

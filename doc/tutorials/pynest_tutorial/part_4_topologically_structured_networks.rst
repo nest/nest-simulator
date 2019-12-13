@@ -4,12 +4,12 @@ Part 4: Spatially structured networks
 Introduction
 ------------
 
-This section covers the use of spatial information in NEST to construct
+This section covers how to use NEST to construct
 structured networks. When you have worked through this material you will
 be able to:
 
 -  Create populations of neurons with specific spatial locations
--  Define connectivity profiles between populations
+-  Define connectivity profiles between these types of populations
 -  Connect populations using profiles
 -  Visualize the connectivity
 
@@ -20,9 +20,8 @@ sections of this tutorial:
 - :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 - :doc:`Part 3: Connecting networks with synapses <part_3_connecting_networks_with_synapses>`
 
-More advanced examples can be found at :doc:`Example
-Networks <../../examples/index>`, or
-have a look at at the source directory of your NEST installation in the
+More advanced examples can be found at :doc:`Example Networks <../../examples/index>`, or
+have a look at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
 Incorporating structure in networks of point neurons
@@ -101,7 +100,7 @@ defined using ``CopyModel()``.
 
 We next have to decide whether the nodes should be placed in a
 **grid-based** or **free** (off-grid) fashion, which is equivalent to
-asking \`\`can the elements of our network be regularly and evenly
+asking "can the elements of our network be regularly and evenly
 placed within a 2D/3D network, or do we need to tell them where they should
 be located?".
 
@@ -109,30 +108,27 @@ be located?".
 .. _grid:
 
 .. figure:: ../../_static/img/grid.png
-   :alt: Example of on-grid,  in which the neurons
-   are positioned as grid+jitter.
+   :alt: Example of on-grid, in which the neurons are positioned as grid.
 
    Example of on-grid, in which the neurons are
-   positioned as grid+jitter.
-
+   positioned as grid.
 
 .. _free:
 
 .. figure:: ../../_static/img/free.png
-   :alt: Example of off-grid, in which the neurons
-   are positioned as grid+jitter .
+   :alt: Example of off-grid, in which the neurons are positioned as grid+jitter.
 
    Example of off-grid, in which the neurons are
-   positioned as grid+jitter .????????????????????????????????????????????????????????????????????????????????????NOE FEIL HER
+   positioned as grid+jitter.
 
 
 1 - On-grid
 ~~~~~~~~~~~
 
-We have to explicitly specify the size and spacing of the grid, by the
-number or rows *m* and columns *n* as a list called shape=[m, n]. If you also give the *extent* (layer size),
-The size (extent) of the layer has a default size of 1 x 1, but this you can set yourself as well.
-The grid spacing i is determined from *m*, *n* and extent, and *n*\ x\ *m* elements
+We have to explicitly specify the spacing of the grid with shape=[m, n],
+where *m* is the number of rows and *n* is the number of columns.
+The size (*extent*) of the layer has a default size of 1 x 1, but this you can also set yourself.
+The grid spacing i is determined from *m*, *n* and *extent*, and *n*\ x\ *m* elements
 are arranged symmetrically. Note that we can also specify a center to
 the grid, else the default offset is the origin.
 
@@ -162,7 +158,7 @@ The following snippet produces :numref:`free`:
         nest.random.uniform(min=-0.3, max=0.3),  # using random positions in a uniform distribution
         num_dimensions=2  # have to specify number of dimensions
     )
-    s_nodes = nest.Create('iaf_psc_alpha', 10, positions=positions)
+    s_nodes = nest.Create('iaf_psc_alpha', 100, positions=positions)
 
 Note that we have to specify the number of dimensions as we are using a
 random parameter for the positions. The number of dimensions can be either
@@ -171,10 +167,10 @@ number of dimensions is deduced by NEST. Also note that when creating the
 nodes, we specify the number of neurons to be created. This is not
 necessary when using an array of positions.
 
-See the table :ref:`tbl_parameters` in NUTM for a selection of NEST
+See the table of *Topology-specific NEST Parameters* in NUTM for a selection of NEST
 Parameters that can be used.
 
-An example with a list of positions:
+An example of how to create off-grid nodes with a list of positions:
 
 ::
 
@@ -197,7 +193,7 @@ allows us to tune our connectivity profiles by tuning the likelihood of a
 connection, the number of connections, or defining a subset of the nodes
 to connect.
 
-Chapter 3 in NTUM deals comprehensively with all the different                        GJØR OM TIL LINK!!!!!!!!!!!!!!!!!!!!!!!!!S
+Chapter 3 in NTUM deals comprehensively with all the different
 possibilities, and it’s suggested that you look there for learning about
 the different constraints, as well as reading through the different
 examples listed there. Here are some representative examples for setting
@@ -207,8 +203,7 @@ that can be used.
 .. _cirgauss:
 
 .. figure:: ../../_static/img/sample1_circgauss.png
-   :alt: Examples of connectivity for each of the connectivity
-   dictionaries mentioned in the following Python code snippet.
+   :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
    mentioned in the following Python code snippet.
@@ -216,8 +211,7 @@ that can be used.
 .. _rectanchor:
 
 .. figure:: ../../_static/img/sample2_rectanchor.png
-   :alt: Examples of connectivity for each of the connectivity
-   dictionaries mentioned in the following Python code snippet.
+   :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
    mentioned in the following Python code snippet.
@@ -225,8 +219,7 @@ that can be used.
 .. _doughnutlinear:
 
 .. figure:: ../../_static/img/sample3_doughnutlinear.png
-   :alt: Examples of connectivity for each of the connectivity
-   dictionaries mentioned in the following Python code snippet.
+   :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
    mentioned in the following Python code snippet.
@@ -234,8 +227,7 @@ that can be used.
 .. _gaussweights:
 
 .. figure:: ../../_static/img/sample4_gaussweights.png
-   :alt: Examples of connectivity for each of the connectivity
-   dictionaries mentioned in the following Python code snippet.
+   :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
    mentioned in the following Python code snippet.
@@ -275,51 +267,51 @@ that can be used.
              'allow_autapses': False
              }
 
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| Parameter               | Description                                      | Possible values                       |
-|                         |                                                  |                                       |
-+=========================+==================================================+=======================================+
-| rule                    | Determines how nodes are selected when           | Can be any connection rule, but for   |
-|                         | connections are made.                            | spatial specific parameters has to be |
-|                         |                                                  | one of the following:                 |
-|                         |                                                  | ``pairwise_bernoulli``,               |
-|                         |                                                  | ``fixed_indegree``,                   |
-|                         |                                                  | ``fixed_outdegree``                   |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| mask                    | Spatially selected subset of neurons considered  | circular,                             |
-|                         | as (potential) targets                           | rectangular, elliptical,              |
-|                         |                                                  | doughnut, grid                        |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| p                       | Value or NEST Parameter that determines the      | constant,                             |
-|                         | likelihood of a neuron being chosen as a target. | NEST Parameter                        |
-|                         | Can be distance-dependent.                       |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| weight                  | Distribution of weight values of connections.    | constant,                             |
-|                         | Can be distance-dependent or -independent.       | NEST Parameter                        |
-|                         | **NB**: this value overrides any value currently |                                       |
-|                         | used by synapse\_model, and therefore unless     |                                       |
-|                         | defined will default to 1.!                      |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| delay                   | Distribution of delay values for connections.    | constant,                             |
-|                         | Can be distance-dependent or -independent.       | NEST Parameter                        |
-|                         | **NB**: like weights, this value overrides any   |                                       |
-|                         | value currently used by synapse\_model!          |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| synapse_model           | Define the type of synapse model to be included. | any synapse model included in         |
-|                         |                                                  | ``nest.Models()``, or currently       |
-|                         |                                                  | user-defined                          |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| use_on_source           | Whether we want the mask and connection          | boolean                               |
-|                         | probability to be applied to the source neurons  |                                       |
-|                         | instead of the target neurons.                   |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| allow\_multapses        | Whether we want to have multiple connections     | boolean                               |
-|                         | between the same source-target pair, or ensure   |                                       |
-|                         | unique connections.                              |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
-| allow_autapses          | Whether we want to allow a neuron to connect to  | boolean                               |
-|                         | itself                                           |                                       |
-+-------------------------+--------------------------------------------------+---------------------------------------+
++-------------------------+----------------------------------------------------+---------------------------------------+
+| Parameter               | Description                                        | Possible values                       |
+|                         |                                                    |                                       |
++=========================+====================================================+=======================================+
+| | rule                  | | Determines how nodes are selected when           | | Can be any connection rule, but for |
+|                         | | connections are made.                            | | spatial specific parameters has to  |
+|                         |                                                    | | be one of the following:            |
+|                         |                                                    | | ``pairwise_bernoulli``,             |
+|                         |                                                    | | ``fixed_indegree``,                 |
+|                         |                                                    | | ``fixed_outdegree``                 |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | mask                  | | Spatially selected subset of neurons considered  | | circular,                           |
+|                         | | as (potential) targets                           | | rectangular, elliptical,            |
+|                         |                                                    | | doughnut, grid                      |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | p                     | | Value or NEST Parameter that determines the      | | constant,                           |
+|                         | | likelihood of a neuron being chosen as a target. | | NEST Parameter                      |
+|                         | | Can be distance-dependent.                       |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | weight                | | Distribution of weight values of connections.    | | constant,                           |
+|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                      |
+|                         | | **NB**: this value overrides any value currently |                                       |
+|                         | | used by synapse\_model, and therefore unless     |                                       |
+|                         | | defined will default to 1.!                      |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | delay                 | | Distribution of delay values for connections.    | | constant,                           |
+|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                      |
+|                         | | **NB**: like weights, this value overrides any   |                                       |
+|                         | | value currently used by synapse\_model!          |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | synapse_model         | | Define the type of synapse model to be included. | | any synapse model included in       |
+|                         |                                                    | | ``nest.Models()``, or currently     |
+|                         |                                                    | | user-defined                        |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | use_on_source         | | Whether we want the mask and connection          | | boolean                             |
+|                         | | probability to be applied to the source neurons  |                                       |
+|                         | | instead of the target neurons.                   |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | allow\_multapses      | | Whether we want to have multiple connections     | | boolean                             |
+|                         | | between the same source-target pair, or ensure   |                                       |
+|                         | | unique connections.                              |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
+| | allow_autapses        | | Whether we want to allow a neuron to connect to  | | boolean                             |
+|                         | | itself                                           |                                       |
++-------------------------+----------------------------------------------------+---------------------------------------+
 
 Connecting spatially distributed nodes
 --------------------------------------
@@ -371,11 +363,13 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See Section 4.2 of NTUM for more details.                                          ###############LINK!!!
+   See Section 4.2 *Visualization functions* of :doc:`NTUM<../../topology/Topology_UserManual>`
+   for more details.
 
 It may also be useful to look at the ``.spatial`` property of the
 NodeCollection, which describes the spatial properties. Other useful
-functions that may be of help are listed in NTUM :ref:`Section 4.1<sec:../../topology/Topology_UserManual/queries>`.  ###################LINK!!!
+functions that may be of help are listed in :doc:`NTUM<../../topology/Topology_UserManual>`
+Section 4.1 *Query functions*.
 
 >>>  ex_pop.spatial
      {'center': (0.0, 0.0),

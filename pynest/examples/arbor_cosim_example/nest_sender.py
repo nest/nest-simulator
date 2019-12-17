@@ -20,12 +20,12 @@ nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 print("Building network")
 pg = nest.Create('poisson_generator', params={'rate': 10.0})
 
-# We cannot directly record from poisson_generator due to implementation details
-# Create a parrot and connect the recorder to that
+# We cannot directly record from poisson_generator due to implementation
+# details. Create a parrot and connect the recorder to that
 parrots = nest.Create('parrot_neuron', 100)
 nest.Connect(pg, parrots)
 
-sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})		  
+sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})
 nest.Connect(parrots, sd2)
 
 status = nest.GetKernelStatus()

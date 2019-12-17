@@ -64,7 +64,7 @@ reset/after-hyperpolarization and tau_reset is the time constant of
 recovery from this hyperpolarization.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 

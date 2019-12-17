@@ -75,18 +75,6 @@ The following parameters can be set in the status dictionary:
                                       *end* of the step. Default: false
 ==================== ================ =========================================
 
-
-Examples:
-
-The rate can be altered in the following way:
-
-    /inhomogeneous_poisson_generator Create /sc Set
-    sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
-
-The average firing rate of each realization of the Poisson process will be
-0.0 in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5)
-and 4.0 from then on.
-
 Receives:
 ++++++++
 

@@ -43,7 +43,7 @@ Name:
 ######
 
 sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
-as defined in [1].
+as defined in [1]_.
 
 Description:
 +++++++++++++

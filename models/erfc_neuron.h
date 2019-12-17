@@ -49,20 +49,22 @@ the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is
 
- g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). 
+.. math::
+
+ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)).
 
 This corresponds to a McCulloch-Pitts neuron receiving additional
 Gaussian noise with mean 0 and standard deviation sigma.
 The time constant tau_m is defined as the mean of the
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
-simulations with asynchronous update (similar to [1,2]), the time
+simulations with asynchronous update (similar to [1,2]_), the time
 constant needs to be chosen as tau_m = dt*N, where dt is the simulation time
 step and N the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every tau_m ms. Since in the original papers [1,2] neurons
+average every tau_m ms. Since in the original papers [1,2]_ neurons
 are coupled with zero delay, this implementation follows that
-definition. It uses the update scheme described in [3] to
+definition. It uses the update scheme described in [3]_ to
 maintain causality: The incoming events in time step t_i are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to

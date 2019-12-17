@@ -51,7 +51,7 @@ Description:
 +++++++++++++
 
 iaf_psc_exp is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1].
+with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 Thus, postsynaptic currents have an infinitely short rise time.
 
 The threshold crossing is followed by an absolute refractory period (t_ref)
@@ -59,7 +59,7 @@ during which the membrane potential is clamped to the resting potential
 and spiking is prohibited.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [2]. The neuron dynamics is solved on the time
+Integration scheme [2]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -68,7 +68,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]. A flow chart can be found in [3].
+[2]_. A flow chart can be found in [3].
 
 Spiking in this model can be either deterministic (delta=0) or stochastic (delta
 > 0). In the stochastic case this model implements a type of spike response

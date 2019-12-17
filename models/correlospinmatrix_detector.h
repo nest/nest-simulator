@@ -117,34 +117,9 @@ of State_, but are initialized by init_buffers_().
 
 Example:
 
-See also pynest/examples/correlospinmatrix_detector_two_neuron.py
+See  pynest/examples/correlospinmatrix_detector_two_neuron.py
 for a script reproducing a setting studied in Fig 1 of Grinzburg &
 Sompolinsky (1994) PRE 50(4) p. 3171.
-
-See also examples/nest/correlospinmatrix_detector.sli for a basic
-example in sli.
-
-    /sg1 /spike_generator Create def
-    /sg2 /spike_generator Create def
-    /sg3 /spike_generator Create def
-
-    /csd /correlospinmatrix_detector Create def
-
-    csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
-
-    sg1 << /spike_times [10. 10. 16.] >> SetStatus
-    sg2 << /spike_times [15. 15. 20.] >> SetStatus
-
-
-    % one final event needed so that last down transition will be detected
-    sg3 << /spike_times [25.] >> SetStatus
-
-
-    sg1 csd << /receptor_type 0 >> Connect
-    sg2 csd << /receptor_type 1 >> Connect
-    sg3 csd << /receptor_type 2 >> Connect
-
-    100. Simulate
 
 Receives:
 ++++++++

@@ -95,14 +95,6 @@ The following properties are available in the status dictionary:
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
 
-Examples:
-
-    /music_message_in_proxy Create /mmip Set
-    10 Simulate
-    mmip GetStatus /data get /messages get 0 get /command Set
-    (Executing command ') command join ('.) join =
-    command cvx exec
-
 Author:
 ++++++++
 

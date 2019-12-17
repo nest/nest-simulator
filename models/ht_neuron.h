@@ -76,7 +76,7 @@ Description:
 +++++++++++++
 
 This model neuron implements a slightly modified version of the
-neuron model described in [1]. The most important properties are:
+neuron model described in [1]_. The most important properties are:
 
 - Integrate-and-fire with threshold adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
@@ -94,18 +94,16 @@ Documentation and Examples:
 Parameters:
 +++++++++++++
 
-
-=============== =======
-===========================================================
+=============== ======= =========================================================
  V_m            mV      Membrane potential
  tau_m          ms      Membrane time constant applying to all currents except
-                        repolarizing K-current (see [1], p 1677)
+                        repolarizing K-current (see [1]_, p 1677)
  t_ref          ms      Refractory time and duration of post-spike repolarizing
-                        potassium current (t_spike in [1])
+                        potassium current (t_spike in [1]_)
  tau_spike      ms      Membrane time constant for post-spike repolarizing
                         potassium current
  voltage_clamp  boolean If true, clamp voltage to value at beginning of
-simulation
+ simulation
                         (default: false, mainly for testing)
  theta          mV      Threshold
  theta_eq       mV      Equilibrium value
@@ -116,10 +114,9 @@ simulation
  E_Na           mV      Reversal potential for Na leak currents
  tau_D_KNa      ms      Relaxation time constant for I_KNa
  receptor_types         Dictionary mapping synapse names to ports on neuron
-model
+ model
  recordables            List of recordable quantities
-=============== =======
-===========================================================
+=============== ======= =========================================================
 
 +------------------------------------------------------------+
 |{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B} |
@@ -158,6 +155,7 @@ Sends:
 ++++++++
 
 SpikeEvent
+
 Receives:
 ++++++++
 

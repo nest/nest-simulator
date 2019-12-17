@@ -97,7 +97,7 @@ Here this is implemented by subtracting the value of the adaptive threshold
 E_sfa from the membrane potential V_m before passing the potential to the
 transfer function, see also above. E_sfa jumps by q_sfa when the neuron
 fires a spike, and decays exponentially with the time constant tau_sfa
-after (see [2] or [3]). Thus, the E_sfa corresponds to the convolution of the
+after (see [2]_ or [3]_). Thus, the E_sfa corresponds to the convolution of the
 neuron's spike train with an exponential kernel.
 This adaptation kernel may also be chosen as the sum of n exponential
 kernels. To use this feature, q_sfa and tau_sfa have to be given as a list
@@ -112,15 +112,15 @@ is True, and all adaptation terms (q_sfa) are 0, then it will reset
 it a renewal process model (where "rate" above is its hazard function,
 also known as conditional intensity).
 
-pp_psc_delta may also be called a spike-response model with escape-noise [6]
+pp_psc_delta may also be called a spike-response model with escape-noise [6]_
 (for vanishing, non-random dead_time). If c_1>0 and c_2==0, the rate is a
 convolution of the inputs with exponential filters -- which is a model known
-as a Hawkes point process (see [4]). If instead c_1==0, then pp_psc_delta is
+as a Hawkes point process (see [4]_). If instead c_1==0, then pp_psc_delta is
 a point process generalized linear model (with the canonical link function,
-and exponential input filters) (see [5,6]).
+and exponential input filters) (see [5,6]_).
 
 This model has been adapted from iaf_psc_delta. The default parameters are
-set to the mean values given in [2], which have been matched to spike-train
+set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and conciously.
 

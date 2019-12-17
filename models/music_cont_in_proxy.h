@@ -84,12 +84,6 @@ The following properties are available in the status dictionary:
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
-
-    /music_cont_in_proxy Create /mcip Set
-    10 Simulate
-    mcip GetStatus /data get /gaze_directions Set
-
 Author:
 ++++++++
 

@@ -61,18 +61,6 @@ The following parameters can be set in the status dictionary:
  amplitude pA      Amplitude of current
 ========== ======  =============================
 
-
-
-Examples:
-
-    SLI
-
-    The dc current can be altered in the following way:
-    /dc_generator Create /dc_gen Set  % Creates a dc_generator, which is a node
-    dc_gen GetStatus info             % View properties (amplitude is 0)
-    dc_gen << /amplitude 1500. >> SetStatus
-    dc_gen GetStatus info             % amplitude is now 1500.0
-
 Remarks:
 
 The dc_generator is rather inefficient, since it needs to

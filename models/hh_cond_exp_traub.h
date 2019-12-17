@@ -70,21 +70,21 @@ Description:
 
 hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
-This model was specifically developed for a major review of simulators [1],
-based on a model of hippocampal pyramidal cells by Traub and Miles[2].
-The key differences between the current model and the model in [2] are:
+This model was specifically developed for a major review of simulators [1]_,
+based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.
+The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
 - This model includes only I_Na and I_K, with simpler I_K dynamics than
-  in [2], so it has only three instead of eight gating variables;
+  in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
 
 This model is primarily provided as reference implementation for hh_coba
 example of the Brette et al (2007) review. Default parameter values are chosen
-to match those used with NEST 1.9.10 when preparing data for [1]. Code for all
-simulators covered is available from ModelDB [3].
+to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
+simulators covered is available from ModelDB [3]_.
 
 Note:
 In this model, a spike is emitted if
@@ -94,7 +94,7 @@ In this model, a spike is emitted if
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
 Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
-:math:`t_ref = 2` ms in [2].
+:math:`t_ref = 2` ms in [2]_.
 
 Parameters:
 +++++++++++++

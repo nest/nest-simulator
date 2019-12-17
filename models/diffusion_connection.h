@@ -52,14 +52,14 @@ These two factor origin from the mean-field reduction of networks of
 leaky-integrate-and-fire neurons. In this reduction the input to the
 neurons is characterized by its mean and its variance. The mean is
 obtained by a sum over presynaptic activities (e.g as in eq.28 in
-[1]), where each term of the sum consists of the presynaptic activity
+[1]_), where each term of the sum consists of the presynaptic activity
 multiplied with the drift_factor. Similarly, the variance is obtained
-by a sum over presynaptic activities (e.g as in eq.29 in [1]), where
+by a sum over presynaptic activities (e.g as in eq.29 in [1]_), where
 each term of the sum consists of the presynaptic activity multiplied
 with the diffusion_factor. Note that in general the drift and
 diffusion factors might differ from the ones given in eq. 28 and 29.,
 for example in case of a reduction on the single neuron level or in
-case of distributed in-degrees (see discussion in chapter 5.2 of [1])
+case of distributed in-degrees (see discussion in chapter 5.2 of [1]_)
 
 The values of the parameters delay and weight are ignored for
 connections of this type.

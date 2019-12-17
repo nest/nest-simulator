@@ -60,7 +60,7 @@ refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -69,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1].  A flow chart can be found in [2].
+[1]_.  A flow chart can be found in [2].
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step

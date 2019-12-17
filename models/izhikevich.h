@@ -46,7 +46,7 @@ izhikevich - Izhikevich neuron model
 Description:
 +++++++++++++
 Implementation of the simple spiking neuron model introduced by Izhikevich
-[1]. The dynamics are given by:
+[1]_. The dynamics are given by:
   
   dv/dt = 0.04*v^2 + 5*v + 140 - u + I \\
      du/dt = a*(b*v - u)] 
@@ -57,7 +57,7 @@ Implementation of the simple spiking neuron model introduced by Izhikevich
 
     v jumps on each spike arrival by the weight of the spike.
 
-As published in [1], the numerics differs from the standard forward Euler
+As published in [1]_, the numerics differs from the standard forward Euler
 technique in two ways:
 1) the new value of u is calculated based on the new value of v, rather than
 the previous value

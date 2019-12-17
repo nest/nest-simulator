@@ -47,13 +47,13 @@ Description:
 
 This synapse model implements synaptic short-term depression and
 short-term facilitation according to the quantal release model
-described by Fuhrmann et al. [1] and Loebel et al. [2].
+described by Fuhrmann et al. [1]_ and Loebel et al. [2].
 
 Each presynaptic spike will stochastically activate a fraction of
 the available release sites.  This fraction is binomialy
 distributed and the release probability per site is governed by the
 Fuhrmann et al. (2002) model. The solution of the differential
-equations is taken from Maass and Markram 2002 [3].
+equations is taken from Maass and Markram 2002 [3]_.
 
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
@@ -213,7 +213,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // Compute release probability
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
 
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )

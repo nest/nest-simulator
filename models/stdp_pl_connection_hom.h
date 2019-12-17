@@ -47,7 +47,7 @@ Description:
 +++++++++++++
 
 stdp_pl_synapse is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]).
+dependent plasticity (as defined in [1]_).
 
 
 Parameters:

@@ -52,20 +52,20 @@ The gain function g used here is :math:`g(h) = c1*h + c2 * 0.5*(1 +
 \tanh(c3*(h-\theta)))` (output clipped to [0,1]). This allows to
 obtain affin-linear (c1!=0, c2!=0, c3=0) or sigmoidal (c1=0,
 c2=1, c3!=0) shaped gain functions.  The latter choice
-corresponds to the definition in [1], giving the name to this
+corresponds to the definition in [1]_, giving the name to this
 neuron model.
 The choice c1=0, c2=1, c3=beta/2 corresponds to the Glauber
-dynamics [2], :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
+dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
 The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reprodce
-simulations with asynchronous update [1], the time constant needs
+simulations with asynchronous update [1]_, the time constant needs
 to be chosen as :math:`\tau_m = dt*N`, where dt is the simulation time
 step and N the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every :math:`\tau_m` ms. Since in the original paper [1] neurons
+average every :math:`\tau_m` ms. Since in the original paper [1]_ neurons
 are coupled with zero delay, this implementation follows this
-definition. It uses the update scheme described in [3] to
+definition. It uses the update scheme described in [3]_ to
 maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to

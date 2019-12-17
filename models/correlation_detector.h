@@ -150,22 +150,6 @@ See Auto- and crosscorrelation functions for spike
 trains[cross_check_mip_corrdet.py]
 in pynest/examples.
 
-     SLI
-
-     /s1 /spike_generator Create def
-     /s2 /spike_generator Create def
-     s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-     s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-     /cd /correlation_detector Create def
-     cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-     s1 cd << /receptor_type 0 >> Connect
-     s2 cd << /receptor_type 1 >> Connect
-     10 Simulate
-     cd [/n_events] get ==   --> [# 5 7 #]
-     cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
-     cd << /reset true >> SetStatus
-     cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
-
 Receives:
 ++++++++
 

@@ -46,7 +46,7 @@ Description:
 +++++++++++++
 
 stdp_synapse_hom is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]). Here the weight dependence
+dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
  Parameters controlling plasticity are identical for all synapses of the
@@ -54,10 +54,10 @@ exponent can be set separately for potentiation and depression.
 
 Examples:
 
-    multiplicative STDP [2]  mu_plus = mu_minus = 1.0
-    additive STDP       [3]  mu_plus = mu_minus = 0.0
-    Guetig STDP         [1]  mu_plus = mu_minus = [0.0,1.0]
-    van Rossum STDP     [4]  mu_plus = 0.0 mu_minus = 1.0
+    multiplicative STDP [2]_  mu_plus = mu_minus = 1.0
+    additive STDP       [3]_  mu_plus = mu_minus = 0.0
+    Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
+    van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
 
 Parameters:
 +++++++++++++

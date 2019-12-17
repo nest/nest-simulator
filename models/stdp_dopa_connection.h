@@ -51,25 +51,14 @@ Description:
 
 stdp_dopamine_synapse is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
-benchmark model in [1], based on [2]). The dopaminergic signal is a
+benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool
 of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
 dopaminergic dynamics is calculated in the synapse itself.
 
-Examples:
-
-    /volume_transmitter Create /vol Set
-    /iaf_psc_alpha Create /pre_neuron Set
-    /iaf_psc_alpha Create /post_neuron Set
-    /iaf_psc_alpha Create /neuromod_neuron Set
-    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-    neuromod_neuron vol Connect
-    pre_neuron post_neuron /stdp_dopamine_synapse Connect
-
 Parameters:
 +++++++++++++
-
 
 =========  ======= ======================================================
 **Common properties**

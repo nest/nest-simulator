@@ -82,14 +82,6 @@ The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
-Examples:
-
-    /music_event_in_proxy Create /meip Set
-    meip << /music_channel 2 >> SetStatus
-    /iaf_psc_alpha Create /n Set
-    (event_in) 0.2 SetAcceptableLatency
-    meip n Connect
-
 Author:
 ++++++++
 

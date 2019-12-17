@@ -56,7 +56,7 @@ The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [][1]. The neuron dynamics is solved on the time
+Integration scheme [][1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -65,7 +65,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1].  A flow chart can be found in [2].
+[1]__.  A flow chart can be found in [2]_.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step

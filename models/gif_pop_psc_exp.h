@@ -54,7 +54,7 @@ Description:
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described in [1].
+described in [1]_.
 
 The single neuron model is defined by the hazard function
 
@@ -80,7 +80,7 @@ communication effort is reduced in simulations.
 
 This model uses a new algorithm to directly simulate the population activity
 (sum of all spikes) of the population of neurons, without explicitly
-representing each single neuron (see [1]). The computational cost is largely
+representing each single neuron (see [1]_). The computational cost is largely
 independent of the number N of neurons represented. The algorithm used
 here is fundamentally different from and likely much faster than the one
 used in the previously added population model pp_pop_psc_delta.

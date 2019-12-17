@@ -108,8 +108,8 @@ positive or negative):
 
 Note:
 
-In the current implementation of the model (as described in [1] and
-[2]), the values of :math:`\eta_i` and :math:`\gamma_i` are affected
+In the current implementation of the model (as described in [1]_ and
+[2]_), the values of :math:`\eta_i` and :math:`\gamma_i` are affected
 immediately after spike emission. However, GIF toolbox
 (http://wiki.epfl.ch/giftoolbox) which fits the model using experimental data,
 requires a different set of :math:`\eta_i` and :math:`\gamma_i`. It applies the

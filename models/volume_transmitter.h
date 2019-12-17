@@ -68,16 +68,7 @@ intervals of a manifold of the minimal synaptic delay. In order to
 insure the link between the neuromodulatory synapses and the volume
 transmitter, the volume transmitter is passed as a parameter when a
 neuromodulatory synapse is defined. The implementation is based on the
-framework presented in [1].
-
-Examples:
-    /volume_transmitter Create /vol Set
-    /iaf_psc_alpha Create /pre_neuron Set
-    /iaf_psc_alpha Create /post_neuron Set
-    /iaf_psc_alpha Create /neuromod_neuron Set
-    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-    neuromod_neuron vol Connect
-    pre_neuron post_neuron /stdp_dopamine_synapse Connect
+framework presented in [1]_.
 
 Parameters:
 +++++++++++++

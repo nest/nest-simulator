@@ -71,7 +71,7 @@ Description:
 +++++++++++++
 
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
+conductance-based synapses [1]_. It is modeled after iaf_cond_alpha with the
 addition of after hyper-polarization current instead of a membrane potential
 reset. Incoming spike events induce a post-synaptic change of conductance
 modeled by an alpha function. The alpha function is normalized such that an

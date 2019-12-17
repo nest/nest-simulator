@@ -74,11 +74,11 @@ Description:
 +++++++++++++
 
 aeif_psc_delta_clopath is an implementation of the neuron model as it is used
-in [1]. It is an extension of the aeif_psc_delta model and capable of
+in [1]_. It is an extension of the aeif_psc_delta model and capable of
 connecting to a Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
-present in a MATLAB implementation by Claudia Clopath [3]. The first one is the
+present in a MATLAB implementation by Claudia Clopath [3]_. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
@@ -168,8 +168,8 @@ gsl_error_tol real    This parameter controls the admissible error of the
 Note:
 
 Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
-mentioned in [1]. However, they are part of an reference implementation
-by Claudia Clopath et al. that can be found on ModelDB [3]. The clamping is
+mentioned in [1]_. However, they are part of an reference implementation
+by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
 

@@ -118,8 +118,8 @@ positive or negative):
  \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
 
 
-Note that in the current implementation of the model (as described in [1] and
-[2]) the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
+Note that in the current implementation of the model (as described in [1]_ and
+[2]_) the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
 after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
 which fits the model using experimental data, requires a different set of
 \:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`eta_i`  and

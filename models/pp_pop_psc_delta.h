@@ -54,7 +54,7 @@ Description:
 pp_pop_psc_delta is an effective model of a population of neurons. The
 N component neurons are assumed to be spike response models with escape
 noise, also known as generalized linear models. We follow closely the
-nomenclature of [1]. The component neurons are a special case of
+nomenclature of [1]_. The component neurons are a special case of
 pp_psc_delta (with purely exponential rate function, no reset and no
 random dead_time). All neurons in the population share the inputs that it
 receives, and the output is the pooled spike train.
@@ -76,12 +76,12 @@ neurons, we can keep track of the numbers of neurons that fired a certain
 number of time steps in the past. These neurons will have the same value of
 the hazard function (instantaneous rate), and we draw a binomial random
 number for each of these groups. This algorithm is thus very similar to
-ppd_sup_generator and gamma_sup_generator, see also [2].
+ppd_sup_generator and gamma_sup_generator, see also [2]_.
 
 However, the adapting threshold eta(t) of the neurons generally makes the
 neurons non-renewal processes. We employ the quasi-renewal approximation
-[1], to be able to use the above algorithm. For the extension of [1] to
-coupled populations see [3].
+[1]_, to be able to use the above algorithm. For the extension of [1] to
+coupled populations see [3]_.
 
 In effect, in each simulation time step, a binomial random number for each
 of the groups of neurons has to be drawn, independent of the number of

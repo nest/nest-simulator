@@ -83,16 +83,6 @@ to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
 
-Examples:
-
-The rate can be altered in the following way:
-
-   /step_rate_generator Create /sc Set
-   sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
-
-   The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
-   2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
-
 Sends:
 ++++++++
 

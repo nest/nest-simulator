@@ -49,10 +49,10 @@ Description:
 +++++++++++++
 
 iaf_tum_2000 is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1].
+with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
-refractory time separately, as required by [1].
+refractory time separately, as required by [1]_.
 
 The threshold crossing is followed by an absolute refractory period
 (t_ref_abs) during which the membrane potential is clamped to the resting
@@ -63,7 +63,7 @@ larger or equal to the absolute refractory time. If equal, the
 refractoriness of the model if equivalent to the other models of NEST.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]. The neuron dynamics is solved on the time
+Integration scheme [2]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -72,7 +72,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]. A flow chart can be found in [3].
+[2]_. A flow chart can be found in [3].
 
 Remarks:
 

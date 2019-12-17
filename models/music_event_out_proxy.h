@@ -82,12 +82,6 @@ The following properties are available in the status dictionary:
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
-
-    /iaf_psc_alpha Create /n Set
-    /music_event_out_proxy Create /meop Set
-    n meop << /music_channel 2 >> Connect
-
 Author:
 ++++++++
 

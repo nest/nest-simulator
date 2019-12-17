@@ -55,7 +55,7 @@ with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
 The threshold is lifted when the neuron is fired and then decreases in a
-fixed time scale toward a fixed level [3].
+fixed time scale toward a fixed level [3]_.
 
 The threshold crossing is followed by a total refractory period
 during which the neuron is not allowed to fire, even if the membrane
@@ -63,7 +63,7 @@ potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -72,7 +72,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]. A flow chart can be found in [2].
+[1]_. A flow chart can be found in [2].
 
 Remarks:
 
@@ -101,10 +101,10 @@ The following parameters can be set in the status dictionary:
  t_spike      ms      Point in time of last spike
  tau_1        ms      Short time constant of adaptive threshold
  tau_2        ms      Long time constant of adaptive threshold
- alpha_1      mV      Amplitude of short time threshold adaption [3]
- alpha_2      mV      Amplitude of long time threshold adaption [3]
+ alpha_1      mV      Amplitude of short time threshold adaption [3]_
+ alpha_2      mV      Amplitude of long time threshold adaption [3]_
  omega        mV      Resting spike threshold (absolute value, not
-                      relative to E_L as in [3])
+                      relative to E_L as in [3]_)
 ============ =======  ========================================================
 
 
@@ -119,7 +119,7 @@ The following state variables can be read out with the multimeter device:
 Remarks:
 
 tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]. For very similar values,
+degenerate case of the ODE describing the model [1]_. For very similar values,
 numerics will be unstable.
 
 References:
@@ -234,7 +234,7 @@ private:
     /** Resting threshold in mV
         (relative to resting potential).
         The real resting threshold is (E_L_+omega_).
-        Called omega in [3]. */
+        Called omega in [3]_. */
     double omega_;
 
     Parameters_(); //!< Sets default parameter values

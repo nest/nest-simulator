@@ -45,8 +45,8 @@ Description:
 +++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
-facilitation according to [1] and [2]. It solves Eq (2) from [1] and
-modulates U according to eq. (2) of [2].
+facilitation according to [1]_ and [2]_. It solves Eq (2) from [1]_ and
+modulates U according to eq. (2) of [2]_.
 
 This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
@@ -72,7 +72,7 @@ The following parameters can be set in the status dictionary:
 ========  ======  ========================================================
 
 
- Remarks:
+Remarks:
 
 Under identical conditions, the tsodyks2_synapse produces
 slightly lower peak amplitudes than the tsodyks_synapse. However,
@@ -221,8 +221,8 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonS
   double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // now we compute spike number n+1
-  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]
+  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
 
   // We use the current values for the spike number n.
   e.set_receiver( *target );

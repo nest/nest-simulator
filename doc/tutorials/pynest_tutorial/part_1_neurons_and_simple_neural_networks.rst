@@ -106,7 +106,7 @@ Creating Nodes
 A neural network in NEST consists of two basic element types: nodes and
 connections. Nodes are either neurons, devices or sub-networks. Devices
 are used to stimulate neurons or to record from them. Nodes can be
-arranged with spatial structure to build networks disptributed in space
+arranged with spatial structure to build networks distributed in space
 - we will get to this later in the course. For now we
 will work with the default network structure of NEST.
 
@@ -133,7 +133,7 @@ a variable called ``neuron``.
     import nest
     neuron = nest.Create("iaf_psc_alpha")
 
-We can now use the id to access the properties of this neuron.
+We can now use the NodeCollection to access the properties of this neuron.
 Properties of nodes in NEST are generally accessed via Python
 dictionaries of key-value pairs of the form ``{key: value}``. In order
 to see which properties a neuron has, you may ask it for its status.
@@ -201,14 +201,14 @@ variables by looking at the neuron’s property ``recordables``.
 ::
 
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"record_from":["V_m"]})
+    multimeter.set(record_from=["V_m"])
 
 We now create a ``spikedetector``, another device that records the
 spiking events produced by a neuron.
 
 ::
 
-    spikedetector = nest.Create("spike_detector"})
+    spikedetector = nest.Create("spike_detector")
 
 A short note on naming: here we have called the neuron ``neuron``, the
 multimeter ``multimeter`` and so on. Of course, you can assign your
@@ -481,8 +481,7 @@ Nodes
 ~~~~~
 
 -  ``Create(model, n=1, params=None)``
-    Create ``n`` instances of type ``model`` in the current
-    sub-network. Parameters for the new nodes can be given as
+    Create ``n`` instances of type ``model``. Parameters for the new nodes can be given as
     ``params`` (a single dictionary, or a list of dictionaries with
     size ``n``). If omitted, the ``model``\ ’s defaults are used.
 
@@ -496,7 +495,7 @@ Nodes
     Set the parameters on the NodeCollection it is called on to ``params``, which may
     be a single dictionary, or a list of dictionaries of the same size
     as the NodeCollection. If ``kwargs`` is given, it has to be names and values of
-    an attribute as keyword argument pairs. The values
+    an attribute as keyword=argument pairs. The values
     can be single values or list of the same size as the NodeCollection.
 
 Connections
@@ -508,7 +507,7 @@ function, please see NEST’s online help for the full version and
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``
-    Connect pre neurons to post neurons.Neurons in pre and post are
+    Connect pre neurons to post neurons. Neurons in pre and post are
     connected using the specified connectivity (``"all_to_all"`` by
     default) and synapse type (``"static_synapse"`` by default). Details
     depend on the connectivity rule. ``pre`` -

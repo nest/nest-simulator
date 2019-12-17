@@ -426,6 +426,9 @@ nest::ConnectionManager::connect( const index sgid,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
   if ( not have_connections_changed_[ target_thread ] )
   {
     have_connections_changed_.set( target_thread, true );
@@ -506,6 +509,9 @@ nest::ConnectionManager::connect( const index sgid,
 
   const thread tid = kernel().vp_manager.get_thread_id();
 
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
   if ( not have_connections_changed_[ tid ] )
   {
     have_connections_changed_.set( tid, true );
@@ -699,6 +705,9 @@ nest::ConnectionManager::find_connection( const thread tid, const synindex syn_i
 void
 nest::ConnectionManager::disconnect( const thread tid, const synindex syn_id, const index sgid, const index tgid )
 {
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
   if ( not have_connections_changed_[ tid ] )
   {
     have_connections_changed_.set( tid, true );

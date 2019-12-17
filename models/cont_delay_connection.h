@@ -37,9 +37,13 @@ namespace nest
 Synapses
 cont_delay
 
-Name: cont_delay_synapse - Synapse type for continuous delays
+Name:
+######
+
+cont_delay_synapse - Synapse type for continuous delays
 
 Description:
++++++++++++++
 
 cont_delay_synapse relaxes the condition that NEST only implements delays
 which are an integer multiple of the time step h. A continuous delay is
@@ -90,9 +94,15 @@ Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 
 FirstVersion: June 2007
 
-Author: Abigail Morrison
+Author:
+++++++++
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
+Abigail Morrison
+
+SeeAlso:
+++++++++
+
+synapsedict, static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
 template < typename targetidentifierT >

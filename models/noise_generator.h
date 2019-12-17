@@ -44,9 +44,13 @@ namespace nest
 Devices
 generator
 
-Name: noise_generator - Device to generate Gaussian white noise current.
+Name:
+######
+
+noise_generator - Device to generate Gaussian white noise current.
 
 Description:
++++++++++++++
 This device can be used to inject a Gaussian "white" noise current into a node.
 
 The current is not really white, but a piecewise constant current with Gaussian
@@ -72,6 +76,7 @@ the noise_generator.ipynb notebook included in the NEST source code
 (docs/model_details).
 
 Parameters:
++++++++++++++
 The following parameters can be set in the status dictionary:
 
 
@@ -111,11 +116,20 @@ Remarks:
   currents computed. When there exists only a single target, this would be
   equivalent to the actual current provided to that target.
 
-Sends: CurrentEvent
+Sends:
+++++++++
 
-Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
+CurrentEvent
 
-SeeAlso: Device
+Author:
+++++++++
+
+Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
+
+SeeAlso:
+++++++++
+
+Device
 
 EndUserDocs */
 class noise_generator : public DeviceNode

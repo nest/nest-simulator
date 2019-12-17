@@ -38,9 +38,13 @@ namespace nest
 Neurons
 iaf
 
-Name: izhikevich - Izhikevich neuron model
+Name:
+######
+
+izhikevich - Izhikevich neuron model
 
 Description:
++++++++++++++
 Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]. The dynamics are given by:
   
@@ -70,6 +74,7 @@ Euler integration. In this case, consistent_integration must be set to true
 
 
 Parameters:
++++++++++++++
 The following parameters can be set in the status dictionary.
 
 
@@ -88,6 +93,7 @@ The following parameters can be set in the status dictionary.
 
 
 References:
++++++++++++
 
 
 .. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
@@ -96,15 +102,27 @@ on
        DOI: https://doi.org/10.1109/TNN.2003.820440
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: 2009
 
-Author: Hanuschkin, Morrison, Kunkel
+Author:
+++++++++
 
-SeeAlso: iaf_psc_delta, mat2_psc_exp
+Hanuschkin, Morrison, Kunkel
+
+SeeAlso:
+++++++++
+
+iaf_psc_delta, mat2_psc_exp
 
 EndUserDocs */
 class izhikevich : public Archiving_Node

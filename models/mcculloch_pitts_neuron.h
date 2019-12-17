@@ -33,10 +33,14 @@ namespace nest
 Neurons
 binary
 
-Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
+Name:
+######
+
+mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                               activation function.
 
 Description:
++++++++++++++
 
 The mcculloch_pitts_neuron is an implementation of a binary
 neuron that is irregularly updated as Poisson time points [1]. At
@@ -77,6 +81,7 @@ The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
 Parameters:
++++++++++++++
 
 
 ======= =======  ====================================================
@@ -86,6 +91,7 @@ Parameters:
 
 
 References:
++++++++++++
 
 
 .. [1] McCulloch W, Pitts W (1943). A logical calculus of the ideas
@@ -100,15 +106,27 @@ References:
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, PotentialRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, PotentialRequest
 
 FirstVersion: February 2013
 
-Author: Moritz Helias
+Author:
+++++++++
 
-SeeAlso: pp_psc_delta
+Moritz Helias
+
+SeeAlso:
+++++++++
+
+pp_psc_delta
 
 EndUserDocs */
 class gainfunction_mcculloch_pitts

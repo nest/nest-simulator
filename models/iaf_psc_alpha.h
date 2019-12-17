@@ -40,9 +40,13 @@ Neurons
 iaf
 psc
 
-Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
+Name:
+######
+
+iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 
 Description:
++++++++++++++
 
 iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
@@ -89,6 +93,7 @@ matrix objects.
 
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -116,6 +121,7 @@ For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
 
 References:
++++++++++++
 
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
@@ -132,15 +138,25 @@ References:
        DOI: https://doi.org/10.1162/neco.2007.19.1.47
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: September 1999
 
 Author:  Diesmann, Gewaltig
+++++++++
 
-SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
+SeeAlso:
+++++++++
+
+iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs */
 class iaf_psc_alpha : public Archiving_Node

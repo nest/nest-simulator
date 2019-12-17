@@ -35,11 +35,15 @@ namespace nest
 Synapses
 stp
 
-Name: tsodyks_synapse_hom - Synapse type with short term plasticity using
+Name:
+######
+
+tsodyks_synapse_hom - Synapse type with short term plasticity using
                             homogeneous parameters, i.e. all synapses have
                             the same parameters.
 
 Description:
++++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to [1]. In particular it solves Eqs (3) and (4) from
@@ -85,6 +89,7 @@ the concentration of transmitter y(t) in the synaptic cleft. It may realize
 an arbitrary postsynaptic effect depending on y(t).
 
 Parameters:
++++++++++++++
 
 
 ========  ======  ======================================================
@@ -106,6 +111,7 @@ all synapses of the model and must be set using SetDefaults on the synapse
 model.
 
 References:
++++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -117,9 +123,15 @@ Transmits: SpikeEvent
 
 FirstVersion: March 2006
 
-Author: Susanne Kunkel, Moritz Helias
+Author:
+++++++++
 
-SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
+Susanne Kunkel, Moritz Helias
+
+SeeAlso:
+++++++++
+
+synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
 
 EndUserDocs iaf_psc_exp, iaf_tum_2000
 */

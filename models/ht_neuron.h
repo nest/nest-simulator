@@ -67,9 +67,13 @@ extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 Neurons
 ht_neuron
 
-Name: ht_neuron - Neuron model after Hill & Tononi (2005).
+Name:
+######
+
+ht_neuron - Neuron model after Hill & Tononi (2005).
 
 Description:
++++++++++++++
 
 This model neuron implements a slightly modified version of the
 neuron model described in [1]. The most important properties are:
@@ -88,6 +92,7 @@ Documentation and Examples:
 - pynest/examples/intrinsic_currents_subthreshold.py
 
 Parameters:
++++++++++++++
 
 
 =============== =======
@@ -144,14 +149,24 @@ equilibrate                  If given and true, time-dependent activation
 
 @Note Conductances are unitless in this model and currents are in mV.
 
-Author: Hans Ekkehard Plesser
+Author:
+++++++++
 
-Sends: SpikeEvent
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Hans Ekkehard Plesser
+
+Sends:
+++++++++
+
+SpikeEvent
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: October 2009; full revision November 2016
 
 References:
++++++++++++
 
 
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
@@ -163,7 +178,10 @@ References:
        DOI: https://doi.org/10.1152/jn.01038.2002
 
 
-SeeAlso: ht_connection
+SeeAlso:
+++++++++
+
+ht_connection
 
 EndUserDocs */
 class ht_neuron : public Archiving_Node

@@ -67,10 +67,14 @@ iaf
 cond
 
 
-Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
+Name:
+######
+
+iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
                           integrate-and-fire neuron model.
 
 Description:
++++++++++++++
 
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
@@ -110,6 +114,7 @@ synaptic weights must be positive numbers!
 
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
@@ -148,11 +153,18 @@ change. USE AT YOUR OWN PERIL!
 @note All parameters that occur for both compartments
 and dendrite are stored as C arrays, with index 0 being soma.
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
++++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
@@ -167,9 +179,15 @@ References:
        DOI: https://doi.org/10.1073/pnas.88.24.11569
 
 
-Author: Plesser
+Author:
+++++++++
 
-SeeAlso: iaf_cond_alpha
+Plesser
+
+SeeAlso:
+++++++++
+
+iaf_cond_alpha
 
 EndUserDocs
 */

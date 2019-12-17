@@ -36,10 +36,14 @@ namespace nest
 Synapses
 stp
 
-Name: quantal_stp_synapse - Probabilistic synapse model with short term
+Name:
+######
+
+quantal_stp_synapse - Probabilistic synapse model with short term
 plasticity.
 
 Description:
++++++++++++++
 
 This synapse model implements synaptic short-term depression and
 short-term facilitation according to the quantal release model
@@ -55,6 +59,7 @@ The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -72,6 +77,7 @@ The following parameters can be set in the status dictionary:
 
 
 References:
++++++++++++
 
 
 .. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
@@ -91,9 +97,15 @@ Transmits: SpikeEvent
 
 FirstVersion: December 2013
 
-Author: Marc-Oliver Gewaltig, based on tsodyks2_synapse
+Author:
+++++++++
 
-SeeAlso: tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
+Marc-Oliver Gewaltig, based on tsodyks2_synapse
+
+SeeAlso:
+++++++++
+
+tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
 template < typename targetidentifierT >

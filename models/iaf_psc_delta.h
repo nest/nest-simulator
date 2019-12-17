@@ -39,9 +39,13 @@ Neurons
 iaf
 psc
 
-Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
+Name:
+######
+
+iaf_psc_delta - Leaky integrate-and-fire neuron model.
 
 Description:
++++++++++++++
 
 iaf_psc_delta is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
@@ -93,6 +97,7 @@ matrix objects.
 
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -113,6 +118,7 @@ The following parameters can be set in the status dictionary.
 
 
 References:
++++++++++++
 
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
@@ -125,13 +131,23 @@ References:
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  September 1999, Diesmann, Gewaltig
+++++++++
 
-SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
+SeeAlso:
+++++++++
+
+iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
 class iaf_psc_delta : public Archiving_Node

@@ -41,10 +41,14 @@ Neurons
 iaf
 psc
 
-Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
+Name:
+######
+
+iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
                    PSCs.
 
 Description:
++++++++++++++
 
 iaf_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1].
@@ -86,6 +90,7 @@ address the problem of efficient usage of appropriate vector and
 matrix objects.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -123,6 +128,7 @@ kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [6].
 
 References:
++++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -143,16 +149,28 @@ References:
 =======
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 
 FirstVersion: March 2006
 
-Author: Moritz Helias
+Author:
+++++++++
 
-SeeAlso: iaf_psc_exp_ps
+Moritz Helias
+
+SeeAlso:
+++++++++
+
+iaf_psc_exp_ps
 
 EndUserDocs */
 class iaf_psc_exp : public Archiving_Node

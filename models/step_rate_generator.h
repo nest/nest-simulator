@@ -43,9 +43,13 @@ namespace nest
 Devices
 generator
 
-Name: step_rate_generator - provides a piecewise constant input rate
+Name:
+######
+
+step_rate_generator - provides a piecewise constant input rate
 
 Description:
++++++++++++++
 
 The rate_generator provides a piecewise constant rate input to the
 connected rate unit(s). Please note that this input is handled in the same
@@ -54,6 +58,7 @@ function of the receiving rate unit. The amplitude of the rate is changed
 at the specified times. The unit of the rate is Hz.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -88,11 +93,20 @@ The rate can be altered in the following way:
    The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
    2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
 
-Sends: DelayedRateConnectionEvent
+Sends:
+++++++++
 
-Author: Sandra Nestler, David Dahmen
+DelayedRateConnectionEvent
 
-SeeAlso: step_current_generator, Device, StimulatingDevice
+Author:
+++++++++
+
+Sandra Nestler, David Dahmen
+
+SeeAlso:
+++++++++
+
+step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
 class step_rate_generator : public DeviceNode

@@ -45,9 +45,13 @@ namespace nest
 Devices
 generator
 
-Name: mip_generator - create spike trains as described by the MIP model.
+Name:
+######
+
+mip_generator - create spike trains as described by the MIP model.
 
 Description:
++++++++++++++
 
 The mip_generator generates correlated spike trains using an Multiple
 Interaction Process (MIP) as described in [1]. Underlying principle is a
@@ -59,6 +63,7 @@ created by a MIP process equals p.
 
 
 Parameters:
++++++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -90,9 +95,13 @@ IMPORTANT: The mother_seed of mpi_generator must be different from any
       Most important: If RNG is changed in prototype by SetDefaults,
       then this is
 
-Sends: SpikeEvent
+Sends:
+++++++++
+
+SpikeEvent
 
 References:
++++++++++++
 
 
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
@@ -101,9 +110,15 @@ References:
        DOI: https://doi.org/10.1162/089976603321043702
 
 
-Author: May 2006, Helias
+Author:
+++++++++
 
-SeeAlso: Device
+May 2006, Helias
+
+SeeAlso:
+++++++++
+
+Device
 
 EndUserDocs */
 class mip_generator : public DeviceNode

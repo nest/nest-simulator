@@ -32,11 +32,15 @@ namespace nest
 Synapses
 inst_rate
 
-Name: diffusion_connection - Synapse type for instantaneous rate connections
+Name:
+######
+
+diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
 
 
 Description:
++++++++++++++
 
 diffusion_connection is a connector to create
 instantaneous connections between neurons of type siegert_neuron. The
@@ -63,6 +67,7 @@ connections of this type.
 Transmits: DiffusionConnectionEvent
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,
@@ -73,9 +78,15 @@ References:
        DOI: https://doi.org/10.3389/fninf.2017.00034
 
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+Author:
+++++++++
 
-SeeAlso: siegert_neuron, rate_connection_instantaneous
+David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso:
+++++++++
+
+siegert_neuron, rate_connection_instantaneous
 
 EndUserDocs */
 template < typename targetidentifierT >

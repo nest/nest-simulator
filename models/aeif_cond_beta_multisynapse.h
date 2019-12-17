@@ -62,7 +62,10 @@ iaf
 aeif
 cond
 
-Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
+Name:
+######
+
+aeif_cond_beta_multisynapse - Conductance based adaptive exponential
                                      integrate-and-fire neuron model according
                                      to Brette and Gerstner (2005) with
                                      multiple synaptic rise time and decay
@@ -70,6 +73,7 @@ Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
                                      modeled by a beta function.
 
 Description:
++++++++++++++
 
 aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
 integrate-and-fire neuron model. It allows an arbitrary number of synaptic
@@ -109,6 +113,7 @@ and the differential equation for the spike-adaptation current w is:
 When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
++++++++++++++
 The following parameters can be set in the status dictionary.
 
 
@@ -192,13 +197,25 @@ Examples:
     pylab.plot(ts, Vms)
     pylab.show()
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: Bruno Golosio 07/10/2016
+Receives:
+++++++++
 
-SeeAlso: aeif_cond_alpha_multisynapse
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+Bruno Golosio 07/10/2016
+
+SeeAlso:
+++++++++
+
+aeif_cond_alpha_multisynapse
 
 EndUserDocs */
 class aeif_cond_beta_multisynapse : public Archiving_Node

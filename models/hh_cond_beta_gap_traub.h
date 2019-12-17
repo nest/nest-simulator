@@ -64,11 +64,15 @@ Neurons
 hh
 cond
 
-Name: hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron as featured in
+Name:
+######
+
+hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron as featured in
 Brette et al (2007) review with added gap junction support and beta function
 synaptic conductance.
 
 Description:
++++++++++++++
 
 hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junctions.
@@ -115,6 +119,7 @@ Gap Junctions are implemented by a gap current of the form
 \f$ g_ij( V_i - V_j) \f$.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -143,6 +148,7 @@ I_e          pA      External input current
 
 
 References:
++++++++++++
 
 .. [1] Brette R et al (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
@@ -157,14 +163,26 @@ References:
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: Daniel Naoumenko (modified hh_cond_exp_traub by Schrader and
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+Daniel Naoumenko (modified hh_cond_exp_traub by Schrader and
 hh_psc_alpha_gap by Jan Hahne, Moritz Helias and Susanne Kunkel)
 
-SeeAlso: hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
+SeeAlso:
+++++++++
+
+hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
 
 EndUserDocs */
 class hh_cond_beta_gap_traub : public Archiving_Node

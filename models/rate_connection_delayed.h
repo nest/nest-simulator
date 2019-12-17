@@ -33,9 +33,13 @@ namespace nest
 Synapses
 cont_delay
 
-Name: rate_connection_delayed - Synapse type for rate connections with delay.
+Name:
+######
+
+rate_connection_delayed - Synapse type for rate connections with delay.
 
 Description:
++++++++++++++
 
 rate_connection_delayed is a connector to create connections with delay
 between rate model neurons.
@@ -46,6 +50,7 @@ the synapse type rate_connection_instantaneous.
 Transmits: DelayedRateConnectionEvent
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
@@ -54,9 +59,15 @@ References:
        DOI: https://doi.org/10.3389/fninf.2017.00034
 
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+Author:
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
+David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso:
+++++++++
+
+rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 
 EndUserDocs */
 

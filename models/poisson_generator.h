@@ -45,9 +45,13 @@ namespace nest
 Devices
 generator
 
-Name: poisson_generator - simulate neuron firing with Poisson processes
+Name:
+######
+
+poisson_generator - simulate neuron firing with Poisson processes
                           statistics.
 Description:
++++++++++++++
 
 The poisson_generator simulates a neuron that is firing with Poisson
 statistics, i.e. exponentially distributed interspike intervals. It will
@@ -56,6 +60,7 @@ this behavior and need the same spike train for all targets, you have to use a
 parrot neuron inbetween the poisson generator and the targets.
 
 Parameters:
++++++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -67,7 +72,10 @@ The following parameters appear in the element's status dictionary:
 =======   ======== =========================================================
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
+
+SpikeEvent
 
 Remarks:
 
@@ -101,7 +109,10 @@ refer to:
 
 http://ken.brainworks.uni-freiburg.de/cgi-bin/mailman/private/nest_developer/2011-January/002977.html
 
-SeeAlso: poisson_generator_ps, Device, parrot_neuron
+SeeAlso:
+++++++++
+
+poisson_generator_ps, Device, parrot_neuron
 
 EndUserDocs */
 class poisson_generator : public DeviceNode

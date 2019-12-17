@@ -36,10 +36,14 @@ namespace nest
 Synapses
 stdp
 
-Name: stdp_synapse_hom - Synapse type for spike-timing dependent
+Name:
+######
+
+stdp_synapse_hom - Synapse type for spike-timing dependent
 plasticity using homogeneous parameters.
 
 Description:
++++++++++++++
 
 stdp_synapse_hom is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]). Here the weight dependence
@@ -56,6 +60,7 @@ Examples:
     van Rossum STDP     [4]  mu_plus = 0.0 mu_minus = 1.0
 
 Parameters:
++++++++++++++
 
 
 ========= =======  ======================================================
@@ -78,6 +83,7 @@ SetDefaults on the synapse model.
 Transmits: SpikeEvent
 
 References:
++++++++++++
 
 
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
@@ -98,9 +104,15 @@ References:
 
 FirstVersion: March 2006
 
-Author: Moritz Helias, Abigail Morrison
+Author:
+++++++++
 
-SeeAlso: synapsedict, tsodyks_synapse, static_synapse
+Moritz Helias, Abigail Morrison
+
+SeeAlso:
+++++++++
+
+synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
 /**

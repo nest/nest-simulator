@@ -36,9 +36,13 @@ namespace nest
 Synapses
 stp
 
-Name: tsodyks2_synapse - Synapse type with short term plasticity.
+Name:
+######
+
+tsodyks2_synapse - Synapse type with short term plasticity.
 
 Description:
++++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to [1] and [2]. It solves Eq (2) from [1] and
@@ -53,6 +57,7 @@ synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -77,6 +82,7 @@ models.
 
 
 References:
++++++++++++
 
 
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
@@ -96,9 +102,15 @@ Transmits: SpikeEvent
 
 FirstVersion: October 2011
 
-Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
+Author:
+++++++++
 
-SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
+Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
+
+SeeAlso:
+++++++++
+
+tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
 template < typename targetidentifierT >

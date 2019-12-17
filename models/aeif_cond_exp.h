@@ -74,10 +74,14 @@ iaf
 aeif
 cond
 
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
+Name:
+######
+
+aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
                       model according to Brette and Gerstner (2005).
 
 Description:
++++++++++++++
 
 aeif_cond_exp is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic
@@ -104,6 +108,7 @@ Note that the spike detection threshold V_peak is automatically set to
 setting V_peak too high.
 
 Parameters:
++++++++++++++
 The following parameters can be set in the status dictionary.
 
 
@@ -159,12 +164,21 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
+Author:
+++++++++
+
+Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
 Fardet on December 2016
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
@@ -173,7 +187,10 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso: iaf_cond_exp, aeif_cond_alpha
+SeeAlso:
+++++++++
+
+iaf_cond_exp, aeif_cond_alpha
 
 EndUserDocs */
 class aeif_cond_exp : public Archiving_Node

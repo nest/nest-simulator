@@ -61,10 +61,14 @@ Neurons
 iaf
 cond
 
-Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
+Name:
+######
+
+iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
                        model.
 
 Description:
++++++++++++++
 
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
@@ -73,6 +77,7 @@ is normalised such that an event of weight 1.0 results in a peak current of 1 nS
 at \f$ t = tau_{syn} \f$.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -93,9 +98,15 @@ The following parameters can be set in the status dictionary.
 =========== ======= ===========================================================
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Remarks:
 
@@ -107,6 +118,7 @@ Remarks:
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
 References:
++++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
@@ -125,9 +137,15 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
 
 
-Author: Schrader, Plesser
+Author:
+++++++++
 
-SeeAlso: iaf_cond_exp, iaf_cond_alpha_mc
+Schrader, Plesser
+
+SeeAlso:
+++++++++
+
+iaf_cond_exp, iaf_cond_alpha_mc
 
 EndUserDocs
 */

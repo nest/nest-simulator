@@ -63,10 +63,14 @@ hh
 psc
 clopath_n
 
-Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
+Name:
+######
+
+hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
 Clopath synapse.
 
 Description:
++++++++++++++
 
 hh_psc_alpha_clopath is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
@@ -84,6 +88,7 @@ there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -138,6 +143,7 @@ better spike detection
 initial wavelet/spike at simulation onset
 
 References:
++++++++++++
 
 
 .. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
@@ -161,14 +167,26 @@ References:
        =%2fmodeldb_package%2fstdp_cc.mod
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+Jonas Stapmanns, David Dahmen, Jan Hahne
         (adapted from hh_psc_alpha by Schrader)
 
-SeeAlso: hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
+SeeAlso:
+++++++++
+
+hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
 EndUserDocs */
 class hh_psc_alpha_clopath : public Clopath_Archiving_Node

@@ -44,9 +44,13 @@ namespace nest
 Devices
 generator
 
-Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
+Name:
+######
+
+pulsepacket_generator - Generate sequence of Gaussian pulse packets.
 
 Description:
++++++++++++++
 
 The pulsepacket_generator produces a spike train contains Gaussian pulse
 packets centered about given  times.  A Gaussian pulse packet is
@@ -55,6 +59,7 @@ from the center time of the pulse.
 It resembles the output of synfire groups of neurons.
 
 Parameters:
++++++++++++++
 
 
 ============  ======= =======================================================
@@ -73,9 +78,15 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-SeeAlso: spike_generator, StimulatingDevice
+SpikeEvent
+
+SeeAlso:
+++++++++
+
+spike_generator, StimulatingDevice
 
 EndUserDocs */
 class pulsepacket_generator : public Node

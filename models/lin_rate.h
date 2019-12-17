@@ -38,9 +38,13 @@ namespace nest
 Neurons
 rate
 
-Name: lin_rate - Linear rate model
+Name:
+######
+
+lin_rate - Linear rate model
 
 Description:
++++++++++++++
 
 lin_rate is an implementation of a linear rate model with
 input function \f$ input(h) = g * h \f$.
@@ -57,6 +61,7 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -77,6 +82,7 @@ The following parameters can be set in the status dictionary.
 
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
@@ -90,14 +96,26 @@ References:
        DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Sends:
+++++++++
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives:
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+Author:
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
+David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso:
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
 

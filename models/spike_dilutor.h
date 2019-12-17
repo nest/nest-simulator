@@ -38,9 +38,13 @@ namespace nest
 Devices
 generator
 
-Name: spike_dilutor - repeats incoming spikes with a certain probability.
+Name:
+######
+
+spike_dilutor - repeats incoming spikes with a certain probability.
 
 Description:
++++++++++++++
 
 The device repeats incoming spikes with a certain probability.
 Targets will receive diffenrent spike trains.
@@ -51,6 +55,7 @@ In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
 
 Parameters:
++++++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -60,12 +65,21 @@ The following parameters appear in the element's status dictionary:
 ======== ======  ================
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Author: Adapted from mip_generator by Kunkel, Oct 2011
+SpikeEvent
+
+Author:
+++++++++
+
+Adapted from mip_generator by Kunkel, Oct 2011
 ported to Nest 2.6 by: Setareh, April 2015
 
-SeeAlso: mip_generator
+SeeAlso:
+++++++++
+
+mip_generator
 
 EndUserDocs */
 class spike_dilutor : public DeviceNode

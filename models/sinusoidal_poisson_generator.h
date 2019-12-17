@@ -41,10 +41,14 @@ namespace nest
 Devices
 generator
 
-Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
+Name:
+######
+
+sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
                                      spike trains.
 
 Description:
++++++++++++++
 
 sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
 trains. By default, each target of the generator will receive a different
@@ -56,6 +60,7 @@ The instantaneous rate of the process is given by
      * \pi/180 )) >= 0
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -86,15 +91,27 @@ Remarks:
   SetDefaults or CopyModel before a generator node is created, the generator
   will send the same spike train to all of its targets.
 
-Receives: DataLoggingRequest
+Receives:
+++++++++
 
-Sends: SpikeEvent
+DataLoggingRequest
+
+Sends:
+++++++++
+
+SpikeEvent
 
 FirstVersion: July 2006, Oct 2009, May 2013
 
-Author: Hans Ekkehard Plesser
+Author:
+++++++++
 
-SeeAlso: poisson_generator, sinusoidal_gamma_generator
+Hans Ekkehard Plesser
+
+SeeAlso:
+++++++++
+
+poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
 class sinusoidal_poisson_generator : public DeviceNode

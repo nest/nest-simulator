@@ -42,10 +42,14 @@ namespace nest
 Devices
 detector
 
-Name: correlation_detector - Device for evaluating cross correlation between
+Name:
+######
+
+correlation_detector - Device for evaluating cross correlation between
                              two spike sources
 
 Description:
++++++++++++++
 
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
@@ -79,6 +83,7 @@ receptor_port = 0 will be pooled as the spike source 1, the ones with
 receptor_port = 1 will be used as spike source 2.
 
 Parameters:
++++++++++++++
 
 
 ==================== ========
@@ -161,14 +166,23 @@ in pynest/examples.
      cd << /reset true >> SetStatus
      cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
 
-Receives: SpikeEvent
+Receives:
+++++++++
 
-Author: Moritz Helias
+SpikeEvent
+
+Author:
+++++++++
+
+Moritz Helias
         Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
 
 FirstVersion: 2007/5/21
 
-SeeAlso: spike_detector, Device, PseudoRecordingDevice
+SeeAlso:
+++++++++
+
+spike_detector, Device, PseudoRecordingDevice
 
 EndUserDocs */
 class correlation_detector : public Node

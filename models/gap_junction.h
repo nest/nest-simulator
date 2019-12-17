@@ -32,9 +32,13 @@ namespace nest
 Synapses
 gap
 
-Name: gap_junction - Synapse type for gap-junction connections.
+Name:
+######
+
+gap_junction - Synapse type for gap-junction connections.
 
 Description:
++++++++++++++
 
 gap_junction is a connector to create gap junctions between pairs
 of neurons. Gap junctions are bidirectional connections.
@@ -53,6 +57,7 @@ type gap_junction.
 Transmits: GapJunctionEvent
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
@@ -66,9 +71,15 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
 
 
-Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+Author:
+++++++++
 
-SeeAlso: synapsedict, hh_psc_alpha_gap
+Jan Hahne, Moritz Helias, Susanne Kunkel
+
+SeeAlso:
+++++++++
+
+synapsedict, hh_psc_alpha_gap
 
 EndUserDocs */
 template < typename targetidentifierT >

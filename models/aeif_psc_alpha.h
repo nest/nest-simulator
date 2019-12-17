@@ -63,10 +63,14 @@ iaf
 aeif
 psc
 
-Name: aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
+Name:
+######
+
+aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
                          model according to Brette and Gerstner (2005).
 
 Description:
++++++++++++++
 
 aeif_psc_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
@@ -89,6 +93,7 @@ and
  \tau_w * dw/dt= a(V-E_L) -W
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -148,13 +153,23 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author: Tanguy Fardet
+Author:
+++++++++
 
-Sends: SpikeEvent
+Tanguy Fardet
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends:
+++++++++
+
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
++++++++++++
 
 
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
@@ -163,7 +178,10 @@ References:
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso: iaf_psc_alpha, aeif_cond_exp
+SeeAlso:
+++++++++
+
+iaf_psc_alpha, aeif_cond_exp
 
 EndUserDocs */
 class aeif_psc_alpha : public Archiving_Node

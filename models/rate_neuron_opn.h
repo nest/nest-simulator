@@ -48,9 +48,13 @@ namespace nest
 Neurons
 rate
 
-Name: rate_neuron_opn - Base class for rate model with output noise.
+Name:
+######
+
+rate_neuron_opn - Base class for rate model with output noise.
 
 Description:
++++++++++++++
 
 Base class for rate model with output noise of the form
 
@@ -84,6 +88,7 @@ In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
@@ -92,9 +97,15 @@ References:
        DOI:  https://doi.org./10.3389/fninf.2017.00034
 
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+Author:
+++++++++
 
-SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
+David Dahmen, Jan Hahne, Jannis Schuecker
+
+SeeAlso:
+++++++++
+
+lin_rate, tanh_rate, threshold_lin_rate
 
 EndUserDocs  */
 template < class TNonlinearities >

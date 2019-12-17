@@ -43,15 +43,20 @@ namespace nest
 Devices
 generator
 
-Name: step_current_generator - provides a piecewise constant DC input current
+Name:
+######
+
+step_current_generator - provides a piecewise constant DC input current
 
 Description:
++++++++++++++
 
 The dc_generator provides a piecewise constant DC input to the
 connected node(s).  The amplitude of the current is changed at the
 specified times. The unit of the current is pA.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -86,11 +91,20 @@ The current can be altered in the following way:
     The amplitude of the DC will be 0.0 pA in the time interval [0, 0.2),
     2.0 pA in the interval [0.2, 0.5) and 4.0 from then on.
 
-Sends: CurrentEvent
+Sends:
+++++++++
 
-Author: Jochen Martin Eppler, Jens Kremkow
+CurrentEvent
 
-SeeAlso: ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
+Author:
+++++++++
+
+Jochen Martin Eppler, Jens Kremkow
+
+SeeAlso:
+++++++++
+
+ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
 class step_current_generator : public DeviceNode

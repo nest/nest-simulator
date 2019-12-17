@@ -41,9 +41,13 @@ namespace nest
 Neurons
 rate
 
-Name: threshold_lin_rate - rate model with threshold-linear gain function
+Name:
+######
+
+threshold_lin_rate - rate model with threshold-linear gain function
 
 Description:
++++++++++++++
 
 threshold_lin_rate is an implementation of a nonlinear rate model with input
 function \f$ input(h) = min( max( g * ( h - \theta ), 0 ), \alpha ) \f$.
@@ -55,6 +59,7 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -80,6 +85,7 @@ individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
 References:
++++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
@@ -92,13 +98,25 @@ References:
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Sends:
+++++++++
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives:
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
+Author:
+++++++++
+
+David Dahmen, Jan Hahne, Jannis Schuecker
+SeeAlso:
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
 

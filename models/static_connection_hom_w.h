@@ -34,10 +34,14 @@ namespace nest
 Synapses
 static
 
-Name: static_synapse_hom_w - Synapse type for static connections with
+Name:
+######
+
+static_synapse_hom_w - Synapse type for static connections with
 homogeneous weight.
 
 Description:
++++++++++++++
 
 static_synapse_hom_w does not support any kind of plasticity. It simply
 stores the parameters delay, target, and receiver port for each connection
@@ -55,9 +59,15 @@ DataLoggingRequest, DoubleDataEvent
 
 FirstVersion: April 2008
 
-Author: Susanne Kunkel, Moritz Helias
+Author:
+++++++++
 
-SeeAlso: synapsedict, static_synapse
+Susanne Kunkel, Moritz Helias
+
+SeeAlso:
+++++++++
+
+synapsedict, static_synapse
 
 EndUserDocs */
 template < typename targetidentifierT >

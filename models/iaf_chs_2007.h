@@ -42,9 +42,13 @@ namespace nest
 Neurons
 iaf
 
-Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
+Name:
+######
+
+iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
 
 Description:
++++++++++++++
 
 The membrane potential is the sum of stereotyped events: the postsynaptic
 potentials (V_syn), waveforms that include a spike and the subsequent
@@ -71,6 +75,7 @@ noise signal externally prior to simulation. The noise signal,
 if present, has to be at least as long as the simulation.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -86,6 +91,7 @@ The following parameters can be set in the status dictionary.
 
 
 References:
++++++++++++
 
 
 .. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
@@ -97,13 +103,22 @@ References:
        DOI: https://doi.org/10.1007/s004220050570
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, DataLoggingRequest
 
 FirstVersion: May 2012
 
-Author: Thomas Heiberg, Birgit Kriener
+Author:
+++++++++
+
+Thomas Heiberg, Birgit Kriener
 EndUserDocs */
 class iaf_chs_2007 : public Archiving_Node
 {

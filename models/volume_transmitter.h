@@ -41,12 +41,16 @@ namespace nest
 Devices
 generator
 
-Name: volume_transmitter - Node used in combination with neuromodulated synaptic
+Name:
+######
+
+volume_transmitter - Node used in combination with neuromodulated synaptic
 plasticity. It collects all spikes emitted by the population of neurons
 connected to the volume transmitter and transmits the signal to a user-specific
 subset of synapses.
 
 Description:
++++++++++++++
 The volume transmitter is used in combination with neuromodulated
 synaptic plasticty, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
@@ -76,11 +80,13 @@ Examples:
     pre_neuron post_neuron /stdp_dopamine_synapse Connect
 
 Parameters:
++++++++++++++
 - deliver_interval - time interval given in d_min time steps, in which
                      the volume signal is delivered from the volume
                      transmitter to the assigned synapses
 
 References:
++++++++++++
 
 
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
@@ -89,13 +95,22 @@ References:
        4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
 
 
-Author: Wiebke Potjans, Abigail Morrison
+Author:
+++++++++
+
+Wiebke Potjans, Abigail Morrison
 
 Remarks: major changes to update function after code revision in Apr 2013 (SK)
 
-Receives: SpikeEvent
+Receives:
+++++++++
 
-SeeAlso: stdp_dopamine_synapse
+SpikeEvent
+
+SeeAlso:
+++++++++
+
+stdp_dopamine_synapse
 
 EndUserDocs */
 class ConnectorBase;

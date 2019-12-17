@@ -63,10 +63,14 @@ iaf
 aeif
 psc
 
-Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
+Name:
+######
+
+aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
 neuron model according to Brette and Gerstner (2005) with delta synapse.
 
 Description:
++++++++++++++
 
 aeif_psc_delta is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic currents
@@ -97,6 +101,7 @@ spikes. This is implemented such that V_m will be incremented/decremented by
 the value of J after a spike.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -140,13 +145,23 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
+Author:
+++++++++
 
-Sends: SpikeEvent
+Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends:
+++++++++
+
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
++++++++++++
 
 
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
@@ -155,7 +170,10 @@ References:
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
+SeeAlso:
+++++++++
+
+iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 
 EndUserDocs */
 class aeif_psc_delta : public Archiving_Node

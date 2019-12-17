@@ -60,9 +60,13 @@ Neurons
 hh
 cond
 
-Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
+Name:
+######
+
+hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 
 Description:
++++++++++++++
 
 hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
@@ -93,6 +97,7 @@ Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
 :math:`t_ref = 2` ms in [2].
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -123,6 +128,7 @@ I_e          pA     External input current
 
 References:
 +++++++++++
++++++++++++
 
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
@@ -131,13 +137,25 @@ References:
        Cambridge University Press, Cambridge UK.
 .. [3] http://modeldb.yale.edu/83319
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: Schrader
+Receives:
+++++++++
 
-SeeAlso: hh_psc_alpha
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+Schrader
+
+SeeAlso:
+++++++++
+
+hh_psc_alpha
 
 EndUserDocs */
 class hh_cond_exp_traub : public Archiving_Node

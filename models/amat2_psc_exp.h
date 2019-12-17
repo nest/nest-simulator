@@ -40,10 +40,14 @@ Neurons
 iaf
 psc
 
-Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
+Name:
+######
+
+amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
                       with exponential PSCs and adaptive threshold.
 
 Description:
++++++++++++++
 
 amat2_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
@@ -85,6 +89,7 @@ Remarks:
   different are very close.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -128,6 +133,7 @@ avoid a degenerate case of the ODE describing the model [1].
 For very similar values, numerics will be unstable.
 
 References:
++++++++++++
 
 
 .. [1] Rotter S, Diesmann M (1999). Exact simulation of
@@ -148,13 +154,22 @@ References:
        DOI: https://doi.org/10.3389/fncom.2011.00042
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: April 2013
 
-Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
+Author:
+++++++++
+
+Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
 Thomas Pfeil)
 
 EndUserDocs */

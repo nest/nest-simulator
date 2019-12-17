@@ -41,10 +41,14 @@ namespace nest
 Devices
 detector
 
-Name: correlospinmatrix_detector - Device for measuring the covariance matrix
+Name:
+######
+
+correlospinmatrix_detector - Device for measuring the covariance matrix
                                   from several inputs
 
 Description:
++++++++++++++
 
 The correlospinmatrix_detector is a recording device. It is used
 to record correlations from binary neurons from several binary sources and
@@ -66,6 +70,7 @@ set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
 Parameters:
++++++++++++++
 
 
 ================ ========= ====================================================
@@ -141,13 +146,22 @@ example in sli.
 
     100. Simulate
 
-Receives: SpikeEvent
+Receives:
+++++++++
 
-Author: Moritz Helias
+SpikeEvent
+
+Author:
+++++++++
+
+Moritz Helias
 
 FirstVersion: 2015/08/25
 
-SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
+SeeAlso:
+++++++++
+
+correlation_detector, correlomatrix_detector, spike_detector,
 
 EndUserDocs */
 class correlospinmatrix_detector : public Node

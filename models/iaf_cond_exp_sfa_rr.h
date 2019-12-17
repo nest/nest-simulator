@@ -61,10 +61,14 @@ Neurons
 iaf
 cond
 
-Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
+Name:
+######
+
+iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire
                             neuron model.
 
 Description:
++++++++++++++
 
 iaf_cond_exp_sfa_rr is an iaf_cond_exp_sfa_rr i.e. an implementation of a
 spiking neuron using IAF dynamics with conductance-based synapses,
@@ -82,6 +86,7 @@ these conductances decay exponentially with time constants tau_sfa
 and tau_rr, respectively.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -112,12 +117,19 @@ The following parameters can be set in the status dictionary.
 =========== ======  ===========================================================
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 
 References:
++++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
@@ -131,9 +143,15 @@ References:
                                                             item_3006127
 
 
-Author: Sven Schrader, Eilif Muller
+Author:
+++++++++
 
-SeeAlso: iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp,
+Sven Schrader, Eilif Muller
+
+SeeAlso:
+++++++++
+
+iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp,
 iaf_cond_alpha
 
 EndUserDocs */

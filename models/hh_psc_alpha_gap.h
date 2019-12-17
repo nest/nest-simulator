@@ -64,9 +64,13 @@ psc
 hh
 gap
 
-Name: hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
+Name:
+######
+
+hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
 
 Description:
++++++++++++++
 
 hh_psc_alpha_gap is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
@@ -88,6 +92,7 @@ Gap Junctions are implemented by a gap current of the form
 \f$ g_ij( V_i - V_j) \f$.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -115,6 +120,7 @@ I_e          pA      External input current
 
 
 References:
++++++++++++
 
 
 .. [1] Gerstner W, Kistler W. Spiking neuron models: Single neurons,
@@ -135,13 +141,25 @@ References:
 
 
 
-Sends: SpikeEvent, GapJunctionEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent, GapJunctionEvent
 
-Author: Jan Hahne, Moritz Helias, Susanne Kunkel
+Receives:
+++++++++
 
-SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
+SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+Jan Hahne, Moritz Helias, Susanne Kunkel
+
+SeeAlso:
+++++++++
+
+hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
 EndUserDocs */
 class hh_psc_alpha_gap : public Archiving_Node

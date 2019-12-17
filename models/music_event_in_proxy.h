@@ -44,9 +44,13 @@ namespace nest
 Devices
 music
 
-Name: music_event_in_proxy - A device which receives spikes from MUSIC.
+Name:
+######
+
+music_event_in_proxy - A device which receives spikes from MUSIC.
 
 Description:
++++++++++++++
 
 A music_event_in_proxy can be used to pass spikes to nodes within NEST
 which are received from another application.
@@ -60,6 +64,7 @@ on the same port, but each channel can only listened to by a
 single proxy.
 
 Parameters:
++++++++++++++
 
 The following properties are available in the status dictionary:
 
@@ -85,13 +90,19 @@ Examples:
     (event_in) 0.2 SetAcceptableLatency
     meip n Connect
 
-Author: Moritz Helias, Jochen Martin Eppler
+Author:
+++++++++
+
+Moritz Helias, Jochen Martin Eppler
 
 FirstVersion: October 2008
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
+SeeAlso:
+++++++++
+
+SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
 
 EndUserDocs */
 class music_event_in_proxy : public DeviceNode

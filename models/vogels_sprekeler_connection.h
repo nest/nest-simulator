@@ -34,11 +34,16 @@ namespace nest
 Synapses
 stdp
 
-Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
+Name:
+######
+
+vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
 dependent
 plasticity with constant depression.
 
 Description:
++++++++++++++
+
 vogels_sprekeler_synapse is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]).
 The learning rule is symmetric, i.e., the synapse is strengthened
@@ -47,7 +52,7 @@ pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
 Parameters:
-
++++++++++++++
 
 ======  ======  =========================================================
  tau    ms      Time constant of STDP window, potentiation
@@ -61,7 +66,7 @@ Parameters:
 Transmits: SpikeEvent
 
 References:
-
++++++++++++
 
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science,
@@ -70,9 +75,15 @@ References:
 
 FirstVersion: January 2016
 
-Author: Ankur Sinha
+Author:
+++++++++
 
-SeeAlso: synapsedict
+Ankur Sinha
+
+SeeAlso:
+++++++++
+
+synapsedict
 
 EndUserDocs */
 // connections are templates of target identifier type (used for pointer /

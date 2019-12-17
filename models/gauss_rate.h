@@ -43,9 +43,13 @@ namespace nest
 Neurons
 rate
 
-Name: gauss_rate - rate model with Gaussian gain function
+Name:
+######
+
+gauss_rate - rate model with Gaussian gain function
 
 Description:
++++++++++++++
 
 gauss_rate is an implementation of a nonlinear rate model with input
 function
@@ -62,6 +66,7 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -88,6 +93,7 @@ individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
 References:
++++++++++++
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
        M. (2017). Integration of continuous-time dynamics in a spiking neural
@@ -100,14 +106,26 @@ References:
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Sends:
+++++++++
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives:
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
+Author:
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
+Mario Senden, Jan Hahne, Jannis Schuecker
+
+SeeAlso:
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
 class nonlinearities_gauss_rate

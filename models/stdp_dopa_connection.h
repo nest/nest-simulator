@@ -40,10 +40,14 @@ namespace nest
 Synapses
 stdp
 
-Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
+Name:
+######
+
+stdp_dopamine_synapse - Synapse type for dopamine-modulated
                               spike-timing dependent plasticity.
 
 Description:
++++++++++++++
 
 stdp_dopamine_synapse is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
@@ -64,6 +68,7 @@ Examples:
     pre_neuron post_neuron /stdp_dopamine_synapse Connect
 
 Parameters:
++++++++++++++
 
 
 =========  ======= ======================================================
@@ -97,6 +102,7 @@ The common properties can only be set by SetDefaults and apply to all
 synapses of the model.
 
 References:
++++++++++++
 
 
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
@@ -110,13 +116,19 @@ References:
 
 Transmits: SpikeEvent
 
-Author: Susanne Kunkel
+Author:
+++++++++
+
+Susanne Kunkel
 
 Remarks:
 - based on an earlier version by Wiebke Potjans
 - major changes to code after code revision in Apr 2013
 
-SeeAlso: volume_transmitter
+SeeAlso:
+++++++++
+
+volume_transmitter
 
 EndUserDocs */
 /**

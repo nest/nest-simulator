@@ -43,11 +43,15 @@ namespace nest
 Synapses
 stdp
 
-Name: stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent
+Name:
+######
+
+stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent
 plasticity with presynaptic-centered nearest-neighbour spike pairing
 scheme.
 
 Description:
++++++++++++++
 
 stdp_nn_pre-centered_synapse is a connector to create synapses with spike
 time dependent plasticity with the presynaptic-centered nearest-neighbour
@@ -76,6 +80,7 @@ trace (implemented on the postsynaptic neuron side) decays with the time
 constant tau_minus and increases to 1 on a post-spike occurrence.
 
 Parameters:
++++++++++++++
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
@@ -92,6 +97,7 @@ Parameters:
 Transmits: SpikeEvent
 
 References:
++++++++++++
 
 
 .. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
@@ -104,11 +110,17 @@ References:
 
 FirstVersion: March 2006
 
-Author: Moritz Helias, Abigail Morrison
+Author:
+++++++++
+
+Moritz Helias, Abigail Morrison
 
 Adapted by: Philipp Weidel, Alex Serenko
 
-SeeAlso: stdp_synapse, stdp_nn_symm_synapse
+SeeAlso:
+++++++++
+
+stdp_synapse, stdp_nn_symm_synapse
 
 EndUserDocs */
 

@@ -42,12 +42,16 @@ namespace nest
 Devices
 generator
 
-Name: spike_generator - A device which generates spikes from an array with
+Name:
+######
+
+spike_generator - A device which generates spikes from an array with
                         spike-times.
 
 Synopsis: spike_generator Create -> node_id
 
 Description:
++++++++++++++
 
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
@@ -164,6 +168,7 @@ Example:
     3.0 milliseconds, and use the weight of the connection.
 
 Parameters:
++++++++++++++
 The following properties can be set in the status dictionary.
 
 
@@ -184,11 +189,20 @@ The following properties can be set in the status dictionary.
 ===================== ============= ==========================================
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Author: Gewaltig, Diesmann, Eppler
+SpikeEvent
 
-SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
+Author:
+++++++++
+
+Gewaltig, Diesmann, Eppler
+
+SeeAlso:
+++++++++
+
+Device, StimulatingDevice, testsuite::test_spike_generator
 
 EndUserDocs */
 class spike_generator : public DeviceNode

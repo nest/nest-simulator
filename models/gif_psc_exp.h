@@ -40,10 +40,14 @@ Neurons
 psc
 iaf
 
-Name: gif_psc_exp - Current-based generalized integrate-and-fire neuron
+Name:
+######
+
+gif_psc_exp - Current-based generalized integrate-and-fire neuron
 model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
 Description:
++++++++++++++
 
 gif_psc_exp is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) and Pozzorini et al. (2015), with exponential shaped
@@ -123,6 +127,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 The shape of post synaptic current is exponential.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -162,6 +167,7 @@ V_T_star   mV           Base threshold
 
 
 References:
++++++++++++
 
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
@@ -175,13 +181,25 @@ References:
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: March 2016, Setareh
+Receives:
+++++++++
 
-SeeAlso: pp_psc_delta, gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Author:
+++++++++
+
+March 2016, Setareh
+
+SeeAlso:
+++++++++
+
+pp_psc_delta, gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
 EndUserDocs */
 class gif_psc_exp : public Archiving_Node

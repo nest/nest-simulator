@@ -59,9 +59,13 @@ extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron Hodgkin-Huxley current-based
 
-Name: hh_psc_alpha - Hodgkin-Huxley neuron model.
+Name:
+######
+
+hh_psc_alpha - Hodgkin-Huxley neuron model.
 
 Description:
++++++++++++++
 
 hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
@@ -78,6 +82,7 @@ there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -105,6 +110,7 @@ better spike detection
 initial wavelet/spike at simulation onset
 
 References:
++++++++++++
 
 
 .. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
@@ -118,13 +124,25 @@ References:
        DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Authors: Schrader
+Receives:
+++++++++
 
-SeeAlso: hh_cond_exp_traub
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Authors:
+++++++++
+
+Schrader
+
+SeeAlso:
+++++++++
+
+hh_cond_exp_traub
 EndUserDocs */
 
 class hh_psc_alpha : public Archiving_Node

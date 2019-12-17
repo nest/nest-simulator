@@ -43,10 +43,14 @@ Neurons
 pp
 psc
 
-Name: pp_psc_delta - Point process neuron with leaky integration of
+Name:
+######
+
+pp_psc_delta - Point process neuron with leaky integration of
                      delta-shaped PSCs.
 
 Description:
++++++++++++++
 
 pp_psc_delta is an implementation of a leaky integrator, where the potential
 jumps on each spike arrival. It produces spike stochastically, and supports
@@ -122,6 +126,7 @@ parameters should be set carefully and conciously.
 
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -149,6 +154,7 @@ The following parameters can be set in the status dictionary.
 
 
 References:
++++++++++++
 
 
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
@@ -176,13 +182,22 @@ References:
        Cambridge University Press
 
 
-Sends: SpikeEvent
+Sends:
+++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
+++++++++
 
-SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
+SeeAlso:
+++++++++
+
+pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
 class pp_psc_delta : public Archiving_Node

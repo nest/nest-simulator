@@ -64,10 +64,14 @@ clopath_n
 aeif
 psc
 
-Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
+Name:
+######
+
+aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
 model according to Clopath et al. (2010).
 
 Description:
++++++++++++++
 
 aeif_psc_delta_clopath is an implementation of the neuron model as it is used
 in [1]. It is an extension of the aeif_psc_delta model and capable of
@@ -83,6 +87,7 @@ synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
 used to compute the change of the synaptic weight.
 
 Parameters:
++++++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -168,13 +173,23 @@ by Claudia Clopath et al. that can be found on ModelDB [3]. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+Author:
+++++++++
 
-Sends: SpikeEvent
+Jonas Stapmanns, David Dahmen, Jan Hahne
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends:
+++++++++
+
+SpikeEvent
+
+Receives:
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
++++++++++++
 
 .. [1] Clopath et al. (2010). Connectivity reflects coding: a model of
        voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
@@ -186,7 +201,10 @@ References:
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
        modeldb_package%2fVoTriCode%2faEIF.m
 
-SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
+SeeAlso:
+++++++++
+
+aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
 EndUserDocs */
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node

@@ -831,7 +831,11 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
   for ( ; t_id < nodecollection->end(); ++t_id )
   {
     const index node_id = ( *t_id ).node_id;
-    if ( kernel().node_manager.get_node_or_proxy( node_id, tid )->has_proxies() )
+    const auto node = kernel().node_manager.get_node_or_proxy( node_id, tid );
+    // Normal neuron nodes have proxies. Globally receiving devices, e.g. volume transmitter, don't have a local
+    // receiver, but are connected in the same way as normal neuron nodes. Therefore they have to be treated as such
+    // here.
+    if ( node->has_proxies() or not node->local_receiver() )
     {
       neuron_node_ids.push_back( node_id );
     }

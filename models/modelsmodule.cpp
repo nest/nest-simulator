@@ -91,6 +91,8 @@
 #include "gif_cond_exp.h"
 #include "gif_cond_exp_multisynapse.h"
 #include "gif_pop_psc_exp.h"
+#include "glif_cond.h"
+#include "glif_psc.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -198,6 +200,7 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
+
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
@@ -233,6 +236,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
@@ -339,6 +343,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >( "gif_cond_exp_multisynapse" );
   kernel().model_manager.register_node_model< gif_pop_psc_exp >( "gif_pop_psc_exp" );
+  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
 
   kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );

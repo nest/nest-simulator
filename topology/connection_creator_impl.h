@@ -39,28 +39,31 @@ namespace nest
 {
 template < int D >
 void
-ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
+ConnectionCreator::connect( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   switch ( type_ )
   {
   case Pairwise_bernoulli_on_source:
 
-    pairwise_bernoulli_on_source_( source, target, target_nc );
+    pairwise_bernoulli_on_source_( source, source_nc, target, target_nc );
     break;
 
   case Fixed_indegree:
 
-    fixed_indegree_( source, target, target_nc );
+    fixed_indegree_( source, source_nc, target, target_nc );
     break;
 
   case Fixed_outdegree:
 
-    fixed_outdegree_( source, target, target_nc );
+    fixed_outdegree_( source, source_nc, target, target_nc );
     break;
 
   case Pairwise_bernoulli_on_target:
 
-    pairwise_bernoulli_on_target_( source, target, target_nc );
+    pairwise_bernoulli_on_target_( source, source_nc, target, target_nc );
     break;
 
   default:
@@ -174,7 +177,10 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
+ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   // Connect using pairwise Bernoulli drawing source nodes (target driven)
   // For each local target node:
@@ -186,11 +192,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >
   PoolWrapper_< D > pool;
   if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
-    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_ ) );
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
   }
   else
   {
-    pool.define( source.get_global_positions_vector() );
+    pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -246,7 +252,10 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
+ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   // Connecting using pairwise Bernoulli drawing target nodes (source driven)
   // It is actually implemented as pairwise Bernoulli on source nodes,
@@ -262,11 +271,11 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
   {
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
-    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target ) );
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
   }
   else
   {
-    pool.define( source.get_global_positions_vector() );
+    pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -330,7 +339,10 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source, Layer< D >
 
 template < int D >
 void
-ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
+ConnectionCreator::fixed_indegree_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -366,7 +378,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
 
   if ( mask_.get() )
   {
-    MaskedLayer< D > masked_source( source, mask_, allow_oversized_ );
+    MaskedLayer< D > masked_source( source, mask_, allow_oversized_, source_nc );
     const auto masked_source_end = masked_source.end();
 
     std::vector< std::pair< Position< D >, index > > positions;
@@ -489,7 +501,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
     // no mask
 
     // Get (position,node ID) pairs for all nodes in source layer
-    std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector();
+    std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_nc );
 
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
@@ -601,7 +613,10 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source, Layer< D >& target, Node
 
 template < int D >
 void
-ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
+ConnectionCreator::fixed_outdegree_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -636,14 +651,15 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source, Layer< D >& target, Nod
   // 2. If using kernel: Compute connection probability for each global target
   // 3. Draw connections to make using global rng
 
-  MaskedLayer< D > masked_target( target, mask_, allow_oversized_ );
+  MaskedLayer< D > masked_target( target, mask_, allow_oversized_, target_nc );
   const auto masked_target_end = masked_target.end();
 
   // We create a target positions vector here that can be updated with the
   // position and node ID pairs. This is done to avoid creating and destroying
   // unnecessarily many vectors.
   std::vector< std::pair< Position< D >, index > > target_pos_node_id_pairs;
-  std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs = *source.get_global_positions_vector();
+  std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs =
+    *source.get_global_positions_vector( source_nc );
 
   for ( const auto& source_pos_node_id_pair : source_pos_node_id_pairs )
   {

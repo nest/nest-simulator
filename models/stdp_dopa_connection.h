@@ -36,9 +36,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
                               spike-timing dependent plasticity.
@@ -65,7 +65,7 @@ Examples:
 
 Parameters:
 
-\verbatim embed:rst
+
 =========  ======= ======================================================
 **Common properties**
 -------------------------------------------------------------------------
@@ -90,7 +90,7 @@ Parameters:
  c  real    Eligibility trace
  n  real    Neuromodulator concentration
 === ======  =====================================
-\endverbatim
+
 
 Remarks:
 The common properties can only be set by SetDefaults and apply to all
@@ -98,7 +98,7 @@ synapses of the model.
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
        circuit simulations with distributed computing of neuromodulated
        plasticity. Frontiers in Computational Neuroscience, 4:141.
@@ -106,7 +106,7 @@ References:
 .. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
        of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
        DOI: https://doi.org/10.1093/cercor/bhl152
-\endverbatim
+
 
 Transmits: SpikeEvent
 
@@ -117,7 +117,8 @@ Remarks:
 - major changes to code after code revision in Apr 2013
 
 SeeAlso: volume_transmitter
-*/
+
+EndUserDocs */
 /**
  * Class containing the common properties for all synapses of type dopamine
  * connection.

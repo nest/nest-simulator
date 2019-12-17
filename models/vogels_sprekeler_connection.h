@@ -30,9 +30,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
 dependent
@@ -48,7 +48,7 @@ which differentiates this rule from other classical stdp rules.
 
 Parameters:
 
-\verbatim embed:rst
+
 ======  ======  =========================================================
  tau    ms      Time constant of STDP window, potentiation
  Wmax   real    Maximum allowed weight
@@ -56,24 +56,25 @@ Parameters:
  alpha  real    Constant depression (= 2 * tau * target firing rate in
                 [1])
 ======  ======  =========================================================
-\endverbatim
+
 
 Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science,
        334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
-\endverbatim
+
 
 FirstVersion: January 2016
 
 Author: Ankur Sinha
 
 SeeAlso: synapsedict
-*/
+
+EndUserDocs */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing)
 // derived from generic connection template

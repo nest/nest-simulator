@@ -44,9 +44,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs:
+Neurons
+rate
 
 Name: rate_transformer_node - Rate neuron that sums up incoming rates
                 and applies a nonlinearity specified via the template.
@@ -86,7 +86,7 @@ status dictionary.
 Author: Mario Senden, Jan Hahne, Jannis Schuecker
 
 FirstVersion: November 2017
-*/
+EndUserDocs */
 template < class TNonlinearities >
 class rate_transformer_node : public Archiving_Node
 {

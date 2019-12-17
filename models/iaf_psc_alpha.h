@@ -35,10 +35,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+psc
 
 Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 
@@ -92,7 +92,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== ======  ==========================================================
  V_m        mV      Membrane potential
  E_L        mV      Resting membrane potenial
@@ -106,7 +106,7 @@ The following parameters can be set in the status dictionary.
  I_e        pA      Constant input current
  V_min      mV      Absolute lower value for the membrane potenial
 =========== ======  ==========================================================
-\endverbatim
+
 Remarks:
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
@@ -117,7 +117,7 @@ the NEST source code (docs/model_details).
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -130,7 +130,7 @@ References:
        subthreshold integration with continuous spike times in discrete time
        neural network simulations. Neural Computation, in press
        DOI: https://doi.org/10.1162/neco.2007.19.1.47
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -141,7 +141,8 @@ FirstVersion: September 1999
 Author:  Diesmann, Gewaltig
 
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
-*/
+
+EndUserDocs */
 class iaf_psc_alpha : public Archiving_Node
 {
 

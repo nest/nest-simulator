@@ -63,9 +63,9 @@ namespace nest
  */
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup ht_neuron
+/* BeginUserDocs:
+Neurons
+ht_neuron
 
 Name: ht_neuron - Neuron model after Hill & Tononi (2005).
 
@@ -89,7 +89,7 @@ Documentation and Examples:
 
 Parameters:
 
-\verbatim embed:rst
+
 =============== =======
 ===========================================================
  V_m            mV      Membrane potential
@@ -140,7 +140,7 @@ equilibrate                  If given and true, time-dependent activation
                              SetStatus call; otherwise they retain their
                              present values.
 ============================ =================================================
-\endverbatim
+
 
 @Note Conductances are unitless in this model and currents are in mV.
 
@@ -153,7 +153,7 @@ FirstVersion: October 2009; full revision November 2016
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
        thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
        DOI: https://doi.org/10.1152/jn.00915.2004
@@ -161,10 +161,11 @@ References:
        unblock of NMDA receptors limits their  contribution to spike generation
        in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
        DOI: https://doi.org/10.1152/jn.01038.2002
-\endverbatim
+
 
 SeeAlso: ht_connection
-*/
+
+EndUserDocs */
 class ht_neuron : public Archiving_Node
 {
 public:

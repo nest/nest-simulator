@@ -34,18 +34,18 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
+/* BeginUserDocs:
+Neurons
+iaf
 
 Name: izhikevich - Izhikevich neuron model
 
 Description:
 Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]. The dynamics are given by:
-  @f[
+  
   dv/dt = 0.04*v^2 + 5*v + 140 - u + I \\
-     du/dt = a*(b*v - u)] @f]
+     du/dt = a*(b*v - u)] 
 
     if  \f$ v >= V_{th} \f$:
       v is set to c
@@ -72,7 +72,7 @@ Euler integration. In this case, consistent_integration must be set to true
 Parameters:
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ======================= =======  ==============================================
  V_m                    mV       Membrane potential
  U_m                    mV       Membrane potential recovery variable
@@ -85,16 +85,16 @@ The following parameters can be set in the status dictionary.
  d                      mV       After-spike reset value of U_m
  consistent_integration boolean  Use standard integration technique
 ======================= =======  ==============================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
 on
        Neural Networks, 14:1569-1572.
        DOI: https://doi.org/10.1109/TNN.2003.820440
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -105,7 +105,8 @@ FirstVersion: 2009
 Author: Hanuschkin, Morrison, Kunkel
 
 SeeAlso: iaf_psc_delta, mat2_psc_exp
-*/
+
+EndUserDocs */
 class izhikevich : public Archiving_Node
 {
 

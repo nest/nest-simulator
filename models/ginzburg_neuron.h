@@ -29,9 +29,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup binary
+/* BeginUserDocs:
+Neurons
+binary
 
 Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
                         function.
@@ -44,25 +44,25 @@ point the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
-The gain function g used here is \f$ g(h) = c1*h + c2 * 0.5*(1 +
-\tanh(c3*(h-\theta))) \f$ (output clipped to [0,1]). This allows to
+The gain function g used here is :math:`g(h) = c1*h + c2 * 0.5*(1 +
+\tanh(c3*(h-\theta)))` (output clipped to [0,1]). This allows to
 obtain affin-linear (c1!=0, c2!=0, c3=0) or sigmoidal (c1=0,
 c2=1, c3!=0) shaped gain functions.  The latter choice
 corresponds to the definition in [1], giving the name to this
 neuron model.
 The choice c1=0, c2=1, c3=beta/2 corresponds to the Glauber
-dynamics [2], \f$ g(h) = 1 / (1 + \exp(-\beta (h-\theta))) \f$.
-The time constant \f$ \tau_m \f$ is defined as the mean
+dynamics [2], :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
+The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reprodce
 simulations with asynchronous update [1], the time constant needs
-to be chosen as \f$ \tau_m = dt*N \f$, where dt is the simulation time
+to be chosen as :math:`\tau_m = dt*N`, where dt is the simulation time
 step and N the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every \f$ \tau_m \f$ ms. Since in the original paper [1] neurons
+average every :math:`\tau_m` ms. Since in the original paper [1] neurons
 are coupled with zero delay, this implementation follows this
 definition. It uses the update scheme described in [3] to
-maintain causality: The incoming events in time step \f$ t_i \f$ are
+maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay d, the user has to specify the
@@ -87,7 +87,7 @@ noise_generator.
 
 Parameters:
 
-\verbatim embed:rst
+
 ====== ============= ===========================================================
  tau_m  ms           Membrane time constant (mean inter-update-interval)
  theta  mV           Threshold for sigmoidal activation function
@@ -96,11 +96,11 @@ Parameters:
  c2     probability  Prefactor of sigmoidal gain
  c3     1/mV         Slope factor of sigmoidal gain
 ====== ============= ===========================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
        DOI: https://doi.org/10.1103/PhysRevE.50.3171
@@ -111,7 +111,7 @@ References:
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer.
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -122,7 +122,8 @@ FirstVersion: February 2010
 Author: Moritz Helias
 
 SeeAlso: pp_psc_delta
-*/
+
+EndUserDocs */
 class gainfunction_ginzburg
 {
 private:

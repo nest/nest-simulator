@@ -37,9 +37,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
                                      spike trains.
@@ -52,14 +52,14 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-@f[  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
+  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
      * \pi/180 )) >= 0
-@f]
+
 Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ======================== ======= ==============================================
  rate                    real    Mean firing rate in spikes/second,
                                  default: 0 s^-1
@@ -69,7 +69,7 @@ The following parameters can be set in the status dictionary:
  phase                   real    Modulation phase in degree [0-360], default: 0
  individual_spike_trains boolean See note below, default: true
 ======================== ======= ==============================================
-\endverbatim
+
 
 Remarks:
 - If amplitude > rate, firing rate is cut off at zero. In this case, the mean
@@ -95,7 +95,8 @@ FirstVersion: July 2006, Oct 2009, May 2013
 Author: Hans Ekkehard Plesser
 
 SeeAlso: poisson_generator, sinusoidal_gamma_generator
-*/
+
+EndUserDocs */
 class sinusoidal_poisson_generator : public DeviceNode
 {
 

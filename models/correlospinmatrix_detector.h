@@ -37,9 +37,9 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginUserDocs:
+Devices
+detector
 
 Name: correlospinmatrix_detector - Device for measuring the covariance matrix
                                   from several inputs
@@ -67,7 +67,7 @@ specified receptor will be pooled.
 
 Parameters:
 
-\verbatim embed:rst
+
 ================ ========= ====================================================
 Tstart           real      Time when to start counting events. This time should
                            be set to at least start + tau_max in order to avoid
@@ -95,7 +95,7 @@ count_covariance 3D        matrix of read-only -raw, auto/cross correlation
                  matrix of counts
                  integers
 ================ ========= ====================================================
-\endverbatim
+
 
 Remarks:
 
@@ -148,10 +148,8 @@ Author: Moritz Helias
 FirstVersion: 2015/08/25
 
 SeeAlso: correlation_detector, correlomatrix_detector, spike_detector,
-        Device, PseudoRecordingDevice
 
-Availability: NEST
-*/
+EndUserDocs */
 class correlospinmatrix_detector : public Node
 {
 

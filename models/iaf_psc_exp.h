@@ -35,11 +35,11 @@
 namespace nest
 {
 
-/** @BeginDocumentation
+/* BeginUserDocs:
 
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+Neurons
+iaf
+psc
 
 Name: iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
                    PSCs.
@@ -89,7 +89,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ===========  =======  ========================================================
  E_L          mV      Resting membrane potential
  C_m          pF      Capacity of the membrane
@@ -103,7 +103,7 @@ The following parameters can be set in the status dictionary.
  I_e          pA      Constant input current
  t_spike      ms      Point in time of last spike
 ===========  =======  ========================================================
-\endverbatim
+
 
 
 Remarks:
@@ -124,7 +124,7 @@ tau_syn_ex. For an example application, see [6].
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
        20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
@@ -139,7 +139,7 @@ References:
 .. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
        metastable state driven by colored noise. Physical Review E 92:052119
        DOI: https://doi.org/10.1103/PhysRevE.92.052119
-\endverbatim
+
 =======
 
 
@@ -147,12 +147,14 @@ Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_exp_ps
 
 FirstVersion: March 2006
 
 Author: Moritz Helias
-*/
+
+SeeAlso: iaf_psc_exp_ps
+
+EndUserDocs */
 class iaf_psc_exp : public Archiving_Node
 {
 

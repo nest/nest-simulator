@@ -28,9 +28,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup inst_rate
+/* BeginUserDocs:
+Synapses
+inst_rate
 
 Name: diffusion_connection - Synapse type for instantaneous rate connections
 between neurons of type siegert_neuron.
@@ -64,19 +64,20 @@ Transmits: DiffusionConnectionEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,
        Bolten M, Helias M, Diesmann, M. (2017).
        Integration of continuous-time dynamics in a
        spiking neural network simulator.
        Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
-\endverbatim
+
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
 SeeAlso: siegert_neuron, rate_connection_instantaneous
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {

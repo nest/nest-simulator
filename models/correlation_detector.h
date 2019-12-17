@@ -38,9 +38,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginUserDocs:
+Devices
+detector
 
 Name: correlation_detector - Device for evaluating cross correlation between
                              two spike sources
@@ -65,8 +65,8 @@ histogram[n] then contains the sum of products of the weight
 \f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
 with\f$ t_{2,j}-t_{1,i} \f$ in
 
-   @f[ n*\delta_\tau - \tau_{max} - \delta_\tau/2 @f]
-   @f[ n*\delta_\tau - \tau_{max} + \delta_\tau/2 @f]
+    n*\delta_\tau - \tau_{max} - \delta_\tau/2 
+    n*\delta_\tau - \tau_{max} + \delta_\tau/2 
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
@@ -80,7 +80,7 @@ receptor_port = 1 will be used as spike source 2.
 
 Parameters:
 
-\verbatim embed:rst
+
 ==================== ========
 ====================================================
 Tstart               real     Time when to start counting events. This time
@@ -117,7 +117,7 @@ n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
 ==================== ========
 ====================================================
-\endverbatim
+
 
 Remarks:
 
@@ -170,8 +170,7 @@ FirstVersion: 2007/5/21
 
 SeeAlso: spike_detector, Device, PseudoRecordingDevice
 
-Availability: NEST
-*/
+EndUserDocs */
 class correlation_detector : public Node
 {
 

@@ -55,10 +55,10 @@ namespace nest
  */
 extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup hh
-@ingroup cond
+/* BeginUserDocs:
+Neurons
+hh
+cond
 
 Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 
@@ -85,18 +85,18 @@ simulators covered is available from ModelDB [3].
 Note:
 In this model, a spike is emitted if
 
-@f[ V_m >= V_T + 30 mV and V_m has fallen during the current time step @f]
+ :math:`V_m >= V_T + 30` mV and `V_m` has fallen during the current time step
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
-\f$ t_ref = 2 ms \f$ in [2].
+Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
+:math:`t_ref = 2` ms in [2].
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== ======  =========================================================
 V_m          mV     Membrane potential
 V_T          mV     Voltage offset that controls dynamics. For default
@@ -118,19 +118,18 @@ E_K          mV     Potassium reversal potential
 g_K          nS     Potassium peak conductance
 I_e          pA     External input current
 =========== ======  =========================================================
-\endverbatim
+
 
 
 References:
++++++++++++
 
-\verbatim embed:rst
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
        23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
 .. [2] Traub RD and Miles R (1991). Neuronal networks of the hippocampus.
        Cambridge University Press, Cambridge UK.
 .. [3] http://modeldb.yale.edu/83319
-\envverbatim
 
 Sends: SpikeEvent
 
@@ -139,7 +138,8 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author: Schrader
 
 SeeAlso: hh_psc_alpha
-*/
+
+EndUserDocs */
 class hh_cond_exp_traub : public Archiving_Node
 {
 

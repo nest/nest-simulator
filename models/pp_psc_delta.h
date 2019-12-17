@@ -38,10 +38,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+pp
+psc
 
 Name: pp_psc_delta - Point process neuron with leaky integration of
                      delta-shaped PSCs.
@@ -60,11 +60,13 @@ true will reset the membrane potential after each spike.
 The transfer function can be chosen to be linear, exponential or a sum of
 both by adjusting three parameters:
 
-@f[  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ], @f]
+.. math::
 
-where the effective potential \f$ V' = V_m - E_{sfa} \f$ and \f$ E_{sfa} \f$
+  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ],
+
+where the effective potential :math:`V' = V_m - E_{sfa}` and :math:`E_{sfa}`
 is called the adaptive threshold. Here Rect means rectifier:
-\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary
+:math:`Rect(x) = {x \text{ if } x>=0, 0 \text{ else}}` (this is necessary
 because
 negative rates are not possible).
 
@@ -74,7 +76,7 @@ linear rate model.
 The dead time enables to include refractoriness. If dead time is 0, the
 number of spikes in one time step might exceed one and is drawn from the
 Poisson distribution accordingly. Otherwise, the probability for a spike
-is given by \f$ 1 - \exp(-rate*h) \f$, where h is the simulation time step. If
+is given by :math:`1 - \exp(-rate*h)`, where h is the simulation time step. If
 dead_time is smaller than the simulation resolution (time step), it is
 internally set to the resolution.
 
@@ -123,7 +125,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =================  ======= ===================================================
  V_m               mV      Membrane potential
  C_m               pF      Capacitance of the membrane
@@ -144,11 +146,11 @@ The following parameters can be set in the status dictionary.
  c_3               1/mV    Coefficient of exponential non-linearity of
                            transfer function
 =================  ======= ===================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
        processes and applications to neural modeling. Journal of
        Computational Neuroscience 28(2):267-284
@@ -172,7 +174,7 @@ References:
 .. [6] Gerstner W, Kistler WM, Naud R, Paninski L (2014). Neuronal Dynamics:
        From single neurons to networks and models of cognition.
        Cambridge University Press
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -180,9 +182,9 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 
-SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
-iaf_psc_delta_ps
-*/
+SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
+
+EndUserDocs */
 class pp_psc_delta : public Archiving_Node
 {
 

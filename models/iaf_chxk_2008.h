@@ -56,10 +56,10 @@ namespace nest
  */
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs:
+Neurons
+iaf
+cond
 
 Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
                       used in Casti et al 2008.
@@ -77,7 +77,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ========  ======= ===========================================================
  V_m      mV      Membrane potential
  E_L      mV      Leak reversal potential
@@ -95,15 +95,15 @@ The following parameters can be set in the status dictionary.
  ahp_bug  boolean Defaults to false. If true, behaves like original
                   model implementation
 ========  ======= ===========================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
        transmission. Journal of Computational Neuroscience 24:235-252.
        DOI: https://doi.org/10.1007/s10827-007-0053-7
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -112,7 +112,8 @@ Receives: SpikeEvent, CurrentEvent
 Author: Heiberg
 
 SeeAlso: iaf_cond_alpha
-*/
+
+EndUserDocs */
 class iaf_chxk_2008 : public Archiving_Node
 {
 

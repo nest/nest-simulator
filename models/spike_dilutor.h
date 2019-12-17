@@ -34,9 +34,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: spike_dilutor - repeats incoming spikes with a certain probability.
 
@@ -54,11 +54,11 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-\verbatim embed:rst
+
 ======== ======  ================
  p_copy  real    Copy probability
 ======== ======  ================
- \endverbatim
+
 
 Sends: SpikeEvent
 
@@ -66,7 +66,8 @@ Author: Adapted from mip_generator by Kunkel, Oct 2011
 ported to Nest 2.6 by: Setareh, April 2015
 
 SeeAlso: mip_generator
-*/
+
+EndUserDocs */
 class spike_dilutor : public DeviceNode
 {
 

@@ -34,9 +34,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs:
+Neurons
+rate
 
 Name: lin_rate - Linear rate model
 
@@ -59,7 +59,7 @@ the gap-junction framework.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 ===============  ======= ==================================================
  rate            real    Rate (unitless)
  tau             ms      Time constant of rate dynamics
@@ -74,11 +74,11 @@ The following parameters can be set in the status dictionary.
  theta_in        real    Shift in multiplicative coupling
  rectify_output  boolean Switch to restrict rate to values >= 0
 ===============  ======= ==================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
        M (2017). Integration of continuous-time dynamics in a spiking neural
        network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -88,7 +88,7 @@ References:
        in distributed neuronal network simulations.
        Frontiers Neuroinformatics, 9:22.
        DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
+
 
 Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
@@ -98,7 +98,8 @@ DataLoggingRequest
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+
+EndUserDocs */
 
 class nonlinearities_lin_rate
 {

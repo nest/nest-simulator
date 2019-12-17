@@ -56,10 +56,10 @@ namespace nest
  */
 extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs:
+Neurons
+iaf
+cond
 
 Name: iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron
                       model.
@@ -76,7 +76,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ============= ====== =========================================================
  V_m          mV      Membrane potential
  E_L          mV      Leak reversal potential
@@ -93,7 +93,7 @@ The following parameters can be set in the status dictionary.
  tau_decay_in ms      Rise time of the inhibitory synaptic beta function
  I_e          pA      Constant input current
 ============= ====== =========================================================
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -110,7 +110,7 @@ Remarks:
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
@@ -132,12 +132,13 @@ References:
 .. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
-\endverbatim
+
 
 Author: Daniel Naoumenko (modified iaf_cond_alpha by Schrader, Plesser)
 
 SeeAlso: iaf_cond_exp, iaf_cond_alpha, iaf_cond_alpha_mc
 
+EndUserDocs
 */
 class iaf_cond_beta : public Archiving_Node
 {

@@ -29,9 +29,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup static
+/* BeginUserDocs:
+Synapses
+static
 
 Name: static_synapse - Synapse type for static connections.
 
@@ -50,7 +50,8 @@ DoubleDataEvent, DataLoggingRequest
 Remarks: Refactored for new connection system design, March 2007
 
 SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {

@@ -39,9 +39,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: inhomogeneous_poisson_generator - provides Poisson spike trains
     at a piecewise constant rate
@@ -56,7 +56,7 @@ a different spike train.
 Parameters:
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ==================== ================ =========================================
  rate_times          list of ms       Times at which rate changes
  rate_values         list of spikes/s Rate of Poisson spike train
@@ -69,7 +69,7 @@ The following parameters can be set in the status dictionary:
                                       step,otherwise they are rounded up to the
                                       *end* of the step. Default: false
 ==================== ================ =========================================
-\endverbatim
+
 
 Examples:
 
@@ -88,9 +88,9 @@ Sends: SpikeEvent
 
 Authors: Renato Duarte, Barna Zajzon
 
-SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
-       StimulatingDevice
-*/
+SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice
+
+EndUserDocs */
 class inhomogeneous_poisson_generator : public DeviceNode
 {
 

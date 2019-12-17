@@ -33,9 +33,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stp
+/* BeginUserDocs:
+Synapses
+stp
 
 Name: tsodyks_synapse - Synapse type with short term plasticity.
 
@@ -88,7 +88,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ========  ======  ======================================================
  U        real    Maximum probability of release [0,1]
  tau_psc  ms      Time constant of synaptic current
@@ -99,15 +99,15 @@ The following parameters can be set in the status dictionary:
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
 ========  ======  ======================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. Journal of Neuroscience,
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
-\endverbatim
+
 
 Transmits: SpikeEvent
 
@@ -116,7 +116,8 @@ FirstVersion: March 2006
 Author: Moritz Helias
 
 SeeAlso: synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class TsodyksConnection : public Connection< targetidentifierT >
 {

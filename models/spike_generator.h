@@ -38,9 +38,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: spike_generator - A device which generates spikes from an array with
                         spike-times.
@@ -166,7 +166,7 @@ Example:
 Parameters:
 The following properties can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ===================== ============= ==========================================
  origin               ms            Time origin for device timer
  start                ms            Earliest possible time stamp of a spike to
@@ -182,14 +182,15 @@ The following properties can be set in the status dictionary.
  allow_offgrid_times  boolean       see above
  shift_now_spikes     boolean       see above
 ===================== ============= ==========================================
-\endverbatim
+
 
 Sends: SpikeEvent
 
 Author: Gewaltig, Diesmann, Eppler
 
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
-*/
+
+EndUserDocs */
 class spike_generator : public DeviceNode
 {
 

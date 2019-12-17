@@ -39,9 +39,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: step_current_generator - provides a piecewise constant DC input current
 
@@ -55,13 +55,13 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ==================== ===============  ======================================
  amplitude_times     list of ms       Times at which current changes
  amplitude_values    list of pA       Amplitudes of step current current
  allow_offgrid_times boolean          Default false
 ==================== ===============  ======================================
-\endverbatim
+
 
   If false, times will be rounded to the nearest step if they are
   less than tic/2 from the step, otherwise NEST reports an error.
@@ -90,9 +90,9 @@ Sends: CurrentEvent
 
 Author: Jochen Martin Eppler, Jens Kremkow
 
-SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
-StimulatingDevice
-*/
+SeeAlso: ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
+
+EndUserDocs */
 class step_current_generator : public DeviceNode
 {
 

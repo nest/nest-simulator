@@ -40,9 +40,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup music
+/* BeginUserDocs:
+Devices
+music
 
 Name: music_event_in_proxy - A device which receives spikes from MUSIC.
 
@@ -63,7 +63,7 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-\verbatim embed:rst
+
 ============== ======== =======================================================
  port_name     string   The name of the MUSIC input port to listen to (default:
                         event_in)
@@ -71,7 +71,7 @@ The following properties are available in the status dictionary:
  registered    boolean  A bool indicating if the port has been already
                         registered with the corresponding MUSIC event handler
 ============== ======== =======================================================
-\endverbatim
+
 
 The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
@@ -91,9 +91,9 @@ FirstVersion: October 2008
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
-music_message_in_proxy
-*/
+SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
+
+EndUserDocs */
 class music_event_in_proxy : public DeviceNode
 {
 

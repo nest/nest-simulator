@@ -39,9 +39,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: step_rate_generator - provides a piecewise constant input rate
 
@@ -57,13 +57,13 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ==================== ===============  ======================================
  amplitude_times     list of ms       Times at which current changes
  amplitude_values    list of pA       Amplitudes of step current current
  allow_offgrid_times boolean          Default false
 ==================== ===============  ======================================
-\endverbatim
+
 
 If false, times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
@@ -93,7 +93,8 @@ Sends: DelayedRateConnectionEvent
 Author: Sandra Nestler, David Dahmen
 
 SeeAlso: step_current_generator, Device, StimulatingDevice
-*/
+
+EndUserDocs */
 class step_rate_generator : public DeviceNode
 {
 

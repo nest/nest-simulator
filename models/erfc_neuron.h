@@ -28,9 +28,9 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup binary
+/* BeginUserDocs:
+Neurons
+binary
 
 Name: erfc_neuron - Binary stochastic neuron with complementary error
 function as activation function.
@@ -45,7 +45,7 @@ the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is
 
-@f[ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). @f]
+ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). 
 
 This corresponds to a McCulloch-Pitts neuron receiving additional
 Gaussian noise with mean 0 and standard deviation sigma.
@@ -84,17 +84,17 @@ noise_generator.
 
 Parameters:
 
-\verbatim embed:rst
+
 ======  ======  =========================================================
  tau_m  ms      Membrane time constant (mean inter-update-interval)
  theta  mV      threshold for sigmoidal activation function
  sigma  mV      1/sqrt(2pi) x inverse of maximal slope
 ======  ======  =========================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
        DOI: https://doi.org/10.1103/PhysRevE.50.3171
@@ -105,7 +105,7 @@ References:
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -116,7 +116,8 @@ FirstVersion: May 2016
 Authors: Jakob Jordan, Tobias Kuehn
 
 SeeAlso: mcculloch_pitts_neuron, ginzburg_neuron
-*/
+
+EndUserDocs */
 class gainfunction_erfc
 {
 private:

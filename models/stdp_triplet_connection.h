@@ -30,9 +30,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
                              plasticity (triplets).
@@ -47,7 +47,7 @@ STDP examples:
     triplet      Aplus_triplet = Aminus_triplet = 1.0
 
 Parameters:
-\verbatim embed:rst
+
 =================  ======  ===========================================
  tau_plus          real    Time constant of short presynaptic trace
                            (tau_plus of [1])
@@ -70,17 +70,17 @@ Parameters:
  Kplus          real    Pre-synaptic trace (r_1 of [1])
  Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1])
 =============== ======  ===========================================
-\endverbatim
+
 
 Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
        of spike timing-dependent plasticity.  The Journal of Neuroscience
        26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
-\endverbatim
+
 
 Notes:
 - Presynaptic traces r_1 and r_2 of [1] are stored in the connection as
@@ -101,7 +101,8 @@ Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
 Adapted by: Philipp Weidel
 
 SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
-*/
+
+EndUserDocs */
 // connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template

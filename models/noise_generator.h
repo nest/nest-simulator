@@ -40,9 +40,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: noise_generator - Device to generate Gaussian white noise current.
 
@@ -58,15 +58,15 @@ deviation of the noise.
 
 The current generated is given by
 
-@f[  I(t) = mean + std * N_j  \text{ for } t_0 + j dt <= t < t_0 + (j-1) dt @f]
+  I(t) = mean + std * N_j  \text{ for } t_0 + j dt <= t < t_0 + (j-1) dt
 
 where \f$ N_j \f$ are Gaussian random numbers with unit standard deviation and
 \f$ t_0 \f$ is the device onset time.
 If the modulation is added the current is given by
-  @f[
+
   I(t) = mean + \sqrt(std^2 + std_{mod}^2 * \sin(\omega * t + phase)) * N_j \\
                               \text{ for } t_0 + j dt <= t < t_0 + (j-1) dt
-   @f]
+
 For a detailed discussion of the properties of the noise generator, please see
 the noise_generator.ipynb notebook included in the NEST source code
 (docs/model_details).
@@ -74,7 +74,7 @@ the noise_generator.ipynb notebook included in the NEST source code
 Parameters:
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ========== ======  =========================================================
  mean      pA      Mean value of the noise current
  std       pA      Standard deviation of noise current
@@ -83,7 +83,7 @@ The following parameters can be set in the status dictionary:
  phase     real    Phase of sine modulation (0-360 deg)
  frequency Hz      Frequency of sine modulation
 ========== ======  =========================================================
-\endverbatim
+
 
 Remarks:
 - All targets receive different currents.
@@ -96,14 +96,14 @@ Remarks:
   For the leaky integrate-and-fire neuron with time constant \f$ \tau_m \f$ and
   capacity \f$ C_m \f$, membrane potential fluctuations Sigma at time
   s \f$ t_j+delay \f$ are given by
-  @f[
+
   \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
                              \text{where } x = exp(-dt/\tau_m)
-  @f]
+
   for large \f$ t_j \f$. In the white noise limit, dt -> 0, one has
-  @f[
+
   \Sigma -> std / C_m * \sqrt(dt * \tau / 2).
-  @f]
+
   To obtain comparable results for different values of dt, you must
   adapt std.
 - As the noise generator provides a different current for each of its targets,
@@ -113,10 +113,11 @@ Remarks:
 
 Sends: CurrentEvent
 
+Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
+
 SeeAlso: Device
 
-Author: Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
-*/
+EndUserDocs */
 class noise_generator : public DeviceNode
 {
 

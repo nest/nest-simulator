@@ -39,9 +39,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent
 plasticity with presynaptic-centered nearest-neighbour spike pairing
@@ -76,7 +76,7 @@ trace (implemented on the postsynaptic neuron side) decays with the time
 constant tau_minus and increases to 1 on a post-spike occurrence.
 
 Parameters:
-\verbatim embed:rst
+
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -87,20 +87,20 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
+
 
 Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
        Neural Comput. 15, 1511--1523
 
 .. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-\endverbatim
+
 
 FirstVersion: March 2006
 
@@ -109,7 +109,8 @@ Author: Moritz Helias, Abigail Morrison
 Adapted by: Philipp Weidel, Alex Serenko
 
 SeeAlso: stdp_synapse, stdp_nn_symm_synapse
-*/
+
+EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template

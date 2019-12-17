@@ -39,9 +39,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_nn_restr_synapse - Synapse type for spike-timing dependent
 plasticity with restricted symmetric nearest-neighbour spike pairing
@@ -73,7 +73,7 @@ decays exponentially with the time constant tau_minus and increases to 1 on
 a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
 
 Parameters:
-\verbatim embed:rst
+
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -84,17 +84,17 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
+
 
 Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-\endverbatim
+
 
 FirstVersion: March 2006
 
@@ -103,7 +103,8 @@ Author: Moritz Helias, Abigail Morrison
 Adapted by: Philipp Weidel, Alex Serenko
 
 SeeAlso: stdp_synapse, stdp_nn_symm_synapse
-*/
+
+EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template

@@ -35,10 +35,10 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+psc
 
 Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
                       with exponential PSCs and adaptive threshold.
@@ -88,7 +88,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 =========== ======= ===========================================================
  C_m        pF      Capacity of the membrane
  E_L        mV      Resting potential
@@ -118,7 +118,7 @@ The following parameters can be set in the status dictionary:
  V_m        mV   Non-resetting membrane potential
  V_th       mV   Two-timescale adaptive threshold
 =========== ==== =======================================================
-\endverbatim
+
 
 Remarks:
 
@@ -129,7 +129,7 @@ For very similar values, numerics will be unstable.
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Rotter S, Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -146,7 +146,7 @@ References:
        for reproducing diverse firing patterns and predicting precise
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -156,7 +156,8 @@ FirstVersion: April 2013
 
 Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
 Thomas Pfeil)
-*/
+
+EndUserDocs */
 class amat2_psc_exp : public Archiving_Node
 {
 

@@ -33,9 +33,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent
                                   plasticity using homogeneous parameters,
@@ -56,7 +56,7 @@ stdp_connection_hom.
 
 Parameters:
 
-\verbatim embed:rst
+
 ======================= =========== ===========================================
 **Common properties**
 -------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ Parameters:
  synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
-\endverbatim
+
 
 Remarks:
 
@@ -126,7 +126,7 @@ Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
        synaptic plasticity based on spike-timing. Biological Cybernetics,
        98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
@@ -140,14 +140,15 @@ References:
        neuromorphic hardware. Frontiers in Neuroscience 6(90).
        DOI: https://doi.org/10.3389/fnins.2012.00090
 .. [4] Friedmann, S. in preparation
-\endverbatim
+
 
 FirstVersion: July 2011
 
 Author: Thomas Pfeil (TP), Moritz Helias, Abigail Morrison
 
 SeeAlso: stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
-*/
+
+EndUserDocs */
 // template class forward declaration required by common properties friend
 // definition
 template < typename targetidentifierT >

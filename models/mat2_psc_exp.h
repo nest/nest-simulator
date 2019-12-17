@@ -36,10 +36,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+psc
 
 Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
 exponential PSCs and adaptive threshold.
@@ -83,7 +83,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ============ =======  ========================================================
  C_m          pF      Capacity of the membrane
  E_L          mV      Resting potential
@@ -101,15 +101,15 @@ The following parameters can be set in the status dictionary:
  omega        mV      Resting spike threshold (absolute value, not
                       relative to E_L as in [3])
 ============ =======  ========================================================
-\endverbatim
+
 
 The following state variables can be read out with the multimeter device:
-\verbatim embed:rst
+
 ====== ====  =================================
  V_m   mV    Non-resetting membrane potential
  V_th  mV    Two-timescale adaptive threshold
 ====== ====  =================================
-\endverbatim
+
 
 Remarks:
 
@@ -119,7 +119,7 @@ numerics will be unstable.
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Rotter S and Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -132,7 +132,7 @@ References:
        spiking neuron model equipped with a multi-timescale adaptive
        threshold. Frontiers in Computuational Neuroscience 3:9.
        DOI: https://doi.org/10.3389/neuro.10.009.2009
-\endverbatim
+
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
@@ -141,7 +141,7 @@ FirstVersion: Mai 2009
 
 Author: Thomas Pfeil (modified iaf_psc_exp model of Moritz Helias)
 
-*/
+EndUserDocs */
 class mat2_psc_exp : public Archiving_Node
 {
 

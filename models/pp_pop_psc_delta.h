@@ -37,10 +37,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+pp
+psc
 
 Name: pp_pop_psc_delta - Population of point process neurons with leaky
                          integration of delta-shaped PSCs.
@@ -57,7 +57,9 @@ receives, and the output is the pooled spike train.
 
 The instantaneous firing rate of the N component neurons is defined as
 
-@f[ rate(t) = \rho_0 * \exp( (h(t) - \eta(t))/\delta_u ), @f]
+.. math::
+
+ rate(t) = \rho_0 * \exp( (h(t) - \eta(t))/\delta_u ),
 
 where h(t) is the input potential (synaptic delta currents convolved with
 an exponential kernel with time constant tau_m), eta(t) models the effect
@@ -98,7 +100,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== =============== ===========================================
  N          integer         Number of represented neurons
  tau_m      ms              Membrane time constant
@@ -112,10 +114,10 @@ The following parameters can be set in the status dictionary.
  len_kernel real            Post-spike kernel eta is truncated after
                             max(tau_eta) * len_kernel
 =========== =============== ===========================================
-\endverbatim
+
 
 The parameters correspond to the ones of pp_psc_delta as follows.
-\verbatim embed:rst
+
 ==================  ============================
  c_1                0.0
  c_2                rho_0
@@ -128,11 +130,11 @@ The parameters correspond to the ones of pp_psc_delta as follows.
  with_reset         False
  t_ref_remaining    0.0
 ==================  ============================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
        a population approach to the peri-stimulus time histogram.
        PLoS Compututational Biology 8: e1002711.
@@ -145,7 +147,7 @@ References:
        information filtering in coupled populations of spiking neurons with
        adaptation. Physical Review E 90:6, 062704.
        DOI: https://doi.org/10.1103/PhysRevE.90.062704
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -153,9 +155,9 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author: May 2014, Setareh, Deger
 
-SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator,
-gamma_sup_generator
-*/
+SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator, gamma_sup_generator
+
+EndUserDocs */
 class pp_pop_psc_delta : public Node
 {
 

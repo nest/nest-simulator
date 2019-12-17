@@ -45,9 +45,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
                                    spike trains.
@@ -60,12 +60,14 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-@f[ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 ) @f]
+.. math::
+
+ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
 
 Parameters:
 
 The following parameters can be set in the status dictionary:
-\verbatim embed:rst
+
 ======================== ======== ==============================================
  rate                    spikes/s Mean firing rate,
                                   default: 0 spikes/s
@@ -76,7 +78,7 @@ The following parameters can be set in the status dictionary:
  order                   real     Gamma order (>= 1), default: 1
  individual_spike_trains boolean  See note below, default: true
 ======================== ======== ==============================================
-\endverbatim
+
 
 
 Remarks:
@@ -100,19 +102,20 @@ Sends: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
        stimulus-response models of neural spiking activity. Journal of
        Neuroscience Methods, 105:25-3.
        DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
-\endverbatim
+
 
 FirstVersion: October 2007, May 2013
 
 Author: Hans E Plesser, Thomas Heiberg
 
 SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
-*/
+
+EndUserDocs */
 
 /**
  * AC Gamma Generator.
@@ -121,13 +124,13 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * performance at all.
  * @note  The simulator works by calculating the hazard h(t) for each time step
  * and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
- * @f[
+ *
  *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
  *                                                                  \Lambda(t))}
- * @f]
+ *
  * with
- * @f[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) @f]
- * @f[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds @f]
+ *   \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi )
+ *   \Lambda(t) = a \int_{t_0}^t \lambda(s) ds
  * and the incomplete Gamma function \f$ Gamma(a,z) \f$; \f$ a \f$ is the order
  * of the gamma function and \f$t_0\f$ the time of the most recent spike.
  *
@@ -140,8 +143,8 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * are changed at
  *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
  *       \f$t>t_c\f$ as
- *       @f[ \Lambda(t) = a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds @f]
+ *        \Lambda(t) = a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                      + a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *

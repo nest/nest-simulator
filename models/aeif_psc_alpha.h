@@ -57,11 +57,11 @@ namespace nest
  */
 extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+aeif
+psc
 
 Name: aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
                          model according to Brette and Gerstner (2005).
@@ -77,18 +77,22 @@ adaptive step size to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 
-@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e @f]
+.. math::
+
+ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e
 
 and
 
-@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+.. math::
+
+ \tau_w * dw/dt= a(V-E_L) -W
 
 Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -142,7 +146,7 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities
 ============= ======= =========================================================
-\endverbatim
+
 
 Author: Tanguy Fardet
 
@@ -152,15 +156,16 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-\endverbatim
+
 
 SeeAlso: iaf_psc_alpha, aeif_cond_exp
-*/
+
+EndUserDocs */
 class aeif_psc_alpha : public Archiving_Node
 {
 

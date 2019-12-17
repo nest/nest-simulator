@@ -34,10 +34,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+psc
 
 Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
 
@@ -96,7 +96,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ================= ======= ======================================================
  V_m              mV      Membrane potential
  E_L              mV      Resting membrane potential
@@ -110,11 +110,11 @@ The following parameters can be set in the status dictionary.
  refractory_input boolean If true, do not discard input during
                           refractory period. Default: false
 ================= ======= ======================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -123,7 +123,7 @@ References:
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -132,7 +132,8 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author:  September 1999, Diesmann, Gewaltig
 
 SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
-*/
+
+EndUserDocs */
 class iaf_psc_delta : public Archiving_Node
 {
 

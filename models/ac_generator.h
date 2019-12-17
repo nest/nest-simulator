@@ -33,58 +33,75 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
+/* BeginUserDocs: devices, generator
 
-namespace nest
-{
+Produce an AC input current
+###########################
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+Device name
+++++++++++++
 
-Name: ac_generator - provides AC input current
+ac_generator
 
-Description:
+Description
++++++++++++++
 
 This device produces an ac-current sent by a CurrentEvent. The
 current is given by
 
-       @f[ I(t) = offset + amplitude * \sin ( om * t + \phi ) @f]
+.. math::
+
+        I(t) = offset + amplitude * \sin ( om * t + \phi )
 
 where
-    @f[
+
+.. math::
+
     om  = 2 * \pi * frequency \\
     \phi = phase / 180 * \pi
-    @f]
 
-Parameters:
-\verbatim embed:rst
+
+Parameters
+++++++++++
+
 ==========   ======   ====================================
  amplitude   pA       Amplitude of sine current
  offset      pA       Constant amplitude offset
  frequency   Hz       Frequency
  phase       degree   Phase of sine current (0-360 deg)
 ==========   ======   ====================================
-\endverbatim
-
 
 Setting start and stop (see StimulatingDevice) only windows the current
 as defined above. It does not shift the time axis.
 
-References:
-
-\verbatim embed:rst
+References
+++++++++++
 
 .. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
        invariant linear systems with applications to neuronal modeling,
        Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
-\endverbatim
 
-Sends: CurrentEvent
 
-Author: Johan Hake, Spring 2003
+Sends
++++++
 
-SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
-*/
+CurrentEvent
+
+Authors
++++++++
+
+J Hake, 2003
+
+SeeAlso
++++++++
+
+StimulatingDevice, dc_generator, step_current_generator
+
+EndUserDocs */
+
+namespace nest
+{
+
 class ac_generator : public DeviceNode
 {
 

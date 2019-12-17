@@ -43,9 +43,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup music
+/* BeginUserDocs:
+Devices
+music
 
 Name: music_event_out_proxy - Device to forward spikes to remote applications
                               using MUSIC.
@@ -65,7 +65,7 @@ Parameters:
 
 The following properties are available in the status dictionary:
 
-\verbatim embed:rst
+
 =========== ======= ========================================================
  port_name  string  The name of the MUSIC output_port to forward events to
                     (default: event_out)
@@ -73,7 +73,7 @@ The following properties are available in the status dictionary:
  published  boolean A bool indicating if the port has been already published
                     with MUSIC
 =========== ======= ========================================================
-\endverbatim
+
 
 The parameter port_name can be set using SetStatus.
 
@@ -90,7 +90,8 @@ FirstVersion: March 2009
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
-*/
+
+EndUserDocs */
 class music_event_out_proxy : public DeviceNode
 {
 

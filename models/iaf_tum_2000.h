@@ -35,9 +35,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
+/* BeginUserDocs:
+Neurons
+iaf
 
 Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
                     PSCs.
@@ -89,7 +89,7 @@ matrix objects.
 Parameters:
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 ===========  ====== ========================================================
  E_L          mV     Resting membrane potenial
  C_m          pF     Capacity of the membrane
@@ -104,7 +104,7 @@ The following parameters can be set in the status dictionary.
  I_e          pA     Constant input current
  t_spike      ms     Point in time of last spike
 ===========  ====== ========================================================
-\endverbatim
+
 
 Remarks:
 
@@ -116,7 +116,7 @@ the NEST source code (docs/model_details).
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
        20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
@@ -128,7 +128,7 @@ References:
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -137,7 +137,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 FirstVersion: March 2006
 
 Author: Moritz Helias
-*/
+EndUserDocs */
 class iaf_tum_2000 : public Archiving_Node
 {
 

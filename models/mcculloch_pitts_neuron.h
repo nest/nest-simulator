@@ -29,9 +29,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup binary
+/* BeginUserDocs:
+Neurons
+binary
 
 Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
                               activation function.
@@ -78,16 +78,16 @@ noise_generator.
 
 Parameters:
 
-\verbatim embed:rst
+
 ======= =======  ====================================================
  tau_m   ms      Membrane time constant (mean inter-update-interval)
  theta   mV      Threshold for sigmoidal activation function
 ======= =======  ====================================================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] McCulloch W, Pitts W (1943). A logical calculus of the ideas
        immanent in nervous activity. Bulletin of Mathematical Biophysics,
        5:115-133. DOI: https://doi.org/10.1007/BF02478259
@@ -98,7 +98,7 @@ References:
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer.
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -109,7 +109,8 @@ FirstVersion: February 2013
 Author: Moritz Helias
 
 SeeAlso: pp_psc_delta
-*/
+
+EndUserDocs */
 class gainfunction_mcculloch_pitts
 {
 private:

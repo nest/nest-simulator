@@ -40,9 +40,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
 
@@ -56,13 +56,13 @@ It resembles the output of synfire groups of neurons.
 
 Parameters:
 
-\verbatim embed:rst
+
 ============  ======= =======================================================
  pulse_times  ms      Times of the centers of pulses
  activity     integer Number of spikes per pulse
  sdev         ms      Standard deviation of spike times in each pulse
 ============  ======= =======================================================
-\endverbatim
+
 
 Remarks:
 
@@ -76,7 +76,8 @@ Remarks:
 Sends: SpikeEvent
 
 SeeAlso: spike_generator, StimulatingDevice
-*/
+
+EndUserDocs */
 class pulsepacket_generator : public Node
 {
 

@@ -28,9 +28,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup gap
+/* BeginUserDocs:
+Synapses
+gap
 
 Name: gap_junction - Synapse type for gap-junction connections.
 
@@ -54,7 +54,7 @@ Transmits: GapJunctionEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
        M (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
@@ -64,12 +64,13 @@ References:
        Synchronization of electrically coupled pairs of inhibitory
        interneurons in neocortex. Journal of Neuroscience 27:2058-2073.
        DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
-\endverbatim
+
 
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 
 SeeAlso: synapsedict, hh_psc_alpha_gap
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {

@@ -57,12 +57,12 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup clopath_n
-@ingroup aeif
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+clopath_n
+aeif
+psc
 
 Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
 model according to Clopath et al. (2010).
@@ -86,7 +86,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 
 =========== ======  ===================================================
 **Dynamic state variables**
@@ -158,7 +158,7 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
+
 
 Note:
 
@@ -175,7 +175,7 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References:
-\verbatim embed:rst
+
 .. [1] Clopath et al. (2010). Connectivity reflects coding: a model of
        voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
        DOI: https://doi.org/10.1038/nn.2479
@@ -185,9 +185,10 @@ References:
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
        modeldb_package%2fVoTriCode%2faEIF.m
-\endverbatim
+
 SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
-*/
+
+EndUserDocs */
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 

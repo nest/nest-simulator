@@ -44,29 +44,33 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs:
+Neurons
+rate
 
 Name: rate_neuron_ipn - Base class for rate model with input noise.
 
 Description:
 
 Base class for rate model with input noise of the form
-@f[
+
+.. math::
+
 \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 or
-@f[
+
+.. math::
+
 \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) \\
                 + \text{mult_coupling_in}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt \\
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 This template class needs to be instantiated with a class
 containing the following functions:
  - input (nonlinearity that is applied to the input, either psi or phi)
@@ -81,17 +85,18 @@ to the summed excitatory and inhibitory inputs if linear_summation=True.
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
-\endverbatim
+
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
 SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
- */
+
+EndUserDocs  */
 template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
 {

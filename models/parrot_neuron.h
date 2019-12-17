@@ -33,9 +33,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup parrot
+/* BeginUserDocs:
+Neurons
+parrot
 
 Name: parrot_neuron - Neuron that repeats incoming spikes.
 
@@ -77,7 +77,7 @@ Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
 Plesser
 
 FirstVersion: May 2006
-*/
+EndUserDocs */
 class parrot_neuron : public Archiving_Node
 {
 

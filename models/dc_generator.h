@@ -38,9 +38,9 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: dc_generator - provides DC input current
 
@@ -51,11 +51,11 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ========== ======  =============================
  amplitude pA      Amplitude of current
 ========== ======  =============================
-\endverbatim
+
 
 
 Examples:
@@ -80,7 +80,8 @@ Sends: CurrentEvent
 Author: docu by Sirko Straube
 
 SeeAlso: Device, StimulatingDevice
-*/
+
+EndUserDocs */
 class dc_generator : public DeviceNode
 {
 

@@ -38,10 +38,10 @@ namespace nest
 
 class Network;
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs:
+Neurons
+iaf
+psc
 
 Name: gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
 with exponential postsynaptic currents and adaptation
@@ -54,7 +54,7 @@ described in [1].
 
 The single neuron model is defined by the hazard function
 
-@f[ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ] @f]
+ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ] 
 
 After each spike the membrane potential V_m is reset to V_reset. Spike
 frequency
@@ -90,7 +90,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== ============= =====================================================
  V_reset    mV            Membrane potential is reset to this value after
                           a spike
@@ -121,16 +121,16 @@ gif_pop_psc_exp  gif_psc_exp  relation
 tau_m            g_L          \f$ tau_m = C_m / g_L \f$
 N                ---          use N gif_psc_exp
 =============== ============  =============================
-\endverbatim
+
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
        columns: From spiking neurons to interacting neural populations of
        finite size. PLoS Computational Biology.
        https://doi.org/10.1371/journal.pcbi.1005507
-\endverbatim
+
 
 Sends: SpikeEvent
 
@@ -139,7 +139,8 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
 
 SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
-*/
+
+EndUserDocs */
 class gif_pop_psc_exp : public Node
 {
 

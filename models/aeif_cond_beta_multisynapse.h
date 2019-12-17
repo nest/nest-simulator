@@ -56,11 +56,11 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup cond
+/* BeginUserDocs:
+Neurons
+iaf
+aeif
+cond
 
 Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
                                      integrate-and-fire neuron model according
@@ -85,27 +85,33 @@ are automatically assigned in the range from 1 to n_receptors.
 During connection, the ports are selected with the property "receptor_type".
 
 The membrane potential is given by the following differential equation:
-@f[
+
+.. math::
+
  C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
  + I_{syn_{tot}}(V, t) - w + I_e
-@f]
+
 
 where:
 
-@f[ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) , @f]
+.. math::
+
+ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
 the synapse i is excitatory or inhibitory depending on the value of
-\f$ E_{rev,i} \f$
+:math:`E_{rev,i}`
 and the differential equation for the spike-adaptation current w is:
 
-@f[ \tau_w * dw/dt = a(V - E_L) - w @f]
+.. math::
+
+ \tau_w * dw/dt = a(V - E_L) - w
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 ======== ======= =======================================
 **Dynamic state variables:**
 --------------------------------------------------------
@@ -149,7 +155,7 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
+
 
 Examples:
 
@@ -193,7 +199,8 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 Author: Bruno Golosio 07/10/2016
 
 SeeAlso: aeif_cond_alpha_multisynapse
-*/
+
+EndUserDocs */
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

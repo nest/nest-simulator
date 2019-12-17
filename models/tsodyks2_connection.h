@@ -32,9 +32,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stp
+/* BeginUserDocs:
+Synapses
+stp
 
 Name: tsodyks2_synapse - Synapse type with short term plasticity.
 
@@ -56,7 +56,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
+
 ========  ======  ========================================================
  U        real    Maximum probability of release (U1) [0,1], default=0.5
  u        real    Maximum probability of release (U_se) [0,1],
@@ -65,7 +65,7 @@ The following parameters can be set in the status dictionary:
  tau_fac  ms      Time constant for facilitation, default = 0(off)
  tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
-\endverbatim
+
 
  Remarks:
 
@@ -78,7 +78,7 @@ models.
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
        pyramidal neurons depends on neurotransmitter release probability.
        PNAS, 94(2):719-23.
@@ -90,7 +90,7 @@ References:
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-61.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
-\endverbatim
+
 
 Transmits: SpikeEvent
 
@@ -99,7 +99,8 @@ FirstVersion: October 2011
 Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
 
 SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class Tsodyks2Connection : public Connection< targetidentifierT >
 {

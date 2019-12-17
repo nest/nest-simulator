@@ -32,9 +32,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stp
+/* BeginUserDocs:
+Synapses
+stp
 
 Name: quantal_stp_synapse - Probabilistic synapse model with short term
 plasticity.
@@ -57,7 +57,7 @@ be obtained if all n release sites are activated.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-\verbatim embed:rst
+
 ==========  ======= =========================================================
  U          real    Maximal fraction of available resources [0,1],
                     default=0.5
@@ -68,12 +68,12 @@ The following parameters can be set in the status dictionary:
  tau_rec    ms      Time constant for depression, default=800 ms
  tau_rec    ms      Time constant for facilitation, default=0 (off)
 ==========  ======= =========================================================
-\endverbatim
+
 
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
        neurophysiology, 87(1):140-8.
@@ -85,7 +85,7 @@ References:
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-161.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
-\endverbatim
+
 
 Transmits: SpikeEvent
 
@@ -94,7 +94,8 @@ FirstVersion: December 2013
 Author: Marc-Oliver Gewaltig, based on tsodyks2_synapse
 
 SeeAlso: tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
-*/
+
+EndUserDocs */
 template < typename targetidentifierT >
 class Quantal_StpConnection : public Connection< targetidentifierT >
 {

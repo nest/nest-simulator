@@ -40,10 +40,10 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
-@ingroup clopath_s
+/* BeginUserDocs:
+Synapses
+stdp
+clopath_s
 
 Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
 
@@ -61,13 +61,13 @@ hh_psc_alpha_clopath.
 
 Parameters:
 
-\verbatim embed:rst
+
 =======  ======  ==========================================================
 tau_x    ms      Time constant of the trace of the presynaptic spike train
 Wmax     real    Maximum allowed weight
 Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
-\endverbatim
+
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
@@ -77,7 +77,7 @@ Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Clopath et al. (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
        Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
@@ -86,11 +86,12 @@ References:
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
-\endverbatim
+
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
-*/
+
+EndUserDocs */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >

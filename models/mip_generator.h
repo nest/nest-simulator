@@ -41,9 +41,9 @@ namespace nest
 */
 
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: mip_generator - create spike trains as described by the MIP model.
 
@@ -62,14 +62,14 @@ Parameters:
 
 The following parameters appear in the element's status dictionary:
 
-\verbatim embed:rst
+
 ============  ======== ================================================
  rate         spikes/s Mean firing rate of the mother process
  p_copy       real     Copy probability
  mother_rng   rng      Random number generator of mother process
  mother_seed  integer  Seed of RNG of mother process
 ============  ======== ================================================
-\endverbatim
+
 
 Remarks:
 
@@ -94,18 +94,18 @@ Sends: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
        ensembles and the response of simple model neurons. Neural Computation
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
- \endverbatim
+
 
 Author: May 2006, Helias
 
 SeeAlso: Device
 
-*/
+EndUserDocs */
 class mip_generator : public DeviceNode
 {
 

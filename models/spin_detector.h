@@ -37,9 +37,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginUserDocs:
+Devices
+detector
 
 Name: spin_detector - Device for detecting binary states in neurons.
 
@@ -77,7 +77,8 @@ states are not necessarily written to file in chronological order.
 Receives: SpikeEvent
 
 SeeAlso: spike_detector, Device, RecordingDevice
-*/
+
+EndUserDocs */
 
 /**
  * Spin detector class.

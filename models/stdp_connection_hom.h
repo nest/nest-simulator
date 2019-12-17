@@ -32,9 +32,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs:
+Synapses
+stdp
 
 Name: stdp_synapse_hom - Synapse type for spike-timing dependent
 plasticity using homogeneous parameters.
@@ -57,7 +57,7 @@ Examples:
 
 Parameters:
 
-\verbatim embed:rst
+
 ========= =======  ======================================================
  tau_plus ms       Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -68,7 +68,7 @@ Parameters:
  mu_minus real     Weight dependence exponent, depression
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
+
 
 Remarks:
 
@@ -79,7 +79,7 @@ Transmits: SpikeEvent
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
        temporally asymmetric hebbian plasticity. Journal of Neuroscience,
        23:3697-3714 DOI: https://doi.org/10.1523/JNEUROSCI.23-09-03697.2003
@@ -94,14 +94,15 @@ References:
        from spike timing-dependent plasticity. Journal of Neuroscience,
        20(23):8812-8821.
        DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
-\endverbatim
+
 
 FirstVersion: March 2006
 
 Author: Moritz Helias, Abigail Morrison
 
 SeeAlso: synapsedict, tsodyks_synapse, static_synapse
-*/
+
+EndUserDocs */
 /**
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.

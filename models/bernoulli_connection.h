@@ -31,9 +31,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup static
+/* BeginUserDocs:
+Synapses
+static
 
 Name: bernoulli_synapse - Static synapse with stochastic transmission.
 
@@ -49,11 +49,11 @@ the parameters target, weight, transmission probability, delay and
 receiver port for each connection.
 
 Parameters:
-\verbatim embed:rst
+
 =========== ====== ===================================================
  p_transmit real   Transmission probability, must be between 0 and 1
 =========== ====== ===================================================
-\endverbatim
+
 
 FirstVersion: June 2017
 
@@ -62,11 +62,9 @@ Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
            DoubleDataEvent, DataLoggingRequest
 
-SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
-
 References:
 
-\verbatim embed:rst
+
 .. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
        neuronal network of the C2 barrel column in mouse primary
        somatosensory cortex. Neuron, 61(2):301-316.
@@ -80,8 +78,10 @@ References:
        network model for burst generation during hippocampal sharp waves.
        Journal of Neuroscience, 35(43):14585-14601.
        DOI: https://doi.org/10.1523/JNEUROSCI.4944-14.2015
-\endverbatim
-*/
+
+SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
+
+EndUserDocs */
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >
 {

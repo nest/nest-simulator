@@ -37,9 +37,9 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs:
+Devices
+generator
 
 Name: volume_transmitter - Node used in combination with neuromodulated synaptic
 plasticity. It collects all spikes emitted by the population of neurons
@@ -82,12 +82,12 @@ Parameters:
 
 References:
 
-\verbatim embed:rst
+
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
        neural circuit simulations with distributed computing of
        neuromodulated plasticity. Frontiers in Computattional Neuroscience,
        4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
-\endverbatim
+
 
 Author: Wiebke Potjans, Abigail Morrison
 
@@ -97,7 +97,7 @@ Receives: SpikeEvent
 
 SeeAlso: stdp_dopamine_synapse
 
-*/
+EndUserDocs */
 class ConnectorBase;
 
 class volume_transmitter : public Archiving_Node

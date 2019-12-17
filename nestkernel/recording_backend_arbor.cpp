@@ -153,8 +153,8 @@ nest::RecordingBackendArbor::cleanup()
 
     prepared_ = false;
 
-	// sanity check if (two) simulator ran for the correct amount of step.
-	// This assures that the other side is in sync (MPI)
+    // sanity check if (two) simulator ran for the correct amount of step.
+    // This assures that the other side is in sync (MPI)
     if ( steps_left_ != 0 )
     {
       throw UnmatchedSteps( steps_left_, arbor_steps_ );
@@ -191,12 +191,12 @@ nest::RecordingBackendArbor::prepare()
   DictionaryDatum dict_out( new Dictionary );
   kernel().get_status( dict_out );
   const float nest_min_delay = ( *dict_out )[ "min_delay" ];
-  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ];  // Gives size 0 if nest_kernel_reset is called
-  
+  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ]; // Gives size 0 if nest_kernel_reset is called
+
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
   num_arbor_cells_ = arb::shadow::broadcast( 0, MPI_COMM_WORLD, arbor_->info.arbor_root );
-  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root ); 
+  arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root );
 
   // hand shake #2: communications step size synchronized
   const float arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );
@@ -209,17 +209,18 @@ nest::RecordingBackendArbor::prepare()
     arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root ) + 1; // arbor has a pre-exchange
 
   // TODO:
-  // In an ideal world we would se thte set min_delay here. But after setting the update in delay we would need to reset the kernel
-  // which results in losing the connection. With this in mind we check if the delays received are equal and fail hard of not. 
-  if (min_delay != nest_min_delay)
+  // In an ideal world we would set the min_delay here. But after setting the update in delay we would need to reset
+  // the kernel which results in losing the connection. With this in mind we check if the delays received are equal
+  // and fail hard if not.
+  if ( min_delay != nest_min_delay )
   {
-    throw BadParameter( "RecordingBackendArbor: min_delay Arbor and NEST are not equal");
+    throw BadParameter( "RecordingBackendArbor: min_delay Arbor and NEST are not equal" );
   }
   // Ideally the following section would be used to set the delays dynamically.
-  //DictionaryDatum dict_in( new Dictionary );
-  //( *dict_in )[ "min_delay" ] = min_delay;
-  //( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
-  //kernel().set_status( dict_in );
+  // DictionaryDatum dict_in( new Dictionary );
+  // ( *dict_in )[ "min_delay" ] = min_delay;
+  // ( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
+  // kernel().set_status( dict_in );
 
   // Arbor has an initial exchange before time 0
   std::vector< arb::shadow::spike > empty_spikes;

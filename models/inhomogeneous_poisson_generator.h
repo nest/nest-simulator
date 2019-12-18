@@ -43,11 +43,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-inhomogeneous_poisson_generator - provides Poisson spike trains
-    at a piecewise constant rate
+inhomogeneous_poisson_generator - provides Poisson spike trains at a piecewise constant rate
+#############################################################################################
 
 Description:
 +++++++++++++

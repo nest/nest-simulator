@@ -36,11 +36,10 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-stdp_synapse_hom - Synapse type for spike-timing dependent
-plasticity using homogeneous parameters.
+stdp_synapse_hom - Synapse type for spike-timing dependent plasticity using homogeneous parameters
+###################################################################################################
+
 
 Description:
 +++++++++++++
@@ -80,7 +79,10 @@ Remarks:
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++

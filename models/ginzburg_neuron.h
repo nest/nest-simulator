@@ -33,11 +33,9 @@ namespace nest
 Neurons
 binary
 
-Name:
-######
 
-ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
-                        function.
+ginzburg_neuron - Binary stochastic neuron with sigmoidal activation function
+#############################################################################
 
 Description:
 +++++++++++++

@@ -1,3 +1,24 @@
+# -*- coding: utf-8 -*-
+#
+# extractor_userdocs.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 import re
 from pprint import pformat
 import os
@@ -8,6 +29,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
+
 def relative_glob(*pattern, basedir=os.curdir, **kwargs):
     tobase = os.path.relpath(basedir, os.curdir)
     tohere = os.path.relpath(os.curdir, basedir)
@@ -16,12 +38,13 @@ def relative_glob(*pattern, basedir=os.curdir, **kwargs):
     # remove prefix from all expanded names
     return [name[len(tobase)+1:] for name in names]
 
+
 def UserDocExtractor(
         filenames,
         basedir="..",
         replace_ext='.rst',
-        outdir = "from_cpp/"
-    ):
+        outdir="from_cpp/"
+        ):
     """
     Extract all user documentation from given files.
 
@@ -73,12 +96,7 @@ def UserDocExtractor(
         nfiles_total += 1
         match = None
         with open(os.path.join(basedir, filename)) as infile:
-            text = infile.read()
-            assert not ("beginuserdocs" in text.lower() and 'BeginUserDocs' not in text), 'Wrong capitalization of BeginUserDocs'
-            if "BeginUserDocs" in text:
-                if not "EndUserDocs" in text:
-                    assert "EndUserDocs" in text, 'BeginUserDocs found, but no EndUserDocs'
-                match = userdoc_re.search(infile.read())
+            match = userdoc_re.search(infile.read())
         if not match:
             log.warning("No user documentation found in " + filename)
             continue
@@ -95,16 +113,13 @@ def UserDocExtractor(
     log.info("%4d files with documentation", nfiles)
     return tagdict
 
+
 def write_rst_files(doc, tags, outdir, outname):
     """
     Write raw rst to a file and generate a wrapper with index
     """
     with open(os.path.join(outdir, outname), "w") as outfile:
         outfile.write(doc)
-    #with open(os.path.join(outdir, outname), "w") as outfile:
-    #    outfile.write(":doc:`index` : ")
-    #    outfile.write(" ~ ".join([":doc:`index_%s`" % t for t in sorted(tags)])+"\n\n")
-    #    outfile.write(".. include:: %s\n" % outnameraw)
 
 
 def make_hierarchy(tags, *basetags):
@@ -127,12 +142,13 @@ def make_hierarchy(tags, *basetags):
     Returns a hierarchical dictionary of (dict or set) with items in the
     intersection of basetag.
     """
-    if not basetags: return tags
+    if not basetags:
+        return tags
 
     # items having all given basetags
-    baseitems = set.intersection(*[set(items) for tag,items in tags.items() if tag in basetags])
+    baseitems = set.intersection(*[set(items) for tag, items in tags.items() if tag in basetags])
     tree = dict()
-    subtags = [t for t in tags.keys() if not t in basetags]
+    subtags = [t for t in tags.keys() if t not in basetags]
     for subtag in subtags:
         docs = set(tags[subtag]).intersection(baseitems)
         if docs:
@@ -144,7 +160,8 @@ def make_hierarchy(tags, *basetags):
         tree[''] = remaining
     return {basetags: tree}
 
-def rst_index(hierarchy, underlines = '=-~'):
+
+def rst_index(hierarchy, underlines='=-~'):
     """
     Create an index page from a given hierarchical dict of documents.
 
@@ -162,8 +179,12 @@ def rst_index(hierarchy, underlines = '=-~'):
     -------
     String with pretty index.
     """
-    mktitle = lambda t, ul: t+'\n'+ul*len(t)+'\n'
-    mkitem = lambda t: "* :doc:`%s`" % os.path.splitext(t)[0]
+    def mktitle(t, ul):
+        return t+'\n'+ul*len(t)+'\n'
+
+    def mkitem(t):
+        return "* :doc:`%s`" % os.path.splitext(t)[0]
+
     output = list()
     for tags, items in sorted(hierarchy.items()):
         if isinstance(tags, str):
@@ -192,6 +213,7 @@ def reverse_dict(tags):
         for item in items:
             revdict.setdefault(item, list()).append(tag)
     return revdict
+
 
 def CreateTagIndices(tags, outdir="from_cpp/"):
     taglist = list(tags.keys())
@@ -248,3 +270,4 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
 
 if __name__ == '__main__':
     ExtractUserDocs(relative_glob("models/*.h", "nestkernel/*.h", basedir='..'), outdir="from_cpp/")
+

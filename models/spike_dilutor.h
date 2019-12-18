@@ -38,10 +38,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-spike_dilutor - repeats incoming spikes with a certain probability.
+spike_dilutor - repeats incoming spikes with a certain probability
+###################################################################
 
 Description:
 +++++++++++++

@@ -40,10 +40,9 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
 sigmoid_rate - rate model with sigmoidal gain function
+######################################################
 
 Description:
 +++++++++++++

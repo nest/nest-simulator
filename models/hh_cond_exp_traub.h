@@ -60,10 +60,9 @@ Neurons
 hh
 cond
 
-Name:
-######
 
 hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
+##########################################################################
 
 Description:
 +++++++++++++

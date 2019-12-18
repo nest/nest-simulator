@@ -70,11 +70,9 @@ extern "C" int aeif_cond_alpha_dynamics_DT0( double, const double*, double*, voi
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-Neuron name
-###########
 
-aeif_cond_alpha -  Conductance based exponential integrate-and-fire neuron model
-according to Brette and Gerstner (2005).
+aeif_cond_alpha - Conductance based exponential integrate-and-fire neuron model
+#################################################################################
 
 Description
 +++++++++++

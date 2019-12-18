@@ -37,10 +37,8 @@ namespace nest
 Synapses
 stp
 
-Name:
-######
-
-tsodyks_synapse - Synapse type with short term plasticity.
+tsodyks_synapse - Synapse type with short term plasticity
+###############################################################
 
 Description:
 +++++++++++++
@@ -115,7 +113,10 @@ References:
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 FirstVersion: March 2006
 

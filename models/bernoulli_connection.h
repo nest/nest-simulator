@@ -35,10 +35,8 @@ namespace nest
 Synapses
 static
 
-Name:
-######
-
-bernoulli_synapse - Static synapse with stochastic transmission.
+bernoulli_synapse - Static synapse with stochastic transmission
+################################################################
 
 Description:
 +++++++++++++
@@ -68,6 +66,7 @@ Author:
 Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
++++++++++
            DoubleDataEvent, DataLoggingRequest
 
 References:

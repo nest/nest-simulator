@@ -39,11 +39,9 @@ namespace nest
 Neurons
 iaf
 
-Name:
-######
 
-iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
-                    PSCs.
+iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs
+###########################################################################
 
 Description:
 +++++++++++++

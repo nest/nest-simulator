@@ -33,10 +33,9 @@ namespace nest
 Synapses
 ht_synapse
 
-Name:
-######
 
-ht_synapse - Synapse with depression after Hill & Tononi (2005).
+ht_synapse - Synapse with depression after Hill & Tononi (2005)
+################################################################
 
 Description:
 +++++++++++++
@@ -48,6 +47,7 @@ Synaptic dynamics are given by
 
 
 P'(t) = ( 1 - P ) / \tau_P
+#####################################
 P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
 P(t=0) = 1
 

@@ -32,10 +32,9 @@ namespace nest
 Synapses
 gap
 
-Name:
-######
 
-gap_junction - Synapse type for gap-junction connections.
+gap_junction - Synapse type for gap-junction connections
+#########################################################
 
 Description:
 +++++++++++++
@@ -47,14 +46,16 @@ neurons i and j two NEST connections are required: For each created
 connection a second connection with the exact same parameters in
 the opposite direction is required. NEST provides the possibility
 to create both connections with a single call to Connect via
-the make_symmetric flag:
+the make_symmetric flag.
 
-    i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
 
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
-Transmits: GapJunctionEvent
+Transmits:
++++++++++
+
+GapJunctionEvent
 
 References:
 +++++++++++

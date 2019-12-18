@@ -64,11 +64,9 @@ clopath_n
 aeif
 psc
 
-Name:
-######
 
-aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
-model according to Clopath et al. (2010).
+aeif_psc_delta_clopath - Adaptive exponential integrate-and-fire neuron
+########################################################################
 
 Description:
 +++++++++++++

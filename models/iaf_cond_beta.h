@@ -61,11 +61,9 @@ Neurons
 iaf
 cond
 
-Name:
-######
 
-iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron
-                      model.
+iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron model
+###############################################################################
 
 Description:
 +++++++++++++
@@ -74,7 +72,7 @@ iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an beta function. The beta function
 is normalised such that an event of weight 1.0 results in a peak current of
-1 nS at t = tau_rise_[ex|in].
+1 nS at `t = tau_rise_[ex|in]`.
 
 Parameters:
 +++++++++++++

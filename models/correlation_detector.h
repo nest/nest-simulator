@@ -42,11 +42,9 @@ namespace nest
 Devices
 detector
 
-Name:
-######
 
-correlation_detector - Device for evaluating cross correlation between
-                             two spike sources
+correlation_detector - Device for evaluating cross correlation between two spike sources
+##########################################################################################
 
 Description:
 +++++++++++++
@@ -54,20 +52,22 @@ Description:
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-\f$ \delta_\tau \f$. The result can be obtained via GetStatus under the key
+:math:`\delta_\tau`. The result can be obtained via GetStatus under the key
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors the
 Kahan summation algorithm is used when calculating the weighted histogram.
 (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-Both are arrays of \f$ 2*\tau_{max}/\delta_\tau+1 \f$ values containing the
+Both are arrays of :math:`2*\tau_{max}/\delta_\tau+1` values containing the
 histogram counts in the following way:
 
-Let \f$ t_{1,i}\f$ be the spike times of source 1,
-\f$ t_{2,j} \f$ the spike times of source 2.
+Let :math:`t_{1,i}` be the spike times of source 1,
+:math:`t_{2,j}` the spike times of source 2.
 histogram[n] then contains the sum of products of the weight
-\f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
-with\f$ t_{2,j}-t_{1,i} \f$ in
+:math:`w_{1,i}*w_{2,j}`, count_histogram[n] contains 1 summed over all events
+with :math:`t_{2,j}-t_{1,i}` in
+
+.. math::
 
     n*\delta_\tau - \tau_{max} - \delta_\tau/2 
     n*\delta_\tau - \tau_{max} + \delta_\tau/2 
@@ -86,8 +86,7 @@ Parameters:
 +++++++++++++
 
 
-==================== ========
-====================================================
+==================== ======== ==================================================
 Tstart               real     Time when to start counting events. This time
 should
                               be set to at least start + tau_max in order to
@@ -120,8 +119,7 @@ histogram_correction list of  read-only - Correction factors for kahan summation
                      integers algoritm
 n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
-==================== ========
-====================================================
+==================== ======== ==================================================
 
 
 Remarks:

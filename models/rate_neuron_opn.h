@@ -48,23 +48,26 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
-rate_neuron_opn - Base class for rate model with output noise.
+rate_neuron_opn - Base class for rate model with output noise
+##############################################################
 
 Description:
 +++++++++++++
 
 Base class for rate model with output noise of the form
 
-\tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
+.. math::
+
+ \tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
                      \psi( X_j(t-d_{ij}) + \sqrt{\tau} \cdot
                      \sigma \cdot \xi_j(t) ) )
 
 or
 
-\tau dX_i(t) / dt = - X_i(t) + \mu
+.. math::
+
+ \tau dX_i(t) / dt = - X_i(t) + \mu
                      + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                      \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) \\
                      + \sqrt{\tau} \cdot \sigma \cdot \xi_j(t) ) ) \\
@@ -73,7 +76,7 @@ or
                      + \sqrt{\tau} \cdot \sigma \cdot \xi_j(t) ) )
 
 
-Here \f$ xi_j(t) \f$ denotes a Gaussian white noise.
+Here :math:`xi_j(t)` denotes a Gaussian white noise.
 
 This template class needs to be instantiated with a class
 containing the following functions:

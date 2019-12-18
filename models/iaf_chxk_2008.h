@@ -61,11 +61,9 @@ Neurons
 iaf
 cond
 
-Name:
-######
 
-iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
-                      used in Casti et al 2008.
+iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
+#################################################################################################
 
 Description:
 +++++++++++++

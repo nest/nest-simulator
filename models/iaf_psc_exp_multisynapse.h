@@ -41,13 +41,10 @@ namespace nest
 /* BeginUserDocs:
 Neurons
 iaf
-@ingreoup psc
 
-Name:
-######
 
-iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with
-                                 multiple ports.
+iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with multiple ports
+####################################################################################
 
 Description:
 +++++++++++++

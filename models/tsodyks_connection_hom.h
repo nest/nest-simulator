@@ -35,12 +35,9 @@ namespace nest
 Synapses
 stp
 
-Name:
-######
 
-tsodyks_synapse_hom - Synapse type with short term plasticity using
-                            homogeneous parameters, i.e. all synapses have
-                            the same parameters.
+tsodyks_synapse_hom - Synapse type with short term plasticity using homogenous parameters
+#########################################################################################
 
 Description:
 +++++++++++++
@@ -119,7 +116,10 @@ References:
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 FirstVersion: March 2006
 

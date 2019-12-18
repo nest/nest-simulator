@@ -43,11 +43,10 @@ Neurons
 iaf
 psc
 
-Name:
-######
 
-gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
-with exponential postsynaptic currents and adaptation
+gif_pop_psc_exp - Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and adaptation
+############################################################################################################################
+
 
 Description:
 +++++++++++++
@@ -58,7 +57,9 @@ described in [1]_.
 
 The single neuron model is defined by the hazard function
 
- lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ] 
+.. math::
+
+ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
 
 After each spike the membrane potential V_m is reset to V_reset. Spike
 frequency

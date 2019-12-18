@@ -34,11 +34,9 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-stdp_triplet_synapse - Synapse type with spike-timing dependent
-                             plasticity (triplets).
+stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets)
+######################################################################################
 
 Description:
 +++++++++++++
@@ -73,7 +71,10 @@ Parameters:
 =============== ======  ===========================================
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++

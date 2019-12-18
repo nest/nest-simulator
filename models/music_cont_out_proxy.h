@@ -54,11 +54,9 @@ namespace nest
 Devices
 music
 
-Name:
-######
 
-music_cont_out_proxy - A device which sends continuous data from NEST to
-MUSIC.
+music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC
+################################################################################
 
 Description:
 +++++++++++++

@@ -49,11 +49,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
-                                   spike trains.
+sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains
+#################################################################################
 
 Description:
 +++++++++++++

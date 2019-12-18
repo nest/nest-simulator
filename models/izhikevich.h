@@ -38,20 +38,21 @@ namespace nest
 Neurons
 iaf
 
-Name:
-######
 
 izhikevich - Izhikevich neuron model
+#####################################
 
 Description:
 +++++++++++++
 Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]_. The dynamics are given by:
-  
-  dv/dt = 0.04*v^2 + 5*v + 140 - u + I \\
-     du/dt = a*(b*v - u)] 
 
-    if  \f$ v >= V_{th} \f$:
+.. math::
+
+  dv/dt = 0.04*v^2 + 5*v + 140 - u + I \\
+     du/dt = a*(b*v - u)]
+
+   if :math:`v >= V_{th}`:
       v is set to c
       u is incremented by d
 
@@ -75,6 +76,7 @@ Euler integration. In this case, consistent_integration must be set to true
 
 Parameters:
 +++++++++++++
+
 The following parameters can be set in the status dictionary.
 
 
@@ -97,9 +99,7 @@ References:
 
 
 .. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
-on
-       Neural Networks, 14:1569-1572.
-       DOI: https://doi.org/10.1109/TNN.2003.820440
+       on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
 
 
 Sends:

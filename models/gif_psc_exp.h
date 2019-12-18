@@ -40,11 +40,9 @@ Neurons
 psc
 iaf
 
-Name:
-######
 
-gif_psc_exp - Current-based generalized integrate-and-fire neuron
-model according to Mensi et al. (2012) and Pozzorini et al. (2015).
+gif_psc_exp - Current-based generalized integrate-and-fire neuron model
+#########################################################################
 
 Description:
 +++++++++++++

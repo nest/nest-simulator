@@ -44,11 +44,10 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-gamma_sup_generator - simulate the superimposed spike train of a
-                            population of gamma process.
+gamma_sup_generator - simulate the superimposed spike train of a population of gamma process
+#############################################################################################
+
 Description:
 +++++++++++++
 
@@ -80,7 +79,8 @@ References:
 
 Author:
 ++++++++
-   Jan 2011, Moritz Deger
+
+Jan 2011, Moritz Deger
 
 SeeAlso:
 ++++++++

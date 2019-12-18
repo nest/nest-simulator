@@ -67,11 +67,10 @@ iaf
 cond
 
 
-Name:
-######
 
-iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
-                          integrate-and-fire neuron model.
+iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire neuron model
+########################################################################################################
+
 
 Description:
 +++++++++++++
@@ -88,16 +87,18 @@ The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
 passive conductances as follows
 
-C_{m.s} d/dt V_{m.s} = \ldots - g_{sp} ( V_{m.s} - V_{m.p} ) \\
+.. math::
 
-C_{m.p} d/dt V_{m.p} = \ldots - g_{sp} ( V_{m.p} - V_{m.s} )
-    - g_{pd} ( V_{m.p} - V_{m.d} ) \\
+ C_{m.s} d/dt V_{m.s} = \ldots - g_{sp} ( V_{m.s} - V_{m.p} ) \\
 
-C_{m.d} d/dt V_{m.d} = \ldots \qquad - g_{pd} ( V_{m.d} - V_{m.p} )
+ C_{m.p} d/dt V_{m.p} = \ldots - g_{sp} ( V_{m.p} - V_{m.s} )
+     - g_{pd} ( V_{m.p} - V_{m.d} ) \\
+
+ C_{m.d} d/dt V_{m.d} = \ldots \qquad - g_{pd} ( V_{m.d} - V_{m.p} )
 
 A spike is fired when the somatic membrane potential exceeds threshold,
-\f$ V_{m.s} >= V_{th} \f$. After a spike, somatic membrane potential is
-clamped to a reset potential, \f$ V_{m.s} == V_{reset} \f$, for the refractory
+:math:`V_{m.s} >= V_{th}`. After a spike, somatic membrane potential is
+clamped to a reset potential, :math:` V_{m.s} == V_{reset}`, for the refractory
 period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse

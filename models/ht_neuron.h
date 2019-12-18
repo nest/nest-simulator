@@ -67,10 +67,9 @@ extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 Neurons
 ht_neuron
 
-Name:
-######
 
-ht_neuron - Neuron model after Hill & Tononi (2005).
+ht_neuron - Neuron model after Hill & Tononi (2005)
+#####################################################
 
 Description:
 +++++++++++++

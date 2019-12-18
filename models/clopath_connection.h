@@ -45,10 +45,9 @@ Synapses
 stdp
 clopath_s
 
-Name:
-######
 
-clopath_synapse - Synapse type for voltage-based STDP after Clopath.
+clopath_synapse - Synapse type for voltage-based STDP after Clopath
+####################################################################
 
 Description:
 +++++++++++++
@@ -79,6 +78,7 @@ depression (LTD) are stored in in the neuron models that are compatible with the
 Clopath synapse.
 
 Transmits: SpikeEvent
++++++++++
 
 References:
 +++++++++++

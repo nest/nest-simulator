@@ -41,11 +41,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
-                                     spike trains.
+sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains
+i####################################################################################
 
 Description:
 +++++++++++++
@@ -55,6 +53,8 @@ trains. By default, each target of the generator will receive a different
 spike train.
 
 The instantaneous rate of the process is given by
+
+.. math::
 
   f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
      * \pi/180 )) >= 0

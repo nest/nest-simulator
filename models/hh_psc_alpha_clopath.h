@@ -63,11 +63,9 @@ hh
 psc
 clopath_n
 
-Name:
-######
 
-hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
-Clopath synapse.
+hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the Clopath synapse
+#####################################i#################################################
 
 Description:
 +++++++++++++

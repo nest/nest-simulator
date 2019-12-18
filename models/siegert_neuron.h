@@ -49,10 +49,9 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
 siegert_neuron
+###############
 
 Description:
 +++++++++++++

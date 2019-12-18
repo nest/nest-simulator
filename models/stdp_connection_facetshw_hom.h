@@ -37,12 +37,9 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent
-                                  plasticity using homogeneous parameters,
-                                  i.e. all synapses have the same parameters.
+stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent plasticity using homogenous parameters
+##########################################################################################################
 
 Description:
 +++++++++++++
@@ -127,7 +124,10 @@ first presynaptic activity at a synapse.
 
 Common properties can only be set on the synapse model using SetDefaults.
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++

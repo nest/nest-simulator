@@ -43,11 +43,8 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
-
-stdp_synapse - Synapse type for spike-timing dependent
-plasticity.
+stdp_synapse - Synapse type for spike-timing dependent plastiicty
+##################################################################
 
 Description:
 +++++++++++++
@@ -71,7 +68,10 @@ Parameters:
 ========= =======  ======================================================
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++

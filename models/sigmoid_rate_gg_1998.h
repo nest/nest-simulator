@@ -39,17 +39,15 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
 sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
-as defined in [1]_.
+#################################################################
 
 Description:
 +++++++++++++
 
 sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
-input function \f$ input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ) \f$.
+input function as in [1]_ :math:`input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 )`.
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 

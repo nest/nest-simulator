@@ -32,11 +32,9 @@ namespace nest
 Neurons
 binary
 
-Name:
-######
 
-erfc_neuron - Binary stochastic neuron with complementary error
-function as activation function.
+erfc_neuron - Binary stochastic neuron with complementary error function as activation function
+#################################################################################################
 
 Description:
 +++++++++++++

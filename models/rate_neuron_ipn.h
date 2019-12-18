@@ -48,10 +48,9 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
-rate_neuron_ipn - Base class for rate model with input noise.
+rate_neuron_ipn - Base class for rate model with input noise
+#############################################################
 
 Description:
 +++++++++++++
@@ -60,7 +59,7 @@ Base class for rate model with input noise of the form
 
 .. math::
 
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
 
@@ -68,7 +67,7 @@ or
 
 .. math::
 
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) \\
                 + \text{mult_coupling_in}( X_i(t) ) \cdot \\

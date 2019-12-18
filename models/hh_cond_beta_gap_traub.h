@@ -64,18 +64,15 @@ Neurons
 hh
 cond
 
-Name:
-######
 
-hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron as featured in
-Brette et al (2007) review with added gap junction support and beta function
-synaptic conductance.
+hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron with added gap junction support and beta function synaptic conductance
+##############################################################################################################################
 
 Description:
 +++++++++++++
 
 hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
-that also supports gap junctions.
+that also supports gap junction.
 
 This model was specifically developed for a major review of simulators [1]_,
 based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.
@@ -96,7 +93,7 @@ simulators covered is available from ModelDB [3]_.
 Note:
 In this model, a spike is emitted if
 
- V_m >= V_T + 30 mV and V_m has fallen during the current time step 
+ :math:`V_m >= V_T + 30 mV` and `V_m` has fallen during the current time step
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.

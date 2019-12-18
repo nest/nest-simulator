@@ -42,11 +42,10 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-spike_generator - A device which generates spikes from an array with
-                        spike-times.
+spike_generator - A device which generates spikes from an array with spike-times
+################################################################################
+
 
 Synopsis: spike_generator Create -> node_id
 
@@ -153,6 +152,7 @@ onto the grid will be handled as follows for different option settings:
 
 Parameters:
 +++++++++++++
+
 The following properties can be set in the status dictionary.
 
 

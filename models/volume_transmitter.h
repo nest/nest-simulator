@@ -41,13 +41,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-volume_transmitter - Node used in combination with neuromodulated synaptic
-plasticity. It collects all spikes emitted by the population of neurons
-connected to the volume transmitter and transmits the signal to a user-specific
-subset of synapses.
+volume_transmitter - Node used in combination with neuromodulated synaptic plasticity
+######################################################################################
 
 Description:
 +++++++++++++

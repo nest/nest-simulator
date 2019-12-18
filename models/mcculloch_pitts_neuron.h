@@ -33,11 +33,9 @@ namespace nest
 Neurons
 binary
 
-Name:
-######
 
-mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
-                              activation function.
+mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside activation function
+########################################################################################
 
 Description:
 +++++++++++++

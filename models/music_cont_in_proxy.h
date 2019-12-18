@@ -52,10 +52,9 @@ Devices
 music
 
 
-Name:
-######
 
-music_cont_in_proxy - A device which receives continuous data from MUSIC.
+music_cont_in_proxy - A device which receives continuous data from MUSIC
+##########################################################################
 
 Description:
 +++++++++++++

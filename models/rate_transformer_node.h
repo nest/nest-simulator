@@ -48,11 +48,10 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
-rate_transformer_node - Rate neuron that sums up incoming rates
-                and applies a nonlinearity specified via the template.
+rate_transformer_node - Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
+######################################################################################################################
+
 
 Description:
 +++++++++++++

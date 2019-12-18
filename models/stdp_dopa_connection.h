@@ -40,11 +40,10 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-stdp_dopamine_synapse - Synapse type for dopamine-modulated
-                              spike-timing dependent plasticity.
+stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent plasticity
+##############################################################################################
+
 
 Description:
 +++++++++++++
@@ -103,7 +102,10 @@ References:
        DOI: https://doi.org/10.1093/cercor/bhl152
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 Author:
 ++++++++

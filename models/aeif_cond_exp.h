@@ -74,11 +74,9 @@ iaf
 aeif
 cond
 
-Name:
-######
 
-aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
-                      model according to Brette and Gerstner (2005).
+aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model
+################################################################################
 
 Description:
 +++++++++++++

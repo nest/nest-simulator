@@ -41,16 +41,15 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
 threshold_lin_rate - rate model with threshold-linear gain function
+#####################################################################
 
 Description:
 +++++++++++++
 
 threshold_lin_rate is an implementation of a nonlinear rate model with input
-function \f$ input(h) = min( max( g * ( h - \theta ), 0 ), \alpha ) \f$.
+function :math:`input(h) = min( max( g * ( h - \theta ), 0 ), \alpha )`.
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 

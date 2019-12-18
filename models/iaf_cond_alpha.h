@@ -61,11 +61,9 @@ Neurons
 iaf
 cond
 
-Name:
-######
 
-iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
-                       model.
+iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron model
+#################################################################################
 
 Description:
 +++++++++++++

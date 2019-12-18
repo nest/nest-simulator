@@ -63,11 +63,9 @@ iaf
 aeif
 psc
 
-Name:
-######
 
-aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
-neuron model according to Brette and Gerstner (2005) with delta synapse.
+aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
+######################################################################################################
 
 Description:
 +++++++++++++

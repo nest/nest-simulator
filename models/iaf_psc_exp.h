@@ -41,11 +41,9 @@ Neurons
 iaf
 psc
 
-Name:
-######
 
-iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential
-                   PSCs.
+iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs
+############################################################################
 
 Description:
 +++++++++++++

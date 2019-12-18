@@ -45,11 +45,10 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-poisson_generator - simulate neuron firing with Poisson processes
-                          statistics.
+poisson_generator - simulate neuron firing with Poisson processes statistics
+############################################################################
+
 Description:
 +++++++++++++
 

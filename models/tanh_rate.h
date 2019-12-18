@@ -38,10 +38,8 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
-
 tanh_rate - rate model with hyperbolic tangent non-linearity
+################################################################
 
 Description:
 +++++++++++++

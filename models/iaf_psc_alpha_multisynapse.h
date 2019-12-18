@@ -43,11 +43,9 @@ Neurons
 iaf
 psc
 
-Name:
-######
 
-iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
-                                   multiple ports.
+iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with multiple ports
+#######################################################################################
 
 Description:
 +++++++++++++

@@ -37,10 +37,9 @@ namespace nest
 Neurons
 parrot
 
-Name:
-######
 
-parrot_neuron - Neuron that repeats incoming spikes.
+parrot_neuron - Neuron that repeats incoming spikes
+####################################################
 
 Description:
 +++++++++++++

@@ -64,10 +64,9 @@ psc
 hh
 gap
 
-Name:
-######
 
-hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support.
+hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support
+#########################################################################
 
 Description:
 +++++++++++++

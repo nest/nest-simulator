@@ -34,12 +34,9 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
-dependent
-plasticity with constant depression.
+vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent plasticity with constant depression
+#################################################################################################################
 
 Description:
 +++++++++++++
@@ -63,7 +60,10 @@ Parameters:
 ======  ======  =========================================================
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++

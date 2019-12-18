@@ -41,11 +41,9 @@ namespace nest
 Devices
 detector
 
-Name:
-######
 
-correlospinmatrix_detector - Device for measuring the covariance matrix
-                                  from several inputs
+correlospinmatrix_detector - Device for measuring the covariance matrix from several inputs
+#############################################################################################
 
 Description:
 +++++++++++++
@@ -56,7 +54,7 @@ calculates the raw auto and cross correlation binned to bins of duration
 delta_tau. The result can be obtained via GetStatus under the key
 /count_covariance. The result is a tensor of rank 3 of size
 N_channels x N_channels, with each entry \f$ C_{ij} \f$ being a vector of size
-\f$ 2*\tau_{max}/\delta_{\tau} + 1 \f$ containing the histogram for the
+:math:`2*\tau_{max}/\delta_{\tau} + 1` containing the histogram for the
 different
 time lags.
 

@@ -51,12 +51,9 @@ Neurons
 iaf
 cond
 
-Name:
-######
 
-gif_cond_exp_multisynapse - Conductance-based generalized
-integrate-and-fire neuron model with multiple synaptic time constants
-according to Mensi et al. (2012) and Pozzorini et al. (2015).
+gif_cond_exp_multisynapse - Conductance-based generalized integrate-and-fire neuron model with multiple synaptic time constants
+################################################################################################################################
 
 Description:
 +++++++++++++

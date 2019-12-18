@@ -44,12 +44,10 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
-ppd_sup_generator - simulate the superimposed spike train of a population
-of Poisson processes
-with dead time.
+ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
+##############################################################################################################
+
 
 Description:
 +++++++++++++
@@ -88,8 +86,9 @@ References:
         Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
 
 Authors:
-++++++++
-   June 2009, Moritz Deger, Moritz Helias
++++++++++
+
+Moritz Deger, Moritz Helias
 
 SeeAlso:
 ++++++++

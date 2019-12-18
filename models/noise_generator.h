@@ -44,10 +44,9 @@ namespace nest
 Devices
 generator
 
-Name:
-######
 
 noise_generator - Device to generate Gaussian white noise current.
+#####################################
 
 Description:
 +++++++++++++
@@ -98,14 +97,18 @@ Remarks:
   the membrane potential fluctuations evoked when a noise current is
   injected into a neuron. The standard deviation of these fluctuations
   across an ensemble will increase with dt for a given value of std.
-  For the leaky integrate-and-fire neuron with time constant \f$ \tau_m \f$ and
-  capacity \f$ C_m \f$, membrane potential fluctuations Sigma at time
-  s \f$ t_j+delay \f$ are given by
+  For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
+  capacity :math:`C_m`, membrane potential fluctuations Sigma at time
+  :math:`t_j+delay` are given by
+
+.. math::
 
   \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
                              \text{where } x = exp(-dt/\tau_m)
 
-  for large \f$ t_j \f$. In the white noise limit, dt -> 0, one has
+  for large :math:`t_j`. In the white noise limit, dt -> 0, one has
+
+.. math::
 
   \Sigma -> std / C_m * \sqrt(dt * \tau / 2).
 

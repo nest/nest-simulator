@@ -43,10 +43,9 @@ namespace nest
 Neurons
 rate
 
-Name:
-######
 
 gauss_rate - rate model with Gaussian gain function
+#######################################################
 
 Description:
 +++++++++++++

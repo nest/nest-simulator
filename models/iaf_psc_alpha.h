@@ -40,10 +40,9 @@ Neurons
 iaf
 psc
 
-Name:
-######
 
-iaf_psc_alpha - Leaky integrate-and-fire neuron model.
+iaf_psc_alpha - Leaky integrate-and-fire neuron model
+#######################################################
 
 Description:
 +++++++++++++

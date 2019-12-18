@@ -36,18 +36,15 @@ namespace nest
 Synapses
 stp
 
-Name:
-######
-
-quantal_stp_synapse - Probabilistic synapse model with short term
-plasticity.
+quantal_stp_synapse - Probabilistic synapse model with short term plasticity
+##############################################################################
 
 Description:
 +++++++++++++
 
 This synapse model implements synaptic short-term depression and
 short-term facilitation according to the quantal release model
-described by Fuhrmann et al. [1]_ and Loebel et al. [2].
+described by Fuhrmann et al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of
 the available release sites.  This fraction is binomialy
@@ -93,7 +90,10 @@ References:
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 
 
-Transmits: SpikeEvent
+Transmits:
+++++++++++
+
+SpikeEvent
 
 FirstVersion: December 2013
 

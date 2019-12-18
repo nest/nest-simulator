@@ -33,11 +33,9 @@ namespace nest
 Synapses
 inst_rate
 
-Name:
-######
 
-rate_connection_instantaneous - Synapse type for instantaneous rate
-connections.
+rate_connection_instantaneous - Synapse type for instantaneous rate connections
+################################################################################
 
 Description:
 +++++++++++++
@@ -49,7 +47,10 @@ The value of the parameter delay is ignored for connections of
 this type. To create rate connections with delay please use
 the synapse type rate_connection_delayed.
 
-Transmits: InstantaneousRateConnectionEvent
+Transmits:
+++++++++++
+
+InstantaneousRateConnectionEvent
 
 References:
 +++++++++++

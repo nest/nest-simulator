@@ -40,11 +40,9 @@ Neurons
 iaf
 psc
 
-Name:
-######
 
-amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
-                      with exponential PSCs and adaptive threshold.
+amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
+#################################################################################################################
 
 Description:
 +++++++++++++
@@ -71,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]_. A flow chart can be found in [2].
+[1]_. A flow chart can be found in [2]_.
 
 Remarks:
 
@@ -80,9 +78,9 @@ Remarks:
 - If identical parameters are used, and beta==0, then this model shall
   behave exactly as mat2_psc_exp.
 - The time constants in the model must fullfill the following conditions:
-  - \f$ \tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
-  - \f$ \tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
-  - \f$ \tau_m != \tau_v \f$
+  - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+  - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+  - :math:`\tau_m != \tau_v`
   This is required to avoid singularities in the numerics. This is a
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
@@ -127,7 +125,7 @@ The following parameters can be set in the status dictionary:
 
 Remarks:
 
-\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation
+:math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current implementation
 to
 avoid a degenerate case of the ODE describing the model [1]_.
 For very similar values, numerics will be unstable.

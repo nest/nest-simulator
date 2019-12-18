@@ -43,11 +43,10 @@ namespace nest
 Synapses
 stdp
 
-Name:
-######
 
-stdp_nn_symm_synapse - Synapse type for spike-timing dependent
-plasticity with symmetric nearest-neighbour spike pairing scheme.
+stdp_nn_symm_synapse - Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
+################################################################################################################################
+.
 
 Description:
 +++++++++++++
@@ -91,7 +90,10 @@ Parameters:
 ========= =======  ======================================================
 
 
-Transmits: SpikeEvent
+Transmits:
++++++++++++
+
+SpikeEvent
 
 References:
 +++++++++++
@@ -106,12 +108,14 @@ References:
 
 
   FirstVersion: March 2006
-  Author:
+
+Author:
 ++++++++
 
 Moritz Helias, Abigail Morrison
   Adapted by: Philipp Weidel, Alex Serenko
-  SeeAlso:
+
+SeeAlso:
 ++++++++
 
 stdp_synapse

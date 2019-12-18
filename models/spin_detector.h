@@ -41,10 +41,9 @@ namespace nest
 Devices
 detector
 
-Name:
-######
 
-spin_detector - Device for detecting binary states in neurons.
+spin_detector - Device for detecting binary states in neurons
+########################3#####################################
 
 Description:
 +++++++++++++

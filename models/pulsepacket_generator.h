@@ -44,10 +44,8 @@ namespace nest
 Devices
 generator
 
-Name:
-######
-
-pulsepacket_generator - Generate sequence of Gaussian pulse packets.
+pulsepacket_generator - Generate sequence of Gaussian pulse packets
+#####################################################################
 
 Description:
 +++++++++++++

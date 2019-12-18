@@ -66,7 +66,7 @@ set( nestkernel_sources
     conn_builder_factory.h
     music_event_handler.h music_event_handler.cpp
     music_manager.cpp music_manager.h
-    nest.h nest.cpp
+    nest.h nest_impl.h nest.cpp
     synaptic_element.h synaptic_element.cpp
     growth_curve.h growth_curve.cpp
     growth_curve_factory.h

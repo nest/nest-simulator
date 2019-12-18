@@ -1,5 +1,5 @@
 /*
- *  run_all.cpp
+ *  voltmeter.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,17 +20,25 @@
  *
  */
 
-#define BOOST_TEST_MODULE cpptests
-#define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
+#include "voltmeter.h"
 
-// Includes from cpptests
-#include "test_block_vector.h"
-#include "test_enum_bitfield.h"
-#include "test_sort.h"
-#include "test_streamers.h"
-#include "test_target_fields.h"
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 
-#if BOOST_VERSION >= 105900 // test_parameter uses timeout, which is only available in Boost>=1.59.0
-#include "test_parameter.h"
-#endif
+namespace nest
+{
+voltmeter::voltmeter()
+  : multimeter()
+{
+  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
+  ArrayDatum ad;
+  ad.push_back( LiteralDatum( names::V_m.toString() ) );
+  ( *vmdict )[ names::record_from ] = ad;
+  set_status( vmdict );
+}
+
+voltmeter::voltmeter( const voltmeter& n )
+  : multimeter( n )
+{
+}
+}

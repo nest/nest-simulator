@@ -43,7 +43,7 @@ detector
 
 
 spin_detector - Device for detecting binary states in neurons
-########################3#####################################
+##############################################################
 
 Description:
 +++++++++++++

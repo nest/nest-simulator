@@ -34,7 +34,7 @@ Synapses
 static
 
 static_synapse - Synapse type for static connections
-i#####################################################
+######################################################
 
 Description:
 +++++++++++++
@@ -49,8 +49,10 @@ Author:
 
 Jochen Martin Eppler, Moritz Helias
 
-Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-+++++++++
+Transmits: 
+++++++++++
+
+SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest
 
 Remarks: Refactored for new connection system design, March 2007

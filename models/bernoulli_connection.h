@@ -65,9 +65,11 @@ Author:
 
 Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 
-Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-+++++++++
-           DoubleDataEvent, DataLoggingRequest
+Transmits:
+++++++++++
+
+SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+DoubleDataEvent, DataLoggingRequest
 
 References:
 +++++++++++

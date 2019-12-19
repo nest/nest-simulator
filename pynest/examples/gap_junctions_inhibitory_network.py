@@ -131,9 +131,9 @@ n_connection = int(n_neuron * gap_per_neuron / 2)
 neuron_list = neurons.tolist()
 connections = numpy.random.choice(neuron_list, [n_connection, 2])
 
-for source_gid, target_gid in connections:
-    nest.Connect(nest.GIDCollection([source_gid]),
-                 nest.GIDCollection([target_gid]),
+for source_node_id, target_node_id in connections:
+    nest.Connect(nest.NodeCollection([source_node_id]),
+                 nest.NodeCollection([target_node_id]),
                  {'rule': 'one_to_one', 'make_symmetric': True},
                  {'synapse_model': 'gap_junction', 'weight': gap_weight})
 

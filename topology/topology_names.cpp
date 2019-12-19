@@ -32,8 +32,6 @@ namespace nest
 namespace names
 {
 
-const Name allow_autapses( "allow_autapses" );
-const Name allow_multapses( "allow_multapses" );
 const Name allow_oversized_mask( "allow_oversized_mask" );
 const Name anchor( "anchor" );
 const Name azimuth_angle( "azimuth_angle" );
@@ -53,11 +51,8 @@ const Name kernel( "kernel" );
 const Name lower_left( "lower_left" );
 const Name major_axis( "major_axis" );
 const Name mask( "mask" );
-const Name max( "max" );
-const Name min( "min" );
 const Name minor_axis( "minor_axis" );
 const Name number_of_connections( "number_of_connections" );
-const Name offset( "offset" );
 const Name outer_radius( "outer_radius" );
 const Name pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );
 const Name pairwise_bernoulli_on_target( "pairwise_bernoulli_on_target" );
@@ -68,7 +63,6 @@ const Name radius( "radius" );
 const Name rectangular( "rectangular" );
 const Name shape( "shape" );
 const Name spherical( "spherical" );
-const Name theta( "theta" );
 const Name upper_right( "upper_right" );
 
 } // namespace names

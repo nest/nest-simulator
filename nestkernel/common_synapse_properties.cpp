@@ -40,7 +40,7 @@ namespace nest
 
 CommonSynapseProperties::CommonSynapseProperties()
   : weight_recorder_()
-  , wr_gid_( 0 )
+  , wr_node_id_( 0 )
 {
 }
 
@@ -53,7 +53,7 @@ CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
   if ( weight_recorder_.get() )
   {
-    def< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+    def< NodeCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
   }
   else
   {
@@ -65,14 +65,14 @@ CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 void
 CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
-  const bool update_wr = updateValue< GIDCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+  const bool update_wr = updateValue< NodeCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
   if ( update_wr and weight_recorder_->size() > 1 )
   {
-    throw BadProperty( "weight_recorder must be a single element GIDCollection" );
+    throw BadProperty( "weight_recorder must be a single element NodeCollection" );
   }
   else if ( update_wr )
   {
-    wr_gid_ = ( *weight_recorder_ )[ 0 ];
+    wr_node_id_ = ( *weight_recorder_ )[ 0 ];
   }
 }
 

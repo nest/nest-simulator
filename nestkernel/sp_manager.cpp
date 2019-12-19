@@ -142,8 +142,8 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
   }
-  GIDCollectionPTR sources( new GIDCollectionPrimitive() );
-  GIDCollectionPTR targets( new GIDCollectionPrimitive() );
+  NodeCollectionPTR sources( new NodeCollectionPrimitive() );
+  NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -199,19 +199,19 @@ SPManager::builder_max_delay() const
 
 /**
  * Deletes synapses between a source and a target.
- * @param sgid
+ * @param snode_id
  * @param target
  * @param target_thread
  * @param syn_id
  */
 void
-SPManager::disconnect( const index sgid, Node* target, thread target_thread, const index syn_id )
+SPManager::disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id )
 {
-  Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
+  Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_manager.disconnect( target_thread, syn_id, sgid, target->get_gid() );
+    kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
   }
   else if ( target->local_receiver() ) // normal devices
   {
@@ -222,10 +222,10 @@ SPManager::disconnect( const index sgid, Node* target, thread target_thread, con
     if ( ( source->get_thread() != target_thread ) and ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
+      target = kernel().node_manager.get_node_or_proxy( target->get_node_id(), target_thread );
     }
 
-    kernel().connection_manager.disconnect( target_thread, syn_id, sgid, target->get_gid() );
+    kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
   }
   else // globally receiving devices iterate over all target threads
   {
@@ -237,9 +237,9 @@ SPManager::disconnect( const index sgid, Node* target, thread target_thread, con
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), t );
+      target = kernel().node_manager.get_node_or_proxy( target->get_node_id(), t );
       target_thread = target->get_thread();
-      kernel().connection_manager.disconnect( target_thread, syn_id, sgid, target->get_gid() );
+      kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
     }
   }
 }
@@ -254,8 +254,8 @@ SPManager::disconnect( const index sgid, Node* target, thread target_thread, con
  * @param syn_spec synapse specs
  */
 void
-SPManager::disconnect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+SPManager::disconnect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
@@ -513,24 +513,24 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
  * deletion is defined by the pre and post synaptic elements and the synapse
  * type. Updates the number of connected synaptic elements in the source and
  * target.
- * @param sgid source id
- * @param tgid target id
+ * @param snode_id source id
+ * @param tnode_id target id
  * @param syn_id synapse type
  * @param se_pre_name name of the pre synaptic element
  * @param se_post_name name of the post synaptic element
  */
 void
-SPManager::delete_synapse( const index sgid,
-  const index tgid,
+SPManager::delete_synapse( const index snode_id,
+  const index tnode_id,
   const long syn_id,
   const std::string se_pre_name,
   const std::string se_post_name )
 {
   // get thread id
   const int tid = kernel().vp_manager.get_thread_id();
-  if ( kernel().node_manager.is_local_gid( sgid ) )
+  if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
+    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
     const thread source_thread = source->get_thread();
     if ( tid == source_thread )
     {
@@ -538,13 +538,13 @@ SPManager::delete_synapse( const index sgid,
     }
   }
 
-  if ( kernel().node_manager.is_local_gid( tgid ) )
+  if ( kernel().node_manager.is_local_node_id( tnode_id ) )
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tgid );
+    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id );
     const thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      kernel().connection_manager.disconnect( tid, syn_id, sgid, tgid );
+      kernel().connection_manager.disconnect( tid, syn_id, snode_id, tnode_id );
 
       target->connect_synaptic_element( se_post_name, -1 );
     }
@@ -620,7 +620,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   // local nodes
   index n_vacant_id = 0;
   index n_deleted_id = 0;
-  index gid;
+  index node_id;
   int n;
   size_t n_nodes = kernel().node_manager.size();
   se_vacant_id.clear();
@@ -645,12 +645,12 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
     SparseNodeArray::const_iterator node_it;
     for ( node_it = local_nodes.begin(); node_it < local_nodes.end(); node_it++ )
     {
-      gid = node_it->get_gid();
+      node_id = node_it->get_node_id();
       Node* node = node_it->get_node();
       n = node->get_synaptic_elements_vacant( se_name );
       if ( n > 0 )
       {
-        ( *vacant_id_it ) = gid;
+        ( *vacant_id_it ) = node_id;
         ( *vacant_n_it ) = n;
         n_vacant_id++;
         vacant_id_it++;
@@ -658,7 +658,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
       }
       if ( n < 0 )
       {
-        ( *deleted_id_it ) = gid;
+        ( *deleted_id_it ) = node_id;
         ( *deleted_n_it ) = n;
         n_deleted_id++;
         deleted_id_it++;

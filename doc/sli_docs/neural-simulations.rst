@@ -122,18 +122,18 @@ milliseconds. Below, you see a transcript of the simulation:
    1   0.9 -70
    1   1   -70
    1   1.1 -70
-   1   1.2 -69.7612    
-   1   1.3 -69.5248    
-   1   1.4 -69.2907    
-   1   1.5 -69.0589    
+   1   1.2 -69.7612
+   1   1.3 -69.5248
+   1   1.4 -69.2907
+   1   1.5 -69.0589
 
    :
 
-   1   10.5    -55.3751    
-   1   10.6    -55.2818    
-   1   10.7    -55.1894    
+   1   10.5    -55.3751
+   1   10.6    -55.2818
+   1   10.7    -55.1894
    1   10.8    -55.098
-   1   10.9    -55.0075    
+   1   10.9    -55.0075
    1   11  -70
    1   11.1    -70
    1   11.2    -70
@@ -145,16 +145,16 @@ milliseconds. Below, you see a transcript of the simulation:
    1   12.8    -70
    1   12.9    -70
    1   13  -70
-   1   13.1    -69.7612    
-   1   13.2    -69.5248    
-   1   13.3    -69.2907    
-   1   13.4    -69.0589    
-   1   13.5    -68.8295    
-   1   13.6    -68.6023    
-   1   13.7    -68.3775    
-   1   13.8    -68.1548    
-   1   13.9    -67.9343    
-   1   14  -67.7161    
+   1   13.1    -69.7612
+   1   13.2    -69.5248
+   1   13.3    -69.2907
+   1   13.4    -69.0589
+   1   13.5    -68.8295
+   1   13.6    -68.6023
+   1   13.7    -68.3775
+   1   13.8    -68.1548
+   1   13.9    -67.9343
+   1   14  -67.7161
 
    Nov 10 08:57:51 Scheduler::resume [Info]:
        Simulation finished.
@@ -163,7 +163,7 @@ milliseconds. Below, you see a transcript of the simulation:
 
 After some initial messages from the simulation scheduler, we see the
 output from the voltmeter. The number in the left column represents the
-global ID (GID) of the model neuron and the center column the network
+node ID of the model neuron and the center column the network
 time in milliseconds. The right column contains the values of the
 membrane potential at that time. The potential is given in mV.
 
@@ -231,7 +231,7 @@ In the fist line, we create one integrate and fire neuron from the model
 The return value of ``Create`` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
-called the node’s *global id* (the network as a whole owns the global id
+called the node’s *node ID* (the network as a whole owns the node ID
 ``0``, therefore the ids of user-created nodes start with ``1``). Often,
 it is neccessary to have a large number of nodes of the same type. The
 command Create can also be used for this purpose. The following line of
@@ -252,12 +252,12 @@ layer we have created above:
 ::
 
    SLI ] 1 ShowStatus
-   --------------------------------------------------                                                                                
-   Name                     Type                Value                                                                                
-   --------------------------------------------------                                                                                
-   archiver_length          integertype         0                                                                                    
-   C_m                      doubletype          250                                                                                  
-   E_L                      doubletype          -70                                                                                  
+   --------------------------------------------------
+   Name                     Type                Value
+   --------------------------------------------------
+   archiver_length          integertype         0
+   C_m                      doubletype          250
+   E_L                      doubletype          -70
    frozen                   booltype            false
    global_id                integertype         1
    I_e                      doubletype          0
@@ -476,7 +476,7 @@ stored in memory can be retrieved after the simulation using
 ``GetStatus``. To get a list of all available recording backends, run
 
 ::
-   
+
    SLI ] GetKernelStatus /recording_backends get keys ==
 
 Device models are also stored in the dictionary ``modeldict``. The most

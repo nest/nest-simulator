@@ -38,7 +38,7 @@ set( nestkernel_sources
     event.h event.cpp
     exceptions.h exceptions.cpp
     genericmodel.h genericmodel_impl.h
-    gid_collection.h gid_collection.cpp
+    node_collection.h node_collection.cpp
     generic_factory.h
     histentry.h histentry.cpp
     model.h model.cpp
@@ -66,7 +66,7 @@ set( nestkernel_sources
     conn_builder_factory.h
     music_event_handler.h music_event_handler.cpp
     music_manager.cpp music_manager.h
-    nest.h nest.cpp
+    nest.h nest_impl.h nest.cpp
     synaptic_element.h synaptic_element.cpp
     growth_curve.h growth_curve.cpp
     growth_curve_factory.h

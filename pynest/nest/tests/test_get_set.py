@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-GIDCollection get/set tests
+NodeCollection get/set tests
 """
 
 import unittest
@@ -42,8 +42,8 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
-class TestGIDCollectionGetSet(unittest.TestCase):
-    """GIDCollection get/set tests"""
+class TestNodeCollectionGetSet(unittest.TestCase):
+    """NodeCollection get/set tests"""
 
     def setUp(self):
         nest.ResetKernel()
@@ -56,7 +56,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         C_m = nodes.get('C_m')
-        gids = nodes.get('global_id')
+        node_ids = nodes.get('global_id')
         E_L = nodes.get('E_L')
         V_m = nodes.get('V_m')
         t_ref = nodes.get('t_ref')
@@ -67,7 +67,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
-        self.assertEqual(gids, tuple(range(1, 11)))
+        self.assertEqual(node_ids, tuple(range(1, 11)))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
@@ -86,7 +86,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_get_sliced(self):
         """
-        Test that get works on sliced GIDCollections
+        Test that get works on sliced NodeCollections
         """
         nodes = nest.Create('iaf_psc_alpha', 10)
 
@@ -100,7 +100,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_get_composite(self):
         """
-        Test that get function works on composite GIDCollections
+        Test that get function works on composite NodeCollections
         """
         n1 = nest.Create('iaf_psc_alpha', 2)
         n2 = nest.Create('iaf_psc_delta', 2)
@@ -136,7 +136,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(status_dict['refractory_input'], refrac_ref)
 
-        # Check that calling get with string works on composite gc's, both on
+        # Check that calling get with string works on composite NCs, both on
         # parameters all the models have, and on individual parameters.
         Cm_ref = [x * 1. for x in range(251, 259)]
         Cm = n5.get('C_m')
@@ -148,7 +148,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_get_different_size(self):
         """
-        Test get with different input for different sizes of GIDCollections
+        Test get with different input for different sizes of NodeCollections
         """
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
@@ -449,7 +449,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_set_composite(self):
         """
-        Test that set works on composite GIDCollections
+        Test that set works on composite NodeCollections
         """
         nodes = nest.Create('iaf_psc_alpha', 10)
 
@@ -512,7 +512,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestGIDCollectionGetSet, 'test')
+    suite = unittest.makeSuite(TestNodeCollectionGetSet, 'test')
     return suite
 
 

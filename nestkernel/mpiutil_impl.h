@@ -35,7 +35,7 @@ namespace shadow
 
 struct cell_member_type
 {
-  cell_gid_type gid;
+  cell_node_id_type node_id;
   cell_lid_type index;
 };
 

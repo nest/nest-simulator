@@ -40,7 +40,7 @@
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_time.h"
 #include "parameter.h"
 
@@ -80,7 +80,7 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
   virtual ~ConnBuilder();
 
   index
@@ -171,8 +171,8 @@ protected:
    */
   bool loop_over_targets_() const;
 
-  GIDCollectionPTR sources_;
-  GIDCollectionPTR targets_;
+  NodeCollectionPTR sources_;
+  NodeCollectionPTR targets_;
 
   bool allow_autapses_;
   bool allow_multapses_;
@@ -240,8 +240,8 @@ protected:
 class OneToOneBuilder : public ConnBuilder
 {
 public:
-  OneToOneBuilder( GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+  OneToOneBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
@@ -267,8 +267,8 @@ protected:
 class AllToAllBuilder : public ConnBuilder
 {
 public:
-  AllToAllBuilder( GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+  AllToAllBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -301,7 +301,7 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -314,7 +314,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -326,7 +326,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -338,7 +338,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -351,7 +351,7 @@ private:
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
-  SymmetricBernoulliBuilder( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  SymmetricBernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
   bool
   supports_symmetric() const
@@ -369,8 +369,8 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
-  SPBuilder( GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+  SPBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
@@ -400,7 +400,7 @@ public:
 protected:
   using ConnBuilder::connect_;
   void connect_();
-  void connect_( GIDCollectionPTR sources, GIDCollectionPTR targets );
+  void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
 
   /**
    * In charge of dynamically creating the new synapses

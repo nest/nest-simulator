@@ -36,7 +36,7 @@ to check recordings in a more ad hoc fashion. The recording backend
 `screen` can be used to dump all recorded data onto the console for
 quick inspection.
 
-The first field of each record written is the global id of the neuron
+The first field of each record written is the node ID of the neuron
 the event originated from, i.e., the *source* of the event. This is
 followed by the time of the measurement, the recorded floating point
 values, and the recorded integer values.

@@ -46,7 +46,6 @@ NodeCollection supports the following functionality
 -  Access to node properties with :ref:`get() <get_param>` and  :ref:`set() <set_param>` or by using :ref:`direct attributes <direct_attributes>`
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
-
   +---------------------------------------------+----------------------------------------------+
   | NEST 2.x                                    | NEST 3.0                                     |
   +=============================================+==============================================+
@@ -64,10 +63,10 @@ NodeCollection supports the following functionality
 
 .. _nodeID_support:
 
+NodeCollections support the following operations:
 
 Printing
-    A compact representation of information about the NodeCollection can be printed
-
+   A compact representation of information about the NodeCollection can be printed
 
    >>>  nrns = nest.Create('iaf_psc_alpha', 10)
    >>>  print(nrns)
@@ -77,7 +76,6 @@ Printing
 
 Indexing
     Indexing returns a new NodeCollection with a single node
-
 
    >>>  print(nrns[3])
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
@@ -363,7 +361,6 @@ as NodeCollections.
 
     You can find a :doc:`full example <../examples/SynapseCollection>` in our example network page
 
-
 Printing
     Printing a SynapseCollection produces a table of source and target node IDs
 
@@ -378,6 +375,7 @@ Printing
 
 .. _conn_indexing:
 
+
 Indexing
     Indexing returns a single connection SynapseCollection.
 
@@ -387,7 +385,6 @@ Indexing
          *--------*----*
          | target | 9, |
          *--------*----*
-
 
 .. _conn_iterating:
 
@@ -422,7 +419,6 @@ Getting the size
     >>>  len(synColl)
          4
 
-
 .. _conn_testing_equality:
 
 Test of equality
@@ -432,7 +428,6 @@ Test of equality
          True
     >>>  synColl[:2] == synColl[2:]
          False
-
 
 .. _conn_get:
 
@@ -635,18 +630,18 @@ Spatial parameters
   .. image:: ../_static/img/NEST3_23_0.png
 
 
-  .. code-block:: ipython
+.. code-block:: ipython
 
     free_nodes = nest.Create('iaf_psc_alpha', 100,
                              positions=nest.spatial.free(nest.random.uniform(min=0., max=10.),
                                                          num_dimensions=2))
     nest.PlotLayer(free_nodes);
 
-  .. image:: ../_static/img/NEST3_24_0.png
+.. image:: ../_static/img/NEST3_24_0.png
 
 
-  After you have created your spatially distributed nodes, you can use spatial parameters to set
-  node or connection parameters.
+After you have created your spatially distributed nodes, you can use spatial parameters to set
+node or connection parameters.
 
   +----------------------------------+-------------------------------------------------------------------------+
   | Parameter                        | Description                                                             |
@@ -715,50 +710,50 @@ Spatial parameters
 
 Spatial distribution functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The spatial_distributions module contains random distributions that take a spatial
 parameter as input and applies the distribution on the parameter. They are used
 for spatially distributed nodes.
 
-  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
-  | Parameter                                         | Description                                                                                        |
-  +===================================================+====================================================================================================+
-  |  ::                                               | .. math::                                                                                          |
-  |                                                   |      p(x) = \exp{\left(-\frac{x}{\beta}\right)}                                                    |
-  |     nest.spatial_distributions.exponential(x,     |                                                                                                    |
-  |         beta=1.0)                                 |                                                                                                    |
-  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
-  |  ::                                               | .. math::                                                                                          |
-  |                                                   |      p(x) = \exp{\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)}                                        |
-  |     nest.spatial_distributions.gaussian(x,        |                                                                                                    |
-  |         mean=0.0, std=1.0)                        |                                                                                                    |
-  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
-  |  ::                                               | .. math::                                                                                          |
-  |                                                   |      p(x) = \exp{\left(-\frac{\frac{(x-\mu_x)^2}{2\sigma_x^2} - \frac{(y-\mu_y)^2}{2\sigma_y^2} +  |
-  |     nest.spatial_distributions.gaussian2D(x, y,   |      2\rho\frac{(x-\mu_x)(y-\mu_y)}{2\sigma_x*\sigma_y}}{2(1-\rho^2)}\right)}                      |
-  |         mean_x=0.0, mean_y=0.0, std_x=1.0,        |                                                                                                    |
-  |         std_y=1.0, rho=0.0)                       |                                                                                                    |
-  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
-  |  ::                                               | .. math::                                                                                          |
-  |                                                   |      p(x) = \frac{x^{\kappa-1}e^{-\frac{x}{\theta}}}{\theta^\kappa\Gamma(\kappa)}                  |
-  |     nest.spatial_distributions.gamma(x, kappa=1.0,|                                                                                                    |
-  |         theta=1.0)                                |                                                                                                    |
-  +---------------------------------------------------+----------------------------------------------------------------------------------------------------+
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  | Distribution function                        | Arguments          | Function                                             |
+  +==============================================+====================+======================================================+
+  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
+  | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
+  |                                              | | beta             |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              | | x,               | .. math::                                            |
+  | ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
+  |                                              | | std              |     {2\text{std}^2}}                                 |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
+  |                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
+  |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
+  |                                              | | rho              |    {2(1-\rho^2)}}                                    |
+  |                                              |                    |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
+  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
+  |                                              | | kappa            |                                                      |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
 
-Note that ``x`` and ``y`` are ``nest.Parameter`` types.
+With these functions, you can recreate for example a Gaussian kernel as a
+parameter:
 
-With these functions, you can, for example, recreate a Gaussian kernel as a parameter:
-
-
-  +------------------------------------------------+-----------------------------------------------------------------+
-  | NEST 2.x                                       | NEST 3.0                                                        |
-  +------------------------------------------------+-----------------------------------------------------------------+
-  |  ::                                            |  ::                                                             |
-  |                                                |                                                                 |
-  |     kernel = {"gaussian": {"p_center": 2.0,    |     param = 2*nest.spatial_distributions.gaussian(              |
-  |                            "sigma": 1.0}}      |         nest.spatial.distance, std=1.0)                         |
-  |                                                |                                                                 |
-  +------------------------------------------------+-----------------------------------------------------------------+
-
+  +------------------------------------------------------------+-----------------------------------------------------------------+
+  | NEST 2.x                                                   | NEST 3.0                                                        |
+  +------------------------------------------------------------+-----------------------------------------------------------------+
+  |                                                            |                                                                 |
+  | ::                                                         | ::                                                              |
+  |                                                            |                                                                 |
+  |     kernel = {"gaussian": {"p_center": 1.0, "sigma": 1.0}} |     param = nest.spatial_distributions.gaussian(                |
+  |                                                            |         nest.spatial.distance, p_center=1.0, std_deviation=1.0) |
+  |                                                            |                                                                 |
+  +------------------------------------------------------------+-----------------------------------------------------------------+
 
 .. code-block:: ipython
 
@@ -980,8 +975,8 @@ Using parameters makes it easy to set node properties
   | ::                                            | ::                                                 |
   |                                               |                                                    |
   |     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
-  |         v_m = numpy.random.uniform(-20., 20.) |                                                    |
-  |         nest.SetStatus([gid], {'V_m': V_m})   |                                                    |
+  |       v_m = numpy.random.uniform(-20., 20.)   |                                                    |
+  |       nest.SetStatus([node_id], {'V_m': V_m}) |                                                    |
   |                                               |                                                    |
   |                                               |                                                    |
   +-----------------------------------------------+----------------------------------------------------+

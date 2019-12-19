@@ -52,13 +52,13 @@ pattern:
 
 ::
 
-   data_path/data_prefix(label|model_name)-gid-vp.file_extension
+   data_path/data_prefix(label|model_name)-node_id-vp.file_extension
 
 The properties ``data_path`` and ``data_prefix`` are global kernel
 properties. They can, for example, be set during repetitive simulation
 protocols to separate the data originating from individual runs. The
 ``label`` replaces the model name component if it is set to a non-empty
-string. ``gid`` and ``vp`` denote the zero-padded global ID and virtual
+string. ``node_id`` and ``vp`` denote the zero-padded global ID and virtual
 process of the recorder writing the file. The filename ends in a dot
 and the ``file_extension``.
 
@@ -86,7 +86,7 @@ recording backend in the second. The third line describes the data by
 means of the field names for the different columns. All lines of the
 header start with a `#` character.
 
-The first field of each record written is the global id of the neuron
+The first field of each record written is the node ID of the neuron
 the event originated from, i.e., the *source* of the event. This is
 followed by the time of the measurement, the recorded floating point
 values and the recorded integer values.
@@ -192,7 +192,7 @@ public:
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
 private:
-  const std::string compute_vp_gid_string_( const RecordingDevice& device ) const;
+  const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
 
   struct DeviceData
   {
@@ -210,7 +210,7 @@ private:
     long precision_;                         //!< Number of decimal places used when writing decimal values
     bool time_in_steps_;                     //!< Should time be recorded in steps (ms if false)
     std::string modelname_;                  //!< File name up to but not including the "."
-    std::string vp_gid_string_;              //!< The vp and gid component of the filename
+    std::string vp_node_id_string_;          //!< The vp and node ID component of the filename
     std::string file_extension_;             //!< File name extension without leading "."
     std::string label_;                      //!< The label of the device.
     std::ofstream file_;                     //!< File stream to use for the device

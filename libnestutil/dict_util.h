@@ -53,7 +53,7 @@ updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node*
     {
       throw BadParameter( "Cannot use Parameter with this model." );
     }
-    auto vp = kernel().vp_manager.suggest_vp_for_gid( node->get_gid() );
+    auto vp = kernel().vp_manager.suggest_vp_for_node_id( node->get_node_id() );
     auto tid = kernel().vp_manager.vp_to_thread( vp );
     auto rng = get_vp_rng( tid );
     value = pd->get()->value( rng, node );

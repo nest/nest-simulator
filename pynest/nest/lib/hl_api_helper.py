@@ -52,7 +52,7 @@ __all__ = [
     'is_iterable',
     'is_literal',
     'is_sequence_of_connections',
-    'is_sequence_of_gids',
+    'is_sequence_of_node_ids',
     'is_string',
     'load_help',
     'model_deprecation_warning',
@@ -279,9 +279,9 @@ def is_sequence_of_connections(seq):
     return False
 
 
-def is_sequence_of_gids(seq):
+def is_sequence_of_node_ids(seq):
     """Checks whether the argument is a potentially valid sequence of
-    GIDs (non-negative integers).
+    node IDs (non-negative integers).
 
     Parameters
     ----------
@@ -291,7 +291,7 @@ def is_sequence_of_gids(seq):
     Returns
     -------
     bool:
-        True if object is a potentially valid sequence of GIDs
+        True if object is a potentially valid sequence of node IDs
     """
 
     return all(isinstance(n, int) and n >= 0 for n in seq)
@@ -380,7 +380,7 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
-    Prints message if no help is available for hlpobj.
+    Prints message if no help is available for `hlpobj`.
 
     Parameters
     ----------
@@ -540,7 +540,7 @@ def serializable(data):
 
     """
     try:
-        # Numpy array and GIDCollection can be converted to list
+        # Numpy array and NodeCollection can be converted to list
         result = data.tolist()
         return result
     except AttributeError:
@@ -612,15 +612,15 @@ def restructure_data(result, keys):
     return final_result
 
 
-def get_parameters(gc, param):
+def get_parameters(nc, param):
     """
     Get parameters from nodes.
 
-    Used by GIDCollections `get()` function.
+    Used by NodeCollections `get()` function.
 
     Parameters
     ----------
-    gc: GIDCollection
+    nc: NodeCollection
         nodes to get values from
     param: string or list of strings
         string or list of string naming model properties.
@@ -635,30 +635,30 @@ def get_parameters(gc, param):
     # param is single literal
     if is_literal(param):
         cmd = '/{} get'.format(param)
-        sps(gc._datum)
+        sps(nc._datum)
         try:
             sr(cmd)
             result = spp()
         except kernel.NESTError:
-            result = gc.get()[param]  # If the GIDCollection is a composite.
+            result = nc.get()[param]  # If the NodeCollection is a composite.
     # param is array of strings
     elif is_iterable(param):
-        result = {param_name: gc.get(param_name) for param_name in param}
+        result = {param_name: nc.get(param_name) for param_name in param}
     else:
         raise TypeError("Params should be either a string or an iterable")
 
     return result
 
 
-def get_parameters_hierarchical_addressing(gc, params):
+def get_parameters_hierarchical_addressing(nc, params):
     """
     Get parameters from nodes, hierarchical case.
 
-    Used by GIDCollections `get()` function.
+    Used by NodeCollections `get()` function.
 
     Parameters
     ----------
-    gc: GIDCollection
+    nc: NodeCollection
         nodes to get values from
     params: tuple
         first value in the tuple should be a string, second can be a string or a list of string.
@@ -678,7 +678,7 @@ def get_parameters_hierarchical_addressing(gc, params):
     # addressing, where arg0 must be a string and arg1 can be string
     # or list of strings.
     if is_literal(params[0]):
-        value_list = gc.get(params[0])
+        value_list = nc.get(params[0])
         if type(value_list) != tuple:
             value_list = (value_list,)
     else:

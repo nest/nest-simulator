@@ -86,7 +86,7 @@ public:
    * When this function is called by a `RecordingDevice` @p device,
    * the `RecordingBackend` can set up per-device data structures and
    * properties. Individual device instances can be identified using
-   * the `thread` and `gid` of the @p device.
+   * the `thread` and `node_id` of the @p device.
    *
    * This function is called from the set_initialized_() function of
    * the @p device and their set_status() function. The companion
@@ -105,7 +105,7 @@ public:
    * call to finalize().
    *
    * A common implementation of this function will create an entry in
-   * a thread-local map, associating the device's global id with the
+   * a thread-local map, associating the device's node ID with the
    * device-specific backend properties and an output facility of some
    * kind.
    *

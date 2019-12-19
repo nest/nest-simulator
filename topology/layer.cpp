@@ -24,7 +24,7 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "kernel_manager.h"
 #include "parameter.h"
 
@@ -44,14 +44,14 @@
 namespace nest
 {
 
-GIDCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = GIDCollectionMetadataPTR( 0 );
-GIDCollectionMetadataPTR AbstractLayer::cached_vector_md_ = GIDCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
@@ -154,26 +154,26 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   assert( layer_local );
   std::shared_ptr< AbstractLayer > layer_safe( layer_local );
-  GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
+  NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
-  // We have at least one element, create a GIDCollection for it
-  GIDCollectionPTR gid_coll = kernel().node_manager.add_node( element_id, length );
+  // We have at least one element, create a NodeCollection for it
+  NodeCollectionPTR node_collection = kernel().node_manager.add_node( element_id, length );
 
-  gid_coll->set_metadata( layer_meta );
+  node_collection->set_metadata( layer_meta );
 
-  get_layer( gid_coll )->gid_collection_ = gid_coll;
+  get_layer( node_collection )->node_collection_ = node_collection;
 
-  layer_meta->set_first_gid( gid_coll->operator[]( 0 ) );
+  layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
 
   layer_local->set_status( layer_dict );
 
-  return gid_coll;
+  return node_collection;
 }
 
-GIDCollectionMetadataPTR
+NodeCollectionMetadataPTR
 AbstractLayer::get_metadata() const
 {
-  return gid_collection_->get_metadata();
+  return node_collection_->get_metadata();
 }
 
 } // namespace nest

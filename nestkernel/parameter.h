@@ -35,7 +35,7 @@
 #include "nest_names.h"
 #include "nest_types.h"
 #include "nestmodule.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -76,7 +76,7 @@ public:
    */
   virtual double value( librandom::RngPtr& rng, Node* node ) const = 0;
   virtual double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const
   {
     return value( rng, nullptr );
   }
@@ -173,10 +173,10 @@ public:
   virtual Parameter* dimension_parameter( const Parameter& y_parameter, const Parameter& z_parameter ) const;
 
   /**
-   * Applies a parameter on a single-GID GIDCollection and given array of positions.
+   * Applies a parameter on a single-node ID NodeCollection and given array of positions.
    * @returns array of result values, one per position in the TokenArray.
    */
-  std::vector< double > apply( const GIDCollectionPTR&, const TokenArray& ) const;
+  std::vector< double > apply( const NodeCollectionPTR&, const TokenArray& ) const;
 
   /**
    * Check if the Parameter is based on spatial properties.
@@ -187,7 +187,7 @@ public:
 protected:
   bool parameter_is_spatial_{ false };
 
-  Node* gid_to_node_ptr_( const index, const thread ) const;
+  Node* node_id_to_node_ptr_( const index, const thread ) const;
 };
 
 /**
@@ -450,7 +450,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
     throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
   }
@@ -580,10 +580,10 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return parameter1_->value( rng, sgid, target, target_thread )
-      * parameter2_->value( rng, sgid, target, target_thread );
+    return parameter1_->value( rng, snode_id, target, target_thread )
+      * parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -651,10 +651,10 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return parameter1_->value( rng, sgid, target, target_thread )
-      / parameter2_->value( rng, sgid, target, target_thread );
+    return parameter1_->value( rng, snode_id, target, target_thread )
+      / parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -722,10 +722,10 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return parameter1_->value( rng, sgid, target, target_thread )
-      + parameter2_->value( rng, sgid, target, target_thread );
+    return parameter1_->value( rng, snode_id, target, target_thread )
+      + parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -793,10 +793,10 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return parameter1_->value( rng, sgid, target, target_thread )
-      - parameter2_->value( rng, sgid, target, target_thread );
+    return parameter1_->value( rng, snode_id, target, target_thread )
+      - parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -861,9 +861,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return p_->value( rng, sgid, target, target_thread );
+    return p_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -949,10 +949,10 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return compare_(
-      parameter1_->value( rng, sgid, target, target_thread ), parameter2_->value( rng, sgid, target, target_thread ) );
+    return compare_( parameter1_->value( rng, snode_id, target, target_thread ),
+      parameter2_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1055,15 +1055,15 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    if ( condition_->value( rng, sgid, target, target_thread ) )
+    if ( condition_->value( rng, snode_id, target, target_thread ) )
     {
-      return if_true_->value( rng, sgid, target, target_thread );
+      return if_true_->value( rng, snode_id, target, target_thread );
     }
     else
     {
-      return if_false_->value( rng, sgid, target, target_thread );
+      return if_false_->value( rng, snode_id, target, target_thread );
     }
   }
 
@@ -1138,9 +1138,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::min( p_->value( rng, sgid, target, target_thread ), other_value_ );
+    return std::min( p_->value( rng, snode_id, target, target_thread ), other_value_ );
   }
 
   double
@@ -1208,9 +1208,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::max( p_->value( rng, sgid, target, target_thread ), other_value_ );
+    return std::max( p_->value( rng, snode_id, target, target_thread ), other_value_ );
   }
 
   double
@@ -1268,7 +1268,7 @@ public:
    * @returns the value of the parameter.
    */
   double value( librandom::RngPtr& rng, Node* node ) const override;
-  double value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override;
+  double value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override;
   double value( librandom::RngPtr& rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1329,9 +1329,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::exp( p_->value( rng, sgid, target, target_thread ) );
+    return std::exp( p_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1396,9 +1396,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::sin( p_->value( rng, sgid, target, target_thread ) );
+    return std::sin( p_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1462,9 +1462,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::cos( p_->value( rng, sgid, target, target_thread ) );
+    return std::cos( p_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1531,9 +1531,9 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
-    return std::pow( p_->value( rng, sgid, target, target_thread ), exponent_ );
+    return std::pow( p_->value( rng, snode_id, target, target_thread ), exponent_ );
   }
 
   double
@@ -1619,7 +1619,7 @@ public:
   }
 
   double
-  value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const override
+  value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }

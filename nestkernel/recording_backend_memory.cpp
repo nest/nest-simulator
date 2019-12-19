@@ -50,12 +50,12 @@ void
 nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   thread t = device.get_thread();
-  index gid = device.get_gid();
+  index node_id = device.get_node_id();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
   {
-    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    auto p = device_data_[ t ].insert( std::make_pair( node_id, DeviceData() ) );
     device_data = p.first;
   }
 
@@ -66,9 +66,9 @@ void
 nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
 {
   thread t = device.get_thread();
-  index gid = device.get_gid();
+  index node_id = device.get_node_id();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data_[ t ].erase( device_data );
@@ -81,9 +81,9 @@ nest::RecordingBackendMemory::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& long_value_names )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   assert( device_data != device_data_[ t ].end() );
   device_data->second.set_value_names( double_value_names, long_value_names );
 }
@@ -107,9 +107,9 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const std::vector< long >& long_values )
 {
   thread t = device.get_thread();
-  index gid = device.get_gid();
+  index node_id = device.get_node_id();
 
-  device_data_[ t ][ gid ].push_back( event, double_values, long_values );
+  device_data_[ t ][ node_id ].push_back( event, double_values, long_values );
 }
 
 void
@@ -130,9 +130,9 @@ void
 nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  const auto device_data = device_data_[ t ].find( gid );
+  const auto device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data->second.get_status( d );
@@ -192,7 +192,7 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  senders_.push_back( event.get_sender_gid() );
+  senders_.push_back( event.get_sender_node_id() );
 
   if ( time_in_steps_ )
   {

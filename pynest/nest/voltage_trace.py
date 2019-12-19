@@ -73,7 +73,7 @@ def from_file(fname, title=None, grayscale=False):
 
     elif data.shape[1] == 2:
         print("INFO: found 2 columns in the file. Assuming \
-            them to be gid, pot.")
+            them to be node ID, pot.")
 
         plotid = []
         data_dict = {}

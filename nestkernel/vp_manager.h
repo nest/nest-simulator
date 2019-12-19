@@ -85,17 +85,17 @@ public:
   /**
    * Returns true if the given global node exists on this vp.
    */
-  bool is_gid_vp_local( const index gid ) const;
+  bool is_node_id_vp_local( const index node_id ) const;
 
   /**
    * Returns thread local index of a given global node.
    */
-  index gid_to_lid( const index gid ) const;
+  index node_id_to_lid( const index node_id ) const;
 
   /**
-   * Returns the global id of a given local index.
+   * Returns the node ID of a given local index.
    */
-  index lid_to_gid( const index lid ) const;
+  index lid_to_node_id( const index lid ) const;
 
   /**
    * Returns virtual process index.
@@ -106,11 +106,11 @@ public:
    * Return a thread number for a given global node id.
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
-   * t = (gid div P) mod T, where P is the number of simulation processes and
+   * t = (node_id div P) mod T, where P is the number of simulation processes and
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  thread suggest_vp_for_gid( const index gid ) const;
+  thread suggest_vp_for_node_id( const index node_id ) const;
 
   /**
    * Convert a given VP ID to the corresponding thread ID

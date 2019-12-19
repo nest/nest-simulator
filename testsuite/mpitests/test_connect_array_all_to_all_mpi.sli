@@ -53,7 +53,7 @@ ResetKernel
   /local_num_threads 2
 >> SetKernelStatus
 
-/gid1 N 1 add def            % gid1 = N + 1
+/node_id1 N 1 add def            % node_id1 = N + 1
 
 % create sources and targets
 /sources /iaf_psc_alpha N Create def
@@ -81,9 +81,9 @@ targets % loop on all neurons of target subnet
   neuron2 GetStatus /local get  % checks if neuron2 is local or not
   {
     /n_loc n_loc 1 add def  % increases n_loc
-    
+
     % gets all connections to the target neuron
-    /conn << /target [neuron2] cvgidcollection >> GetConnections def
+    /conn << /target [neuron2] cvnodecollection >> GetConnections def
 
     /sdict_lst conn GetStatus def % gets info on synapses
 
@@ -94,7 +94,7 @@ targets % loop on all neurons of target subnet
       /sdict exch def
       /w sdict /weight get def  % gets synaptic weight
       /d sdict /delay get def   % gets synaptic delay
-      /diff d w sub def         % diff = delay - weight 
+      /diff d w sub def         % diff = delay - weight
       diff 1.0 eq               % checks that d = w + 1
 	  pass and /pass exch def   % updates control flag
 
@@ -104,7 +104,7 @@ targets % loop on all neurons of target subnet
     Warr1 length N eq         % checks the size of Warr1
 	pass and /pass exch def   % updates control flag
 
-    /i1 neuron2 gid1 sub N mul def  % first index = (n2 - gid1) * N
+    /i1 neuron2 node_id1 sub N mul def  % first index = (n2 - node_id1) * N
     % get row of original weight array
     % and compare it with Warr1
     /Wdiff Warr cva i1 N getinterval Warr1 sub def
@@ -113,9 +113,9 @@ targets % loop on all neurons of target subnet
     Wdiff 0.0 HasDifferentMemberQ not
     pass and /pass exch def   % updates control flag
 
-  } 
+  }
   if   % neuron2 is local
-} 
+}
 forall  % neurons in targets
 
 pass n_loc 0 gt and

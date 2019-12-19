@@ -52,7 +52,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , port_name_( "cont_out" )
   , record_from_()
-  , targets_( new GIDCollectionPrimitive() )
+  , targets_( new NodeCollectionPrimitive() )
 {
 }
 
@@ -107,7 +107,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::record_from ] = ad_record_from;
-  ( *d )[ names::targets ] = new GIDCollectionDatum( targets_ );
+  ( *d )[ names::targets ] = new NodeCollectionDatum( targets_ );
 }
 
 void
@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      targets_ = getValue< GIDCollectionDatum >( d, names::targets );
+      targets_ = getValue< NodeCollectionDatum >( d, names::targets );
     }
     else
     {
@@ -251,10 +251,10 @@ nest::music_cont_out_proxy::calibrate()
     DictionaryDatum dummy_params = new Dictionary();
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      const index tgid = ( *P_.targets_ )[ i ];
-      if ( kernel().node_manager.is_local_gid( tgid ) )
+      const index tnode_id = ( *P_.targets_ )[ i ];
+      if ( kernel().node_manager.is_local_node_id( tnode_id ) )
       {
-        kernel().connection_manager.connect( get_gid(), tgid, dummy_params, synmodel_id );
+        kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
 
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
@@ -326,7 +326,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {

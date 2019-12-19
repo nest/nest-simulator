@@ -19,7 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
  % autorun=true
 
 /*
@@ -40,18 +40,18 @@
      networks. Neural Comput 19(6):1437-67
    Helias et al (2012). Supercomputers ready for use as discovery machines for
      neuroscience. Front. Neuroinform. 6:26
-   Kunkel et al (2014). Spiking network simulation code for petascale 
+   Kunkel et al (2014). Spiking network simulation code for petascale
      computers. Front. Neuroinform. 8:78
-     
+
    A note on scaling
    -----------------
-   
+
    This benchmark was originally developed for very large-scale simulations on
    supercomputers with more than 1 million neurons in the network and
    11.250 incoming synapses per neuron. For such large networks, synaptic input
    to a single neuron will be little correlated across inputs and network
    activity will remain stable over long periods of time.
-   
+
    The original network size corresponds to a scale parameter of 100 or more.
    In order to make it possible to test this benchmark script on desktop
    computers, the scale parameter is set to 1 below, while the number of
@@ -60,23 +60,23 @@
    Over time, network dynamics will therefore become unstable and all neurons
    in the network will fire in synchrony, leading to extremely slow simulation
    speeds.
-   
+
    Therefore, the presimulation time is reduced to 50 ms below and the
    simulation time to 250 ms, while we usually use 100 ms presimulation and
    1000 ms simulation time.
-   
+
    For meaningful use of this benchmark, you should use a scale > 10 and check
    that the firing rate reported at the end of the benchmark is below 10 spikes
-   per second. 
+   per second.
 */
-  
+
 %%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define all relevant parameters: changes should be made here
 % all data is placed in the userdict dictionary
 
 /nvp 1 def              % total number of virtual processes
-/scale 1.0 def          % scaling factor of the network size, 
+/scale 1.0 def          % scaling factor of the network size,
                         % total network size = scale*11250 neurons
 /simtime 250. def       % total simulation time in ms
 /presimtime 50. ms def % simulation time until reaching equilibrium
@@ -102,7 +102,7 @@
     a = tauMem / tauSyn;
     b = 1.0 / tauSyn - 1.0 / tauMem;
     t_rise = 1.0/b * (-LambertWm1(-exp(-1.0/a)/a)-1.0/a);
-  
+
     % maximum of PSP for current of unit amplitude
     exp(1.0)/(tauSyn*CMem*b) * ((exp(-t_rise/tauMem) - exp(-t_rise/tauSyn)) / b - t_rise*exp(-t_rise/tauSyn))
   ) ExecMath
@@ -113,7 +113,7 @@ def
 % For compatiblity with earlier benchmarks, we require a rise time of
 % t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
 % tau_m. This requires numerical inversion of the expression for t_rise
-% in ConvertSynapseWeight. We computed this value once and hard-code 
+% in ConvertSynapseWeight. We computed this value once and hard-code
 % it here.
 
 /tau_syn 0.32582722403722841 ms def
@@ -165,7 +165,7 @@ def
     /mu     0.4          %STDP weight dependence exponent (potentiation)
     /tau_plus 15.0       %time constant for potentiation
   >>
-  
+
   /eta 1.685         %scaling of external stimulus
   /filestem path_name
 
@@ -179,7 +179,7 @@ brunel_params dup using
 
 /BuildNetwork
 {
-  
+
   tic % start timer on construction
   % set global kernel parameters
   <<
@@ -194,7 +194,7 @@ brunel_params dup using
 
   /iaf_psc_alpha 1 Create  % To get same spike counter as before NEST 3.0
   /E_neurons /iaf_psc_alpha NE Create def
- 
+
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
 
@@ -217,7 +217,7 @@ brunel_params dup using
       } forall
 
       I_neurons LocalOnly
-      { 
+      {
           << /V_m mean_potential sigma_potential normal Random mul add >>
           SetStatus
       } forall
@@ -276,7 +276,7 @@ brunel_params dup using
   /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
   /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
 
-  stdp_params /weight JE_pA put	
+  stdp_params /weight JE_pA put
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
 
@@ -316,15 +316,15 @@ brunel_params dup using
     local_neurons Nrec lt
     {
       M_ERROR (BuildNetwork)
-      (Spikes can only be recorded from local neurons, but the number of local 
-neurons is smaller than the number of neurons spikes should be recorded from. 
+      (Spikes can only be recorded from local neurons, but the number of local
+neurons is smaller than the number of neurons spikes should be recorded from.
 Aborting the simulation!) message
       1 quit_i
     } if
 
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
-    E_neurons LocalOnly cva Nrec Take cvgidcollection E_detector << /rule (all_to_all) >> << /synapse_model /syn_std >> Connect
+    E_neurons LocalOnly cva Nrec Take cvnodecollection E_detector << /rule (all_to_all) >> << /synapse_model /syn_std >> Connect
   } if
 
   % read out time used for building
@@ -371,7 +371,7 @@ Aborting the simulation!) message
   {
     E_detector ComputeRate cvs ( # average rate) join logger /log call
   } if
-  
+
   E_neurons size I_neurons size add cvs ( # num_neurons) join logger /log call
   GetKernelStatus /num_connections get cvs ( # num_connections) join logger /log call
   GetKernelStatus /min_delay get cvs ( # min_delay) join logger /log call
@@ -434,7 +434,7 @@ def
 
 	    % convert rank to string, prepend 0 if necessary to make
             % numbers equally wide for all ranks
-            Rank cvs 
+            Rank cvs
             dup length max_rank_log cvs length exch sub
             {
 	      48 prepend   % 48 is ASCII code for 0

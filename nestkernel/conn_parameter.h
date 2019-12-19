@@ -420,12 +420,12 @@ class ParameterConnParameterWrapper : public ConnParameter
 public:
   ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
 
-  double value_double( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const;
+  double value_double( thread target_thread, librandom::RngPtr& rng, index snode_id, Node* target ) const;
 
   long
-  value_int( thread target_thread, librandom::RngPtr& rng, index sgid, Node* target ) const
+  value_int( thread target_thread, librandom::RngPtr& rng, index snode_id, Node* target ) const
   {
-    return value_double( target_thread, rng, sgid, target );
+    return value_double( target_thread, rng, snode_id, target );
   }
 
   inline bool

@@ -34,7 +34,7 @@
     2. PrepareSimulation
     3. DerivedParameters
     4. CreateNetworkNodes
-    5. WriteGIDsToFile
+    5. WritenodeIDsToFile
     6. ConnectNetworkNodes
 
     Please see the file README.txt for details.
@@ -241,27 +241,27 @@
 
 
 % the following variables are created here:
-% neuron_GIDs
-% poisson_GIDs
-% dc_generator_GIDs
-% spike_detector_GIDs
-% voltmeter_GIDs
-% th_neuron_GIDs
-% th_poisson_GID
-% th_spike_detector_GID
+% neuron_nodeIDs
+% poisson_nodeIDs
+% dc_generator_nodeIDs
+% spike_detector_nodeIDs
+% voltmeter_nodeIDs
+% th_neuron_nodeIDs
+% th_poisson_nodeID
+% th_spike_detector_nodeID
 /CreateNetworkNodes
 {
     /spikes_record_to          save_cortical_spikes {/ascii}{/memory} ifelse def
     /voltages_record_to        save_voltages        {/ascii}{/memory} ifelse def
-    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def 
+    /thalamic_spikes_record_to save_thalamic_spikes {/ascii}{/memory} ifelse def
 
     neuron_model model_params SetDefaults
-    % arrays of GIDs:
-    /neuron_GIDs         [n_layers n_pops_per_layer] 0 LayoutArray def
-    /spike_detector_GIDs [n_layers n_pops_per_layer] 0 LayoutArray def
-    /voltmeter_GIDs      [n_layers n_pops_per_layer] 0 LayoutArray def
-    /poisson_GIDs        [n_layers n_pops_per_layer] 0 LayoutArray def
-    /dc_generator_GIDs   [n_layers n_pops_per_layer] 0 LayoutArray def
+    % arrays of nodeIDs:
+    /neuron_nodeIDs         [n_layers n_pops_per_layer] 0 LayoutArray def
+    /spike_detector_nodeIDs [n_layers n_pops_per_layer] 0 LayoutArray def
+    /voltmeter_nodeIDs      [n_layers n_pops_per_layer] 0 LayoutArray def
+    /poisson_nodeIDs        [n_layers n_pops_per_layer] 0 LayoutArray def
+    /dc_generator_nodeIDs   [n_layers n_pops_per_layer] 0 LayoutArray def
 
     0 1 n_layers 1 sub {
         /layer_index Set
@@ -274,9 +274,9 @@
 	    n_neurons layer_index get population_index get % how many
 	    Create /population Set
 
-	    % store the GIDCollection
-            neuron_GIDs [layer_index population_index] % the position
-	    population put /neuron_GIDs Set
+	    % store the NodeCollection
+            neuron_nodeIDs [layer_index population_index] % the position
+	    population put /neuron_nodeIDs Set
 
             % initialize membrane potentials
             population {
@@ -297,53 +297,53 @@
                SetStatus
 	    } forall
 
-            spike_detector_GIDs [layer_index population_index] /spike_detector <<
+            spike_detector_nodeIDs [layer_index population_index] /spike_detector <<
 	       /label spike_detector_label layer_index cvs join (_) join population_index cvs join
 	       /record_to spikes_record_to
-	    >> Create put /spike_detector_GIDs Set
+	    >> Create put /spike_detector_nodeIDs Set
 
-	    voltmeter_GIDs [layer_index population_index] /voltmeter <<
+	    voltmeter_nodeIDs [layer_index population_index] /voltmeter <<
 	       /label voltmeter_label layer_index cvs join (_) join population_index cvs join
 	       /record_to voltages_record_to
-	    >> Create put /voltmeter_GIDs Set
+	    >> Create put /voltmeter_nodeIDs Set
 
 	    K_bg layer_index get population_index get /K_bg_ Set
 
-	    poisson_GIDs [layer_index population_index] /poisson_generator <<
+	    poisson_nodeIDs [layer_index population_index] /poisson_generator <<
 	       /rate K_bg_ bg_rate mul
-            >> Create put /poisson_GIDs Set
+            >> Create put /poisson_nodeIDs Set
 
-	    dc_generator_GIDs [layer_index population_index] /dc_generator <<
+	    dc_generator_nodeIDs [layer_index population_index] /dc_generator <<
 	       /amplitude K_bg_ dc_amplitude mul
-	    >>  Create put /dc_generator_GIDs Set
+	    >>  Create put /dc_generator_nodeIDs Set
 
         } for % loop over e and i populations
     } for % loop over layers
 
     % create and configure thalamic neurons (parrots) and their Poisson inputs
     n_thal 0 gt {
-        /parrot_neuron n_thal Create /th_neuron_GIDs Set
+        /parrot_neuron n_thal Create /th_neuron_nodeIDs Set
 
 	/poisson_generator <<
            /rate th_rate
            /start th_start
            /stop th_start th_duration add
-        >> Create /th_poisson_GID Set
+        >> Create /th_poisson_nodeID Set
 
         save_thalamic_spikes {
             /spike_detector Create <<
 	       /label th_spike_detector_label
 	       /record_to thalamic_spikes_record_to
-	    >> /th_spike_detector_GID Set
+	    >> /th_spike_detector_nodeID Set
         } if
     } if
 } def
 
 
-% WriteGIDsToFile - Save the GIDs of the neurons to a file based on
+% WritenodeIDsToFile - Save the nodeIDs of the neurons to a file based on
 % the parameters given in sim_params.sli.
 %
-/WriteGIDsToFile
+/WritenodeIDsToFile
 {
     Rank 0 eq {
 
@@ -351,12 +351,12 @@
             (/) join
         } if
 
-	GID_filename join
+	nodeID_filename join
 	(w) ofsopen ;
 
-	neuron_GIDs Flatten {
-            /GIDs Set
-            GIDs Min <- (\t) <- GIDs Max <- (\n) <-
+	neuron_nodeIDs Flatten {
+            /nodeIDs Set
+            nodeIDs Min <- (\t) <- nodeIDs Max <- (\n) <-
 	} forall
 
 close
@@ -378,7 +378,7 @@ close
 	    /target_pop Set
 
             % get neuron IDs
-            neuron_GIDs target_layer get target_pop get /target_nodes Set
+            neuron_nodeIDs target_layer get target_pop get /target_nodes Set
 
             n_neurons target_layer get target_pop get /n_targets Set
             full_scale_n_neurons target_layer get target_pop get /full_scale_n_targets Set
@@ -392,7 +392,7 @@ close
 		    % local connections
 
 		    % get neuron IDs
-                    neuron_GIDs source_layer get source_pop get /source_nodes Set
+                    neuron_nodeIDs source_layer get source_pop get /source_nodes Set
 
                     n_neurons source_layer get source_pop get /n_sources Set
                     full_scale_n_neurons source_layer get source_pop get /full_scale_n_sources Set
@@ -488,7 +488,7 @@ close
                     conn_dict /rule /fixed_total_number put
 
                     % Connect the thalamus
-                    th_neuron_GIDs target_nodes conn_dict syn_dict Connect
+                    th_neuron_nodeIDs target_nodes conn_dict syn_dict Connect
 
                 } if % n_synapses > 0
             } if % n_thal > 0
@@ -498,26 +498,26 @@ close
             % Connect to the spike detector
             % record from a continuous range of IDs (appropriate for networks without topology)
             target_nodes n_neurons_rec_spikes target_layer get target_pop get Take
-            spike_detector_GIDs target_layer get target_pop get
+            spike_detector_nodeIDs target_layer get target_pop get
             /all_to_all
 	    Connect
 
             % Connect to the voltmeter
-            voltmeter_GIDs target_layer get target_pop get
+            voltmeter_nodeIDs target_layer get target_pop get
             % record from a continuous range of IDs
             target_nodes n_neurons_rec_voltage target_layer get target_pop get Take
             /all_to_all
 	    Connect
 
             % Connect to the Poisson generators
-            poisson_GIDs target_layer get target_pop get
+            poisson_nodeIDs target_layer get target_pop get
             target_nodes
             /all_to_all
             << /weight PSC_ext /delay delays 0 get >>
             Connect
 
             % Connect to the DC generators
-            dc_generator_GIDs target_layer get target_pop get
+            dc_generator_nodeIDs target_layer get target_pop get
             target_nodes
             /all_to_all
             Connect
@@ -527,15 +527,15 @@ close
 
     n_thal 0 gt {
         % Connect thalamic poisson_generator to thalamic neurons (parrots)
-        th_poisson_GID 1 arraystore
-        th_neuron_GIDs
+        th_poisson_nodeID 1 arraystore
+        th_neuron_nodeIDs
         Connect
     } if
 
     record_thalamic_spikes n_thal 0 gt and {
         % Connect thalamic neurons to spike detector
-        th_neuron_GIDs
-        th_spike_detector_GID 1 arraystore
+        th_neuron_nodeIDs
+        th_spike_detector_nodeID 1 arraystore
         Connect
     } if
 
@@ -552,7 +552,7 @@ CheckParameters
 PrepareSimulation
 DerivedParameters
 CreateNetworkNodes
-WriteGIDsToFile
+WritenodeIDsToFile
 ConnectNetworkNodes
 
 tic

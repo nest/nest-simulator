@@ -97,15 +97,15 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
   if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
   {
     const auto tid = device.get_thread();
-    const auto gid = device.get_gid();
+    const auto node_id = device.get_node_id();
 
-    auto device_it = devices_[ tid ].find( gid );
+    auto device_it = devices_[ tid ].find( node_id );
     if ( device_it != devices_[ tid ].end() )
     {
       devices_[ tid ].erase( device_it );
     }
 
-    devices_[ tid ].insert( std::make_pair( gid, &device ) );
+    devices_[ tid ].insert( std::make_pair( node_id, &device ) );
   }
   else
   {
@@ -117,9 +117,9 @@ void
 nest::RecordingBackendArbor::disenroll( const RecordingDevice& device )
 {
   const auto tid = device.get_thread();
-  const auto gid = device.get_gid();
+  const auto node_id = device.get_node_id();
 
-  auto device_it = devices_[ tid ].find( gid );
+  auto device_it = devices_[ tid ].find( node_id );
   if ( device_it != devices_[ tid ].end() )
   {
     devices_[ tid ].erase( device_it );
@@ -232,21 +232,21 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   const std::vector< long >& )
 {
   const thread t = device.get_thread();
-  const auto device_gid = device.get_gid();
+  const auto device_node_id = device.get_node_id();
 
-  if ( devices_[ t ].find( device_gid ) == devices_[ t ].end() )
+  if ( devices_[ t ].find( device_node_id ) == devices_[ t ].end() )
   {
     return;
   }
 
   auto& buffer = arbor_->spike_buffers[ t ];
 
-  const unsigned sender_gid = event.get_sender_gid();
+  const unsigned sender_node_id = event.get_sender_node_id();
   const auto step_time = event.get_stamp().get_ms();
   const auto offset = event.get_offset();
   const auto time = static_cast< float >( step_time - offset );
 
-  buffer.push_back( { { num_arbor_cells_ + sender_gid, 0 }, time } );
+  buffer.push_back( { { num_arbor_cells_ + sender_node_id, 0 }, time } );
 }
 
 void

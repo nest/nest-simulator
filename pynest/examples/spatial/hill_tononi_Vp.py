@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # ! ===========================================
-# ! NEST Topology Module: A Case-Based Tutorial
+# ! NEST Spatial Example: A Case-Based Tutorial
 # ! ===========================================
 # !
 # ! :Author: Hans Ekkehard Plesser
@@ -41,8 +41,8 @@
 # ! ============
 # !
 # ! This tutorial shows you how to implement a simplified version of the
-# ! Hill-Tononi model of the early visual pathway using the NEST Topology
-# ! module.  The model is described in the paper
+# ! Hill-Tononi model of the early visual pathway using NEST. The model
+# ! is described in the paper
 # !
 # !   S. L. Hill and G. Tononi.
 # !   Modeling Sleep and Wakefulness in the Thalamocortical System.
@@ -67,8 +67,8 @@
 # ! #. Synaptic delays follow a Gaussian distribution in the HT
 # !    model. This implies actually a Gaussian distributions clipped at
 # !    some small, non-zero delay, since delays must be
-# !    positive. Currently, there is a bug in the Topology module when
-# !    using clipped Gaussian distribution. We therefore draw delays from a
+# !    positive. Currently, there is a bug in the module when using clipped
+# !    Gaussian distribution. We therefore draw delays from a
 # !    uniform distribution.
 # !
 # ! #. Some further adaptations are given at the appropriate locations in
@@ -81,7 +81,7 @@
 # !    tutorial
 # !
 # ! Preparations_
-# !    Neccessary steps to use NEST and the Topology Module
+# !    Neccessary steps to use NEST
 # !
 # ! `Configurable Parameters`_
 # !    Define adjustable network parameters
@@ -333,7 +333,7 @@ nest.CopyModel('sinusoidal_poisson_generator', 'RetinaNode',
 # ! from other models.
 # !
 # ! We configure multimeter to record membrane potential to membrane
-# ! potential at certain intervals to memory only. We record the GID of
+# ! potential at certain intervals to memory only. We record the node ID of
 # ! the recorded neurons, but not the time.
 nest.CopyModel('multimeter', 'RecordingNode',
                params={'interval': Params['sim_interval'],
@@ -481,9 +481,9 @@ nest.CopyModel('static_synapse', 'GABA_A')
 # ! **Note:** Hill & Tononi state that their model spans 8 degrees of
 # ! visual angle and stimuli are specified according to this. On the
 # ! other hand, all connection patterns are defined in terms of cell
-# ! grid positions. Since the NEST Topology Module defines connection
-# ! patterns in terms of the extent given in degrees, we need to apply
-# ! the following scaling factor to all lengths in connections:
+# ! grid positions. Since the NEST defines connection patterns in terms
+# ! of the extent given in degrees, we need to apply the following
+# ! scaling factor to all lengths in connections:
 dpc = Params['visSize'] / (Params['N'] - 1)
 
 # ! We will collect all same-orientation cortico-cortical connections in
@@ -799,15 +799,15 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 # ! the connections from the central node of various layers.
 
 # ! Connections from Retina to TpRelay
-retina_ctr_gid = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_gid.get('global_id'))
+retina_ctr_node_id = nest.FindCenterElement(retina)
+retina_ctr_index = retina.index(retina_ctr_node_id.get('global_id'))
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # ! Connections from TpRelay to L4pyr in Vp (horizontally tuned)
-TpRelay_ctr_gid = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_gid.get('global_id'))
+TpRelay_ctr_node_id = nest.FindCenterElement(TpRelay)
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_node_id.get('global_id'))
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 

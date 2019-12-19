@@ -32,8 +32,8 @@ class TestConnectArrays(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_connect_arrays_nonunique_gids(self):
-        """Connecting arrays with nonunique GIDs"""
+    def test_connect_arrays_nonunique_node_ids(self):
+        """Connecting arrays with nonunique node IDs"""
         nest.Create('iaf_psc_alpha', 4)
         source = [1, 1, 2, 2]
         target = [3, 3, 4, 4]
@@ -43,8 +43,8 @@ class TestConnectArrays(unittest.TestCase):
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
         self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
-    def test_connect_numpy_arrays_gids(self):
-        """Connecting numpy arrays with nonunique GIDs"""
+    def test_connect_numpy_arrays_node_ids(self):
+        """Connecting numpy arrays with nonunique node IDs"""
         nest.Create('iaf_psc_alpha', 4)
         source = np.array([1, 1, 2, 2])
         target = np.array([3, 3, 4, 4])
@@ -54,29 +54,29 @@ class TestConnectArrays(unittest.TestCase):
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
         self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
-    def test_connect_arrays_unique_gids(self):
-        """Connecting arrays with unique GIDs"""
+    def test_connect_arrays_unique_node_ids(self):
+        """Connecting arrays with unique node IDs"""
         n = nest.Create('iaf_psc_alpha', 4)
-        gids = n.tolist()
+        node_ids = n.tolist()
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            nest.Connect(gids, gids)
+            nest.Connect(node_ids, node_ids)
             self.assertEqual(len(w), 1)
             self.assertTrue(issubclass(w[-1].category, UserWarning))
             self.assertTrue('unique' in str(w[-1].message))
         conns = nest.GetConnections()
-        st_pairs = np.array([(s, t) for s in gids for t in gids])
+        st_pairs = np.array([(s, t) for s in node_ids for t in node_ids])
         self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
         self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
 
-    def test_connect_array_with_gc(self):
-        """Connecting one array with a GIDCollection"""
-        gc = nest.Create('iaf_psc_alpha', 4)
-        gids = [1, 1, 2, 2]
+    def test_connect_array_with_nc(self):
+        """Connecting one array with a NodeCollection"""
+        nc = nest.Create('iaf_psc_alpha', 4)
+        node_ids = [1, 1, 2, 2]
         with self.assertRaises(TypeError):
-            nest.Connect(gids, gc)
+            nest.Connect(node_ids, nc)
         with self.assertRaises(TypeError):
-            nest.Connect(gc, gids)
+            nest.Connect(nc, node_ids)
 
 
 def suite():

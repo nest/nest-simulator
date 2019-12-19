@@ -535,9 +535,9 @@ def pn_fig(fig, loc, l, cdict,
     ax = fig.add_subplot(loc)
 
     conns = nest.GetConnections(l)
-    first_gid = list(l[0])[0]  # hack to map GID to layer index
-    dist = np.array([nest.Distance(l[s - first_gid],
-                                   l[t - first_gid])
+    first_node_id = list(l[0])[0]  # hack to map node ID to layer index
+    dist = np.array([nest.Distance(l[s - first_node_id],
+                                   l[t - first_node_id])
                      for s, t in zip(conns.sources(), conns.targets())])
     ax.hist(dist, bins=50, histtype='stepfilled', density=True)
     r = np.arange(0., 0.51, 0.01)

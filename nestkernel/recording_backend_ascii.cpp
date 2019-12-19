@@ -59,14 +59,14 @@ void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
   {
-    std::string vp_gid_string = compute_vp_gid_string_( device );
+    std::string vp_node_id_string = compute_vp_node_id_string_( device );
     std::string modelname = device.get_name();
-    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData( modelname, vp_gid_string ) ) );
+    auto p = device_data_[ t ].insert( std::make_pair( node_id, DeviceData( modelname, vp_node_id_string ) ) );
     device_data = p.first;
   }
 
@@ -77,9 +77,9 @@ void
 nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data_[ t ].erase( device_data );
@@ -92,9 +92,9 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& long_value_names )
 {
   const thread t = device.get_thread();
-  const thread gid = device.get_gid();
+  const thread node_id = device.get_node_id();
 
-  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   assert( device_data != device_data_[ t ].end() );
   device_data->second.set_value_names( double_value_names, long_value_names );
 }
@@ -142,9 +142,9 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
   {
     return;
@@ -154,18 +154,18 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendASCII::compute_vp_gid_string_( const RecordingDevice& device ) const
+nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& device ) const
 {
   const float num_vps = kernel().vp_manager.get_num_virtual_processes();
   const float num_nodes = kernel().node_manager.size();
   const int vp_digits = static_cast< int >( std::floor( std::log10( num_vps ) ) + 1 );
-  const int gid_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
+  const int node_id_digits = static_cast< int >( std::floor( std::log10( num_nodes ) ) + 1 );
 
-  std::ostringstream vp_gid_string;
-  vp_gid_string << "-" << std::setfill( '0' ) << std::setw( gid_digits ) << device.get_gid() << "-"
-                << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
+  std::ostringstream vp_node_id_string;
+  vp_node_id_string << "-" << std::setfill( '0' ) << std::setw( node_id_digits ) << device.get_node_id() << "-"
+                    << std::setfill( '0' ) << std::setw( vp_digits ) << device.get_vp();
 
-  return vp_gid_string.str();
+  return vp_node_id_string.str();
 }
 
 void
@@ -210,9 +210,9 @@ void
 nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  data_map::value_type::const_iterator device_data = device_data_[ t ].find( gid );
+  data_map::value_type::const_iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data->second.get_status( d );
@@ -221,11 +221,11 @@ nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& dev
 
 /* ******************* Device meta data class DeviceData ******************* */
 
-nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_gid_string )
+nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std::string vp_node_id_string )
   : precision_( 3 )
   , time_in_steps_( false )
   , modelname_( modelname )
-  , vp_gid_string_( vp_gid_string )
+  , vp_node_id_string_( vp_node_id_string )
   , file_extension_( "dat" )
   , label_( "" )
 {
@@ -276,7 +276,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
         << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
-  file_ << std::fixed << std::setprecision( precision_ ) << "# sender" << timehead;
+  file_ << std::fixed << std::setprecision( precision_ ) << "sender" << timehead;
   for ( auto& val : double_value_names_ )
   {
     file_ << "\t" << val;
@@ -299,7 +299,7 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  file_ << event.get_sender_gid() << "\t";
+  file_ << event.get_sender_node_id() << "\t";
 
   if ( time_in_steps_ )
   {
@@ -370,5 +370,5 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 
   std::string data_prefix = kernel().io_manager.get_data_prefix();
 
-  return data_path + data_prefix + label + vp_gid_string_ + "." + file_extension_;
+  return data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_;
 }

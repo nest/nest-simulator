@@ -54,8 +54,8 @@ skip_if_not_threaded
     /local_num_threads 2
   >> SetKernelStatus
 
-  /net1 /iaf_psc_alpha N Create def % gids of sources
-  /net2 /iaf_psc_alpha N Create def % gids of targets 
+  /net1 /iaf_psc_alpha N Create def % node_ids of sources
+  /net2 /iaf_psc_alpha N Create def % node_ids of targets
 
   /NC N K mul def     % number of connections
   /Dmax NC 1 add def  % maximum delay
@@ -76,7 +76,7 @@ skip_if_not_threaded
     /neuron1 exch def
 
     % gets all connections from the source neuron
-    /conn << /source [neuron1] cvgidcollection >> GetConnections def
+    /conn << /source [neuron1] cvnodecollection >> GetConnections def
 
     /sdict_lst conn GetStatus def % gets info on synapses
 
@@ -87,7 +87,7 @@ skip_if_not_threaded
             /sdict exch def
             /w sdict /weight get def  % gets synaptic weight
             /d sdict /delay get def   % gets synaptic delay
-            /diff d w sub def         % diff = delay - weight 
+            /diff d w sub def         % diff = delay - weight
             diff 1.0 eq assert_or_die % checks that d = w + 1
 
             /Warr1 Warr1 w append def  % appends w to Warr1
@@ -102,9 +102,8 @@ skip_if_not_threaded
             % check that all elements of Warr are in Wrow
             Wrow w MemberQ assert_or_die
     } forall
-    /Warr_all Warr_all Warr1 join def  
+    /Warr_all Warr_all Warr1 join def
 
   } forall
   Warr_all
 } distributed_process_invariant_collect_assert_or_die
-

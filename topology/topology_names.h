@@ -40,8 +40,6 @@ namespace nest
 namespace names
 {
 
-extern const Name allow_autapses;
-extern const Name allow_multapses;
 extern const Name allow_oversized_mask;
 extern const Name anchor;
 extern const Name azimuth_angle;
@@ -61,11 +59,8 @@ extern const Name kernel;
 extern const Name lower_left;
 extern const Name major_axis;
 extern const Name mask;
-extern const Name max;
-extern const Name min;
 extern const Name minor_axis;
 extern const Name number_of_connections;
-extern const Name offset;
 extern const Name outer_radius;
 extern const Name pairwise_bernoulli_on_source;
 extern const Name pairwise_bernoulli_on_target;
@@ -76,7 +71,6 @@ extern const Name radius;
 extern const Name rectangular;
 extern const Name shape;
 extern const Name spherical;
-extern const Name theta;
 extern const Name upper_right;
 
 } // namespace names

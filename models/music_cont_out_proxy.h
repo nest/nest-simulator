@@ -40,7 +40,7 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_types.h"
 #include "device_node.h"
 
@@ -72,13 +72,13 @@ started for the first time.
 In case of multiple recordables the data can be read out (PyNEST only) of the
 receiving buffer via the following access pattern:
 
-    buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
+    buffer[ target_node_id_index ][ recordable_index] = buffer[ target_node_id_index *
     record_from.size() + recordable_index ]
 
     For example:
-    target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
+    target_node_ids = [ 2, 5, 4 ], record_from = ["V_m"] and
 
-    we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
+    we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
 Parameters:
 
@@ -176,7 +176,7 @@ private:
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
     std::vector< Name > record_from_; //!< recordables to record from
-    GIDCollectionPTR targets_;        //!< nodes to be observed
+    NodeCollectionPTR targets_;       //!< nodes to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary

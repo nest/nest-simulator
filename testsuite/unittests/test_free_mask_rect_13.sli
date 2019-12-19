@@ -50,7 +50,7 @@
 %          52 32 37 42
 
 
-% loop y-coords backwards so that we get same gid-pos mapping as on grid
+% loop y-coords backwards so that we get same node_id-pos mapping as on grid
 [-0.5 0.5 0.25] Range
 { /x Set [0.5 -0.5 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
 /pos Set
@@ -385,4 +385,3 @@ sources_conns_oss sources targets /static_synapse DumpLayerConnections ;
 {
   conn_ref conn_result eq
 } assert_or_die
-

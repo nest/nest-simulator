@@ -63,10 +63,10 @@ per second.
 References
 ~~~~~~~~~~~~
 
-.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent plasticity in balanced random
-       networks. Neural Comput 19(6):1437-67
-.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
-       neuroscience. Front. Neuroinform. 6:26
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+       plasticity in balanced random networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
 
@@ -156,7 +156,7 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-    ###############################################################################
+    ####################################################################
     # Note that Kunkel et al. (2014) report different values. The values
     # in the paper were used for the benchmarks on K, the values given
     # here were used for the benchmark on JUQUEEN.
@@ -227,13 +227,13 @@ def build_network(logger):
             'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
-        for node in nest.GetLocalGIDCollection(E_neurons):
+        for node in nest.GetLocalNodeCollection(E_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
-        for node in nest.GetLocalGIDCollection(I_neurons):
+        for node in nest.GetLocalNodeCollection(I_neurons):
             nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
@@ -332,7 +332,7 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_neurons = nest.GetLocalGIDCollection(E_neurons)
+            local_neurons = nest.GetLocalNodeCollection(E_neurons)
         else:
             local_neurons = E_neurons
 

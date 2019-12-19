@@ -87,7 +87,7 @@ ResetKernel
   /correlation_detector << /delta_tau 0.1 >> SetDefaults
   << /resolution 1.0 >> SetKernelStatus
   /correlation_detector Create % cannot create now with delta_tau==0.1
-} fail_or_die  
+} fail_or_die
 
 
 % Fifth test: proper number of histogram bins under resolution changes
@@ -97,7 +97,7 @@ ResetKernel
   << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
   << /resolution 0.2 >> SetKernelStatus
-  /correlation_detector Create 
+  /correlation_detector Create
   1 Simulate % must simulate to force creation of histogram
   [/histogram] get cva length
   11 eq
@@ -106,7 +106,7 @@ ResetKernel
 
 % Functions for actual correlation tests
 
-% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_gid
+% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_node_id
 /cdsim
 {
   << >> begin
@@ -114,8 +114,8 @@ ResetKernel
 
     % build and connect
     /correlation_detector Create /cdt Set
-    [0 1] { 
-      /i Set 
+    [0 1] {
+      /i Set
       /spike_generator Create /sg Set
       sg << /precise_times false /spike_times st i get >> SetStatus
       /static_synapse << /receptor_type i >> SetDefaults
@@ -125,7 +125,7 @@ ResetKernel
 
     % simulate to max spike time plus 2 min_delay
     st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
-    
+
     % get spike counts and histogram
     cdt [ /histogram ] get cva
     cdt [ /n_events  ] get cva
@@ -142,9 +142,9 @@ def
   2 arraystore /st Set
 
   st cdsim ;
-    
+
   % check spike counts
-  st { length } Map eq 
+  st { length } Map eq
 
   % check histogram
   exch
@@ -197,7 +197,7 @@ def
   << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
-  % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0] 
+  % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0]
   [ [ 1.0 2.0     6.0 ]       % input 0
     [     2.0 4.0     ]       % input 1
   ]
@@ -208,8 +208,8 @@ def
   Plus 0 gt % ensure we have non-zeros in histogram
   {
 	cdt << /n_events [0 0] >> SetStatus
-    cdt [/n_events] get cva Plus 0 eq  
-    cdt [/histogram] get cva Plus 0.0 eq  
+    cdt [/n_events] get cva Plus 0 eq
+    cdt [/histogram] get cva Plus 0.0 eq
     and
   }
   { false }

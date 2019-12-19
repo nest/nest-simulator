@@ -143,7 +143,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   Device::set_status( d );
 
-  if ( get_gid() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
 
@@ -189,7 +189,7 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 
-  if ( get_gid() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
     kernel().io_manager.get_recording_backend_device_defaults( P_.record_to_, d );

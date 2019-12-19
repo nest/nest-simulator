@@ -57,7 +57,7 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
   CommonSynapseProperties::get_status( d );
   if ( vt_ != 0 )
   {
-    def< long >( d, names::vt, vt_->get_gid() );
+    def< long >( d, names::vt, vt_->get_node_id() );
   }
   else
   {
@@ -79,11 +79,11 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  long vtgid;
-  if ( updateValue< long >( d, names::vt, vtgid ) )
+  long vtnode_id;
+  if ( updateValue< long >( d, names::vt, vtnode_id ) )
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    Node* vt = kernel().node_manager.get_node_or_proxy( vtgid, tid );
+    Node* vt = kernel().node_manager.get_node_or_proxy( vtnode_id, tid );
     vt_ = dynamic_cast< volume_transmitter* >( vt );
     if ( vt_ == 0 )
     {

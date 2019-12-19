@@ -38,8 +38,6 @@ _ignore_modules = set()
 #   `from .libs.$X import *`
 # for every module in ./libs/$X.py that is left
 _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
-# Do the same with files in random folder
-_il.import_libs(__file__, globals(), 'random', ignore=_ignore_modules)
 
 ############################
 
@@ -52,7 +50,7 @@ __all__ = [
     'Cleanup',
     'Connect',
     'ConnectionRules',
-    'Connectome',
+    'SynapseCollection',
     'CopyModel',
     'Create',
     'CreateMask',
@@ -69,14 +67,14 @@ __all__ = [
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
-    'GetLocalGIDCollection',
+    'GetLocalNodeCollection',
     'GetNodes',
     'GetPosition',
     'GetStatus',
     'GetStructuralPlasticityStatus',
     'GetTargetNodes',
     'GetTargetPositions',
-    'GIDCollection',
+    'NodeCollection',
     'Install',
     'Mask',
     'Models',

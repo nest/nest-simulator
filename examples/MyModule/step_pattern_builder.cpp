@@ -78,8 +78,8 @@
    SeeAlso: Connect
 */
 
-mynest::StepPatternBuilder::StepPatternBuilder( const nest::GIDCollectionPTR sources,
-  const nest::GIDCollectionPTR targets,
+mynest::StepPatternBuilder::StepPatternBuilder( const nest::NodeCollectionPTR sources,
+  const nest::NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : nest::ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -118,12 +118,12 @@ mynest::StepPatternBuilder::connect_()
         for ( auto source_it = sources_->begin(); source_it < sources_->end();
               advance_( source_it, sources_->end(), source_step_ ) )
         {
-          if ( not allow_autapses_ and ( *source_it ).gid == ( *target_it ).gid )
+          if ( not allow_autapses_ and ( *source_it ).node_id == ( *target_it ).node_id )
           {
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( not change_connected_synaptic_elements( ( *source_it ).gid, ( *source_it ).gid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( ( *source_it ).node_id, ( *source_it ).node_id, tid, 1 ) )
           {
             for ( size_t i = 0; i < sources_->size(); ++i )
             {
@@ -131,9 +131,9 @@ mynest::StepPatternBuilder::connect_()
             }
             continue;
           }
-          nest::Node* const target = nest::kernel().node_manager.get_node_or_proxy( ( *target_it ).gid, tid );
+          nest::Node* const target = nest::kernel().node_manager.get_node_or_proxy( ( *target_it ).node_id, tid );
           const nest::thread target_thread = target->get_thread();
-          single_connect_( ( *source_it ).gid, *target, target_thread, rng );
+          single_connect_( ( *source_it ).node_id, *target, target_thread, rng );
         }
       }
     }
@@ -147,8 +147,8 @@ mynest::StepPatternBuilder::connect_()
 }
 
 void
-mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
-  const nest::GIDCollection::const_iterator& end,
+mynest::StepPatternBuilder::advance_( nest::NodeCollection::const_iterator& it,
+  const nest::NodeCollection::const_iterator& end,
   size_t step )
 {
   while ( step > 0 and it < end )

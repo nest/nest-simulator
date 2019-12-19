@@ -24,15 +24,15 @@
 /CGConnect trie
 
   % We create the type trie for the list variants using a loop
-  [/arraytype /intvectortype /gidcollectiontype] {
-    /gidlisttype Set
+  [/arraytype /intvectortype /nodecollectiontype] {
+    /nodeidlisttype Set
 
     % using empty parameter map and default synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype] {
       % stack: cg src trg
-      cvgidcollection  % convert trg to gidcollection
+      cvnodecollection  % convert trg to nodecollection
       exch             % stack: cg trg src
-      cvgidcollection  % convert src to gidcollection
+      cvnodecollection  % convert src to nodecollection
       exch             % stack: cg src trg
       << >>            % stack: cg src trg params
       /Connect /syn_spec GetOption /synapse_model get % stack: cg src trg params synmodel
@@ -40,26 +40,26 @@
     } bind addtotrie
 
     % using given parameter map and default synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /dictionarytype ] {
       % stack: cg src trg params
       3 2 roll         % stack: cg trg params src
-      cvgidcollection  % convert src to gidcollection
+      cvnodecollection  % convert src to nodecollection
       3 -2 roll        % stack: cg src trg params
       exch             % stack: cg src params trg
-      cvgidcollection  % convert trg to gidcollection
+      cvnodecollection  % convert trg to nodecollection
       exch             % stack: cg src trg params
       /Connect /syn_spec GetOption /synapse_model get  % stack: cg src trg params synmodel
       CGConnect_cg_g_g_D_l
     } bind addtotrie
 
     % using empty parameter map and given synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /literaltype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /literaltype ] {
       % stack: cg src trg synmodel
       3 2 roll         % stack: cg trg synmodel src
-      cvgidcollection  % convert src to gidcollection
+      cvnodecollection  % convert src to nodecollection
       3 -2 roll        % stack: cg src trg synmodel
       exch             % stack: cg src synmodel trg
-      cvgidcollection  % convert trg to gidcollection
+      cvnodecollection  % convert trg to nodecollection
       exch             % stack: cg src trg synmodel
       << >>            % stack: cg src trg synmodel params
       exch             % stack: cg src trg params synmodel
@@ -67,13 +67,13 @@
     } bind addtotrie
 
     % using given parameter map and synapse model
-    [/connectiongeneratortype gidlisttype gidlisttype /dictionarytype /literaltype ] {
+    [/connectiongeneratortype nodeidlisttype nodeidlisttype /dictionarytype /literaltype ] {
       % stack: cg src trg params synmodel
       4 3 roll         % stack: cg trg params synmodel src
-      cvgidcollection  % convert src to gidcollection
+      cvnodecollection  % convert src to nodecollection
       4 -3 roll        % stack: cg src trg params synmodel
       3 2 roll         % stack: cg src params synmodel trg
-      cvgidcollection  % convert trg to gidcollection
+      cvnodecollection  % convert trg to nodecollection
       3 -2 roll        % stack: cg src trg params synmodel
       CGConnect_cg_g_g_D_l
     } bind addtotrie

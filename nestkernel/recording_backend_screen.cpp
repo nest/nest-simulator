@@ -43,13 +43,13 @@ nest::RecordingBackendScreen::finalize()
 void
 nest::RecordingBackendScreen::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
   const thread t = device.get_thread();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
   {
-    auto p = device_data_[ t ].insert( std::make_pair( gid, DeviceData() ) );
+    auto p = device_data_[ t ].insert( std::make_pair( node_id, DeviceData() ) );
     device_data = p.first;
   }
 
@@ -59,10 +59,10 @@ nest::RecordingBackendScreen::enroll( const RecordingDevice& device, const Dicti
 void
 nest::RecordingBackendScreen::disenroll( const RecordingDevice& device )
 {
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
   const thread t = device.get_thread();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data_[ t ].erase( device_data );
@@ -96,14 +96,14 @@ nest::RecordingBackendScreen::write( const RecordingDevice& device,
   const std::vector< long >& long_values )
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  if ( device_data_[ t ].find( gid ) == device_data_[ t ].end() )
+  if ( device_data_[ t ].find( node_id ) == device_data_[ t ].end() )
   {
     return;
   }
 
-  device_data_[ t ][ gid ].write( event, double_values, long_values );
+  device_data_[ t ][ node_id ].write( event, double_values, long_values );
 }
 
 void
@@ -124,9 +124,9 @@ void
 nest::RecordingBackendScreen::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  const index node_id = device.get_node_id();
 
-  device_data_map::value_type::const_iterator device_data = device_data_[ t ].find( gid );
+  device_data_map::value_type::const_iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
   {
     device_data->second.get_status( d );
@@ -195,7 +195,7 @@ nest::RecordingBackendScreen::DeviceData::write( const Event& event,
   {
     prepare_cout_();
 
-    std::cout << event.get_sender_gid() << "\t";
+    std::cout << event.get_sender_node_id() << "\t";
 
     if ( time_in_steps_ )
     {

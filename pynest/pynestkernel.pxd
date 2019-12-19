@@ -70,12 +70,12 @@ cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "gid_collection.h":
-    cppclass GIDCollectionDatum:
-        GIDCollectionDatum(const GIDCollectionDatum&)
+cdef extern from "node_collection.h":
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum(const NodeCollectionDatum&)
 
-    cppclass GIDCollectionIteratorDatum:
-        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
@@ -86,8 +86,8 @@ cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
         ConnectionDatum(const ConnectionDatum&) except +
-        long get_source_gid()
-        long get_target_gid()
+        long get_source_node_id()
+        long get_target_node_id()
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()

@@ -72,13 +72,13 @@ SetStatus
 parrots
 {
   /src Set
-  [src] cvgidcollection /gc Set
-  gc GetStatus /local get
+  [src] cvnodecollection /gc Set
+  nc GetStatus /local get
   {
-    gc mo <</rule /one_to_one >> << /receptor_type i >> Connect
+    nc mo <</rule /one_to_one >> << /receptor_type i >> Connect
   }
   if
-  
+
   /i i 1 add def
 }
 forall

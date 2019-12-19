@@ -50,7 +50,6 @@ __all__ = [
 def sysinfo():
     """Print information on the platform on which NEST was compiled.
 
-    KEYWORDS: info
     """
 
     sr("sysinfo")
@@ -65,7 +64,6 @@ def version():
     str
         The version of NEST
 
-    KEYWORDS: info
     """
 
     sr("statusdict [[ /kernelname /version ]] get")
@@ -76,7 +74,6 @@ def version():
 def authors():
     """Print the authors of NEST.
 
-    KEYWORDS: info
     """
 
     sr("authors")
@@ -88,7 +85,6 @@ def helpdesk():
 
     Use the system default browser.
 
-    KEYWORDS: info
     """
 
     if sys.version_info < (2, 7, 8):
@@ -136,9 +132,8 @@ def help(obj=None, pager=None, return_text=False):
     Returns
     -------
     None or str
-        The help text of the object if `return_text` is ``True``.
+        The help text of the object if `return_text` is `True`.
 
-    KEYWORDS: info
     """
     hlpobj = obj
     if hlpobj is not None:
@@ -175,7 +170,6 @@ def get_argv():
     tuple
         Argv, as seen by NEST
 
-    KEYWORDS: info
     """
 
     sr('statusdict')
@@ -196,7 +190,6 @@ def message(level, sender, text):
     text : str
         Text to be sent in the message
 
-    KEYWORDS: info
     """
 
     sps(level)
@@ -209,12 +202,12 @@ def message(level, sender, text):
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Returns
     -------
@@ -230,12 +223,12 @@ def get_verbosity():
 def set_verbosity(level):
     """Change verbosity level for NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Parameters
     ----------
@@ -252,14 +245,14 @@ def SetStatus(nodes, params, val=None):
     """Set parameters of nodes or connections.
 
     Parameters of nodes or connections, given in `nodes`, is set as specified
-    by `params`. If `val` is given, `params` has to be a string with the
+    by `params`. If `val` is given, `params` has to be a `string` with the
     name of an attribute, which is set to `val` on the nodes/connections. `val`
     can be a single value or a list of the same size as nodes.
 
     Parameters
     ----------
-    nodes : GIDCollection or tuple
-        Either a `GIDCollection` representing nodes, or a `Connectome`
+    nodes : NodeCollection or SynapseCollection
+        Either a `NodeCollection` representing nodes, or a `SynapseCollection`
         of connection handles as returned by
         :py:func:`.GetConnections()`.
     params : str or dict or list
@@ -272,18 +265,18 @@ def SetStatus(nodes, params, val=None):
     Raises
     ------
     TypeError
-        If `nodes` is not a list of nodes or synapses, or if the
+        If `nodes` is not a NodeCollection of nodes, a SynapseCollection of synapses, or if the
         number of parameters don't match the number of nodes or
         synapses.
 
     See Also
     -------
-    :py:func:`.GetStatus`
+    GetStatus
 
     """
 
-    if not isinstance(nodes, (nest.GIDCollection, nest.Connectome)):
-        raise TypeError("'nodes' must be GIDCollection or a Connectome.")
+    if not isinstance(nodes, (nest.NodeCollection, nest.SynapseCollection)):
+        raise TypeError("'nodes' must be NodeCollection or a SynapseCollection.")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty
@@ -294,7 +287,7 @@ def SetStatus(nodes, params, val=None):
 
     n0 = nodes[0]
     params_is_dict = isinstance(params, dict)
-    set_status_nodes = isinstance(nodes, nest.GIDCollection)
+    set_status_nodes = isinstance(nodes, nest.NodeCollection)
     set_status_local_nodes = set_status_nodes and n0.get('local')
 
     if (params_is_dict and set_status_local_nodes):
@@ -324,7 +317,7 @@ def SetStatus(nodes, params, val=None):
             "status dict must be a dict, or a list of dicts of length "
             "len(nodes)")
 
-    if isinstance(nodes, nest.Connectome):
+    if isinstance(nodes, nest.SynapseCollection):
         params = broadcast(params, len(nodes), (dict,), "params")
 
         sps(nodes)
@@ -346,8 +339,8 @@ def GetStatus(nodes, keys=None, output=''):
 
     Parameters
     ----------
-    nodes : GIDCollection or tuple
-        Either a `GIDCollection` representing nodes, or a `Connectome` of
+    nodes : NodeCollection or SynapseCollection
+        Either a `NodeCollection` representing nodes, or a `SynapseCollection` of
         connection handles as returned by :py:func:`.GetConnections()`.
     keys : str or list, optional
         string or a list of strings naming model properties.
@@ -374,12 +367,12 @@ def GetStatus(nodes, keys=None, output=''):
         If `nodes` or `keys` are on the wrong form.
 
     See Also
-    -------
-    :py:func:`.SetStatus`
+    --------
+    SetStatus
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, nest.Connectome)):
-        raise TypeError("The first input (nodes) must be GIDCollection or a Connectome with connection handles ")
+    if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.SynapseCollection)):
+        raise TypeError("The first input (nodes) must be NodeCollection or a SynapseCollection with connection handles")
 
     if len(nodes) == 0:
         return nodes
@@ -401,7 +394,7 @@ def GetStatus(nodes, keys=None, output=''):
     result = spp()
 
     if isinstance(result, dict):
-        # We have taken GetStatus on a layer object, or another GIDCollection with metadata, which returns a
+        # We have taken GetStatus on a layer object, or another NodeCollection with metadata, which returns a
         # dictionary from C++, so we need to turn it into a tuple for consistency.
         result = (result,)
 

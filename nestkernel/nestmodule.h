@@ -54,8 +54,8 @@ class NestModule : public SLIModule
 {
 public:
   static SLIType ConnectionType;
-  static SLIType GIDCollectionType;
-  static SLIType GIDCollectionIteratorType;
+  static SLIType NodeCollectionType;
+  static SLIType NodeCollectionIteratorType;
   static SLIType ParameterType;
 
   NestModule();
@@ -107,8 +107,8 @@ public:
    * - @c t  : any token
    * - @c C  : connectiontype
    * - @c cg : connectiongeneratortype
-   * - @c g  : gid collection
-   * - @c q  : gid collection iterator
+   * - @c g  : node collection
+   * - @c q  : node collection iterator
    *
    * @subsection compoundtypes Codes for compund data types
    * - @c A  : array
@@ -117,8 +117,8 @@ public:
    *
    * @section conventions Conventions
    * -# All interface functions expect and return nodes as vectors
-   *    of GIDs (Vi).
-   * -# Functions must document how they loop over GID vectors and
+   *    of node IDs (Vi).
+   * -# Functions must document how they loop over node ID vectors and
    *    how the function is applied to subnets provided as
    *    arguments.
    * -# Functions that do not require overloading on the SLI level,
@@ -375,20 +375,20 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Cfunction;
 
-  class Cvgidcollection_i_iFunction : public SLIFunction
+  class Cvnodecollection_i_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_i_ifunction;
+  } cvnodecollection_i_ifunction;
 
-  class Cvgidcollection_iaFunction : public SLIFunction
+  class Cvnodecollection_iaFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_iafunction;
+  } cvnodecollection_iafunction;
 
-  class Cvgidcollection_ivFunction : public SLIFunction
+  class Cvnodecollection_ivFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_ivfunction;
+  } cvnodecollection_ivfunction;
 
   class Cva_gFunction : public SLIFunction
   {
@@ -435,15 +435,15 @@ public:
     void execute( SLIInterpreter* ) const;
   } enditerator_gfunction;
 
-  class GetGID_qFunction : public SLIFunction
+  class GetNodeID_qFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } getgid_qfunction;
+  } getnodeid_qfunction;
 
-  class GetGIDModelID_qFunction : public SLIFunction
+  class GetNodeIDModelID_qFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } getgidmodelid_qfunction;
+  } getnodeidmodelid_qfunction;
 
   class Next_qFunction : public SLIFunction
   {

@@ -25,10 +25,11 @@
 #include <boost/test/unit_test.hpp>
 
 // Includes from cpptests
-#include "test_sort.h"
-#include "test_target_fields.h"
 #include "test_block_vector.h"
+#include "test_enum_bitfield.h"
+#include "test_sort.h"
 #include "test_streamers.h"
+#include "test_target_fields.h"
 
 #if BOOST_VERSION >= 105900 // test_parameter uses timeout, which is only available in Boost>=1.59.0
 #include "test_parameter.h"

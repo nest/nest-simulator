@@ -42,7 +42,7 @@ class GetNodesTestCase(unittest.TestCase):
 
     def test_GetNodes(self):
         """test GetNodes"""
-        all_nodes_ref = nest.GIDCollection(list(range(1, nest.GetKernelStatus('network_size') + 1)))
+        all_nodes_ref = nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1)))
         all_nodes = nest.GetNodes()
 
         self.assertEqual(all_nodes_ref, all_nodes)
@@ -50,17 +50,17 @@ class GetNodesTestCase(unittest.TestCase):
     def test_GetNodes_with_params(self):
         """test GetNodes with params"""
         nodes_Vm = nest.GetNodes({'V_m': -77.})
-        nodes_Vm_ref = nest.GIDCollection([4, 5, 6, 8])
+        nodes_Vm_ref = nest.NodeCollection([4, 5, 6, 8])
 
         self.assertEqual(nodes_Vm_ref, nodes_Vm)
 
         nodes_Vm_tau = nest.GetNodes({'V_m': -77., 'tau_m': 12.})
-        nodes_Vm_tau_ref = nest.GIDCollection([8])
+        nodes_Vm_tau_ref = nest.NodeCollection([8])
 
         self.assertEqual(nodes_Vm_tau_ref, nodes_Vm_tau)
 
         nodes_exp = nest.GetNodes({'model': 'iaf_psc_exp'})
-        nodes_exp_ref = nest.GIDCollection([10, 11, 12, 13])
+        nodes_exp_ref = nest.NodeCollection([10, 11, 12, 13])
 
         self.assertEqual(nodes_exp_ref, nodes_exp)
 

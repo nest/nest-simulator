@@ -59,8 +59,8 @@ extern int SLIsignalflag;
 namespace nest
 {
 SLIType NestModule::ConnectionType;
-SLIType NestModule::GIDCollectionType;
-SLIType NestModule::GIDCollectionIteratorType;
+SLIType NestModule::NodeCollectionType;
+SLIType NestModule::NodeCollectionIteratorType;
 SLIType NestModule::ParameterType;
 
 // At the time when NestModule is constructed, the SLI Interpreter
@@ -77,8 +77,8 @@ NestModule::~NestModule()
   // dynamicloadermodule also needs it
 
   ConnectionType.deletetypename();
-  GIDCollectionType.deletetypename();
-  GIDCollectionIteratorType.deletetypename();
+  NodeCollectionType.deletetypename();
+  NodeCollectionIteratorType.deletetypename();
   ParameterType.deletetypename();
 }
 
@@ -158,13 +158,13 @@ NestModule::parameter_factory_( void )
    deviate generator or object
 
    Synopsis:
-   gid   dict SetStatus -> -
+   node_id   dict SetStatus -> -
    conn  dict SetStatus -> -
    rdev  dict SetStatus -> -
    obj   dict SetStatus -> -
 
    Description:
-   SetStatus changes properties of a node (specified by its gid), a connection
+   SetStatus changes properties of a node (specified by its node_id), a connection
    (specified by a connection object), a random deviate generator (see
    GetStatus_v for more) or an object as used in object-oriented programming in
    SLI (see cvo for more). Properties can be inspected with GetStatus.
@@ -228,8 +228,8 @@ NestModule::Cva_CFunction::execute( SLIInterpreter* i ) const
 {
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.top() );
   ArrayDatum ad;
-  ad.push_back( conn.get_source_gid() );
-  ad.push_back( conn.get_target_gid() );
+  ad.push_back( conn.get_source_node_id() );
+  ad.push_back( conn.get_target_node_id() );
   ad.push_back( conn.get_target_thread() );
   ad.push_back( conn.get_synapse_model_id() );
   ad.push_back( conn.get_port() );
@@ -258,8 +258,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+        con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
@@ -276,8 +276,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
-        con_id.get_target_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+        con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port(),
@@ -296,22 +296,22 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
    random deviate generator or object
 
    Synopsis:
-   gid   GetStatus -> dict
+   node_id   GetStatus -> dict
    conn  GetStatus -> dict
    rdev  GetStatus -> dict
    obj   GetStatus -> dict
 
    Description:
    GetStatus returns a dictionary with the status information
-   for a node (specified by its gid), a connection (specified by a connection
+   for a node (specified by its node_id), a connection (specified by a connection
    object), a random deviate generator (see GetStatus_v for more) or an
    object as used in object-oriented programming in SLI (see cvo for more).
 
    The interpreter exchanges data with the network element using
    its status dictionary. To abbreviate the access pattern
-        gid GetStatus /lit get
+        node_id GetStatus /lit get
    a variant of get implicitly calls GetStatus
-        gid /lit get .
+        node_id /lit get .
    In this way network elements and dictionaries can be accessed
    with the same syntax. Sometimes access to nested data structures in
    the status dictionary is required. In this case the advanced addressing
@@ -343,20 +343,20 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  if ( not gc->valid() )
+  NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
+  if ( not nc->valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
 
-  size_t gc_size = gc->size();
+  size_t nc_size = nc->size();
   ArrayDatum result;
 
-  result.reserve( gc_size );
+  result.reserve( nc_size );
 
-  for ( GIDCollection::const_iterator it = gc->begin(); it < gc->end(); ++it )
+  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
-    index node_id = ( *it ).gid;
+    index node_id = ( *it ).node_id;
     DictionaryDatum dict = get_node_status( node_id );
     result.push_back( dict );
   }
@@ -386,8 +386,8 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
-    conn.get_target_gid(),
+  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
     conn.get_port() );
@@ -409,8 +409,8 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
-      con_id.get_target_gid(),
+    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+      con_id.get_target_node_id(),
       con_id.get_target_thread(),
       con_id.get_synapse_model_id(),
       con_id.get_port() );
@@ -427,21 +427,21 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  if ( not gc->valid() )
+  NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
+  if ( not nc->valid() )
   {
-    throw KernelException( "InvalidGIDCollection" );
+    throw KernelException( "InvalidNodeCollection" );
   }
 
-  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
 
-  // return empty dict if GC does not have metadata
+  // return empty dict if NC does not have metadata
   if ( meta.get() )
   {
     meta->get_status( dict );
 
-    ( *dict )[ names::network_size ] = gc->size();
+    ( *dict )[ names::network_size ] = nc->size();
   }
 
   i->OStack.pop();
@@ -652,10 +652,10 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    Name: Create - create a number of equal nodes in the current subnet
 
    Synopsis:
-   /model          Create -> gids
-   /model n        Create -> gids
-   /model   params Create -> gids
-   /model n params Create -> gids
+   /model          Create -> node_ids
+   /model n        Create -> node_ids
+   /model   params Create -> node_ids
+   /model n params Create -> node_ids
 
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
@@ -663,7 +663,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    params - parameters for the newly created node(s)
 
    Returns:
-   gids   - GIDCollection representing nodes created
+   node_ids   - NodeCollection representing nodes created
 
    Description:
    Create generates n new network objects of the supplied model
@@ -688,7 +688,7 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  GIDCollectionDatum nodes_created = create( modname, n_nodes );
+  NodeCollectionDatum nodes_created = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
   i->OStack.push( nodes_created );
@@ -705,7 +705,7 @@ NestModule::GetNodes_D_b::execute( SLIInterpreter* i ) const
   const bool local_only = getValue< bool >( i->OStack.pick( 0 ) );
   const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
 
-  GIDCollectionDatum nodes = get_nodes( params, local_only );
+  NodeCollectionDatum nodes = get_nodes( params, local_only );
 
   i->OStack.pop( 2 );
   i->OStack.push( nodes );
@@ -738,14 +738,14 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-// Disconnect for gidcollection gidcollection conn_spec syn_spec
+// Disconnect for nodecollection nodecollection conn_spec syn_spec
 void
 NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
 
-  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
@@ -756,15 +756,15 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-// Connect for gidcollection gidcollection conn_spec syn_spec
+// Connect for nodecollection nodecollection conn_spec syn_spec
 // See lib/sli/nest-init.sli for details
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
 
-  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
@@ -817,7 +817,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    Synopsis:
    -  PrintNodes -> -
    Description:
-   Print GID ranges and model names of the nodes in the network. Print the
+   Print node ID ranges and model names of the nodes in the network. Print the
    information directly to screen.
 */
 
@@ -1183,44 +1183,44 @@ NestModule::Cvdict_CFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
+NestModule::Cvnodecollection_i_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
   const long first = getValue< long >( i->OStack.pick( 1 ) );
   const long last = getValue< long >( i->OStack.pick( 0 ) );
 
-  GIDCollectionDatum gidcoll = new GIDCollectionPrimitive( first, last );
+  NodeCollectionDatum nodecollection = new NodeCollectionPrimitive( first, last );
 
   i->OStack.pop( 2 );
-  i->OStack.push( gidcoll );
+  i->OStack.push( nodecollection );
   i->EStack.pop();
 }
 
 void
-NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
+NestModule::Cvnodecollection_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
+  TokenArray node_ids = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll );
+  i->OStack.push( nodecollection );
   i->EStack.pop();
 }
 
 void
-NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
+NestModule::Cvnodecollection_ivFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
+  IntVectorDatum node_ids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection( NodeCollection::create( node_ids ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll );
+  i->OStack.push( nodecollection );
   i->EStack.pop();
 }
 
@@ -1228,11 +1228,11 @@ void
 NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  ArrayDatum gids = gidcoll->to_array();
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
+  ArrayDatum node_ids = nodecollection->to_array();
 
   i->OStack.pop();
-  i->OStack.push( gids );
+  i->OStack.push( node_ids );
   i->EStack.pop();
 }
 
@@ -1240,10 +1240,10 @@ void
 NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll->size() );
+  i->OStack.push( nodecollection->size() );
   i->EStack.pop();
 }
 
@@ -1251,10 +1251,10 @@ void
 NestModule::ValidQ_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll->valid() );
+  i->OStack.push( nodecollection->valid() );
   i->EStack.pop();
 }
 
@@ -1262,10 +1262,10 @@ void
 NestModule::Join_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum left = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionDatum right = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum left = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionDatum right = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionDatum combined = left + right;
+  NodeCollectionDatum combined = left + right;
 
   i->OStack.pop( 2 );
   i->OStack.push( combined );
@@ -1276,10 +1276,10 @@ void
 NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+  const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const bool res = gidcoll->contains( gid );
+  const bool res = nodecollection->contains( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1289,10 +1289,10 @@ void
 NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
+  const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = gidcoll->find( gid );
+  const auto res = nodecollection->find( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1302,10 +1302,10 @@ void
 NestModule::eq_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll_other = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection_other = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
 
-  const bool res = gidcoll->operator==( gidcoll_other );
+  const bool res = nodecollection->operator==( nodecollection_other );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();
@@ -1315,9 +1315,9 @@ void
 NestModule::BeginIterator_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionIteratorDatum it = new gc_const_iterator( gidcoll->begin( gidcoll ) );
+  NodeCollectionIteratorDatum it = new nc_const_iterator( nodecollection->begin( nodecollection ) );
 
   i->OStack.pop();
   i->OStack.push( it );
@@ -1328,9 +1328,9 @@ void
 NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  GIDCollectionIteratorDatum it = new gc_const_iterator( gidcoll->end( gidcoll ) );
+  NodeCollectionIteratorDatum it = new nc_const_iterator( nodecollection->end( nodecollection ) );
 
   i->OStack.pop();
   i->OStack.push( it );
@@ -1338,27 +1338,27 @@ NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::GetGID_qFunction::execute( SLIInterpreter* i ) const
+NestModule::GetNodeID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
-  index gid = ( **it ).gid;
+  index node_id = ( **it ).node_id;
 
   i->OStack.pop();
-  i->OStack.push( gid );
+  i->OStack.push( node_id );
   i->EStack.pop();
 }
 
 void
-NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
+NestModule::GetNodeIDModelID_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum gm_pair;
-  const GIDTriple& gp = **it;
-  gm_pair.push_back( gp.gid );
+  const NodeIDTriple& gp = **it;
+  gm_pair.push_back( gp.node_id );
   gm_pair.push_back( gp.model_id );
 
   i->OStack.pop();
@@ -1370,7 +1370,7 @@ void
 NestModule::Next_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  GIDCollectionIteratorDatum it = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ++( *it );
 
@@ -1382,8 +1382,8 @@ void
 NestModule::Eq_q_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionIteratorDatum it_l = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionIteratorDatum it_r = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionIteratorDatum it_l = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionIteratorDatum it_r = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   const bool res = not it_l->operator!=( *it_r );
 
@@ -1397,8 +1397,8 @@ void
 NestModule::Lt_q_qFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionIteratorDatum it_l = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionIteratorDatum it_r = getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionIteratorDatum it_l = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionIteratorDatum it_r = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   const bool res = it_l->operator<( *it_r );
 
@@ -1412,10 +1412,10 @@ void
 NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   long idx = getValue< long >( i->OStack.pick( 0 ) );
 
-  const size_t g_size = gidcoll->size();
+  const size_t g_size = nodecollection->size();
   if ( idx < 0 )
   {
     idx = g_size + idx;
@@ -1425,10 +1425,10 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
     throw RangeCheck();
   }
 
-  const index gid = ( *gidcoll )[ idx ];
+  const index node_id = ( *nodecollection )[ idx ];
 
   i->OStack.pop( 2 );
-  i->OStack.push( gid );
+  i->OStack.push( node_id );
   i->EStack.pop();
 }
 
@@ -1436,7 +1436,7 @@ void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
-  GIDCollectionDatum gidcoll = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   TokenArray slice = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
   if ( slice.size() != 3 )
@@ -1444,7 +1444,7 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
     throw DimensionMismatch( 3, slice.size() );
   }
 
-  const size_t g_size = gidcoll->size();
+  const size_t g_size = nodecollection->size();
   long start = slice[ 0 ];
   long stop = slice[ 1 ];
   long step = slice[ 2 ];
@@ -1473,10 +1473,10 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
     stop += g_size + 1; // adjust from 0- to 1- based indexin
   }
 
-  GIDCollectionDatum sliced_gc = gidcoll->slice( start, stop, step );
+  NodeCollectionDatum sliced_nc = nodecollection->slice( start, stop, step );
 
   i->OStack.pop( 2 );
-  i->OStack.push( sliced_gc );
+  i->OStack.push( sliced_nc );
   i->EStack.pop();
 }
 
@@ -1912,10 +1912,10 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  GIDCollectionDatum gc = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, gc );
+  auto result = apply( param, nc );
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -1928,11 +1928,11 @@ NestModule::init( SLIInterpreter* i )
   ConnectionType.settypename( "connectiontype" );
   ConnectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  GIDCollectionType.settypename( "gidcollectiontype" );
-  GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
+  NodeCollectionType.settypename( "nodecollectiontype" );
+  NodeCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  GIDCollectionIteratorType.settypename( "gidcollectioniteratortype" );
-  GIDCollectionIteratorType.setdefaultaction( SLIInterpreter::datatypefunction );
+  NodeCollectionIteratorType.settypename( "nodecollectioniteratortype" );
+  NodeCollectionIteratorType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   ParameterType.settypename( "parametertype" );
   ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
@@ -2021,9 +2021,9 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_C", &cvdict_Cfunction );
 
-  i->createcommand( "cvgidcollection_i_i", &cvgidcollection_i_ifunction );
-  i->createcommand( "cvgidcollection_ia", &cvgidcollection_iafunction );
-  i->createcommand( "cvgidcollection_iv", &cvgidcollection_ivfunction );
+  i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
+  i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
+  i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
   i->createcommand( "cva_g", &cva_gfunction );
   i->createcommand( "size_g", &size_gfunction );
   i->createcommand( "ValidQ_g", &validq_gfunction );
@@ -2033,8 +2033,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "eq_g", &eq_gfunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
   i->createcommand( ":enditerator_g", &enditerator_gfunction );
-  i->createcommand( ":getgid_q", &getgid_qfunction );
-  i->createcommand( ":getgidmodelid_q", &getgidmodelid_qfunction );
+  i->createcommand( ":getnodeid_q", &getnodeid_qfunction );
+  i->createcommand( ":getnodeidmodelid_q", &getnodeidmodelid_qfunction );
   i->createcommand( ":next_q", &next_qfunction );
   i->createcommand( ":eq_q_q", &eq_q_qfunction );
   i->createcommand( ":lt_q_q", &lt_q_qfunction );

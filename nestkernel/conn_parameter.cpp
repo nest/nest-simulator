@@ -117,8 +117,8 @@ nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const Parame
 double
 nest::ParameterConnParameterWrapper::value_double( thread target_thread,
   librandom::RngPtr& rng,
-  index sgid,
+  index snode_id,
   Node* target ) const
 {
-  return parameter_->value( rng, sgid, target, target_thread );
+  return parameter_->value( rng, snode_id, target, target_thread );
 }

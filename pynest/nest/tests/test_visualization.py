@@ -58,6 +58,14 @@ class VisualizationTestCase(unittest.TestCase):
         else:
             return '.'
 
+    def setUp(self):
+        self.filenames = []
+
+    def tearDown(self):
+        for filename in self.filenames:
+            # Cleanup temporary datafiles
+            os.remove(filename)
+
     @unittest.skipIf(not HAVE_PYDOT, 'pydot not found')
     def test_plot_network(self):
         """Test plot_network"""
@@ -68,9 +76,9 @@ class VisualizationTestCase(unittest.TestCase):
         nest.Connect(sources, targets)
 
         filename = os.path.join(self.nest_tmpdir(), 'network_plot.png')
+        self.filenames.append(filename)
         nvis.plot_network(sources + targets, filename)
         self.assertTrue(os.path.isfile(filename), 'Plot was not created or not saved')
-        os.remove(filename)
 
     def voltage_trace_verify(self, device):
         self.assertIsNotNone(plt._pylab_helpers.Gcf.get_active(), 'No active figure')
@@ -107,18 +115,27 @@ class VisualizationTestCase(unittest.TestCase):
         data[:, 1] = vm['times']
         data[:, 2] = vm['V_m']
         filename = os.path.join(self.nest_tmpdir(), 'voltage_trace.txt')
+        self.filenames.append(filename)
         np.savetxt(filename, data)
         nest.voltage_trace.from_file(filename)
         self.voltage_trace_verify(device)
-        os.remove(filename)
 
-    def spike_detector_data_setup(self):
+    def spike_detector_data_setup(self, to_file=False):
         nest.ResetKernel()
         pg = nest.Create('poisson_generator', {'rate': 1000.})
         sd = nest.Create('spike_detector')
-        nest.Connect(pg, sd)
-        nest.Simulate(100)
-        return sd
+        if to_file:
+            parrot = nest.Create('parrot_neuron')
+            sd_to_file = nest.Create('spike_detector')
+            sd_to_file.record_to = 'ascii'
+            nest.Connect(pg, parrot)
+            nest.Connect(parrot, sd)
+            nest.Connect(parrot, sd_to_file)
+            nest.Simulate(100)
+            return sd, sd_to_file
+        else:
+            nest.Simulate(100)
+            return sd
 
     def spike_detector_raster_verify(self, sd_ref):
         self.assertIsNotNone(plt._pylab_helpers.Gcf.get_active(), 'No active figure')
@@ -127,6 +144,7 @@ class VisualizationTestCase(unittest.TestCase):
         x_data, y_data = axs[0].lines[0].get_data()
         plt.close(fig)
         # Have to use isclose() because of round-off errors
+        self.assertEqual(x_data.shape, sd_ref.shape)
         self.assertTrue(all(np.isclose(x_data, sd_ref)))
 
     @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
@@ -134,7 +152,7 @@ class VisualizationTestCase(unittest.TestCase):
         """Test raster_plot"""
         import nest.raster_plot as nraster
 
-        sd = self.spike_detector_data_setup()
+        sd, sd_to_file = self.spike_detector_data_setup(to_file=True)
         spikes = sd.get('events')
         sd_ref = spikes['times']
 
@@ -150,8 +168,8 @@ class VisualizationTestCase(unittest.TestCase):
         self.spike_detector_raster_verify(sd_ref)
 
         # Test from_file
-        filename = os.path.join(self.nest_tmpdir(), 'spike_data.txt')
-        np.savetxt(filename, data)
+        filename = sd_to_file.filenames[0]
+        self.filenames.append(filename)
         nest.raster_plot.from_file(filename)
         self.spike_detector_raster_verify(sd_ref)
 
@@ -166,15 +184,12 @@ class VisualizationTestCase(unittest.TestCase):
 
         # Test extract_events
         all_extracted = nest.raster_plot.extract_events(data)
-        times_30_to_40_extracted = nest.raster_plot.extract_events(data, time=[30., 40.], sel=[1])
+        times_30_to_40_extracted = nest.raster_plot.extract_events(data, time=[30., 40.], sel=[3])
         source_2_extracted = nest.raster_plot.extract_events(data, sel=[2])
         self.assertTrue(np.array_equal(all_extracted, data))
         self.assertTrue(np.all(times_30_to_40_extracted[:, 1] >= 30.))
         self.assertTrue(np.all(times_30_to_40_extracted[:, 1] < 40.))
         self.assertEqual(len(source_2_extracted), 0)
-
-        # Cleanup temporary datafile
-        os.remove(filename)
 
 
 def suite():

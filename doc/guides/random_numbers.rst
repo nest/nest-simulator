@@ -395,8 +395,8 @@ the node belongs. This is achieved by the following code
     nodes   = nest.Create('iaf_psc_delta', 10)
     node_info   = nest.GetStatus(nodes)
     local_nodes = [(ni['global_id'], ni['vp']) for ni in node_info if ni['local']]
-    for gid,vp in local_nodes:
-       nest.SetStatus([gid], {'V_m': pyrngs[vp].uniform(-70.0, -50.0)})
+    for node_id,vp in local_nodes:
+       nest.SetStatus([node_id], {'V_m': pyrngs[vp].uniform(-70.0, -50.0)})
 
 The first line generates \\([N\_{vp}\\) properly seeded NumPy RNGs as
 discussed above. The next line creates 10 nodes, while the third line
@@ -419,9 +419,9 @@ connection weights:
 
     C_E = 10
     nest.CopyModel("static_synapse", "excitatory")
-    for tgt_gid, tgt_vp in local_nodes:
+    for tgt_node_id, tgt_vp in local_nodes:
         weights = pyrngs[tgt_vp].uniform(0.5, 1.5, C_E)
-        nest.RandomConvergentConnect(nodes, [tgt_gid], C_E,
+        nest.RandomConvergentConnect(nodes, [tgt_node_id], C_E,
                                      weight=list(weights), delay=2.0,
                                      model="excitatory")
 
@@ -430,8 +430,8 @@ target, we create an array of \\(C\_E\\) randomly chosen weights,
 uniform on \\([0.5, 1.5\\. We then call ``RandomConvergentConnect()``
 with this weight list as argument. Note a few details:
 
--  We need to put ``tgt_gid`` into brackets as PyNEST functions always
-   expect lists of GIDs.
+-  We need to put ``tgt_node_id`` into brackets as PyNEST functions always
+   expect lists of node IDs.
 
 -  We need to convert the NumPy array ``weights`` to a plain Python
    list, as most PyNEST functions currently cannot handle array input.
@@ -444,7 +444,7 @@ You can check the weights selected by
 
     print nest.GetStatus(nest.GetConnections(), ['source', 'target', 'weight'])
 
-which will print a list containing a triple of source GID, target GID
+which will print a list containing a triple of source node ID, target node ID
 and weight for each connection in the network. If you want to see only a
 subset of connections, pass source, target, or synapse model to
 ``GetConnections()``.
@@ -465,16 +465,16 @@ above.
 
     nest.CopyModel('static_synapse', 'inhibitory', {'weight': 0.0, 'delay': 3.0})
     nest.RandomDivergentConnect(nodes, nodes, C_E, model='inhibitory')
-    gid_vp_map = dict(local_nodes)
+    node_id_vp_map = dict(local_nodes)
     for src in nodes:
         conns = nest.GetConnections(source=[src], synapse_model='inhibitory')
         tgts = [conn[1] for conn in conns]
-        rweights = [{'weight': pyrngs[gid_vp_map[tgt]].uniform(-2.5, -0.5)}
+        rweights = [{'weight': pyrngs[node_id_vp_map[tgt]].uniform(-2.5, -0.5)}
                    for tgt in tgts]
         nest.SetStatus(conns, rweights)
 
 In this code, we first create all connections with weight 0. We then
-create ``gid_vp_map``, mapping GIDs to VP number for all local nodes.
+create ``node_id_vp_map``, mapping node IDs to VP number for all local nodes.
 For each node considered as source, we then find all outgoing excitatory
 connections from that node and then obtain a flat list of the targets of
 these connections. For each target we then choose a random weight as

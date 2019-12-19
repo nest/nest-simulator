@@ -80,8 +80,8 @@ def plot_weight_matrices(E_neurons, I_neurons):
     '''
     We now iterate through the range of all connections of each type.
     To populate the corresponding weight matrix, we begin by identifying
-    the source-gid (by using .get('source')) and the target-gid.
-    For each gid, we subtract the minimum gid within the corresponding
+    the source-node_id (by using .get('source')) and the target-node_id.
+    For each node_id, we subtract the minimum node_id within the corresponding
     population, to assure the matrix indices range from 0 to the size of
     the population.
 
@@ -154,10 +154,10 @@ def plot_weight_matrices(E_neurons, I_neurons):
 
 #################################################################################
 # The script iterates through the list of all connections of each type.
-# To populate the corresponding weight matrix, we identify the source-gid
-# (first element of each connection object, `n[0]`) and the target-gid (second
+# To populate the corresponding weight matrix, we identify the source-node_id
+# (first element of each connection object, `n[0]`) and the target-node_id (second
 # element of each connection object, `n[1]`).
-# For each `gid`, we subtract the minimum `gid` within the corresponding
+# For each `node_id`, we subtract the minimum `node_id` within the corresponding
 # population, to assure the matrix indices range from 0 to the size of the
 # population.
 #

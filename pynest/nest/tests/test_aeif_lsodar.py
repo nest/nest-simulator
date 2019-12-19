@@ -217,7 +217,7 @@ class AEIFTestCase(unittest.TestCase):
         Parameters
         ----------
         multimeters : dict of tuples
-            Dictionary containing the model name as key and the GID of the
+            Dictionary containing the model name as key and the node ID of the
             associated multimeter as value.
         params : dict
             Parameters used for the models.

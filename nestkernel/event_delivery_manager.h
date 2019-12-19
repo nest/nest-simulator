@@ -89,7 +89,7 @@ public:
   void send_local( thread t, Node& source, Event& e );
 
   /**
-   * Add global id of event sender to the spike_register.
+   * Add node ID of event sender to the spike_register.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
    * the buffers are collocated and sent to the partner machines.
@@ -108,8 +108,8 @@ public:
   void send_remote( thread tid, SpikeEvent&, const long lag = 0 );
 
   /**
-   * Add global id of event sender to the spike_register.
-   * Store event offset with global id.
+   * Add node ID of event sender to the spike_register.
+   * Store event offset with node ID.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
    * the buffers are collocated and sent to the partner machines.
@@ -373,7 +373,7 @@ private:
   std::vector< delay > slice_moduli_;
 
   /**
-   * Register for gids of neurons that spiked. This is a 4-dim
+   * Register for node IDs of neurons that spiked. This is a 4-dim
    * structure. While spikes are written to the buffer they are
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
@@ -385,7 +385,7 @@ private:
   std::vector< std::vector< std::vector< std::vector< Target > > > > spike_register_;
 
   /**
-   * Register for gids of precise neurons that spiked. This is a 4-dim
+   * Register for node IDs of precise neurons that spiked. This is a 4-dim
    * structure. While spikes are written to the buffer they are
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.

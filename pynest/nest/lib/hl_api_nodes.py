@@ -30,11 +30,11 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
-from .hl_api_types import GIDCollection, Parameter
+from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
     'Create',
-    'GetLocalGIDCollection',
+    'GetLocalNodeCollection',
     'GetNodes',
     'PrintNodes',
 ]
@@ -54,16 +54,16 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict, list or `Parameter`, optional
+    params : dict, list or Parameter, optional
         Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n or a `Parameter`. If omitted, the model's defaults are used.
-    positions: :py:class:`spatial.grid` or :py:class:`spatial.free` object, optional
+        dictionaries with size n or a :py:class:`.Parameter`. If omitted, the model's defaults are used.
+    positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional
         Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
 
     Returns
     -------
-    GIDCollection:
-        Object representing global IDs of created nodes, see :py:class:`GIDCollection` for more.
+    NodeCollection:
+        Object representing the IDs of created nodes, see :py:class:`.NodeCollection` for more.
 
     Raises
     ------
@@ -113,75 +113,75 @@ def Create(model, n=1, params=None, positions=None):
     sps(n)
     sr(cmd)
 
-    gids = spp()
+    node_ids = spp()
 
     if params is not None and params_contains_list:
         try:
-            SetStatus(gids, params)
+            SetStatus(node_ids, params)
         except:
             warnings.warn(
                 "SetStatus() call failed, but nodes have already been " +
-                "created! The GIDs of the new nodes are: {0}.".format(gids))
+                "created! The node IDs of the new nodes are: {0}.".format(node_ids))
             raise
 
-    return gids
+    return node_ids
 
 
 @check_stack
 def PrintNodes():
-    """Print the `GID` ranges and model names of all the nodes in the network."""
+    """Print the `node ID` ranges and `model names` of all the nodes in the network."""
 
     sr("PrintNodesToStream")
     print(spp())
 
 
 def GetNodes(properties={}, local_only=False):
-    """Return all nodes with the given properties as `GIDCollection`.
+    """Return all nodes with the given properties as `NodeCollection`.
 
     Parameters
     ----------
     properties : dict, optional
-        Only global ids of nodes matching the properties given in the
+        Only node IDs of nodes matching the properties given in the
         dictionary exactly will be returned. Matching properties with float
         values (e.g. the membrane potential) may fail due to tiny numerical
         discrepancies and should be avoided. Note that when a params dict is
         present, thread parallelization is not possible, the function will
         be run thread serial.
     local_only : bool, optional
-        If True, only GIDs of nodes simulated on the local MPI process will
-        be returned. By default, global ids of nodes in the entire simulation
+        If True, only node IDs of nodes simulated on the local MPI process will
+        be returned. By default, node IDs of nodes in the entire simulation
         will be returned. This requires MPI communication and may slow down
         the script.
 
     Returns
     -------
-    GIDCollection:
-        `GIDCollection` of nodes
+    NodeCollection:
+        `NodeCollection` of nodes
     """
 
     return sli_func('GetNodes', properties, local_only)
 
 
 @check_stack
-def GetLocalGIDCollection(gc):
-    """Get local nodes of a `GIDCollection` as a new `GIDCollection`.
+def GetLocalNodeCollection(nc):
+    """Get local nodes of a `NodeCollection` as a new `NodeCollection`.
 
-    This function returns the local nodes of a `GIDCollection`. If there are no
-    local elements, an empty `GIDCollection` is returned.
+    This function returns the local nodes of a `NodeCollection`. If there are no
+    local elements, an empty `NodeCollection` is returned.
 
-    Parameters:
-    -----------
-    gc: `GIDCollection`
-        `GIDCollection` for which to get local nodes
+    Parameters
+    ----------
+    nc: NodeCollection
+        `NodeCollection` for which to get local nodes
 
     Returns
     -------
-    GIDCollection:
-        Object representing the local nodes of the given `GIDCollection`
+    NodeCollection:
+        Object representing the local nodes of the given `NodeCollection`
     """
-    if not isinstance(gc, GIDCollection):
-        raise TypeError("GetLocalGIDCollection requires a GIDCollection in order to run")
+    if not isinstance(nc, NodeCollection):
+        raise TypeError("GetLocalNodeCollection requires a NodeCollection in order to run")
 
-    sps(gc)
+    sps(nc)
     sr("LocalOnly")
     return spp()

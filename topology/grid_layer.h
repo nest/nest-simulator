@@ -132,8 +132,10 @@ public:
 
   using Layer< D >::get_global_positions_vector;
 
-  std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( const AbstractMask& mask, const Position< D >& anchor, bool allow_oversized );
+  std::vector< std::pair< Position< D >, index > > get_global_positions_vector( const AbstractMask& mask,
+    const Position< D >& anchor,
+    bool allow_oversized,
+    NodeCollectionPTR node_collection );
 
   masked_iterator masked_begin( const Mask< D >& mask, const Position< D >& anchor );
   masked_iterator masked_end();
@@ -147,9 +149,10 @@ protected:
   Position< D, index > dims_; ///< number of nodes in each direction.
 
   template < class Ins >
-  void insert_global_positions_( Ins iter );
-  void insert_global_positions_ntree_( Ntree< D, index >& tree );
-  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec );
+  void insert_global_positions_( Ins iter, NodeCollectionPTR node_collection );
+  void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+    NodeCollectionPTR node_collection );
 };
 
 template < int D >
@@ -175,7 +178,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     this->dims_[ i ] = static_cast< index >( new_dims[ i ] );
   }
 
-  if ( new_size != this->gid_collection_->size() )
+  if ( new_size != this->node_collection_->size() )
   {
     throw BadProperty( "Total size of layer must be unchanged." );
   }
@@ -272,31 +275,32 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 template < int D >
 template < class Ins >
 void
-GridLayer< D >::insert_global_positions_( Ins iter )
+GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
   index i = 0;
-  index lid_end = this->gid_collection_->size();
+  index lid_end = node_collection->size();
 
-  GIDCollection::const_iterator gi = this->gid_collection_->begin();
+  NodeCollection::const_iterator gi = node_collection->begin();
 
-  for ( ; ( gi < this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( ; ( gi < node_collection->end() ) && ( i < lid_end ); ++gi, ++i )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
+    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
   }
 }
 
 template < int D >
 void
-GridLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree )
+GridLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection )
 {
-  insert_global_positions_( std::inserter( tree, tree.end() ) );
+  insert_global_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
 template < int D >
 void
-GridLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec )
+GridLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+  NodeCollectionPTR node_collection )
 {
-  insert_global_positions_( std::back_inserter( vec ) );
+  insert_global_positions_( std::back_inserter( vec ), node_collection );
 }
 
 template < int D >
@@ -370,7 +374,7 @@ template < int D >
 inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operator*()
 {
   return std::pair< Position< D >, index >(
-    layer_.gridpos_to_position( node_ ), layer_.gid_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
+    layer_.gridpos_to_position( node_ ), layer_.node_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
 }
 
 template < int D >
@@ -394,7 +398,10 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::opera
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-GridLayer< D >::get_global_positions_vector( const AbstractMask& mask, const Position< D >& anchor, bool )
+GridLayer< D >::get_global_positions_vector( const AbstractMask& mask,
+  const Position< D >& anchor,
+  bool,
+  NodeCollectionPTR node_collection )
 {
   std::vector< std::pair< Position< D >, index > > positions;
 

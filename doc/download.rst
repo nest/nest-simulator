@@ -15,6 +15,9 @@ Download NEST
 Download the source code
 -------------------------
 
+Here you'll find the lastest versions of the source code and Live Media for download.
+If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
+
 
 * If you are compiling NEST from source, you can |link-pre|\ |version|\ |link-post|
 
@@ -50,11 +53,14 @@ Download the source code
    Previous versions and associated release notes can be found at
    https://github.com/nest/nest-simulator/releases/
 
+.. _download_livemedia:
+
 Download the NEST live media for virtual machines
 --------------------------------------------------
 
 Live media is available in the OVA format, and is suitable, for example, for importing into VirtualBox.
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
+After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
 
 * Download the |link-premedia|\ |version|\ |link-postmedia|
@@ -70,7 +76,6 @@ If you run **Windows**, this is the option for you OR if you just want to run NE
 * After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
 
-
 Older versions of live media
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -82,5 +87,14 @@ Older versions of live media
 
 `Checksum 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova.sha512sum>`_
 
+We continuously aim to improve NEST, implement features, and fix bugs with every new version;
+thus, we encourage our users to use the **most recent version of NEST**.
 
 
+----
+
+NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
+
+-  use NEST for your research,
+-  modify and improve NEST according to your needs,
+-  distribute NEST to others under the same license.

@@ -163,7 +163,6 @@ def sli_func(s, *args, **kwargs):
     r,q = sli_func('dup rollu add',2,3)
     r   = sli_func('add',2,3)
     r   = sli_func('add pop',2,3)
-    l   = sli_func('CreateLayer', {...}, namespace='topology')
     """
 
     # check for namespace

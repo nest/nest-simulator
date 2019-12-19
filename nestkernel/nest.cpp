@@ -129,15 +129,15 @@ void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();
-  const index source_gid = getValue< long >( conn_dict, nest::names::source );
-  const index target_gid = getValue< long >( conn_dict, nest::names::target );
+  const index source_node_id = getValue< long >( conn_dict, nest::names::source );
+  const index target_node_id = getValue< long >( conn_dict, nest::names::target );
   const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
   const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
   const port p = getValue< long >( conn_dict, nest::names::port );
 
   dict->clear_access_flags();
 
-  kernel().connection_manager.set_synapse_status( source_gid, target_gid, tid, syn_id, p, dict );
+  kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
 
   ALL_ENTRIES_ACCESSED2( *dict,
     "SetStatus",
@@ -149,14 +149,14 @@ set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict 
 DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
-    conn.get_target_gid(),
+  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
     conn.get_port() );
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 create( const Name& model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )
@@ -176,15 +176,15 @@ create( const Name& model_name, const index n_nodes )
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 get_nodes( const DictionaryDatum& params, const bool local_only )
 {
   return kernel().node_manager.get_nodes( params, local_only );
 }
 
 void
-connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
@@ -401,14 +401,14 @@ is_spatial( const ParameterDatum& param )
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const GIDCollectionDatum& gc )
+apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 {
   std::vector< double > result;
-  result.reserve( gc->size() );
+  result.reserve( nc->size() );
   librandom::RngPtr rng = get_global_rng();
-  for ( auto it = gc->begin(); it < gc->end(); ++it )
+  for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
-    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).gid );
+    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );
     result.push_back( param->value( rng, node ) );
   }
   return result;
@@ -418,11 +418,11 @@ std::vector< double >
 apply( const ParameterDatum& param, const DictionaryDatum& positions )
 {
   auto source_tkn = positions->lookup( names::source );
-  auto source_gc = getValue< GIDCollectionPTR >( source_tkn );
+  auto source_nc = getValue< NodeCollectionPTR >( source_tkn );
 
   auto targets_tkn = positions->lookup( names::targets );
   TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
-  return param->apply( source_gc, target_tkns );
+  return param->apply( source_nc, target_tkns );
 }
 
 } // namespace nest

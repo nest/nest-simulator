@@ -20,7 +20,7 @@
  *
  */
 
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "node.h"
 #include "topology.h"
 
@@ -34,20 +34,20 @@ template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType
 namespace nest
 {
 Node*
-Parameter::gid_to_node_ptr_( const index gid, const thread t ) const
+Parameter::node_id_to_node_ptr_( const index node_id, const thread t ) const
 {
-  return kernel().node_manager.get_node_or_proxy( gid, t );
+  return kernel().node_manager.get_node_or_proxy( node_id, t );
 }
 
 std::vector< double >
-Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) const
+Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array ) const
 {
   std::vector< double > result;
   result.reserve( token_array.size() );
   librandom::RngPtr rng = get_global_rng();
 
-  // Get source layer from the GIDCollection
-  auto source_metadata = gc->get_metadata();
+  // Get source layer from the NodeCollection
+  auto source_metadata = nc->get_metadata();
   if ( not source_metadata.get() )
   {
     throw KernelException( "apply: not meta" );
@@ -63,8 +63,8 @@ Parameter::apply( const GIDCollectionPTR& gc, const TokenArray& token_array ) co
     throw KernelException( "apply: not valid layer" );
   }
 
-  assert( gc->size() == 1 );
-  const index source_lid = gc->operator[]( 0 ) - source_metadata->get_first_gid();
+  assert( nc->size() == 1 );
+  const index source_lid = nc->operator[]( 0 ) - source_metadata->get_first_node_id();
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
@@ -92,12 +92,12 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  GIDCollectionPTR gc = node->get_gc();
-  if ( not gc.get() )
+  NodeCollectionPTR nc = node->get_nc();
+  if ( not nc.get() )
   {
-    throw KernelException( "NodePosParameter: not gc" );
+    throw KernelException( "NodePosParameter: not nc" );
   }
-  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
   if ( not meta.get() )
   {
     throw KernelException( "NodePosParameter: not meta" );
@@ -112,7 +112,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
-  index lid = node->get_gid() - meta->get_first_gid();
+  index lid = node->get_node_id() - meta->get_first_node_id();
   std::vector< double > pos = layer->get_position_vector( lid );
   if ( ( unsigned int ) dimension_ >= pos.size() )
   {
@@ -188,7 +188,7 @@ RedrawParameter::value( librandom::RngPtr& rng, Node* node ) const
 }
 
 double
-RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread target_thread ) const
+RedrawParameter::value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const
 {
   double value;
   size_t num_redraws = 0;
@@ -198,7 +198,7 @@ RedrawParameter::value( librandom::RngPtr& rng, index sgid, Node* target, thread
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, sgid, target, target_thread );
+    value = p_->value( rng, snode_id, target, target_thread );
   } while ( value < min_ or value > max_ );
   return value;
 }

@@ -19,9 +19,11 @@ Here you can find details on a variety of topics in NEST.
     recording_from_simulations
     parallel_computing
     random_numbers
+    guide_spatially_structured_networks
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music
+
 
 .. toctree::
    :maxdepth: 1

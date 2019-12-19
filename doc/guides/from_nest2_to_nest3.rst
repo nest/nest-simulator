@@ -11,26 +11,17 @@ perform operations that were not possible in previous versions.
 
 .. seealso::
 
-  See the :doc:`../nest-3/nest2_vs_3` to see a full list of functions that have changed
-
-
-..   NEST 3.0 introduces a number of new features and concepts, and some changes
-   to the user interface that are not backwards compatible. One big change is
-   the :ref:`removal of subnets <subnet_rm>` and all functions based on subnets. To organize
-   neurons, we now use the powerful :ref:`NodeCollections <gid>`, which will be
-   presented below. Other big features include :ref:`SynapseCollection` objects to
-   efficiently work with connections, :ref:`parameter objects <param_ex>`, and changes to how
-   nodes with :ref:`spatial information <topo_changes>` are defined and how to work with them.
+  See the :doc:`../ref_material/nest2_vs_3` to see a full list of functions that have changed
 
 This guide is based exclusively on PyNEST.
 
 What's new?
 ------------
 
-.. _gid:
+.. _nodeid:
 
 New functionality for node handles (neurons and devices)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible container for node handles.
@@ -71,7 +62,7 @@ NodeCollection supports the following functionality
   |                                             |                                              |
   +---------------------------------------------+----------------------------------------------+
 
-.. _GID_support:
+.. _nodeID_support:
 
 
 Printing
@@ -86,7 +77,6 @@ Printing
 
 Indexing
     Indexing returns a new NodeCollection with a single node
-
 
 
    >>>  print(nrns[3])
@@ -198,12 +188,12 @@ Test of membership
 
 Direct attributes
     You can directly get and set parameters of your NodeCollection
-    
+
     >>> nrns.V_m = [-70., -60., -50., -40., -30., -20., -10., -20., -30., -40.]
     >>> nrns.V_m
         (-70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, -20.0, -30.0, -40.0)
     >>> nrns.C_m = 111.
-    >>> nrns.C_m 
+    >>> nrns.C_m
         (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
 
     If your nodes are spatially distributed (see :ref:`spatially distributed nodes <topo_changes>`),
@@ -330,15 +320,19 @@ To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
 keyword of the parameter_dict is the parameter name. The value could be a list
 the size of the NodeCollection, a single value, or a ``nest.Parameter``.
 
->>> nodes[:3].set({'V_m': [-70., -80., -90.], 'C_m': 333.})
+::
+
+ nodes[:3].set({'V_m': [-70., -80., -90.], 'C_m': 333.})
 
 You could also set a single parameter by using ``nodes.set(parameter_name=parameter)``.
 As parameter, you can either send in a single value, a list the size of the NodeCollection,
 or a ``nest.Parameter``
 
->>> nodes.set(t_ref=3.0)
->>> nodes[:3].set(t_ref=[3.0, 4.0, 5.0])
->>> nodes.set(t_ref=nest.random.uniform())
+::
+
+ nodes.set(t_ref=3.0)
+ nodes[:3].set(t_ref=[3.0, 4.0, 5.0])
+ nodes.set(t_ref=nest.random.uniform())
 
 Note that some parameters, like `global_id`, cannot be set.
 
@@ -445,7 +439,7 @@ Test of equality
 Getting connection parameters
     Just as with NodeCollection, you can get parameters of the connections with
     ``get()``. The same function arguments as for :ref:`NodeCollections get() <get_param>`
-    applies here. The returned values also follow the same rules. 
+    applies here. The returned values also follow the same rules.
 
     If you call ``get()`` without any input variables, a dictionary with all parameters is
     returned as a list if number of connections is bigger than 1 and a single integer if
@@ -484,8 +478,8 @@ Getting connection parameters
 
 Setting connection parameters
     Likewise, you can set the parameters of connections in the SynapseCollection.
-    Again the same rules as with ``set()`` on NodeCollection applies, see :ref:`NodeCollection set() <set_param>`
-    for more.
+    Again the same rules as with ``set()`` on NodeCollection applies, see :ref:`set_param`
+    for more details.
 
     If you want to set several parameters at once, use ``set(parameter_dictionary)``.
     You can use a single value, a list, or a ``nest.Parameter`` as values. If a single value is given,
@@ -506,7 +500,7 @@ Setting connection parameters
 
 Setting and getting attributes directly
     You can also directly get and set parameters of your SynapseCollection
-    
+
     >>>  synColl.weight = 5.
     >>>  synColl.weight
          [5.0, 5.0, 5.0, 5.0]
@@ -531,11 +525,11 @@ Iterator of sources and targets
 Parametrization
 ~~~~~~~~~~~~~~~~
 
-NEST 3.0 introduces *Parameter objects*, i.e., objects that represent values
+NEST 3.0 introduces *parameter objects*, i.e., objects that represent values
 drawn from a random distribution or values based on various spatial node
 parameters. Parameters can be used to set node status, to create positions
 in topology (see :ref:`Topology section <topo_changes>` below), and to define connection
-probabilities, weights and delays. The Parameters can be combined in
+probabilities, weights and delays. The parameters can be combined in
 different ways, and they can be used with some mathematical functions that
 are provided by NEST.
 
@@ -559,7 +553,7 @@ and connection parameters, as well as positions for spatially distributed nodes.
   +--------------------------------------------------+--------------------------------------------+
   | Parameter                                        | Description                                |
   +==================================================+============================================+
-  |  ::                                              |                                            |                                  
+  |  ::                                              |                                            |
   |                                                  |                                            |
   |     nest.random.uniform(min=0.0, max=1.0)        | Draws samples based on a                   |
   |                                                  | uniform distribution.                      |
@@ -591,21 +585,21 @@ distribution.
 
     n = nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60., std=10.)})
 
-    gids = n.global_id
+    node_ids = n.global_id
     v_m = n.get('V_m')
     fig, ax = plt.subplots(figsize=(12, 6),
                            gridspec_kw={'width_ratios':
                                         [3, 1]},
                            ncols=2,
                            sharey=True)
-    ax[0].plot(gids, v_m, '.', alpha=0.5, ms=3.5)
-    ax[0].set_xlabel('GID');
+    ax[0].plot(node_ids, v_m, '.', alpha=0.5, ms=3.5)
+    ax[0].set_xlabel('Node_ID');
     ax[1].hist(v_m, bins=40, orientation='horizontal');
     ax[1].set_xlabel('num. nodes');
     ax[0].set_ylabel('V_m');
 
 
-.. image:: ../nest-3/NEST3_13_0.png
+.. image:: ../_static/img/NEST3_13_0.png
 
 
 .. _spatial_ex:
@@ -638,7 +632,7 @@ Spatial parameters
     grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
     nest.PlotLayer(grid_nodes);
 
-  .. image:: ../nest-3/NEST3_23_0.png
+  .. image:: ../_static/img/NEST3_23_0.png
 
 
   .. code-block:: ipython
@@ -648,7 +642,7 @@ Spatial parameters
                                                          num_dimensions=2))
     nest.PlotLayer(free_nodes);
 
-  .. image:: ../nest-3/NEST3_24_0.png
+  .. image:: ../_static/img/NEST3_24_0.png
 
 
   After you have created your spatially distributed nodes, you can use spatial parameters to set
@@ -686,7 +680,7 @@ Spatial parameters
   |     nest.spatial.distance.z      | | Can only be used when connecting.                                     |
   +----------------------------------+-------------------------------------------------------------------------+
 
-  These Parameters represent positions of neurons or distances between two
+  These parameters represent positions of neurons or distances between two
   neurons. To set node parameters, only the node position can be used. The
   others can only be used when connecting.
 
@@ -710,7 +704,7 @@ Spatial parameters
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
 
-  .. image:: ../nest-3/NEST3_25_0.png
+  .. image:: ../_static/img/NEST3_25_0.png
 
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
@@ -790,11 +784,11 @@ With these functions, you can, for example, recreate a Gaussian kernel as a para
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
     plt.xticks(bars[1] + 0.5,np.arange(1, N+1))
-    ax.set_title('Connections from node with GID {}'.format(spatial_nodes[middle_node].get('global_id')))
-    ax.set_xlabel('Target GID')
+    ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
+    ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
 
-.. image:: ../nest-3/NEST3_34_0.png
+.. image:: ../_static/img/NEST3_34_0.png
 
 
 
@@ -808,19 +802,19 @@ Mathematical functions
   +============================+=============================================+
   | ::                         |                                             |
   |                            |                                             |
-  |     nest.random.exp(x)     | | Calculates the exponential of a Parameter |
+  |     nest.random.exp(x)     | | Calculates the exponential of a parameter |
   +----------------------------+---------------------------------------------+
   | ::                         |                                             |
   |                            |                                             |
-  |     nest.random.cos(x)     | | Calculates the cosine of a Parameter      |
+  |     nest.random.cos(x)     | | Calculates the cosine of a parameter      |
   +----------------------------+---------------------------------------------+
   | ::                         |                                             |
   |                            |                                             |
-  |     nest.random.sin(x)     | | Calculates the sine of a Parameter        |
+  |     nest.random.sin(x)     | | Calculates the sine of a parameter        |
   +----------------------------+---------------------------------------------+
 
 The mathematical functions take a parameter object as argument, and return
-a new parameter which applies the mathematical function on the Parameter
+a new parameter which applies the mathematical function on the parameter
 given as argument.
 
 .. code-block:: ipython
@@ -848,7 +842,7 @@ given as argument.
 
 
 
-.. image:: ../nest-3/NEST3_27_0.png
+.. image:: ../_static/img/NEST3_27_0.png
 
 .. _logic:
 
@@ -866,13 +860,13 @@ Clipping, redraw, and conditionals
   +----------------------------------------------------+-----------------------------------------------------+
   | ::                                                 |                                                     |
   |                                                    |                                                     |
-  |     nest.math.max(x, value)                        | If a value from the Parameter is beneath a          |
+  |     nest.math.max(x, value)                        | If a value from the parameter is beneath a          |
   |                                                    | threshold, the value is replaced with the value of  |
   |                                                    | the threshold.                                      |
   +----------------------------------------------------+-----------------------------------------------------+
   | ::                                                 |                                                     |
   |                                                    |                                                     |
-  |     nest.math.redraw(x, min, max)                  | If a value from the Parameter is outside of the     |
+  |     nest.math.redraw(x, min, max)                  | If a value from the parameter is outside of the     |
   |                                                    | limits given, the value is redrawn. Throws an error |
   |                                                    | if a suitable value is not found after a certain    |
   |                                                    | number of redraws.                                  |
@@ -887,7 +881,7 @@ Clipping, redraw, and conditionals
 Note that ``x`` is a ``nest.Parameter``.
 
 The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
-a Parameter. Essentially they work like the standard ``min()`` and
+a parameter. Essentially they work like the standard ``min()`` and
 ``max()`` functions, ``nest.math.min()`` yielding the smallest of two
 values, and ``nest.math.max()`` yielding the largest of two values.
 
@@ -910,9 +904,9 @@ The ``nest.logic.conditional()`` function works like an ``if``/``else``
 statement. Three arguments are required:
 
 - The first argument is a condition.
-- The second argument is the resulting value or Parameter evalued if the
+- The second argument is the resulting value or parameter evalued if the
   condition evaluates to true.
-- The third argument is the resulting value or Parameter evalued if the
+- The third argument is the resulting value or parameter evalued if the
   condition evaluates to false.
 
 ::
@@ -942,7 +936,7 @@ statement. Three arguments are required:
 
 
 
-.. image:: ../nest-3/NEST3_26_0.png
+.. image:: ../_static/img/NEST3_26_0.png
 
 
 .. _combine_ex:
@@ -999,7 +993,7 @@ With NEST 3.0, we no longer support Python 2.
 
 .. _param_changes:
 
-Model parameter changes and changed functionalities
+Model parameters and their functionalities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Use term synapse_model throughout:
@@ -1017,7 +1011,7 @@ Use term synapse_model throughout:
     called ``synapse_model``.
 
 Use allow_offgrid_times throughout:
-    In the model ``spike_generator``, the parameter ``allow_offgrid_spikes`` is renamed 
+    In the model ``spike_generator``, the parameter ``allow_offgrid_spikes`` is renamed
     ``allow_offgrid_times`` for consistency with other models.
 
 Use unit ms instead of number of simulation steps:
@@ -1074,7 +1068,7 @@ where ``spatial_data`` can be one of the following
 
 - ``nest.spatial.free()``
     This creates nodes positioned freely in space. The first argument to
-    ``nest.spatial.free()`` can either be a NEST Parameter that generates
+    ``nest.spatial.free()`` can either be a NEST parameter that generates
     the positions, or an explicit list of positions. Some example free
     spatial nodes specifications:
 
@@ -1091,12 +1085,12 @@ where ``spatial_data`` can be one of the following
 
 Note the following
 
-- For positions generated from NEST Parameters, the number of neurons
+- For positions generated from NEST parameters, the number of neurons
   has to be provided in ``nest.Create()``.
 - The extent is calculated from the positions of the nodes, but can be
   set explicitly.
 - If possible, NEST tries to deduce the number of dimensions. But if
-  the positions are generated from NEST Parameters, and there is no
+  the positions are generated from NEST parameters, and there is no
   extent defined, the number of dimensions has to be provided.
 
   ::
@@ -1168,8 +1162,8 @@ a ``.spatial`` parameter that will retrieve all spatial information as a diction
        (0.3796140942722559, 0.2643292499706149, 0.848507022485137),
        (0.6565130492672324, 0.38219101540744305, 0.4020354822278023))}
 
-Note that if you have specified your positions as a NEST Parameter, NEST will convert that
-to a list with lists, and this is what you will get when calling ``.spatial``. 
+Note that if you have specified your positions as a NEST parameter, NEST will convert that
+to a list with lists, and this is what you will get when calling ``.spatial``.
 
 
 Connect spatially distributed nodes
@@ -1331,7 +1325,7 @@ Functions
 
 Some functions have also been removed. The removed functions where either related to subnets,
 or they can be replaced by using other functions with indexing into a NodeCollection.
-The removed functions are (see also :doc:`../nest-3/nest2_vs_3` for a full list of functions that have changed):
+The removed functions are (see also :doc:`../ref_material/nest2_vs_3` for a full list of functions that have changed):
 
 - BeginSubnet
 - ChangeSubnet

@@ -15,6 +15,7 @@ Download NEST
 Download the source code
 -------------------------
 
+
 * If you are compiling NEST from source, you can |link-pre|\ |version|\ |link-post|
 
 .. |link-pre| raw:: html
@@ -24,6 +25,10 @@ Download the source code
 .. |link-post| raw:: html
 
     .tar.gz">download the latest release here</a>
+
+.. note::
+
+ To try out NEST 3.0 - you can clone and compile the source code from the `the nest-3 branch on GitHub <https://github.com/nest/nest-simulator/tree/nest-3>`_
 
 * Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`.
 

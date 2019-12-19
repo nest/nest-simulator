@@ -20,9 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""
-Sinusoidal poisson generator example
-------------------------------------
+"""Sinusoidal poisson generator example
+-----------------------------------------
 
 This script demonstrates the use of the ``sinusoidal_poisson_generator``
 and its different parameters and modes. The source code of the model
@@ -66,7 +65,7 @@ g = nest.Create('sinusoidal_poisson_generator', n=2,
                          'frequency': 5.0,
                          'phase': 90.0}])
 
-m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
+m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'record_from': ['rate']})
 s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')

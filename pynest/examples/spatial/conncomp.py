@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
+"""
+Create two populations of pyramidal cells and two populations of interneurons
+======================================----------------------------------------
 
 Create two populations of pyramidal cells and two populations of interneurons
 on a 30x30 grid. Connect with two projections, one pyr->pyr, one pyr->in, and
@@ -28,7 +29,7 @@ visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab
@@ -39,6 +40,7 @@ nest.set_verbosity('M_WARNING')
 nest.CopyModel('iaf_psc_alpha', 'pyr')
 nest.CopyModel('iaf_psc_alpha', 'in')
 
+#########################################################################
 # same positions for all populations
 pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 
@@ -58,9 +60,10 @@ nest.Connect(a_pyr, b_in, {'rule': 'pairwise_bernoulli',
 
 pylab.clf()
 
+######################################################
 # plot targets of neurons in different grid locations
-
 # obtain node id for center: pick first node of composite
+
 ctr_index = 30 * 15 + 15
 ctr_id = a_pyr[ctr_index:ctr_index + 1]
 

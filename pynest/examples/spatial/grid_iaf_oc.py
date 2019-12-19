@@ -19,15 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
-
-Create three populations of iaf_psc_alpha neurons on a 4x3 grid,
-each with different center.
+"""
+Create three populations of iaf_psc_alpha neurons on a 4x3 grid, each with different center
+-------------------------------------------------------------------------------------------
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import pylab
 import nest

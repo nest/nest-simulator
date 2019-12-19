@@ -14,11 +14,11 @@ Here you can find how to build complex, layered networks in NEST.
 * If you've never used spatially-structured networks before,  we recommend you
   check out the **PyNEST tutorial** :doc:`on spatially-structured networks <../tutorials/pynest_tutorial/part_4_topologically_structured_networks>`
 
-* We also have a :doc:`comprehensive guide into spatially-structured networks <Topology_UserManual>`
+* We also have a :doc:`comprehensive guide into spatially-structured networks <../guides/guide_structurally_spatial_networks>`
 
 * We also recommend another **tutorial** :doc:`using the Hill Tononi model <../tutorials/topology/index>`
 
-* We have a large selection of **examples** using spatially-structured netowrks, check them out in our :doc:`examples/index` section.
+* We have a large selection of **examples** using spatially-structured networks, check them out in our :doc:`examples/index` section.
 
 .. toctree::
    :hidden:

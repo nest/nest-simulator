@@ -47,7 +47,7 @@ randomly selected connections between networks using ``Connect()``. Likewise, it
 also possible to use ``Create()`` and ``Connect()`` to create network
 models that incorporate spatial location and spatial connectivity
 profiles. **NOTE:** Full documentation for usage of the spatial functions
-is present in our :doc:`<../../guides/guide_structurally_spatial_networks>` [1]_,
+is present in our :doc:`../../guides/guide_structurally_spatial_networks` [1]_,
 which in the following is referenced as full-source.
 
 Adding spatial information to populations

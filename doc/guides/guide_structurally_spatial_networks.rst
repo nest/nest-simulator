@@ -898,7 +898,7 @@ Prescribed number of connections
    specifying the number of connections to create per driver node. See
    Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
 
-A selection of spatially-structured specific NEST parameters are shown in Table
+A selection of specific NEST parameters are pertaining to spatially structured networks shown in Table
 :ref:`tbl_parameters`.
 
 .. _tbl_parameters:
@@ -1395,7 +1395,7 @@ The following table presents some query functions provided by NEST.
 +---------------------------------+---------------------------------------------+
 | ``nest.DumpLayerConnections()`` | Write connectivity information to file.     |
 |                                 | This function may be very useful to check   |
-|                                 | that NEST created the correct           |
+|                                 | that NEST created the correct               |
 |                                 | connection structure.                       |
 +---------------------------------+---------------------------------------------+
 | ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a  |

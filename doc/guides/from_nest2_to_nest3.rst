@@ -13,7 +13,10 @@ perform operations that were not possible in previous versions.
 
   See the :doc:`../ref_material/nest2_vs_3` to see a full list of functions that have changed
 
-This guide is based exclusively on PyNEST.
+.. note::
+
+  Running the code snippets throughout this guide requires a freshly started instance of Python with nest
+  (and sometimes pyplot from matplotlib) imported.
 
 What's new?
 ------------
@@ -24,7 +27,7 @@ New functionality for node handles (neurons and devices)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
-This provides a more compact and flexible container for node handles.
+This provides a more compact and flexible way for handling nodes.
 
 
 .. note::
@@ -137,7 +140,7 @@ Conversion to and from lists
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=3, first=1, last=3)
 
     Note however that the nodes have to be already created. If any
-    of the node IDs refer to nodes that are not created, an error is thrown.
+    of the node IDs refer to a non existing node, an error is thrown.
 
 .. _composing:
 
@@ -160,7 +163,7 @@ Composing
                         model=iaf_psc_delta, size=3, first=14, last=16)
 
     Note that composing NodeCollections that overlap or that contain metadata
-    (see section on :ref:`spatially distributed nodes <topo_changes>`) is impossible.
+    (see section on :ref:`spatially distributed nodes <topo_changes>`) is not supported.
 
 .. _testing_equality:
 
@@ -298,7 +301,7 @@ and get a dictionary with arrays.
 >>>    sd.get('events', 'senders')
        array([], dtype=int64)
 
-Lastly, you can specify the output format (pandas, JSON currently implemented). The
+Lastly, you can specify the output format (`pandas` and `JSON` for now). The
 output format can be specified for all the different ``get()`` versions above.
 
 >>>    nodes[0].get(['V_m', 'V_reset'], output='json')
@@ -307,15 +310,15 @@ output format can be specified for all the different ``get()`` versions above.
 
 .. _set_param:
 
-Set the node status
-~~~~~~~~~~~~~~~~~~~~~~~
+Set node properties
+~~~~~~~~~~~~~~~~~~~~
 
 ``set()`` sets the values of a parameter by iterating over each node.
 
 As with ``get()``, you can set parameters in different ways.
 
 To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
-keyword of the parameter_dict is the parameter name. The value could be a list
+keys of the parameter_dict are the parameter names. The values could be a list
 the size of the NodeCollection, a single value, or a ``nest.Parameter``.
 
 ::
@@ -332,7 +335,8 @@ or a ``nest.Parameter``
  nodes[:3].set(t_ref=[3.0, 4.0, 5.0])
  nodes.set(t_ref=nest.random.uniform())
 
-Note that some parameters, like `global_id`, cannot be set.
+Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
+will point out which parameters can be set and which are read-only.
 
 
 .. _SynapseCollection:
@@ -434,11 +438,11 @@ Test of equality
 Getting connection parameters
     Just as with NodeCollection, you can get parameters of the connections with
     ``get()``. The same function arguments as for :ref:`NodeCollections get() <get_param>`
-    applies here. The returned values also follow the same rules.
+    apply here. The returned values also follow the same rules.
 
-    If you call ``get()`` without any input variables, a dictionary with all parameters is
-    returned as a list if number of connections is bigger than 1 and a single integer if
-    number of connections is 1.
+    If you call ``get()`` without any arguments, a dictionary with all parameters is
+    returned as a list if the number of connections is bigger than 1 and a single integer if
+    number of connections is equal to 1.
 
     >>>  synColl.get()
          {'delay': [1.0, 1.0, 1.0, 1.0],
@@ -489,7 +493,8 @@ Setting connection parameters
 
     >>>  synColl.set(weight=[4.0, 4.5, 5.0, 5.5])
 
-    Note that some parameters, like `source` and `target`, cannot be set.
+    Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
+    model will point out which parameters can be set and which are read-only.
 
 .. _conn_direct_attributes:
 
@@ -523,7 +528,7 @@ Parametrization
 NEST 3.0 introduces *parameter objects*, i.e., objects that represent values
 drawn from a random distribution or values based on various spatial node
 parameters. Parameters can be used to set node status, to create positions
-in topology (see :ref:`Topology section <topo_changes>` below), and to define connection
+in space (see :ref:`Topology section <topo_changes>` below), and to define connection
 probabilities, weights and delays. The parameters can be combined in
 different ways, and they can be used with some mathematical functions that
 are provided by NEST.
@@ -542,7 +547,7 @@ The following parameters and functionalities are provided:
 
 Random parameters
 ^^^^^^^^^^^^^^^^^
-The random module contains random distributions that can be used to set node
+The `random` module contains random distributions that can be used to set node
 and connection parameters, as well as positions for spatially distributed nodes.
 
   +--------------------------------------------------+--------------------------------------------+
@@ -576,13 +581,11 @@ distribution.
 
 .. code-block:: ipython
 
-    nest.ResetKernel()
-
-    n = nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60., std=10.)})
+    n = nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60.0, std=10.0)})
 
     node_ids = n.global_id
     v_m = n.get('V_m')
-    fig, ax = plt.subplots(figsize=(12, 6),
+    fig, ax = pyplot.subplots(figsize=(12, 6),
                            gridspec_kw={'width_ratios':
                                         [3, 1]},
                            ncols=2,
@@ -601,11 +604,12 @@ distribution.
 
 Spatial parameters
 ^^^^^^^^^^^^^^^^^^
-  The spatial module contains parameters related to spatial positions of the
-  nodes.
 
-  To create spatially distributed nodes (see section on :ref:`spatially distributed nodes <topo_changes>` for more),
-  use ``ǹest.spatial.grid()`` or ``nest.spatial.free``.
+The `spatial` module contains parameters related to spatial positions of the
+nodes.
+
+To create spatially distributed nodes (see section on :ref:`spatially distributed nodes <topo_changes>` for more),
+use ``ǹest.spatial.grid()`` or ``nest.spatial.free``.
 
   +----------------------------------------------------+-------------------------------------------------------+
   | Parameter                                          | Description                                           |
@@ -640,7 +644,7 @@ Spatial parameters
 .. image:: ../_static/img/NEST3_24_0.png
 
 
-After you have created your spatially distributed nodes, you can use spatial parameters to set
+After you have created your spatially distributed nodes, you can use `spatial` property to set
 node or connection parameters.
 
   +----------------------------------+-------------------------------------------------------------------------+
@@ -682,8 +686,6 @@ node or connection parameters.
 
   .. code-block:: ipython
 
-    nest.ResetKernel()
-
     positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 10000)])
     spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
@@ -694,7 +696,7 @@ node or connection parameters.
     node_pos[:,1]
     v_m = spatial_nodes.get('V_m');
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = pyplot.subplots(figsize=(12, 6))
     ax.plot(node_pos[:,0], v_m, '.', ms=3.5)
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
@@ -757,8 +759,6 @@ parameter:
 
 .. code-block:: ipython
 
-    nest.ResetKernel()
-
     N = 21
     middle_node = N//2
 
@@ -775,10 +775,10 @@ parameter:
 
     targets = nest.GetConnections().get('target')
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = pyplot.subplots(figsize=(12, 6))
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
-    plt.xticks(bars[1] + 0.5,np.arange(1, N+1))
+    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+1))
     ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
@@ -814,8 +814,6 @@ given as argument.
 
 .. code-block:: ipython
 
-    nest.ResetKernel()
-
     positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 100)])
     spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
@@ -830,7 +828,7 @@ given as argument.
     node_pos[:,1]
     v_m = spatial_nodes.get('V_m');
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = pyplot.subplots(figsize=(12, 6))
     ax.plot(node_pos[:,0], v_m, '.', ms=6.5)
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
@@ -911,8 +909,6 @@ statement. Three arguments are required:
 
 .. code-block:: ipython
 
-    nest.ResetKernel()
-
     positions = nest.spatial.free([[x, 0.5*x] for x in np.linspace(0, 1.0, 50)])
     spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
@@ -924,7 +920,7 @@ statement. Three arguments are required:
     node_pos[:,1]
     v_m = spatial_nodes.get('V_m');
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = pyplot.subplots(figsize=(12, 6))
     ax.plot(node_pos[:,0], v_m, 'o')
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
@@ -984,14 +980,14 @@ Using parameters makes it easy to set node properties
 What's changed?
 ----------------
 
-With NEST 3.0, we no longer support Python 2.
+With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
 
 .. _param_changes:
 
 Model parameters and their functionalities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Use term synapse_model throughout:
+Consistently use term synapse_model throughout:
     As all PyNEST functions that used to take the list returned by ``Create`` now use the NodeCollection
     returned by ``Create``, there shouldn't be too many changes on the PyNEST level. One important
     change though, is that we now use ``synapse_model`` throughout to reference the synapse model.
@@ -1032,12 +1028,12 @@ Topology module
 
 All of the functionality of Topology has been moved to the standard
 functions. In fact, there is no longer a Topology module in PyNEST. The
-functions that are specific for Topology are now in the ``nest`` module.
+functions for creating spatially arranged neuronal networks are now in the ``nest`` module.
 
 Create spatially distributed nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creating spatially distributed nodes are now done with the standard ``nest.Create()`` function.
+Creating spatially distributed nodes is now handled by with the standard ``nest.Create()`` function.
 Arguments of node creation have also been changed to make creating
 populations with and without spatial information more unified. To create
 nodes with spatial positions, ``nest.Create()`` must be provided with the
@@ -1096,7 +1092,7 @@ Note the following
 
 
 Spatially positioned nodes are no longer subnets, as subnets have been removed, but
-NodeCollections with metadata. These NodeCollections behave as normal
+are rather NodeCollections with metadata. These NodeCollections behave as normal
 NodeCollections with two exceptions:
 
 - They cannot be merged, as concatenating NodeCollections with metadata is

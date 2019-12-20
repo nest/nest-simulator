@@ -74,7 +74,7 @@ Functions related to connection
 | =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=      |
 |                                             | None, syn_spec=None,                          |
 |                                             | :green:`return_SynapseCollection`=False)      |
-|                                             | | *In syn_spec the synapse model*               |
+|                                             | | *In syn_spec the synapse model*             |
 |                                             | *is given by synapse_model,*                  |
 |                                             | *not model.*                                  |
 +---------------------------------------------+-----------------------------------------------+
@@ -87,7 +87,7 @@ Functions related to connection
 | nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`,  |
 | parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,             |
 | _synapse')                                  | parameter_map=None,                           |
-|                                             | :green:`synapse_model` ='static_synapse')      |
+|                                             | :green:`synapse_model` ='static_synapse')     |
 +---------------------------------------------+-----------------------------------------------+
 | nest.DisconnectOneToOne(int, int,           | nest.Disconnect(:green:`nest.NodeCollection`, |
 | syn_spec)                                   | :green:`nest.NodeCollection`,                 |

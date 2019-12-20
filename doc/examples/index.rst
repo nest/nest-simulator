@@ -44,7 +44,7 @@ PyNEST Examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: Brunel network examples
+   :caption: Random balanced network examples
 
    ../auto_examples/brunel_alpha_numpy
    ../auto_examples/brunel_alpha_nest
@@ -73,7 +73,7 @@ PyNEST Examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: CSA for connection
+   :caption: Connection set algebra examples
 
    ../auto_examples/csa_example
    ../auto_examples/csa_topology_example
@@ -96,18 +96,9 @@ PyNEST Examples
    ../auto_examples/Potjans_2014/sim_params
 
 
-
 .. toctree::
    :maxdepth: 1
-   :caption: MUSIC example
-
-   ../auto_examples/music_cont_out_proxy_example/nest_script
-   ../auto_examples/music_cont_out_proxy_example/receiver_script
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Spatial networks examples
+   :caption: Spatially arranged networks examples
 
    ../auto_examples/spatial/hill_tononi_Vp
    ../auto_examples/spatial/conncomp

@@ -20,6 +20,7 @@
 set( nestutil_sources
     block_vector.h
     compose.hpp
+    enum_bitfield.h
     iterator_pair.h
     lockptr.h
     logging_event.h logging_event.cpp

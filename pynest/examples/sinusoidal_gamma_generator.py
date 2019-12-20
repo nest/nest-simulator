@@ -61,7 +61,7 @@ nest.SetKernelStatus({'resolution': 0.01})
 ###############################################################################
 # Then we create two instances of the ``sinusoidal_gamma_generator`` with two
 # different orders of the underlying gamma process using ``Create``. Moreover,
-# we create devices to record firing rates (``Multimeter``) and spikes
+# we create devices to record firing rates (``multimeter``) and spikes
 # (``spike_detector``) and connect them to the generators using ``Connect``.
 
 

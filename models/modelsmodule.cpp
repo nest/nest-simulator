@@ -20,20 +20,6 @@
  *
  */
 
-/*
-    This file is part of NEST.
-
-    modelsmodule.cpp -- sets up the modeldict with all models included
-    with the NEST distribution.
-
-    Author(s):
-    Marc-Oliver Gewaltig
-    R"udiger Kupper
-    Hans Ekkehard Plesser
-
-    First Version: June 2006
-*/
-
 #include "modelsmodule.h"
 
 // Includes from nestkernel
@@ -48,15 +34,22 @@
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_exp.h"
 #include "aeif_psc_alpha.h"
-#include "aeif_psc_exp.h"
 #include "aeif_psc_delta.h"
 #include "aeif_psc_delta_clopath.h"
+#include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
+#include "gif_psc_exp.h"
+#include "gif_psc_exp_multisynapse.h"
+#include "gif_cond_exp.h"
+#include "gif_cond_exp_multisynapse.h"
+#include "gif_pop_psc_exp.h"
+#include "glif_cond.h"
+#include "glif_psc.h"
 #include "ginzburg_neuron.h"
-#include "hh_cond_exp_traub.h"
 #include "hh_cond_beta_gap_traub.h"
+#include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"
 #include "hh_psc_alpha_clopath.h"
 #include "hh_psc_alpha_gap.h"
@@ -76,8 +69,6 @@
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
-#include "tanh_rate.h"
-#include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
@@ -86,11 +77,8 @@
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
-#include "gif_psc_exp.h"
-#include "gif_psc_exp_multisynapse.h"
-#include "gif_cond_exp.h"
-#include "gif_cond_exp_multisynapse.h"
-#include "gif_pop_psc_exp.h"
+#include "tanh_rate.h"
+#include "threshold_lin_rate.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -115,9 +103,9 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
-#include "weight_recorder.h"
-
+#include "voltmeter.h"
 #include "volume_transmitter.h"
+#include "weight_recorder.h"
 
 // Prototypes for synapses
 #include "bernoulli_connection.h"
@@ -130,21 +118,21 @@
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
-#include "rate_connection_instantaneous.h"
 #include "rate_connection_delayed.h"
+#include "rate_connection_instantaneous.h"
 #include "spike_dilutor.h"
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
 #include "stdp_connection.h"
-#include "stdp_nn_restr_connection.h"
-#include "stdp_nn_symm_connection.h"
-#include "stdp_nn_pre-centered_connection.h"
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
-#include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
+#include "stdp_nn_restr_connection.h"
+#include "stdp_nn_symm_connection.h"
+#include "stdp_nn_pre-centered_connection.h"
 #include "stdp_pl_connection_hom.h"
+#include "stdp_triplet_connection.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
@@ -160,10 +148,10 @@
 #include "target_identifier.h"
 
 #ifdef HAVE_MUSIC
-#include "music_event_in_proxy.h"
-#include "music_event_out_proxy.h"
 #include "music_cont_in_proxy.h"
 #include "music_cont_out_proxy.h"
+#include "music_event_in_proxy.h"
+#include "music_event_out_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 
@@ -233,6 +221,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
@@ -257,71 +246,11 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
   kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
-
-  // Create voltmeter as a multimeter pre-configured to record V_m.
-  /* BeginUserDocs:
-  Name: voltmeter - Device to record membrane potential from neurons.
-  Synopsis: voltmeter Create
-
-  Description:
-  A voltmeter records the membrane potential (V_m) of connected nodes
-  to memory, file or stdout.
-
-  By default, voltmeters record values once per ms. Set the parameter
-  /interval to change this. The recording interval cannot be smaller
-  than the resolution.
-
-  Results are returned in the /events entry of the status dictionary,
-  which contains membrane potential as vector /V_m and pertaining
-  times as vector /times and node node IDs as /senders.
-
-  Remarks:
-   - The voltmeter model is implemented as a multimeter preconfigured to
-     record /V_m.
-   - The set of variables to record and the recording interval must be set
-     BEFORE the voltmeter is connected to any node, and cannot be changed
-     afterwards.
-   - A voltmeter cannot be frozen.
-   - If you record with voltmeter in accumulator mode and some of the nodes
-     you record from are frozen and others are not, data will only be collected
-     from the unfrozen nodes. Most likely, this will lead to confusing results,
-     so you should not use voltmeter with frozen nodes.
-
-  Parameters:
-       The following parameter can be set in the status dictionary:
-       interval     double - Recording interval in ms
-
-  Examples:
-  SLI ] /iaf_cond_alpha Create /n Set
-  SLI ] /voltmeter Create /vm Set
-  SLI ] vm << /interval 0.5 >> SetStatus
-  SLI ] vm n Connect
-  SLI ] 10 Simulate
-  SLI ] vm /events get info
-  --------------------------------------------------
-  Name                     Type                Value
-  --------------------------------------------------
-  senders                  intvectortype       <intvectortype>
-  times                    doublevectortype    <doublevectortype>
-  V_m                      doublevectortype    <doublevectortype>
-  --------------------------------------------------
-  Total number of entries: 3
-
-
-  Sends: DataLoggingRequest
-
-  SeeAlso: Device, RecordingDevice, multimeter
-  */
-  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
-  ArrayDatum ad;
-  ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  ( *vmdict )[ names::record_from ] = ad;
-  const Name name = "voltmeter";
-  kernel().model_manager.register_preconf_node_model< multimeter >( name, vmdict, false );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
@@ -339,6 +268,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >( "gif_cond_exp_multisynapse" );
   kernel().model_manager.register_node_model< gif_pop_psc_exp >( "gif_pop_psc_exp" );
+  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
 
   kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
@@ -361,214 +291,39 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
 #endif
 
-  // register synapses
+  // register all connection models
+  register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
+  register_connection_model< ClopathConnection >(
+    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
+  register_connection_model< HTConnection >( "ht_synapse" );
+  register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
+  register_connection_model< StaticConnection >( "static_synapse" );
+  register_connection_model< StaticConnectionHomW >( "static_synapse_hom_w" );
+  register_connection_model< STDPConnection >( "stdp_synapse" );
+  register_connection_model< STDPConnectionHom >( "stdp_synapse_hom" );
+  register_connection_model< STDPDopaConnection >( "stdp_dopamine_synapse" );
+  register_connection_model< STDPFACETSHWConnectionHom >( "stdp_facetshw_synapse_hom" );
+  register_connection_model< STDPNNRestrConnection >( "stdp_nn_restr_synapse" );
+  register_connection_model< STDPNNSymmConnection >( "stdp_nn_symm_synapse" );
+  register_connection_model< STDPNNPreCenteredConnection >( "stdp_nn_pre-centered_synapse" );
+  register_connection_model< STDPPLConnectionHom >( "stdp_pl_synapse_hom" );
+  register_connection_model< STDPTripletConnection >( "stdp_triplet_synapse" );
+  register_connection_model< TsodyksConnection >( "tsodyks_synapse" );
+  register_connection_model< TsodyksConnectionHom >( "tsodyks_synapse_hom" );
+  register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
+  register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
 
-  /* BeginUserDocs:
-     Name: static_synapse_hpc - Variant of static_synapse with low memory
-     consumption.
+  // register secondary connection models
+  register_secondary_connection_model< GapJunction >(
+    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
 
-     Description:
-     hpc synapses store the target neuron in form of a 2 Byte index instead of
-     an 8 Byte pointer. This limits the number of thread local neurons to
-     65,536. No support for different receptor types. Otherwise identical to
-     static_synapse.
-
-     SeeAlso: synapsedict, static_synapse
-  */
-  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierPtrRport > >( "static_synapse" );
-  kernel().model_manager.register_connection_model< StaticConnection< TargetIdentifierIndex > >( "static_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: static_synapse_hom_w_hpc - Variant of static_synapse_hom_w with low
-     memory consumption.
-     SeeAlso: synapsedict, static_synapse_hom_w, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierPtrRport > >(
-    "static_synapse_hom_w" );
-  kernel().model_manager.register_connection_model< StaticConnectionHomW< TargetIdentifierIndex > >(
-    "static_synapse_hom_w_hpc" );
-
-  /* BeginUserDocs:
-     Name: gap_junction - Connection model for gap junctions.
-     SeeAlso: synapsedict
-  */
-  kernel().model_manager.register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >( "gap_junction",
-    /*has_delay=*/false,
-    /*requires_symmetric=*/true,
-    /*supports_wfr=*/true );
-  kernel().model_manager.register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
-    "rate_connection_instantaneous",
-    /*has_delay=*/false,
-    /*requires_symmetric=*/false,
-    /*supports_wfr=*/true );
-  kernel().model_manager.register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
-    "rate_connection_delayed",
-    /*has_delay=*/true,
-    /*requires_symmetric=*/false,
-    /*supports_wfr=*/false );
-  kernel().model_manager.register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
-    "diffusion_connection",
-    /*has_delay=*/false,
-    /*requires_symmetric=*/false,
-    /*supports_wfr=*/true );
-
-
-  /* BeginUserDocs:
-     Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory
-     consumption.
-     SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierPtrRport > >( "stdp_synapse" );
-  kernel().model_manager.register_connection_model< STDPConnection< TargetIdentifierIndex > >( "stdp_synapse_hpc" );
-
-  kernel().model_manager.register_connection_model< ClopathConnection< TargetIdentifierPtrRport > >( "clopath_synapse",
-    /*requires_symmetric=*/false,
-    /*requires_clopath_archiving=*/true );
-
-  kernel().model_manager.register_connection_model< STDPNNRestrConnection< TargetIdentifierPtrRport > >(
-    "stdp_nn_restr_synapse" );
-
-  kernel().model_manager.register_connection_model< STDPNNSymmConnection< TargetIdentifierPtrRport > >(
-    "stdp_nn_symm_synapse" );
-
-  kernel().model_manager.register_connection_model< STDPNNPreCenteredConnection< TargetIdentifierPtrRport > >(
-    "stdp_nn_pre-centered_synapse" );
-
-  /* BeginUserDocs:
-     Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low
-     memory consumption.
-     SeeAlso: synapsedict, stdp_pl_synapse_hom, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierPtrRport > >(
-    "stdp_pl_synapse_hom" );
-  kernel().model_manager.register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
-    "stdp_pl_synapse_hom_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: stdp_triplet_synapse_hpc - Variant of stdp_triplet_synapse with low
-     memory consumption.
-     SeeAlso: synapsedict, stdp_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierPtrRport > >(
-    "stdp_triplet_synapse" );
-  kernel().model_manager.register_connection_model< STDPTripletConnection< TargetIdentifierIndex > >(
-    "stdp_triplet_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: quantal_stp_synapse_hpc - Variant of quantal_stp_synapse with low
-     memory consumption.
-     SeeAlso: synapsedict, quantal_stp_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierPtrRport > >(
-    "quantal_stp_synapse" );
-  kernel().model_manager.register_connection_model< Quantal_StpConnection< TargetIdentifierIndex > >(
-    "quantal_stp_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: stdp_synapse_hom_hpc - Variant of quantal_stp_synapse with low memory
-     consumption.
-     SeeAlso: synapsedict, stdp_synapse_hom, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierPtrRport > >(
-    "stdp_synapse_hom" );
-  kernel().model_manager.register_connection_model< STDPConnectionHom< TargetIdentifierIndex > >(
-    "stdp_synapse_hom_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: stdp_facetshw_synapse_hom_hpc - Variant of stdp_facetshw_synapse_hom
-     with low memory consumption.
-     SeeAlso: synapsedict, stdp_facetshw_synapse_hom, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierPtrRport > >(
-    "stdp_facetshw_synapse_hom" );
-  kernel().model_manager.register_connection_model< STDPFACETSHWConnectionHom< TargetIdentifierIndex > >(
-    "stdp_facetshw_synapse_hom_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low
-     memory consumption.
-     SeeAlso: synapsedict, cont_delay_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierPtrRport > >(
-    "cont_delay_synapse" );
-  kernel().model_manager.register_connection_model< ContDelayConnection< TargetIdentifierIndex > >(
-    "cont_delay_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: tsodyks_synapse_hpc - Variant of tsodyks_synapse with low memory
-     consumption.
-     SeeAlso: synapsedict, tsodyks_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierPtrRport > >(
-    "tsodyks_synapse" );
-  kernel().model_manager.register_connection_model< TsodyksConnection< TargetIdentifierIndex > >(
-    "tsodyks_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: tsodyks_synapse_hom_hpc - Variant of tsodyks_synapse_hom with low
-     memory consumption.
-     SeeAlso: synapsedict, tsodyks_synapse_hom, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierPtrRport > >(
-    "tsodyks_synapse_hom" );
-  kernel().model_manager.register_connection_model< TsodyksConnectionHom< TargetIdentifierIndex > >(
-    "tsodyks_synapse_hom_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory
-     consumption.
-     SeeAlso: synapsedict, tsodyks2_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierPtrRport > >(
-    "tsodyks2_synapse" );
-  kernel().model_manager.register_connection_model< Tsodyks2Connection< TargetIdentifierIndex > >(
-    "tsodyks2_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: ht_synapse_hpc - Variant of ht_synapse with low memory consumption.
-     SeeAlso: synapsedict, ht_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierPtrRport > >( "ht_synapse" );
-  kernel().model_manager.register_connection_model< HTConnection< TargetIdentifierIndex > >( "ht_synapse_hpc" );
-
-
-  /* BeginUserDocs:
-     Name: stdp_dopamine_synapse_hpc - Variant of stdp_dopamine_synapse with low
-     memory consumption.
-     SeeAlso: synapsedict, stdp_dopamine_synapse, static_synapse_hpc
-  */
-  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierPtrRport > >(
-    "stdp_dopamine_synapse" );
-  kernel().model_manager.register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
-    "stdp_dopamine_synapse_hpc" );
-
-  /* BeginUserDocs:
-     Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
-     with low memory
-     consumption.
-     SeeAlso: synapsedict, vogels_sprekeler_synapse
-  */
-  kernel().model_manager.register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
-    "vogels_sprekeler_synapse" );
-  kernel().model_manager.register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
-    "vogels_sprekeler_synapse_hpc" );
-
-  /* BeginUserDocs:
-     Name: bernoulli_synapse - Static synapse with stochastic transmission
-     SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
-  */
-  kernel().model_manager.register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
-    "bernoulli_synapse" );
+  register_secondary_connection_model< RateConnectionInstantaneous >(
+    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  register_secondary_connection_model< RateConnectionDelayed >(
+    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
+  register_secondary_connection_model< DiffusionConnection >(
+    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
 }
 
 } // namespace nest

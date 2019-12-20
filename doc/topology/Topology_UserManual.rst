@@ -7,31 +7,30 @@ Topology User Manual
 .. TODO: Should it still be called "Topology User Manual",
 ..       now that the PyNEST Topology Module is gone?
 
-The Topology Module provides the NEST simulator [1]_
-with a convenient interface for creating layers of neurons placed in
-space and connecting neurons in such layers with probabilities and
+The NEST simulator [1]_ provides  a convenient interface for creating neurons placed in
+space and connecting those neurons with probabilities and
 properties depending on the relative placement of neurons. This permits
 the creation of complex networks with spatial structure.
 
-This user manual provides an introduction to the functionality provided
-by the Topology Module. It is based exclusively on the PyNEST, the
+This user manual provides an introduction to the functionalities provided for
+defining spatial networks in NEST. It is based exclusively on the PyNEST, the
 Python interface to NEST. NEST users using the SLI
 interface should be able to map instructions to corresponding SLI code.
 This manual is not meant as a comprehensive reference manual. Please
-consult the online documentation in PyNEST for details; where
+consult the online documentation in PyNEST for details; where                             ################################# LINK!!!!!!!!!!!!!!!!!!!!
 appropriate, that documentation also points to relevant SLI
 documentation.
 
-This manual describes the Topology Module included with NEST 3.0.
+This manual describes the spatial functionalities included with NEST 3.0.
 
 .. TODO: Chapter 5 about parameters?
 
-In the next chapter of this manual, we introduce Topology layers, which
-place neurons in space. In Chapter \ :ref:`3 <sec:connections>` we then
-describe how to connect layers with each other, before discussing in
+In the next chapter of this manual, we introduce spatially distributed nodes.
+In Chapter \ :ref:`3 <sec:connections>` we then
+describe how to connect spatial nodes with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
-Topology networks. Chapter \ :ref:`5 <ch:extending>` deals with the more
-advanced topic of extending the Topology module with custom masks provided
+spatial networks. Chapter \ :ref:`5 <ch:extending>` deals with the more
+advanced topic of extending the functionalities with custom masks provided
 by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
@@ -939,49 +938,43 @@ are also Parameters drawing values from random distributions.
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
   +==============================================+====================+======================================================+
-  |                                              |                    | .. math:: p(x) = a e^{-\frac{x}{\tau}}               |
+  |                                              |                    | .. math:: p(x) = e^{-\frac{x}{\beta}}                |
   | ``nest.spatial_distributions.exponential()`` | | x,               |                                                      |
-  |                                              | | a,               |                                                      |
-  |                                              | | tau              |                                                      |
+  |                                              | | beta             |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              | | x,               | .. math::                                            |
-  | ``nest.spatial_distributions.gaussian()``    | | p_center,        |     p(x) = p_{\text{center}}  e^{-\frac              |
-  |                                              | | mean,            |     {(x-\text{mean})^2}{2\text{std_deviation}^2}}    |
-  |                                              | | std_deviation    |                                                      |
+  | ``nest.spatial_distributions.gaussian()``    | | mean,            |     p(x) =  e^{-\frac{(x-\text{mean})^2}             |
+  |                                              | | std              |     {2\text{std}^2}}                                 |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math::                                            |
   |                                              | | x,               |                                                      |
-  |                                              | | y,               |    p(x) = p_{\text{center}}                          |
-  |                                              | | p_center,        |    e^{-\frac{\frac{(x-\text{mean_x})^2}              |
-  | ``nest.spatial_distributions.gaussian2D()``  | | mean_x,          |    {\text{std_deviation_x}^2}-\frac{                 |
-  |                                              | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_deviation_y}^2}+2  |
-  |                                              | | std_deviation_x, |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
-  |                                              | | std_deviation_y, |    {\text{std_deviation_x}\text{std_deviation_y}}}   |
+  |                                              | | y,               |    p(x) = e^{-\frac{\frac{(x-\text{mean_x})^2}       |
+  |                                              | | mean_x,          |    {\text{std_x}^2}+\frac{                           |
+  | ``nest.spatial_distributions.gaussian2D()``  | | mean_y,          |    (y-\text{mean_y})^2}{\text{std_y}^2}+2            |
+  |                                              | | std_x,           |    \rho\frac{(x-\text{mean_x})(y-\text{mean_y})}     |
+  |                                              | | std_y,           |    {\text{std_x}\text{std_y}}}                       |
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
+  |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | .. math:: p(x) = \frac{x^{\alpha-1}e^{-\frac{x}      |
-  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\alpha\Gamma(\alpha)}          |
-  |                                              | | alpha,           |                                                      |
-  |                                              | | theta            |                                                      |
+  |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
+  | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
+  |                                              | | kappa            |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | :math:`p\in [\text{min},\text{max})` uniformly       |
   | ``nest.random.uniform()``                    | | min,             |                                                      |
   |                                              | | max              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | normal with given mean and :math:`\sigma`            |
-  | ``nest.random.normal()``                     | | mean,            |                                                      |
-  |                                              | | std,             |                                                      |
+  |                                              |                    |                                                      |
+  | ``nest.random.normal()``                     | | mean,            | normal with given mean and standard deviation        |
+  |                                              | | std              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    |                                                      |
   | ``nest.random.exponential()``                | | beta             | exponential with a given scale, :math:`\beta`        |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
-  |                                              |                    | :math:`p \in [\text{min},\text{max})` lognormal      |
-  |                                              | | mean,            | with given :math:`\mu` and :math:`\sigma`            |
-  | ``nest.random.lognormal()``                  | | sigma,           |                                                      |
-  |                                              | | min,             |                                                      |
-  |                                              | | max,             |                                                      |
-  |                                              | | dimension        |                                                      |
+  |                                              |                    | lognormal with given mean and standard               |
+  | ``nest.random.lognormal()``                  | | mean,            | deviation, std                                       |
+  |                                              | | std              |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
 
 .. _fig_conn4:
@@ -1363,15 +1356,15 @@ detailed information about these functions, please see the online Python
 and SLI documentation.
 
 +---------------------------------+---------------------------------------------+
-| ``nest.PrintNodes()``           | Print the node ID ranges and model names of the |
-|                                 | nodes in the network.                       |
+| ``nest.PrintNodes()``           | Print the node ID ranges and model names of |
+|                                 | the nodes in the network.                   |
 +---------------------------------+---------------------------------------------+
 | ``nest.GetConnections()``       | Retrieve connections (all or for a given    |
 |                                 | source or target); see also                 |
 |                                 | http://www.nest-simulator.org/connection_ma |
 |                                 | nagement.                                   |
 +---------------------------------+---------------------------------------------+
-| ``nest.GetNodes()``             | Returns a NodeCollection of the layer        |
+| ``nest.GetNodes()``             | Returns a NodeCollection of the layer       |
 |                                 | elements.                                   |
 |                                 |                                             |
 |                                 |                                             |
@@ -1387,8 +1380,8 @@ and SLI documentation.
 | ``nest.FindNearestElement()``   | Return the node(s) closest to the           |
 |                                 | location(s) in the given layer(s).          |
 +---------------------------------+---------------------------------------------+
-| ``nest.FindCenterElement()``    | Return node ID(s) of node closest to center of  |
-|                                 | layer(s).                                   |
+| ``nest.FindCenterElement()``    | Return node ID(s) of node closest to center |
+|                                 | of layer(s).                                |
 +---------------------------------+---------------------------------------------+
 | ``nest.Displacement()``         | Obtain vector of lateral displacement       |
 |                                 | between nodes, taking periodic boundary     |
@@ -1406,7 +1399,7 @@ and SLI documentation.
 |                                 | that Topology created the correct           |
 |                                 | connection structure.                       |
 +---------------------------------+---------------------------------------------+
-| ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a      |
+| ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a  |
 |                                 | masked area of a layer.                     |
 |                                 |                                             |
 +---------------------------------+---------------------------------------------+
@@ -1418,20 +1411,19 @@ Visualization functions
 
 NEST provides three functions to visualize networks:
 
-.. TODO: Remove PlotKernel?
-
-+-------------------+------------------------------------------+
-| ``PlotLayer()``   | Plot nodes in a layer.                   |
-+-------------------+------------------------------------------+
-| ``PlotTargets()`` | Plot all targets of a node in a given    |
-|                   | layer.                                   |
-+-------------------+------------------------------------------+
-| ``PlotKernel()``  | Add indication of mask and kernel to     |
-|                   | plot of layer. It does *not* wrap masks  |
-|                   | and kernels with respect to periodic     |
-|                   | boundary conditions. This function is    |
-|                   | usually called by ``PlotTargets``.       |
-+-------------------+------------------------------------------+
++---------------------------------+------------------------------------------+
+| ``PlotLayer()``                 | Plot nodes in a layer.                   |
++---------------------------------+------------------------------------------+
+| ``PlotTargets()``               | Plot all targets of a node in a given    |
+|                                 | layer.                                   |
++---------------------------------+------------------------------------------+
+| ``PlotProbabilityParameter()``  | Add indication of mask and probability   |
+|                                 | ``p`` to  plot of layer. It does *not*   |
+|                                 | wrap masks and ``p`` with respect to     |
+|                                 | periodic boundary conditions. This       |
+|                                 | function is usually called by `          |
+|                                 | `PlotTargets``.                          |
++---------------------------------+------------------------------------------+
 
 .. _fig_vislayer:
 

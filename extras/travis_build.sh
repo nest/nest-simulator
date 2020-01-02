@@ -179,12 +179,9 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
 
     # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
-    printf '%s\n' "$file_names" | while IFS= read -r line
+    for single_file_name in $file_names
     do
-       for single_file_name in $file_names
-       do
-         echo "MSGBLD0095: File changed: $single_file_name"
-       done
+        echo "MSGBLD0095: File changed: $single_file_name"
     done
     echo "MSGBLD0100: Retrieving changed files completed."
     echo

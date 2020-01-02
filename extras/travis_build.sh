@@ -165,8 +165,10 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     #            The commit range might not properly reflect the history.
     #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-       echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
-       file_names=`curl --retry 5 "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
+       echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using git diff against $TRAVIS_BRANCH."
+       file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
+    #    echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
+    #    file_names=`curl --retry 5 "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
     else
        echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`

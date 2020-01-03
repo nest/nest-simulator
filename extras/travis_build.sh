@@ -169,7 +169,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
        file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
     else
        echo "MSGBLD0090: Retrieving changed files using git diff in range $TRAVIS_COMMIT_RANGE."
-       file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
+       file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
     fi
 
     # Note: uncomment the following line to static check *all* files, not just those that have changed.

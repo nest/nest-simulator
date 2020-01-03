@@ -23,4 +23,5 @@
 function( NEST_SET_DEFAULT_COMPILER_FLAGS )
    # no default flags for C
    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" PARENT_SCOPE )
+   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual" PARENT_SCOPE )
 endfunction()

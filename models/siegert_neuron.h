@@ -134,6 +134,7 @@ public:
    */
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( DiffusionConnectionEvent& );
   void handle( DataLoggingRequest& );

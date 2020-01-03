@@ -237,6 +237,8 @@ private:
 class RadialParameter : public TopologyParameter
 {
 public:
+  using TopologyParameter::raw_value;
+
   RadialParameter()
     : TopologyParameter()
   {
@@ -272,6 +274,8 @@ public:
 class LinearParameter : public RadialParameter
 {
 public:
+  using RadialParameter::raw_value;
+
   /**
    * Parameters:
    * a - coefficient of linear function
@@ -309,6 +313,8 @@ private:
 class ExponentialParameter : public RadialParameter
 {
 public:
+  using RadialParameter::raw_value;
+
   /**
    * Parameters:
    * a   - coefficient of exponential term
@@ -355,6 +361,8 @@ private:
 class GaussianParameter : public RadialParameter
 {
 public:
+  using RadialParameter::raw_value;
+
   /**
    * Parameters:
    * c        - constant offset
@@ -452,6 +460,8 @@ private:
 class GammaParameter : public RadialParameter
 {
 public:
+  using RadialParameter::raw_value;
+
   /**
    * Parameters:
    * kappa    - shape of gamma distribution

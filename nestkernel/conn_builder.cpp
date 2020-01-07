@@ -1376,13 +1376,10 @@ nest::FixedTotalNumberBuilder::connect_()
   librandom::BinomialRandomDev bino( grng, 0, 0 );
 #endif
 
-  // We only go to M - 1 here as we can set the number of connections on the last process manually after having
-  // distributed the number of connections on the other processes. The number of connections on the last process
-  // will then be N_ - connections on other vp's, and this we can set directly without having to go through the
-  // binomial random dev. This will also prevent an error with setting the n value for GSL if we have already
-  // distributed all connections on the previous processes, as we can't have n = 0 for GSL.
-  for ( int k = 0; k < M - 1; k++ )
+  for ( int k = 0; k < M; k++ )
   {
+    // If we have distributed all connections on the previous processes we exit the loop. It is important to
+    // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
     if ( N_ == sum_partitions )
     {
       break;
@@ -1399,9 +1396,6 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
-
-  // Number of connections on last process is N_ - connections on other vp's
-  num_conns_on_vp[ M - 1 ] = N_ - sum_partitions;
 
 // end code adapted from gsl 1.8
 

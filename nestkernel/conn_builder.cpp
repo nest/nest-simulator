@@ -1378,6 +1378,12 @@ nest::FixedTotalNumberBuilder::connect_()
 
   for ( int k = 0; k < M; k++ )
   {
+    // If we have distributed all connections on the previous processes we exit the loop. It is important to
+    // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
+    if ( N_ == sum_partitions )
+    {
+      break;
+    }
     if ( number_of_targets_on_vp[ k ] > 0 )
     {
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );

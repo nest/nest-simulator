@@ -470,6 +470,10 @@ ModelManager::clear_prototypes_()
 void
 ModelManager::calibrate( const TimeConverter& tc )
 {
+  for ( auto&& model : models_ )
+  {
+    model->calibrate_time( tc );
+  }
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     for ( std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin(); pt != prototypes_[ t ].end(); ++pt )

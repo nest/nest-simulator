@@ -50,6 +50,7 @@ namespace nest
 class Model;
 class Subnet;
 class Archiving_Node;
+class TimeConverter;
 
 
 /**
@@ -297,6 +298,15 @@ public:
    *
    */
   virtual void calibrate() = 0;
+
+  /**
+   * Re-calculate time-based properties of the node.
+   * This function is called after a change in resolution.
+   */
+  virtual void
+  calibrate_time( const TimeConverter& tc )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to

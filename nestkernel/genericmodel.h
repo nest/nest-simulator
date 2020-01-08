@@ -60,6 +60,7 @@ public:
   bool potential_global_receiver();
   bool one_node_per_process();
   bool is_off_grid();
+  void calibrate_time( const TimeConverter& tc );
   /**
      @note The decision of whether one node can receive a certain
      event was originally in the node. But in the distributed case,
@@ -195,6 +196,13 @@ inline bool
 GenericModel< ElementT >::is_off_grid()
 {
   return proto_.is_off_grid();
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::calibrate_time( const TimeConverter& tc )
+{
+  proto_.calibrate_time( tc );
 }
 
 template < typename ElementT >

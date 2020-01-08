@@ -1250,6 +1250,89 @@ probability and delay, and random weights from a normal distribution:
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
 
+Improved infrastructure for handling recordings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In NEST 2.x, all recording modalities (i.e. *screen*, *memory*, and
+*files*) were handled by a single C++ class. Due to the many different
+responsibilities and the resulting complexity of this class, extending
+and maintaining it was rather burdensome.
+
+With NEST 3.0 we replaced this single class by an extensible and
+modular infrastructure for handling recordings: each modality is now
+taken care of by a specific recording backend and each recorder can
+use one of them to handle its data.
+
+NEST 3.0 brings recording backends for all modalities supported
+already in NEST 2.x. If compiled with support for `SIONlib
+<http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
+writing binary files in parallel becomes available. This is especially
+useful on large clusters and supercomputers.
+
+Changes
+^^^^^^^
+
+In NEST 2.x, the recording modality was selected by either providing a
+list of modalities to the `record_to` property, or by setting one or
+more of the flags `to_file`, `to_memory`, or `to_screen` to *True*.
+
+In NEST 3.0, the individual flags are gone and the `record_to`
+property now expects the name of the backend to use. Recording to
+multiple modalities from a single device is not possible anymore and
+individual devices have to be created and configured if this
+functionality is needed.
+
+All following examples assume that the variable `mm` points to a
+``multimeter`` instance, i.e. that ``mm = nest.Create('multimeter')``
+was executed.
+
+
+  +------------------------------------------------------+--------------------------------+
+  | NEST 2.x                                             | NEST 3.0                       |
+  +------------------------------------------------------+--------------------------------+
+  |                                                      |                                |
+  | ::                                                   | ::                             |
+  |                                                      |                                |
+  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"     |
+  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"    |
+  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"    |
+  |                                                      |                                |
+  +------------------------------------------------------+--------------------------------+
+  | ::                                                   | ::                             |
+  |                                                      |                                |
+  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"     |
+  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"    |
+  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"    |
+  |                                                      |                                |
+  +------------------------------------------------------+--------------------------------+
+
+The list of available backends can be retrieved using the following command:
+
+ ::
+
+    list(nest.GetKernelStatus("recording_backends").keys())
+
+Previously, the content and formatting of any output created by a
+recording devices could be configured in a fine-grained fashion using
+flags like `withgid`, `withtime`, `withweight`, `withport` and so
+on. In many cases, this, however, lead to a confusing variety of
+possible interpretations of data columns for the resulting output.
+
+As storage space is usually not a concern nowadays, the new
+infrastructure does not have this plethora of options, but rather
+always writes all available data. In addition, most backends now write
+the name of the recorded variable for each column as a descriptive
+meta-data header prior to writing any data.
+
+The `accumulator_mode` of the ``multimeter`` has been dropped, as it
+was not used by anyone to the best of our knowledge and supporting it
+made the code more complex and prone to errors. In case of high user
+demand, the functionality will be re-added in form of a recording
+backend.
+
+All details about the new infrastucture can be found in the guide on
+:doc:`recording from simulations <recording_from_simulations>`.
+  
 
 What's removed?
 ---------------

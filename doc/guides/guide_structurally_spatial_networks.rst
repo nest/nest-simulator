@@ -1,8 +1,8 @@
 .. _sec:intro:
 
-=====================
-Topology User Manual
-=====================
+=======================================
+Guide to spatially-structured networks
+=======================================
 
 .. TODO: Should it still be called "Topology User Manual",
 ..       now that the PyNEST Topology Module is gone?
@@ -25,7 +25,7 @@ This manual describes the spatial functionalities included with NEST 3.0.
 
 .. TODO: Chapter 5 about parameters?
 
-In the next chapter of this manual, we introduce spatially distributed nodes.
+In the next section of this manual, we introduce spatially distributed nodes.
 In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect spatial nodes with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
@@ -43,7 +43,7 @@ Limitations and Disclaimer
 --------------------------
 
 Undocumented features
-   The Topology Module provides a number of undocumented features, which
+   There may be a number of undocumented features, which
    you may discover by browsing the code. These features are highly
    experimental and should *not be used for simulations*, as they have
    not been validated.
@@ -55,15 +55,14 @@ Layers
 
 .. TODO: Not called Module anymore?
 
-The Topology Module (just Topology for short in the remainder of this
-document) organizes neuronal networks in *layers*. Layers in NEST 3
+Neuronal networks can have an organized spatial distribution or *layers*. Layers in NEST 3.0
 are NodeCollections with spatial metadata. We will first
-illustrate how Topology places elements in simple layers, where each
+illustrate how to place elements in simple layers, where each
 element is a single model neuron.
 
 We will illustrate the definition and use of layers using examples.
 
-Topology distinguishes between two classes of layers:
+NEST distinguishes between two classes of layers:
 
 grid-based layers
    in which each element is placed at a location in a regular grid;
@@ -356,7 +355,7 @@ without periodic boundary conditions is
 
 .. math:: \sqrt{x_{\text{ext}}^2 + y_{\text{ext}}^2}
 
-\ but only
+but only
 
 .. math:: \left.\sqrt{x_{\text{ext}}^2 + y_{\text{ext}}^2}\right/ 2
 
@@ -368,14 +367,15 @@ Chapter \ :ref:`3 <sec:connections>`.
 
 .. _sec:subnet:
 
-Topology layer as NEST NodeCollection
+
+Layers as NEST NodeCollection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-From the perspective of NEST, a Topology layer is a special type of
+From the perspective of NEST, a layer is a special type of
 *NodeCollection*. From the user perspective, the following points may
 be of interest:
 
--  The GICCollection has a ``spatial`` property describing the layer
+-  The NodeCollection has a ``spatial`` property describing the layer
    properties (``l`` is the layer created above):
 
 .. literalinclude:: user_manual_scripts/layers.py
@@ -440,7 +440,7 @@ selectively to different neuron models.
 Connections
 ===========
 
-The most important feature of the Topology module is the ability to
+The most important feature of the spatially-structured networks is the ability to
 create connections between layers with quite some flexibility. In this
 chapter, we will illustrate how to specify and create connections. All
 connections are created using the ``Connect`` function.
@@ -458,7 +458,7 @@ Terminology
 We begin by introducing important terminology:
 
 Connection
-   In the context of connections between the elements of Topology
+   In the context of connections between the elements of
    layers, we often call the set of all connections between pairs of
    network nodes created by a single call to ``Connect`` a
    *connection*.
@@ -553,10 +553,11 @@ Multapse
 
 .. _sec:minimalcall:
 
-Connecting Topology layers
+Connecting layers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Connections between Topology layers are created by calling ``Connect``, as
+
+Connections between are created by calling ``Connect``, as
 with normal NodeCollections. But in addition to the usual ways one could
 connect NodeCollections, having spatial information about the nodes makes
 position-based options available. In many cases when connecting layers, a
@@ -606,7 +607,7 @@ Mapping source and target layers
 The application of masks and other functions depending on the distance
 or even the displacement between nodes in the source and target layers
 requires a mapping of coordinate systems between source and target
-layers. Topology applies the following *coordinate mapping rules*:
+layers. NEST applies the following *coordinate mapping rules*:
 
 1. All layers have two-dimensional Euclidean coordinate systems.
 
@@ -638,7 +639,7 @@ using periodic boundary conditions, since the mask would “wrap around”
 in that case and pool nodes would be considered multiple times as
 targets.
 
-If none of the mask types provided in the topology library meet your
+If none of the mask types provided in the library meet your
 need, you may add more mask types in a NEST extension module. This is
 covered in Chapter \ `5 <#ch:extending>`__.
 
@@ -647,7 +648,7 @@ covered in Chapter \ `5 <#ch:extending>`__.
 Masks for 2D layers
 ~~~~~~~~~~~~~~~~~~~
 
-Topology currently provides four types of masks usable for 2-dimensional
+ currently provides four types of masks usable for 2-dimensional
 free and grid-based layers. They are illustrated in  :numref:`fig_conn2_a`.
 The masks are
 
@@ -874,12 +875,12 @@ Probabilistic connection rules
 ------------------------------
 
 Many neuronal network models employ probabilistic connection rules.
-Topology supports probabilistic connections through the
+NEST supports probabilistic connections through the
 ``pairwise_bernoulli`` rule. The probability can then be a constant,
 depend on the position of the source or the target neuron, or on the
 distance between a driver and a pool node to a connection probability. To
 create dependencies on neuron positions, NEST Parameters objects are used.
-Topology then generates a connection according to this probability.
+NEST then generates a connection according to this probability.
 
 Probabilistic connections between layers can be generated in two different
 ways:
@@ -897,15 +898,15 @@ Prescribed number of connections
    specifying the number of connections to create per driver node. See
    Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
 
-A selection of topology-specific NEST Parameters are shown in Table
+A selection of specific NEST parameters are pertaining to spatially structured networks shown in Table
 :ref:`tbl_parameters`.
 
 .. _tbl_parameters:
 
-Topology-specific NEST Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Spatially-structured specific NEST parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Parameters in the table below represent positions of neurons or
+The parameters in the table below represent positions of neurons or
 distances between two neurons. To set node parameters, only the node
 position can be used. The others can only be used when connecting.
 
@@ -1026,7 +1027,7 @@ Cut-off Gaussian
     :start-after: #{ conn42d #}
     :end-before: #{ end #}
 
-Note that for pool layers with periodic boundary conditions, Topology
+Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to
 pool neuron as ``nest.spatial.distance``.
 
@@ -1144,7 +1145,7 @@ on the following principles:
    is irrelevant whether the driver layer has periodic boundary
    conditions or not.
 
--  By default, Topology does not accept masks that are wider than the
+-  By default, NEST does not accept masks that are wider than the
    pool layer when using periodic boundary conditions. Otherwise, one
    pool node could appear as multiple targets to the same driver node as
    the masks wraps several times around the layer. For layers with
@@ -1176,7 +1177,7 @@ probability.
 
 Many neuron models in the literature, in contrast, prescribe a certain
 *fan in* (number of incoming connections) or *fan out* (number of outgoing
-connections) for each node. You can achieve this in Topology by
+connections) for each node. You can achieve this in NEST by
 prescribing the number of connections for each driver node by using
 ``fixed_indegree`` or ``fixed_outdegree``.
 
@@ -1322,7 +1323,7 @@ Layers and recording devices
 ----------------------------
 
 Generally, one should not create a layer of recording devices,
-especially spike detectors, to record from a topology layer. Instead,
+especially spike detectors, to record from a layer. Instead,
 create a single spike detector, and connect all neurons in the layer to
 that spike detector:
 
@@ -1351,9 +1352,7 @@ visualize networks, layers, and connectivity.
 Query functions
 ---------------
 
-The following table presents some query functions provided by NEST. For
-detailed information about these functions, please see the online Python
-and SLI documentation.
+The following table presents some query functions provided by NEST.
 
 +---------------------------------+---------------------------------------------+
 | ``nest.PrintNodes()``           | Print the node ID ranges and model names of |
@@ -1396,7 +1395,7 @@ and SLI documentation.
 +---------------------------------+---------------------------------------------+
 | ``nest.DumpLayerConnections()`` | Write connectivity information to file.     |
 |                                 | This function may be very useful to check   |
-|                                 | that Topology created the correct           |
+|                                 | that NEST created the correct               |
 |                                 | connection structure.                       |
 +---------------------------------+---------------------------------------------+
 | ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a  |
@@ -1445,6 +1444,8 @@ center neuron are shown, as well as mask and connection probability.
 .. literalinclude:: user_manual_scripts/layers.py
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
+
+.. TODO: adding masks need to be updated for 3.0?
 
 .. _ch:extending:
 
@@ -1572,6 +1573,8 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
+.. TODO: how does registering work with mymodule in 3.0?
+
 The mask class must then be registered with the topology module, and this
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
@@ -1592,111 +1595,6 @@ used in connections, e.g.
                        'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 
 
-.. TODO: remove changes?
-
-.. _sec:changes:
-
-Changes between versions
-========================
-
-In this chapter we give summaries of the most important changes in the
-Topology Module between different NEST versions, starting with the most
-recent ones.
-
-Changes from Topology 2.14 to 2.16
-----------------------------------
-
-The one important change in the Topology module from NEST version 2.14
-to 2.16 was the inclusion of rotated masks:
-
--  Rotation of ``rectangular/box`` and ``elliptical/ellipsoidal`` masks
-   is now possible. NEST offers rotation in two directions, from the
-   x-axis towards the y-axis, and from the z-axis away from the y-axis.
-   To specify the former use the variable ``azimuth_angle`` and for the
-   latter, use ``polar_angle``.
-
-Changes from Topology 2.12 to 2.14
-----------------------------------
-
-This is a short summary of the most important changes in the Topology
-Module from NEST version 2.12 to 2.14.
-
--  Elliptical and ellipsoidal masks have been added to NEST with
-   NEST 2.14. To specify the mask, the ``major_axis``, ``minor_axis``
-   and (for ellipsoidal masks) ``polar_axis`` must be specified.
-
--  It is now possible to obtain the node IDs inside a masked area with the
-   function SelectNodesByMask.
-
-Changes from Topology 2.0 to 2.2
---------------------------------
-
-This is a short summary of the most important changes in the Topology
-Module from NEST version 2.0 to 2.2.
-
--  Nested layers are no longer supported.
-
--  Subnets are no longer used inside composite layers. A call to
-   GetElement for a composite layer will now return a list of node IDs for
-   the nodes at the position rather than a single subnet node ID.
-
--  Positions in layers may now be 3-dimensional.
-
--  The functions GetPosition, Displacement and Distance now only works
-   for nodes local to the current MPI process, if used in a MPI-parallel
-   simulation.
-
--  It is now possible to add kernel functions and masks to the Topology
-   module through an extension module. Please see
-   Chapter \ `5 <#ch:extending>`__ for examples.
-
-Changes from Topology 1.9 to 2.0
---------------------------------
-
-This is a short summary of the most important changes in the NEST
-Topology Module from the 1.9-xxxx to the 2.0 version.
-
--  ConnectLayer is now called ConnectLayers
-
--  Several other functions changed names, and there are many new
-   functions. Please see Ch. \ :ref:`4 <sec:inspection>` for an overview.
-
--  All nest.topology functions now require lists of node IDs as input, not
-   "naked" node IDs
-
--  There are a number of new functions in nest.topology, I tried to
-   write good doc strings for them
-
--  For grid based layers (ie those with /rows and /columns), we have
-   changed the definition of "extent": Previously, nodes were placed on
-   the edges of the extent, so if you had an extend of 2 (in
-   x-direction) and 3 nodes, these had x-coordinates -1, 0, 1. The grid
-   constant was extent/(num_nodes - 1).
-
-   Now, we define the grid constant as extent/num_nodes, center the
-   nodes about 0 and thus add a space of half a grid constant between
-   the outermost nodes and the boundary of the extent. If you want three
-   nodes at -1,0,1 you thus have to set the extent to 3, i.e.,
-   stretching from -1.5 to 1.5.
-
-   The main reason for this change was that topology always added this
-   padding silently when you used periodic boundary conditions
-   (otherwise, neurons are the left and right edge would have been in
-   identical locations, not what one wants).
-
--  The semantics of the ``anchor`` entry for kernel functions has
-   changed: the anchor now specifies the center of the probability
-   distribution relative to the driver node. This is consistent with the
-   semantics for free masks, see Sec. \ :ref:`3.3 <sec:conn_masks>` and
-   :ref:`3.4 <sec:conn_kernels>`.
-
--  Functions computing connection probabilities, weights and delays as
-   functions of distance between source and target nodes now handle
-   periodic boundary conditions correctly.
-
--  Masks with a diameter larger than the diameter of the layer they are
-   applied to are now prohibited by default. This avoids multiple
-   connections when masks overwrap.
 
 References
 ==========

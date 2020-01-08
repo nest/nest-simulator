@@ -19,15 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
-
-Create a 4x3 grid with one pyramidal cell and one interneuron at each position,
-visualize.
+"""
+Create a 4x3 grid with one pyramidal cell and one interneuron at each position
+-------------------------------------------------------------------------------
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab

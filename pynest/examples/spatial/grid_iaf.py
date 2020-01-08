@@ -19,14 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
-
-Create a population of iaf_psc_alpha neurons on a 4x3 grid, visualize.
+"""
+Create a population of iaf_psc_alpha neurons on a 4x3 grid
+-----------------------------------------------------------
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab

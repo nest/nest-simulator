@@ -19,24 +19,24 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
-
-Create two populations on a 30x30 grid and connect them using a Gaussian
-probabilistic kernel, visualize.
+"""
+Create two populations on a 30x30 grid and connect them using a Gaussian probabilistic kernel
+----------------------------------------------------------------------------------------------
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import pylab
 import nest
 
 nest.ResetKernel()
 
+#####################################################################
 # create two test layers
 pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 
+#####################################################################
 # create and connect two populations
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
@@ -48,10 +48,12 @@ cdict = {'rule': 'pairwise_bernoulli',
 
 nest.Connect(a, b, cdict)
 
+#####################################################################
 # plot targets of neurons in different grid locations
-
+#
 # plot targets of two source neurons into same figure, with mask
 # use different colors
+
 for src_index, color, cmap in [(30 * 15 + 15, 'blue', 'Blues'), (0, 'green', 'Greens')]:
     # obtain node id for center
     src = a[src_index:src_index + 1]

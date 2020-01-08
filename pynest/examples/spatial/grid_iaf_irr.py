@@ -19,14 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
-
-Create 12 freely placed iaf_psc_alpha neurons, visualize.
+"""
+Create 12 freely placed iaf_psc_alpha neurons
+-----------------------------------------------
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab

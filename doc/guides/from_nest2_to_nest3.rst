@@ -24,7 +24,7 @@ What's new?
 .. _nodeid:
 
 New functionality for node handles (neurons and devices)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.
@@ -211,7 +211,7 @@ Direct attributes
 .. _get_param:
 
 Get the node status
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 ``get()`` returns the parameters in the collection. You can call ``get()`` in
 several ways.
@@ -311,7 +311,7 @@ output format can be specified for all the different ``get()`` versions above.
 .. _set_param:
 
 Set node properties
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 ``set()`` sets the values of a parameter by iterating over each node.
 
@@ -342,7 +342,7 @@ will point out which parameters can be set and which are read-only.
 .. _SynapseCollection:
 
 New functionality for handling connections (synapses)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
 container for connections. In NEST 3, when you call ``GetConnections()`` a
@@ -523,7 +523,7 @@ Iterator of sources and targets
 .. _param_ex:
 
 Parametrization
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 NEST 3.0 introduces *parameter objects*, i.e., objects that represent values
 drawn from a random distribution or values based on various spatial node
@@ -547,6 +547,7 @@ The following parameters and functionalities are provided:
 
 Random parameters
 ^^^^^^^^^^^^^^^^^
+
 The `random` module contains random distributions that can be used to set node
 and connection parameters, as well as positions for spatially distributed nodes.
 
@@ -933,7 +934,7 @@ statement. Three arguments are required:
 .. _combine_ex:
 
 Combine parameters
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 NEST parameters support the basic arithmetic operations. Two parameters
 can be added together, subtracted, multiplied with each other, or one can
@@ -960,7 +961,7 @@ Some examples:
     p = nest.spatial.distance**2 + 0.4 * nest.random.uniform() * nest.spatial.distance
 
 Use parameters to set node properties
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Using parameters makes it easy to set node properties
 
@@ -978,14 +979,14 @@ Using parameters makes it easy to set node properties
   +-----------------------------------------------+----------------------------------------------------+
 
 What's changed?
-----------------
+---------------
 
 With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
 
 .. _param_changes:
 
 Model parameters and their functionalities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Consistently use term synapse_model throughout:
     As all PyNEST functions that used to take the list returned by ``Create`` now use the NodeCollection
@@ -1139,6 +1140,7 @@ Composite layers:
 
 Retrieving spatial information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 To retrieve the spatial information from your nodes, spatially structured NodeCollections have
 a ``.spatial`` parameter that will retrieve all spatial information as a dictionary.
 
@@ -1192,7 +1194,7 @@ metadata. In a layer-connection context, moving to the standard
   above.
 
 Usage examples
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
 
 A grid layer connected with Gaussian distance dependent connection
 probability and rectangular mask on the target layer:
@@ -1250,7 +1252,7 @@ probability and delay, and random weights from a normal distribution:
 
 
 What's removed?
------------------
+---------------
 
 .. subnet_rm::
 

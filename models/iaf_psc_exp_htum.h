@@ -1,5 +1,5 @@
 /*
- *  iaf_tum_2000.h
+ *  iaf_psc_exp_htum.h
  *
  *  This file is part of NEST.
  *
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef IAF_TUM_2000_H
-#define IAF_TUM_2000_H
+#ifndef iaf_psc_exp_htum_H
+#define iaf_psc_exp_htum_H
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -39,14 +39,14 @@ namespace nest
 @ingroup Neurons
 @ingroup iaf
 
-Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
-                    PSCs.
+Name: iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential
+                         PSCs.
 
 Description:
 
-iaf_tum_2000 is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1].
-The postsynaptic currents have an infinitely short rise time.
+iaf_psc_exp_htum is an implementation of a leaky integrate-and-fire model
+with exponential shaped postsynaptic currents (PSCs) according to [1], and first
+described in [2]. The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
 refractory time separately, as required by [1].
 
@@ -59,7 +59,7 @@ larger or equal to the absolute refractory time. If equal, the
 refractoriness of the model if equivalent to the other models of NEST.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]. The neuron dynamics is solved on the time
+Integration scheme [3]. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -68,7 +68,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]. A flow chart can be found in [3].
+[3]. A flow chart can be found in [4].
 
 Remarks:
 
@@ -81,7 +81,7 @@ object is required.
 
 The template support of recent C++ compilers enables a more succinct
 formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_tum_2000 will probably
+optimization levels. A future version of iaf_psc_exp_htum will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
@@ -120,11 +120,14 @@ References:
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
        20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
+.. [2] Hill, A. V. (1936). Excitation and accommodation in nerve. Proceedings of
+       the Royal Society of London. Series B-Biological Sciences, 119(814), 305-355.
+       DOI: https://doi.org/10.1098/rspb.1936.0012
+.. [3] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
-.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+.. [4] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
@@ -138,12 +141,12 @@ FirstVersion: March 2006
 
 Author: Moritz Helias
 */
-class iaf_tum_2000 : public Archiving_Node
+class iaf_psc_exp_htum : public Archiving_Node
 {
 
 public:
-  iaf_tum_2000();
-  iaf_tum_2000( const iaf_tum_2000& );
+  iaf_psc_exp_htum();
+  iaf_psc_exp_htum( const iaf_psc_exp_htum& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -174,8 +177,8 @@ private:
   void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_tum_2000 >;
-  friend class UniversalDataLogger< iaf_tum_2000 >;
+  friend class RecordablesMap< iaf_psc_exp_htum >;
+  friend class UniversalDataLogger< iaf_psc_exp_htum >;
 
   // ----------------------------------------------------------------
 
@@ -259,8 +262,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_tum_2000& );
-    Buffers_( const Buffers_&, iaf_tum_2000& );
+    Buffers_( iaf_psc_exp_htum& );
+    Buffers_( const Buffers_&, iaf_psc_exp_htum& );
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -268,7 +271,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_tum_2000 > logger_;
+    UniversalDataLogger< iaf_psc_exp_htum > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -319,7 +322,7 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_tum_2000_data
+   * @defgroup iaf_psc_exp_htum_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -332,12 +335,12 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_tum_2000 > recordablesMap_;
+  static RecordablesMap< iaf_psc_exp_htum > recordablesMap_;
 };
 
 
 inline port
-iaf_tum_2000::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_exp_htum::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -345,7 +348,7 @@ iaf_tum_2000::send_test_event( Node& target, rport receptor_type, synindex, bool
 }
 
 inline port
-iaf_tum_2000::handles_test_event( SpikeEvent&, rport receptor_type )
+iaf_psc_exp_htum::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -355,7 +358,7 @@ iaf_tum_2000::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-iaf_tum_2000::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_exp_htum::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -365,7 +368,7 @@ iaf_tum_2000::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_tum_2000::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_htum::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -376,7 +379,7 @@ iaf_tum_2000::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 
 
 inline void
-iaf_tum_2000::get_status( DictionaryDatum& d ) const
+iaf_psc_exp_htum::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -385,7 +388,7 @@ iaf_tum_2000::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_tum_2000::set_status( const DictionaryDatum& d )
+iaf_psc_exp_htum::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
@@ -405,4 +408,4 @@ iaf_tum_2000::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // IAF_TUM_2000_H
+#endif // iaf_psc_exp_htum_H

@@ -1,5 +1,5 @@
 /*
- *  iaf_tum_2000.cpp
+ *  iaf_psc_exp_htum.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "iaf_tum_2000.h"
+#include "iaf_psc_exp_htum.h"
 
 // C++ includes:
 #include <limits>
@@ -45,7 +45,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_exp_htum > nest::iaf_psc_exp_htum::recordablesMap_;
 
 namespace nest
 {
@@ -53,12 +53,12 @@ namespace nest
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< iaf_tum_2000 >::create()
+RecordablesMap< iaf_psc_exp_htum >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_tum_2000::get_V_m_ );
-  insert_( names::I_syn_ex, &iaf_tum_2000::get_I_syn_ex_ );
-  insert_( names::I_syn_in, &iaf_tum_2000::get_I_syn_in_ );
+  insert_( names::V_m, &iaf_psc_exp_htum::get_V_m_ );
+  insert_( names::I_syn_ex, &iaf_psc_exp_htum::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &iaf_psc_exp_htum::get_I_syn_in_ );
 }
 }
 
@@ -66,7 +66,7 @@ RecordablesMap< iaf_tum_2000 >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_tum_2000::Parameters_::Parameters_()
+nest::iaf_psc_exp_htum::Parameters_::Parameters_()
   : Tau_( 10.0 )             // in ms
   , C_( 250.0 )              // in pF
   , tau_ref_tot_( 2.0 )      // in ms
@@ -80,7 +80,7 @@ nest::iaf_tum_2000::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_tum_2000::State_::State_()
+nest::iaf_psc_exp_htum::State_::State_()
   : i_0_( 0.0 )
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
@@ -95,7 +95,7 @@ nest::iaf_tum_2000::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_psc_exp_htum::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
@@ -110,7 +110,7 @@ nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_psc_exp_htum::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -166,13 +166,13 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_exp_htum::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
-nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_psc_exp_htum::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
   {
@@ -184,12 +184,12 @@ nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p,
   }
 }
 
-nest::iaf_tum_2000::Buffers_::Buffers_( iaf_tum_2000& n )
+nest::iaf_psc_exp_htum::Buffers_::Buffers_( iaf_psc_exp_htum& n )
   : logger_( n )
 {
 }
 
-nest::iaf_tum_2000::Buffers_::Buffers_( const Buffers_&, iaf_tum_2000& n )
+nest::iaf_psc_exp_htum::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_htum& n )
   : logger_( n )
 {
 }
@@ -198,7 +198,7 @@ nest::iaf_tum_2000::Buffers_::Buffers_( const Buffers_&, iaf_tum_2000& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_tum_2000::iaf_tum_2000()
+nest::iaf_psc_exp_htum::iaf_psc_exp_htum()
   : Archiving_Node()
   , P_()
   , S_()
@@ -207,7 +207,7 @@ nest::iaf_tum_2000::iaf_tum_2000()
   recordablesMap_.create();
 }
 
-nest::iaf_tum_2000::iaf_tum_2000( const iaf_tum_2000& n )
+nest::iaf_psc_exp_htum::iaf_psc_exp_htum( const iaf_psc_exp_htum& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -220,14 +220,14 @@ nest::iaf_tum_2000::iaf_tum_2000( const iaf_tum_2000& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_tum_2000::init_state_( const Node& proto )
+nest::iaf_psc_exp_htum::init_state_( const Node& proto )
 {
-  const iaf_tum_2000& pr = downcast< iaf_tum_2000 >( proto );
+  const iaf_psc_exp_htum& pr = downcast< iaf_psc_exp_htum >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::iaf_tum_2000::init_buffers_()
+nest::iaf_psc_exp_htum::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize
   B_.spikes_in_.clear(); // includes resize
@@ -237,7 +237,7 @@ nest::iaf_tum_2000::init_buffers_()
 }
 
 void
-nest::iaf_tum_2000::calibrate()
+nest::iaf_psc_exp_htum::calibrate()
 {
   B_.logger_.init();
 
@@ -269,7 +269,7 @@ nest::iaf_tum_2000::calibrate()
   // P20_ = h/C_;
 
   // tau_ref_abs_ and tau_ref_tot_ specify the length of the corresponding
-  // refractory periods as doubles in ms. The grid based iaf_tum_2000 can
+  // refractory periods as doubles in ms. The grid based iaf_psc_exp_htum can
   // only handle refractory periods that are integer multiples of the
   // computation step size (h). To ensure consistency with the overall
   // simulation scheme such conversion should be carried out via objects of
@@ -303,7 +303,7 @@ nest::iaf_tum_2000::calibrate()
 }
 
 void
-nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
+nest::iaf_psc_exp_htum::update( Time const& origin, const long from, const long to )
 {
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
@@ -361,7 +361,7 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::iaf_tum_2000::handle( SpikeEvent& e )
+nest::iaf_psc_exp_htum::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -378,7 +378,7 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_tum_2000::handle( CurrentEvent& e )
+nest::iaf_psc_exp_htum::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -390,7 +390,7 @@ nest::iaf_tum_2000::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_tum_2000::handle( DataLoggingRequest& e )
+nest::iaf_psc_exp_htum::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

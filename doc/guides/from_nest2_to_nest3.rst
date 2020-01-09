@@ -1330,7 +1330,7 @@ made the code more complex and prone to errors. In case of high user
 demand, the functionality will be re-added in form of a recording
 backend.
 
-All details about the new infrastucture can be found in the guide on
+All details about the new infrastructure can be found in the guide on
 :doc:`recording from simulations <recording_from_simulations>`.
   
 

@@ -164,6 +164,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -315,6 +317,12 @@ inline SignalType
 noise_generator::sends_signal() const
 {
   return ALL;
+}
+
+inline void
+noise_generator::calibrate_time( const TimeConverter& tc )
+{
+  P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
 }
 
 } // namespace

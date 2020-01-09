@@ -1306,7 +1306,7 @@ was executed.
   |                                                      |                                |
   +------------------------------------------------------+--------------------------------+
 
-The list of available backends can be retrieved using the following command:
+You can retrieve the list of available backends using the following command:
 
  ::
 

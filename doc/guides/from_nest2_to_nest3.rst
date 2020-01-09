@@ -1313,7 +1313,7 @@ The list of available backends can be retrieved using the following command:
     list(nest.GetKernelStatus("recording_backends").keys())
 
 Previously, the content and formatting of any output created by a
-recording devices could be configured in a fine-grained fashion using
+recording device could be configured in a fine-grained fashion using
 flags like `withgid`, `withtime`, `withweight`, `withport` and so
 on. In many cases, this, however, lead to a confusing variety of
 possible interpretations of data columns for the resulting output.

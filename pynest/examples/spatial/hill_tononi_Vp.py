@@ -119,7 +119,7 @@ connections, then apply these dictionaries later.
 The way in which we declare the network model here is an
 example. You should not consider it the last word: we expect to see
 a significant development in strategies and tools for network
-descriptions in the future. The following contributions to CNS\*09
+descriptions in the future. The following contributions to CNS*09
 seem particularly interesting
 
 - Ralf Ansorg & Lars Schwabe. Declarative model description and
@@ -309,7 +309,6 @@ nest.CopyModel('NeuronModel', 'ThalamicNeuron',
                        'V_th': -53.0,
                        't_ref': 1.0,
                        'E_in': -80.0})
-
 
 
 ##############################################################################
@@ -818,7 +817,6 @@ for src, tgt, conn, syn in [(TpRelay, Rp,
     syn_spec = thal_syn_spec.copy()
     syn_spec.update(syn)
     nest.Connect(src, tgt, conn_spec, syn_spec)
-
 
 
 ##############################################################################

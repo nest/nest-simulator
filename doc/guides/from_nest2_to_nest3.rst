@@ -1278,7 +1278,7 @@ more of the flags `to_file`, `to_memory`, or `to_screen` to *True*.
 
 In NEST 3.0, the individual flags are gone, and the `record_to`
 property now expects the name of the backend you want to use. Recording to
-multiple modalities from a single device is not possible anymore and
+multiple modalities from a single device is no longer possible. 
 individual devices have to be created and configured if this
 functionality is needed.
 

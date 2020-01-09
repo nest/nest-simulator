@@ -26,6 +26,9 @@ import numpy as np
 
 @nest.ll_api.check_stack
 class TestChangingTicBase(unittest.TestCase):
+    eps = 1e-7
+    ignored_models = ['iaf_psc_exp_ps_lossless']
+
     def setUp(self):
         nest.ResetKernel()
 
@@ -38,9 +41,11 @@ class TestChangingTicBase(unittest.TestCase):
             except nest.kernel.NESTError:
                 # If we can't get the defaults, we ignore the model.
                 pass
-        nest.SetKernelStatus({'tics_per_ms': 1024., 'resolution': 0.5})
+        nest.SetKernelStatus({'tics_per_ms': 1500., 'resolution': 0.5})
         failing_models = []
         for model in reference.keys():
+            if model in self.ignored_models:
+                continue
             model_reference = reference[model]
             model_defaults = nest.GetDefaults(model)
             # Remove entries where the item contains more than one value, as this causes issues when comparing.
@@ -50,10 +55,15 @@ class TestChangingTicBase(unittest.TestCase):
                 del model_defaults[key]
                 del model_reference[key]
 
-            if model_defaults != model_reference:
-                keydiff = [key for key, value in model_defaults.items() if value != model_reference[key]]
+            keydiff = []
+            for key, value in model_defaults.items():
+                if value != model_reference[key] and abs(value - model_reference[key]) > self.eps:
+                    print(value - model_reference[key])
+                    keydiff.append([key, model_reference[key], value])
+            if len(keydiff) > 0:
                 print(model, keydiff)
                 failing_models.append(model)
+
         self.assertEqual([], failing_models)
 
 

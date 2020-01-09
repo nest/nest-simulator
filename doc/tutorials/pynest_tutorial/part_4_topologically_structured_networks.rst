@@ -47,7 +47,7 @@ randomly selected connections between networks using ``Connect()``. Likewise, it
 also possible to use ``Create()`` and ``Connect()`` to create network
 models that incorporate spatial location and spatial connectivity
 profiles. **NOTE:** Full documentation for usage of the spatial functions
-is present in :doc:`NEST Topology Users Manual (NTUM)<../../topology/Topology_UserManual>` [1]_,
+is present in our :doc:`../../guides/guide_structurally_spatial_networks` [1]_,
 which in the following is referenced as full-source.
 
 Adding spatial information to populations
@@ -363,12 +363,12 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See Section 4.2 *Visualization functions* of :doc:`NTUM<../../topology/Topology_UserManual>`
+   See Section 4.2 *Visualization functions* of :doc:`<../../guides/guide_structurally_spatial_networks>`
    for more details.
 
 It may also be useful to look at the ``.spatial`` property of the
 NodeCollection, which describes the spatial properties. Other useful
-functions that may be of help are listed in :doc:`NTUM<../../topology/Topology_UserManual>`
+functions that may be of help are listed in :doc:`<../../ref_material/nest2_vs_3>`
 Section 4.1 *Query functions*.
 
 >>>  ex_pop.spatial
@@ -378,6 +378,9 @@ Section 4.1 *Query functions*.
       'network_size': 20,
       'shape': (5, 4)}
 
+It may also be useful to look at the ``spatial`` property of the
+NodeCollection, which describes the layer properties. Other useful
+functions that may be of help are listed in NTUM Section 4.1.
 
 References
 ----------

@@ -266,10 +266,10 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
     // it is effectively late by that much at the synapse.
     double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
-    // subtract 1.0 yields the triplet_Kminus value just prior to
+    // subtract 1.0 yields the Kminus_triplet value just prior to
     // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
-    double ky = start->triplet_Kminus_ - 1.0;
+    double ky = start->Kminus_triplet_ - 1.0;
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0

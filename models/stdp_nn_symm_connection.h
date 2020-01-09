@@ -276,7 +276,7 @@ STDPNNSymmConnection< targetidentifierT >::send( Event& e, thread t, const Commo
 
   // depression due to the new pre-synaptic spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and triplet_Kminus here
+  double value_to_throw_away; // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 

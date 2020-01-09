@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
+"""
+Connect with circular mask, flat probability using 2 populations of iaf_psc_alpha neurons
+-------------------------------------------------------------------------------------------
 
 Create two populations on a 30x30 grid of iaf_psc_alpha neurons,
 connect with circular mask, flat probability,
@@ -28,7 +29,7 @@ visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab
@@ -37,6 +38,7 @@ nest.ResetKernel()
 
 pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 
+#######################################################
 # create and connect two populations
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
@@ -49,6 +51,7 @@ nest.Connect(a, b,
              conn_spec=cdict,
              syn_spec={'weight': nest.random.uniform(0.5, 2.)})
 
+#################################################################
 # plot targets of neurons in different grid locations
 
 # first, clear existing figure, get current figure

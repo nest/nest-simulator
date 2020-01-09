@@ -663,11 +663,11 @@ public:
   virtual double get_LTD_value( double t );
 
   /**
-   * write the Kminus, nearest_neighbor_Kminus, and triplet_Kminus
+   * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
   * return the spike history for (t1,t2].

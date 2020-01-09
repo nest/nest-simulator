@@ -280,11 +280,11 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   if ( start != finish )
   {
     double nearest_neighbor_Kminus;
-    double value_to_throw_away; // discard Kminus and triplet_Kminus here
+    double value_to_throw_away; // discard Kminus and Kminus_triplet here
     target->get_K_values( t_spike - dendritic_delay,
       value_to_throw_away, // discard Kminus
       nearest_neighbor_Kminus,
-      value_to_throw_away // discard triplet_Kminus
+      value_to_throw_away // discard Kminus_triplet
       );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }

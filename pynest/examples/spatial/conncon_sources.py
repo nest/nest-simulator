@@ -19,16 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
+"""
+Connect two populations with convergent projection and rectangular mask, visualize connection from target perspective
+-----------------------------------------------------------------------------------------------------------------------
 
-Create two populations of iaf_psc_alpha neurons on a 30x30 grid,
-connect with convergent projection and rectangular mask,
-visualize connection from target perspective.
-
+Create two populations of iaf_psc_alpha neurons on a 30x30 grid
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
 import nest
 import pylab
@@ -38,6 +36,7 @@ nest.set_verbosity('M_WARNING')
 
 pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 
+#########################################################################
 # create and connect two populations
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
@@ -51,6 +50,7 @@ nest.Connect(a, b,
              syn_spec={'weight': nest.random.uniform(0.5, 2.)})
 pylab.clf()
 
+############################################################################
 # plot sources of neurons in different grid locations
 for tgt_index in [30 * 15 + 15, 0]:
     # obtain node id for center

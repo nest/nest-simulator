@@ -48,8 +48,6 @@
 #include "fdstream.h"
 #include "name.h"
 
-const DictionaryDatum nest::ConnBuilder::dummy_param_ = new Dictionary;
-
 nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   const GIDCollection& targets,
   const DictionaryDatum& conn_spec,
@@ -65,6 +63,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , weight_( 0 )
   , delay_( 0 )
   , param_dicts_()
+  , dummy_param_dicts_()
   , parameters_requiring_skipping_()
 {
   // read out rule-related parameters -------------------------
@@ -205,6 +204,13 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         }
       }
     }
+  }
+
+  // Create dummy dictionaries, one per thread
+  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+  {
+    dummy_param_dicts_[ kernel().vp_manager.get_thread_id() ] = new Dictionary();
   }
 
   // If make_symmetric_ is requested call reset on all parameters in order
@@ -397,12 +403,17 @@ nest::ConnBuilder::single_connect_( index sgid, Node& target, thread target_thre
   {
     if ( default_weight_and_delay_ )
     {
-      kernel().connection_manager.connect( sgid, &target, target_thread, synapse_model_id_, dummy_param_ );
+      kernel().connection_manager.connect(
+        sgid, &target, target_thread, synapse_model_id_, dummy_param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
     {
-      kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, dummy_param_, delay_->value_double( target_thread, rng ) );
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_id_,
+        dummy_param_dicts_[ target_thread ],
+        delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
     {
@@ -410,7 +421,7 @@ nest::ConnBuilder::single_connect_( index sgid, Node& target, thread target_thre
         &target,
         target_thread,
         synapse_model_id_,
-        dummy_param_,
+        dummy_param_dicts_[ target_thread ],
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -419,7 +430,7 @@ nest::ConnBuilder::single_connect_( index sgid, Node& target, thread target_thre
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_id_, dummy_param_, delay, weight );
+        sgid, &target, target_thread, synapse_model_id_, dummy_param_dicts_[ target_thread ], delay, weight );
     }
   }
   else

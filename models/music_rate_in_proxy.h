@@ -47,15 +47,15 @@
 
 /*BeginDocumentation
 
-Name: music_rate_in_proxy - A device which receives continuous data from MUSIC.
+Name: music_rate_in_proxy - A device which receives rate data from MUSIC.
 
 Description:
-A music_rate_in_proxy can be used to receive continuous data from
+A music_rate_in_proxy can be used to receive rate data from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive the data from other applications.
 The music_rate_in_proxy represents a complete port to which MUSIC can
-connect and send data. The music_rate_in_proxy can queried using
+connect and send data. The music_rate_in_proxy can be queried using
 GetStatus to retrieve the messages.
 
 Parameters:
@@ -75,19 +75,18 @@ Examples:
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
-Author: Jochen Martin Eppler
-FirstVersion: July 2010
+Author: Philipp Weidel, Jakob Jordan
+FirstVersion: June 2019
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
+SeeAlso: music_rate_out_proxy, music_cont_in_proxy
 */
 
 namespace nest
 {
 /**
- * Emit spikes at times received from another application via a
- * MUSIC port. The timestamps of the events also contain offsets,
- * which makes it also useful for precise spikes.
+ * Emit rate at times received from another application via a
+ * MUSIC port.
  */
 class music_rate_in_proxy : public DeviceNode
 {

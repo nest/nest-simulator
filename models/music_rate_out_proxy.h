@@ -43,11 +43,11 @@
 
 /* BeginDocumentation
 
-Name: music_rate_out_proxy - Device to forward spikes to remote applications
+Name: music_rate_out_proxy - Device to forward rates to remote applications
                               using MUSIC.
 
 Description:
-A music_rate_out_proxy is used to send spikes to a remote application that
+A music_rate_out_proxy is used to send rates to a remote application that
 also uses MUSIC.
 
 The music_rate_out_proxy represents a complete MUSIC rate output
@@ -72,11 +72,11 @@ Examples:
 /music_rate_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect
 
-Author: Moritz Helias, Jochen Martin Eppler
-FirstVersion: March 2009
+Author: Philipp Weidel, Jakob Jordan
+FirstVersion: June 2019
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_rate_in_proxy, music_cont_in_proxy, music_message_in_proxy
+SeeAlso: music_rate_in_proxy, music_cont_out_proxy
 */
 
 namespace nest

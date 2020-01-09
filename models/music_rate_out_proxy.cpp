@@ -136,8 +136,6 @@ nest::music_rate_out_proxy::~music_rate_out_proxy()
 void
 nest::music_rate_out_proxy::init_state_( const Node& /* np */ )
 {
-  // const music_rate_out_proxy& sd = dynamic_cast<const
-  // music_rate_out_proxy&>(np);
 }
 
 void

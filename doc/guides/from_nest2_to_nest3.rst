@@ -1264,7 +1264,7 @@ taken care of by a specific recording backend and each recorder can
 use one of them to handle its data.
 
 NEST 3.0 supports the same recording backends for all modalities 
-already in NEST 2.x. If compiled with support for `SIONlib
+as in NEST 2.x. If compiled with support for `SIONlib
 <http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
 writing binary files in parallel becomes available. This is especially
 useful on large clusters and supercomputers.

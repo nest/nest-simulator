@@ -1283,7 +1283,7 @@ Individual devices have to be created and configured if this
 functionality is needed.
 
 The following examples assume that the variable `mm` points to a
-``multimeter`` instance, i.e. that ``mm = nest.Create('multimeter')``
+``multimeter`` instance, i.e.,  ``mm = nest.Create('multimeter')``
 was executed.
 
 

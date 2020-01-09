@@ -1282,7 +1282,7 @@ multiple modalities from a single device is no longer possible.
 Individual devices have to be created and configured if this
 functionality is needed.
 
-All following examples assume that the variable `mm` points to a
+The following examples assume that the variable `mm` points to a
 ``multimeter`` instance, i.e. that ``mm = nest.Create('multimeter')``
 was executed.
 

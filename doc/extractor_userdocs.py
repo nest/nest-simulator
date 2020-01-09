@@ -270,4 +270,3 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
 
 if __name__ == '__main__':
     ExtractUserDocs(relative_glob("models/*.h", "nestkernel/*.h", basedir='..'), outdir="from_cpp/")
-

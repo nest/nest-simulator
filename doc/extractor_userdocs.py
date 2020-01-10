@@ -51,7 +51,9 @@ def UserDocExtractor(
     This method searches for "BeginUserDocs" and "EndUserDocs" keywords and
     extracts all text inbetween as user-level documentation. The keyword
     "BeginUserDocs" may optionally be followed by a colon ":" and a comma
-    separated list of tags till the end of the line.
+    separated list of tags till the end of the line. Note that this allows tags
+    to contain spaces, i.e. you do not need to introduce underscores or hyphens
+    for multi-word tags.
 
     Example
     -------

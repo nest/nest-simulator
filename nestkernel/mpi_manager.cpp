@@ -114,7 +114,7 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 
   // MPI errors are not detected systematically on all MPI operations.
   // Therefore make them fatal to avoid proceeding past MPI errors.
-  MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_ARE_FATAL);
+  MPI_Comm_set_errhandler( MPI_COMM_WORLD, MPI_ERRORS_ARE_FATAL );
 
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );

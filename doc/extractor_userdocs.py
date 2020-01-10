@@ -216,6 +216,10 @@ def reverse_dict(tags):
 
 
 def CreateTagIndices(tags, outdir="from_cpp/"):
+    """
+    This function generates all combinations of tags and creates an index page
+    for each combination using `rst_index`.
+    """
     taglist = list(tags.keys())
     if "" in taglist:
         taglist.remove('')
@@ -258,6 +262,10 @@ class JsonWriter(object):
 def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
     """
     Extract and build all user documentation and build tag indices.
+
+    Writes extracted information to JSON files in outdir. In particular the
+    list of seen tags mapped to files they appear in, and the indices generated
+    from all combinations of tags.
     """
     data = JsonWriter(outdir)
     # Gather all information and write RSTs

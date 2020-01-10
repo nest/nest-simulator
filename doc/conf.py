@@ -62,25 +62,6 @@ sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
 
-try:
-    print(subprocess.check_output(['pandoc', '--version']))
-except subprocess.CalledProcessError:
-    print("No pandoc on %s" % os.environ['PATH'])
-
-
-def ConvertMarkdownFiles():
-    for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
-        for f in files:
-            if not f.endswith('.md'):
-                continue
-            ff = os.path.join(dirpath, f)
-            print(ff)
-            fb = os.path.basename(f)[:-3]
-            print(fb)
-            fo = fb + ".rst"
-            args = ['pandoc', ff, '-o', fo]
-            subprocess.check_output(args)
-
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
 from mock_kernel import convert  # noqa
@@ -227,7 +208,6 @@ def config_inited_handler(app, config):
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
         outdir="from_cpp/"
     )
-    ConvertMarkdownFiles()
 
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),

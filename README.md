@@ -5,6 +5,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2605422.svg)](https://doi.org/10.5281/zenodo.2605422)
 [![Latest Version](https://img.shields.io/badge/latest%20version-2.18.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.18.0)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
+[![Coverage Status](https://coveralls.io/repos/github/lekshmideepu/nest-simulator/badge.svg?branch=master)](https://coveralls.io/github/lekshmideepu/nest-simulator?branch=master)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact

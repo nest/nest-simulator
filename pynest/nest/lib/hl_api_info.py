@@ -202,12 +202,12 @@ def message(level, sender, text):
 def get_verbosity():
     """Return verbosity level of NEST's messages.
 
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
+    - M_ALL=0,  display all messages
+    - M_INFO=10, display information messages and above
+    - M_DEPRECATED=18, display deprecation warnings and above
+    - M_WARNING=20, display warning messages and above
+    - M_ERROR=30, display error messages and above
+    - M_FATAL=40, display failure messages and above
 
     Returns
     -------
@@ -251,7 +251,7 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : NodeCollection or tuple
+    nodes : NodeCollection or SynapseCollection
         Either a `NodeCollection` representing nodes, or a `SynapseCollection`
         of connection handles as returned by
         :py:func:`.GetConnections()`.
@@ -271,7 +271,7 @@ def SetStatus(nodes, params, val=None):
 
     See Also
     -------
-    :py:func:`.GetStatus`
+    GetStatus
 
     """
 
@@ -339,7 +339,7 @@ def GetStatus(nodes, keys=None, output=''):
 
     Parameters
     ----------
-    nodes : NodeCollection or tuple
+    nodes : NodeCollection or SynapseCollection
         Either a `NodeCollection` representing nodes, or a `SynapseCollection` of
         connection handles as returned by :py:func:`.GetConnections()`.
     keys : str or list, optional
@@ -368,7 +368,7 @@ def GetStatus(nodes, keys=None, output=''):
 
     See Also
     --------
-    :py:func:`.SetStatus`
+    SetStatus
     """
 
     if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.SynapseCollection)):

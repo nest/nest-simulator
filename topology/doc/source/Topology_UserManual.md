@@ -906,7 +906,7 @@ reference="ch:extending"}.
                   `c`
 
   `gaussian2D`    `p_center`,      $$p(d) = c + p_{\text{center}}
-                  `sigma_x`,       e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}-\frac{(d_y-\mu_y)^2}{\sigma_y^2}
+                  `sigma_x`,       e^{-\frac{\frac{(d_x-\mu_x)^2}{\sigma_x^2}+\frac{(d_y-\mu_y)^2}{\sigma_y^2}
                   `sigma_y`,                 +2\rho\frac{(d_x-\mu_x)(d_y-\mu_y)}{\sigma_x\sigma_y}}{2(1-\rho^2)}}$$
                   `mean_x`,
                   `mean_y`,`rho`,

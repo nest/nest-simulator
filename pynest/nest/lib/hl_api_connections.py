@@ -54,10 +54,10 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Parameters
     ----------
-    source : NodeCollection or list, optional
+    source : NodeCollection, optional
         Source node IDs, only connections from these
         pre-synaptic neurons are returned
-    target : NodeCollection or list, optional
+    target : NodeCollection, optional
         Target node IDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
@@ -69,7 +69,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     -------
     SynapseCollection:
         Object representing the source-node_id, target-node_id, target-thread, synapse-id, port of connections, see
-        :py:class:`SynapseCollection`.
+        :py:class:`.SynapseCollection` for more.
 
     Raises
     ------
@@ -316,16 +316,16 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Parameters
     ----------
-    pre : NodeCollection
+    pre : NodeCollection (or list)
         Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection
+    post : NodeCollection (or list)
         Postsynaptic nodes, as object representing the IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
         Specifies synapse model, see below
     return_synapsecollection: bool
-        Specifies whether or not we should return a SynapseCollection of pre and post connections
+        Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
 
     Raises
     ------
@@ -334,14 +334,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Notes
     -----
     It is possible to connect arrays of nonunique node IDs by
-    passing the arrays as pre and post, together with a syn_spec dictionary.
+    passing the arrays as `pre` and `post`, together with a `syn_spec` dictionary.
     However this should only be done if you know what you're doing. This will
-    connect all nodes in pre to all nodes in post and apply the specified
+    connect all nodes in `pre` to all nodes in `post` and apply the specified
     synapse specifications.
 
     If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
-    nodes are considered as potential targets for each source node. Connection with spatial nodes can also
-    use nest.distribution as parameters, for instance for the probability `p`.
+    nodes are considered as potential targets for each source node. Connections with spatial nodes can also
+    use `nest.spatial_distributions` as parameters, for instance for the probability `p`.
 
     **Connectivity specification (conn_spec)**
 
@@ -469,6 +469,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     support for libneurosim.
 
     For further information, see
+
     * The NEST documentation on using the CG Interface at
       https://www.nest-simulator.org/connection-generator-interface
     * The GitHub repository and documentation for libneurosim at
@@ -578,9 +579,9 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     Parameters
     ----------
     pre : NodeCollection
-        Presynaptic nodes, given as NodeCollection
+        Presynaptic nodes, given as `NodeCollection`
     post : NodeCollection
-        Postsynaptic nodes, given as NodeCollection
+        Postsynaptic nodes, given as `NodeCollection`
     conn_spec : str or dict
         Disconnection rule, see below
     syn_spec : str or dict
@@ -591,7 +592,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     **conn_spec**
 
-    Apply the same rules as for connectivity specs in the `Connect` method
+    Apply the same rules as for connectivity specs in the :py:func:`.Connect` method
 
     Possible choices of the conn_spec are
     ::
@@ -620,9 +621,6 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     - 'receptor_type'
     - parameters specific to the synapse model chosen
 
-    All parameters except synapse_model are optional and if not specified will use the default
-    values determined by the current synapse model.
-
     'synapse_model' determines the synapse type, taken from pre-defined synapse
     types in NEST or manually specified synapses created via :py:func:`.CopyModel`.
 
@@ -630,7 +628,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     Notes
     -----
-    Disconnect only disconnects explicitly specified nodes.
+    `Disconnect` only disconnects explicitly specified nodes.
     """
 
     sps(pre)

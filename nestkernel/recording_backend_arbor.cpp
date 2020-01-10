@@ -111,6 +111,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
   {
     throw BadProperty( "Only spike detectors can record to recording backend 'arbor'." );
   }
+  enrolled_ = true;
 }
 
 void
@@ -150,12 +151,10 @@ nest::RecordingBackendArbor::cleanup()
       return;
     }
 
-    if ( not prepared_ )
-    {
-      throw BackendNotPrepared( "RecordingBackendArbor" );
-    }
     prepared_ = false;
 
+    // sanity check if (two) simulator ran for the correct amount of step.
+    // This assures that the other side is in sync (MPI)
     if ( steps_left_ != 0 )
     {
       throw UnmatchedSteps( steps_left_, arbor_steps_ );
@@ -168,11 +167,7 @@ nest::RecordingBackendArbor::cleanup()
 void
 nest::RecordingBackendArbor::exchange_( std::vector< arb::shadow::spike >& local_spikes )
 {
-  // static int step = 0;
-  // std::cerr << "NEST: n: " << step++ << std::endl;
-  // std::cerr << "NEST: Output spikes" << std::endl;
   arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
-  // std::cerr << "NEST: Output spikes done: " << steps_left_ << std::endl;
   steps_left_--;
 }
 
@@ -189,7 +184,6 @@ nest::RecordingBackendArbor::prepare()
     throw BackendPrepared( "RecordingBackendArbor" );
   }
   prepared_ = true;
-
   //  INITIALISE MPI
   arbor_->info = arb::shadow::get_comm_info( false, kernel().mpi_manager.get_communicator() );
 
@@ -197,7 +191,7 @@ nest::RecordingBackendArbor::prepare()
   DictionaryDatum dict_out( new Dictionary );
   kernel().get_status( dict_out );
   const float nest_min_delay = ( *dict_out )[ "min_delay" ];
-  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ];
+  const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ]; // Gives size 0 if nest_kernel_reset is called
 
   // HAND SHAKE ARBOR-NEST
   // hand shake #1: communicate cell populations
@@ -214,11 +208,19 @@ nest::RecordingBackendArbor::prepare()
   steps_left_ = arbor_steps_ =
     arb::shadow::broadcast( 0u, MPI_COMM_WORLD, arbor_->info.arbor_root ) + 1; // arbor has a pre-exchange
 
-  // set min_delay
-  DictionaryDatum dict_in( new Dictionary );
-  ( *dict_in )[ "min_delay" ] = min_delay;
-  ( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
-  kernel().set_status( dict_in );
+  // TODO:
+  // In an ideal world we would set the min_delay here. But after setting the update in delay we would need to reset
+  // the kernel which results in losing the connection. With this in mind we check if the delays received are equal
+  // and fail hard if not.
+  if ( min_delay != nest_min_delay )
+  {
+    throw BadParameter( "RecordingBackendArbor: min_delay Arbor and NEST are not equal" );
+  }
+  // Ideally the following section would be used to set the delays dynamically.
+  // DictionaryDatum dict_in( new Dictionary );
+  // ( *dict_in )[ "min_delay" ] = min_delay;
+  // ( *dict_in )[ "max_delay" ] = ( *dict_out )[ "max_delay" ];
+  // kernel().set_status( dict_in );
 
   // Arbor has an initial exchange before time 0
   std::vector< arb::shadow::spike > empty_spikes;
@@ -258,6 +260,18 @@ nest::RecordingBackendArbor::get_status( DictionaryDatum& d ) const
 void
 nest::RecordingBackendArbor::post_run_hook()
 {
+  // nothing to do
+}
+
+void
+nest::RecordingBackendArbor::post_step_hook()
+{
+  collect_and_exchange_spikes_();
+}
+
+void
+nest::RecordingBackendArbor::collect_and_exchange_spikes_()
+{
 #pragma omp single
   {
     auto& buffers = arbor_->spike_buffers;
@@ -278,12 +292,6 @@ nest::RecordingBackendArbor::post_run_hook()
 
     exchange_( local_spikes );
   }
-}
-
-void
-nest::RecordingBackendArbor::post_step_hook()
-{
-  // nothing to do
 }
 
 void

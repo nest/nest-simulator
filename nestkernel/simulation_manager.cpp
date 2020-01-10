@@ -30,6 +30,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -175,7 +176,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd * tics_per_ms, &integer_part ) != 0 )
+      else if ( not is_integer( resd * tics_per_ms ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -211,7 +212,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd / Time::get_ms_per_tic(), &integer_part ) != 0 )
+      else if ( not is_integer( resd / Time::get_ms_per_tic() ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -697,8 +698,8 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp single
   {
     kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.set_have_connections_changed( false );
   }
+  kernel().connection_manager.set_have_connections_changed( tid, false );
 }
 
 bool

@@ -334,7 +334,11 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
 void
 connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
 {
-  kernel().connection_manager.set_have_connections_changed( true );
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
+  {
+    kernel().connection_manager.set_have_connections_changed( tid, true );
+  }
 
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
@@ -343,7 +347,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ConnectionCreator connector( connection_dict );
   ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
-  source->connect( target, target_nc, connector );
+  source->connect( source_nc, target, target_nc, connector );
 }
 
 void
@@ -368,7 +372,7 @@ dump_layer_connections( const Token& syn_model,
 
   if ( out->good() )
   {
-    source_layer->dump_connections( *out, target_layer, syn_model );
+    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
   }
 }
 

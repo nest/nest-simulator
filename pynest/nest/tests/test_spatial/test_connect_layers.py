@@ -26,6 +26,8 @@ import unittest
 import nest
 import numpy as np
 
+nest.set_verbosity('M_ERROR')
+
 
 class ConnectLayersTestCase(unittest.TestCase):
     def setUp(self):
@@ -37,11 +39,15 @@ class ConnectLayersTestCase(unittest.TestCase):
             'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
 
     def _check_connections(self, conn_spec, expected_num_connections):
+        """Helper function which asserts that connecting with the specified conn_spec gives
+        the expected number of connections."""
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
 
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
+        """Helper function which asserts that connecting with or without allowing autapses gives
+        the expected number of autapses."""
         conn_spec = {
             'rule': 'pairwise_bernoulli',
             'p': 1.0,
@@ -56,6 +62,8 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertEqual(n_autapses, expected_num_autapses)
 
     def _assert_connect_layers_multapses(self, multapses):
+        """Helper function which asserts that connecting with or without allowing multapses
+        gives the expected number of multapses."""
         conn_spec = {
             'rule': 'fixed_indegree',
             'indegree': 10,
@@ -71,6 +79,31 @@ class ConnectLayersTestCase(unittest.TestCase):
             self.assertGreater(num_nonunique_conns, 0)
         else:
             self.assertEqual(num_nonunique_conns, 0)
+
+    def _assert_connect_sliced(self, pre, post):
+        """Helper function which asserts that connecting with ConnectLayers on the SLI level
+        gives the expected number of connections."""
+        # Using distance based probability with zero weight to
+        # use ConnectLayers to connect on the SLI level.
+        p = 1.0 + 0.*nest.spatial.distance
+        conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
+        expected_conns = len(pre) * len(post)
+
+        nest.Connect(pre, post, conn_spec)
+        conns = nest.GetConnections()
+        result = '{} ({}), pre length={}, post length={}'.format(len(conns), expected_conns, len(pre), len(post))
+        print(result)
+        self.assertEqual(len(conns), expected_conns,
+                         'pre length={}, post length={}'.format(len(pre), len(post)))
+
+    def _reset_and_create_sliced(self, positions):
+        """Helper function which resets the kernel and creates a layer and
+        a variation of sliced instances of that layer."""
+        nest.ResetKernel()
+        kwargs = ({'positions': positions} if isinstance(positions, nest.spatial.grid) else
+                  {'n': 20, 'positions': positions})
+        layer = nest.Create('iaf_psc_alpha', **kwargs)
+        return {'layer': layer, 'single': layer[10], 'range': layer[8:12], 'step': layer[::2]}
 
     def test_connect_layers_indegree(self):
         """Connecting layers with fixed_indegree."""
@@ -303,6 +336,34 @@ class ConnectLayersTestCase(unittest.TestCase):
     def test_connect_layers_multapses_impossible(self):
         """Connecting layers with multapses impossible"""
         self._assert_connect_layers_multapses(False)
+
+    def test_connect_sliced_grid_layer(self):
+        """Connecting with sliced grid layer"""
+        positions = nest.spatial.grid([4, 5], extent=[10., 10.])
+        for sliced in ['single', 'range', 'step']:
+            layers = self._reset_and_create_sliced(positions)
+            layer = layers['layer']
+            sliced_pre = layers[sliced]
+            self._assert_connect_sliced(sliced_pre, layer)
+        for sliced in ['single', 'range', 'step']:
+            layers = self._reset_and_create_sliced(positions)
+            layer = layers['layer']
+            sliced_post = layers[sliced]
+            self._assert_connect_sliced(layer, sliced_post)
+
+    def test_connect_sliced_free_layer(self):
+        """Connecting with sliced free layer"""
+        positions = nest.spatial.free(nest.random.uniform(), extent=[10., 10.])
+        for sliced in ['single', 'range', 'step']:
+            layers = self._reset_and_create_sliced(positions)
+            layer = layers['layer']
+            sliced_pre = layers[sliced]
+            self._assert_connect_sliced(sliced_pre, layer)
+        for sliced in ['single', 'range', 'step']:
+            layers = self._reset_and_create_sliced(positions)
+            layer = layers['layer']
+            sliced_post = layers[sliced]
+            self._assert_connect_sliced(layer, sliced_post)
 
 
 def suite():

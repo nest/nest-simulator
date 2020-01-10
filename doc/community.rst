@@ -1,3 +1,5 @@
+.. _nest_community:
+
 NEST Community
 ===============
 
@@ -12,8 +14,7 @@ time allows.
 
 By subscribing to the mailing list you will also get notified of all NEST related events!
 
-For more information, subscription instructions and access to the archives,
-please visit https://www.nest-initiative.org/mailinglist/.
+Before submitting a question, please take a look at our :doc:`guidelines for the NEST mailing list <contribute/mailing_list_guidelines>`.
 
 Open video meeting for users and developers
 --------------------------------------------

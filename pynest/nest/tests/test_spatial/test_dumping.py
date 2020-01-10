@@ -119,6 +119,36 @@ class DumpingTestCase(unittest.TestCase):
         self.assertTrue(np.array_equal(npa, reference))
         os.remove(filename)
 
+    def test_DumpConns_sliced(self):
+        """Test dumping connections with sliced layer."""
+        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
+        nest.ResetKernel()
+        l = nest.Create('iaf_psc_alpha',
+                        positions=nest.spatial.grid(shape=[10, 1],
+                                                    extent=[2., 2.],
+                                                    edge_wrap=True))
+        nest.Connect(l, l, cdict)
+
+        filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
+        nest.DumpLayerConnections(l[0], l, 'static_synapse', filename)
+        npa = np.genfromtxt(filename)
+        reference = np.array([[1., 1., 1., 1., 0., 0.],
+                              [1., 2., 1., 1., 0.2, 0.],
+                              [1., 3., 1., 1., 0.4, 0.],
+                              [1., 4., 1., 1., 0.6, 0.],
+                              [1., 5., 1., 1., 0.8, 0.],
+                              [1., 6., 1., 1., -1., 0.],
+                              [1., 7., 1., 1., -0.8, 0.],
+                              [1., 8., 1., 1., -0.6, 0.],
+                              [1., 9., 1., 1., -0.4, 0.],
+                              [1., 10., 1., 1., -0.2, 0.]])
+        # Connections for a single source may be shuffled, so we simply
+        # check if the dumped connections are the same as in the reference.
+        self.assertEqual(len(npa), len(reference))
+        for conn in npa:
+            self.assertTrue(conn in reference, 'Connection not in reference: {}'.format(conn))
+        os.remove(filename)
+
 
 def suite():
     suite = unittest.makeSuite(DumpingTestCase, 'test')

@@ -56,7 +56,7 @@ def Simulate(t):
 
     See Also
     --------
-    RunManager, ResumeSimulation
+    RunManager
 
     """
 
@@ -136,7 +136,7 @@ def RunManager():
 
     E.g.:
 
-    .. code-block:: python
+    ::
 
         with RunManager():
             for i in range(10):
@@ -260,8 +260,7 @@ def Install(module_name):
     (``DYLD_LIBRARY_PATH`` under OSX).
 
     **Example**
-
-    .. code-block: python
+    ::
 
         nest.Install("mymodule")
 

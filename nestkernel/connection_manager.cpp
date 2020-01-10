@@ -66,7 +66,7 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_( true )
+  , have_connections_changed_()
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
   , check_primary_connections_()
@@ -94,6 +94,7 @@ nest::ConnectionManager::initialize()
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
 
+  have_connections_changed_.resize( num_threads, true );
   check_primary_connections_.resize( num_threads, false );
   check_secondary_connections_.resize( num_threads, false );
 
@@ -355,8 +356,6 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
-  have_connections_changed_ = true;
-
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -460,7 +459,15 @@ nest::ConnectionManager::connect( const index snode_id,
   const double weight )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
-  have_connections_changed_ = true;
+
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
+  if ( not have_connections_changed_[ target_thread ] )
+  {
+    have_connections_changed_.set( target_thread, true );
+  }
+
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
@@ -489,13 +496,22 @@ nest::ConnectionManager::connect( const index snode_id,
   const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
-  have_connections_changed_ = true;
+
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
+  if ( not have_connections_changed_[ tid ] )
+  {
+    have_connections_changed_.set( tid, true );
+  }
+
   if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
   {
     return false;
   }
 
-  const thread tid = kernel().vp_manager.get_thread_id();
   Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
   const thread target_thread = target->get_thread();
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
@@ -644,7 +660,13 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  have_connections_changed_ = true;
+  // Need to check if have_connections_changed_ has already been set, because if
+  // we have a lot of threads and they all try to set the variable at once we get
+  // performance issues on supercomputers.
+  if ( not have_connections_changed_[ tid ] )
+  {
+    have_connections_changed_.set( tid, true );
+  }
 
   assert( syn_id != invalid_synindex );
 

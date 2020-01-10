@@ -1416,7 +1416,7 @@ GetlineFunction::execute( SLIInterpreter* i ) const
   {
     string s;
     getline( **istreamdatum, s );
-    if ( not ( *istreamdatum )->good() )
+    if ( not( *istreamdatum )->good() )
     {
       i->OStack.push( false );
     }

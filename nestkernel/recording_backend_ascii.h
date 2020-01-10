@@ -28,7 +28,7 @@
 
 #include "recording_backend.h"
 
-/* BeginUserDocs: device, backend
+/* BeginUserDocs: recording backend
 
 .. _ascii_backend:
 

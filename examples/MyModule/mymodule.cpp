@@ -40,6 +40,8 @@
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
+#include "nest.h"
+#include "nest_impl.h"
 #include "nestmodule.h"
 #include "target_identifier.h"
 
@@ -124,8 +126,7 @@ mynest::MyModule::init( SLIInterpreter* i )
      even further, but limits the number of available rports. Please see
      Kunkel et al, Front Neurofinfom 8:78 (2014), Sec 3.3.2, for details.
   */
-  nest::kernel().model_manager.register_connection_model< DropOddSpikeConnection< nest::TargetIdentifierPtrRport > >(
-    "drop_odd_synapse" );
+  nest::register_connection_model< DropOddSpikeConnection >( "drop_odd_synapse" );
 
   // Register connection rule.
   nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >( "step_pattern" );

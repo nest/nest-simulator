@@ -26,11 +26,11 @@ If applicable, add screenshots to help explain your problem.
 **Desktop/Environment (please complete the following information):**
  - OS: [e.g. iOS, Ubuntu-18.04]
  - Browser: [if applicable, e.g. chrome, safari]
- - Shell: [e.g. bash, zshshell]
+ - Shell: [e.g. bash, zsh]
  - Python-Version: [e.g. Python 3.6]
  - NEST-Version: [e.g. nest-2.18, or git hash]
  - Installation: [e.g. conda packet, apt, with/out MPI, ...]
-   (in case of manual compile from sources provide the
+   (in case you compiled the source code manually, provide the
     "Installation Summary" that you see at the end of the 
     cmake step)
 

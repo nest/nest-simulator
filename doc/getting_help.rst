@@ -5,7 +5,7 @@ Getting Help
 Have a specific question or problem with NEST?
 ------------------------------------------------
 
-* Check out the :doc:`FAQs <faqs/index>` for common issues.
+* Check out the :doc:`troubleshooting section <troubleshooting>` for common issues.
 
 If your question is not on there, ask our :doc:`Mailing List <community>`.
 

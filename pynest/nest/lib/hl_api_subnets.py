@@ -57,11 +57,11 @@ def PrintNodes():
 
 @check_stack
 @deprecated('', 'PrintNetwork is deprecated and will be removed in NEST 3.0. \
-Use PrintNodes instead.')
+            Use PrintNodes instead.')
 def PrintNetwork(depth=1, subnet=None):
-    """Print the network tree up to depth, starting at subnet.
+    """Print the network tree up to depth, starting at `subnet`.
 
-    If subnet is omitted, the current subnet is used instead.
+    If `subnet` is omitted, the current subnet is used instead.
 
     Parameters
     ----------
@@ -125,11 +125,11 @@ def ChangeSubnet(subnet):
 
 @check_stack
 @deprecated('', 'GetLeaves is deprecated and will be removed in NEST 3.0. Use \
-GIDCollection instead.')
+            GIDCollection instead.')
 def GetLeaves(subnets, properties=None, local_only=False):
-    """Return the GIDs of the leaf nodes of the given subnets.
+    """Return the GIDs of the leaf nodes of the given `subnets`.
 
-    Leaf nodes are all nodes that are not subnets.
+    Leaf nodes are all nodes that are not `subnets`.
 
     Parameters
     ----------
@@ -166,9 +166,9 @@ def GetLeaves(subnets, properties=None, local_only=False):
 
 @check_stack
 @deprecated('', 'GetNodes is deprecated and will be removed in NEST 3.0. Use \
-GIDCollection instead.')
+            GIDCollection instead.')
 def GetNodes(subnets, properties=None, local_only=False):
-    """Return the global ids of the all nodes of the given subnets.
+    """Return the global ids of the all nodes of the given `subnets`.
 
     Parameters
     ----------
@@ -205,9 +205,10 @@ def GetNodes(subnets, properties=None, local_only=False):
 
 @check_stack
 @deprecated('',
-            'GetChilden is deprecated and will be removed in NEST 3.0. Use GIDCollection instead.')  # noqa
+            'GetChilden is deprecated and will be removed in NEST 3.0. Use \
+            GIDCollection instead.')  # noqa
 def GetChildren(subnets, properties=None, local_only=False):
-    """Return the global ids of the immediate children of the given subnets.
+    """Return the global ids of the immediate children of the given `subnets`.
 
     Parameters
     ----------
@@ -244,10 +245,10 @@ def GetChildren(subnets, properties=None, local_only=False):
 
 @check_stack
 @deprecated('', 'GetNetwork is deprecated and will be removed in Nest 3.0.\
-Script is responsible for retaining structure information if needed')
+            Script is responsible for retaining structure information if needed')
 def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
-    depth.
+    `depth`.
 
     Parameters
     ----------
@@ -278,7 +279,7 @@ def GetNetwork(gid, depth):
 
 @check_stack
 @deprecated('', 'BeginSubnet is deprecated and will be removed in NEST 3.0. \
-Use GIDCollection instead.')
+            Use GIDCollection instead.')
 def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
 
@@ -300,7 +301,7 @@ def BeginSubnet(label=None, params=None):
 
 @check_stack
 @deprecated('', 'EndSubnet is deprecated and will be removed in NEST 3.0. Use \
-GIDCollection instead.')
+            GIDCollection instead.')
 def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
 
@@ -322,13 +323,13 @@ def EndSubnet():
 
 
 @check_stack
-@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST 3.0. \
-Use Create(<model>, n=<number>) instead.')
+@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST 3.0 \
+            Use Create(<model>, n=<number> instead.')
 def LayoutNetwork(model, dim, label=None, params=None):
-    """Create a subnetwork of dimension dim with nodes of type model and
+    """Create a subnetwork of dimension dim with nodes of type `model` and
     return a list of ids.
 
-    params is a dictionary, which will be set as
+    `params` is a dictionary, which will be set as
     customdict of the newly created subnet.
 
     Parameters

@@ -325,7 +325,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
             kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           }
         }
       }
@@ -346,7 +346,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           double w, d;
           get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
         }
       }
     }
@@ -390,7 +390,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
             double w, d;
             get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
             kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           }
         }
       }
@@ -410,7 +410,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
           double w, d;
           get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
         }
       }
     }
@@ -541,7 +541,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           }
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          kernel().connection_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -574,7 +575,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           index source_id = positions[ random_id ].second;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
-          kernel().connection_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -653,7 +655,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -686,7 +689,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           Position< D > source_pos = ( *positions )[ random_id ].first;
           double w, d;
           get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
-          kernel().connection_manager.connect( source_id, *tgt_it, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -821,8 +825,13 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       }
 
       Node* target_ptr = kernel().node_manager.get_node( target_id );
-      kernel().connection_manager.connect(
-        source_id, target_ptr, target_ptr->get_thread(), synapse_model_, dummy_param_, d, w );
+      kernel().connection_manager.connect( source_id,
+        target_ptr,
+        target_ptr->get_thread(),
+        synapse_model_,
+        dummy_param_dicts_[ target_ptr->get_thread() ],
+        d,
+        w );
     }
   }
 }

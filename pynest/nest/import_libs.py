@@ -21,6 +21,7 @@
 
 import ast
 import os
+import sys
 
 
 # We search through the subdirectory "lib" of the "nest" module
@@ -68,7 +69,13 @@ def import_libs(mod_file, mod_dict, path,
         # construct from .pkg_name import *
         names = [ast.alias(name='*', asname=None)]
         body = [ast.ImportFrom(module=pkg_name, names=names, level=level)]
-        module = ast.fix_missing_locations(ast.Module(body=body))
+
+        # changes in python 3.8
+        # see https://bugs.python.org/issue35894
+        if sys.version_info >= (3, 8):
+            module = ast.fix_missing_locations(ast.Module(body=body, type_ignores=[]))
+        else:
+            module = ast.fix_missing_locations(ast.Module(body=body))
 
         code = compile(module, mod_file, 'exec')
         exec(code, mod_dict, mod_dict)

@@ -178,8 +178,8 @@ private:
   lockPTR< TopologyParameter > weight_;
   lockPTR< TopologyParameter > delay_;
 
-  //! Empty dictionary to pass to connect functions
-  const static DictionaryDatum dummy_param_;
+  //! Empty dictionary to pass to connect functions, one per thread
+  std::vector< DictionaryDatum > dummy_param_dicts_;
 };
 
 inline void
@@ -193,7 +193,7 @@ ConnectionCreator::connect_( index s, Node* target, thread target_thread, double
     if ( tid == target_thread )
     {
       // TODO implement in terms of nest-api
-      kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_, d, w );
+      kernel().connection_manager.connect( s, target, target_thread, syn, dummy_param_dicts_[ target_thread ], d, w );
     }
   }
 }

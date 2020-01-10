@@ -61,6 +61,7 @@ def build_network(dt):
 
     return vm, sd
 
+
 ###############################################################################
 # The function ``build_network`` takes the resolution as argument.
 # First the Kernel is reset and the number of threads is set to zero as well
@@ -71,10 +72,10 @@ def build_network(dt):
 # therefore, times are given in the times vector in events. Now the
 # ``spike_detector`` is created and its handle is stored in sd.
 #
-# Voltmeter and spikedetector are then connected to the neuron. The ``Connect``
-# function takes the handles as input.  The voltmeter is connected to the
-# neuron and the neuron to the spikedetector because the neuron sends spikes
-# to the detector and the voltmeter 'observes' the neuron.
+# The voltmeter and spike detector are then connected to the neuron. The
+# ``Connect`` function takes the handles as input.  The voltmeter is connected
+# to the neuron and the neuron to the spikedetector because the neuron sends
+# spikes to the detector and the voltmeter 'observes' the neuron.
 
 ###############################################################################
 # The neuron is simulated for three different resolutions and then the
@@ -116,5 +117,3 @@ for dt in [0.1, 0.5, 1.0]:
     pylab.legend(loc=3)
     pylab.xlabel("time (ms)")
     pylab.ylabel("V_m (mV)")
-
-

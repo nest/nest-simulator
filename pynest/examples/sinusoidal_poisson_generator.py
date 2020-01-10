@@ -50,7 +50,7 @@ nest.ResetKernel()   # in case we run the script multiple times from iPython
 ####################################################################################
 # We create two instances of the ``sinusoidal_poisson_generator`` with two
 # different parameter sets using ``Create``. Moreover, we create devices to
-# record firing rates (``Multimeter``) and spikes (``spike_detector``) and connect
+# record firing rates (``multimeter``) and spikes (``spike_detector``) and connect
 # them to the generators using ``Connect``.
 
 

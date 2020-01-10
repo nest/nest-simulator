@@ -24,3 +24,4 @@ seaborn
 sphinx_gallery
 mock
 breathe
+https://github.com/djungelorm/sphinx-tabs/releases/download/v1.1.11/sphinx-tabs-1.1.11.tar.gz

@@ -1,0 +1,60 @@
+/*
+ *  issue-1366.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1366
+
+Synopsis: (issue-1366) run -> NEST exits if test fails
+
+Description:
+This tests checks that we are able to connect with fixed_total_number equal to 1
+when we have more than 1 virtual process and more than 1 node per process.
+
+Author: Stine Brekke Vennemo
+FirstVersion: December 2019
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+M_ERROR setverbosity
+
+% Check if we are able to connect with fixed_total_number equal to 1
+{
+  ResetKernel
+
+  0 << 
+      /total_num_virtual_procs 4
+    >> SetStatus
+
+  /nodes /iaf_psc_alpha 4 Create def
+
+  [nodes] Range [nodes] Range << /rule /fixed_total_number /N 1 >> Connect
+
+  0 GetStatus /num_connections get 1 eq
+}
+assert_or_die
+
+endusing

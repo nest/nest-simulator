@@ -4,7 +4,7 @@ Analog recording with multimeter
 As of r89xx, NEST replaces a range of analog recording devices, such as
 voltmeter, conductancemeter and aeif\_w\_meter with a universal
 *multimeter*, which can record all analog quantities a model neuron
-makes available for recording. Multimeter works essentially as the
+makes available for recording. The multimeter works essentially as the
 old-style voltmeter, but with a few changes:
 
 -  The ``/recordables`` list of a neuron model will tell you which
@@ -105,7 +105,7 @@ examples set:
 
 Here is the result:
 
-.. figure:: _static/img/MultimeterExample.png
-   :alt: MultimeterExample
+.. figure:: ../_static/img/multimeter_example.png
+   :alt: multimeter_example
 
-   MultimeterExample
+   Example for using the multimeter

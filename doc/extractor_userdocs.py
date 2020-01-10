@@ -74,13 +74,16 @@ def UserDocExtractor(
     ----------
 
     filenames
-    : Any iterable with input file names (relative to `basedir`).
+       Any iterable with input file names (relative to `basedir`).
+
     basedir
-    : Directory to which input `filenames` are relative.
+       Directory to which input `filenames` are relative.
+
     replace_ext
-    : Replacement for the extension of the original filename when writing to `outdir`.
+       Replacement for the extension of the original filename when writing to `outdir`.
+
     outdir
-    : Directory where output files are created.
+       Directory where output files are created.
 
     Returns
     -------
@@ -135,11 +138,11 @@ def make_hierarchy(tags, *basetags):
     Parameters
     ----------
     tags
-    : flat dictionary of tag to entry
+       flat dictionary of tag to entry
 
     basetags
-    : iterable of a subset of tags.keys(), if no basetags are given the
-      original tags list is returned unmodified.
+       iterable of a subset of tags.keys(), if no basetags are given the
+       original tags list is returned unmodified.
 
     Returns a hierarchical dictionary of (dict or set) with items in the
     intersection of basetag.
@@ -172,10 +175,11 @@ def rst_index(hierarchy, underlines='=-~'):
     Parameters
     ----------
     hierarchy
-    : any dict or dict-of-dict returned from `make_hierarchy()`
+       any dict or dict-of-dict returned from `make_hierarchy()`
+
     underlines
-    : list of characters to use for underlining deeper levels of the generated
-      index.
+       list of characters to use for underlining deeper levels of the generated
+       index.
 
     Returns
     -------
@@ -208,7 +212,22 @@ def rst_index(hierarchy, underlines='=-~'):
 
 def reverse_dict(tags):
     """
-    return the reversed dict-of-list
+    Return the reversed dict-of-list
+
+    Given a dictionary `keys:values`, this function creates the inverted
+    dictionary `value:[key, key2, ...]` with one entry per value of the given
+    dict. Since many keys can have the same value, the reversed dict must have
+    list-of-keys as values.
+
+    Parameters
+    ----------
+
+    tags
+       dictionary. Values must be hashable to be used as keys for the result.
+
+    Returns
+    -------
+    Dictionary mapping the original values to lists of original keys.
     """
     revdict = dict()
     for tag, items in tags.items():
@@ -221,6 +240,19 @@ def CreateTagIndices(tags, outdir="from_cpp/"):
     """
     This function generates all combinations of tags and creates an index page
     for each combination using `rst_index`.
+
+    Parameters
+    ----------
+
+    tags
+       dictionary of tags
+
+    outdir
+       path to the intended output directory (handed to `rst_index`.
+
+    Returns
+    -------
+    returns a list of names of generated files.
     """
     taglist = list(tags.keys())
     if "" in taglist:
@@ -268,6 +300,10 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
     Writes extracted information to JSON files in outdir. In particular the
     list of seen tags mapped to files they appear in, and the indices generated
     from all combinations of tags.
+
+    Returns
+    -------
+    None
     """
     data = JsonWriter(outdir)
     # Gather all information and write RSTs

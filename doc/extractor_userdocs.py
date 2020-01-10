@@ -87,8 +87,9 @@ def UserDocExtractor(
 
     Returns
     -------
-    Dictionary mapping tags to lists of documentation filenames (relative to
-    `outdir`).
+
+    dict
+       mapping tags to lists of documentation filenames (relative to `outdir`).
     """
     if not os.path.exists(outdir):
         log.info("creating output directory "+outdir)
@@ -144,8 +145,12 @@ def make_hierarchy(tags, *basetags):
        iterable of a subset of tags.keys(), if no basetags are given the
        original tags list is returned unmodified.
 
-    Returns a hierarchical dictionary of (dict or set) with items in the
-    intersection of basetag.
+    Returns
+    -------
+
+    dict
+       A hierarchical dictionary of (dict or set) with items in the
+       intersection of basetag.
     """
     if not basetags:
         return tags
@@ -183,7 +188,9 @@ def rst_index(hierarchy, underlines='=-~'):
 
     Returns
     -------
-    String with pretty index.
+
+    str
+       formatted pretty index.
     """
     def mktitle(t, ul):
         return t+'\n'+ul*len(t)+'\n'
@@ -227,7 +234,9 @@ def reverse_dict(tags):
 
     Returns
     -------
-    Dictionary mapping the original values to lists of original keys.
+
+    dict
+       Mapping the original values to lists of original keys.
     """
     revdict = dict()
     for tag, items in tags.items():
@@ -252,7 +261,9 @@ def CreateTagIndices(tags, outdir="from_cpp/"):
 
     Returns
     -------
-    returns a list of names of generated files.
+
+    list
+        list of names of generated files.
     """
     taglist = list(tags.keys())
     if "" in taglist:

@@ -6,10 +6,6 @@ Files: *
 Copyright: 2004-2019 The NEST Initiative <nest_user@nest-initiative.org>
 License: GPL-2+
 
-Files: librandom/*
-Copyright: other people
-License: other license
-
 Files: debian/*
 Copyright: 2019 The NEST Initiative <nest_user@nest-initiative.org>
 License: GPL-2+

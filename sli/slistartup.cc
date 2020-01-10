@@ -40,8 +40,6 @@
 #include "namedatum.h"
 #include "stringdatum.h"
 
-extern int SLIsignalflag;
-
 // Access to environement variables.
 #ifdef __APPLE__
 #include <crt_externs.h>
@@ -366,6 +364,7 @@ SLIStartup::init( SLIInterpreter* i )
       SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
+  // check for sli-init.sli
   if ( not checkpath( slihomepath, fname ) )
   {
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Your NEST installation seems broken. \n" );
@@ -378,9 +377,10 @@ SLIStartup::init( SLIInterpreter* i )
 
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Bye." );
 
-    SLIsignalflag = 255;                     // this exits the interpreter.
-    debug_ = false;                          // switches off the -d/--debug switch!
-    i->verbosity( SLIInterpreter::M_QUIET ); // suppress all further output.
+    // We cannot call i->terminate() here because the interpreter is not
+    // fully configured yet. If running PyNEST, the Python process will
+    // terminate.
+    std::exit( EXITCODE_FATAL );
   }
   else
   {

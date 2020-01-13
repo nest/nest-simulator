@@ -177,7 +177,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Cannot change time representation after model defaults have "
-        "modified. Please call ResetKernel first." );
+        "been modified. Please call ResetKernel first." );
       throw KernelException();
     }
     else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to

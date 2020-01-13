@@ -81,19 +81,27 @@ mindelay maxdelay check_min_max_delay
 defdelay check_delay
 
 % Test 1: Change resolution.
+ResetKernel
 <<
   /resolution 0.001
+  /min_delay mindelay
+  /max_delay maxdelay
 >> SetKernelStatus
+/static_synapse << /delay defdelay >> SetDefaults
 
 mindelay maxdelay check_min_max_delay
 
 defdelay check_delay
 
 % Test 2: Change tics_per_ms.
+ResetKernel
 <<
   /tics_per_ms 10000.0
   /resolution 0.001
+  /min_delay mindelay
+  /max_delay maxdelay
 >> SetKernelStatus
+/static_synapse << /delay defdelay >> SetDefaults
 
 mindelay maxdelay check_min_max_delay
 

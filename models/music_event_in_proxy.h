@@ -40,10 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-music
-
+/* BeginUserDocs: devices, music
 
 music_event_in_proxy - A device which receives spikes from MUSIC
 #####################################################################

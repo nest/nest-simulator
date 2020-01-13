@@ -31,10 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stp
-
+/* BeginUserDocs: synapses, short-term plasticity
 
 tsodyks_synapse_hom - Synapse type with short term plasticity using homogenous parameters
 #########################################################################################

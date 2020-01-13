@@ -35,11 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-psc
-iaf
-
+/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 gif_psc_exp - Current-based generalized integrate-and-fire neuron model
 #########################################################################

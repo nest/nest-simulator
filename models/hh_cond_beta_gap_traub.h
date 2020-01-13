@@ -59,11 +59,7 @@ namespace nest
  */
 extern "C" int hh_cond_beta_gap_traub_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-hh
-cond
-
+/* BeginUserDocs: neurons, Hodgkin-Huxley, conductance-based
 
 hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron with added gap junction support and beta function synaptic conductance
 ##############################################################################################################################

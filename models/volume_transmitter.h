@@ -37,10 +37,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 volume_transmitter - Node used in combination with neuromodulated synaptic plasticity
 ######################################################################################

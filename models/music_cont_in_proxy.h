@@ -47,11 +47,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-music
-
-
+/* BeginUserDocs: devices, music
 
 music_cont_in_proxy - A device which receives continuous data from MUSIC
 ##########################################################################

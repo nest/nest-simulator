@@ -37,10 +37,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 threshold_lin_rate - rate model with threshold-linear gain function
 #####################################################################

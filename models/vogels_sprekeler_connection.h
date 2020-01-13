@@ -30,10 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent plasticity with constant depression
 #################################################################################################################

@@ -39,10 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 step_rate_generator - provides a piecewise constant input rate
 ################################################################

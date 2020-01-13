@@ -33,10 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-parrot
-
+/* BeginUserDocs: neurons, parrot
 
 parrot_neuron - Neuron that repeats incoming spikes
 ####################################################

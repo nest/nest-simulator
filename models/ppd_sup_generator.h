@@ -40,10 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
 ##############################################################################################################

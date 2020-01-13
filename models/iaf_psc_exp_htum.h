@@ -35,9 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-iaf
+/* BeginUserDocs: neurons, integrate-and-fire
 
 iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs
 ###########################################################################

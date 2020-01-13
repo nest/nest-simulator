@@ -28,10 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-gap
-
+/* BeginUserDocs: synapses, gap
 
 gap_junction - Synapse type for gap-junction connections
 #########################################################

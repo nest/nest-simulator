@@ -32,9 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stp
+/* BeginUserDocs: synapses, short-term plasticity
 
 quantal_stp_synapse - Probabilistic synapse model with short term plasticity
 ##############################################################################

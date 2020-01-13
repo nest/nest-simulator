@@ -39,9 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_synapse - Synapse type for spike-timing dependent plastiicty
 ##################################################################

@@ -32,9 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stp
+/* BeginUserDocs: synapses, short-term plasticity
 
 tsodyks2_synapse - Synapse type with short term plasticity
 #############################################################

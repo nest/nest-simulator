@@ -45,10 +45,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 siegert_neuron
 ###############

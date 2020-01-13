@@ -39,10 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 gauss_rate - rate model with Gaussian gain function
 #######################################################

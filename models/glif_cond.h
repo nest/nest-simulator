@@ -42,7 +42,8 @@
 
 #include "dictdatum.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: integrate-and-fire, conductance-based
+
 Name: glif_cond - Conductance-based generalized leaky integrate and fire (GLIF)
 model
 

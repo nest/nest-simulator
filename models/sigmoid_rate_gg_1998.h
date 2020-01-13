@@ -35,10 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
 #################################################################

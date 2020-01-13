@@ -33,10 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-cont_delay
-
+/* BeginUserDocs: synapses, continuous delays
 
 cont_delay_synapse - Synapse type for continuous delays
 ########################################################

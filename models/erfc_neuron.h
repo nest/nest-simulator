@@ -28,10 +28,7 @@
 
 namespace nest
 {
-/* BeginUserDocs:
-Neurons
-binary
-
+/* BeginUserDocs: neurons, binary
 
 erfc_neuron - Binary stochastic neuron with complementary error function as activation function
 #################################################################################################

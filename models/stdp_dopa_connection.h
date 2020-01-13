@@ -36,10 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent plasticity
 ##############################################################################################

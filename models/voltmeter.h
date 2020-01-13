@@ -43,7 +43,9 @@
 
 namespace nest
 {
-/* @BeginDocumentation
+
+/* BeginUserDocs: voltmeter
+
 Name: voltmeter - Device to record membrane potential from neurons.
 Synopsis: voltmeter Create
 

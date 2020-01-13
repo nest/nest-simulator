@@ -44,10 +44,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 rate_transformer_node - Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
 ######################################################################################################################

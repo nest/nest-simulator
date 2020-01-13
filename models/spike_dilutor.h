@@ -34,10 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 spike_dilutor - repeats incoming spikes with a certain probability
 ###################################################################

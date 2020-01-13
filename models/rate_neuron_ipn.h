@@ -44,10 +44,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
-
+/* BeginUserDocs: neurons, rate
 
 rate_neuron_ipn - Base class for rate model with input noise
 #############################################################

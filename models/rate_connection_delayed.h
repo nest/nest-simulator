@@ -29,10 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-cont_delay
-
+/* BeginUserDocs: synapses, connections with delay
 
 rate_connection_delayed - Synapse type for rate connections with delay
 #######################################################################

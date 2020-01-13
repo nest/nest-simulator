@@ -29,9 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-static
+/* BeginUserDocs: synapses, static
 
 static_synapse - Synapse type for static connections
 ######################################################

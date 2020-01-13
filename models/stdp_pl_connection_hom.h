@@ -32,10 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_pl_synapse_hom - Synapse type for spike-timing dependent plasticity with power law
 #######################################################################################

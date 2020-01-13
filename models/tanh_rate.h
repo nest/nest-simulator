@@ -34,9 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
+/* BeginUserDocs: neurons, rate
 
 tanh_rate - rate model with hyperbolic tangent non-linearity
 ################################################################

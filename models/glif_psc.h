@@ -32,7 +32,8 @@
 
 #include "dictdatum.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: integrate-and-fire, post-synaptic current
+
 Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF)
 model
 

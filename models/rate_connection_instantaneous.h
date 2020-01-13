@@ -29,10 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-inst_rate
-
+/* BeginUserDocs: synapses, instantaneous rate
 
 rate_connection_instantaneous - Synapse type for instantaneous rate connections
 ################################################################################

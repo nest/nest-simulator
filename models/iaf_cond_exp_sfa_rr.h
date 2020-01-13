@@ -56,11 +56,7 @@ namespace nest
  */
 extern "C" int iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-cond
-
+/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
 
 iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire neuron model
 ####################################################################################

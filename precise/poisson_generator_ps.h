@@ -100,6 +100,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -244,6 +246,13 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline void
+poisson_generator_ps::calibrate_time( const TimeConverter& tc )
+{
+  V_.t_min_active_ = tc.from_old_tics( V_.t_min_active_.get_tics() );
+  V_.t_max_active_ = tc.from_old_tics( V_.t_max_active_.get_tics() );
 }
 
 } // namespace

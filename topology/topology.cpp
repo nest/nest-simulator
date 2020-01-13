@@ -334,7 +334,11 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
 void
 connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
 {
-  kernel().connection_manager.set_have_connections_changed( true );
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
+  {
+    kernel().connection_manager.set_have_connections_changed( tid, true );
+  }
 
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );

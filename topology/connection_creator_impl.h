@@ -103,7 +103,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
         tgt_ptr,
         tgt_thread,
         synapse_model_,
-        dummy_param_,
+        dummy_param_dicts_[ tgt_thread ],
         delay_->value( rng, source_pos, target_pos, source ),
         weight_->value( rng, source_pos, target_pos, source ) );
     }
@@ -456,7 +456,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           positions[ random_id ].first.get_vector( source_pos_vector );
           const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
           const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -490,7 +492,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           index source_id = positions[ random_id ].second;
           const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
           const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -569,7 +573,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           ( *positions )[ random_id ].first.get_vector( source_pos_vector );
           const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
           const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -602,7 +608,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           ( *positions )[ random_id ].first.get_vector( source_pos_vector );
           const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
           const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect( source_id, tgt, target_thread, synapse_model_, dummy_param_, d, w );
+          kernel().connection_manager.connect(
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -739,8 +747,9 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       }
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
+      thread target_thread = target_ptr->get_thread();
       kernel().connection_manager.connect(
-        source_id, target_ptr, target_ptr->get_thread(), synapse_model_, dummy_param_, d, w );
+        source_id, target_ptr, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
     }
   }
 }

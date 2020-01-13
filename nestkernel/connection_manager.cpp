@@ -1585,7 +1585,8 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
   // performance issues on supercomputers.
   if ( not have_connections_changed_[ tid ] )
   {
-    std::string msg = "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+    std::string msg =
+      "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
     LOG( M_WARNING, "ConnectionManager", msg );
     have_connections_changed_.set( tid, true );
   }

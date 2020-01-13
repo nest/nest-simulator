@@ -164,6 +164,22 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "created. Please call ResetKernel first." );
       throw KernelException();
     }
+    else if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot change time representation when user models have been "
+        "created. Please call ResetKernel first." );
+      throw KernelException();
+    }
+    else if ( kernel().model_manager.are_model_defaults_modified() )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot change time representation after model defaults have "
+        "modified. Please call ResetKernel first." );
+      throw KernelException();
+    }
     else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
                                                     // be changed together with
                                                     // resolution

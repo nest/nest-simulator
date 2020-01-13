@@ -66,6 +66,26 @@ class TestChangingTicBase(unittest.TestCase):
 
         self.assertEqual([], failing_models)
 
+    def _assert_ticbase_change_raises_and_reset(self, after_call):
+        with self.assertRaises(nest.kernel.NESTError, msg='after calling "{}"'.format(after_call)):
+            nest.SetKernelStatus({'tics_per_ms': 1500., 'resolution': 0.5})
+        nest.ResetKernel()
+
+    def test_prohibit_change_tic_base(self):
+        """Getting error when changing tic-base in prohibited conditions"""
+
+        nest.CopyModel('iaf_psc_alpha', 'alpha_copy')
+        self._assert_ticbase_change_raises_and_reset('CopyModel')
+
+        nest.SetDefaults("multimeter", {"record_to": "ascii"})
+        self._assert_ticbase_change_raises_and_reset('SetDefaults')
+
+        nest.Create('multimeter')
+        self._assert_ticbase_change_raises_and_reset('Create')
+
+        nest.Simulate(10.)
+        self._assert_ticbase_change_raises_and_reset('Simulate')
+
 
 def suite():
     suite = unittest.makeSuite(TestChangingTicBase, 'test')

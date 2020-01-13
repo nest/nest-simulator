@@ -130,7 +130,6 @@ ids of all the created neurons, in this case only one, which we store in
 a variable called ``neuron``.
 
 ::
-
     import pylab
     import nest
     neuron = nest.Create("iaf_psc_alpha")

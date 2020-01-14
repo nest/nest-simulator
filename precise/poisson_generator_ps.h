@@ -33,6 +33,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
 

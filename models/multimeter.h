@@ -31,6 +31,7 @@
 #include "device_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_timeconverter.h"
 #include "recording_device.h"
 
 // Includes from sli:

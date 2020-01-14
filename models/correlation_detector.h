@@ -150,12 +150,6 @@ Receives:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Moritz Helias
-        Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
-
 FirstVersion: 2007/5/21
 
 SeeAlso:

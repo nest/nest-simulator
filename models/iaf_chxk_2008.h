@@ -116,11 +116,6 @@ Receives:
 
 SpikeEvent, CurrentEvent
 
-Author:
-++++++++
-
-Heiberg
-
 SeeAlso:
 ++++++++
 

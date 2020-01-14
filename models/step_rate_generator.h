@@ -84,11 +84,6 @@ Sends:
 
 DelayedRateConnectionEvent
 
-Author:
-++++++++
-
-Sandra Nestler, David Dahmen
-
 SeeAlso:
 ++++++++
 

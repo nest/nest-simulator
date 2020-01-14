@@ -101,11 +101,6 @@ SpikeEvent
 
 FirstVersion: October 2011
 
-Author:
-++++++++
-
-Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
-
 SeeAlso:
 ++++++++
 

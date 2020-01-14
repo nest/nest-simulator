@@ -175,11 +175,6 @@ Sends:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Gewaltig, Diesmann, Eppler
-
 SeeAlso:
 ++++++++
 

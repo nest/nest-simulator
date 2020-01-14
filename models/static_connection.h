@@ -42,11 +42,6 @@ the parameters target, weight, delay and receiver port for each connection.
 
 FirstVersion: October 2005
 
-Author:
-++++++++
-
-Jochen Martin Eppler, Moritz Helias
-
 Transmits: 
 ++++++++++
 

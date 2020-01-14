@@ -66,12 +66,6 @@ Sends:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Adapted from mip_generator by Kunkel, Oct 2011
-ported to Nest 2.6 by: Setareh, April 2015
-
 SeeAlso:
 ++++++++
 

@@ -68,11 +68,6 @@ SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
 FirstVersion: June 2007
 
-Author:
-++++++++
-
-Abigail Morrison
-
 SeeAlso:
 ++++++++
 

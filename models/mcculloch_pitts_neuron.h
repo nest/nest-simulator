@@ -113,11 +113,6 @@ SpikeEvent, PotentialRequest
 
 FirstVersion: February 2013
 
-Author:
-++++++++
-
-Moritz Helias
-
 SeeAlso:
 ++++++++
 

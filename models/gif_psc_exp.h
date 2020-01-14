@@ -185,11 +185,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-March 2016, Setareh
-
 SeeAlso:
 ++++++++
 

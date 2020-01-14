@@ -58,11 +58,6 @@ Parameters:
 
 FirstVersion: June 2017
 
-Author:
-++++++++
-
-Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
-
 Transmits:
 ++++++++++
 

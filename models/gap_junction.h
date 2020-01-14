@@ -69,11 +69,6 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
 
 
-Author:
-++++++++
-
-Jan Hahne, Moritz Helias, Susanne Kunkel
-
 SeeAlso:
 ++++++++
 

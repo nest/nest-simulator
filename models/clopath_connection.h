@@ -91,10 +91,6 @@ References:
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
 
-Authors:
-++++++++
-
-Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso:
 ++++++++

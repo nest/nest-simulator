@@ -70,11 +70,6 @@ Sends:
 
 CurrentEvent
 
-Author:
-++++++++
-
-docu by Sirko Straube
-
 SeeAlso:
 ++++++++
 

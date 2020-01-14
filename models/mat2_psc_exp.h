@@ -145,11 +145,6 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: Mai 2009
 
-Author:
-++++++++
-
-Thomas Pfeil (modified iaf_psc_exp model of Moritz Helias)
-
 EndUserDocs */
 class mat2_psc_exp : public Archiving_Node
 {

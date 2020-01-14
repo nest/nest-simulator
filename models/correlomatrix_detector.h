@@ -135,12 +135,6 @@ Receives:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Dmytro Grytskyy
-       Jakob Jordan
-
 FirstVersion: 2013/02/27
 
 SeeAlso:

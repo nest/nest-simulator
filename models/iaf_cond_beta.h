@@ -140,11 +140,6 @@ References:
        MIT Press.
 
 
-Author:
-++++++++
-
-Daniel Naoumenko (modified iaf_cond_alpha by Schrader, Plesser)
-
 SeeAlso:
 ++++++++
 

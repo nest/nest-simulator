@@ -100,11 +100,6 @@ SpikeEvent
 
 FirstVersion: July 2006, Oct 2009, May 2013
 
-Author:
-++++++++
-
-Hans Ekkehard Plesser
-
 SeeAlso:
 ++++++++
 

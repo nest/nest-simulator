@@ -104,15 +104,6 @@ Transmits:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Susanne Kunkel
-
-Remarks:
-- based on an earlier version by Wiebke Potjans
-- major changes to code after code revision in Apr 2013
-
 SeeAlso:
 ++++++++
 

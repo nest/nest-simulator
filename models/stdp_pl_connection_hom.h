@@ -78,11 +78,6 @@ SpikeEvent
 
 FirstVersion: May 2007
 
-Author:
-++++++++
-
-Abigail Morrison
-
 SeeAlso:
 ++++++++
 

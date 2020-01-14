@@ -185,9 +185,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
-++++++++
-
 SeeAlso:
 ++++++++
 

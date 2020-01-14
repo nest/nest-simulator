@@ -87,11 +87,6 @@ Sends
 
 CurrentEvent
 
-Authors
-+++++++
-
-J Hake, 2003
-
 SeeAlso
 +++++++
 

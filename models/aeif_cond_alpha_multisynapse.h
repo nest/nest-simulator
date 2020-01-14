@@ -145,11 +145,6 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Authors
-+++++++
-
-HE Plesser, based on aeif_cond_beta_multisynapse
-
 SeeAlso
 +++++++
 

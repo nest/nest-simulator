@@ -145,11 +145,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Authors:
-++++++++
-
-Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
-
 SeeAlso:
 ++++++++
 

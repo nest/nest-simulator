@@ -93,13 +93,6 @@ References:
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias, Abigail Morrison
-
-Adapted by: Philipp Weidel
-
 SeeAlso:
 ++++++++
 

@@ -90,11 +90,6 @@ The following properties are available in the status dictionary:
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
 
-Author:
-++++++++
-
-Jochen Martin Eppler
-
 FirstVersion: July 2010
 
 Availability: Only when compiled with MUSIC

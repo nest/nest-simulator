@@ -150,7 +150,6 @@ References:
       model for the large, fluctuating synaptic conductance state typical of
       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
-Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
 */
 
 namespace nest

@@ -90,11 +90,6 @@ Only the parameter
 and the parameters from the class Nonlinearities can be set in the
 status dictionary.
 
-Author:
-++++++++
-
-Mario Senden, Jan Hahne, Jannis Schuecker
-
 FirstVersion: November 2017
 EndUserDocs */
 template < class TNonlinearities >

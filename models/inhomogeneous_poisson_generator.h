@@ -80,11 +80,6 @@ Sends:
 
 SpikeEvent
 
-Authors:
-++++++++
-
-Renato Duarte, Barna Zajzon
-
 SeeAlso:
 ++++++++
 

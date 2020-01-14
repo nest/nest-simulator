@@ -166,12 +166,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Daniel Naoumenko (modified hh_cond_exp_traub by Schrader and
-hh_psc_alpha_gap by Jan Hahne, Moritz Helias and Susanne Kunkel)
-
 SeeAlso:
 ++++++++
 

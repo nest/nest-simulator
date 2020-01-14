@@ -138,11 +138,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author:
-++++++++
-
-Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
-
 Sends:
 ++++++++
 

@@ -113,11 +113,6 @@ Receives:
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author:
-++++++++
-
-Mario Senden, Jan Hahne, Jannis Schuecker
-
 SeeAlso:
 ++++++++
 

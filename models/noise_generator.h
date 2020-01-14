@@ -121,11 +121,6 @@ Sends:
 
 CurrentEvent
 
-Author:
-++++++++
-
-Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP
-
 SeeAlso:
 ++++++++
 

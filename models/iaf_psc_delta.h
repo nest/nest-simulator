@@ -136,9 +136,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  September 1999, Diesmann, Gewaltig
-++++++++
-
 SeeAlso:
 ++++++++
 

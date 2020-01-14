@@ -136,7 +136,6 @@ References:
     Generalized leaky integrate-and-fire models classify multiple neuron types.
     Nature Communications 9:709.
 
-Author: Binghuang Cai and Kael Dai @ Allen Institute for Brain Science
 */
 
 namespace nest

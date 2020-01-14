@@ -82,11 +82,6 @@ Sends:
 
 CurrentEvent
 
-Author:
-++++++++
-
-Jochen Martin Eppler, Jens Kremkow
-
 SeeAlso:
 ++++++++
 

@@ -80,11 +80,6 @@ SpikeEvent
 
 FirstVersion: March 2009
 
-Author:
-++++++++
-
-Hans Ekkehard Plesser, based on markram_synapse
-
 SeeAlso:
 ++++++++
 

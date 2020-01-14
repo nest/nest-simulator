@@ -200,11 +200,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Bruno Golosio 07/10/2016
-
 SeeAlso:
 ++++++++
 

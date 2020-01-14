@@ -142,11 +142,6 @@ equilibrate                  If given and true, time-dependent activation
 
 @Note Conductances are unitless in this model and currents are in mV.
 
-Author:
-++++++++
-
-Hans Ekkehard Plesser
-
 Sends:
 ++++++++
 

@@ -175,11 +175,6 @@ References:
        DOI: https://doi.org/10.1073/pnas.88.24.11569
 
 
-Author:
-++++++++
-
-Plesser
-
 SeeAlso:
 ++++++++
 

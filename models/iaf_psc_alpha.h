@@ -145,9 +145,6 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: September 1999
 
-Author:  Diesmann, Gewaltig
-++++++++
-
 SeeAlso:
 ++++++++
 

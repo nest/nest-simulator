@@ -120,11 +120,6 @@ SpikeEvent
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Susanne Kunkel, Moritz Helias
-
 SeeAlso:
 ++++++++
 

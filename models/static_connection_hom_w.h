@@ -58,11 +58,6 @@ DataLoggingRequest, DoubleDataEvent
 
 FirstVersion: April 2008
 
-Author:
-++++++++
-
-Susanne Kunkel, Moritz Helias
-
 SeeAlso:
 ++++++++
 

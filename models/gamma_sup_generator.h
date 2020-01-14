@@ -74,11 +74,6 @@ References:
        Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
 
 
-Author:
-++++++++
-
-Jan 2011, Moritz Deger
-
 SeeAlso:
 ++++++++
 

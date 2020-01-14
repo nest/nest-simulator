@@ -145,11 +145,6 @@ Receives:
 
 SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Jan Hahne, Moritz Helias, Susanne Kunkel
-
 SeeAlso:
 ++++++++
 

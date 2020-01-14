@@ -157,12 +157,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author:
-++++++++
-
-Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
-Fardet on December 2016
-
 Sends:
 ++++++++
 

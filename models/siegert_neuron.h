@@ -120,11 +120,6 @@ Receives:
 
 DiffusionConnectionEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Jannis Schuecker, David Dahmen, Jan Hahne
-
 SeeAlso:
 ++++++++
 

@@ -78,11 +78,6 @@ The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
-Author:
-++++++++
-
-Moritz Helias, Jochen Martin Eppler
-
 FirstVersion: October 2008
 
 Availability: Only when compiled with MUSIC

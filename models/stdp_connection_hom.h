@@ -103,11 +103,6 @@ References:
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias, Abigail Morrison
-
 SeeAlso:
 ++++++++
 

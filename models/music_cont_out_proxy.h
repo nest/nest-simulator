@@ -99,11 +99,6 @@ The following properties are available in the status dictionary:
 ============ ========  ========================================================
 
 
-Author:
-++++++++
-
-Martin Asghar Schulze, Forschungszentrum fur Informatik Karlsruhe (FZI)
-
 FirstVersion: March 2016
 
 Availability: Only when compiled with MPI and MUSIC

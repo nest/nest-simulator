@@ -103,11 +103,6 @@ Receives:
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author:
-++++++++
-
-David Dahmen, Jan Hahne, Jannis Schuecker
-
 SeeAlso:
 ++++++++
 

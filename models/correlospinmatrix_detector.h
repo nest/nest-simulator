@@ -121,11 +121,6 @@ Receives:
 
 SpikeEvent
 
-Author:
-++++++++
-
-Moritz Helias
-
 FirstVersion: 2015/08/25
 
 SeeAlso:

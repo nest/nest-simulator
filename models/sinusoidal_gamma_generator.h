@@ -118,11 +118,6 @@ References:
 
 FirstVersion: October 2007, May 2013
 
-Author:
-++++++++
-
-Hans E Plesser, Thomas Heiberg
-
 SeeAlso:
 ++++++++
 

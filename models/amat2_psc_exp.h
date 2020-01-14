@@ -160,12 +160,6 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: April 2013
 
-Author:
-++++++++
-
-Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
-Thomas Pfeil)
-
 EndUserDocs */
 class amat2_psc_exp : public Archiving_Node
 {

@@ -79,11 +79,6 @@ The following properties are available in the status dictionary:
 
 The parameter port_name can be set using SetStatus.
 
-Author:
-++++++++
-
-Jochen Martin Eppler
-
 FirstVersion: July 2010
 
 Availability: Only when compiled with MUSIC

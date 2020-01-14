@@ -111,11 +111,6 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: 2009
 
-Author:
-++++++++
-
-Hanuschkin, Morrison, Kunkel
-
 SeeAlso:
 ++++++++
 

@@ -64,9 +64,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  Plesser, adapted from iaf_psc_alpha_multisynapse
-++++++++
-
 SeeAlso:
 ++++++++
 

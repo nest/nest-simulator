@@ -122,11 +122,6 @@ SpikeEvent, PotentialRequest
 
 FirstVersion: May 2016
 
-Authors:
-++++++++
-
-Jakob Jordan, Tobias Kuehn
-
 SeeAlso:
 ++++++++
 

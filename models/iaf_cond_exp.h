@@ -112,11 +112,6 @@ References:
        DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
 
 
-Author:
-++++++++
-
-Sven Schrader
-
 SeeAlso:
 ++++++++
 

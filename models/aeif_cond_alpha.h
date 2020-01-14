@@ -156,11 +156,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Authors
-+++++++
-
-M-O Gewaltig; full revision by T Fardet, 2016
-
 Sends
 ++++++
 

@@ -170,12 +170,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Jonas Stapmanns, David Dahmen, Jan Hahne
-        (adapted from hh_psc_alpha by Schrader)
-
 SeeAlso:
 ++++++++
 

@@ -79,13 +79,6 @@ References:
        4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
 
 
-Author:
-++++++++
-
-Wiebke Potjans, Abigail Morrison
-
-Remarks: major changes to update function after code revision in Apr 2013 (SK)
-
 Receives:
 ++++++++
 

@@ -147,11 +147,6 @@ References:
 
 FirstVersion: July 2011
 
-Author:
-++++++++
-
-Thomas Pfeil (TP), Moritz Helias, Abigail Morrison
-
 SeeAlso:
 ++++++++
 

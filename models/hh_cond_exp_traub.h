@@ -142,11 +142,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Schrader
-
 SeeAlso:
 ++++++++
 

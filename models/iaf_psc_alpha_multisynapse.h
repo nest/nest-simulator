@@ -64,9 +64,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  Schrader, adapted from iaf_psc_alpha
-++++++++
-
 SeeAlso:
 ++++++++
 

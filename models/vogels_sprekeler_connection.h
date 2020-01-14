@@ -72,11 +72,6 @@ References:
 
 FirstVersion: January 2016
 
-Author:
-++++++++
-
-Ankur Sinha
-
 SeeAlso:
 ++++++++
 

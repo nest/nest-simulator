@@ -137,11 +137,6 @@ References:
                                                             item_3006127
 
 
-Author:
-++++++++
-
-Sven Schrader, Eilif Muller
-
 SeeAlso:
 ++++++++
 

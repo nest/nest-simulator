@@ -160,11 +160,6 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-May 2014, Setareh, Deger
-
 SeeAlso:
 ++++++++
 

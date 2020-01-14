@@ -97,12 +97,6 @@ Notes:
 
 FirstVersion: Nov 2007
 
-Author:
-++++++++
-
-Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
-Adapted by: Philipp Weidel
-
 SeeAlso:
 ++++++++
 

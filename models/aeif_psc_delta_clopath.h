@@ -165,11 +165,6 @@ by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
 
-Author:
-++++++++
-
-Jonas Stapmanns, David Dahmen, Jan Hahne
-
 Sends:
 ++++++++
 

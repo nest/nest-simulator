@@ -118,11 +118,6 @@ SpikeEvent
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias
-
 SeeAlso:
 ++++++++
 

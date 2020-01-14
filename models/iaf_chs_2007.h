@@ -111,10 +111,6 @@ SpikeEvent, DataLoggingRequest
 
 FirstVersion: May 2012
 
-Author:
-++++++++
-
-Thomas Heiberg, Birgit Kriener
 EndUserDocs */
 class iaf_chs_2007 : public Archiving_Node
 {

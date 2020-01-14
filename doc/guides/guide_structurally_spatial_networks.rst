@@ -4,9 +4,6 @@
 Guide to spatially-structured networks
 =======================================
 
-.. TODO: Should it still be called "Topology User Manual",
-..       now that the PyNEST Topology Module is gone?
-
 The NEST simulator [1]_ provides  a convenient interface for creating neurons placed in
 space and connecting those neurons with probabilities and
 properties depending on the relative placement of neurons. This permits
@@ -17,7 +14,7 @@ defining spatial networks in NEST. It is based exclusively on the PyNEST, the
 Python interface to NEST. NEST users using the SLI
 interface should be able to map instructions to corresponding SLI code.
 This manual is not meant as a comprehensive reference manual. Please
-consult the online documentation in PyNEST for details; where                             ################################# LINK!!!!!!!!!!!!!!!!!!!!
+consult the online documentation in PyNEST for details; where
 appropriate, that documentation also points to relevant SLI
 documentation.
 
@@ -51,7 +48,7 @@ Undocumented features
 .. _sec:layers:
 
 Layers
-======
+------
 
 .. TODO: Not called Module anymore?
 
@@ -76,12 +73,12 @@ certain circumstances.
 .. _sec:gridbased:
 
 Grid-based Layers
------------------
+~~~~~~~~~~~~~~~~~
 
 .. _sec:verysimple:
 
 A very simple layer
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 We create a first, grid-based simple layer with the following command:
 
@@ -147,7 +144,7 @@ but the grid spacing may differ in x- and y-direction.
 .. _sec:setextent:
 
 Setting the extent
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Grid-based layers have a default extent of :math:`1\times 1`. You can specify a
 different extent of a layer, i.e., its size in :math:`x`- and
@@ -178,7 +175,7 @@ assertion, thus stopping NEST.
 .. _sec:setcenter:
 
 Setting the center
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Layers are centered about the origin :math:`(0,0)` by default. This can
 be changed by passing the ``center`` argument to ``nest.spatial.grid()``.
@@ -210,7 +207,7 @@ Sec. \ :ref:`2.1.2 <sec:setextent>`.
 .. _sec:fixedlayerexample:
 
 Constructing a layer: an example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To see how to construct a layer, consider the following example:
 
@@ -251,7 +248,7 @@ and shown in :numref:`fig_layer3a`:
 .. _sec:freelayer:
 
 Free layers
------------
+~~~~~~~~~~~
 
 *Free layers* do not restrict node positions to a grid, but allow free
 placement within the extent. To this end, the user can specify the
@@ -290,7 +287,7 @@ Note the following points:
 .. _sec:3dlayer:
 
 3D layers
----------
+~~~~~~~~~
 
 Although the term “layer” suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
@@ -312,7 +309,7 @@ for the positions:
 .. _sec:periodic:
 
 Periodic boundary conditions
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simulations usually model systems much smaller than the biological
 networks we want to study. One problem this entails is that a
@@ -369,7 +366,7 @@ Chapter \ :ref:`3 <sec:connections>`.
 
 
 Layers as NEST NodeCollection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From the perspective of NEST, a layer is a special type of
 *NodeCollection*. From the user perspective, the following points may
@@ -438,7 +435,7 @@ selectively to different neuron models.
 .. _sec:connections:
 
 Connections
-===========
+-----------
 
 The most important feature of the spatially-structured networks is the ability to
 create connections between layers with quite some flexibility. In this
@@ -448,12 +445,12 @@ connections are created using the ``Connect`` function.
 .. _sec:conn_basics:
 
 Basic principles
-----------------
+~~~~~~~~~~~~~~~~
 
 .. _sec:terminology:
 
 Terminology
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 We begin by introducing important terminology:
 
@@ -554,7 +551,7 @@ Multapse
 .. _sec:minimalcall:
 
 Connecting layers
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 
 Connections between are created by calling ``Connect``, as
@@ -602,7 +599,7 @@ nodes in the layer, as illustrated in :numref:`fig_conn1`.
 .. _sec:mapping:
 
 Mapping source and target layers
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The application of masks and other functions depending on the distance
 or even the displacement between nodes in the source and target layers
@@ -626,7 +623,7 @@ layers. NEST applies the following *coordinate mapping rules*:
 .. _sec:conn_masks:
 
 Masks
------
+~~~~~
 
 A mask describes which area of the pool layer shall be searched for
 nodes to connect for any given node in the driver layer. We will first
@@ -646,7 +643,7 @@ covered in Chapter \ `5 <#ch:extending>`__.
 .. _sec:free_masks:
 
 Masks for 2D layers
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
  currently provides four types of masks usable for 2-dimensional
 free and grid-based layers. They are illustrated in  :numref:`fig_conn2_a`.
@@ -757,7 +754,7 @@ from the x-axis to the y-axis.
 .. _sec:3d_masks:
 
 Masks for 3D layers
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Similarly, there are three mask types that can be used for 3D layers,
 
@@ -812,7 +809,7 @@ the (possibly rotated) x-axis is missing.
 .. _sec:grid_masks:
 
 Masks for grid-based layers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Grid-based layers can be connected using rectangular *grid masks*. For
 these, you specify the size of the mask not by lower left and upper
@@ -872,7 +869,7 @@ Note the following:
 .. _sec:conn_kernels:
 
 Probabilistic connection rules
-------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Many neuronal network models employ probabilistic connection rules.
 NEST supports probabilistic connections through the
@@ -904,7 +901,7 @@ A selection of specific NEST parameters are pertaining to spatially structured n
 .. _tbl_parameters:
 
 Spatially-structured specific NEST parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The parameters in the table below represent positions of neurons or
 distances between two neurons. To set node parameters, only the node
@@ -1034,7 +1031,7 @@ pool neuron as ``nest.spatial.distance``.
 .. _sec:conn_wd:
 
 Weights and delays
-------------------
+~~~~~~~~~~~~~~~~~~
 
 Parameters, such as those presented in Table :ref:`tbl_parameters`, can
 also be used to specify distance-dependent or randomized weights and
@@ -1107,7 +1104,7 @@ circles in the bottom panel of :numref:`fig_conn5`.
    details.
 
 Designing distance-dependent Parameters
----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although NEST comes with some pre-defined functions that can be used to
 create distributions of distance-dependent Parameters, this is not a limit
@@ -1136,7 +1133,7 @@ And can be directly plugged into the ``Connect`` function:
 .. _sec:conn_pbc:
 
 Periodic boundary conditions
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Connections between layers with periodic boundary conditions are based
 on the following principles:
@@ -1167,7 +1164,7 @@ applied to.
 .. _sec:prescribed_numbers:
 
 Prescribed number of connections
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We have so far described how to connect layers by either connecting to all
 nodes inside the mask or by considering each pool node in turn and
@@ -1247,7 +1244,7 @@ number of connections is prescribed.
 .. _sec:conn_composite:
 
 .. Connecting composite layers
-.. ---------------------------
+.. ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. Connections between layers with composite elements are based on the
 .. following principles:
@@ -1278,7 +1275,7 @@ number of connections is prescribed.
 .. _sec:conn_synapse:
 
 Synapse models and properties
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, ``Connect`` creates connections using the default synapse
 model in NEST, ``static_synapse``. You can specify a different model by
@@ -1296,7 +1293,7 @@ not be set in distance-dependent ways at present.
 .. _sec:dev_subregions:
 
 Connecting devices to subregions of layers
-------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to connect stimulation and recording devices only to
 specific subregions of layers. A simple way to achieve this is to create
@@ -1320,7 +1317,7 @@ Sec. \ :ref:`3.11 <sec:rec_dev>`):
 .. _sec:rec_dev:
 
 Layers and recording devices
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, one should not create a layer of recording devices,
 especially spike detectors, to record from a layer. Instead,
@@ -1340,7 +1337,7 @@ connected as sources, not as targets.
 .. _sec:inspection:
 
 Inspecting Layers
-=================
+-----------------
 
 We strongly recommend that you inspect the layers created to be sure that
 node placement and connectivity indeed turned out as expected. In this
@@ -1350,7 +1347,7 @@ visualize networks, layers, and connectivity.
 .. _sec:queries:
 
 Query functions
----------------
+~~~~~~~~~~~~~~~
 
 The following table presents some query functions provided by NEST.
 
@@ -1406,7 +1403,7 @@ The following table presents some query functions provided by NEST.
 .. _sec:visualize:
 
 Visualization functions
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 NEST provides three functions to visualize networks:
 
@@ -1450,7 +1447,7 @@ center neuron are shown, as well as mask and connection probability.
 .. _ch:extending:
 
 Adding masks
-============
+------------
 
 This chapter will show examples of how to extend NEST by adding custom
 masks. Some knowledge of the C++ programming language is needed for this.
@@ -1597,7 +1594,7 @@ used in connections, e.g.
 
 
 References
-==========
+----------
 
 .. [1]
    NEST is available under an open source license at

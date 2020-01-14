@@ -1623,6 +1623,9 @@ NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i 
 /**
  * Enable Structural Plasticity within the simulation. This means, allowing
  * dynamic rewiring of the network based on mean electrical activity.
+ * Please note that in the current implementation of structural plasticity
+ * spikes could be delivered via connections that were not present at the 
+ * time of the spike in some cases.
  * @param i
  */
 void

@@ -41,6 +41,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"

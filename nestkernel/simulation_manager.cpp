@@ -136,7 +136,6 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   bool tics_per_ms_updated = updateValue< double >( d, names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
   bool res_updated = updateValue< double >( d, names::resolution, resd );
-  double integer_part; // Dummy variable to be used with std::modf().
 
   if ( tics_per_ms_updated or res_updated )
   {

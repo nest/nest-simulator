@@ -84,7 +84,7 @@ Sends:
 
 DelayedRateConnectionEvent
 
-SeeAlso:
+See also
 ++++++++
 
 step_current_generator, Device, StimulatingDevice

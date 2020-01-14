@@ -160,7 +160,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator, gamma_sup_generator

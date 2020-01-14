@@ -118,7 +118,7 @@ SpikeEvent
 
 FirstVersion: March 2006
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000

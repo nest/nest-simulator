@@ -69,7 +69,7 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
 
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, hh_psc_alpha_gap

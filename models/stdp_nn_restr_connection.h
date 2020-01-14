@@ -102,7 +102,7 @@ References:
 
 FirstVersion: March 2006
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_synapse, stdp_nn_symm_synapse

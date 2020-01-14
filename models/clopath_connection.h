@@ -92,7 +92,7 @@ References:
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
 
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath

@@ -109,7 +109,11 @@ Total number of entries: 3
 
 Sends: DataLoggingRequest
 
-SeeAlso: Device, RecordingDevice, multimeter
+See also
+++++++++
+
+device, RecordingDevice, multimeter
+
 */
 class voltmeter : public multimeter
 {

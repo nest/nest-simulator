@@ -80,7 +80,7 @@ Sends:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice

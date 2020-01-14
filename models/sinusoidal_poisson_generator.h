@@ -100,7 +100,7 @@ SpikeEvent
 
 FirstVersion: July 2006, Oct 2009, May 2013
 
-SeeAlso:
+See also
 ++++++++
 
 poisson_generator, sinusoidal_gamma_generator

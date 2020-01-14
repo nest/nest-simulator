@@ -93,7 +93,7 @@ References:
 
 FirstVersion: March 2006
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, static_synapse

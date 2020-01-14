@@ -175,7 +175,7 @@ Sends:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 Device, StimulatingDevice, testsuite::test_spike_generator

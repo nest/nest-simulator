@@ -155,7 +155,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: March 2006
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_exp_ps

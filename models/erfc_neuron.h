@@ -122,7 +122,7 @@ SpikeEvent, PotentialRequest
 
 FirstVersion: May 2016
 
-SeeAlso:
+See also
 ++++++++
 
 mcculloch_pitts_neuron, ginzburg_neuron

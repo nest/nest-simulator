@@ -123,7 +123,7 @@ SpikeEvent
 
 FirstVersion: 2015/08/25
 
-SeeAlso:
+See also
 ++++++++
 
 correlation_detector, correlomatrix_detector, spike_detector,

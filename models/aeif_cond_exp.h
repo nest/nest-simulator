@@ -174,7 +174,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_exp, aeif_cond_alpha

@@ -87,7 +87,7 @@ Sends
 
 CurrentEvent
 
-SeeAlso
+See also
 +++++++
 
 StimulatingDevice, dc_generator, step_current_generator

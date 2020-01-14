@@ -145,7 +145,7 @@ Receives:
 
 SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 hh_psc_alpha, hh_cond_exp_traub, gap_junction

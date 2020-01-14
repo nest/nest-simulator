@@ -97,7 +97,7 @@ References:
        DOI:  https://doi.org./10.3389/fninf.2017.00034
 
 
-SeeAlso:
+See also
 ++++++++
 
 lin_rate, tanh_rate, threshold_lin_rate

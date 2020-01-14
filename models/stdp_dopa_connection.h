@@ -104,7 +104,7 @@ Transmits:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 volume_transmitter

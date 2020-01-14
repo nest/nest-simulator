@@ -97,7 +97,7 @@ Notes:
 
 FirstVersion: Nov 2007
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse

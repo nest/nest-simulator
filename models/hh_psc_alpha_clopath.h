@@ -170,7 +170,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath

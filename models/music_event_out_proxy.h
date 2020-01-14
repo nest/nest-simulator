@@ -81,7 +81,7 @@ FirstVersion: March 2009
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy

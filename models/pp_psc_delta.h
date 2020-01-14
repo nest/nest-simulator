@@ -185,7 +185,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps

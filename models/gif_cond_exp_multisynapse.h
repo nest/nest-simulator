@@ -224,7 +224,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse

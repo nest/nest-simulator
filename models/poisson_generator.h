@@ -105,7 +105,7 @@ refer to:
 
 http://ken.brainworks.uni-freiburg.de/cgi-bin/mailman/private/nest_developer/2011-January/002977.html
 
-SeeAlso:
+See also
 ++++++++
 
 poisson_generator_ps, Device, parrot_neuron

@@ -188,7 +188,7 @@ References:
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
        modeldb_package%2fVoTriCode%2faEIF.m
 
-SeeAlso:
+See also
 ++++++++
 
 aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath

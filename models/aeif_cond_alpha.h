@@ -174,7 +174,7 @@ References
        activity. Journal of Neurophysiology. 943637-3642
        DOI: https://doi.org/10.1152/jn.00686.2005
 
-SeeAlso
+See also
 +++++++
 
 iaf_cond_alpha, aeif_cond_exp

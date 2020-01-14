@@ -78,7 +78,7 @@ SpikeEvent
 
 FirstVersion: May 2007
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, stdp_synapse, tsodyks_synapse, static_synapse

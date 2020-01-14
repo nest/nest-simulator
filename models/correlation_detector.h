@@ -152,7 +152,7 @@ SpikeEvent
 
 FirstVersion: 2007/5/21
 
-SeeAlso:
+See also
 ++++++++
 
 spike_detector, Device, PseudoRecordingDevice

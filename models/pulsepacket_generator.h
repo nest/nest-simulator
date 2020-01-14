@@ -79,7 +79,7 @@ Sends:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 spike_generator, StimulatingDevice

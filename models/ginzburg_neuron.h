@@ -126,7 +126,7 @@ SpikeEvent, PotentialRequest
 
 FirstVersion: February 2010
 
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta

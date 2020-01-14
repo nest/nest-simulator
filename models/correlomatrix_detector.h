@@ -137,7 +137,7 @@ SpikeEvent
 
 FirstVersion: 2013/02/27
 
-SeeAlso:
+See also
 ++++++++
 
 correlation_detector, spike_detector, Device, PseudoRecordingDevice

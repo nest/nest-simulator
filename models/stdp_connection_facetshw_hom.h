@@ -147,7 +147,7 @@ References:
 
 FirstVersion: July 2011
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_synapse, synapsedict, tsodyks_synapse, static_synapse

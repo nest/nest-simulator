@@ -132,7 +132,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 hh_cond_exp_traub

@@ -137,7 +137,7 @@ References:
                                                             item_3006127
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp,

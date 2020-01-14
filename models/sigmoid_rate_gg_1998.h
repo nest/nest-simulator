@@ -105,7 +105,7 @@ Receives:
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 rate_connection_instantaneous, rate_connection_delayed

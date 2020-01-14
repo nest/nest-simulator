@@ -84,7 +84,7 @@ Receives:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_dopamine_synapse

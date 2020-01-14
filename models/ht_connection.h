@@ -80,7 +80,7 @@ SpikeEvent
 
 FirstVersion: March 2009
 
-SeeAlso:
+See also
 ++++++++
 
 ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse

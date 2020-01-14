@@ -66,7 +66,7 @@ Sends:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 mip_generator

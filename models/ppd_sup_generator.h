@@ -82,7 +82,7 @@ References:
         of superimposed stationary spike trains. Journal of Computational
         Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
 
-SeeAlso:
+See also
 ++++++++
 
 gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice

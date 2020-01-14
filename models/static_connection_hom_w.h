@@ -58,7 +58,7 @@ DataLoggingRequest, DoubleDataEvent
 
 FirstVersion: April 2008
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, static_synapse

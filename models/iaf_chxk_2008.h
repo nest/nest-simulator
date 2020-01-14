@@ -116,7 +116,7 @@ Receives:
 
 SpikeEvent, CurrentEvent
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_alpha

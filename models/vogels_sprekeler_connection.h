@@ -72,7 +72,7 @@ References:
 
 FirstVersion: January 2016
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict

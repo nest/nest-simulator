@@ -95,7 +95,7 @@ SpikeEvent
 
 FirstVersion: December 2013
 
-SeeAlso:
+See also
 ++++++++
 
 tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse

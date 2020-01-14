@@ -167,7 +167,7 @@ References:
        DOI: https://doi.org/10.1152/jn.01038.2002
 
 
-SeeAlso:
+See also
 ++++++++
 
 ht_connection

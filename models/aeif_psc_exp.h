@@ -167,7 +167,7 @@ References:
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_exp, aeif_cond_exp

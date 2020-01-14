@@ -82,7 +82,7 @@ References:
        Journal of Neuroscience, 35(43):14585-14601.
        DOI: https://doi.org/10.1523/JNEUROSCI.4944-14.2015
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, static_synapse, static_synapse_hom_w

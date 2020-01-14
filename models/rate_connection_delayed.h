@@ -58,7 +58,7 @@ References:
        DOI: https://doi.org/10.3389/fninf.2017.00034
 
 
-SeeAlso:
+See also
 ++++++++
 
 rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn

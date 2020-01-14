@@ -120,7 +120,7 @@ SpikeEvent
 
 FirstVersion: March 2006
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,

@@ -50,7 +50,7 @@ DoubleDataEvent, DataLoggingRequest
 
 Remarks: Refactored for new connection system design, March 2007
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, stdp_synapse

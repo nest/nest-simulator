@@ -103,7 +103,7 @@ FirstVersion: March 2016
 
 Availability: Only when compiled with MPI and MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 music_cont_in_proxy, music_event_out_proxy, music_event_in_proxy, music_message_in_proxy

@@ -140,7 +140,7 @@ References:
        MIT Press.
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_exp, iaf_cond_alpha, iaf_cond_alpha_mc

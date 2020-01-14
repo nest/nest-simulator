@@ -68,7 +68,7 @@ SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
 FirstVersion: June 2007
 
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, static_synapse, iaf_psc_alpha_ps

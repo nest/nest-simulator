@@ -120,7 +120,7 @@ Receives:
 
 DiffusionConnectionEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 diffusion_connection

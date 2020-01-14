@@ -131,7 +131,7 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_exp, iaf_cond_alpha_mc

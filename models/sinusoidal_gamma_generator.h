@@ -118,7 +118,7 @@ References:
 
 FirstVersion: October 2007, May 2013
 
-SeeAlso:
+See also
 ++++++++
 
 sinusoidal_poisson_generator, gamma_sup_generator

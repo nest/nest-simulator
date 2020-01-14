@@ -79,7 +79,7 @@ Receives:
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 spike_detector, Device, RecordingDevice

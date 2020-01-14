@@ -106,7 +106,7 @@ References:
        DOI: https://doi.org/10.1162/089976603321043702
 
 
-SeeAlso:
+See also
 ++++++++
 
 Device

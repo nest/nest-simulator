@@ -112,7 +112,7 @@ References:
        DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp

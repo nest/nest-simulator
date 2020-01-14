@@ -94,7 +94,7 @@ FirstVersion: July 2010
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy

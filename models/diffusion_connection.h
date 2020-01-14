@@ -76,7 +76,7 @@ References:
        DOI: https://doi.org/10.3389/fninf.2017.00034
 
 
-SeeAlso:
+See also
 ++++++++
 
 siegert_neuron, rate_connection_instantaneous

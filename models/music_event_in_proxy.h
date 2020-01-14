@@ -82,7 +82,7 @@ FirstVersion: October 2008
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy

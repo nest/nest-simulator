@@ -111,7 +111,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: 2009
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_delta, mat2_psc_exp

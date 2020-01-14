@@ -121,7 +121,7 @@ Sends:
 
 CurrentEvent
 
-SeeAlso:
+See also
 ++++++++
 
 Device

@@ -145,7 +145,7 @@ Receives:
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso:
+See also
 ++++++++
 
 gif_psc_exp, pp_pop_psc_delta, spike_dilutor

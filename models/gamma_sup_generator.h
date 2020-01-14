@@ -74,7 +74,7 @@ References:
        Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
 
 
-SeeAlso:
+See also
 ++++++++
 
 ppd_sup_generator, poisson_generator_ps, spike_generator

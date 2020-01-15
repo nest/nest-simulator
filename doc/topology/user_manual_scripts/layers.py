@@ -37,12 +37,12 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
 
     if xticks is None:
         if 'shape' in l.spatial:
-            dx = float(ext[0]) / l.spatial['shape'][1]
-            dy = float(ext[1]) / l.spatial['shape'][0]
+            dx = float(ext[0]) / l.spatial['shape'][0]
+            dy = float(ext[1]) / l.spatial['shape'][1]
             xticks = ctr[0] - ext[0] / 2. + dx / 2. + dx * np.arange(
                 l.spatial['shape'][0])
             yticks = ctr[1] - ext[1] / 2. + dy / 2. + dy * np.arange(
-                l.spatial['shape'][0])
+                l.spatial['shape'][1])
 
     if xlim is None:
         xlim = [ctr[0] - ext[0] / 2. - dx / 2., ctr[0] + ext[
@@ -166,7 +166,7 @@ nc, nr = 5, 3
 d = 0.1
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(
-                    shape=[nr, nc],
+                    shape=[nc, nr],
                     extent=[nc * d, nr * d],
                     center=[nc * d / 2., 0.]))
 #{ end #}
@@ -222,7 +222,7 @@ nest.ResetKernel()
 #{ player #}
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(
-                    shape=[1, 5],
+                    shape=[5, 1],
                     extent=[5., 1.],
                     edge_wrap=True))
 #{ end #}
@@ -280,9 +280,9 @@ nest.ResetKernel()
 
 #{ layer6 #}
 l1 = nest.Create('iaf_cond_alpha',
-                 positions=nest.spatial.grid(shape=[1, 2]))
+                 positions=nest.spatial.grid(shape=[2, 1]))
 l2 = nest.Create('poisson_generator',
-                 positions=nest.spatial.grid(shape=[1, 2]))
+                 positions=nest.spatial.grid(shape=[2, 1]))
 #{ end #}
 
 print("#{ layer6 #}")

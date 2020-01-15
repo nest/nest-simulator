@@ -321,7 +321,7 @@ fig = nest.PlotLayer(l, nodesize=80)
 ctr = nest.FindCenterElement(l)
 nest.PlotTargets(ctr, l, fig=fig,
                  mask=conndict['mask'], probability_parameter=probability_param,
-                 src_size=250, tgt_color='red', tgt_size=20,
+                 src_size=250, tgt_color='red', tgt_size=20, mask_color='red',
                  probability_cmap='Greens')
 #{ end #}
 plt.savefig('../user_manual_figures/vislayer.png', bbox_inches='tight')

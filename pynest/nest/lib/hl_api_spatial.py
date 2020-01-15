@@ -1264,7 +1264,7 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
             z[:, i] = np.array(values)
         img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
                         origin='lower', cmap=prob_cmap, vmin=0., vmax=1.)
-        plt.colorbar(img, ax=ax)
+        plt.colorbar(img, ax=ax, fraction=0.046, pad=0.04)
 
     if mask is not None:
         periodic = source.spatial['edge_wrap']

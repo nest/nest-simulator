@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""Sinusoidal gamma generator example
---------------------------------------
+"""
+Sinusoidal gamma generator example
+----------------------------------
 
 This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
 different parameters and modes. The source code of the model can be found in
@@ -70,8 +71,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2)
+m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', 2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -354,3 +355,4 @@ exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
 plt.plot(exp, 'r')
 plt.title('Modulation Phase: 0 -> Pi')
 plt.xlabel('Time [ms]')
+plt.show()

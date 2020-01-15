@@ -88,7 +88,7 @@ spikedetector = nest.Create("spike_detector")
 # Note that we need not set parameters for the neuron, the spike detector, and
 # the voltmeter, since they have satisfactory defaults.
 
-noise.set("rate", [n_ex * r_ex, n_in * r_in])
+noise.set(rate=[n_ex * r_ex, n_in * r_in])
 
 ###############################################################################
 # Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the

@@ -909,10 +909,7 @@ nest.SetKernelStatus({'print_time': True})
 vmn = [-80, -80, -80, -80, -80, -80]
 vmx = [-50, -50, -50, -50, -50, -50]
 
-# Because we are running the simulation in steps, we use the
-# Prepare-Run-Cleanup procedure.
-nest.Prepare()
-nest.Run(Params['sim_interval'])
+nest.Simulate(Params['sim_interval'])
 
 # Set up the figure, assume six recorders.
 fig, axes = plt.subplots(2, 3)
@@ -929,7 +926,7 @@ for i, ax in enumerate(axes.flat):
 for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
     # do the simulation
-    nest.Run(Params['sim_interval'])
+    nest.Simulate(Params['sim_interval'])
 
     # now plot data from each recorder in turn
     for name, rec_item in recorders.items():
@@ -947,9 +944,6 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
     # We need to pause because drawing of the figure happens while the main code is sleeping
     plt.pause(0.0001)
-
-# Cleanup after the simulation is complete.
-nest.Cleanup()
 
 # just for some information at the end
 pprint(nest.GetKernelStatus())

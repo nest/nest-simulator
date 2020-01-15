@@ -36,13 +36,13 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
     ext = l.spatial['extent']
 
     if xticks is None:
-        if 'rows' in l.spatial:
-            dx = float(ext[0]) / l.spatial['columns']
-            dy = float(ext[1]) / l.spatial['rows']
+        if 'shape' in l.spatial:
+            dx = float(ext[0]) / l.spatial['shape'][1]
+            dy = float(ext[1]) / l.spatial['shape'][0]
             xticks = ctr[0] - ext[0] / 2. + dx / 2. + dx * np.arange(
-                l.spatial['columns'])
+                l.spatial['shape'][0])
             yticks = ctr[1] - ext[1] / 2. + dy / 2. + dy * np.arange(
-                l.spatial['rows'])
+                l.spatial['shape'][0])
 
     if xlim is None:
         xlim = [ctr[0] - ext[0] / 2. - dx / 2., ctr[0] + ext[
@@ -70,7 +70,7 @@ nest.ResetKernel()
 
 #{ layer1 #}
 l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(rows=5, columns=5))
+                positions=nest.spatial.grid(shape=[5, 5]))
 #{ end #}
 
 fig = nest.PlotLayer(l, nodesize=50)
@@ -109,8 +109,7 @@ nest.ResetKernel()
 #{ layer2 #}
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(
-                    rows=5,
-                    columns=5,
+                    shape=[5, 5],
                     extent=[2.0, 0.5]))
 #{ end #}
 
@@ -137,16 +136,14 @@ nest.ResetKernel()
 
 #{ layer3 #}
 l1 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(rows=5, columns=5))
+                 positions=nest.spatial.grid(shape=[5, 5]))
 l2 = nest.Create('iaf_psc_alpha',
                  positions=nest.spatial.grid(
-                     rows=5,
-                     columns=5,
+                     shape=[5, 5],
                      center=[-1., 1.]))
 l3 = nest.Create('iaf_psc_alpha',
                  positions=nest.spatial.grid(
-                     rows=5,
-                     columns=5,
+                     shape=[5, 5],
                      center=[1.5, 0.5]))
 #{ end #}
 
@@ -169,8 +166,7 @@ nc, nr = 5, 3
 d = 0.1
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(
-                    rows=nr,
-                    columns=nc,
+                    shape=[nr, nc],
                     extent=[nc * d, nr * d],
                     center=[nc * d / 2., 0.]))
 #{ end #}
@@ -226,8 +222,7 @@ nest.ResetKernel()
 #{ player #}
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(
-                    rows=1,
-                    columns=5,
+                    shape=[1, 5],
                     extent=[5., 1.],
                     edge_wrap=True))
 #{ end #}
@@ -285,9 +280,9 @@ nest.ResetKernel()
 
 #{ layer6 #}
 l1 = nest.Create('iaf_cond_alpha',
-                 positions=nest.spatial.grid(rows=1, columns=2))
+                 positions=nest.spatial.grid(shape=[1, 2]))
 l2 = nest.Create('poisson_generator',
-                 positions=nest.spatial.grid(rows=1, columns=2))
+                 positions=nest.spatial.grid(shape=[1, 2]))
 #{ end #}
 
 print("#{ layer6 #}")
@@ -315,17 +310,18 @@ nest.ResetKernel()
 
 #{ vislayer #}
 l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(rows=21, columns=21))
+                positions=nest.spatial.grid(shape=[21, 21]))
+probability_param = nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.15)
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.15),
+            'p': probability_param,
             'mask': {'circular': {'radius': 0.4}}}
 nest.Connect(l, l, conndict)
 fig = nest.PlotLayer(l, nodesize=80)
 
-ctr = l[l.index(nest.FindCenterElement(l))]
+ctr = nest.FindCenterElement(l)
 nest.PlotTargets(ctr, l, fig=fig,
-                 mask=conndict['mask'], kernel={'gaussian': {'p_center': 1.0, 'sigma': 0.15}},
+                 mask=conndict['mask'], probability_parameter=probability_param,
                  src_size=250, tgt_color='red', tgt_size=20,
-                 kernel_color='green')
+                 probability_cmap='Greens')
 #{ end #}
 plt.savefig('../user_manual_figures/vislayer.png', bbox_inches='tight')

@@ -38,7 +38,7 @@ propagates the internal state of a neuron or device.
 Simulation resolution and update interval
 -----------------------------------------
 
-Each connection in NEST has it's own specific *delay* that defines the
+Each connection in NEST has its own specific *delay* that defines the
 time it takes until an event reaches the target node. We define the
 minimum delay *dmin* as the smallest transmission delay and *dmax* as
 the largest delay in the network. From this definition follows that no
@@ -48,9 +48,7 @@ the elements are effectively decoupled for this interval.
 .. figure:: ../_static/img/time_definitions-300x61.png
    :alt: Definitions of the minimimum delay and the simulation resolution
 
-   Definitions of the minimimum delay and the simulation resolution.
-
-Definitions of minimum delay (dmin) and simulation resolution (h).
+   Definitions of minimum delay (*dmin*) and simulation resolution (*h*).
 
 Two major optimizations in NEST are built on this decoupling:
 

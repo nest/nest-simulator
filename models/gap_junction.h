@@ -31,10 +31,10 @@ namespace nest
 /* BeginUserDocs: synapses, gap
 
 gap_junction - Synapse type for gap-junction connections
-#########################################################
+########################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gap_junction is a connector to create gap junctions between pairs
 of neurons. Gap junctions are bidirectional connections.
@@ -49,13 +49,13 @@ the make_symmetric flag.
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
-Transmits:
+Transmits
 +++++++++
 
 GapJunctionEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,

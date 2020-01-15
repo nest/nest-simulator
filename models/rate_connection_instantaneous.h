@@ -32,10 +32,10 @@ namespace nest
 /* BeginUserDocs: synapses, instantaneous rate
 
 rate_connection_instantaneous - Synapse type for instantaneous rate connections
-################################################################################
+###############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 rate_connection_instantaneous is a connector to create
 instantaneous connections between rate model neurons.
@@ -44,13 +44,13 @@ The value of the parameter delay is ignored for connections of
 this type. To create rate connections with delay please use
 the synapse type rate_connection_delayed.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 InstantaneousRateConnectionEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,

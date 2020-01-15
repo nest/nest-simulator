@@ -61,8 +61,8 @@ extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron model
 ###############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
@@ -70,8 +70,8 @@ of conductance modelled by an beta function. The beta function
 is normalised such that an event of weight 1.0 results in a peak current of
 1 nS at `t = tau_rise_[ex|in]`.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -94,12 +94,12 @@ The following parameters can be set in the status dictionary.
 ============= ====== =========================================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
@@ -113,8 +113,8 @@ Remarks:
         inputs to the two synapses by the sign of the synaptic weight.
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical

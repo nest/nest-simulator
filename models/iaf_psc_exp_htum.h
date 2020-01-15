@@ -38,10 +38,10 @@ namespace nest
 /* BeginUserDocs: neurons, integrate-and-fire
 
 iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs
-###########################################################################
+##########################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_tum_2000 is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
@@ -85,8 +85,8 @@ address the problem of efficient usage of appropriate vector and
 matrix objects.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -134,12 +134,12 @@ References:
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

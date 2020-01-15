@@ -45,8 +45,8 @@ stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent plasticit
 ##################################################################################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_nn_pre-centered_synapse is a connector to create synapses with spike
 time dependent plasticity with the presynaptic-centered nearest-neighbour
@@ -74,8 +74,8 @@ occurrence, and is reset to 0 on a post-spike occurrence. The postsynaptic
 trace (implemented on the postsynaptic neuron side) decays with the time
 constant tau_minus and increases to 1 on a post-spike occurrence.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
@@ -89,13 +89,13 @@ Parameters:
 ========= =======  ======================================================
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,

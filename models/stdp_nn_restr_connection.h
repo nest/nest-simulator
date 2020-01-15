@@ -45,8 +45,8 @@ stdp_nn_restr_synapse - Synapse type for spike-timing dependent plasticity with 
 ###########################################################################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_nn_restr_synapse is a connector to create synapses with spike time
 dependent plasticity with the restricted symmetric nearest-neighbour spike
@@ -71,8 +71,8 @@ eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
 decays exponentially with the time constant tau_minus and increases to 1 on
 a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
@@ -86,13 +86,13 @@ Parameters:
 ========= =======  ======================================================
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological

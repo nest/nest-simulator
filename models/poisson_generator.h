@@ -46,8 +46,8 @@ namespace nest
 poisson_generator - simulate neuron firing with Poisson processes statistics
 ############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The poisson_generator simulates a neuron that is firing with Poisson
 statistics, i.e. exponentially distributed interspike intervals. It will
@@ -55,8 +55,8 @@ generate a _unique_ spike train for each of it's targets. If you do not want
 this behavior and need the same spike train for all targets, you have to use a
 parrot neuron inbetween the poisson generator and the targets.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -68,8 +68,8 @@ The following parameters appear in the element's status dictionary:
 =======   ======== =========================================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 

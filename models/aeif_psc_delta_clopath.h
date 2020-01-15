@@ -60,10 +60,10 @@ extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, 
 /* BeginUserDocs: neurons, adaptive exponential, integrate-and-fire, clopath_neuron, post-synaptic current
 
 aeif_psc_delta_clopath - Adaptive exponential integrate-and-fire neuron
-########################################################################
+#######################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 aeif_psc_delta_clopath is an implementation of the neuron model as it is used
 in [1]_. It is an extension of the aeif_psc_delta model and capable of
@@ -78,8 +78,8 @@ duration of the spike influences the evolution of the convolved versions
 synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
 used to compute the change of the synaptic weight.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -165,18 +165,18 @@ by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References:
-+++++++++++
+References
+++++++++++
 
 .. [1] Clopath et al. (2010). Connectivity reflects coding: a model of
        voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.

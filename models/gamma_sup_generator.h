@@ -43,16 +43,16 @@ namespace nest
 /* BeginUserDocs: devices, generator
 
 gamma_sup_generator - simulate the superimposed spike train of a population of gamma process
-#############################################################################################
+############################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The gamma_sup_generator generator simulates the pooled spike train of a
 population of neurons firing independently with gamma process statistics.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -65,8 +65,8 @@ The following parameters appear in the element's status dictionary:
 ============  ======== =========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of

@@ -34,8 +34,8 @@ diffusion_connection - Synapse type for instantaneous rate connections between n
 ##############################################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 diffusion_connection is a connector to create
 instantaneous connections between neurons of type siegert_neuron. The
@@ -59,13 +59,13 @@ case of distributed in-degrees (see discussion in chapter 5.2 of [1]_)
 The values of the parameters delay and weight are ignored for
 connections of this type.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 DiffusionConnectionEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,

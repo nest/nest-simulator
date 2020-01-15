@@ -31,10 +31,10 @@ namespace nest
 /* BeginUserDocs: neurons, binary
 
 erfc_neuron - Binary stochastic neuron with complementary error function as activation function
-#################################################################################################
+###############################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The erfc_neuron is an implementation of a binary neuron that
 is irregularly updated at Poisson time points. At each update
@@ -83,8 +83,8 @@ The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ======  ======  =========================================================
@@ -94,8 +94,8 @@ Parameters:
 ======  ======  =========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
@@ -110,12 +110,12 @@ References:
        (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, PotentialRequest

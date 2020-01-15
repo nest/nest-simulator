@@ -47,10 +47,10 @@ namespace nest
 /* BeginUserDocs: neurons, rate
 
 rate_neuron_ipn - Base class for rate model with input noise
-#############################################################
+############################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 Base class for rate model with input noise of the form
 
@@ -83,8 +83,8 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,

@@ -39,12 +39,12 @@ Produce an AC input current
 ###########################
 
 Device name
-++++++++++++
++++++++++++
 
 ac_generator
 
 Description
-+++++++++++++
++++++++++++
 
 This device produces an ac-current sent by a CurrentEvent. The
 current is given by
@@ -88,7 +88,7 @@ Sends
 CurrentEvent
 
 See also
-+++++++
+++++++++
 
 StimulatingDevice, dc_generator, step_current_generator
 

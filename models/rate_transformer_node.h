@@ -47,11 +47,11 @@ namespace nest
 /* BeginUserDocs: neurons, rate
 
 rate_transformer_node - Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
-######################################################################################################################
+#####################################################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
@@ -72,18 +72,18 @@ Remarks:
   are handled as usual.
 - Delays are honored on incoming and outgoing connections.
 
-Receives:
+Receives
 ++++++++
 
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Sends:
-++++++++
+Sends
++++++
 
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 Only the parameter
 - linear_summation

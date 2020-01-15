@@ -44,10 +44,10 @@ namespace nest
 /* BeginUserDocs: devices, generator
 
 mip_generator - create spike trains as described by the MIP model
-##################################################################
+#################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The mip_generator generates correlated spike trains using an Multiple
 Interaction Process (MIP) as described in [1]_. Underlying principle is a
@@ -58,8 +58,8 @@ The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -91,13 +91,13 @@ IMPORTANT: The mother_seed of mpi_generator must be different from any
       Most important: If RNG is changed in prototype by SetDefaults,
       then this is
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input

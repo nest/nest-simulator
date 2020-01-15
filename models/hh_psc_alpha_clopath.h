@@ -62,8 +62,8 @@ extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, vo
 hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the Clopath synapse
 #######################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 hh_psc_alpha_clopath is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
@@ -80,8 +80,8 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -135,8 +135,8 @@ Problems/Todo:
 better spike detection
 initial wavelet/spike at simulation onset
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
@@ -160,12 +160,12 @@ References:
        =%2fmodeldb_package%2fstdp_cc.mod
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

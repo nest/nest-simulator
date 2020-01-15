@@ -46,8 +46,8 @@ spike_generator - A device which generates spikes from an array with spike-times
 
 Synopsis: spike_generator Create -> node_id
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
@@ -147,8 +147,8 @@ onto the grid will be handled as follows for different option settings:
 110,
          not shifted, since it is in the future anyways
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following properties can be set in the status dictionary.
 
@@ -170,8 +170,8 @@ The following properties can be set in the status dictionary.
 ===================== ============= ==========================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 

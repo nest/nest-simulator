@@ -34,10 +34,10 @@ namespace nest
 /* BeginUserDocs: synapses, static
 
 bernoulli_synapse - Static synapse with stochastic transmission
-################################################################
+###############################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 Spikes are transmitted by bernoulli_synapse following a Bernoulli trial with
 success probability p_transmit. This synaptic mechanism was inspired by the
@@ -48,8 +48,8 @@ bernoulli_synapse does not support any kind of plasticity. It simply stores
 the parameters target, weight, transmission probability, delay and
 receiver port for each connection.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 =========== ====== ===================================================
  p_transmit real   Transmission probability, must be between 0 and 1
@@ -58,14 +58,14 @@ Parameters:
 
 FirstVersion: June 2017
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory

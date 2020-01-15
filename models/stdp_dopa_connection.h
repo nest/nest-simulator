@@ -39,11 +39,11 @@ namespace nest
 /* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent plasticity
-##############################################################################################
+#############################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_dopamine_synapse is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
@@ -53,8 +53,8 @@ of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
 dopaminergic dynamics is calculated in the synapse itself.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 =========  ======= ======================================================
 **Common properties**
@@ -86,8 +86,8 @@ Remarks:
 The common properties can only be set by SetDefaults and apply to all
 synapses of the model.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
@@ -99,8 +99,8 @@ References:
        DOI: https://doi.org/10.1093/cercor/bhl152
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 

@@ -64,8 +64,8 @@ extern "C" int hh_cond_beta_gap_traub_dynamics( double, const double*, double*, 
 hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron with added gap junction support and beta function synaptic conductance
 ##############################################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junction.
@@ -111,8 +111,8 @@ Gap Junctions
 Gap Junctions are implemented by a gap current of the form
 \f$ g_ij( V_i - V_j) \f$.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -140,8 +140,8 @@ I_e          pA      External input current
 ============ ======  =======================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 .. [1] Brette R et al (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
@@ -156,12 +156,12 @@ References:
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

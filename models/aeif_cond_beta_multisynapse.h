@@ -59,10 +59,10 @@ extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, doub
 /* BeginUserDocs: neurons, adaptive exponential, integrate-and-fire, conductance-based
 
 aeif_cond_beta_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
-#####################################################################################################
+####################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
 integrate-and-fire neuron model, according to Brette and Gerstner (2005) with
@@ -105,8 +105,9 @@ and the differential equation for the spike-adaptation current w is:
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
+
 The following parameters can be set in the status dictionary.
 
 
@@ -190,12 +191,12 @@ Examples:
     pylab.plot(ts, Vms)
     pylab.show()
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

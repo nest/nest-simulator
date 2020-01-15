@@ -41,15 +41,15 @@ namespace nest
 /* BeginUserDocs: devices, generator
 
 dc_generator - provides DC input current
-##########################################
+########################################
 
-Description: 
-+++++++++++++
+Description
++++++++++++
 
 The DC-Generator provides a constant DC Input to the connected node. The unit of the current is pA.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -65,8 +65,8 @@ send the same current information on each time step. If you
 only need a constant bias current into a neuron, you should
 set it directly in the neuron, e.g., dc_generator.
 
-Sends:
-++++++++
+Sends
++++++
 
 CurrentEvent
 

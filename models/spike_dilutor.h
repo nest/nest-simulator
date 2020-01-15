@@ -37,10 +37,10 @@ namespace nest
 /* BeginUserDocs: devices, generator
 
 spike_dilutor - repeats incoming spikes with a certain probability
-###################################################################
+##################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The device repeats incoming spikes with a certain probability.
 Targets will receive diffenrent spike trains.
@@ -50,8 +50,8 @@ Remarks:
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -61,8 +61,8 @@ The following parameters appear in the element's status dictionary:
 ======== ======  ================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 

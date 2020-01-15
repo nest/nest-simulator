@@ -38,10 +38,10 @@ namespace nest
 /* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs
-############################################################################
+#########################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
@@ -82,8 +82,8 @@ optimization levels. A future version of iaf_psc_exp will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -120,8 +120,8 @@ receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [6].
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -142,12 +142,12 @@ References:
 =======
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

@@ -37,10 +37,11 @@ namespace nest
 /* BeginUserDocs: neurons, integrate-and-fire
 
 izhikevich - Izhikevich neuron model
-#####################################
+####################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
+
 Implementation of the simple spiking neuron model introduced by Izhikevich
 [1]_. The dynamics are given by:
 
@@ -71,8 +72,8 @@ Euler integration. In this case, consistent_integration must be set to true
 (default).
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -91,20 +92,20 @@ The following parameters can be set in the status dictionary.
 ======================= =======  ==============================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
        on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

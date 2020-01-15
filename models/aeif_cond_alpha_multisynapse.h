@@ -45,7 +45,7 @@
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
 aeif_cond_alpha_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
-######################################################################################################
+#####################################################################################################
 
 Description
 +++++++++++

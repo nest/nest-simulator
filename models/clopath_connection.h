@@ -43,10 +43,10 @@ namespace nest
 /* BeginUserDocs: synapses, spike-timing-dependent plasticity, clopath_synapse
 
 clopath_synapse - Synapse type for voltage-based STDP after Clopath
-####################################################################
+###################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 clopath_synapse is a connector to create Clopath synapses as defined
 in [1]__. In contrast to usual STDP, the change of the synaptic weight does
@@ -58,8 +58,8 @@ synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are aeif_psc_delta_clopath and
 hh_psc_alpha_clopath.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 =======  ======  ==========================================================

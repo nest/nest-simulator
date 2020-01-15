@@ -71,10 +71,10 @@ extern "C" int aeif_cond_exp_dynamics_DT0( double, const double*, double*, void*
 /* BeginUserDocs: neurons, adaptive exponential, integrate-and-fire, conductance-based
 
 aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model
-################################################################################
+#############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 aeif_cond_exp is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic
@@ -157,12 +157,12 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

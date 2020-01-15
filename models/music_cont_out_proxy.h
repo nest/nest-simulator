@@ -53,10 +53,10 @@ namespace nest
 /* BeginUserDocs: devices, music
 
 music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC
-################################################################################
+##############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 A music_cont_out_proxy can be used to send continuous data from
 neurons over MUSIC to remote applications. It works in a similar fashion like
@@ -79,8 +79,8 @@ receiving buffer via the following access pattern:
 
     we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 

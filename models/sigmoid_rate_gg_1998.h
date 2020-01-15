@@ -38,10 +38,10 @@ namespace nest
 /* BeginUserDocs: neurons, rate
 
 sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
-#################################################################
+##############################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
 input function as in [1]_ :math:`input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 )`.
@@ -52,8 +52,8 @@ The model supports connections to other rate models with either zero or
 non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -77,8 +77,8 @@ then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Gancarz G, Grossberg S (1998). A neural model of the saccade generator
@@ -94,12 +94,12 @@ References:
        Neuroinformatics, 9:22. DOI: https://doi/org/10.3389/fninf.2015.00022
 
 
-Sends:
-++++++++
+Sends
++++++
 
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Receives:
+Receives
 ++++++++
 
 InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,

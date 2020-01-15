@@ -43,8 +43,8 @@ pp_pop_psc_delta - Population of point process neurons with leaky integration of
 ##################################################################################################
 
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 pp_pop_psc_delta is an effective model of a population of neurons. The
 N component neurons are assumed to be spike response models with escape
@@ -95,8 +95,8 @@ presumably much faster population model implementation is now available, see
 gif_pop_psc_exp.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -132,8 +132,8 @@ The parameters correspond to the ones of pp_psc_delta as follows.
 ==================  ============================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
@@ -150,12 +150,12 @@ References:
        DOI: https://doi.org/10.1103/PhysRevE.90.062704
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

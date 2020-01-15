@@ -41,10 +41,10 @@ namespace nest
 /* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with multiple ports
-#######################################################################################
+######################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_psc_alpha_multisynapse is a direct extension of iaf_psc_alpha.
 On the postsynapic side, there can be arbitrarily many synaptic
@@ -54,12 +54,12 @@ This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
 "receptor_type" in the connectors.
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

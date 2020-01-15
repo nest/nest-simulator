@@ -36,10 +36,10 @@ namespace nest
 /* BeginUserDocs: neurons, parrot
 
 parrot_neuron - Neuron that repeats incoming spikes
-####################################################
+###################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
@@ -65,18 +65,18 @@ and post-synaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, e.g., a
 stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 No parameters to be set in the status dictionary.
 

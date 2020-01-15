@@ -38,10 +38,10 @@ namespace nest
 /* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 gif_psc_exp - Current-based generalized integrate-and-fire neuron model
-#########################################################################
+#######################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gif_psc_exp is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) and Pozzorini et al. (2015), with exponential shaped
@@ -120,8 +120,8 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 The shape of post synaptic current is exponential.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -160,8 +160,8 @@ V_T_star   mV           Base threshold
 =========== ======= ===========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
@@ -175,12 +175,12 @@ References:
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

@@ -60,10 +60,10 @@ extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
 
 iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
-#################################################################################################
+################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]_. It is modeled after iaf_cond_alpha with the
@@ -72,8 +72,8 @@ reset. Incoming spike events induce a post-synaptic change of conductance
 modeled by an alpha function. The alpha function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_{syn} \f$.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -97,8 +97,8 @@ The following parameters can be set in the status dictionary.
 ========  ======= ===========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
@@ -106,12 +106,12 @@ References:
        DOI: https://doi.org/10.1007/s10827-007-0053-7
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent

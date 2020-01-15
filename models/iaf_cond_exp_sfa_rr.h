@@ -61,8 +61,8 @@ extern "C" int iaf_cond_exp_sfa_rr_dynamics( double, const double*, double*, voi
 iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire neuron model
 ####################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_cond_exp_sfa_rr is an iaf_cond_exp_sfa_rr i.e. an implementation of a
 spiking neuron using IAF dynamics with conductance-based synapses,
@@ -79,8 +79,8 @@ refractory conductances by q_sfa and q_rr, respectively.  Otherwise
 these conductances decay exponentially with time constants tau_sfa
 and tau_rr, respectively.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -111,19 +111,19 @@ The following parameters can be set in the status dictionary.
 =========== ======  ===========================================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical

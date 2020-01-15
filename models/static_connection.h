@@ -32,18 +32,18 @@ namespace nest
 /* BeginUserDocs: synapses, static
 
 static_synapse - Synapse type for static connections
-######################################################
+####################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 static_synapse does not support any kind of plasticity. It simply stores
 the parameters target, weight, delay and receiver port for each connection.
 
 FirstVersion: October 2005
 
-Transmits: 
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest

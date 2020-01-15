@@ -40,10 +40,10 @@ namespace nest
 /* BeginUserDocs: devices, detector
 
 correlomatrix_detector - Device for measuring the covariance matrix from several inputs
-########################################################################################
+#######################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The correlomatrix_detector is a recording device. It is used to
 record spikes from several pools of spike inputs and calculates the
@@ -75,8 +75,8 @@ The correlomatrix_detector has a variable number of inputs which can be set
 via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ================ ========= ====================================================
@@ -130,7 +130,7 @@ sense.
    entries, then registers new entries in histogram
 
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent

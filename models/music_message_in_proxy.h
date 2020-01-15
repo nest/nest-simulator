@@ -54,10 +54,10 @@ namespace nest
 /* BeginUserDocs: devices, music
 
 music_message_in_proxy - A device which receives message strings from MUSIC
-############################################################################
+###########################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 A music_message_in_proxy can be used to receive message strings from
 remote MUSIC applications in NEST.
@@ -67,8 +67,8 @@ applications. The music_message_in_proxy represents an input port to
 which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 

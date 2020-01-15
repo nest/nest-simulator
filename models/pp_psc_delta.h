@@ -41,10 +41,10 @@ namespace nest
 /* BeginUserDocs: neurons, point process, post-synaptic current
 
 pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs
-################################################################################
+###############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 pp_psc_delta is an implementation of a leaky integrator, where the potential
 jumps on each spike arrival. It produces spike stochastically, and supports
@@ -119,8 +119,8 @@ recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and conciously.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -147,8 +147,8 @@ The following parameters can be set in the status dictionary.
 =================  ======= ===================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
@@ -176,11 +176,12 @@ References:
        Cambridge University Press
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
-Receives:
+
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

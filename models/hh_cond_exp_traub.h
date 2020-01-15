@@ -58,10 +58,10 @@ extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void*
 /* BeginUserDocs: neurons, Hodgkin-Huxley, conductance-based
 
 hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
-##########################################################################
+#######################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
@@ -91,8 +91,8 @@ spike, it is essential to chose a sufficiently long refractory period.
 Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
 :math:`t_ref = 2` ms in [2]_.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -121,8 +121,7 @@ I_e          pA     External input current
 
 
 
-References:
-+++++++++++
+References
 +++++++++++
 
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
@@ -132,12 +131,12 @@ References:
        Cambridge University Press, Cambridge UK.
 .. [3] http://modeldb.yale.edu/83319
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest

@@ -33,16 +33,16 @@ namespace nest
 /* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets)
-######################################################################################
+#####################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_triplet_synapse is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]_).
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 =================  ======  ===========================================
  tau_plus          real    Time constant of short presynaptic trace
@@ -68,13 +68,13 @@ Parameters:
 =============== ======  ===========================================
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model

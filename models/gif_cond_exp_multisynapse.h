@@ -177,8 +177,6 @@ The following parameters can be set in the status dictionary.
 ==============  ======  ======================================================
 
 
-
-
 Example:
 
     neuron = nest.Create('gif_cond_exp_multisynapse',

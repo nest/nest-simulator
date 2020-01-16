@@ -87,6 +87,7 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
+
 References
 ++++++++++
 

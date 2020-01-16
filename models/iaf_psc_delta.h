@@ -90,7 +90,6 @@ optimization levels. A future version of iaf_psc_delta will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
 Parameters
 ++++++++++
 
@@ -114,7 +113,6 @@ The following parameters can be set in the status dictionary.
 
 References
 ++++++++++
-
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal

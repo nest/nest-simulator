@@ -69,7 +69,7 @@ The following parameters can be set in the status dictionary.
 ==================  ======= ==============================================
 
 
--Note:
+Note:
 
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and

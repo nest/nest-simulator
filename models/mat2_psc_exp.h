@@ -116,6 +116,7 @@ tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
 degenerate case of the ODE describing the model [1]_. For very similar values,
 numerics will be unstable.
 
+
 References
 ++++++++++
 

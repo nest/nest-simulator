@@ -42,7 +42,6 @@ namespace nest
 pp_pop_psc_delta - Population of point process neurons with leaky integration of delta-shaped PSCs
 ##################################################################################################
 
-
 Description
 +++++++++++
 
@@ -93,7 +92,6 @@ spikes emitted in a time step, and can be monitored using a multimeter.
 EDIT Nov 2016: pp_pop_psc_delta is now deprecated, because a new and
 presumably much faster population model implementation is now available, see
 gif_pop_psc_exp.
-
 
 Parameters
 ++++++++++

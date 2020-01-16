@@ -44,7 +44,6 @@ namespace nest
 stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent plasticity with presynaptic-centered nearest-neighbour spike pairing scheme
 ##################################################################################################################################################
 
-
 Description
 +++++++++++
 

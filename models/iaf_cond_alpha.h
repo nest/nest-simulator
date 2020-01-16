@@ -111,6 +111,7 @@ Remarks:
         inputs to the two synapses by the sign of the synaptic weight.
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
+
 References
 ++++++++++
 
@@ -129,7 +130,6 @@ References
        the fluctuation- driven regime. Journal of Neuroscience,
        24(10):2345-2356
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
-
 
 See also
 ++++++++

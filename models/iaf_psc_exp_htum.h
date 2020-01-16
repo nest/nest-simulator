@@ -84,7 +84,6 @@ optimization levels. A future version of iaf_psc_exp_htum will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
 Parameters
 ++++++++++
 
@@ -114,8 +113,9 @@ tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent

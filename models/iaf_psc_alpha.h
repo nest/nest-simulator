@@ -86,7 +86,6 @@ optimization levels. A future version of iaf_psc_alpha will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
 Parameters
 ++++++++++
 
@@ -114,6 +113,7 @@ will numerically behave as if tau_m is equal to tau_syn_ex or
 tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
+
 
 References
 ++++++++++

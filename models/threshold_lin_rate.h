@@ -80,6 +80,7 @@ then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
+
 References
 ++++++++++
 

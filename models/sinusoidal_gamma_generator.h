@@ -63,8 +63,8 @@ The instantaneous rate of the process is given by
 
  f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -78,7 +78,6 @@ The following parameters can be set in the status dictionary:
  order                   real     Gamma order (>= 1), default: 1
  individual_spike_trains boolean  See note below, default: true
 ======================== ======== ==============================================
-
 
 
 Remarks:

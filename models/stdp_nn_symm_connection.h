@@ -43,7 +43,6 @@ namespace nest
 
 stdp_nn_symm_synapse - Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
 ###############################################################################################################################
-.
 
 Description
 +++++++++++

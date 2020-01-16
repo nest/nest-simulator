@@ -44,7 +44,6 @@ namespace nest
 stdp_nn_restr_synapse - Synapse type for spike-timing dependent plasticity with restricted symmetric nearest-neighbour spike pairing scheme
 ###########################################################################################################################################
 
-
 Description
 +++++++++++
 

@@ -165,6 +165,7 @@ V_T_star   mV               Base threshold
 tau_syn  list of ms        Time constants of the synaptic currents
 =======  ================  ==================================================
 
+
 References
 ++++++++++
 

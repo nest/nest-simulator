@@ -66,7 +66,6 @@ extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void*
 iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire neuron model
 #######################################################################################################
 
-
 Description
 +++++++++++
 
@@ -107,7 +106,6 @@ Synapses, including those for injection external currents, are addressed through
 the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment iaf_cond_alpha model, all
 synaptic weights must be positive numbers!
-
 
 Parameters
 ++++++++++
@@ -158,6 +156,7 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
+
 
 References
 ++++++++++

@@ -103,7 +103,6 @@ The following parameters can be set in the status dictionary.
 ===========  =======  ========================================================
 
 
-
 Remarks:
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
@@ -119,6 +118,7 @@ the membrane potential equation. Current input through
 receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [6].
+
 
 References
 ++++++++++
@@ -138,8 +138,6 @@ References
 .. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
        metastable state driven by colored noise. Physical Review E 92:052119
        DOI: https://doi.org/10.1103/PhysRevE.92.052119
-
-=======
 
 
 Sends

@@ -34,10 +34,11 @@
 
 /* BeginUserDocs: integrate-and-fire, post-synaptic current
 
-Name: glif_psc - Current-based generalized leaky integrate and fire (GLIF)
+glif_psc - Current-based generalized leaky integrate and fire (GLIF)
 model
 
-Description:
+Description
++++++++++++
 
 glif_psc provides five generalized leaky integrate-and-fire
 (GLIF) models [1] with alpha-function shaped synaptic currents.
@@ -61,7 +62,8 @@ GLIF Model 5 - Leaky integrate and fire with biologically defined reset rules,
                after-spike currents and a voltage dependent threshold
                (LIF_R_ASC_A) model.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -130,7 +132,10 @@ We recommend the setting of the parameters of these three models to follow the
 condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
 < (V_th + th_spike_add).
 
-References:
+
+References
+++++++++++
+
 [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
     Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
     Generalized leaky integrate-and-fire models classify multiple neuron types.

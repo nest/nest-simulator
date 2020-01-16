@@ -259,6 +259,16 @@ public:
   virtual void set_diffusion_factor( weight t ){};
 
   /**
+   * Returns true if the pointer to the sender node is not null.
+   */
+  bool sender_is_not_null() const;
+
+  /**
+   * Returns true if the pointer to the receiver node is not null.
+   */
+  bool receiver_is_not_null() const;
+
+  /**
    * Check integrity of the event.
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
@@ -1254,9 +1264,21 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 // Inline implementations.
 
 inline bool
+Event::sender_is_not_null() const
+{
+  return sender_ != nullptr;
+}
+
+inline bool
+Event::receiver_is_not_null() const
+{
+  return receiver_ != nullptr;
+}
+
+inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) and ( receiver_ != NULL ) and ( d_ > 0 ) );
+  return ( sender_is_not_null() and receiver_is_not_null() and ( d_ > 0 ) );
 }
 
 inline void

@@ -261,12 +261,12 @@ public:
   /**
    * Returns true if the pointer to the sender node is not null.
    */
-  bool sender_is_not_null() const;
+  bool sender_is_null() const;
 
   /**
    * Returns true if the pointer to the receiver node is not null.
    */
-  bool receiver_is_not_null() const;
+  bool receiver_is_null() const;
 
   /**
    * Check integrity of the event.
@@ -1264,21 +1264,21 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 // Inline implementations.
 
 inline bool
-Event::sender_is_not_null() const
+Event::sender_is_null() const
 {
-  return sender_ != nullptr;
+  return sender_ == nullptr;
 }
 
 inline bool
-Event::receiver_is_not_null() const
+Event::receiver_is_null() const
 {
-  return receiver_ != nullptr;
+  return receiver_ == nullptr;
 }
 
 inline bool
 Event::is_valid() const
 {
-  return ( sender_is_not_null() and receiver_is_not_null() and ( d_ > 0 ) );
+  return ( not sender_is_null() and not receiver_is_null() and ( d_ > 0 ) );
 }
 
 inline void

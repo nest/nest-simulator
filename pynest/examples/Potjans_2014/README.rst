@@ -31,8 +31,15 @@ variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to
 `0.1`. ``N_scaling`` adjusts the number of neurons and ``K_scaling`` adjusts
 the number of connections to be simulated. The full network can be run by
 adjusting these values to 1. If this is done, the option to print the time
-progress should be set to False in the file ``sim_params.py``. For running, use
-``python example.py``. The output will be saved in the directory ``data``.
+progress should be set to False in the file ``sim_params.py``.
+
+Install required packages:
+
+.. code-block:: python
+
+  pip install --user -r requirements.txt
+
+For running, use ``python example.py``. The output will be saved in the directory ``data``.
 
 The code can be parallelized using OpenMP and MPI, if NEST has been built with
 these applications `(Parallel computing with NEST) <https://www.nest-simulator.org/parallel_computing/>`__.

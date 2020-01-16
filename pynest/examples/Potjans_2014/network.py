@@ -112,8 +112,6 @@ class Network:
                 % rng_seeds
                 )
             print('Global random number generator seed: %i' % grng_seed)
-        self.pyrngs = [np.random.RandomState(s) for s in list(range(
-            master_seed, master_seed + N_tp))]
         self.sim_resolution = self.sim_dict['sim_resolution']
         kernel_dict = {
             'resolution': self.sim_resolution,
@@ -198,8 +196,8 @@ class Network:
             population = nest.Create(
                 self.net_dict['neuron_model'], int(self.nr_neurons[i])
                 )
-            nest.SetStatus(
-                population, {
+
+            population.set({
                     'tau_syn_ex': self.net_dict['neuron_params']['tau_syn_ex'],
                     'tau_syn_in': self.net_dict['neuron_params']['tau_syn_in'],
                     'E_L': self.net_dict['neuron_params']['E_L'],
@@ -207,49 +205,22 @@ class Network:
                     'V_reset':  self.net_dict['neuron_params']['V_reset'],
                     't_ref': self.net_dict['neuron_params']['t_ref'],
                     'I_e': self.DC_amp_e[i]
-                    }
-                )
+                    })
             if self.net_dict['V0_type'] == 'optimized':
-                for thread in \
-                        np.arange(nest.GetKernelStatus('local_num_threads')):
-                    local_nodes = nest.GetLocalGIDCollection(pop)
-                    vp = nest.GetStatus(local_nodes)[0]['vp']
-                    nest.SetStatus(
-                        local_nodes, 'V_m', self.pyrngs[vp].normal(
-                            self.net_dict
-                            ['neuron_params']['V0_mean']['optimized'][i],
-                            self.net_dict
-                            ['neuron_params']['V0_sd']['optimized'][i],
-                            len(local_pop))
-                    )
+                population.set({'V_m': nest.random.normal(
+                    self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                    self.net_dict['neuron_params']['V0_sd']['optimized'][i],
+                    )})
+            elif self.net_dict['V0_type'] == 'original':
+                 population.set({'V_m': nest.random.normal(
+                    self.net_dict['neuron_params']['V0_mean']['original'],
+                    self.net_dict['neuron_params']['V0_sd']['original'],
+                    )})
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
-                nest.GetStatus(population[0], 'global_id')[0],
-                nest.GetStatus(population[-1], 'global_id')[0]))
+                population.get('global_id')[0],
+                population.get('global_id')[-1]))
         pop_file.close()
-
-        if self.net_dict['V0_type'] == 'original':
-            # Set random membrane potential
-            no_vps = nest.GetKernelStatus('local_num_threads')
-            # Create nested list where the elements in the outer list represents
-            # the vp's, and each vp will have a list of the GIDs in that vp.
-            vp_lists = [[] for x in range(no_vps)]
-            # Go through all populations
-            for gids in self.pops:
-                node_info = nest.GetStatus(gids)
-                for info in node_info:
-                    if info['local']:
-                        # Find the vp for the GID and place the GID in correct list
-                        vp = info['vp']
-                        vp_lists[vp].append(info['global_id'])
-    
-            for vp, vps_gids in enumerate(vp_lists):
-                # Set random membrane portential
-                nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(
-                        self.net_dict['neuron_params']['V0_mean']['original'],
-                        self.net_dict['neuron_params']['V0_sd']['original'],
-                        len(vps_gids)))
-
 
     def create_devices(self):
         """ Creates the recording devices.
@@ -308,13 +279,11 @@ class Network:
                 self.stim_dict['th_start'] + self.stim_dict['th_duration']
                 )
             self.poisson_th = nest.Create('poisson_generator')
-            nest.SetStatus(
-                self.poisson_th, {
+            self.poisson_th.set({
                     'rate': self.stim_dict['th_rate'],
                     'start': self.stim_dict['th_start'],
                     'stop': self.stop_th
-                    }
-                )
+                    })
             nest.Connect(self.poisson_th, self.thalamic_population)
             self.nr_synapses_th = synapses_th_matrix(
                 self.net_dict, self.stim_dict
@@ -341,7 +310,7 @@ class Network:
             self.poisson = []
             for i, target_pop in enumerate(self.pops):
                 poisson = nest.Create('poisson_generator')
-                nest.SetStatus(poisson, {'rate': rate_ext[i]})
+                poisson.set({'rate': rate_ext[i]})
                 self.poisson.append(poisson)
 
     def create_dc_generator(self):

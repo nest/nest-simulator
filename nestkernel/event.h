@@ -259,12 +259,12 @@ public:
   virtual void set_diffusion_factor( weight t ){};
 
   /**
-   * Returns true if the pointer to the sender node is not null.
+   * Returns true if the pointer to the sender node is null.
    */
   bool sender_is_null() const;
 
   /**
-   * Returns true if the pointer to the receiver node is not null.
+   * Returns true if the pointer to the receiver node is null.
    */
   bool receiver_is_null() const;
 

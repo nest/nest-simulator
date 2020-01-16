@@ -50,7 +50,6 @@ set( sli_sources
     parser.cc parser.h
     parserdatum.h
     processes.cc processes.h
-    psignal.c psignal.h
     scanner.cc scanner.h
     sli_io.cc sli_io.h
     sliactions.cc sliactions.h

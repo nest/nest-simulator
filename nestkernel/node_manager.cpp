@@ -380,7 +380,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
   IntVectorDatum nodes_datum( nodes );
   NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
 
-  return nodecollection;
+  return std::move( nodecollection );
 }
 
 void

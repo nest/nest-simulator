@@ -54,8 +54,6 @@
 #include "stringdatum.h"
 #include "tokenutils.h"
 
-extern int SLIsignalflag;
-
 namespace nest
 {
 SLIType NestModule::ConnectionType;

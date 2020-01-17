@@ -62,9 +62,9 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
   assert( growth_curve_ != 0 );
-  DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
-  se.get( gc_parameters );
-  growth_curve_->set( gc_parameters );
+  DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
+  se.get( nc_parameters );
+  growth_curve_->set( nc_parameters );
 }
 
 nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
@@ -72,14 +72,14 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
   if ( this != &other )
   {
     // 1: allocate new memory and copy the elements
-    GrowthCurve* new_gc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
-    DictionaryDatum gc_parameters = DictionaryDatum( new Dictionary );
+    GrowthCurve* new_nc = kernel().sp_manager.new_growth_curve( other.growth_curve_->get_name() );
+    DictionaryDatum nc_parameters = DictionaryDatum( new Dictionary );
 
-    other.get( gc_parameters );
-    new_gc->set( gc_parameters );
+    other.get( nc_parameters );
+    new_nc->set( nc_parameters );
 
     delete growth_curve_;
-    growth_curve_ = new_gc;
+    growth_curve_ = new_nc;
 
     z_ = other.z_;
     z_t_ = other.z_t_;

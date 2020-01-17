@@ -138,11 +138,11 @@ class TestRefractoryCase(unittest.TestCase):
         model : str
           Name of the neuronal model.
         sd : tuple
-            GID of the spike detector.
+            node ID of the spike detector.
         vm : tuple
-            GID of the voltmeter.
+            node ID of the voltmeter.
         neuron : tuple
-            GID of the recorded neuron.
+            node ID of the recorded neuron.
 
         Returns
         -------
@@ -194,7 +194,7 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
-            sd = nest.Create("spike_detector", params={'precise_times': True})
+            sd = nest.Create("spike_detector")
             cg = nest.Create("dc_generator", params={"amplitude": 1200.})
 
             # For models that do not clamp V_m, use very large current to

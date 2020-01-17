@@ -99,7 +99,7 @@ BoxMask< D >::outside( const Box< D >& b ) const
 {
   // Note: There could be some inconsistencies with the boundaries. For the
   // inside() function we had to add an epsilon because of rounding errors that
-  // can occur if GIDs are on the boundary if we have rotation. This might lead
+  // can occur if node IDs are on the boundary if we have rotation. This might lead
   // to overlap of the inside and outside functions. None of the tests have
   // picked up any problems with this potential overlap as of yet (autumn 2017),
   // so we don't know if it is an actual problem.
@@ -134,8 +134,8 @@ BoxMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< std::vector< double > >( maskd, names::lower_left, lower_left_ );
-  def< std::vector< double > >( maskd, names::upper_right, upper_right_ );
+  def< std::vector< double > >( maskd, names::lower_left, lower_left_.get_vector() );
+  def< std::vector< double > >( maskd, names::upper_right, upper_right_.get_vector() );
   def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
   def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
@@ -145,6 +145,25 @@ template < int D >
 bool
 BallMask< D >::inside( const Position< D >& p ) const
 {
+  // Optimizing by trying to avoid expensive calculations.
+  double dim_sum = 0;
+  // First check each dimension
+  for ( int i = 0; i < D; ++i )
+  {
+    const double di = std::abs( p[ i ] - center_[ i ] );
+    if ( di > radius_ )
+    {
+      return false;
+    }
+    dim_sum += di;
+  }
+  // Next, check if we are inside a diamond (rotated square), which fits inside the ball.
+  if ( dim_sum <= radius_ )
+  {
+    return true;
+  }
+  // Point must be somewhere between the ball mask edge and the diamond edge,
+  // revert to expensive calculation in this case.
   return ( p - center_ ).length() <= radius_;
 }
 
@@ -192,7 +211,7 @@ BallMask< D >::get_dict() const
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
   def< double >( maskd, names::radius, radius_ );
-  def< std::vector< double > >( maskd, names::anchor, center_ );
+  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
   return d;
 }
 
@@ -272,7 +291,7 @@ EllipseMask< D >::get_dict() const
   def< double >( maskd, names::major_axis, major_axis_ );
   def< double >( maskd, names::minor_axis, minor_axis_ );
   def< double >( maskd, names::polar_axis, polar_axis_ );
-  def< std::vector< double > >( maskd, names::anchor, center_ );
+  def< std::vector< double > >( maskd, names::anchor, center_.get_vector() );
   def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
   def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
@@ -487,7 +506,7 @@ DictionaryDatum
 AnchoredMask< D >::get_dict() const
 {
   DictionaryDatum d = m_->get_dict();
-  def< std::vector< double > >( d, names::anchor, anchor_ );
+  def< std::vector< double > >( d, names::anchor, anchor_.get_vector() );
   return d;
 }
 

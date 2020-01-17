@@ -148,7 +148,7 @@ def
   /pn /parrot_neuron Create def
   
   /neuron 
-    /iaf_tum_2000
+    /iaf_psc_exp_htum
     << /tau_m Tau
        /t_ref_tot TauR
        /t_ref_abs TauR
@@ -163,10 +163,7 @@ def
 
   /vm 
     /voltmeter 
-    << /withtime true
-       /to_memory true
-       /interval 25.0
-    >>
+    << /interval 25.0 >>
   Create def
 
   synapse_model 

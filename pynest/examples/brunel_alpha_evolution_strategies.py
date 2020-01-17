@@ -104,12 +104,12 @@ def compute_rate(spikes, N_rec, sim_time):
 
 
 def sort_spikes(spikes):
-    # Sorts recorded spikes by gid
-    unique_gids = sorted(np.unique(spikes['senders']))
+    # Sorts recorded spikes by node ID
+    unique_node_ids = sorted(np.unique(spikes['senders']))
     spiketrains = []
-    for gid in unique_gids:
-        spiketrains.append(spikes['times'][spikes['senders'] == gid])
-    return unique_gids, spiketrains
+    for node_id in unique_node_ids:
+        spiketrains.append(spikes['times'][spikes['senders'] == node_id])
+    return unique_node_ids, spiketrains
 
 
 def compute_cv(spiketrains):
@@ -151,8 +151,8 @@ def compute_statistics(parameters, espikes, ispikes):
     erate = compute_rate(espikes, parameters['N_rec'], parameters['sim_time'])
     irate = compute_rate(espikes, parameters['N_rec'], parameters['sim_time'])
 
-    egids, espiketrains = sort_spikes(espikes)
-    igids, ispiketrains = sort_spikes(ispikes)
+    enode_ids, espiketrains = sort_spikes(espikes)
+    inode_ids, ispiketrains = sort_spikes(ispikes)
 
     ecv = compute_cv(espiketrains)
     icv = compute_cv(ispiketrains)
@@ -242,18 +242,8 @@ def simulate(parameters):
     nodes_ex = nest.Create('iaf_psc_alpha', NE)
     nodes_in = nest.Create('iaf_psc_alpha', NI)
     noise = nest.Create('poisson_generator')
-    espikes = nest.Create('spike_detector')
-    ispikes = nest.Create('spike_detector')
-
-    nest.SetStatus(espikes, [{'label': 'brunel-py-ex',
-                              'withtime': True,
-                              'withgid': True,
-                              'to_file': False}])
-
-    nest.SetStatus(ispikes, [{'label': 'brunel-py-in',
-                              'withtime': True,
-                              'withgid': True,
-                              'to_file': False}])
+    espikes = nest.Create('spike_detector', params={'label': 'brunel-py-ex'})
+    ispikes = nest.Create('spike_detector', params={'label': 'brunel-py-in'})
 
     nest.CopyModel('static_synapse', 'excitatory',
                    {'weight': J_ex, 'delay': parameters['delay']})
@@ -277,17 +267,15 @@ def simulate(parameters):
     nest.Connect(nodes_in[:parameters['N_rec']], ispikes)
 
     conn_parameters_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-    nest.Connect(
-        nodes_ex, nodes_ex + nodes_in, conn_parameters_ex, 'excitatory')
+    nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_parameters_ex, 'excitatory')
 
     conn_parameters_in = {'rule': 'fixed_indegree', 'indegree': CI}
-    nest.Connect(
-        nodes_in, nodes_ex + nodes_in, conn_parameters_in, 'inhibitory')
+    nest.Connect(nodes_in, nodes_ex + nodes_in, conn_parameters_in, 'inhibitory')
 
     nest.Simulate(parameters['sim_time'])
 
-    return (nest.GetStatus(espikes, 'events')[0],
-            nest.GetStatus(ispikes, 'events')[0])
+    return (espikes.get('events'),
+            ispikes.get('events'))
 
 
 ###############################################################################

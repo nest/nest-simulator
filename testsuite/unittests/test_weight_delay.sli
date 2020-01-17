@@ -28,8 +28,7 @@
 % Expected weights are 1., 0.98, 0.96, 0.94, 0.92, 0.90, 0.88, 0.86, 0.84, 0.82
 % Expected delays with resolution 0.04 are 1.0 0.96 0.96 0.92 0.92 0.88 0.84
 
-/layer << /rows 1
-          /columns 10
+/layer << /shape [ 10 1 ]
           /extent [10. 1.]
           /center [0. 0.]
           /edge_wrap true
@@ -44,10 +43,10 @@
 << /distance << >> >> CreateParameter
 mul add /linear_parameter Set
 
-/conns << /connection_type (divergent)
-          /mask    << /grid << /rows 1 /columns 10 >> /anchor << /row 0 /column 0 >> >>
-          /weights linear_parameter
-          /delays  linear_parameter
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask    << /grid << /shape [ 10 1 ] >> /anchor [ 0 0 ] >>
+          /weight linear_parameter
+          /delay  linear_parameter
        >> def
 
 % required to make sure that resolution goes into userdict

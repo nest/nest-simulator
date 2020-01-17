@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-GIDCollection get/set tests
+NodeCollection get/set tests
 """
 
 import unittest
@@ -42,8 +42,8 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
-class TestGIDCollectionGetSet(unittest.TestCase):
-    """GIDCollection get/set tests"""
+class TestNodeCollectionGetSet(unittest.TestCase):
+    """NodeCollection get/set tests"""
 
     def setUp(self):
         nest.ResetKernel()
@@ -56,7 +56,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         C_m = nodes.get('C_m')
-        gids = nodes.get('global_id')
+        node_ids = nodes.get('global_id')
         E_L = nodes.get('E_L')
         V_m = nodes.get('V_m')
         t_ref = nodes.get('t_ref')
@@ -67,7 +67,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
                                250.0, 250.0, 250.0, 250.0, 250.0))
-        self.assertEqual(gids, tuple(range(1, 11)))
+        self.assertEqual(node_ids, tuple(range(1, 11)))
         self.assertEqual(E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
                                -70.0, -70.0, -70.0, -70.0, -70.0))
         self.assertEqual(V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
@@ -86,7 +86,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_get_sliced(self):
         """
-        Test that get works on sliced GIDCollections
+        Test that get works on sliced NodeCollections
         """
         nodes = nest.Create('iaf_psc_alpha', 10)
 
@@ -100,20 +100,20 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_get_composite(self):
         """
-        Test that get function works on composite GIDCollections
+        Test that get function works on composite NodeCollections
         """
         n1 = nest.Create('iaf_psc_alpha', 2)
         n2 = nest.Create('iaf_psc_delta', 2)
         n3 = nest.Create('iaf_psc_exp')
         n4 = nest.Create('iaf_psc_alpha', 3)
 
-        n1.set('V_m', [-77., -88.])
+        n1.set(V_m=[-77., -88.])
         n3.set({'V_m': -55.})
 
-        n1.set('C_m', [251., 252.])
-        n2.set('C_m', [253., 254.])
+        n1.set(C_m=[251., 252.])
+        n2.set(C_m=[253., 254.])
         n3.set({'C_m': 255.})
-        n4.set('C_m', [256., 257., 258.])
+        n4.set(C_m=[256., 257., 258.])
 
         n5 = n1 + n2 + n3 + n4
 
@@ -136,7 +136,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         self.assertEqual(status_dict['refractory_input'], refrac_ref)
 
-        # Check that calling get with string works on composite gc's, both on
+        # Check that calling get with string works on composite NCs, both on
         # parameters all the models have, and on individual parameters.
         Cm_ref = [x * 1. for x in range(251, 259)]
         Cm = n5.get('C_m')
@@ -148,7 +148,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_get_different_size(self):
         """
-        Test get with different input for different sizes of GIDCollections
+        Test get with different input for different sizes of NodeCollections
         """
         single_sd = nest.Create('spike_detector', 1)
         multi_sd = nest.Create('spike_detector', 10)
@@ -159,8 +159,8 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(single_sd.get('start'), 0.0)
 
         # Single node, array parameter
-        self.assertEqual(single_sd.get(['start', 'to_file']),
-                         {'start': 0.0, 'to_file': False})
+        self.assertEqual(single_sd.get(['start', 'time_in_steps']),
+                         {'start': 0.0, 'time_in_steps': False})
 
         # Single node, hierarchical with literal parameter
         np.testing.assert_array_equal(single_sd.get('events', 'times'),
@@ -192,12 +192,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get()
-        self.assertEqual(len(values.keys()), 37)
+        num_values_single_sd = len(values.keys())
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get()
-        self.assertEqual(len(values.keys()), 37)
+        self.assertEqual(len(values.keys()), num_values_single_sd)
         self.assertEqual(values['start'],
                          tuple(0.0 for i in range(len(multi_sd))))
 
@@ -213,21 +213,21 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         # Single node, literal parameter
         pt.assert_frame_equal(single_sd.get('start', output='pandas'),
                               pandas.DataFrame({'start': [0.0]},
-                                               index=tuple(single_sd)))
+                                               index=tuple(single_sd.tolist())))
 
         # Multiple nodes, literal parameter
         pt.assert_frame_equal(multi_sd.get('start', output='pandas'),
                               pandas.DataFrame(
                                   {'start': [0.0 for i in range(
                                       len(multi_sd))]},
-                                  index=tuple(multi_sd)))
+                                  index=tuple(multi_sd.tolist())))
 
         # Single node, array parameter
         pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
                                             output='pandas'),
                               pandas.DataFrame({'start': [0.0],
                                                 'n_events': [0]},
-                                               index=tuple(single_sd)))
+                                               index=tuple(single_sd.tolist())))
 
         # Multiple nodes, array parameter
         ref_dict = {'start': [0.0 for i in range(len(multi_sd))],
@@ -235,13 +235,13 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
                                            output='pandas'),
                               pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+                                               index=tuple(multi_sd.tolist())))
 
         # Single node, hierarchical with literal parameter
         pt.assert_frame_equal(single_sd.get('events', 'times',
                                             output='pandas'),
                               pandas.DataFrame({'times': [[]]},
-                                               index=tuple(single_sd)))
+                                               index=tuple(single_sd.tolist())))
 
         # Multiple nodes, hierarchical with literal parameter
         ref_dict = {'times': [empty_array_float
@@ -249,11 +249,11 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         pt.assert_frame_equal(multi_sd.get('events', 'times',
                                            output='pandas'),
                               pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd)))
+                                               index=tuple(multi_sd.tolist())))
 
         # Single node, hierarchical with array parameter
         ref_df = pandas.DataFrame(
-            {'times': [[]], 'senders': [[]]}, index=tuple(single_sd))
+            {'times': [[]], 'senders': [[]]}, index=tuple(single_sd.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(single_sd.get(
             'events', ['senders', 'times'], output='pandas'),
@@ -264,7 +264,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                     'senders': [[] for i in range(len(multi_sd))]}
         ref_df = pandas.DataFrame(
             ref_dict,
-            index=tuple(multi_sd))
+            index=tuple(multi_sd.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         sd_df = multi_sd.get('events', ['senders', 'times'], output='pandas')
         sd_df = sd_df.reindex(sorted(sd_df.columns), axis=1)
@@ -273,15 +273,15 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = single_sd.get(output='pandas')
-        self.assertEqual(values.shape, (1, 37))
-        self.assertEqual(values['start'][tuple(single_sd)[0]], 0.0)
+        num_values_single_sd = values.shape[1]
+        self.assertEqual(values['start'][tuple(single_sd.tolist())[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = multi_sd.get(output='pandas')
-        self.assertEqual(values.shape, (len(multi_sd), 37))
+        self.assertEqual(values.shape, (len(multi_sd), num_values_single_sd))
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
-                                              for key in tuple(multi_sd)},
+                                              for key in tuple(multi_sd.tolist())},
                                              dtype=np.float64,
                                              name='start'))
 
@@ -291,11 +291,11 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(40)
+        nest.Simulate(39)
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd))
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
                                             output='pandas'),
@@ -304,7 +304,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd))
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
         pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
                                            output='pandas'),
@@ -366,12 +366,12 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
         # Single node, no parameter (gets all values)
         values = json.loads(single_sd.get(output='json'))
-        self.assertEqual(len(values), 37)
+        num_values_single_sd = len(values)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
         values = json.loads(multi_sd.get(output='json'))
-        self.assertEqual(len(values), 37)
+        self.assertEqual(len(values), num_values_single_sd)
         self.assertEqual(values['start'], len(multi_sd) * [0.0])
 
         # With data in events
@@ -380,7 +380,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sd)
         nest.Connect(nodes, multi_sd, 'one_to_one')
-        nest.Simulate(40.)
+        nest.Simulate(39)
 
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}
@@ -411,7 +411,7 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                100.0, 100.0, 100.0, 100.0, 100.0))
 
         # Set same value for all nodes.
-        nodes.set('tau_Ca', 500.0)
+        nodes.set(tau_Ca=500.0)
         tau_Ca = nodes.get('tau_Ca')
         self.assertEqual(tau_Ca, (500.0, 500.0, 500.0, 500.0, 500.0,
                                   500.0, 500.0, 500.0, 500.0, 500.0))
@@ -425,14 +425,14 @@ class TestGIDCollectionGetSet(unittest.TestCase):
                                60.0, 70.0, 80.0, 90.0, -100.0))
 
         # Set value of a parameter based on list. List must be length of nodes.
-        nodes.set('V_reset', [-85., -82., -80., -77., -75.,
-                              -72., -70., -67., -65., -62.])
+        nodes.set(V_reset=[-85., -82., -80., -77., -75.,
+                           -72., -70., -67., -65., -62.])
         V_reset = nodes.get('V_reset')
         self.assertEqual(V_reset, (-85., -82., -80., -77., -75.,
                                    -72., -70., -67., -65., -62.))
 
-        with self.assertRaises(TypeError):
-            nodes.set('V_reset', [-85., -82., -80., -77., -75.])
+        with self.assertRaises(IndexError):
+            nodes.set(V_reset=[-85., -82., -80., -77., -75.])
 
         # Set different parameters with a dictionary.
         nodes.set({'t_ref': 44.0, 'tau_m': 2.0, 'tau_minus': 42.0})
@@ -449,13 +449,13 @@ class TestGIDCollectionGetSet(unittest.TestCase):
 
     def test_set_composite(self):
         """
-        Test that set works on composite GIDCollections
+        Test that set works on composite NodeCollections
         """
         nodes = nest.Create('iaf_psc_alpha', 10)
 
         nodes[2:5].set(({'V_m': -50.0}, {'V_m': -40.0}, {'V_m': -30.0}))
         nodes[5:7].set({'t_ref': 4.4, 'tau_m': 3.0})
-        nodes[2:9:2].set('C_m', 111.0)
+        nodes[2:9:2].set(C_m=111.0)
         V_m = nodes.get('V_m')
         g = nodes.get(['t_ref', 'tau_m'])
         C_m = nodes.get('C_m')
@@ -469,9 +469,50 @@ class TestGIDCollectionGetSet(unittest.TestCase):
         self.assertEqual(C_m, (250.0, 250.0, 111.0, 250.0, 111.0,
                                250.0, 111.0, 250.0, 111.0, 250.0))
 
+    def test_get_attribute(self):
+        """Test get using getattr"""
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        self.assertEqual(nodes.C_m, (250.0, 250.0, 250.0, 250.0, 250.0,
+                                     250.0, 250.0, 250.0, 250.0, 250.0))
+        self.assertEqual(nodes.global_id, tuple(range(1, 11)))
+        self.assertEqual(nodes.E_L, (-70.0, -70.0, -70.0, -70.0, -70.0,
+                                     -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.V_m, (-70.0, -70.0, -70.0, -70.0, -70.0,
+                                     -70.0, -70.0, -70.0, -70.0, -70.0))
+        self.assertEqual(nodes.t_ref, (2.0, 2.0, 2.0, 2.0, 2.0,
+                                       2.0, 2.0, 2.0, 2.0, 2.0))
+        with self.assertRaises(KeyError):
+            print(nodes.nonexistent_attribute)
+
+        self.assertIsNone(nodes.spatial)
+        spatial_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        self.assertIsNotNone(spatial_nodes.spatial)
+        spatial_reference = {'network_size': 4,
+                             'center': (0.0, 0.0),
+                             'edge_wrap': False,
+                             'extent': (1.0, 1.0),
+                             'shape': (2, 2)}
+        self.assertEqual(spatial_nodes.spatial, spatial_reference)
+
+    def test_set_attribute(self):
+        """Test set using setattr"""
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes.C_m = 100.0
+        self.assertEqual(nodes.get('C_m'), (100.0, 100.0, 100.0, 100.0, 100.0,
+                                            100.0, 100.0, 100.0, 100.0, 100.0))
+        v_reset_reference = (-85., -82., -80., -77., -75., -72., -70., -67., -65., -62.)
+        nodes.V_reset = v_reset_reference
+        self.assertEqual(nodes.get('V_reset'), v_reset_reference)
+
+        with self.assertRaises(IndexError):
+            nodes.V_reset = [-85., -82., -80., -77., -75.]
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nodes.nonexistent_attribute = 1.
+
 
 def suite():
-    suite = unittest.makeSuite(TestGIDCollectionGetSet, 'test')
+    suite = unittest.makeSuite(TestNodeCollectionGetSet, 'test')
     return suite
 
 

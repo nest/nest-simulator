@@ -23,7 +23,7 @@
 % to be run by run_test.sli
 
 % expectation:
-%   /anchor << /row 5 /column 5 >>
+%   /anchor [ 5 5 ]
 %   The fictional point (5,5) measured from the top-left corner of the mask towards
 %   the bottom right is aligned with each source, i.e., the top left corner of the mask
 %   displaced by (-5,-5) relative to the source node, measured in grid coordinates.
@@ -32,7 +32,7 @@
 %   at (-1,-1) and spans to (0,1). The coordinates are then wrapped.
 %
 %   What for the source node at (0,0)? The box refererence point is mapped to (-5,-5),
-%   which is identical to (0,0) in a 5x5 periodic system. Thus, we get the same 
+%   which is identical to (0,0) in a 5x5 periodic system. Thus, we get the same
 %   connectivity pattern as for anchor (0,0). Note: the order of connection creation
 %   can differ, so cnn-files need to be sorted before comaprison with reg_mask_grid_anchor_15.
 %
@@ -52,8 +52,7 @@
 %      26 -> 52 32 37
 %	     48 28 33
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap true
@@ -63,8 +62,8 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
-          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row 5 /column 5 >> >>
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ 5 5 ] >>
        >> def
 
 /source_layer_ref

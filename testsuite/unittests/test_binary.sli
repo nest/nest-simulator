@@ -100,8 +100,10 @@
     nrn1 << /theta -10. /tau_m 1. >> SetStatus
 
     nrn1 sp Connect
+
+    Prepare
     
-    100. Simulate
+    100. Run
     
     % should have two events
     sp /events get /senders get length 2 eq
@@ -110,7 +112,6 @@
     % both events should be at same time point
     sp /events get /times get dup 0 get exch 0 get eq
     assert_or_die
-
     
     sp /events get /senders get length 2 eq
     assert_or_die
@@ -118,11 +119,13 @@
     % set threshold so that neuron makes transition to 0
     nrn1 << /theta 10. /tau_m 1. >> SetStatus
 
-    100. Simulate
+    100. Run
 
     % should have one more event now
     sp /events get /senders get length 3 eq
     assert_or_die
+
+    Cleanup
 }
 forall
 

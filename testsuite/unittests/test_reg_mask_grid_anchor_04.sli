@@ -22,7 +22,7 @@
 
 
 % expectation:
-%   /anchor << /row 0 /column -1 >> : ficitonal point one right of left edge, top row aligned with source
+%   /anchor [ -1 0 ] : ficitonal point one right of left edge, top row aligned with source
 %
 %    Sources                      Targets
 %     2  7 12 17 22    	          28 33 38 43 48
@@ -37,8 +37,7 @@
 %
 %      6 -> 37 42 47    21 -> 52       26 ->
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
@@ -48,8 +47,8 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
-          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row 0 /column -1 >> >>
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ -1 0 ] >>
        >> def
 
 /source_layer_ref

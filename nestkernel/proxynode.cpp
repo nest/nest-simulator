@@ -33,10 +33,10 @@
 namespace nest
 {
 
-proxynode::proxynode( index gid, index model_id, index vp )
+proxynode::proxynode( index node_id, index model_id, index vp )
   : Node()
 {
-  set_gid_( gid );
+  set_node_id_( node_id );
   set_model_id( model_id );
   set_vp( vp );
   set_frozen_( true );

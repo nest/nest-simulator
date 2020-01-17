@@ -38,14 +38,13 @@
 %     6	11 16 21 26		  32 37	42 47 52
 %
 %    Exemplary connections
-%      2 ->    33    17 -> 38    48    22 -> 43   
+%      2 ->    33    17 -> 38    48    22 -> 43
 %	    29 	              44                49
 %
 %           31                46                51
-%      6 ->    37    21 -> 42    52    26 -> 47   
+%      6 ->    37    21 -> 42    52    26 -> 47
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
@@ -55,7 +54,7 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
+/conns << /connection_type (pairwise_bernoulli_on_target)
           /mask << /doughnut << /outer_radius 0.25 /inner_radius 0.1 >> /anchor [ 0.0 0.0 ] >>
        >> def
 

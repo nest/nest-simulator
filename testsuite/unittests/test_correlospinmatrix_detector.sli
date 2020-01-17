@@ -63,14 +63,14 @@ def
 /sg3 /spike_generator Create def
 
 /csd /correlospinmatrix_detector Create def
-/sd /spike_detector << /to_screen true >> Create def
+/sd /spike_detector Create def
 
 csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 
 sg1 << /spike_times [10. 10. 16.] >> SetStatus  % binary pulse starting at 10. ending at 16.
 sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. ending at 20.
 
-sg1 GetStatus 0 get info
+sg1 GetStatus info
 
 sg1 sd << >> << /receptor_type 0 >> Connect
 

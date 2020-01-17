@@ -23,6 +23,10 @@
 #ifndef TEST_PARAMETER_H
 #define TEST_PARAMETER_H
 
+// The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 107000
+
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
@@ -30,7 +34,7 @@
 #include "nest_datums.h"
 
 // Includes from librandom
-#include "gslrandomgen.h"
+#include "randomgen.h"
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 
@@ -47,12 +51,13 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ParameterDatum uniform_pd = new nest::UniformParameter( d );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
-  auto rng =
-    librandom::RngPtr( new librandom::GslRandomGen( gsl_rng_knuthran2002, librandom::RandomGen::DefaultSeed ) );
+  auto rng = librandom::RngPtr( librandom::RandomGen::create_knuthlfg_rng( librandom::RandomGen::DefaultSeed ) );
 
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+#endif /* BOOST_VERSION */
 
 #endif /* TEST_PARAMETER_H */

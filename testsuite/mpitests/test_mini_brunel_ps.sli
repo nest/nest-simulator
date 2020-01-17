@@ -150,13 +150,7 @@ def % brunel_setup
     >> SetStatus
 
     /exsd /spike_detector Create def
-    exsd
-    <<
-    /withtime true   % record time of spikes
-    /withgid true    % record which neuron spiked
-    /precise_times true
-    /time_in_steps true    
-    >> SetStatus
+    exsd << /time_in_steps true >> SetStatus
 
     allNeurons
     {

@@ -82,6 +82,10 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
+   /glif_cond << /params << /tau_syn [ 1.0 ] /E_rev [ -85.0 ] >>
+                                  /receptor_type 1 >>
+   /glif_psc << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>                                  
    /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ] 
@@ -169,6 +173,8 @@ M_ERROR setverbosity
       
       % n2 receives one spike with multiplicity 2
       sg2 n2 /all_to_all syn_spec Connect
+
+      (Testing model ) =only model ==
 
       /v1_0 n1 /V_m get def
       /v2_0 n2 /V_m get def

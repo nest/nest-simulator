@@ -26,6 +26,8 @@ from numpy import testing
 import unittest
 import nest
 import time
+import sys
+
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
@@ -303,20 +305,18 @@ class TestGrowthCurve(unittest.TestCase):
         self.se_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
 
-        start = time.clock()
         for t_i, t in enumerate(self.sim_steps):
-            for n_i, n in enumerate(self.pop):
+            for n_i in range(len(self.pop)):
                 self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
-                    [n], ('Ca', 'synaptic_elements'))[0]
+                    self.pop[n_i], ('Ca', 'synaptic_elements'))[0]
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
-        start = time.clock()
         tmp = nest.GetStatus(self.spike_detector, 'events')[0]
         spikes_all = tmp['times']
         senders_all = tmp['senders']
         for n_i, n in enumerate(self.pop):
-            spikes = spikes_all[senders_all == n]
+            spikes = spikes_all[senders_all == n.get('global_id')]
             [sei.reset() for sei in self.se_integrator]
             spike_i = 0
             for t_i, t in enumerate(self.sim_steps):
@@ -396,6 +396,7 @@ class TestGrowthCurve(unittest.TestCase):
                 }
             }
         )
+        print("hjelp")
         self.se_integrator.append(
             GaussianNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
                                eta=eta, eps=eps, growth_rate=growth_rate))
@@ -423,7 +424,7 @@ class TestGrowthCurve(unittest.TestCase):
         eps = 0.10
         psi = 0.10
 
-        local_nodes = nest.GetLocalGIDCollection(self.pop)
+        local_nodes = nest.GetLocalNodeCollection(self.pop)
         local_nodes.set(
             {
                 'beta_Ca': beta_ca,

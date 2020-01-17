@@ -378,15 +378,13 @@ kernel_fig(fig, 231, conndict, kern=0.5)
 
 #{ conn4g #}
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.distributions.gaussian(nest.spatial.distance,
-                                             p_center=1.0, std_deviation=1.0),
+            'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=1.0),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
 kernel_fig(fig, 232, conndict, kern={'gaussian': {'p_center': 1.0, 'sigma': 1.0}})
 
 #{ conn4cut #}
-distribution = nest.distributions.gaussian(nest.spatial.distance,
-                                           p_center=1.0, std_deviation=1.0)
+distribution = nest.spatial_distributions.gaussian(nest.spatial.distance, std=1.0)
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.logic.conditional(distribution > 0.5,
                                         distribution,
@@ -397,9 +395,10 @@ kernel_fig(fig, 234, conndict)
 
 #{ conn42d #}
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.distributions.gaussian2D(nest.spatial.dimension_distance.x,
-                                               nest.spatial.dimension_distance.y,
-                                               p_center=1.0, std_deviation_x=1., std_deviation_y=3.),
+            'p': nest.spatial_distributions.gaussian2D(nest.spatial.distance.x,
+                                                       nest.spatial.distance.y,
+                                                       std_x=1.,
+                                                       std_y=3.),
             'mask': {'circular': {'radius': 4.}}}
 #{ end #}
 kernel_fig(fig, 235, conndict)
@@ -479,7 +478,7 @@ cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
-sdict = {'weight': nest.distributions.exponential(nest.spatial.distance, a=1, tau=5.)}
+sdict = {'weight': nest.spatial_distributions.exponential(nest.spatial.distance, beta=5.)}
 #{ end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Exponential',
        rpos=[25., 0.])
@@ -489,7 +488,7 @@ cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
-sdict = {'weight': nest.distributions.gaussian(nest.spatial.distance, p_center=1., std_deviation=5.)}
+sdict = {'weight': nest.spatial_distributions.gaussian(nest.spatial.distance, std=5.)}
 #{ end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Gaussian', clr='green',
        rpos=[25., 0.])
@@ -511,7 +510,7 @@ plt.savefig('../user_manual_figures/conn5.png', bbox_inches='tight')
 
 # --------------------------------
 #{ conn_param_design #}
-parameter = 0.5 + nest.spatial.dimension_distance.x + 2. * nest.spatial.dimension_distance.y
+parameter = 0.5 + nest.spatial.distance.x + 2. * nest.spatial.distance.y
 #{ end #}
 
 #{ conn_param_design_ex #}
@@ -536,10 +535,10 @@ def pn_fig(fig, loc, l, cdict,
     ax = fig.add_subplot(loc)
 
     conns = nest.GetConnections(l)
-    first_gid = list(l[0])[0]  # hack to map GID to layer index
-    dist = np.array([nest.Distance(l[s - first_gid],
-                                   l[t - first_gid])
-                     for s, t in zip(conns.source(), conns.target())])
+    first_node_id = list(l[0])[0]  # hack to map node ID to layer index
+    dist = np.array([nest.Distance(l[s - first_node_id],
+                                   l[t - first_node_id])
+                     for s, t in zip(conns.sources(), conns.targets())])
     ax.hist(dist, bins=50, histtype='stepfilled', density=True)
     r = np.arange(0., 0.51, 0.01)
 
@@ -568,7 +567,7 @@ cdict = {'rule': 'fixed_outdegree',
          'p': nest.math.max(1. - 2 * nest.spatial.distance, 0.),
          'mask': {'circular': {'radius': 1.0}},
          'outdegree': 50,
-         'multapses': True, 'autapses': False}
+         'allow_multapses': True, 'allow_autapses': False}
 #{ end #}
 pn_fig(fig, 111, l, cdict)
 

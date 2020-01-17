@@ -19,9 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..lib.hl_api_types import Parameter, CreateParameter
-from ..ll_api import sli_func
-import numpy as np
+from ..lib.hl_api_types import CreateParameter
 
 __all__ = [
     'exponential',
@@ -32,30 +30,76 @@ __all__ = [
 
 
 def uniform(min=0.0, max=1.0):
+    """
+    Draws samples from a uniform distribution.
+
+    Samples are distributed uniformly in [min, max) (includes min, but excludes max).
+
+    Parameters
+    ----------
+    min : float, optional
+        Lower boundary of the sample interval. Default value is 0.
+    max : float, optional
+        Upper boundary of the sample interval. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
     return CreateParameter('uniform', {'min': min, 'max': max})
 
 
-def normal(loc=0.0, scale=1.0, min=None, max=None,
-           redraw=False):
-    if redraw:
-        raise NotImplementedError('Redraw is not supported yet')
-    parameters = {'mean': loc, 'sigma': scale}
-    if min:
-        parameters.update({'min': min})
-    if max:
-        parameters.update({'max': max})
-    return CreateParameter('normal', parameters)
+def normal(mean=0.0, std=1.0):
+    """
+    Draws samples from a normal distribution.
+
+    Parameters
+    ----------
+    mean : float, optional
+        Mean of the distribution. Default value is 0.
+    std : float, optional
+        Standard deviation of the distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('normal', {'mean': mean, 'std': std})
 
 
-def exponential(scale=1.0):
-    return CreateParameter('exponential', {'scale': scale})
+def exponential(beta=1.0):
+    """
+    Draws samples from an exponential distribution.
+
+    Parameters
+    ----------
+    beta : float, optional
+        Scale parameter the distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('exponential', {'beta': beta})
 
 
-def lognormal(mean=0.0, sigma=1.0, min=None, max=None, dimension=None):
-    # TODO: mean not the same as mu?
-    parameters = {'mu': mean, 'sigma': sigma}
-    if min:
-        parameters.update({'min': min})
-    if max:
-        parameters.update({'max': max})
-    return CreateParameter('lognormal', parameters)
+def lognormal(mean=0.0, std=1.0):
+    """
+    Draws samples from a log-normal distribution.
+
+    Parameters
+    ----------
+    mean : float, optional
+        Mean value of the underlying normal distribution. Default value is 0.
+    std : float, optional
+        Standard deviation of the underlying normal distribution. Default value is 1.0.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('lognormal', {'mean': mean, 'std': std})

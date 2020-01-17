@@ -51,18 +51,14 @@ class MaskedLayer;
  * to the given parameters. This method is templated with the dimension
  * of the layers, and is called via the Layer connect call using a
  * visitor pattern. The connect method relays to another method (e.g.,
- * convergent_connect_) implementing the concrete connection
+ * fixed_indegree_) implementing the concrete connection
  * algorithm. It would be more elegant if this was a base class for
  * classes representing different connection algorithms with a virtual
  * connect method, but it is not possible to have a virtual template
  * method.
  *
- * This class distinguishes between target driven and convergent
- * connections, which are both called "convergent" in the Topology module
- * documentation, and between source driven and divergent
- * connections. The true convergent/divergent connections are those with
- * a fixed number of connections (fan in/out). The only difference
- * between source driven and target driven connections is which layer
+ * The difference between the Pairwise_bernoulli_on_source and
+ * Pairwise_bernoulli_on_target connection types is which layer
  * coordinates the mask and parameters are defined in.
  */
 class ConnectionCreator
@@ -70,10 +66,10 @@ class ConnectionCreator
 public:
   enum ConnectionType
   {
-    Target_driven,
-    Source_driven,
-    Convergent,
-    Divergent
+    Pairwise_bernoulli_on_source,
+    Pairwise_bernoulli_on_target,
+    Fixed_indegree,
+    Fixed_outdegree
   };
 
   /**
@@ -90,8 +86,8 @@ public:
    * - "synapse_model": The synapse model to use.
    * - "targets": Which targets (model or lid) to select (dictionary).
    * - "sources": Which targets (model or lid) to select (dictionary).
-   * - "weights": Synaptic weight (dictionary, parametertype, or double).
-   * - "delays": Synaptic delays (dictionary, parametertype, or double).
+   * - "weight": Synaptic weight (dictionary, parametertype, or double).
+   * - "delay": Synaptic delays (dictionary, parametertype, or double).
    * - other parameters are interpreted as synapse parameters, and may
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
@@ -101,10 +97,12 @@ public:
   /**
    * Connect two layers.
    * @param source source layer.
+   * @param source NodeCollection of the source.
    * @param target target layer.
+   * @param target NodeCollection of the target.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
 private:
   /**
@@ -142,29 +140,24 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_source_( Layer< D >& source,
+    NodeCollectionPTR source_nc,
+    Layer< D >& target,
+    NodeCollectionPTR target_nc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void pairwise_bernoulli_on_target_( Layer< D >& source,
+    NodeCollectionPTR source_nc,
+    Layer< D >& target,
+    NodeCollectionPTR target_nc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
+  void
+  fixed_indegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
-
-  /**
-   * Calculate parameter values for this position.
-   *
-   * TODO: remove when all four connection variants are refactored
-   */
-  template < int D >
-  void get_parameters_( librandom::RngPtr rng,
-    const Position< D >& source_pos,
-    const Position< D >& target_pos,
-    const Position< D >& displacement,
-    double& weight,
-    double& delay );
+  void
+  fixed_outdegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   ConnectionType type_;
   bool allow_autapses_;
@@ -177,8 +170,8 @@ private:
   std::shared_ptr< Parameter > weight_;
   std::shared_ptr< Parameter > delay_;
 
-  //! Empty dictionary to pass to connect functions
-  const static DictionaryDatum dummy_param_;
+  //! Empty dictionary to pass to connect functions, one per thread
+  std::vector< DictionaryDatum > dummy_param_dicts_;
 };
 
 } // namespace nest

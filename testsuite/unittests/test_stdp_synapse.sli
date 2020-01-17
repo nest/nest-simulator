@@ -82,10 +82,6 @@ ResetKernel
 /parrot /parrot_neuron Create def
 /neuron /iaf_psc_alpha << /tau_minus tau_minus >> Create def
 
-/spike_detector << /to_file   false
-                   /to_memory true
-		               /precision 15
-                >> SetDefaults
 /sd_pre  /spike_detector Create def
 /sd_post /spike_detector Create def
 
@@ -121,8 +117,6 @@ neuron sd_post Connect
 
 
 %%% check final weight %%%
-
-cout 15 setprecision
 
 /K_plus    0.0 def
 /K_minus   0.0 def

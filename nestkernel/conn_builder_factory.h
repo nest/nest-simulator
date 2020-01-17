@@ -50,7 +50,7 @@ public:
   {
   }
   virtual ConnBuilder*
-  create( GIDCollectionPTR, GIDCollectionPTR, const DictionaryDatum&, const DictionaryDatum& ) const = 0;
+  create( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& ) const = 0;
 };
 
 /**
@@ -64,8 +64,8 @@ class ConnBuilderFactory : public GenericConnBuilderFactory
 public:
   //! create conn builder
   ConnBuilder*
-  create( GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+  create( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec ) const
   {

@@ -55,7 +55,7 @@ protected:
   index lcid_ : NUM_BITS_LCID;                       //!< local connection index
   unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
   unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
-  thread tid_ : NUM_BITS_TID;                        //!< thread index
+  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
   synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
 
 public:
@@ -159,6 +159,7 @@ inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const inde
 inline void
 SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double )
 {
+  assert( 0 <= tid );
   assert( tid <= MAX_TID );
   assert( syn_id <= MAX_SYN_ID );
   assert( lcid <= MAX_LCID );

@@ -27,6 +27,7 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from librandom:
@@ -54,6 +55,45 @@ void reset_kernel();
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
+
+enum class RegisterConnectionModelFlags : unsigned
+{
+  REGISTER_HPC = 1 << 0,
+  REGISTER_LBL = 1 << 1,
+  IS_PRIMARY = 1 << 2,
+  HAS_DELAY = 1 << 3,
+  SUPPORTS_WFR = 1 << 4,
+  REQUIRES_SYMMETRIC = 1 << 5,
+  REQUIRES_CLOPATH_ARCHIVING = 1 << 6
+};
+
+template <>
+struct EnableBitMaskOperators< RegisterConnectionModelFlags >
+{
+  static const bool enable = true;
+};
+
+const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
+  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
+  | RegisterConnectionModelFlags::HAS_DELAY;
+
+const RegisterConnectionModelFlags default_secondary_connection_model_flags =
+  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
+
+/**
+ * Register connection model (i.e. an instance of a class inheriting from `Connection`).
+ */
+template < template < typename > class ConnectorModelT >
+void register_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_connection_model_flags );
+
+/**
+ * Register secondary connection models (e.g. gap junctions, rate-based models).
+ */
+template < template < typename > class ConnectorModelT >
+void register_secondary_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 librandom::RngPtr get_vp_rng( thread tid );
@@ -68,18 +108,19 @@ DictionaryDatum get_node_status( const index node_id );
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-GIDCollectionPTR create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const index n );
 
-GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
-void connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets,
+void connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );
+
 /**
  * @fn run(const double& time)
  * @brief Run a partial simulation for `time` ms
@@ -147,6 +188,9 @@ ParameterDatum
 dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const ParameterDatum& param );
+bool is_spatial( const ParameterDatum& param );
+std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
+std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
 }
 
 

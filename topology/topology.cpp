@@ -49,17 +49,17 @@ namespace nest
 {
 
 LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
-  : GIDCollectionMetadata()
+  : NodeCollectionMetadata()
   , layer_( layer )
-  , first_gid_( 0 )
+  , first_node_id_( 0 )
 {
 }
 
 
 AbstractLayerPTR
-get_layer( GIDCollectionPTR gc )
+get_layer( NodeCollectionPTR nc )
 {
-  GIDCollectionMetadataPTR meta = gc->get_metadata();
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
 
   LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
   if ( not layer_meta )
@@ -69,12 +69,12 @@ get_layer( GIDCollectionPTR gc )
   return layer_meta->get_layer();
 }
 
-GIDCollectionPTR
+NodeCollectionPTR
 create_layer( const DictionaryDatum& layer_dict )
 {
   layer_dict->clear_access_flags();
 
-  GIDCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
+  NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
   ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
 
@@ -82,25 +82,25 @@ create_layer( const DictionaryDatum& layer_dict )
 }
 
 ArrayDatum
-get_position( GIDCollectionPTR layer_gc )
+get_position( NodeCollectionPTR layer_nc )
 {
-  AbstractLayerPTR layer = get_layer( layer_gc );
-  GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
-  index first_gid = meta->get_first_gid();
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
 
   ArrayDatum result;
-  result.reserve( layer_gc->size() );
+  result.reserve( layer_nc->size() );
 
-  for ( GIDCollection::const_iterator it = layer_gc->begin(); it < layer_gc->end(); ++it )
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
-    index gid = ( *it ).gid;
+    index node_id = ( *it ).node_id;
 
-    if ( not kernel().node_manager.is_local_gid( gid ) )
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "GetPosition is currently implemented for local nodes only." );
     }
 
-    const long lid = gid - first_gid;
+    const long lid = node_id - first_node_id;
     Token arr = layer->get_position_vector( lid );
 
     result.push_back( arr );
@@ -110,13 +110,13 @@ get_position( GIDCollectionPTR layer_gc )
 }
 
 ArrayDatum
-displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
+displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_gc );
+  ArrayDatum layer_to_positions = get_position( layer_to_nc );
 
-  AbstractLayerPTR layer_from = get_layer( layer_from_gc );
-  GIDCollectionMetadataPTR meta = layer_from_gc->get_metadata();
-  index first_gid = meta->get_first_gid();
+  AbstractLayerPTR layer_from = get_layer( layer_from_nc );
+  NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   ArrayDatum result;
@@ -124,14 +124,14 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   // If layer_from has size equal to one, but layer_to do not, we want the
   // displacement between every node in layer_to against the one in layer_from.
   // Likewise if layer_to has size 1 and layer_from do not.
-  if ( layer_from_gc->size() == 1 )
+  if ( layer_from_nc->size() == 1 )
   {
-    index gid = layer_from_gc->operator[]( 0 );
-    if ( not kernel().node_manager.is_local_gid( gid ) )
+    index node_id = layer_from_nc->operator[]( 0 );
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
-    const long lid = gid - first_gid;
+    const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
     for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
@@ -143,15 +143,15 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for ( GIDCollection::const_iterator it = layer_from_gc->begin(); it < layer_from_gc->end(); ++it )
+    for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
-      index gid = ( *it ).gid;
-      if ( not kernel().node_manager.is_local_gid( gid ) )
+      index node_id = ( *it ).node_id;
+      if ( not kernel().node_manager.is_local_node_id( node_id ) )
       {
         throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
 
-      const long lid = gid - first_gid;
+      const long lid = node_id - first_node_id;
 
       std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
       Token disp = layer_from->compute_displacement( pos, lid );
@@ -159,7 +159,7 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 
       // We only iterate the layer_to positions vector if it has more than one
       // element.
-      if ( layer_to_gc->size() != 1 )
+      if ( layer_to_nc->size() != 1 )
       {
         ++counter;
       }
@@ -170,23 +170,23 @@ displacement( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 }
 
 ArrayDatum
-displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
+displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
 {
-  AbstractLayerPTR layer = get_layer( layer_gc );
-  GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
-  index first_gid = meta->get_first_gid();
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   ArrayDatum result;
-  for ( GIDCollection::const_iterator it = layer_gc->begin(); it != layer_gc->end(); ++it )
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
-    index gid = ( *it ).gid;
-    if ( not kernel().node_manager.is_local_gid( gid ) )
+    index node_id = ( *it ).node_id;
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
 
-    const long lid = gid - first_gid;
+    const long lid = node_id - first_node_id;
 
     std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
     Token disp = layer->compute_displacement( pos, lid );
@@ -203,13 +203,13 @@ displacement( GIDCollectionPTR layer_gc, const ArrayDatum point )
 }
 
 std::vector< double >
-distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
+distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  ArrayDatum layer_to_positions = get_position( layer_to_gc );
+  ArrayDatum layer_to_positions = get_position( layer_to_nc );
 
-  AbstractLayerPTR layer_from = get_layer( layer_from_gc );
-  GIDCollectionMetadataPTR meta = layer_from_gc->get_metadata();
-  index first_gid = meta->get_first_gid();
+  AbstractLayerPTR layer_from = get_layer( layer_from_nc );
+  NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< double > result;
@@ -217,14 +217,14 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   // If layer_from has size equal to one, but layer_to do not, we want the
   // distance between every node in layer_to against the one in layer_from.
   // Likewise if layer_to has size 1 and layer_from do not.
-  if ( layer_from_gc->size() == 1 )
+  if ( layer_from_nc->size() == 1 )
   {
-    index gid = layer_from_gc->operator[]( 0 );
-    if ( not kernel().node_manager.is_local_gid( gid ) )
+    index node_id = layer_from_nc->operator[]( 0 );
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
-    const long lid = gid - first_gid;
+    const long lid = node_id - first_node_id;
 
     // If layer_from has size 1, we need to iterate over the layer_to positions
     for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
@@ -236,15 +236,15 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
   }
   else
   {
-    for ( GIDCollection::const_iterator it = layer_from_gc->begin(); it < layer_from_gc->end(); ++it )
+    for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
-      index gid = ( *it ).gid;
-      if ( not kernel().node_manager.is_local_gid( gid ) )
+      index node_id = ( *it ).node_id;
+      if ( not kernel().node_manager.is_local_node_id( node_id ) )
       {
         throw KernelException( "Displacement is currently implemented for local nodes only." );
       }
 
-      const long lid = gid - first_gid;
+      const long lid = node_id - first_node_id;
 
       std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
       double disp = layer_from->compute_distance( pos, lid );
@@ -252,7 +252,7 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 
       // We only iterate the layer_to positions vector if it has more than one
       // element.
-      if ( layer_to_gc->size() != 1 )
+      if ( layer_to_nc->size() != 1 )
       {
         ++counter;
       }
@@ -263,23 +263,23 @@ distance( GIDCollectionPTR layer_to_gc, GIDCollectionPTR layer_from_gc )
 }
 
 std::vector< double >
-distance( GIDCollectionPTR layer_gc, const ArrayDatum point )
+distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 {
-  AbstractLayerPTR layer = get_layer( layer_gc );
-  GIDCollectionMetadataPTR meta = layer_gc->get_metadata();
-  index first_gid = meta->get_first_gid();
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< double > result;
-  for ( GIDCollection::const_iterator it = layer_gc->begin(); it < layer_gc->end(); ++it )
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
-    index gid = ( *it ).gid;
-    if ( not kernel().node_manager.is_local_gid( gid ) )
+    index node_id = ( *it ).node_id;
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
     }
 
-    const long lid = gid - first_gid;
+    const long lid = node_id - first_node_id;
 
     std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
     double disp = layer->compute_distance( pos, lid );
@@ -332,24 +332,28 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
 }
 
 void
-connect_layers( GIDCollectionPTR source_gc, GIDCollectionPTR target_gc, const DictionaryDatum& connection_dict )
+connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
 {
-  kernel().connection_manager.set_have_connections_changed( true );
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
+  {
+    kernel().connection_manager.set_have_connections_changed( tid, true );
+  }
 
-  AbstractLayerPTR source = get_layer( source_gc );
-  AbstractLayerPTR target = get_layer( target_gc );
+  AbstractLayerPTR source = get_layer( source_nc );
+  AbstractLayerPTR target = get_layer( target_nc );
 
   connection_dict->clear_access_flags();
   ConnectionCreator connector( connection_dict );
   ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
-  source->connect( target, target_gc, connector );
+  source->connect( source_nc, target, target_nc, connector );
 }
 
 void
-dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out )
+dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out )
 {
-  AbstractLayerPTR layer = get_layer( layer_gc );
+  AbstractLayerPTR layer = get_layer( layer_nc );
 
   if ( out->good() )
   {
@@ -359,21 +363,21 @@ dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out )
 
 void
 dump_layer_connections( const Token& syn_model,
-  GIDCollectionPTR source_layer_gc,
-  GIDCollectionPTR target_layer_gc,
+  NodeCollectionPTR source_layer_nc,
+  NodeCollectionPTR target_layer_nc,
   OstreamDatum& out )
 {
-  AbstractLayerPTR source_layer = get_layer( source_layer_gc );
-  AbstractLayerPTR target_layer = get_layer( target_layer_gc );
+  AbstractLayerPTR source_layer = get_layer( source_layer_nc );
+  AbstractLayerPTR target_layer = get_layer( target_layer_nc );
 
   if ( out->good() )
   {
-    source_layer->dump_connections( *out, target_layer, syn_model );
+    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
   }
 }
 
 DictionaryDatum
-get_layer_status( GIDCollectionPTR layer_gc )
+get_layer_status( NodeCollectionPTR layer_nc )
 {
   assert( false && "not implemented" );
 

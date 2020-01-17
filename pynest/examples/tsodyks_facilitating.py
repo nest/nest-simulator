@@ -114,8 +114,7 @@ volts = nest.Create("voltmeter")
 
 nest.SetStatus(neurons, neuron_param)
 nest.SetStatus(dc_gen, {"amplitude": I0, "start": TIstart, "stop": TIend})
-nest.SetStatus(volts, {"label": "voltmeter", "withtime": True, "withgid": True,
-                       "interval": 1.})
+nest.SetStatus(volts, {"label": "voltmeter", "interval": 1.})
 
 ###############################################################################
 # Sixth, the ``dc_generator`` is connected to the first neuron

@@ -54,10 +54,10 @@ ResetKernel
   /local_num_threads 2
 >> SetKernelStatus
 
-/gid1 N 1 add def            % gid1 = N + 1
-/gid2 N 2 mul def            % gid2 = N * 2
-/net1 [1 N] Range def        % global ids of source subnet
-/net2 [gid1 gid2] Range def  % global ids of target subnet
+/node_id1 N 1 add def            % node_id1 = N + 1
+/node_id2 N 2 mul def            % node_id2 = N * 2
+/net1 [1 N] Range def        % node IDs of source subnet
+/net2 [node_id1 node_id2] Range def  % node IDs of target subnet
 
 /iaf_psc_alpha N 2 mul Create ;  % creates source and target subnets
 
@@ -84,7 +84,7 @@ net2 % loop on all neurons of target subnet
         {
                 /n_loc n_loc 1 add def  % increases n_loc
                 % gets all connections to the target neuron
-                /conn << /target [neuron2] cvgidcollection >> GetConnections def
+                /conn << /target [neuron2] cvnodecollection >> GetConnections def
 
                 /sdict_lst conn GetStatus def % gets info on synapses
 
@@ -95,7 +95,7 @@ net2 % loop on all neurons of target subnet
                         /sdict exch def
                         /w sdict /weight get def  % gets synaptic weight
                         /d sdict /delay get def   % gets synaptic delay
-                        /diff d w sub def         % diff = delay - weight 
+                        /diff d w sub def         % diff = delay - weight
                         diff 1.0 eq               % checks that d = w + 1
 			pass and /pass exch def   % updates control flag
 
@@ -106,7 +106,7 @@ net2 % loop on all neurons of target subnet
 		pass and /pass exch def   % updates control flag
 
                 /Warr1 Warr1 Sort def       % sorts the elements of Warr1
-                /i1 neuron2 gid1 sub K mul def  % first index = (n2 - gid1) * K
+                /i1 neuron2 node_id1 sub K mul def  % first index = (n2 - node_id1) * K
 
                 % get row of original weight array, sort it
                 % and compare it with Warr1

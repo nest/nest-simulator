@@ -45,8 +45,7 @@
 %           31                46                51
 %      6 -> 32 37    21 -> 42 47 52    26 -> 47 52
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
@@ -56,7 +55,7 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
+/conns << /connection_type (pairwise_bernoulli_on_target)
           /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
        >> def
 

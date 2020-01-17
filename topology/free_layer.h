@@ -53,13 +53,15 @@ public:
 protected:
   /**
    * Communicate positions across MPI processes
-   * @param iter Insert iterator which will receive pairs of Position,GID
+   * @param iter Insert iterator which will receive pairs of Position,node ID
+   * @param node_collection NodeCollection of the layer
    */
   template < class Ins >
-  void communicate_positions_( Ins iter );
+  void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );
 
-  void insert_global_positions_ntree_( Ntree< D, index >& tree );
-  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec );
+  void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+    NodeCollectionPTR node_collection );
 
   /// Vector of positions.
   std::vector< Position< D > > positions_;
@@ -69,9 +71,9 @@ protected:
   {
   public:
     index
-    get_gid() const
+    get_node_id() const
     {
-      return gid_;
+      return node_id_;
     }
     Position< D >
     get_position() const
@@ -80,15 +82,15 @@ protected:
     }
     bool operator<( const NodePositionData& other ) const
     {
-      return gid_ < other.gid_;
+      return node_id_ < other.node_id_;
     }
     bool operator==( const NodePositionData& other ) const
     {
-      return gid_ == other.gid_;
+      return node_id_ == other.node_id_;
     }
 
   private:
-    double gid_;
+    double node_id_;
     double pos_[ D ];
   };
 };
@@ -116,17 +118,17 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     if ( tkn.is_a< TokenArray >() )
     {
       TokenArray pos = getValue< TokenArray >( tkn );
-      if ( this->gid_collection_->size() != pos.size() )
+      if ( this->node_collection_->size() != pos.size() )
       {
         std::stringstream expected;
         std::stringstream got;
-        expected << "position array with length " << this->gid_collection_->size();
+        expected << "position array with length " << this->node_collection_->size();
         got << "position array with length" << pos.size();
         throw TypeMismatch( expected.str(), got.str() );
       }
 
       positions_.clear();
-      positions_.reserve( this->gid_collection_->size() );
+      positions_.reserve( this->node_collection_->size() );
 
       for ( Token* it = pos.begin(); it != pos.end(); ++it )
       {
@@ -151,7 +153,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
       positions_.clear();
-      auto num_nodes = this->gid_collection_->size();
+      auto num_nodes = this->node_collection_->size();
       positions_.reserve( num_nodes );
 
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -229,75 +231,76 @@ FreeLayer< D >::get_position( index lid ) const
 template < int D >
 template < class Ins >
 void
-FreeLayer< D >::communicate_positions_( Ins iter )
+FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
-  // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
-  std::vector< double > local_gid_pos;
+  // This array will be filled with node ID,pos_x,pos_y[,pos_z] for local nodes:
+  std::vector< double > local_node_id_pos;
 
-  GIDCollection::const_iterator gc_begin = this->gid_collection_->MPI_local_begin();
-  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
+  NodeCollection::const_iterator nc_begin = node_collection->MPI_local_begin();
+  NodeCollection::const_iterator nc_end = node_collection->end();
 
-  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
+  local_node_id_pos.reserve( ( D + 1 ) * node_collection->size() );
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it < gc_end; ++gc_it )
+  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it )
   {
-    // Push GID into array to communicate
-    local_gid_pos.push_back( ( *gc_it ).gid );
+    // Push node ID into array to communicate
+    local_node_id_pos.push_back( ( *nc_it ).node_id );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_gid_pos.push_back( positions_[ ( *gc_it ).lid ][ j ] );
+      local_node_id_pos.push_back( positions_[ ( *nc_it ).lid ][ j ] );
     }
   }
 
-  // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
-  std::vector< double > global_gid_pos;
+  // This array will be filled with node ID,pos_x,pos_y[,pos_z] for global nodes:
+  std::vector< double > global_node_id_pos;
   std::vector< int > displacements;
-  kernel().mpi_manager.communicate( local_gid_pos, global_gid_pos, displacements );
+  kernel().mpi_manager.communicate( local_node_id_pos, global_node_id_pos, displacements );
 
   // To avoid copying the vector one extra time in order to sort, we
   // sneakishly use reinterpret_cast
   NodePositionData* pos_ptr;
   NodePositionData* pos_end;
-  pos_ptr = reinterpret_cast< NodePositionData* >( &global_gid_pos[ 0 ] );
-  pos_end = pos_ptr + global_gid_pos.size() / ( D + 1 );
+  pos_ptr = reinterpret_cast< NodePositionData* >( &global_node_id_pos[ 0 ] );
+  pos_end = pos_ptr + global_node_id_pos.size() / ( D + 1 );
 
   // Get rid of any multiple entries
   std::sort( pos_ptr, pos_end );
   pos_end = std::unique( pos_ptr, pos_end );
 
-  // Unpack GIDs and coordinates
+  // Unpack node IDs and coordinates
   for ( ; pos_ptr < pos_end; pos_ptr++ )
   {
-    *iter++ = std::pair< Position< D >, index >( pos_ptr->get_position(), pos_ptr->get_gid() );
+    *iter++ = std::pair< Position< D >, index >( pos_ptr->get_position(), pos_ptr->get_node_id() );
   }
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree )
+FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection )
 {
 
-  communicate_positions_( std::inserter( tree, tree.end() ) );
+  communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
 }
 
-// Helper function to compare GIDs used for sorting (Position,GID) pairs
+// Helper function to compare node IDs used for sorting (Position,node ID) pairs
 template < int D >
 static bool
-gid_less( const std::pair< Position< D >, index >& a, const std::pair< Position< D >, index >& b )
+node_id_less( const std::pair< Position< D >, index >& a, const std::pair< Position< D >, index >& b )
 {
   return a.second < b.second;
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec )
+FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+  NodeCollectionPTR node_collection )
 {
 
-  communicate_positions_( std::back_inserter( vec ) );
+  communicate_positions_( std::back_inserter( vec ), node_collection );
 
   // Sort vector to ensure consistent results
-  std::sort( vec.begin(), vec.end(), gid_less< D > );
+  std::sort( vec.begin(), vec.end(), node_id_less< D > );
 }
 
 } // namespace nest

@@ -60,7 +60,7 @@ Author: Barna Zajzon, 2017-03-10
 
   /n /iaf_psc_alpha Create def
 
-  /mm /multimeter << /withtime true /interval recint /offset recoffs /record_from recs >>
+  /mm /multimeter << /interval recint /offset recoffs /record_from recs >>
     Create def
 
   % connect and simulate
@@ -95,7 +95,7 @@ assert_or_die
 
   /n /iaf_psc_alpha Create def
 
-  /mm /multimeter << /withtime true /start recstart /stop recstop
+  /mm /multimeter << /start recstart /stop recstop
     /interval recint /offset recoffs /record_from recs >> Create def
 
   % connect and simulate
@@ -103,7 +103,7 @@ assert_or_die
   simtimeinit Simulate
 
   % create second multimeter
-  /mmtwo /multimeter << /withtime true /start recstart /stop recstop
+  /mmtwo /multimeter << /start recstart /stop recstop
     /interval recint /offset recoffs /record_from recs >> Create def
 
   % connect second multimeter and simulate further
@@ -166,7 +166,7 @@ fail_or_die
 
   % create multimeter and node
   /mm /multimeter
-    << /withtime true /interval recint /offset recoffs /start start /stop stop /record_from recs >>
+    << /interval recint /offset recoffs /start start /stop stop /record_from recs >>
     Create def
   /neuron /iaf_psc_exp Create def
 

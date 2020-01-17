@@ -156,7 +156,6 @@ def
 
 
  /spike_detector Create /sd Set
- sd << /precise_times true >> SetStatus
 
  pg sd Connect 
 

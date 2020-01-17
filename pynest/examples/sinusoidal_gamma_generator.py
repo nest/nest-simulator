@@ -20,9 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""
-Sinusoidal gamma generator example
-----------------------------------
+"""Sinusoidal gamma generator example
+--------------------------------------
 
 This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
 different parameters and modes. The source code of the model can be found in
@@ -61,7 +60,7 @@ nest.SetKernelStatus({'resolution': 0.01})
 ###############################################################################
 # Then we create two instances of the ``sinusoidal_gamma_generator`` with two
 # different orders of the underlying gamma process using ``Create``. Moreover,
-# we create devices to record firing rates (``Multimeter``) and spikes
+# we create devices to record firing rates (``multimeter``) and spikes
 # (``spike_detector``) and connect them to the generators using ``Connect``.
 
 
@@ -71,9 +70,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                           'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2, params={'withgid': False})
+m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')

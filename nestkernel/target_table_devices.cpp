@@ -40,7 +40,7 @@ nest::TargetTableDevices::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   target_to_devices_.resize( num_threads );
   target_from_devices_.resize( num_threads );
-  sending_devices_gids_.resize( num_threads );
+  sending_devices_node_ids_.resize( num_threads );
 }
 
 void
@@ -72,7 +72,7 @@ nest::TargetTableDevices::finalize()
 
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_to_devices_ );
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_from_devices_ );
-  std::vector< std::vector< index > >().swap( sending_devices_gids_ );
+  std::vector< std::vector< index > >().swap( sending_devices_node_ids_ );
 }
 
 void
@@ -83,7 +83,7 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
     const thread tid = kernel().vp_manager.get_thread_id();
     target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
-    sending_devices_gids_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
+    sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
   } // end omp parallel
 }
 
@@ -107,30 +107,30 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
 }
 
 void
-nest::TargetTableDevices::get_connections_to_devices_( const index requested_source_gid,
-  const index requested_target_gid,
+nest::TargetTableDevices::get_connections_to_devices_( const index requested_source_node_id,
+  const index requested_target_node_id,
   const thread tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
 {
-  if ( requested_source_gid != 0 )
+  if ( requested_source_node_id != 0 )
   {
-    const index lid = kernel().vp_manager.gid_to_lid( requested_source_gid );
-    get_connections_to_device_for_lid_( lid, requested_target_gid, tid, syn_id, synapse_label, conns );
+    const index lid = kernel().vp_manager.node_id_to_lid( requested_source_node_id );
+    get_connections_to_device_for_lid_( lid, requested_target_node_id, tid, syn_id, synapse_label, conns );
   }
   else
   {
     for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
-      get_connections_to_device_for_lid_( lid, requested_target_gid, tid, syn_id, synapse_label, conns );
+      get_connections_to_device_for_lid_( lid, requested_target_node_id, tid, syn_id, synapse_label, conns );
     }
   }
 }
 
 void
 nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
-  const index requested_target_gid,
+  const index requested_target_node_id,
   const thread tid,
   const synindex syn_id,
   const long synapse_label,
@@ -138,32 +138,32 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
 {
   if ( target_to_devices_[ tid ][ lid ].size() > 0 )
   {
-    const index source_gid = kernel().vp_manager.lid_to_gid( lid );
+    const index source_node_id = kernel().vp_manager.lid_to_node_id( lid );
     // not the root subnet and valid connector
-    if ( source_gid > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
+    if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
     {
       target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(
-        source_gid, requested_target_gid, tid, synapse_label, conns );
+        source_node_id, requested_target_node_id, tid, synapse_label, conns );
     }
   }
 }
 
 void
-nest::TargetTableDevices::get_connections_from_devices_( const index requested_source_gid,
-  const index requested_target_gid,
+nest::TargetTableDevices::get_connections_from_devices_( const index requested_source_node_id,
+  const index requested_target_node_id,
   const thread tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
 {
-  for ( std::vector< index >::const_iterator it = sending_devices_gids_[ tid ].begin();
-        it != sending_devices_gids_[ tid ].end();
+  for ( std::vector< index >::const_iterator it = sending_devices_node_ids_[ tid ].begin();
+        it != sending_devices_node_ids_[ tid ].end();
         ++it )
   {
-    const index source_gid = *it;
-    if ( source_gid > 0 and ( requested_source_gid == source_gid or requested_source_gid == 0 ) )
+    const index source_node_id = *it;
+    if ( source_node_id > 0 and ( requested_source_node_id == source_node_id or requested_source_node_id == 0 ) )
     {
-      const Node* source = kernel().node_manager.get_node_or_proxy( source_gid, tid );
+      const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
       const index ldid = source->get_local_device_id();
 
       if ( target_from_devices_[ tid ][ ldid ].size() > 0 )
@@ -172,7 +172,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
         if ( target_from_devices_[ tid ][ ldid ][ syn_id ] != NULL )
         {
           target_from_devices_[ tid ][ ldid ][ syn_id ]->get_all_connections(
-            source_gid, requested_target_gid, tid, synapse_label, conns );
+            source_node_id, requested_target_node_id, tid, synapse_label, conns );
         }
       }
     }
@@ -180,16 +180,17 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
 }
 
 void
-nest::TargetTableDevices::get_connections( const index requested_source_gid,
-  const index requested_target_gid,
+nest::TargetTableDevices::get_connections( const index requested_source_node_id,
+  const index requested_target_node_id,
   const thread tid,
   const synindex syn_id,
   const long synapse_label,
   std::deque< ConnectionID >& conns ) const
 {
   // collect all connections from neurons to devices
-  get_connections_to_devices_( requested_source_gid, requested_target_gid, tid, syn_id, synapse_label, conns );
+  get_connections_to_devices_( requested_source_node_id, requested_target_node_id, tid, syn_id, synapse_label, conns );
 
   // collect all connections from devices
-  get_connections_from_devices_( requested_source_gid, requested_target_gid, tid, syn_id, synapse_label, conns );
+  get_connections_from_devices_(
+    requested_source_node_id, requested_target_node_id, tid, syn_id, synapse_label, conns );
 }

@@ -53,15 +53,14 @@ neuron = nest.Create("aeif_cond_exp")
 ###############################################################################
 # Set the parameters of the neuron according to the paper.
 
-nest.SetStatus(neuron, {"V_peak": 20., "E_L": -60.0, "a": 80.0, "b": 80.5,
-                        "tau_w": 720.0})
+neuron.set({"V_peak": 20., "E_L": -60.0, "a": 80.0, "b": 80.5, "tau_w": 720.0})
 
 ###############################################################################
 # Create and configure the stimulus which is a step current.
 
 dc = nest.Create("dc_generator")
 
-nest.SetStatus(dc, [{"amplitude": -800.0, "start": 0.0, "stop": 400.0}])
+dc.set({"amplitude": -800.0, "start": 0.0, "stop": 400.0})
 
 ###############################################################################
 # We connect the DC generators.
@@ -69,16 +68,10 @@ nest.SetStatus(dc, [{"amplitude": -800.0, "start": 0.0, "stop": 400.0}])
 nest.Connect(dc, neuron, 'all_to_all')
 
 ###############################################################################
-# And add a ``voltmeter`` to record the membrane potentials.
+# And add a ``voltmeter`` to sample the membrane potentials from the neuron
+# in intervals of 0.1 ms.
 
-voltmeter = nest.Create("voltmeter")
-
-###############################################################################
-# We set the voltmeter to record in small intervals of 0.1 ms and connect the
-# voltmeter to the neuron.
-
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True, 'interval': 0.1})
-
+voltmeter = nest.Create("voltmeter", params={'interval': 0.1})
 nest.Connect(voltmeter, neuron)
 
 ###############################################################################

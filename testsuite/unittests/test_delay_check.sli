@@ -69,11 +69,11 @@ n1 n2 Connect
 n2 n3 Connect
 1.0 2.0 check_min_max_delay
 
-% test 4: set if 'gid gid w d Connect' works as expected
+% test 4: set if 'node_id node_id w d Connect' works as expected
 n2 n3 1.0 6.0 Connect
 1.0 6.0 check_min_max_delay
 
-% test 5: check if min_delay is updated in 'gid gid params Connect'
+% test 5: check if min_delay is updated in 'node_id node_id params Connect'
 n2 n3 << >> << /delay 0.5 >> Connect
 0.5 6.0 check_min_max_delay
 

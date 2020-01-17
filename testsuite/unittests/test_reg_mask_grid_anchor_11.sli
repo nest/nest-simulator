@@ -28,17 +28,16 @@
 %     3  8 13 18 23		  29 34	39 44 49
 %     4	 9 14 19 24		  30 35	40 45 50
 %     5	10 15 20 25		  31 36	41 46 51
-%     6	11 16 21 26		  32 37	42 47 52	      
+%     6	11 16 21 26		  32 37	42 47 52
 %
 %    Exemplary connections
 %      2 -> 28 33 38    17 -> 43 48 28    22 -> 48 28 33
-%           32 37 42          47 52 32          52 32 37 
+%           32 37 42          47 52 32          52 32 37
 %
 %      6 -> 31 36 41    21 -> 46 51 31    26 -> 51 31 36
 %           32 37 42   	      47 52 32   	52 32 37
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap true
@@ -48,8 +47,8 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
-          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row 1 /column 0 >> >>
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ 0 1 ] >>
        >> def
 
 /source_layer_ref

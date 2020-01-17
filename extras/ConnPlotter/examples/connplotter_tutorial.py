@@ -67,6 +67,9 @@ if not using_pyreport:
 
     pylab.show = nop
 
+# ! Import NEST
+import nest
+
 # ! Import ConnPlotter and its examples
 import ConnPlotter as cpl
 import ConnPlotter.examples as ex
@@ -123,6 +126,9 @@ def showTextTable(connPattern, fileTrunk):
 s_layer, s_conn, s_model = ex.simple()
 
 # ! Create Connection Pattern representation
+# p is evaluated, in case it is a Parameter
+for i in range(len(s_conn)):
+    s_conn[i][2]['p'] = eval(str(s_conn[i][2]['p']))
 s_cp = cpl.ConnectionPattern(s_layer, s_conn)
 
 # ! Show pattern as textual table (we cheat a little and include PDF directly)
@@ -258,20 +264,17 @@ pylab.show()
 
 # ! Build network in NEST
 # ! ---------------------
-import nest
-import nest.topology as topo
-
 # ! Create models
 for model in s_model:
     nest.CopyModel(model[0], model[1], model[2])
 
 # ! Create layers, store layer info in Python variable
 for layer in s_layer:
-    exec ('%s = topo.CreateLayer(layer[1])' % layer[0])
+    exec('{} = nest.Create(layer[1], positions=nest.spatial.grid(layer[2], extent=layer[3]))'.format(layer[0]))
 
 # ! Create connections, need to insert variable names
 for conn in s_conn:
-    eval('topo.ConnectLayers(%s,%s,conn[2])' % (conn[0], conn[1]))
+    eval('nest.Connect({}, {}, conn[2], conn[3])'.format(conn[0], conn[1]))
 
 nest.Simulate(10)
 # ! **Ooops:*** Nothing happened? Well, it did, but pyreport cannot capture the
@@ -282,29 +285,24 @@ nest.Simulate(10)
 # ! :::::::::::::::::::::::::::::::::::::::::::
 # ! The following block of messy and makeshift code plots the targets of the
 # ! center neuron of the B/E population in the B/E and the B/I populations.
-B_top = nest.GetStatus(RG, 'topology')[0]
-ctr_id = topo.GetElement(RG,
-                         [int(B_top['rows'] / 2), int(B_top['columns'] / 2)])
-
-# find excitatory element in B
-E_id = [gid for gid in ctr_id
-        if nest.GetStatus([gid], 'model')[0] == 'E']
+E_ctr = nest.FindCenterElement(RG_E)
 
 # get all targets, split into excitatory and inhibitory
-conns = nest.GetConnections(E_id, synapse_model='static_synapse')
-alltgts = conns.get('target')
-Etgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'E']
-Itgts = [t for t in alltgts if nest.GetStatus([t], 'model')[0] == 'I']
+Econns = nest.GetConnections(E_ctr, RG_E, synapse_model='static_synapse')
+Etgts = Econns.get('target')
+Iconns = nest.GetConnections(E_ctr, RG_I, synapse_model='static_synapse')
+Itgts = Iconns.get('target')
 
 # obtain positions of targets
-Etpos = tuple(zip(*topo.GetPosition(Etgts)))
-Itpos = tuple(zip(*topo.GetPosition(Itgts)))
+Etpos = pylab.array([nest.GetPosition(RG_E[RG_E.index(tnode_id)]) for tnode_id in Etgts])
+Itpos = pylab.array([nest.GetPosition(RG_I[RG_I.index(tnode_id)]) for tnode_id in Itgts])
 
 # plot excitatory
 pylab.clf()
 pylab.subplot(121)
-pylab.scatter(Etpos[0], Etpos[1])
-ctrpos = pylab.array(topo.GetPosition(E_id)[0])
+pylab.scatter(Etpos[:, 0], Etpos[:, 1])
+ctrpos = nest.GetPosition(E_ctr)
+
 ax = pylab.gca()
 ax.add_patch(pylab.Circle(ctrpos, radius=0.02, zorder=99,
                           fc='r', alpha=0.4, ec='none'))
@@ -322,8 +320,9 @@ ax.set(aspect='equal', xlim=[-0.5, 0.5], ylim=[-0.5, 0.5],
 
 # plot inhibitory
 pylab.subplot(122)
-pylab.scatter(Itpos[0], Itpos[1])
-ctrpos = topo.GetPosition(E_id)[0]
+
+pylab.scatter(Itpos[:, 0], Itpos[:, 1])
+ctrpos = nest.GetPosition(E_ctr)
 ax = pylab.gca()
 ax.add_patch(pylab.Circle(ctrpos, radius=0.02, zorder=99,
                           fc='r', alpha=0.4, ec='none'))
@@ -354,6 +353,10 @@ pylab.show()
 
 # ! Setup and tabular display
 c_layer, c_conn, c_model = ex.complex()
+# p is evaluated, in case it is a Parameter
+for i in range(len(c_conn)):
+    c_conn[i][2]['p'] = eval(str(c_conn[i][2]['p']))
+
 c_cp = cpl.ConnectionPattern(c_layer, c_conn)
 showTextTable(c_cp, 'complex_tt')
 # $ \centerline{\includegraphics{complex_tt.pdf}}

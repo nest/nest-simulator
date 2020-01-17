@@ -211,9 +211,9 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                                    source=self.pre_neuron)
         # disable depression to make it get to max weight
         # increase eta to cause enough facilitation
-        conn.set("Wmax", limited_weight)
-        conn.set("eta", 5.)
-        conn.set("alpha", 0.)
+        conn.set(Wmax=limited_weight)
+        conn.set(eta=5.)
+        conn.set(alpha=0.)
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0])
@@ -231,6 +231,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

@@ -23,6 +23,9 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
+// C includes:
+#include <sys/time.h>
+
 // C++ includes:
 #include <vector>
 
@@ -82,12 +85,6 @@ public:
   void cleanup();
 
   /**
-   * Simulate for the given time .
-   * calls prepare(); run(Time&); cleanup();
-   */
-  void simulate( Time const& );
-
-  /**
    * Returns true if waveform relaxation is used.
    */
   bool use_wfr() const;
@@ -132,6 +129,13 @@ public:
   bool has_been_simulated() const;
 
   /**
+   * Return true, if the SimulationManager has been prepared for simulation.
+   * This is the case from the time when the Prepare function is called until
+   * the simulation context is left by a call to Cleanup.
+   */
+  bool has_been_prepared() const;
+
+  /**
    * Get slice number. Increased by one for each slice. Can be used
    * to choose alternating buffers.
    */
@@ -159,22 +163,20 @@ private:
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  Time clock_;               //!< SimulationManager clock, updated once per slice
-  delay slice_;              //!< current update slice
-  delay to_do_;              //!< number of pending cycles.
-  delay to_do_total_;        //!< number of requested cycles in current simulation.
-  delay from_step_;          //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;            //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_;    //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;      //!< Wall-clock time at the end of time slice
-  long t_real_;              //!< Accumulated wall-clock time spent simulating (in us)
-  bool prepared_;            //!< Indicates whether the SimulationManager is in a prepared
-                             //!< state
-  bool simulating_;          //!< true if simulation in progress
-  bool simulated_;           //!< indicates whether the SimulationManager has already been
-                             //!< simulated for sometime
-  bool exit_on_user_signal_; //!< true if update loop was left due to signal
-  // received
+  Time clock_;                     //!< SimulationManager clock, updated once per slice
+  delay slice_;                    //!< current update slice
+  delay to_do_;                    //!< number of pending cycles.
+  delay to_do_total_;              //!< number of requested cycles in current simulation.
+  delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
+  long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)
+  bool prepared_;                  //!< Indicates whether the SimulationManager is in a prepared
+                                   //!< state
+  bool simulating_;                //!< true if simulation in progress
+  bool simulated_;                 //!< indicates whether the SimulationManager has already been
+                                   //!< simulated for sometime
   bool inconsistent_state_;        //!< true after exception during update_
                                    //!< simulation must not be resumed
   bool print_time_;                //!< Indicates whether time should be printed during
@@ -206,6 +208,12 @@ inline bool
 SimulationManager::has_been_simulated() const
 {
   return simulated_;
+}
+
+inline bool
+SimulationManager::has_been_prepared() const
+{
+  return prepared_;
 }
 
 inline size_t

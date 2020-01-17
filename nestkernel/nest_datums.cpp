@@ -24,8 +24,8 @@
 
 // explicit instantiations
 template class AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >;
-template class sharedPtrDatum< nest::GIDCollection, &nest::NestModule::GIDCollectionType >;
-template class sharedPtrDatum< nest::gc_const_iterator, &nest::NestModule::GIDCollectionIteratorType >;
+template class sharedPtrDatum< nest::NodeCollection, &nest::NestModule::NodeCollectionType >;
+template class sharedPtrDatum< nest::nc_const_iterator, &nest::NestModule::NodeCollectionIteratorType >;
 
 // instantiate memory management pool
 template <>
@@ -49,14 +49,14 @@ ConnectionDatum::pprint( std::ostream& out ) const
 
 template <>
 void
-GIDCollectionDatum::pprint( std::ostream& out ) const
+NodeCollectionDatum::pprint( std::ostream& out ) const
 {
   this->operator->()->print_me( out );
 }
 
 template <>
 void
-GIDCollectionIteratorDatum::pprint( std::ostream& out ) const
+NodeCollectionIteratorDatum::pprint( std::ostream& out ) const
 {
   this->operator->()->print_me( out );
 }

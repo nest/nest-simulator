@@ -38,7 +38,7 @@ set( nestkernel_sources
     event.h event.cpp
     exceptions.h exceptions.cpp
     genericmodel.h genericmodel_impl.h
-    gid_collection.h gid_collection.cpp
+    node_collection.h node_collection.cpp
     generic_factory.h
     histentry.h histentry.cpp
     model.h model.cpp
@@ -66,13 +66,14 @@ set( nestkernel_sources
     conn_builder_factory.h
     music_event_handler.h music_event_handler.cpp
     music_manager.cpp music_manager.h
-    nest.h nest.cpp
+    nest.h nest_impl.h nest.cpp
     synaptic_element.h synaptic_element.cpp
     growth_curve.h growth_curve.cpp
     growth_curve_factory.h
     kernel_manager.h kernel_manager.cpp
     vp_manager.h vp_manager_impl.h vp_manager.cpp
-    io_manager.h io_manager.cpp
+    io_manager.h io_manager_impl.h io_manager.cpp
+    mpiutil.h mpiutil_impl.h
     mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
     simulation_manager.h simulation_manager.cpp
     connection_manager.h connection_manager_impl.h connection_manager.cpp
@@ -83,6 +84,10 @@ set( nestkernel_sources
     event_delivery_manager.cpp
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
+    recording_backend.h recording_backend.cpp
+    recording_backend_ascii.h recording_backend_ascii.cpp
+    recording_backend_memory.h recording_backend_memory.cpp
+    recording_backend_screen.h recording_backend_screen.cpp
     manager_interface.h
     target_table.h target_table.cpp
     target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
@@ -94,10 +99,24 @@ set( nestkernel_sources
     spike_data.h
     )
 
+if ( HAVE_SIONLIB )
+  set( nestkernel_sources
+      ${nestkernel_sources}
+      recording_backend_sionlib.h recording_backend_sionlib.cpp
+      )
+endif ()
+
+if ( HAVE_MPI )
+  set( nestkernel_sources
+    ${nestkernel_sources}
+    recording_backend_arbor.h recording_backend_arbor.cpp
+  )
+endif ()
+
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
     nestutil random sli_lib
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE

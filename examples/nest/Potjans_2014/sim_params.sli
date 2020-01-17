@@ -20,14 +20,14 @@
  *
  */
 
-/* 
+/*
     Contains:
     - simulation parameters
     - recording parameters
 */
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                           RNG parameters                        %%%        
+%%%                           RNG parameters                        %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%   Master seed for random number generators. Actual seeds will be
@@ -41,7 +41,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                        Simulation parameters                    %%%        
+%%%                        Simulation parameters                    %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /t_sim 1000.0 def                    % simulated time (ms)
@@ -65,8 +65,8 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                       Recording parameters                      %%%        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%                       Recording parameters                      %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /overwrite_existing_files true def
 
@@ -107,7 +107,7 @@
 %% Name of the file to which the global IDs of the different
 %% populations are stored
 
-/GID_filename (population_GIDs.dat) def
+/nodeID_filename (population_nodeIDs.dat) def
 
 %% Filenames for redirecting stdout and stderr of the simulation
 
@@ -115,7 +115,7 @@
 /std_err (errors.txt) def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%                         NEST parameters                         %%%        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%                         NEST parameters                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /nest_path (/opt/nest) def  % the base path of the NEST installation

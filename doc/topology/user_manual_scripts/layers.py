@@ -317,7 +317,7 @@ nest.ResetKernel()
 l = nest.Create('iaf_psc_alpha',
                 positions=nest.spatial.grid(rows=21, columns=21))
 conndict = {'rule': 'pairwise_bernoulli',
-            'p': nest.distributions.gaussian(nest.spatial.distance, std_deviation=0.15),
+            'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.15),
             'mask': {'circular': {'radius': 0.4}}}
 nest.Connect(l, l, conndict)
 fig = nest.PlotLayer(l, nodesize=80)

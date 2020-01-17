@@ -26,13 +26,13 @@ Name: testsuite::test_hpc_synapse - Basic tests on hpc synapses
 
 Synopsis: (test_hpc_synapse) run -> NEST exits if test fails
 
-Description: 
+Description:
 Test basic properties of HPC synapses as follows:
 
 1. For all known synapses with _hpc ending and counterparts without _hpc
    connect spike generator to one neuron with normal, one with _hpc synapse,
    ensure that simulation yields identical membrane potentials.
-   
+
 2. Check that adding and freezing/thawing of nodes either is blocked or
    does not affect results, i.e., that the TargetIdentifierIndicies are ok.
    These tests proceed as follows:
@@ -41,7 +41,7 @@ Test basic properties of HPC synapses as follows:
       as indicator for through which synpse a neuron received input.
    2. Build network once with plain static_synapse to get reference data.
    3. Then build with respective test cases and compare.
-   
+
 Author: Hans E Plesser, 2014-11-14
  */
 
@@ -67,13 +67,13 @@ M_ERROR setverbosity
   {
     /iaf_psc_alpha Create dup syn Connect
     10 Simulate
-  } 
+  }
   stopped
   dup /failed Set
   {
     % error, need to clean up
     counttomark npop % pop all but mark
-    errordict begin /newerror false def end    
+    errordict begin /newerror false def end
   }
   if
   pop % mark
@@ -92,11 +92,11 @@ M_ERROR setverbosity
 /run_sim_test_one  % expects synapse model, returns membrane potential
 {
   /syn Set
-  
+
   ResetKernel
   << /local_num_threads 4 >> SetKernelStatus
 
-  % we connect via a parrot neuron, so we can test plastic synapses, too 
+  % we connect via a parrot neuron, so we can test plastic synapses, too
   /sg /spike_generator << /spike_times [ 5.0 ] >> Create def
   /pn /parrot_neuron Create def
   /nrn /iaf_psc_alpha << /V_th 100000. >> Create def
@@ -105,21 +105,21 @@ M_ERROR setverbosity
   10 Simulate
 
   nrn /V_m get
-  
+
 } def
-  
+
 hpcwithpartner
 {
   /hpc_syn Set
   (Test 1: ) =only hpc_syn ==
   /plain_syn hpc_syn hpctoplain def
-  
-  { 
+
+  {
     hpc_syn run_sim_test_one
     plain_syn run_sim_test_one
     eq
   } assert_or_die
-} forall 
+} forall
 
 
 % second test: build in some neurons, connect, then some more neurons, connect
@@ -133,10 +133,10 @@ hpcwithpartner
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
+  [3 4] { /tnode_id Set pn [tnode_id] cvnodecollection /one_to_one << /synapse_model syn /weight tnode_id 100. mul >> Connect } forall
 
   /iaf_psc_alpha 2 << /V_th 100000. >> Create ;
-  [5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
+  [5 6] { /tnode_id Set pn [tnode_id] cvnodecollection /one_to_one << /synapse_model syn /weight tnode_id 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -156,7 +156,7 @@ hpcwithpartner
 /test_freeze_before_connect_nonfrozen  % expects syntype
 {
   /syn Set
-  
+
   ResetKernel
   << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
@@ -165,7 +165,7 @@ hpcwithpartner
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
+  [4 5 6] { /tnode_id Set pn [tnode_id] cvnodecollection /one_to_one << /synapse_model syn /weight tnode_id 100. mul >> Connect } forall
 
   10. Simulate
   [4 5 6] { /V_m get } Map
@@ -184,7 +184,7 @@ hpcwithpartner
 /test_freeze_before_connect_all  % expects syntype
 {
   /syn Set
-  
+
   ResetKernel
   << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
@@ -193,7 +193,7 @@ hpcwithpartner
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   3 << /frozen true >> SetStatus
   sg pn Connect
-  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tnode_id Set pn [tnode_id] cvnodecollection /one_to_one << /synapse_model syn /weight tnode_id 100. mul >> Connect } forall
 
   10. Simulate
   [3 4 5 6] { /V_m get } Map
@@ -205,11 +205,11 @@ hpcwithpartner
   eq
 } assert_or_die
 
-% fifth test: build, then connect all, then freeze one 
+% fifth test: build, then connect all, then freeze one
 /test_freeze_after_connect_all  % expects syntype
 {
   /syn Set
-  
+
   ResetKernel
   << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
@@ -217,7 +217,7 @@ hpcwithpartner
 
   /iaf_psc_alpha 4 << /V_th 100000. >> Create ;
   sg pn Connect
-  [3 4 5 6] { /tgid Set pn [tgid] cvgidcollection /one_to_one << /synapse_model syn /weight tgid 100. mul >> Connect } forall
+  [3 4 5 6] { /tnode_id Set pn [tnode_id] cvnodecollection /one_to_one << /synapse_model syn /weight tnode_id 100. mul >> Connect } forall
   3 << /frozen true >> SetStatus
 
   10. Simulate
@@ -225,7 +225,7 @@ hpcwithpartner
 } def
 
 {
-  /static_synapse test_freeze_after_connect_all  
+  /static_synapse test_freeze_after_connect_all
   (Test 5 plain: ) =only dup ==
   /static_synapse_hpc test_freeze_after_connect_all
   (Test 5 hpc  : ) =only dup ==
@@ -233,5 +233,5 @@ hpcwithpartner
 } assert_or_die
 
 
- 
+
 endusing

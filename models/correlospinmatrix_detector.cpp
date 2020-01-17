@@ -306,7 +306,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     // A single spike signals a transition to 0 state, two spikes in same time
     // step signal the transition to 1 state.
     //
-    // Remember the global id of the sender of the last spike being received
+    // Remember the node ID of the sender of the last spike being received
     // this assumes that several spikes being sent by the same neuron in the
     // same time step are received consecutively or are conveyed by setting the
     // multiplicity accordingly.
@@ -320,7 +320,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       // events
       if ( curr_i == S_.last_i_ && stamp == S_.t_last_in_spike_ )
       {
-        // received twice the same gid, so transition 0->1
+        // received twice the same node ID, so transition 0->1
         // revise the last event written to the buffer
         S_.curr_state_[ curr_i ] = true;
         S_.last_change_[ curr_i ] = stamp.get_steps();

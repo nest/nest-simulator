@@ -42,13 +42,13 @@ class Node;
  * Provide sparse representation of local nodes.
  *
  * This class is a container providing lookup of local nodes (as Node*)
- * based on GIDs.
+ * based on node IDs.
  *
  * Basically, this array is a vector containing only pointers to local nodes.
  * For M MPI processes, we have
  *
- *   GID  %  M  --> rank
- *   GID div M  --> index on rank
+ *   node ID  %  M  --> rank
+ *   node ID div M  --> index on rank
  *
  * so that the latter gives and index into the local node array. This index
  * will be skewed due to nodes without proxies present on all ranks, whence
@@ -68,10 +68,10 @@ public:
     // could anyways not be used to change entry contents.
     // TODO: But we may want to re-think this.
     Node* get_node() const;
-    index get_gid() const;
+    index get_node_id() const;
 
     Node* node_;
-    index gid_; //!< store gid locally for faster searching
+    index node_id_; //!< store node ID locally for faster searching
   };
 
   typedef BlockVector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
@@ -81,7 +81,7 @@ public:
 
   /**
    * Return size of container.
-   * @see get_max_gid()
+   * @see get_max_node_id()
    */
   size_t size() const;
 
@@ -94,31 +94,31 @@ public:
   void add_local_node( Node& );
 
   /**
-   * Set max gid to max in network.
+   * Set max node ID to max in network.
    *
    * Ensures that array knows about non-local nodes
-   * with GIDs higher than highest local GID.
+   * with node IDs higher than highest local node ID.
    */
-  void update_max_gid( index );
+  void update_max_node_id( index );
 
   /**
-   *  Lookup node based on GID
+   *  Lookup node based on node ID
    *
-   *  Returns 0 if GID is not local.
+   *  Returns 0 if node ID is not local.
    *
    *  The caller is responsible for providing proper
    *  proxy node pointers for non-local nodes
    *
    *  @see get_node_by_index()
    */
-  Node* get_node_by_gid( index ) const;
+  Node* get_node_by_node_id( index ) const;
 
   /**
    * Lookup node based on index into container.
    *
    * Use this when you need to iterate over local nodes only.
    *
-   * @see get_node_by_gid()
+   * @see get_node_by_node_id()
    */
   Node* get_node_by_index( size_t ) const;
 
@@ -129,17 +129,17 @@ public:
   const_iterator end() const;
 
   /**
-   * Return largest GID in global network.
+   * Return largest node ID in global network.
    * @see size
    */
-  index get_max_gid() const;
+  index get_max_node_id() const;
 
 private:
   BlockVector< NodeEntry > nodes_; //!< stores local node information
-  index max_gid_;                  //!< largest GID in network
-  index local_min_gid_;            //!< smallest local GID
-  index local_max_gid_;            //!< largest local GID
-  double gid_idx_scale_;           //!< interpolation factor
+  index max_node_id_;              //!< largest node ID in network
+  index local_min_node_id_;        //!< smallest local node ID
+  index local_max_node_id_;        //!< largest local node ID
+  double node_id_idx_scale_;       //!< interpolation factor
 };
 
 } // namespace nest
@@ -166,10 +166,10 @@ inline void
 nest::SparseNodeArray::clear()
 {
   nodes_.clear();
-  max_gid_ = 0;
-  local_min_gid_ = 0;
-  local_max_gid_ = 0;
-  gid_idx_scale_ = 1.;
+  max_node_id_ = 0;
+  local_min_node_id_ = 0;
+  local_max_node_id_ = 0;
+  node_id_idx_scale_ = 1.;
 }
 
 inline nest::Node*
@@ -180,9 +180,9 @@ nest::SparseNodeArray::get_node_by_index( size_t idx ) const
 }
 
 inline nest::index
-nest::SparseNodeArray::get_max_gid() const
+nest::SparseNodeArray::get_max_node_id() const
 {
-  return max_gid_;
+  return max_node_id_;
 }
 
 inline nest::Node*
@@ -192,9 +192,9 @@ nest::SparseNodeArray::NodeEntry::get_node() const
 }
 
 inline nest::index
-nest::SparseNodeArray::NodeEntry::get_gid() const
+nest::SparseNodeArray::NodeEntry::get_node_id() const
 {
-  return gid_;
+  return node_id_;
 }
 
 #endif /* SPARSE_NODE_ARRAY_H */

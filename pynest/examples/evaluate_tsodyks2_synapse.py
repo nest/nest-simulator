@@ -110,7 +110,6 @@ nest.Connect(neuron[0], neuron[2], syn_spec="tsodyks2_synapse")
 # Now create two voltmeters to record the responses.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # Connect the voltmeters to the neurons.
@@ -134,5 +133,5 @@ nest.Simulate(500.0)
 # Finally, generate voltage traces. Both are shown in the same plot and
 # should be almost completely overlapping.
 
-nest.voltage_trace.from_device([voltmeter[0].get('global_id')])
-nest.voltage_trace.from_device([voltmeter[1].get('global_id')])
+nest.voltage_trace.from_device(voltmeter[0])
+nest.voltage_trace.from_device(voltmeter[1])

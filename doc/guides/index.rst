@@ -1,20 +1,29 @@
 Guides
 ==============
 
-Here you can find detailed look into a variety of topics in NEST.
+Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
+    :caption: Guide to NEST 3.0
+
+    from_nest2_to_nest3
+
+.. toctree::
+    :maxdepth: 1
+    :caption: In depth guides to NEST
 
     connection_management
     running_simulations
+    stimulating_the_network
+    recording_from_simulations
     parallel_computing
     random_numbers
-    analog_recording_with_multimeter
+    guide_spatially_structured_networks
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music
-    from_nest2_to_nest3
+
 
 .. toctree::
    :maxdepth: 1

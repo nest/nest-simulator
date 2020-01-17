@@ -26,104 +26,104 @@
 #include "exceptions.h"
 #include "node.h"
 
-nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index gid )
+nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
   : node_( &node )
-  , gid_( gid )
+  , node_id_( node_id )
 {
-  assert( gid == node.get_gid() );
+  assert( node_id == node.get_node_id() );
 }
 
 nest::SparseNodeArray::SparseNodeArray()
   : nodes_()
-  , max_gid_( 0 )
-  , local_min_gid_( 0 )
-  , local_max_gid_( 0 )
-  , gid_idx_scale_( 1.0 )
+  , max_node_id_( 0 )
+  , local_min_node_id_( 0 )
+  , local_max_node_id_( 0 )
+  , node_id_idx_scale_( 1.0 )
 {
 }
 
 void
 nest::SparseNodeArray::add_local_node( Node& node )
 {
-  const index gid = node.get_gid();
+  const index node_id = node.get_node_id();
 
-  // protect against GID 0
-  assert( gid > 0 );
+  // protect against node ID 0
+  assert( node_id > 0 );
 
-  // local_min_gid_ can only be 0 if no node has been stored
-  assert( local_min_gid_ > 0 or nodes_.size() == 0 );
+  // local_min_node_id_ can only be 0 if no node has been stored
+  assert( local_min_node_id_ > 0 or nodes_.size() == 0 );
 
-  // local_min_gid_ cannot be larger than local_max_gid_
-  assert( local_min_gid_ <= local_max_gid_ );
+  // local_min_node_id_ cannot be larger than local_max_node_id_
+  assert( local_min_node_id_ <= local_max_node_id_ );
 
-  // local_max_gid_ cannot be larger than max_gid_
-  assert( local_max_gid_ <= max_gid_ );
+  // local_max_node_id_ cannot be larger than max_node_id_
+  assert( local_max_node_id_ <= max_node_id_ );
 
-  // gid must exceed max_gid_
-  assert( gid > max_gid_ );
+  // node_id must exceed max_node_id_
+  assert( node_id > max_node_id_ );
 
   // all is consistent, register node and update auxiliary variables
-  nodes_.push_back( NodeEntry( node, gid ) );
-  if ( local_min_gid_ == 0 ) // only first non-zero
+  nodes_.push_back( NodeEntry( node, node_id ) );
+  if ( local_min_node_id_ == 0 ) // only first non-zero
   {
-    local_min_gid_ = gid;
+    local_min_node_id_ = node_id;
   }
-  local_max_gid_ = gid;
-  max_gid_ = gid;
+  local_max_node_id_ = node_id;
+  max_node_id_ = node_id;
 
   // implies nodes_.size() > 1
-  if ( local_max_gid_ > local_min_gid_ )
+  if ( local_max_node_id_ > local_min_node_id_ )
   {
     double size = static_cast< double >( nodes_.size() - 1 );
-    gid_idx_scale_ = size / ( local_max_gid_ - local_min_gid_ );
+    node_id_idx_scale_ = size / ( local_max_node_id_ - local_min_node_id_ );
   }
-  assert( gid_idx_scale_ > 0. );
-  assert( gid_idx_scale_ <= 1. );
+  assert( node_id_idx_scale_ > 0. );
+  assert( node_id_idx_scale_ <= 1. );
 }
 
 void
-nest::SparseNodeArray::update_max_gid( index gid )
+nest::SparseNodeArray::update_max_node_id( index node_id )
 {
-  assert( gid > 0 ); // minimum GID is 1
-  assert( gid >= max_gid_ );
-  max_gid_ = gid;
+  assert( node_id > 0 ); // minimum node ID is 1
+  assert( node_id >= max_node_id_ );
+  max_node_id_ = node_id;
 }
 
 nest::Node*
-nest::SparseNodeArray::get_node_by_gid( index gid ) const
+nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
 {
-  // local_min_gid_ cannot be larger than local_max_gid_
-  assert( local_min_gid_ <= local_max_gid_ );
+  // local_min_node_id_ cannot be larger than local_max_node_id_
+  assert( local_min_node_id_ <= local_max_node_id_ );
 
-  // local_max_gid_ cannot be larger than max_gid_
-  assert( local_max_gid_ <= max_gid_ );
+  // local_max_node_id_ cannot be larger than max_node_id_
+  assert( local_max_node_id_ <= max_node_id_ );
 
-  if ( gid < 1 or max_gid_ < gid )
+  if ( node_id < 1 or max_node_id_ < node_id )
   {
     throw UnknownNode();
   }
 
-  // handle gids below or above range
-  if ( gid < local_min_gid_ or local_max_gid_ < gid )
+  // handle node_ids below or above range
+  if ( node_id < local_min_node_id_ or local_max_node_id_ < node_id )
   {
     return 0;
   }
 
   // now estimate index
-  size_t idx = std::floor( gid_idx_scale_ * ( gid - local_min_gid_ ) );
+  size_t idx = std::floor( node_id_idx_scale_ * ( node_id - local_min_node_id_ ) );
   assert( idx < nodes_.size() );
 
   // search left if necessary
-  while ( 0 < idx and gid < nodes_[ idx ].gid_ )
+  while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )
   {
     --idx;
   }
   // search right if necessary
-  while ( idx < nodes_.size() and nodes_[ idx ].gid_ < gid )
+  while ( idx < nodes_.size() and nodes_[ idx ].node_id_ < node_id )
   {
     ++idx;
   }
-  if ( idx < nodes_.size() and nodes_[ idx ].gid_ == gid )
+  if ( idx < nodes_.size() and nodes_[ idx ].node_id_ == node_id )
   {
     return nodes_[ idx ].node_;
   }

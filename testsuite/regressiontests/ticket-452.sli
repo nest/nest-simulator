@@ -58,12 +58,7 @@ M_ERROR setverbosity
    
  pg n 1.0 1.0 Connect
 
- /spike_detector 
-     <<
-      /withtime true   
-      /withgid false
-      /precise_times false  % problem was unrelated to setting
-    >> Create /sd Set
+ /spike_detector Create /sd Set
 
  n sd Connect
 

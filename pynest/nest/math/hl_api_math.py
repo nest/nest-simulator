@@ -34,24 +34,112 @@ __all__ = [
 
 
 def exp(parameter):
+    """
+    Calculate the exponential of the parameter
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+
+    Returns
+    -------
+    Parameter:
+        Object representing the exponential of the parameter.
+    """
     return sli_func("exp", parameter)
 
 
 def sin(parameter):
+    """
+    Calculate the sine of the parameter
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+
+    Returns
+    -------
+    Parameter:
+        Object representing the sine of the parameter.
+    """
     return sli_func("sin", parameter)
 
 
 def cos(parameter):
+    """
+    Calculate the cosine of the parameter
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+
+    Returns
+    -------
+    Parameter:
+        Object representing the cosine of the parameter.
+    """
     return sli_func("cos", parameter)
 
 
 def min(parameter, value):
+    """
+    Yields the smallest value of the value of a parameter and a given value
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+    value : float
+        Value to compare against.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding the smallest value.
+    """
     return sli_func("min", parameter, float(value))
 
 
 def max(parameter, value):
+    """
+    Yields the largest value of the value of a parameter and a given value
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+    value : float
+        Value to compare against.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding the largest value.
+    """
     return sli_func("max", parameter, float(value))
 
 
 def redraw(parameter, min, max):
+    """
+    Redraws the value of the parameter if it is outside of the given limits
+
+    Both min and max values are included in the limit. If the number of redraws exceeds 1000, an error is thrown.
+
+    Parameters
+    ----------
+    parameter : Parameter
+        Input Parameter.
+    min : float
+        Lower bound of the value.
+    max : float
+        Upper bound of the value.
+
+    Returns
+    -------
+    Parameter:
+        Object redrawing the parameter until it can yield a value within the given limits.
+    """
     return sli_func("redraw", parameter, float(min), float(max))

@@ -64,10 +64,7 @@ skip_if_without_gsl
   /siegert_neuron Create /siegert_neuron2 Set
   
   /mm /multimeter << /record_from [/rate]
-             /record_to [/memory]
-             /interval 1.0
-             /withgid true 
-             /withtime true >> Create def
+             /interval 1.0 >> Create def
   
   mm lin_neuron1 Connect
   mm lin_neuron2 Connect

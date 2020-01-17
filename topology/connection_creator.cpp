@@ -25,17 +25,17 @@
 namespace nest
 {
 
-const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
-
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
+  , allow_oversized_( false )
   , number_of_connections_()
   , mask_()
   , kernel_()
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_()
   , delay_()
+  , dummy_param_dicts_()
 {
   Name connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
@@ -91,11 +91,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
       synapse_model_ = static_cast< index >( synmodel );
     }
-    else if ( dit->first == names::weights )
+    else if ( dit->first == names::weight )
     {
       weight_ = NestModule::create_parameter( dit->second );
     }
-    else if ( dit->first == names::delays )
+    else if ( dit->first == names::delay )
     {
       delay_ = NestModule::create_parameter( dit->second );
     }
@@ -123,34 +123,40 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
   }
 
-  if ( connection_type == names::convergent )
+  if ( connection_type == names::pairwise_bernoulli_on_source )
   {
 
     if ( number_of_connections >= 0 )
     {
-      type_ = Convergent;
+      type_ = Fixed_indegree;
     }
     else
     {
-      type_ = Target_driven;
+      type_ = Pairwise_bernoulli_on_source;
     }
   }
-  else if ( connection_type == names::divergent )
+  else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
 
     if ( number_of_connections >= 0 )
     {
-      type_ = Divergent;
+      type_ = Fixed_outdegree;
     }
     else
     {
-      type_ = Source_driven;
+      type_ = Pairwise_bernoulli_on_target;
     }
   }
   else
   {
-
     throw BadProperty( "Unknown connection type." );
+  }
+
+  // Create dummy dictionaries, one per thread
+  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+  {
+    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
   }
 }
 

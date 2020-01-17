@@ -40,20 +40,13 @@ namespace nest
 namespace names
 {
 
-extern const Name allow_autapses;
-extern const Name allow_multapses;
 extern const Name allow_oversized_mask;
 extern const Name anchor;
 extern const Name azimuth_angle;
 extern const Name box;
 extern const Name center;
 extern const Name circular;
-extern const Name column;
-extern const Name columns;
 extern const Name connection_type;
-extern const Name convergent;
-extern const Name depth;
-extern const Name divergent;
 extern const Name edge_wrap;
 extern const Name elements;
 extern const Name ellipsoidal;
@@ -63,24 +56,21 @@ extern const Name grid;
 extern const Name grid3d;
 extern const Name inner_radius;
 extern const Name kernel;
-extern const Name layer;
 extern const Name lower_left;
 extern const Name major_axis;
 extern const Name mask;
-extern const Name max;
-extern const Name min;
 extern const Name minor_axis;
 extern const Name number_of_connections;
 extern const Name outer_radius;
+extern const Name pairwise_bernoulli_on_source;
+extern const Name pairwise_bernoulli_on_target;
 extern const Name polar_angle;
 extern const Name polar_axis;
 extern const Name positions;
 extern const Name radius;
 extern const Name rectangular;
-extern const Name row;
-extern const Name rows;
+extern const Name shape;
 extern const Name spherical;
-extern const Name theta;
 extern const Name upper_right;
 
 } // namespace names

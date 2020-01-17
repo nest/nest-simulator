@@ -23,7 +23,7 @@
 % to be run by run_test.sli
 
 % expectation:
-%   /anchor << /row 5 /column 5 >> 
+%   /anchor [ 5 5 ]
 %   The fictional point (5,5) measured from the top-left corner of the mask towards
 %   the bottom right is aligned with each source, i.e., the top left corner of the mask
 %   displaced by (-5,-5) relative to the source node, measured in grid coordinates.
@@ -42,8 +42,7 @@
 %      21 -> 28
 %      26 -> 28 33
 
-/layer << /rows 5
-          /columns 5
+/layer << /shape [ 5 5 ]
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
@@ -53,8 +52,8 @@
 /src_layer layer def
 /tgt_layer layer def
 
-/conns << /connection_type (divergent)
-          /mask << /grid << /rows 2 /columns 3 >> /anchor << /row 5 /column 5 >> >>
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ 5 5 ] >>
        >> def
 
 /source_layer_ref

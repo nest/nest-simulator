@@ -30,6 +30,7 @@
 
 // Includes from nestkernel:
 #include "event.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
@@ -193,6 +194,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 private:
   void init_state_( Node const& );
   void init_buffers_();
@@ -347,6 +350,17 @@ inline SignalType
 nest::correlospinmatrix_detector::receives_signal() const
 {
   return BINARY;
+}
+
+inline void
+nest::correlospinmatrix_detector::calibrate_time( const TimeConverter& tc )
+{
+  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
+  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
+  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
+  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+
+  S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );
 }
 
 } // namespace

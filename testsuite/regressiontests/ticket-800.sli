@@ -36,30 +36,22 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
-% TODO: This test should be rewritten as a new test, testing parameters of the
-% new Parameter classes.
-/skipped exit_test_gracefully
-
 M_ERROR setverbosity
 
 /good_random_parameters
 [
   << /uniform << /min 0. /max 1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 0. /max 1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 0. /max 1. /cutoff 0.1 >> >>
-  << /lognormal << /mu 0. /sigma 1. /min 0. /max 1. >> >>
+  << /normal << /mean 0. /std 1. >> >>
+  << /lognormal << /mean 0. /std 1. >> >>
+  << /exponential << /beta 1. >> >>
 ]
 def
 
 /good_distance_parameters
 [
-  << /linear << /a 1. /c 0. >> >>
-  << /exponential << /a 1. /c 0. /tau 1. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 0.5 >> >>
+  << /distance << >> >>
+  << /distance << /dimension 1 >> >>
+  << /distance << /dimension 2 >> >>
 ]
 def
 
@@ -68,38 +60,19 @@ def
 /bad_random_parameters
 [
   << /uniform << /min 0. /max 0. >> >>
-  << /normal << /mu 0. /sigma 1. >> >>   % check if bad parameter names are detected
-  << /normal << /mean 0. /sigma 0. >> >>
-  << /normal << /mean 0. /sigma -1. >> >>
-  << /normal << /mean 0. /sigma 1. /min 1. /max 1. >> >>
-  << /lognormal << /mu 0. /sigma 0. >> >>
-  << /lognormal << /mu 0. /sigma -1. >> >>
-  << /lognormal << /mu 0. /sigma 1. /min 1. /max 1. >> >>
+  << /normal << /mean 0. /sigma 1. >> >>   % check if bad parameter names are detected
+  << /normal << /mean 0. /std 0. >> >>
+  << /normal << /mean 0. /std -1. >> >>
+  << /lognormal << /mu 0. /std 0. >> >>
+  << /lognormal << /mu 0. /std -1. >> >>
+  << /lognormal << /mu 0. /std 1. >> >>
 ]
 def
 
 /bad_distance_parameters
 [
-  << /exponential << /a 1. /c 0. /tau 0. >> >>
-  << /exponential << /a 1. /c 0. /tau -1. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma 0. >> >>
-  << /gaussian << /p_center 1. /c 0. /mean 0. /sigma -1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 0.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 0.5 >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 0.
-   				     /rho 0.5 >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho -1. >> >>
-  << /gaussian2D << /p_center 1. /c 0.
-    			     /mean_x 0. /sigma_x 1.
-    				 /mean_y 0. /sigma_y 1.
-   				     /rho 1. >> >>
+  << /distance << /dim 1 >> >>
+  << /distance << /dimension 1 /min 0. >> >>
 ]
 def
 
@@ -145,10 +118,10 @@ def
 
 /good_layers
 [
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha >>
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha >>
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap true >>
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap false >>
   << /positions [[0.1 0.1] [0.2 0.2]] /elements /iaf_psc_alpha
      /extent [2. .5] /edge_wrap true >>
@@ -159,9 +132,9 @@ def
 
 /bad_layers
 [
-  << /rows 2 /elements /iaf_psc_alpha >>    % mandatory missing
-  << /rows 2 /columns 2 /elementsss /iaf_psc_alpha >>  % misspelling
-  << /rows 2 /columns 2 /elements /iaf_psc_alpha
+  << /shape [ 1 ] /elements /iaf_psc_alpha >>    % too few elements in shape
+  << /shape [ 2 2 ] /elementsss /iaf_psc_alpha >>  % misspelling
+  << /shape [ 2 2 ] /elements /iaf_psc_alpha
      /extent [2. .5] /center [.2 .3] /edge_wrap 3 >>  % bad data type
   << /positions [[0.1 0.1] [0.2 0.2 0.2]] /elements /iaf_psc_alpha  % dim mix
      /extent [2. .5] /edge_wrap true >>
@@ -172,16 +145,16 @@ def
 
 /good_connspecs
 [
-  << /connection_type /convergent >>
-  << /connection_type /divergent >>
-  << /connection_type /convergent /allow_oversized_mask true >>
-  << /connection_type /convergent /synapse_model /static_synapse >>
-  << /connection_type /convergent /allow_multapses false >>
-  << /connection_type /convergent /allow_autapses false >>
-  << /connection_type /convergent /allow_oversized_mask true >>
-  << /connection_type /convergent /number_of_connections 2 >>
-  << /connection_type /divergent /number_of_connections 2 >>
-  << /connection_type /convergent /delays 2.0 >>
+  << /connection_type /pairwise_bernoulli_on_source >>
+  << /connection_type /pairwise_bernoulli_on_target >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_oversized_mask true >>
+  << /connection_type /pairwise_bernoulli_on_source /synapse_model /static_synapse >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_multapses false >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_autapses false >>
+  << /connection_type /pairwise_bernoulli_on_source /allow_oversized_mask true >>
+  << /connection_type /pairwise_bernoulli_on_source /number_of_connections 2 >>
+  << /connection_type /pairwise_bernoulli_on_target /number_of_connections 2 >>
+  << /connection_type /pairwise_bernoulli_on_source /delay 2.0 >>
 ]
 def
 
@@ -198,7 +171,7 @@ def
   /conndict Set
 
   ResetKernel
-  << /elements /iaf_psc_alpha  /rows 1 /columns 1 >> CreateLayer
+  << /elements /iaf_psc_alpha  /shape [ 1 1 ] >> CreateLayer
   dup
   conndict ConnectLayers
 } def
@@ -215,23 +188,23 @@ def
 } def
 
 
-%% first: test CreateTopologyParameter on good parameter sets
+%% first: test CreateParameter on good parameter sets
 good_parameters
 {
   /pset Set
   (Test 1: ) =only
   pset keys ==
-  { pset CreateTopologyParameter } pass_or_die
+  { pset CreateParameter } pass_or_die
   clear
 } forall
 
-%% second: test CreateTopologyParameter on bad parameter sets
+%% second: test CreateParameter on bad parameter sets
 bad_parameters
 {
   /pset Set
   (Test 2: ) =only
   pset keys ==
-  { pset CreateTopologyParameter } fail_or_die
+  { pset CreateParameter } fail_or_die
   clear
 } forall
 
@@ -283,7 +256,7 @@ good_distance_parameters [ 0.5 1.0 ] join
   /kspec Set
   (Test 7: ) =only
   kspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /kernel kspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /kernel kspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -295,7 +268,7 @@ bad_distance_parameters
   /kspec Set
   (Test 8: ) =only
   kspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /kernel kspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /kernel kspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -307,7 +280,7 @@ good_parameters [ 0.5 1.0 ] join
   /wspec Set
   (Test 9: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weights wspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /weight wspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -319,7 +292,7 @@ bad_parameters
   /wspec Set
   (Test 10: ) =only
   wspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /weights wspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /weight wspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -331,7 +304,7 @@ good_masks_2d
   /mspec Set
   (Test 11: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_2d
   } pass_or_die
   clear
@@ -343,7 +316,7 @@ bad_masks_2d
   /mspec Set
   (Test 12: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_2d
   } fail_or_die
   clear
@@ -355,7 +328,7 @@ good_masks_3d
   /mspec Set
   (Test 13: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_3d
   } pass_or_die
   clear
@@ -367,7 +340,7 @@ bad_masks_3d
   /mspec Set
   (Test 14: ) =only
   mspec DictQ { keys == } { == } ifelse
-  { << /connection_type /convergent /mask mspec >>
+  { << /connection_type /pairwise_bernoulli_on_source /mask mspec >>
     conn_layers_test_3d
   } fail_or_die
   clear
@@ -398,5 +371,3 @@ bad_connspecs
 } forall
 
 endusing
-
-

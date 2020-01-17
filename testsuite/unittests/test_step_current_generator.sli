@@ -100,7 +100,7 @@ ResetKernel
          /amplitude_values [ 1.  -2.  4.  -8.  16. -32. 64.  ]
       >> SetStatus
 
-  vm << /record_to [/memory] /interval 0.1 >> SetStatus
+  vm << /interval 0.1 >> SetStatus
 
   scg nrn Connect
   vm  nrn Connect

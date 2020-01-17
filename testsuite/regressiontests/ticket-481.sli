@@ -46,7 +46,10 @@ M_ERROR setverbosity
 % if true, exec and show results instead of asserting
 /debugging false def
 
-% expects on stack: 
+/dt -3 dexp def  % 0.125 ms
+
+
+% expects on stack:
 % syn model 2
 % syn model 1
 % neuron model
@@ -59,12 +62,10 @@ M_ERROR setverbosity
  /model Set
   
  debugging {
-   model cvs ( ) join syn1 cvs join ( ) join syn2 cvs join ( : ) join =only 
- } if 
+   model cvs ( ) join syn1 cvs join ( ) join syn2 cvs join ( : ) join =only
+ } if
 
- /dt -3 dexp def  % 0.125 ms
  /Vref -70.0 def
- << /tics_per_ms 1.0 dt div round /resolution dt >> SetKernelStatus
 
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n1 Set
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n2 Set
@@ -83,19 +84,25 @@ M_ERROR setverbosity
  vm1 [/events /V_m] get cva Max Vref gt  
  vm2 [/events /V_m] get cva Max Vref gt  
 
-} def 
+} def
+
+/setup
+{
+  ResetKernel
+  << /tics_per_ms 1.0 dt div round /resolution dt >> SetKernelStatus
+} def
 
 {
- ResetKernel
+  setup
 
-  % this case always went well  
+  % this case always went well
   /iaf_psc_delta_ps /static_synapse /static_synapse Run
   and
 } debugging { exec = } { assert_or_die } ifelse
 
 % identical synapse models, must pass
 {
-  ResetKernel
+  setup
 
   /static_synapse /hoo CopyModel
   /iaf_psc_delta_ps /hoo /hoo Run
@@ -106,12 +113,10 @@ M_ERROR setverbosity
 % must be last in test script, since exception occurs in middle of
 % simulation, leaving kernel in unresettable state.
 {
-  ResetKernel
+  setup
 
   /static_synapse /foo CopyModel
   /static_synapse /goo CopyModel
   /iaf_psc_delta_ps /foo /goo Run
   and
 } debugging { exec = } { fail_or_die } ifelse
-
-

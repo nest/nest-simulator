@@ -30,28 +30,22 @@
 
 namespace nest
 {
-Multimeter::Multimeter()
-  : DeviceNode()
-  , device_( *this, RecordingDevice::MULTIMETER, "dat", true, true )
+multimeter::multimeter()
+  : RecordingDevice()
   , P_()
-  , S_()
   , B_()
-  , V_()
 {
 }
 
-Multimeter::Multimeter( const Multimeter& n )
-  : DeviceNode( n )
-  , device_( *this, n.device_ )
+multimeter::multimeter( const multimeter& n )
+  : RecordingDevice( n )
   , P_( n.P_ )
-  , S_()
   , B_()
-  , V_()
 {
 }
 
 port
-Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
@@ -63,14 +57,14 @@ Multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
   return p;
 }
 
-nest::Multimeter::Parameters_::Parameters_()
+nest::multimeter::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , offset_( Time::ms( 0. ) )
   , record_from_()
 {
 }
 
-nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
+nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , offset_( p.offset_ )
   , record_from_( p.record_from_ )
@@ -78,13 +72,13 @@ nest::Multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::Multimeter::Buffers_::Buffers_()
+nest::multimeter::Buffers_::Buffers_()
   : has_targets_( false )
 {
 }
 
 void
-nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
+nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::interval ] = interval_.get_ms();
   ( *d )[ names::offset ] = offset_.get_ms();
@@ -97,7 +91,7 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_
     && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
@@ -163,41 +157,13 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 }
 
 void
-Multimeter::init_state_( const Node& np )
+multimeter::calibrate()
 {
-  const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
-  device_.init_state( asd.device_ );
-  S_.data_.clear();
+  RecordingDevice::calibrate( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
-Multimeter::init_buffers_()
-{
-  device_.init_buffers();
-}
-
-void
-Multimeter::calibrate()
-{
-  device_.calibrate();
-  V_.new_request_ = false;
-  V_.current_request_data_start_ = 0;
-}
-
-void
-Multimeter::post_run_cleanup()
-{
-  device_.post_run_cleanup();
-}
-
-void
-Multimeter::finalize()
-{
-  device_.finalize();
-}
-
-void
-Multimeter::update( Time const& origin, const long from, const long )
+multimeter::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice.
      For each subsequent slice, we collect all data generated during the
@@ -215,29 +181,16 @@ Multimeter::update( Time const& origin, const long from, const long )
   // ensures that the event is recorded.
   // handle() has access to request_, so it knows what we asked for.
   //
-  // Provided we are recording anything, V_.new_request_ is set to true. This
-  // informs handle() that the first incoming DataLoggingReply is for a new time
-  // slice, so that the data from that first Reply must be pushed back; all
-  // following Reply data is then added.
-  //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ = B_.has_targets_ && not P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }
 
 void
-Multimeter::handle( DataLoggingReply& reply )
+multimeter::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
-
-  // If this is the first Reply arriving, we need to mark the beginning of the
-  // data for this round of replies
-  if ( V_.new_request_ )
-  {
-    V_.current_request_data_start_ = S_.data_.size();
-  }
 
   // count records that have been skipped during inactivity
   size_t inactive_skipped = 0;
@@ -256,98 +209,19 @@ Multimeter::handle( DataLoggingReply& reply )
       continue;
     }
 
-    // store stamp for current data set in event for logging
     reply.set_stamp( info[ j ].timestamp );
+    // const index sender = reply.get_sender_node_id();
+    // const Time stamp = reply.get_stamp();
+    // const double offset = reply.get_offset();
 
-    // record sender and time information; in accumulator mode only for first
-    // Reply in slice
-    if ( not device_.to_accumulator() || V_.new_request_ )
-    {
-      device_.record_event( reply, false ); // false: more data to come
-    }
-
-    if ( not device_.to_accumulator() )
-    {
-      // "print" actual data, but not in accumulator mode
-      print_value_( info[ j ].data );
-
-      if ( device_.to_memory() )
-      {
-        S_.data_.push_back( info[ j ].data );
-      }
-    }
-    else
-    {
-      if ( V_.new_request_ ) // first reply in slice, push back to create new
-                             // time points
-      {
-        S_.data_.push_back( info[ j ].data );
-      }
-      else
-      { // add data; offset j from current_request_data_start_, but inactive
-        // skipped entries subtracted
-        assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ].size() == info[ j ].data.size() );
-
-        for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-        {
-          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ][ k ] += info[ j ].data[ k ];
-        }
-      }
-    }
+    write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
   }
-
-  // correct either we are done with the first reply or any later one
-  V_.new_request_ = false;
 }
 
-void
-Multimeter::print_value_( const std::vector< double >& values )
+RecordingDevice::Type
+multimeter::get_type() const
 {
-  if ( values.size() < 1 )
-  {
-    return;
-  }
-
-  for ( size_t j = 0; j < values.size() - 1; ++j )
-  {
-    device_.print_value( values[ j ], false );
-  }
-
-  device_.print_value( values[ values.size() - 1 ] );
+  return RecordingDevice::MULTIMETER;
 }
 
-
-void
-Multimeter::add_data_( DictionaryDatum& d ) const
-{
-  // re-organize data into one vector per recorded variable
-  for ( size_t v = 0; v < P_.record_from_.size(); ++v )
-  {
-    std::vector< double > dv( S_.data_.size() );
-    for ( size_t t = 0; t < S_.data_.size(); ++t )
-    {
-      assert( v < S_.data_[ t ].size() );
-      dv[ t ] = S_.data_[ t ][ v ];
-    }
-    initialize_property_doublevector( d, P_.record_from_[ v ] );
-    if ( device_.to_accumulator() && not dv.empty() )
-    {
-      accumulate_property( d, P_.record_from_[ v ], dv );
-    }
-    else
-    {
-      append_property( d, P_.record_from_[ v ], dv );
-    }
-  }
-}
-
-bool
-Multimeter::is_active( Time const& T ) const
-{
-  const long stamp = T.get_steps();
-
-  return device_.get_t_min_() < stamp && stamp <= device_.get_t_max_();
-}
-}
+} // namespace nest

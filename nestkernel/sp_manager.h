@@ -37,7 +37,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -76,7 +76,7 @@ public:
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
-   * @param name which defines the type of GC to be created
+   * @param name which defines the type of NC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
   GrowthCurve* new_growth_curve( Name name );
@@ -91,12 +91,12 @@ public:
    * Disconnect two collections of nodes.  The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param sources GID Collection of the source Nodes.
-   * \param targets GID Collection of the target Nodes.
+   * \param sources Node collection of the source Nodes.
+   * \param targets Node collection of the target Nodes.
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollectionPTR, GIDCollectionPTR, DictionaryDatum&, DictionaryDatum& );
+  void disconnect( NodeCollectionPTR, NodeCollectionPTR, DictionaryDatum&, DictionaryDatum& );
 
   /**
    * Disconnect two nodes.
@@ -104,12 +104,12 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param sgid GID of the sending Node.
+   * \param snode_id node ID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
+  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
@@ -215,8 +215,8 @@ SPManager::get_growthcurvedict()
 inline GrowthCurve*
 SPManager::new_growth_curve( Name name )
 {
-  const long gc_id = ( *growthcurvedict_ )[ name ];
-  return growthcurve_factories_.at( gc_id )->create();
+  const long nc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( nc_id )->create();
 }
 
 inline bool

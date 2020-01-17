@@ -31,7 +31,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -79,26 +79,26 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
-   * @returns GIDCollection as lock pointer
+   * @returns NodeCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  GIDCollectionPTR add_node( index m, long n = 1 );
+  NodeCollectionPTR add_node( index m, long n = 1 );
 
   /**
-   * Get global id's of all nodes with the given properties.
+   * Get node ID's of all nodes with the given properties.
    *
-   * Only global id's of nodes matching the properties given in the dictionary
+   * Only node ID's of nodes matching the properties given in the dictionary
    * exactly will be returned. If the dictionary is empty, all nodes will be
-   * returned. If the local_only bool is true, only GIDs of nodes simulated on
+   * returned. If the local_only bool is true, only node IDs of nodes simulated on
    * the local MPI process will be returned.
    *
    * @param dict parameter dictionary of selection properties
    * @param local_only bool indicating whether all nodes, or just mpi local nodes
    * should be returned.
    *
-   * @returns GIDCollection as lock pointer
+   * @returns NodeCollection as lock pointer
    */
-  GIDCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
    * Set the state (observable dynamic variables) of a node to model defaults.
@@ -132,22 +132,22 @@ public:
   bool is_local_node( Node* ) const;
 
   /**
-   * Return true, if the given gid is on the local machine
+   * Return true, if the given node ID is on the local machine
    */
-  bool is_local_gid( index gid ) const;
+  bool is_local_node_id( index node_id ) const;
 
   /**
    * Return pointer to the specified Node. The function expects that
-   * the given gid and thread are valid. If they are not, an assertion
+   * the given node ID and thread are valid. If they are not, an assertion
    * will fail. In case the given Node does not exist on the fiven
    * thread, a proxy is returned instead.
    *
-   * @param gid index of the Node
+   * @param node_id index of the Node
    * @param tid local thread index of the Node
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index gid, thread tid );
+  Node* get_node_or_proxy( index node_id, thread tid );
 
   /**
    * Return pointer of the specified Node.
@@ -161,7 +161,7 @@ public:
    * If the node has proxies, it returns the node on the first thread (used by
    * recorders).
    *
-   * @params gid Index of the Node.
+   * @params node_id Index of the Node.
    */
   Node* get_mpi_local_node_or_device_head( index );
 
@@ -267,10 +267,10 @@ private:
    * VPs, it is represented by a proxy.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add device nodes.
@@ -278,10 +278,10 @@ private:
    * For device nodes, a clone of the node is added to every virtual process.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -290,10 +290,10 @@ private:
    * always placed on thread 0.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_gid, index max_gid, GIDCollectionPTR gc_ptr );
+  void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
 
 private:
@@ -323,7 +323,7 @@ private:
 inline index
 NodeManager::size() const
 {
-  return local_nodes_[ 0 ].get_max_gid();
+  return local_nodes_[ 0 ].get_max_node_id();
 }
 
 inline Node*

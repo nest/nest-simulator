@@ -406,7 +406,7 @@ phase_five() {
         CODES_FAILURE=${SAVE_CODES_FAILURE}
 
         for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
-            $RUN_TEST "${TEST_BASEDIR}/${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+            $RUN_TEST "${TEST_BASEDIR}/mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
         done
 
     else

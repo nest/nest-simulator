@@ -170,7 +170,7 @@ before_install:
          # the build summary.
          pip install cython scipy matplotlib terminaltables
          pip install numpy==1.16.5
-	 pip install -U pytest
+         pip install -U pytest
      fi
 
 install:
@@ -182,7 +182,7 @@ install:
          python --version
          which pip
          pip list
-	 which pytest
+         which pytest
          pytest --version
          which cmake
          cmake --version

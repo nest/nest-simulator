@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connect_all_patterns.py
+# mpi_tests.py
 #
 # This file is part of NEST.
 #

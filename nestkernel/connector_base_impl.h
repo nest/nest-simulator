@@ -38,9 +38,9 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
   Event& e,
   const CommonSynapseProperties& cp )
 {
-  // If the pointer to the receiver node in the event is a null pointer,
+  // If the pointer to the receiver node in the event is invalid,
   // the event was not sent, and a WeightRecorderEvent is therefore not created.
-  if ( cp.get_weight_recorder() and not e.receiver_is_null() )
+  if ( cp.get_weight_recorder() and e.receiver_is_valid() )
   {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;

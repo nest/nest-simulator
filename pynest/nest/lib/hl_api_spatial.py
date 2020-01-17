@@ -962,7 +962,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter3D(*pos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        ax.scatter(*pos, s=nodesize, c=nodecolor)
         plt.draw_if_interactive()
 
     else:

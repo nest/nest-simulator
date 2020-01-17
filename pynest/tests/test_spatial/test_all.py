@@ -31,7 +31,7 @@ in PyNEST only.
 
 import unittest
 
-from nest.tests import compatibility
+import compatibility
 
 from . import test_basics
 from . import test_connection_with_elliptical_mask

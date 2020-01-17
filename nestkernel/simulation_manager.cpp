@@ -705,7 +705,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   {
     kernel().node_manager.set_have_nodes_changed( false );
   }
-  kernel().connection_manager.set_have_connections_changed( tid, false );
+  kernel().connection_manager.unset_have_connections_changed( tid );
 }
 
 bool

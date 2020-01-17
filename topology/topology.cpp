@@ -337,7 +337,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
-    kernel().connection_manager.set_have_connections_changed( tid, true );
+    kernel().connection_manager.set_have_connections_changed( tid );
   }
 
   AbstractLayerPTR source = get_layer( source_nc );

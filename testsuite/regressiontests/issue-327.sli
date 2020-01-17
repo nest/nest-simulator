@@ -40,7 +40,7 @@ M_ERROR setverbosity
 
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
 
   /sg
   /spike_generator 
@@ -58,7 +58,7 @@ M_ERROR setverbosity
   /pn /parrot_neuron_ps Create def
   
   /sd /spike_detector 
-    << /precise_times true
+    <<
        /time_in_steps true
     >>
   Create

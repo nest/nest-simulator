@@ -22,20 +22,11 @@
 """Gap Junctions: Two neuron example
 --------------------------------------
 
-This script simulates two Hodgkin-Huxley neurons of type `hh_psc_alpha_gap`
+This script simulates two Hodgkin-Huxley neurons of type ``hh_psc_alpha_gap``
 connected by a gap junction. Both neurons receive a constant current of
 100.0 pA. The neurons are initialized with different membrane potentials and
 synchronize over time due to the gap-junction connection.
 
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 
 import nest
@@ -46,35 +37,32 @@ nest.ResetKernel()
 
 ###############################################################################
 # First we set the resolution of the simulation, create two neurons and
-# create a `voltmeter` for recording.
+# create a ``voltmeter`` for recording.
 
 nest.SetKernelStatus({'resolution': 0.05})
 
 neuron = nest.Create('hh_psc_alpha_gap', 2)
 
-vm = nest.Create('voltmeter', params={'to_file': False,
-                                      'withgid': True,
-                                      'withtime': True,
-                                      'interval': 0.1})
+vm = nest.Create('voltmeter', params={'interval': 0.1})
 
 ###############################################################################
 # Then we set the constant current input, modify the inital membrane
-# potential of one of the neurons and connect the neurons to the `voltmeter`.
+# potential of one of the neurons and connect the neurons to the ``voltmeter``.
 
 nest.SetStatus(neuron, {'I_e': 100.})
-nest.SetStatus([neuron[0]], {'V_m': -10.})
+nest.SetStatus(neuron[0], {'V_m': -10.})
 
 nest.Connect(vm, neuron, 'all_to_all')
 
 ###############################################################################
-# In order to create the `gap_junction` connection we employ the
-# `all_to_all` connection rule: Gap junctions are bidirectional connections,
+# In order to create the ``gap_junction`` connection we employ the
+# ``all_to_all`` connection rule: Gap junctions are bidirectional connections,
 # therefore we need to connect `neuron[0]` to `neuron[1]` and `neuron[1]` to
 # `neuron[0]`:
 
 nest.Connect(neuron, neuron,
-             {'rule': 'all_to_all', 'autapses': False},
-             {'model': 'gap_junction', 'weight': 0.5})
+             {'rule': 'all_to_all', 'allow_autapses': False},
+             {'synapse_model': 'gap_junction', 'weight': 0.5})
 
 ###############################################################################
 # Finally we start the simulation and plot the membrane potentials of both

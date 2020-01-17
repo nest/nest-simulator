@@ -35,16 +35,14 @@
 #include <map>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "gslrandomgen.h"
 
 // Includes from nestkernel:
 #include "conn_parameter.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_time.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -82,10 +80,7 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
   virtual ~ConnBuilder();
 
   index
@@ -132,8 +127,7 @@ protected:
   virtual void
   sp_connect_()
   {
-    throw NotImplemented(
-      "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
   }
   virtual void
   disconnect_()
@@ -143,8 +137,7 @@ protected:
   virtual void
   sp_disconnect_()
   {
-    throw NotImplemented(
-      "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
   }
 
   //! Create connection between given nodes, fill parameter values
@@ -178,16 +171,16 @@ protected:
    */
   bool loop_over_targets_() const;
 
-  GIDCollection const* sources_;
-  GIDCollection const* targets_;
+  NodeCollectionPTR sources_;
+  NodeCollectionPTR targets_;
 
-  bool autapses_;
-  bool multapses_;
+  bool allow_autapses_;
+  bool allow_multapses_;
   bool make_symmetric_;
   bool creates_symmetric_connections_;
 
   //! buffer for exceptions raised in threads
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder
@@ -247,8 +240,8 @@ protected:
 class OneToOneBuilder : public ConnBuilder
 {
 public:
-  OneToOneBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  OneToOneBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
@@ -274,8 +267,8 @@ protected:
 class AllToAllBuilder : public ConnBuilder
 {
 public:
-  AllToAllBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  AllToAllBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -285,7 +278,7 @@ public:
   bool
   is_symmetric() const
   {
-    return *sources_ == *targets_ and all_parameters_scalar_();
+    return sources_ == targets_ and all_parameters_scalar_();
   }
 
   bool
@@ -308,41 +301,32 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
-  long indegree_;
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool, long );
+  ParameterDatum indegree_;
 };
 
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
 
 private:
-  long outdegree_;
+  ParameterDatum outdegree_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
@@ -354,26 +338,20 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
 protected:
   void connect_();
 
 private:
   void inner_connect_( const int, librandom::RngPtr&, Node*, index );
-  double p_; //!< connection probability
+  ParameterDatum p_; //!< connection probability
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
-  SymmetricBernoulliBuilder( const GIDCollection&,
-    const GIDCollection&,
-    const DictionaryDatum&,
-    const DictionaryDatum& );
+  SymmetricBernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
   bool
   supports_symmetric() const
@@ -391,8 +369,8 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
-  SPBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  SPBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
@@ -414,11 +392,22 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  void sp_connect( GIDCollection sources, GIDCollection targets );
+  /**
+   *  @note Only for internal use by SPManager.
+   */
+  void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
 
 protected:
+  using ConnBuilder::connect_;
   void connect_();
-  void connect_( GIDCollection sources, GIDCollection targets );
+  void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
+
+  /**
+   * In charge of dynamically creating the new synapses
+   * @param sources nodes from which synapses can be created
+   * @param targets target nodes for the newly created synapses
+   */
+  void connect_( const std::vector< index >& sources, const std::vector< index >& targets );
 };
 
 inline void
@@ -433,8 +422,7 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 inline void
 ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
 {
-  for ( std::vector< ConnParameter* >::iterator it =
-          parameters_requiring_skipping_.begin();
+  for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
         ++it )
   {

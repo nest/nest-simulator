@@ -369,7 +369,7 @@ phase_three() {
 
     echo "TEST_BASEDIR $TEST_BASEDIR"
     echo "PWD $(pwd)"
-    find "${TEST_BASEDIR}/unittests" "${TEST_BASEDIR}/topology/unittests" -name "*.py" -o -name "*.sli" |\
+    find "${TEST_BASEDIR}/unittests" -name "*.py" -o -name "*.sli" |\
         xargs -L1 -P${NPROCS} -I'{}' $RUN_TEST "{}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 }
 
@@ -405,10 +405,8 @@ phase_five() {
         CODES_SUCCESS=${SAVE_CODES_SUCCESS}
         CODES_FAILURE=${SAVE_CODES_FAILURE}
 
-        for test_dir in "mpitests/" "topology/mpitests/" ; do
-            for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep '.*\.sli$') ; do
-                $RUN_TEST "${TEST_BASEDIR}/${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-            done
+        for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
+            $RUN_TEST "${TEST_BASEDIR}/${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
         done
 
     else

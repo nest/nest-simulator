@@ -43,11 +43,11 @@ M_ERROR setverbosity
 % Case 1: Delay compatible with resolution, same result as with normal synapse expected
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
-  /n  /iaf_psc_delta_canon Create def
-  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
+  /n  /iaf_psc_delta_ps Create def
+  /sd /spike_detector Create def
   
   sg n 100. 1.0 /cont_delay_synapse Connect
   n sd Connect
@@ -55,7 +55,7 @@ M_ERROR setverbosity
   10 Simulate
   
   % expected output spike times: 3.0, 6.5
-  sd GetStatus /events/times :: cva [ 3.0 6.5 ] eq
+  sd /events get /times get cva [ 3.0 6.5 ] eq
 }
 assert_or_die
 
@@ -63,20 +63,20 @@ assert_or_die
 % Case 2: Delay not compatible with resolution, set delay as default
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
-  /n  /iaf_psc_delta_canon Create def
-  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
+  /n  /iaf_psc_delta_ps Create def
+  /sd /spike_detector Create def
   
   /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-  sg n /cont_delay_synapse Connect
+  sg n << >> /cont_delay_synapse Connect
   n sd Connect
   
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd GetStatus /events/times :: cva [ 3.7 7.2 ] eq
+  sd /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 
@@ -84,14 +84,14 @@ assert_or_die
 % Case 3: Delay not compatible with resolution, explicitly set delay
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
-  /n  /iaf_psc_delta_canon Create def
-  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
+  /n  /iaf_psc_delta_ps Create def
+  /sd /spike_detector Create def
   
   sg n 100. 1.0 /cont_delay_synapse Connect
-  << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+  << /source sg /synapse_model /cont_delay_synapse >> GetConnections
      { << /delay 1.7 >> SetStatus } 
   forall
 
@@ -100,7 +100,7 @@ assert_or_die
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd GetStatus /events/times :: cva [ 3.7 7.2 ] eq
+  sd /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 
@@ -108,13 +108,13 @@ assert_or_die
 % Case 4: Ensure NEST prohibits delays shorter than resolution
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
-  /n  /iaf_psc_delta_canon Create def
+  /n  /iaf_psc_delta_ps Create def
   
   sg n 100. 1.0 /cont_delay_synapse Connect
-  << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+  << /source sg /synapse_model /cont_delay_synapse >> GetConnections
      { << /delay 0.7 >> SetStatus } 
   forall
 }

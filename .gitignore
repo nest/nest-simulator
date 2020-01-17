@@ -34,6 +34,8 @@ install/
 /topology/doc/Topology_UserManual.out
 /doc/doxygen/
 /doc/_build/
+/doc/xml/
+/doc/auto_examples/
 
 *.kdev4
 
@@ -58,6 +60,7 @@ CPackSourceConfig.cmake
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
+doc/pynestkernel_mock.py
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 

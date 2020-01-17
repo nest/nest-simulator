@@ -37,7 +37,6 @@ __all__ = [
     'Install',
     'Prepare',
     'ResetKernel',
-    'ResetNetwork',
     'Run',
     'RunManager',
     'SetKernelStatus',
@@ -57,9 +56,8 @@ def Simulate(t):
 
     See Also
     --------
-    RunManager, ResumeSimulation
+    RunManager
 
-    KEYWORDS:
     """
 
     sps(float(t))
@@ -74,6 +72,9 @@ def Run(t):
     ----------
     t : float
         Time to simulate in ms
+
+    Notes
+    ------
 
     Call between `Prepare` and `Cleanup` calls, or within a
     ``with RunManager`` clause.
@@ -90,7 +91,6 @@ def Run(t):
     --------
     Prepare, Cleanup, RunManager, Simulate
 
-    KEYWORDS:
     """
 
     sps(float(t))
@@ -108,7 +108,6 @@ def Prepare():
     --------
     Run, Cleanup
 
-    KEYWORDS:
     """
 
     sr('Prepare')
@@ -125,7 +124,6 @@ def Cleanup():
     --------
     Run, Prepare
 
-    KEYWORDS:
     """
     sr('Cleanup')
 
@@ -138,7 +136,7 @@ def RunManager():
 
     E.g.:
 
-    .. code-block:: python
+    ::
 
         with RunManager():
             for i in range(10):
@@ -148,7 +146,6 @@ def RunManager():
     --------
     Prepare, Run, Cleanup, Simulate
 
-    KEYWORDS:
     """
 
     Prepare()
@@ -163,63 +160,23 @@ def ResetKernel():
     """Reset the simulation kernel.
 
     This will destroy the network as well as all custom models created with
-    CopyModel(). Calling this function is equivalent to restarting NEST.
+    :py:func:`.CopyModel`. Calling this function is equivalent to restarting NEST.
 
     In particular,
+
     * all network nodes
     * all connections
     * all user-defined neuron and synapse models
     are deleted, and
+
     * time
     * random generators
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-    KEYWORDS:
    """
 
     sr('ResetKernel')
-
-
-@check_stack
-@deprecated('', 'ResetNetwork is deprecated and will be removed in NEST 3.0.')
-def ResetNetwork():
-    """Reset all nodes and connections to their original state.
-
-    .. deprecated:: 2.18
-    `ResetNetwork` is deprecated and will be removed in NEST 3.0, because
-    this function is not fully able to reset network and simulator state.
-    The only reliable way to reset state is to call `ResetKernel` and then
-    rebuild the network.
-
-    Resets the dynamic state of the entire network to its original state.
-    The dynamic state comprises typically the membrane potential,
-    synaptic currents, buffers holding input that has been delivered, but not
-    yet become effective, and all events pending delivery. Node parameters,
-    such as time constants and threshold potentials, are not affected.
-
-    However, note that
-    * Time and random number generators are NOT reset.
-    * Files belonging to recording devices (spike detector, multimeter,
-      voltmeter, etc) are closed. You must change the file name before
-      simulating again. Otherwise the files can be overwritten or you
-      will receive an error.
-    * `ResetNetwork` will reset the nodes to the state values stored in the
-      model prototypes. So if you have used `SetDefaults` to change a state
-      value of a model since simulating the first time, the network will NOT be
-      reset to the status at T=0.
-    * The dynamic state of synapses with internal dynamics (STDP, facilitation)
-      is NOT reset at present. This will be implemented in a future version
-      of NEST.
-
-    See Also
-    --------
-    ResetKernel
-
-    KEYWORDS:
-    """
-
-    sr('ResetNetwork')
 
 
 @check_stack
@@ -235,12 +192,10 @@ def SetKernelStatus(params):
     --------
     GetKernelStatus
 
-    KEYWORDS:
     """
 
-    sps(0)
     sps(params)
-    sr('SetStatus')
+    sr('SetKernelStatus')
 
 
 @check_stack
@@ -250,7 +205,7 @@ def GetKernelStatus(keys=None):
     Parameters
     ----------
     keys : str or list, optional
-        Single parameter name or ``list`` of parameter names
+        Single parameter name or `list` of parameter names
 
     Returns
     -------
@@ -270,23 +225,17 @@ def GetKernelStatus(keys=None):
     --------
     SetKernelStatus
 
-    KEYWORDS:
     """
 
-    sr('0 GetStatus')
+    sr('GetKernelStatus')
     status_root = spp()
 
-    sr('/subnet GetDefaults')
-    status_subnet = spp()
-
-    d = dict((k, v) for k, v in status_root.items() if k not in status_subnet)
-
     if keys is None:
-        return d
+        return status_root
     elif is_literal(keys):
-        return d[keys]
+        return status_root[keys]
     elif is_iterable(keys):
-        return tuple(d[k] for k in keys)
+        return tuple(status_root[k] for k in keys)
     else:
         raise TypeError("keys should be either a string or an iterable")
 
@@ -311,12 +260,10 @@ def Install(module_name):
     (``DYLD_LIBRARY_PATH`` under OSX).
 
     **Example**
-
-    .. code-block: python
+    ::
 
         nest.Install("mymodule")
 
-    KEYWORDS:
     """
 
     return sr("(%s) Install" % module_name)
@@ -335,7 +282,6 @@ def SetStructuralPlasticityStatus(params):
     --------
     GetStructuralPlasticityStatus
 
-    KEYWORDS:
     """
 
     sps(params)
@@ -355,7 +301,6 @@ def GetStructuralPlasticityStatus(keys=None):
     --------
     SetStructuralPlasticityStatus
 
-    KEYWORDS:
     """
 
     sps({})
@@ -379,7 +324,6 @@ def EnableStructuralPlasticity():
     --------
     DisableStructuralPlasticity
 
-    KEYWORDS:
     """
 
     sr('EnableStructuralPlasticity')
@@ -393,6 +337,5 @@ def DisableStructuralPlasticity():
     --------
     EnableStructuralPlasticity
 
-    KEYWORDS:
     """
     sr('DisableStructuralPlasticity')

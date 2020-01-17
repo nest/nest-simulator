@@ -187,28 +187,23 @@ def
 ResetKernel      % clear all existing network elements
 
 % set resolution and total/local number of threads
-0 <<
+<<
     /resolution  dt
     /local_num_threads local_num_threads
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 tic % start timer on construction
 
   (Creating excitatory population.) =  % show message
-  /E_net /subnet Create def            % create subnet
-  E_net ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NE Create       % create neurons in subnet
-  ;                                    % pop gids returned by Create
-  0 ChangeSubnet                     % return to full network
+  /E_neurons /iaf_psc_alpha_canon NE Create def  % create exitatory neurons
 
   (Creating inhibitory population.) =  % show message
-  /I_net /subnet Create def            % create subnet
-  I_net ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NI Create       % create neurons in subnet
-  ;                                    % pop gids returned by Create
-  0 ChangeSubnet                     % return to full network
+  /I_neurons /iaf_psc_alpha_canon NI Create def  % create inhibitory neurons
 
+  % all neurons
+  /allNeurons E_neurons I_neurons join def
+  
   (Creating excitatory Poisson generator.) =
   /expoisson /poisson_generator_ps Create def
   expoisson
@@ -227,37 +222,10 @@ tic % start timer on construction
   % but by recording the populations separately,
   % we save us a lot of sorting work later
   (Creating excitatory spike detector.) =
-  /exsd /spike_detector Create def
-  exsd
-  <<
-    /withtime true   % record time of spikes
-    /withgid true    % record which neuron spiked
-    /to_file true    % write results to a file
-    /precise_times true
-  >> SetStatus
+  /exsd /spike_detector << /record_to /ascii >> Create def
 
   (Creating inhibitory spike detector.) =
-  /insd /spike_detector Create def
-  insd
-  <<
-    /withtime true
-    /withgid true
-    /to_file true
-    /precise_times true
-  >> SetStatus
-
-  % some connecting functions need lists (arrays) over all
-  % neurons they should work on, so we need to extract these
-  % lists from the subnetworks
-
-  % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net GetGlobalNodes def
-
-  % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net GetGlobalNodes def
-
-  % all neurons
-  /allNeurons E_neurons I_neurons join def
+  /insd /spike_detector << /record_to /ascii >> Create def
 
   % Setting neuron parameters after creation is deprecated in NEST 2.0.
   % You should set parameters using SetDefaults before creating neurons,
@@ -288,27 +256,27 @@ tic % start timer on construction
   /static_synapse /syn_in << /weight JI >> CopyModel
 
   (Connecting excitatory population.) =
-  [expoisson] E_neurons /all_to_all /syn_ex Connect
+  expoisson E_neurons /all_to_all /syn_ex Connect
 
   % E -> E connections
   % the following is a single call to FixedIndegree connect
   E_neurons   % source population [we pick from this]
   E_neurons   % target neurons
   << /rule /fixed_indegree /indegree CE >> % number of source neurons to pick
-  << /model /syn_ex >>    % synapse model
+  << /synapse_model /syn_ex >>    % synapse model
   Connect
 
   % I -> E connections
   % as above, but on a single line
-  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
   (Connecting inhibitory population.) =
-  [inpoisson] I_neurons /all_to_all /syn_ex Connect
+  inpoisson I_neurons /all_to_all /syn_ex Connect
 
   % ... as above, just written more compact
 
-  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
   % Spike detectors are connected to the first Nrec neurons in each
   % population.  Since neurons are equal and connectivity is homogeneously
@@ -317,10 +285,10 @@ tic % start timer on construction
   (Connecting spike detectors.) =
 
   E_neurons Nrec Take % pick the first 500 neurons
-    [exsd] Connect
+    exsd Connect
 
   I_neurons Nrec Take % pick the first 500 neurons
-    [insd] Connect
+    insd Connect
 
   % read out time used for building
 

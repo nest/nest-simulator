@@ -87,7 +87,7 @@ ResetKernel
 % Sixth test: feed neuron and check response
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /scg /step_current_generator Create def
   /nrn /iaf_psc_alpha Create def
   /vm  /voltmeter Create def
@@ -100,7 +100,7 @@ ResetKernel
          /amplitude_values [ 1.  -2.  4.  -8.  16. -32. 64.  ]
       >> SetStatus
 
-  vm << /record_to [/memory] /interval 0.1 >> SetStatus
+  vm << /interval 0.1 >> SetStatus
 
   scg nrn Connect
   vm  nrn Connect

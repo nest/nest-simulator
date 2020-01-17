@@ -20,19 +20,17 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-pynest microcircuit example
+Pynest microcircuit example
 ---------------------------
 
 Example file to run the microcircuit.
 
-
-This example uses the function GetNodes, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 ###############################################################################
 # Import the necessary modules
+
 import time
 import numpy as np
 import network
@@ -42,6 +40,7 @@ from stimulus_params import stim_dict
 
 ###############################################################################
 # Initialize the network and pass parameters to it.
+
 tic = time.time()
 net = network.Network(sim_dict, net_dict, stim_dict)
 toc = time.time() - tic
@@ -63,6 +62,7 @@ print("Time to simulate: %.2f s" % toc)
 # before and 100 ms after the thalamic stimulus time are plotted here by
 # default. The computation of spike rates discards the first 500 ms of
 # the simulation to exclude initialization artifacts.
+
 raster_plot_time_idx = np.array(
     [stim_dict['th_start'] - 100.0, stim_dict['th_start'] + 100.0]
     )

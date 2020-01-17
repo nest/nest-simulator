@@ -142,8 +142,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     {
       if ( has_delay_ )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-          default_connection_.get_delay() );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( default_connection_.get_delay() );
       }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
@@ -163,10 +162,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
                         get_name(),
-                        Time::delay_steps_to_ms(
-                           kernel().connection_manager.get_min_delay() ),
-                        Time::delay_steps_to_ms(
-                           kernel().connection_manager.get_max_delay() ) ) );
+                        Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
+                        Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -193,8 +190,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_delay_ )
     {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-        delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
     if ( p->known( names::delay ) )
@@ -213,8 +209,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     {
       if ( has_delay_ )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-          delay );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
       }
     }
     else
@@ -253,12 +248,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
-  add_connection_( src,
-    tgt,
-    thread_local_connectors,
-    syn_id,
-    connection,
-    actual_receptor_type );
+  add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
 }
 
 
@@ -282,17 +272,12 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 
   ConnectorBase* connector = thread_local_connectors[ syn_id ];
   // The following line will throw an exception, if it does not work.
-  connection.check_connection(
-    src, tgt, receptor_type, get_common_properties() );
+  connection.check_connection( src, tgt, receptor_type, get_common_properties() );
 
   assert( connector != 0 );
 
-  // TODO: simplify: push_back should not return anything
-  Connector< ConnectionT >* vc =
-    static_cast< Connector< ConnectionT >* >( connector );
-  connector = &vc->push_back( connection );
-
-  thread_local_connectors[ syn_id ] = connector;
+  Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
+  vc->push_back( connection );
 }
 
 } // namespace nest

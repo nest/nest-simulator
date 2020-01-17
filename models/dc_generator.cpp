@@ -27,6 +27,9 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
@@ -59,8 +62,7 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -99,9 +101,9 @@ nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d )
+nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::amplitude, amp_ );
+  updateValueParam< double >( d, names::amplitude, amp_, node );
 }
 
 
@@ -165,8 +167,7 @@ nest::dc_generator::calibrate()
 void
 nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();

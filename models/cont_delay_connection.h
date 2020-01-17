@@ -23,6 +23,7 @@
 #ifndef CONT_DELAY_CONNECTION_H
 #define CONT_DELAY_CONNECTION_H
 
+
 // C++ includes:
 #include <cmath>
 
@@ -33,6 +34,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup cont_delay
+
 Name: cont_delay_synapse - Synapse type for continuous delays
 
 Description:
@@ -45,21 +49,21 @@ combined with off-grid spike times.
 
 Example:
 
-0 << /resolution 1.0 >> SetStatus
+    SLI
 
-/sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-def
-/n  /iaf_psc_delta_canon Create def
-/sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-def
+    << /resolution 1.0 >> SetKernelStatus
 
-/cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-sg n /cont_delay_synapse Connect
-n sd Connect
+    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
+    /n  /iaf_psc_delta_ps Create def
+    /sd /spike_detector Create def
 
-10 Simulate
+    /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
+    sg n /cont_delay_synapse Connect
+    n sd Connect
 
-sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
+    10 Simulate
+
+    sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
 Remarks:
 
@@ -70,10 +74,10 @@ using cont_delay_connection. To set non-grid delays, you must either
 2) set the delay for each synapse after the connections have been created,
    e.g.,
 
-     sg n 100. 1.0 /cont_delay_synapse Connect
-     << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
-        { << /delay 1.7 >> SetStatus }
-     forall
+    sg n 100. 1.0 /cont_delay_synapse Connect
+    << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
+       { << /delay 1.7 >> SetStatus }
+    forall
 
 Alternative 1) is much more efficient, but all synapses then will have the
                same delay.
@@ -84,13 +88,11 @@ Continuous delays cannot be shorter than the simulation resolution.
 Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
            DoubleDataEvent
 
-References: none
-
 FirstVersion: June 2007
 
 Author: Abigail Morrison
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
+SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
 */
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
@@ -206,10 +208,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -228,9 +227,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-ContDelayConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+ContDelayConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );

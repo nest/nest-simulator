@@ -31,6 +31,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+
 Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
 dependent
 plasticity with constant depression.
@@ -44,19 +47,26 @@ pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
 Parameters:
-tau        double - Time constant of STDP window, potentiation in ms
-Wmax       double - Maximum allowed weight
-eta        double - learning rate
-alpha      double - constant depression (= 2 * tau * target firing rate in
- [1])
+
+\verbatim embed:rst
+======  ======  =========================================================
+ tau    ms      Time constant of STDP window, potentiation
+ Wmax   real    Maximum allowed weight
+ eta    real    Learning rate
+ alpha  real    Constant depression (= 2 * tau * target firing rate in
+                [1])
+======  ======  =========================================================
+\endverbatim
 
 Transmits: SpikeEvent
 
 References:
-[1] Vogels et al. (2011) Inhibitory Plasticity Balances Excitation and
-Inhibition in Sensory Pathways and Memory Networks.
-Science Vol. 334, Issue 6062, pp. 1569-1573
-DOI: 10.1126/science.1211095
+
+\verbatim embed:rst
+.. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
+       inhibition in sensory pathways and memory networks. Science,
+       334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
+\endverbatim
 
 FirstVersion: January 2016
 
@@ -132,10 +142,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -186,9 +193,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -202,10 +207,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // presynaptic neuron j, post synaptic neuron i
   // Facilitation for each post synaptic spike
@@ -226,8 +228,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // Facilitation and constant depression
   // Getting kvalue at required time already for deferred processing, so no
   // need to transform it to the current time, and so, no exponential required
-  weight_ =
-    facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  weight_ = facilitate_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
   weight_ = depress_( weight_ );
 
   e.set_receiver( *target );
@@ -274,8 +275,7 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -289,9 +289,7 @@ VogelsSprekelerConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

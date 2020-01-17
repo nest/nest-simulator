@@ -65,11 +65,11 @@ class TestPairwiseBernoulli(TestParams):
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
 
         # test that autapses exist
         conn_params['p'] = 1.
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -79,11 +79,11 @@ class TestPairwiseBernoulli(TestParams):
     def testAutapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
 
         # test that autapses were excluded
         conn_params['p'] = 1.
-        conn_params['autapses'] = False
+        conn_params['allow_autapses'] = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist

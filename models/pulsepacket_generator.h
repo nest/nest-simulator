@@ -41,6 +41,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
 
 Description:
@@ -53,9 +56,13 @@ It resembles the output of synfire groups of neurons.
 
 Parameters:
 
-pulse_times  double - Times of the centers of pulses in ms
-activity     int    - Number of spikes per pulse
-sdev         double - Standard deviation of spike times in each pulse in ms
+\verbatim embed:rst
+============  ======= =======================================================
+ pulse_times  ms      Times of the centers of pulses
+ activity     integer Number of spikes per pulse
+ sdev         ms      Standard deviation of spike times in each pulse
+============  ======= =======================================================
+\endverbatim
 
 Remarks:
 
@@ -85,6 +92,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;
@@ -104,7 +117,6 @@ private:
 
   struct Parameters_
   {
-
     std::vector< double > pulse_times_; //!< times of pulses
     long a_;                            //!< number of pulses in a packet
     double sdev_;                       //!< standard deviation of the packet
@@ -120,7 +132,7 @@ private:
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */
-    void set( const DictionaryDatum&, pulsepacket_generator& );
+    void set( const DictionaryDatum&, pulsepacket_generator&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -162,10 +174,7 @@ private:
 };
 
 inline port
-pulsepacket_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -185,8 +194,8 @@ pulsepacket_generator::get_status( DictionaryDatum& d ) const
 inline void
 pulsepacket_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, *this );  // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, *this, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

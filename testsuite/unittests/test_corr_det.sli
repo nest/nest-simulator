@@ -44,6 +44,7 @@ SeeAlso: correlation_detector
 /tau_max 20.0 def
 
 % First test: parameter setting on model and instance
+(Test 1) ==
 {
   ResetKernel
 
@@ -61,38 +62,42 @@ clear
 ResetKernel
 
 % Second test: error if uncommensurable delta_tau
+(Test 2) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 0.25 >> SetDefaults
 } fail_or_die
 
 
 % Third test: error if uncommensurable tau_max
+(Test 3) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 2.5 >> SetDefaults
 } fail_or_die
 
 
 % Fourth test: error if uncommensurable change of resolution
+(Test 4) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 0.1 >> SetDefaults
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   /correlation_detector Create % cannot create now with delta_tau==0.1
-} fail_or_die  
+} fail_or_die
 
 
 % Fifth test: proper number of histogram bins under resolution changes
+(Test 5) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
-  0 << /resolution 0.2 >> SetStatus
-  /correlation_detector Create 
+  << /resolution 0.2 >> SetKernelStatus
+  /correlation_detector Create
   1 Simulate % must simulate to force creation of histogram
   [/histogram] get cva length
   11 eq
@@ -101,7 +106,7 @@ ResetKernel
 
 % Functions for actual correlation tests
 
-% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_gid
+% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_node_id
 /cdsim
 {
   << >> begin
@@ -109,8 +114,8 @@ ResetKernel
 
     % build and connect
     /correlation_detector Create /cdt Set
-    [0 1] { 
-      /i Set 
+    [0 1] {
+      /i Set
       /spike_generator Create /sg Set
       sg << /precise_times false /spike_times st i get >> SetStatus
       /static_synapse << /receptor_type i >> SetDefaults
@@ -119,8 +124,8 @@ ResetKernel
     } Table /sgens Set
 
     % simulate to max spike time plus 2 min_delay
-    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
-    
+    st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
+
     % get spike counts and histogram
     cdt [ /histogram ] get cva
     cdt [ /n_events  ] get cva
@@ -137,9 +142,9 @@ def
   2 arraystore /st Set
 
   st cdsim ;
-    
+
   % check spike counts
-  st { length } Map eq 
+  st { length } Map eq
 
   % check histogram
   exch
@@ -151,10 +156,11 @@ def
 } def
 
 % Sixth test: correlation histogram for time differences in bin centers
+(Test 6) ==
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
   [ 1.0 2.0     6.0 ]       % input 0
@@ -164,9 +170,10 @@ def
 } assert_or_die
 
 % Seventh test: correlation histogram for time differences at bin edges
+(Test 7) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
   [                 6.0                  ]  % input 0
@@ -176,19 +183,21 @@ def
 } assert_or_die
 
 % Eight test: test to ensure [1 1] not allowed for /n_events
+(Test 8) ==
 {
   /correlation_detector Create
   << /n_events [1 1] >> SetStatus
 } fail_or_die
 
 % Ninth test: test that reset works
+(Test 9) ==
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
-  % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0] 
+  % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0]
   [ [ 1.0 2.0     6.0 ]       % input 0
     [     2.0 4.0     ]       % input 1
   ]
@@ -199,8 +208,8 @@ def
   Plus 0 gt % ensure we have non-zeros in histogram
   {
 	cdt << /n_events [0 0] >> SetStatus
-    cdt [/n_events] get cva Plus 0 eq  
-    cdt [/histogram] get cva Plus 0.0 eq  
+    cdt [/n_events] get cva Plus 0 eq
+    cdt [/histogram] get cva Plus 0.0 eq
     and
   }
   { false }

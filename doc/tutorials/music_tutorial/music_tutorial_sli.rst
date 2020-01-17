@@ -67,9 +67,8 @@ use :math:`\texttt{put}`.
 
     % Create spike detector
     /spike_detector Create /sdetector Set
-    sdetector << /to_file true 
-                 /label (output) 
-                 /file_extension (spk) 
+    sdetector << /record_to /ascii
+                 /label (output)
     >> SetStatus
 
     % set port name and channel for all music input proxies.

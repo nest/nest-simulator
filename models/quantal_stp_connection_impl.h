@@ -38,8 +38,7 @@ namespace nest
 
 
 /* Polymorphic version of update_value.
- * This version is needed, because DataConnect will pass all properties as
- * doubles. This code will take either an int or a double and convert is to an
+ * This code will take either an int or a double and convert is to an
  * int.
  */
 bool
@@ -84,8 +83,7 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
 }
 
 template < typename targetidentifierT >
-Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection(
-  const Quantal_StpConnection& rhs )
+Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection( const Quantal_StpConnection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -101,8 +99,7 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection(
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -117,9 +114,7 @@ Quantal_StpConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+Quantal_StpConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -134,8 +129,7 @@ Quantal_StpConnection< targetidentifierT >::set_status(
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::check_synapse_params(
-  const DictionaryDatum& syn_spec ) const
+Quantal_StpConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
   // them since they are integers.

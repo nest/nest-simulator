@@ -20,9 +20,10 @@ For more detailed information please see below: ``Python3 Binding (PyNEST)``
 Choice of compiler
 ------------------
 
-The default compiler for NEST is GNU gcc/g++, but NEST has also successfully
-been compiled with other compilers, including Intel icc/icpc, Pathscale,
-Portland and IBM compilers.
+The default compiler for NEST is GNU gcc/g++. Version 7 or higher is required
+due to the presence of bugs in earlier versions that prevent the compilation
+from succeeding. NEST has also successfully been compiled with Clang 7 and the
+IBM XL C++ compiler.
 
 To select a specific compiler, please add the following flags to your ``cmake``
 line::
@@ -84,23 +85,26 @@ Set default libraries::
 Change compilation behavior::
 
     -Dstatic-libraries=[OFF|ON]     Build static executable and libraries. [default=OFF]
-    -Dwith-optimize=[OFF|ON|<list;of;flags>]  Enable user defined optimizations. Separate
-                                              multiple flags by ';'.
-                                              [default OFF, when ON, defaults to '-O3']
-    -Dwith-warning=[OFF|ON|<list;of;flags>]   Enable user defined warnings. Separate
-                                              multiple flags by ';'.
-                                              [default ON, when ON, defaults to '-Wall']
-    -Dwith-debug=[OFF|ON|<list;of;flags>]     Enable user defined debug flags. Separate
-                                              multiple flags by ';'.
-                                              [default OFF, when ON, defaults to '-g']
-    -Dwith-libraries=<list;of;libraries>      Link additional libraries. Give full path.
-                                              Separate multiple libraries by ';'.
-                                              [default OFF]
-    -Dwith-includes=<list;of;includes>        Add additional include paths. Give full
-                                              path without '-I'. Separate multiple include
-                                              paths by ';'. [default OFF]
-    -Dwith-defines=<list;of;defines>          Additional defines, e.g. '-DXYZ=1'.
-                                              Separate multiple defines by ';'. [default OFF]
+    -Dwith-optimize=[OFF|ON|<list;of;flags>]       Enable user defined optimizations. Separate
+                                                   multiple flags by ';'.
+                                                   [default OFF, when ON, defaults to '-O3']
+    -Dwith-warning=[OFF|ON|<list;of;flags>]        Enable user defined warnings. Separate
+                                                   multiple flags by ';'.
+                                                   [default ON, when ON, defaults to '-Wall']
+    -Dwith-debug=[OFF|ON|<list;of;flags>]          Enable user defined debug flags. Separate
+                                                   multiple flags by ';'.
+                                                   [default OFF, when ON, defaults to '-g']
+    -Dwith-intel-compiler-flags=[<list;of;flags>]  User defined flags for the Intel compiler.
+                                                   Separate multiple flags by ';'.
+                                                   [defaults to '-fp-model strict']
+    -Dwith-libraries=<list;of;libraries>           Link additional libraries. Give full path.
+                                                   Separate multiple libraries by ';'.
+                                                   [default OFF]
+    -Dwith-includes=<list;of;includes>             Add additional include paths. Give full
+                                                   path without '-I'. Separate multiple include
+                                                   paths by ';'. [default OFF]
+    -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
+                                                   Separate multiple defines by ';'. [default OFF]
 
 NO-DOC option
 --------------
@@ -208,6 +212,12 @@ Compiler-specific options
 
 NEST has reasonable default compiler options for the most common compilers.
 
-When compiling with the Portland compiler, use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
+When compiling with the *Portland* compiler:
+  Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
 
+When compiling with the *Intel* compiler:
+  To ensure that computations obey the IEEE754 standard for floating point
+  numerics, the ``-fp-model strict`` flag is used by default, but can be
+  overridden with ::
 
+      -Dwith-intel-compiler-flags="<intel-flags>"

@@ -23,14 +23,14 @@
 ---------------------------------------------
 
 This synapse model implements synaptic short-term depression and short-term f
-according to [1] and [2]. It solves Eq (2) from [1] and modulates U according
+according to [1]_ and [2]_. It solves Eq (2) from [1]_ and modulates U according
 
 This connection merely scales the synaptic weight, based on the spike history
 parameters of the kinetic model. Thus, it is suitable for all types of synapt
 that is current or conductance based.
 
-The parameter A_se from the publications is represented by the
-synaptic weight. The variable x in the synapse properties is the
+The parameter `A_se` from the publications is represented by the
+synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
 Parameters
@@ -38,17 +38,17 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-* U          double - probability of release increment (U1) [0,1], default=0.
-* u          double - Maximum probability of release (U_se) [0,1], default=0.
-* x          double - current scaling factor of the weight, default=U
-* tau_rec    double - time constant for depression in ms, default=800 ms
-* tau_fac    double - time constant for facilitation in ms, default=0 (off)
+* U           - probability of release increment (U1) [0,1], default=0.
+* u           - Maximum probability of release (U_se) [0,1], default=0.
+* x           - current scaling factor of the weight, default=U
+* tau_rec     - time constant for depression in ms, default=800 ms
+* tau_fac     - time constant for facilitation in ms, default=0 (off)
 
 Notes
 ~~~~~~~
 
-Under identical conditions, the tsodyks2_synapse produces slightly lower
-peak amplitudes than the tsodyks_synapse. However, the qualitative behavior
+Under identical conditions, the ``tsodyks2_synapse`` produces slightly lower
+peak amplitudes than the ``tsodyks_synapse``. However, the qualitative behavior
 is identical.
 
 This compares the two synapse models.
@@ -56,22 +56,15 @@ This compares the two synapse models.
 References
 ~~~~~~~~~~~
 
-.. [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between
+.. [1] Tsodyks MV, and Markram H. (1997). The neural code between
        neocortical depends on neurotransmitter release probability. PNAS,
        94(2), 719-23.
-.. [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-       information by activity-dependent synapses. Journal of
-       neurophysiology, 8
-.. [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
+.. [2] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
+.. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2), 155-161.
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 
 import nest
@@ -108,37 +101,37 @@ neuron = nest.Create("iaf_psc_exp", 3)
 
 ###############################################################################
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two
-#  synapse models.
+# synapse models.
 
-nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks_synapse")
-nest.Connect([neuron[0]], [neuron[2]], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks_synapse")
+nest.Connect(neuron[0], neuron[2], syn_spec="tsodyks2_synapse")
 
 ###############################################################################
 # Now create two voltmeters to record the responses.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # Connect the voltmeters to the neurons.
 
-nest.Connect([voltmeter[0]], [neuron[1]])
-nest.Connect([voltmeter[1]], [neuron[2]])
+nest.Connect(voltmeter[0], neuron[1])
+nest.Connect(voltmeter[1], neuron[2])
 
 ###############################################################################
 # Now simulate the standard STP protocol: a burst of spikes, followed by a
 # pause and a recovery response.
 
-nest.SetStatus([neuron[0]], "I_e", 376.0)
+nest.SetStatus(neuron[0], "I_e", 376.0)
+
 nest.Simulate(500.0)
-nest.SetStatus([neuron[0]], "I_e", 0.0)
+nest.SetStatus(neuron[0], "I_e", 0.0)
 nest.Simulate(500.0)
-nest.SetStatus([neuron[0]], "I_e", 376.0)
+nest.SetStatus(neuron[0], "I_e", 376.0)
 nest.Simulate(500.0)
 
 ###############################################################################
 # Finally, generate voltage traces. Both are shown in the same plot and
 # should be almost completely overlapping.
 
-nest.voltage_trace.from_device([voltmeter[0]])
-nest.voltage_trace.from_device([voltmeter[1]])
+nest.voltage_trace.from_device(voltmeter[0])
+nest.voltage_trace.from_device(voltmeter[1])

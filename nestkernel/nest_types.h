@@ -28,13 +28,14 @@
 #include <climits>
 #include <cstddef>
 #include <limits>
+#include <stdint.h>
 
 // Generated includes:
 #include "config.h"
 
 #ifdef HAVE_32BIT_ARCH
 #ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
-#include <stdint.h> // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
 #else
 #error "32-bit platform does not provide a 64-bit unsigned integer data type"
 #endif
@@ -65,8 +66,7 @@ namespace nest
 constexpr uint64_t
 generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
 {
-  return (
-    ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
+  return ( ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 ) << bit_position );
 }
 
 constexpr uint64_t
@@ -92,7 +92,7 @@ constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
-constexpr uint8_t NUM_BITS_GID = 62U;
+constexpr uint8_t NUM_BITS_NODE_ID = 62U;
 
 /*
  * Maximally allowed values for bitfields
@@ -101,8 +101,8 @@ constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
 constexpr int64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
 constexpr int64_t MAX_TID = generate_max_value( NUM_BITS_TID );
 constexpr uint64_t MAX_SYN_ID = generate_max_value( NUM_BITS_SYN_ID );
-constexpr uint64_t DISABLED_GID = generate_max_value( NUM_BITS_GID );
-constexpr uint64_t MAX_GID = DISABLED_GID - 1;
+constexpr uint64_t DISABLED_NODE_ID = generate_max_value( NUM_BITS_NODE_ID );
+constexpr uint64_t MAX_NODE_ID = DISABLED_NODE_ID - 1;
 
 /**
  * Type for Time tics.
@@ -129,7 +129,7 @@ typedef size_t index;
 #ifndef SIZE_MAX
 #define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
 #endif
-const index invalid_index = SIZE_MAX;
+__attribute__( ( __unused__ ) ) const index invalid_index = SIZE_MAX;
 
 /**
  *  For enumerations of synapse types.
@@ -145,7 +145,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
 //! target index into thread local node vector
 typedef unsigned short targetindex;
 const targetindex invalid_targetindex = USHRT_MAX;
-const index max_targetindex = invalid_targetindex - 1;
+__attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
 
 /**
  * Thread index type.

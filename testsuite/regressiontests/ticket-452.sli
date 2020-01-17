@@ -50,7 +50,7 @@ M_ERROR setverbosity
 
  ResetKernel
                                     % 0.125 ms
- 0 << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetStatus
+ << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetKernelStatus
 
  model << /I_e 500.0  >> Create /n Set
  
@@ -58,12 +58,7 @@ M_ERROR setverbosity
    
  pg n 1.0 1.0 Connect
 
- /spike_detector 
-     <<
-      /withtime true   
-      /withgid false
-      /precise_times false  % problem was unrelated to setting
-    >> Create /sd Set
+ /spike_detector Create /sd Set
 
  n sd Connect
 
@@ -74,7 +69,7 @@ M_ERROR setverbosity
 } def 
 
 
-[/iaf_psc_delta_canon /iaf_psc_alpha_canon ]
+[/iaf_psc_delta_ps /iaf_psc_alpha_ps ]
 {
  {Run} exch prepend
  [

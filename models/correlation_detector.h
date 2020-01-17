@@ -39,6 +39,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup detector
+
 Name: correlation_detector - Device for evaluating cross correlation between
                              two spike sources
 
@@ -47,21 +50,23 @@ Description:
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-delta_tau. The result can be obtained via GetStatus under the key
+\f$ \delta_\tau \f$. The result can be obtained via GetStatus under the key
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors the
 Kahan summation algorithm is used when calculating the weighted histogram.
 (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-Both are arrays of 2*tau_max/delta_tau+1 values containing the histogram
-counts in the following way:
+Both are arrays of \f$ 2*\tau_{max}/\delta_\tau+1 \f$ values containing the
+histogram counts in the following way:
 
-Let t_{1,i} be the spike times of source 1,
-t_{2,j} the spike times of source 2.
-histogram[n] then contains the sum of products of the weight w_{1,i}*w_{2,j},
-count_histogram[n] contains 1 summed over all events with t_{2,j}-t_{1,i} in
+Let \f$ t_{1,i}\f$ be the spike times of source 1,
+\f$ t_{2,j} \f$ the spike times of source 2.
+histogram[n] then contains the sum of products of the weight
+\f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
+with\f$ t_{2,j}-t_{1,i} \f$ in
 
-[ n*delta_tau - tau_max - delta_tau/2 , n*delta_tau - tau_max + delta_tau/2 )
+   @f[ n*\delta_\tau - \tau_{max} - \delta_\tau/2 @f]
+   @f[ n*\delta_\tau - \tau_{max} + \delta_\tau/2 @f]
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
@@ -75,29 +80,44 @@ receptor_port = 1 will be used as spike source 2.
 
 Parameters:
 
-Tstart     double    - Time when to start counting events. This time should
-                       be set to at least start + tau_max in order to avoid
-                       edge effects of the correlation counts.
-Tstop      double    - Time when to stop counting events. This time should be
-                       set to at most Tsim - tau_max, where Tsim is the
-                       duration of simulation, in order to avoid edge effects
-                       of the correlation counts.
-delta_tau  double    - bin width in ms
-tau_max    double    - one-sided histogram width in ms. Events with
-                       differences in
-                       [-tau_max-delta_tau/2, tau_max+delta_tau/2)
-                       are counted.
-
-histogram            double vector, read-only  - raw, weighted cross
-                                                 correlation counts
-histogram_correction double_vector, read-only  - correction factors for kahan
-                                                 summation algorithm
-count_histogram      long vector, read-only    - raw, cross correlation
-                                                 counts
-n_events             integer vector            - number of events from source
-                                                 0 and 1. By setting n_events
-                                                 to [0 0], the histogram is
-                                                 cleared.
+\verbatim embed:rst
+==================== ========
+====================================================
+Tstart               real     Time when to start counting events. This time
+should
+                              be set to at least start + tau_max in order to
+avoid
+                              edge effects of the correlation counts.
+Tstop                real     Time when to stop counting events. This time
+should
+                              be set to at most Tsim - tau_max, where Tsim is
+the
+                              duration of simulation, in order to avoid edge
+                              effects of the correlation counts.
+delta_tau            ms       Bin width. This has to be an odd multiple of
+                              the resolution, to allow the symmetry between
+                              positive and negative time-lags.
+tau_max              ms       One-sided width. In the lower triagnular part
+                              events with differences in [0,
+tau_max+delta_tau/2)
+                              are counted. On the diagonal and in the upper
+                              triangular part events with differences in
+                              (0, tau_max+delta_tau/2].
+N_channels           integer  The number of pools. This defines the range of
+                              receptor_type. Default is 1.
+                              Setting N_channels clears count_covariance,
+                              covariance and n_events.
+histogram            squared  read-only - raw, weighted, cross-correlation
+counts
+                     synaptic Unit depends on model
+                     weights
+histogram_correction list of  read-only - Correction factors for kahan summation
+                     integers algoritm
+n_events             list of  Number of events from source 0 and 1. By setting
+                     integers n_events to [0,0], the histogram is cleared.
+==================== ========
+====================================================
+\endverbatim
 
 Remarks:
 
@@ -121,19 +141,25 @@ of State_, but are initialized by init_buffers_().
 
 Example:
 
-/s1 /spike_generator Create def
-/s2 /spike_generator Create def
-s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-/cd /correlation_detector Create def
-cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-s1 cd << /receptor_type 0 >> Connect
-s2 cd << /receptor_type 1 >> Connect
-10 Simulate
-cd [/n_events] get ==   --> [# 5 7 #]
-cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
-cd << /reset true >> SetStatus
-cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
+See Auto- and crosscorrelation functions for spike
+trains[cross_check_mip_corrdet.py]
+in pynest/examples.
+
+     SLI
+
+     /s1 /spike_generator Create def
+     /s2 /spike_generator Create def
+     s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
+     s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
+     /cd /correlation_detector Create def
+     cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
+     s1 cd << /receptor_type 0 >> Connect
+     s2 cd << /receptor_type 1 >> Connect
+     10 Simulate
+     cd [/n_events] get ==   --> [# 5 7 #]
+     cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
+     cd << /reset true >> SetStatus
+     cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
 
 Receives: SpikeEvent
 
@@ -163,6 +189,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -171,7 +203,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& ); //!< @todo implement if-else in term of function
+  void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
 
@@ -219,7 +251,6 @@ private:
 
   struct Parameters_
   {
-
     Time delta_tau_; //!< width of correlation histogram bins
     Time tau_max_;   //!< maximum time difference of events to detect
     Time Tstart_;    //!< start of recording
@@ -235,7 +266,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlation_detector& );
+    bool set( const DictionaryDatum&, const correlation_detector&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -272,7 +303,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool );
+    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -301,17 +332,15 @@ nest::correlation_detector::get_status( DictionaryDatum& d ) const
   device_.get_status( d );
   P_.get( d );
   S_.get( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 }
 
 inline void
 nest::correlation_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
-  const bool reset_required = ptmp.set( d, *this );
+  const bool reset_required = ptmp.set( d, *this, this );
   State_ stmp = S_;
-  stmp.set( d, P_, reset_required );
+  stmp.set( d, P_, reset_required, this );
 
   device_.set_status( d );
   P_ = ptmp;

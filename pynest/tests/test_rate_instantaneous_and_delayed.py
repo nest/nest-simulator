@@ -60,7 +60,6 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         multimeter = nest.Create(
             'multimeter', params={
                 'record_from': ['rate'],
-                'precision': 10,
                 'interval': dt})
 
         # record rates and connect neurons
@@ -70,11 +69,12 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
             multimeter, neurons, 'all_to_all', {'delay': 10.})
 
         nest.Connect(rate_neuron_drive, rate_neuron_1,
-                     'all_to_all', {'model': 'rate_connection_instantaneous',
-                                    'weight': weight})
+                     'all_to_all',
+                     {'synapse_model': 'rate_connection_instantaneous',
+                      'weight': weight})
 
         nest.Connect(rate_neuron_drive, rate_neuron_2,
-                     'all_to_all', {'model': 'rate_connection_delayed',
+                     'all_to_all', {'synapse_model': 'rate_connection_delayed',
                                     'delay': delay,
                                     'weight': weight})
 
@@ -85,9 +85,12 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         events = nest.GetStatus(multimeter)[0]['events']
         senders = events['senders']
 
-        rate_1 = np.array(events['rate'][np.where(senders == rate_neuron_1)])
-        times_2 = np.array(events['times'][np.where(senders == rate_neuron_2)])
-        rate_2 = np.array(events['rate'][np.where(senders == rate_neuron_2)])
+        rate_1 = np.array(events['rate'][
+            np.where(senders == rate_neuron_1.get('global_id'))])
+        times_2 = np.array(events['times'][
+            np.where(senders == rate_neuron_2.get('global_id'))])
+        rate_2 = np.array(events['rate'][
+            np.where(senders == rate_neuron_2.get('global_id'))])
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]

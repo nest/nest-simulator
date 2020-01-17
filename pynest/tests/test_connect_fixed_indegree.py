@@ -49,8 +49,8 @@ class TestFixedInDegree(TestParams):
     def testErrorMessages(self):
         got_error = False
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = True
-        conn_params['multapses'] = False
+        conn_params['allow_autapses'] = True
+        conn_params['allow_multapses'] = False
         conn_params['indegree'] = self.N1 + 1
         try:
             self.setUpNetwork(conn_params)
@@ -60,8 +60,8 @@ class TestFixedInDegree(TestParams):
 
     def testInDegree(self):
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = False
-        conn_params['multapses'] = False
+        conn_params['allow_autapses'] = False
+        conn_params['allow_multapses'] = False
         self.setUpNetwork(conn_params)
         # make sure the indegree is right
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
@@ -75,8 +75,8 @@ class TestFixedInDegree(TestParams):
 
     def testStatistics(self):
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = True
-        conn_params['multapses'] = True
+        conn_params['allow_autapses'] = True
+        conn_params['allow_multapses'] = True
         conn_params['indegree'] = self.C
         expected = hf.get_expected_degrees_fixedDegrees(
             self.C, 'in', self.N_s, self.N_t)
@@ -97,11 +97,11 @@ class TestFixedInDegree(TestParams):
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
 
         # test that autapses exist
         conn_params['indegree'] = N
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -111,11 +111,11 @@ class TestFixedInDegree(TestParams):
     def testAutapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
 
         # test that autapses were excluded
         conn_params['indegree'] = N - 1
-        conn_params['autapses'] = False
+        conn_params['allow_autapses'] = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -125,11 +125,11 @@ class TestFixedInDegree(TestParams):
     def testMultapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 3
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
 
         # test that multapses were drawn
         conn_params['indegree'] = N + 1
-        conn_params['multapses'] = True
+        conn_params['allow_multapses'] = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         nr_conns = len(hf.nest.GetConnections(pop, pop))
@@ -138,11 +138,11 @@ class TestFixedInDegree(TestParams):
     def testMultapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 3
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
 
         # test that no multapses exist
         conn_params['indegree'] = N
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)

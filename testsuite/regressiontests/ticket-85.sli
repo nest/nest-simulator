@@ -39,9 +39,8 @@ Author: Hans Ekkehard Plesser, 2015-11-23
 M_ERROR setverbosity
 
 /precise_models 
-  [ /iaf_psc_alpha_canon
-    /iaf_psc_alpha_presc
-    /iaf_psc_delta_canon
+  [ /iaf_psc_alpha_ps
+    /iaf_psc_delta_ps
     /iaf_psc_exp_ps
     /parrot_neuron_ps
   ]
@@ -55,7 +54,7 @@ precise_models
   {
     model Create
     model Create
-    /stdp_synapse Connect
+    << >> /stdp_synapse Connect
   } pass_or_die
 } forall
 
@@ -65,7 +64,7 @@ precise_models
   {
     dup ==
     model Create
-    GetStatus /tau_minus known
+    GetStatus 0 get /tau_minus known
   } assert_or_die
 } forall
 
@@ -78,15 +77,15 @@ precise_models
     ResetKernel
     /sg /spike_generator << /spike_times [ 10. ] >> Create def
     /n model Create def
-    /sd /spike_detector << /withtime true /precise_times true >> Create def
+    /sd /spike_detector Create def
     
     sg n 10000. 1. Connect
     n sd Connect
     
     20 Simulate
     
-    sd GetStatus /events get /times get dup length 1 sub get
-    n GetStatus /t_spike get
+    sd /events get /times get dup length 1 sub get
+    n /t_spike get
     eq
   } assert_or_die
 } forall
@@ -111,8 +110,8 @@ precise_models
     
     100. Simulate
     
-    << /source [ n1 ] >> GetConnections 
-    0 get GetStatus 
+    << /source n1 >> GetConnections 
+    0 get 
     /weight get
     ini_weight neq
   } assert_or_die

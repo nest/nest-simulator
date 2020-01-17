@@ -155,6 +155,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import warnings
+import nest
 
 __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
@@ -661,13 +662,14 @@ class ConnectionPattern(object):
 
     class _Connection(object):
 
-        def __init__(self, conninfo, layers, synapses, intensity, tcd, Vmem):
+        def __init__(self, conninfo, layers, synapses, tgt_model, intensity, tcd, Vmem):
             """
             Arguments:
             conninfo: list of connection info entries:
                       (sender,target,conn_dict)
             layers  : list of _LayerProps objects
             synapses: list of _SynProps objects
+            tgt_model: model of target neurons
             intensity: 'wp', 'p', 'tcd'
             tcd      : tcd object
             Vmem     : reference membrane potential for tcd calculations
@@ -694,6 +696,7 @@ class ConnectionPattern(object):
 
             # see if we connect to/from specific neuron types
             cdict = conninfo[2]
+            sdict = conninfo[3]
 
             if 'sources' in cdict:
                 if tuple(cdict['sources'].keys()) == ('model',):
@@ -716,7 +719,7 @@ class ConnectionPattern(object):
             # now get (mean) weight, we need this if we classify
             # connections by sign of weight only
             try:
-                self._mean_wght = _weighteval(cdict['weights'])
+                self._mean_wght = _weighteval(sdict['weight'])
             except:
                 raise ValueError('No or corrupt weight information.')
 
@@ -730,7 +733,7 @@ class ConnectionPattern(object):
                     self.synmodel = 'inh'
             else:
                 try:
-                    self.synmodel = cdict['synapse_model']
+                    self.synmodel = sdict['synapse_model']
                     if self.synmodel not in synapses:
                         raise Exception('Unknown synapse model "%s".'
                                         % self.synmodel)
@@ -740,20 +743,20 @@ class ConnectionPattern(object):
             # store information about connection
             try:
                 self._mask = cdict['mask']
-                self._kern = cdict['kernel']
-                self._wght = cdict['weights']
+                self._p_raw = cdict['p']
+                self._wght = sdict['weight']
                 # next line presumes only one layer name will match
                 self._textent = [tl.ext for tl in layers
                                  if tl.name == self.tlayer][0]
                 if intensity == 'tcd':
-                    self._tcd = tcd(self.synmodel, self.tnrn, Vmem)
+                    self._tcd = tcd(self.synmodel, tgt_model, Vmem)
                 else:
                     self._tcd = None
             except:
                 raise Exception('Corrupt connection dictionary')
 
             # prepare for lazy evaluation
-            self._kernel = None
+            self._p = None
 
         # --------------------------------------------------------------------
 
@@ -775,12 +778,12 @@ class ConnectionPattern(object):
         @property
         def kernval(self):
             """Kernel value, as masked array."""
-            if self._kernel is None:
-                self._kernel = _evalkernel(self._mask, self._kern,
-                                           self._mean_wght,
-                                           self._textent, self._intensity,
-                                           self._tcd)
-            return self._kernel
+            if self._p is None:
+                self._p = _evalkernel(self._mask, self._p_raw,
+                                      self._mean_wght,
+                                      self._textent, self._intensity,
+                                      self._tcd)
+            return self._p
 
         # --------------------------------------------------------------------
 
@@ -794,7 +797,7 @@ class ConnectionPattern(object):
         @property
         def kernel(self):
             """Dictionary describing the kernel."""
-            return self._kern
+            return self._p_raw
 
         # --------------------------------------------------------------------
 
@@ -1290,8 +1293,8 @@ class ConnectionPattern(object):
         """Configure synapse information based on connections and user info."""
 
         # compile information on synapse types and weights
-        synnames = set(c[2]['synapse_model'] for c in cList)
-        synweights = set(_weighteval(c[2]['weights']) for c in cList)
+        synnames = set(c[3]['synapse_model'] for c in cList)
+        synweights = set(_weighteval(c[3]['weight']) for c in cList)
 
         # set up synTypes for all pre-defined cases
         if synTypes:
@@ -1366,7 +1369,7 @@ class ConnectionPattern(object):
                    will be sorted in diagram in order of increasing numbers.
         """
         # extract layers to dict mapping name to extent
-        self._layers = [self._LayerProps(l[0], l[1]['extent']) for l in lList]
+        self._layers = [self._LayerProps(l[0], l[3]) for l in lList]
 
         # ensure layer names are unique
         lnames = [l.name for l in self._layers]
@@ -1393,7 +1396,10 @@ class ConnectionPattern(object):
         # everything in a dictionary, so we can find early instances.
         self._cTable = {}
         for conn in cList:
-            key, val = self._Connection(conn, self._layers, self._synAttr,
+            # Extract target model name
+            tgt_model = [layer_spec[1] for layer_spec in lList if layer_spec[0] == conn[1]][0]
+            print(tgt_model)
+            key, val = self._Connection(conn, self._layers, self._synAttr, tgt_model,
                                         intensity, tcd, Vmem).keyval
             if key:
                 if key in self._cTable:
@@ -1620,9 +1626,8 @@ class ConnectionPattern(object):
 
         # add decoration
         for block in _flattened(self._axes.elements):
-
             ax = f.add_axes(self._scaledBox(block),
-                            axisbg=plotParams.layer_bg[block.location],
+                            facecolor=plotParams.layer_bg[block.location],
                             xticks=[], yticks=[],
                             zorder=plotParams.z_layer)
             if hasattr(ax, 'frame'):
@@ -1648,7 +1653,7 @@ class ConnectionPattern(object):
                         continue  # should not happen
 
                     ax = f.add_axes(self._scaledBox(pb),
-                                    axisbg='none', xticks=[], yticks=[],
+                                    facecolor='none', xticks=[], yticks=[],
                                     zorder=plotParams.z_pop)
                     if hasattr(ax, 'frame'):
                         ax.frame.set_visible(False)
@@ -1841,7 +1846,7 @@ class ConnectionPattern(object):
                         cbax.set_yticks([])
 
                         # full-intensity color from color map
-                        cbax.set_axis_bgcolor(self._synAttr[syn].cmap(1.0))
+                        cbax.set_facecolor(self._synAttr[syn].cmap(1.0))
 
                         # narrower border
                         if hasattr(cbax, 'frame'):
@@ -1970,6 +1975,8 @@ class ConnectionPattern(object):
 
                 if isinstance(conn.kernel, (int, float)):
                     lfile.write(r'$%g$' % conn.kernel)
+                elif isinstance(conn.kernel, nest.Parameter):
+                    lfile.write(r'$<Parameter>$')
                 elif 'gaussian' in conn.kernel:
                     ckg = conn.kernel['gaussian']
                     lfile.write(r'$\mathcal{G}(p_0 = %g, \sigma = %g)$' %
@@ -2098,19 +2105,12 @@ def _kerneval(x, y, fun):
     Evaluate function given as topology style dict at
     (x,y). Assume x,y are 2d numpy matrices
     """
-
     if isinstance(fun, (float, int)):
         return float(fun) * np.ones(np.shape(x))
-    elif isinstance(fun, dict):
-        assert (len(fun) == 1)
-
-    if 'gaussian' in fun:
-        g = fun['gaussian']
-        p0 = g['p_center']
-        sig = g['sigma']
-        return p0 * np.exp(-0.5 * (x ** 2 + y ** 2) / sig ** 2)
-    else:
-        raise Exception('Unknown kernel "%s"', tuple(fun.keys())[0])
+    elif isinstance(fun, nest.Parameter):
+        # Create a single node in origo that we can apply the Parameter on.
+        origo_node = nest.Create('iaf_psc_alpha', positions=nest.spatial.free([[0., 0.]]))
+        return np.array([fun.apply(origo_node, list(np.column_stack((xn, yn)))) for xn, yn in zip(x, y)])
 
     # something very wrong
     raise Exception('Cannot handle kernel.')
@@ -2137,7 +2137,7 @@ def _addKernels(kList):
     assert (len(kList) > 0)
 
     if len(kList) < 2:
-        return kList[0].copy()
+        return kList[0].copy() if isinstance(kList[0], dict) else kList[0]
 
     d = np.ma.filled(kList[0], fill_value=0).copy()
     m = kList[0].mask.copy()

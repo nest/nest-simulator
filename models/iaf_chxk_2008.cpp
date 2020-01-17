@@ -31,6 +31,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -48,8 +49,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_chxk_2008 >
-  nest::iaf_chxk_2008::recordablesMap_;
+nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -62,14 +62,10 @@ void
 RecordablesMap< iaf_chxk_2008 >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_(
-    names::V_m, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::V_M > );
-  insert_(
-    names::g_ex, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_EXC > );
-  insert_(
-    names::g_in, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_INH > );
-  insert_(
-    names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
+  insert_( names::V_m, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::V_M > );
+  insert_( names::g_ex, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_EXC > );
+  insert_( names::g_in, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_INH > );
+  insert_( names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
 
   insert_( names::I_syn_ex, &iaf_chxk_2008::get_I_syn_exc_ );
   insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
@@ -82,18 +78,14 @@ RecordablesMap< iaf_chxk_2008 >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_chxk_2008_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::iaf_chxk_2008::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_chxk_2008& node =
-    *( reinterpret_cast< nest::iaf_chxk_2008* >( pnode ) );
+  const nest::iaf_chxk_2008& node = *( reinterpret_cast< nest::iaf_chxk_2008* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -106,8 +98,7 @@ nest::iaf_chxk_2008_dynamics( double,
   const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
-  f[ S::V_M ] = ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_
-                  + node.P_.I_e ) / node.P_.C_m;
+  f[ S::V_M ] = ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ S::DG_EXC ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
@@ -168,8 +159,7 @@ nest::iaf_chxk_2008::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=(
-  const State_& s )
+nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=( const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
   {
@@ -227,22 +217,22 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::g_L, g_L );
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
-  updateValue< double >( d, names::I_e, I_e );
-  updateValue< double >( d, names::tau_ahp, tau_ahp );
-  updateValue< double >( d, names::E_ahp, E_ahp );
-  updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, names::ahp_bug, ahp_bug );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
+  updateValueParam< double >( d, names::I_e, I_e, node );
+  updateValueParam< double >( d, names::tau_ahp, tau_ahp, node );
+  updateValueParam< double >( d, names::E_ahp, E_ahp, node );
+  updateValueParam< double >( d, names::g_ahp, g_ahp, node );
+  updateValueParam< bool >( d, names::ahp_bug, ahp_bug, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -260,9 +250,9 @@ nest::iaf_chxk_2008::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
 
 /* ----------------------------------------------------------------
@@ -329,8 +319,7 @@ nest::iaf_chxk_2008::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -379,13 +368,10 @@ nest::iaf_chxk_2008::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -430,8 +416,7 @@ nest::iaf_chxk_2008::update( Time const& origin,
       // neuron is not absolute refractory
 
       // Find precise spike time using linear interpolation
-      double sigma = ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_
-        / ( S_.y[ State_::V_M ] - vm_prev );
+      double sigma = ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_ / ( S_.y[ State_::V_M ] - vm_prev );
 
       double alpha = exp( -sigma / P_.tau_ahp );
 
@@ -477,16 +462,14 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // ensure conductance is positive
+  }
 }
 
 void
@@ -494,10 +477,8 @@ nest::iaf_chxk_2008::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
 
 void

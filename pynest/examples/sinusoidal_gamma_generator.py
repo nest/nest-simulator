@@ -20,11 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""
-Sinusoidal gamma generator example
-----------------------------------
+"""Sinusoidal gamma generator example
+--------------------------------------
 
-This script demonstrates the use of the `sinusoidal_gamma_generator` and its
+This script demonstrates the use of the ``sinusoidal_gamma_generator`` and its
 different parameters and modes. The source code of the model can be found in
 ``models/sinusoidal_gamma_generator.h``.
 
@@ -35,7 +34,6 @@ underlying gamma process and their resulting PST (Peristiumulus time) and ISI
 of the ``individual_spike_trains`` switch. In Part 2, the effects of
 different settings for rate, phase and frequency are demonstrated.
 
-KEYWORDS:
 """
 
 
@@ -60,10 +58,10 @@ nest.SetKernelStatus({'resolution': 0.01})
 
 
 ###############################################################################
-# Then we create two instances of the `sinusoidal_gamma_generator` with two
-# different orders of the underlying gamma process using `Create`. Moreover,
-# we create devices to record firing rates (`multimeter`) and spikes
-# (`spike_detector`) and connect them to the generators using `Connect`.
+# Then we create two instances of the ``sinusoidal_gamma_generator`` with two
+# different orders of the underlying gamma process using ``Create``. Moreover,
+# we create devices to record firing rates (``multimeter``) and spikes
+# (``spike_detector``) and connect them to the generators using ``Connect``.
 
 
 g = nest.Create('sinusoidal_gamma_generator', n=2,
@@ -72,9 +70,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
-                                           'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2, params={'withgid': False})
+m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', n=2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -83,18 +80,18 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the `spike_detector` using
-# `GetStatus` and plots are created with panels for the PST and ISI histograms.
+# After simulating, the spikes are extracted from the ``spike_detector`` using
+# ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
 
 colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus([m[j]])[0]['events']
+    ev = nest.GetStatus(m[j])[0]['events']
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus([s[j]])[0]['events']['times']
+    sp = nest.GetStatus(s[j])[0]['events']['times']
     plt.subplot(221)
     h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])
@@ -117,8 +114,8 @@ nest.SetKernelStatus({'local_num_threads': 4})
 
 
 ###############################################################################
-# First, a `sinusoidal_gamma_generator` with `individual_spike_trains` set to
-# ``True`` is created and connected to 20 parrot neurons whose spikes are
+# First, a ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to
+# `True` is created and connected to 20 parrot neurons whose spikes are
 # recorded by a spike detector. After simulating, a raster plot of the spikes
 # is created.
 
@@ -141,11 +138,11 @@ plt.yticks([])
 plt.title('Individual spike trains for each target')
 
 
-###############################################################################
+#################################################################################
 # The kernel is reset again and the whole procedure is repeated for a
-# `sinusoidal_gamma_generator` with `individual_spike_trains` set to ``False``.
+# ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to `False`.
 # The plot shows that in this case, all neurons receive the same spike train
-# from the `sinusoidal_gamma_generator`.
+# from the ``sinusoidal_gamma_generator``.
 
 
 nest.ResetKernel()
@@ -179,9 +176,8 @@ plt.title('One spike train for all targets')
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
-    nest.SetStatus([0], [{"resolution": dt}])
-    nest.SetStatus([0], [{"grng_seed": 256 * seed + 1}])
-    nest.SetStatus([0], [{"rng_seeds": [256 * seed + 2]}])
+    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
+                          "rng_seeds": [256 * seed + 2]})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')
@@ -201,6 +197,7 @@ def plot_hist(spikes):
              bins=np.arange(0., max(spikes['times']) + 1.5, 1.),
              histtype='step')
 
+
 t = 1000
 n = 1000
 dt = 1.0
@@ -216,8 +213,8 @@ fig = plt.figure(figsize=(15, 10))
 
 
 ###############################################################################
-# We simulate a `sinusoidal_gamma_generator` with default parameter values,
-# i.e. ``ac=0`` and the DC value being changed from 20 to 50 after ``t/2`` and
+# We simulate a ``sinusoidal_gamma_generator`` with default parameter values,
+# i.e. ``ac=0`` and the DC value being changed from 20 to 50 after `t/2` and
 # plot the number of spikes per second over time.
 
 
@@ -227,7 +224,7 @@ spikes = step(t, n,
               {'rate': 50.0, },
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 20
 exp[int(steps / 2):] *= 50
 plt.plot(exp, 'r')
@@ -236,8 +233,8 @@ plt.ylabel('Spikes per second')
 
 
 ###############################################################################
-# We simulate a `sinusoidal_gamma_generator` with the DC value being changed
-# from 80 to 40 after ``t/2`` and plot the number of spikes per second over
+# We simulate a ``sinusoidal_gamma_generator`` with the DC value being changed
+# from 80 to 40 after `t/2` and plot the number of spikes per second over
 # time.
 
 
@@ -249,7 +246,7 @@ spikes = step(t, n,
                'frequency': 0., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 80
 exp[int(steps / 2):] *= 40
 plt.plot(exp, 'r')
@@ -257,8 +254,8 @@ plt.title('DC rate: 80 -> 40')
 
 
 ###############################################################################
-# Next, we simulate a `sinusoidal_gamma_generator` with the AC value being
-# changed from 40 to 20 after ``t/2`` and plot the number of spikes per
+# Next, we simulate a ``sinusoidal_gamma_generator`` with the AC value being
+# changed from 40 to 20 after `t/2` and plot the number of spikes per
 # second over time.
 
 
@@ -282,9 +279,9 @@ plt.plot(exp, 'r')
 plt.title('Rate Modulation: 40 -> 20')
 
 
-###############################################################################
-# Finally, we simulate a `sinusoidal_gamma_generator` with a non-zero AC value
-# and the DC value being changed from 80 to 40 after ``t/2`` and plot the
+##################################################################################
+# Finally, we simulate a ``sinusoidal_gamma_generator`` with a non-zero AC value
+# and the DC value being changed from 80 to 40 after `t/2` and plot the
 # number of spikes per second over time.
 
 
@@ -310,8 +307,8 @@ plt.xlabel('Time [ms]')
 
 
 ###############################################################################
-# Simulate a `sinusoidal_gamma_generator` with the AC value being
-# changed from 0 to 40 after ``t/2`` and plot the number of spikes per
+# Simulate a ``sinusoidal_gamma_generator`` with the AC value being
+# changed from 0 to 40 after `t/2` and plot the number of spikes per
 # second over time.
 
 
@@ -322,7 +319,7 @@ spikes = step(t, n,
               seed=123, dt=1.)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = 40. * np.ones(steps / 2)
+exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
 exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
                                                      t / 1000. * np.pi * 20. /
                                                      (steps / 2))))
@@ -332,8 +329,8 @@ plt.xlabel('Time [ms]')
 
 
 ###############################################################################
-# Simulate a `sinusoidal_gamma_generator` with a phase shift at
-# ``t/2`` and plot the number of spikes per second over time.
+# Simulate a ``sinusoidal_gamma_generator`` with a phase shift at
+# `t/2` and plot the number of spikes per second over time.
 
 
 # Phase shift

@@ -35,6 +35,7 @@ fi
 
 FAILURES=0
 
+
 # Find all examples that have a line containing "autorun=true"
 # The examples can be found in subdirectory nest and in the 
 # examples installation path.
@@ -78,6 +79,7 @@ for i in $EXAMPLES ; do
 
     export NEST_DATA_PATH=$output_dir
     /usr/bin/time -f "$time_format" --quiet sh -c "$runner $example >$logfile 2>&1"
+
     if [ $? != 0 ] ; then
         echo "    FAILURE!"
         FAILURES=$(( $FAILURES + 1 ))

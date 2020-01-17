@@ -75,6 +75,7 @@ const int SLIInterpreter::M_ALL = 0;
 const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
+const int SLIInterpreter::M_PROGRESS = 15;
 const int SLIInterpreter::M_DEPRECATED = 18;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
@@ -85,6 +86,7 @@ const char* const SLIInterpreter::M_ALL_NAME = "";
 const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
+const char* const SLIInterpreter::M_PROGRESS_NAME = "Progress";
 const char* const SLIInterpreter::M_DEPRECATED_NAME = "Deprecated";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
@@ -111,7 +113,6 @@ SLIType SLIInterpreter::XIstreamtype;
 SLIType SLIInterpreter::Ostreamtype;
 SLIType SLIInterpreter::IntVectortype;
 SLIType SLIInterpreter::DoubleVectortype;
-SLIType SLIInterpreter::Iteratortype;
 
 // SLIType SLIInterpreter::IOstreamtype;
 
@@ -135,7 +136,6 @@ const IloopFunction SLIInterpreter::iloopfunction;
 const IrepeatFunction SLIInterpreter::irepeatfunction;
 const IforFunction SLIInterpreter::iforfunction;
 const IforallarrayFunction SLIInterpreter::iforallarrayfunction;
-const IforalliterFunction SLIInterpreter::iforalliterfunction;
 const IforallindexedarrayFunction SLIInterpreter::iforallindexedarrayfunction;
 const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
@@ -143,8 +143,6 @@ const IforallstringFunction SLIInterpreter::iforallstringfunction;
 void
 SLIInterpreter::inittypes( void )
 {
-  Iteratortype.settypename( "iteratortype" );
-  Iteratortype.setdefaultaction( datatypefunction );
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
   Doubletype.settypename( "doubletype" );
@@ -218,11 +216,8 @@ SLIInterpreter::initbuiltins( void )
   createcommand( irepeat_name, &SLIInterpreter::irepeatfunction );
   createcommand( ifor_name, &SLIInterpreter::iforfunction );
   createcommand( iforallarray_name, &SLIInterpreter::iforallarrayfunction );
-  createcommand( iforalliter_name, &SLIInterpreter::iforalliterfunction );
-  createcommand(
-    iforallindexedstring_name, &SLIInterpreter::iforallindexedstringfunction );
-  createcommand(
-    iforallindexedarray_name, &SLIInterpreter::iforallindexedarrayfunction );
+  createcommand( iforallindexedstring_name, &SLIInterpreter::iforallindexedstringfunction );
+  createcommand( iforallindexedarray_name, &SLIInterpreter::iforallindexedarrayfunction );
   createcommand( iforallstring_name, &SLIInterpreter::iforallstringfunction );
 
   createdouble( pi_name, numerics::pi );
@@ -257,15 +252,13 @@ SLIInterpreter::initexternals( void )
 FunctionDatum*
 SLIInterpreter::Ilookup( void ) const
 {
-  return new FunctionDatum(
-    ilookup_name, &SLIInterpreter::ilookupfunction, "" );
+  return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
 SLIInterpreter::Iiterate( void ) const
 {
-  return new FunctionDatum(
-    iiterate_name, &SLIInterpreter::iiteratefunction, "" );
+  return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
 
 void
@@ -283,9 +276,7 @@ SLIInterpreter::createdouble( Name const& n, double d )
  *  exists.
  */
 void
-SLIInterpreter::createcommand( Name const& n,
-  SLIFunction const* fn,
-  std::string deprecation_info )
+SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn, std::string deprecation_info )
 {
   if ( DStack->known( n ) )
   {
@@ -396,7 +387,6 @@ SLIInterpreter::SLIInterpreter( void )
   , irepeat_name( "::repeat" )
   , ifor_name( "::for" )
   , iforallarray_name( "::forall_a" )
-  , iforalliter_name( "::forall_iter" )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
@@ -536,28 +526,22 @@ SLIInterpreter::addmodule( SLIModule* m )
   }
   catch ( SLIException& e )
   {
-    message( M_ERROR,
-      "SLIInterpreter",
-      ( "An error occured while loading module " + m->name() ).c_str() );
+    message( M_ERROR, "SLIInterpreter", ( "An error occured while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     message( M_ERROR, "SLIInterpreter", e.message().c_str() );
     return;
   }
   catch ( std::exception& e )
   {
-    message( M_ERROR,
-      "SLIInterpreter",
-      ( "A C++ library exception occured while loading module " + m->name() )
-        .c_str() );
+    message(
+      M_ERROR, "SLIInterpreter", ( "A C++ library exception occured while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     return;
   }
   catch ( ... )
   {
-    message( M_ERROR,
-      "SLIInterpreter",
-      ( "An unspecified exception occured while loading module " + m->name() )
-        .c_str() );
+    message(
+      M_ERROR, "SLIInterpreter", ( "An unspecified exception occured while loading module " + m->name() ).c_str() );
     return;
   }
 
@@ -565,8 +549,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   // by sli-init.sli once all C++ stuff is loaded.
   if ( not( m->commandstring().empty() ) )
   {
-    ArrayDatum* ad =
-      dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
+    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
     assert( ad != NULL );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
@@ -581,8 +564,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
   // by sli-init.sli once all C++ stuff is loaded.
   if ( not( m->commandstring().empty() ) )
   {
-    ArrayDatum* ad =
-      dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
+    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
     assert( ad != NULL );
     ad->push_back( new StringDatum( m->commandstring() ) );
   }
@@ -637,8 +619,7 @@ SLIInterpreter::raiseerror( std::exception& err )
   Name caller = getcurrentname();
 
   assert( errordict != NULL );
-  errordict->insert(
-    "command", EStack.top() ); // store the func/trie that caused the error.
+  errordict->insert( "command", EStack.top() ); // store the func/trie that caused the error.
 
   // SLIException provide addtional information
   SLIException* slierr = dynamic_cast< SLIException* >( &err );
@@ -809,8 +790,7 @@ SLIInterpreter::terminate( int returnvalue )
   if ( returnvalue == -1 )
   {
     assert( statusdict->known( "exitcodes" ) );
-    DictionaryDatum exitcodes =
-      getValue< DictionaryDatum >( *statusdict, "exitcodes" );
+    DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
     returnvalue = getValue< long >( exitcodes, "fatal" );
   }
 
@@ -820,10 +800,7 @@ SLIInterpreter::terminate( int returnvalue )
 }
 
 void
-SLIInterpreter::message( int level,
-  const char from[],
-  const char text[],
-  const char errorname[] ) const
+SLIInterpreter::message( int level, const char from[], const char text[], const char errorname[] ) const
 {
 // Only one thread may write at a time.
 #ifdef _OPENMP
@@ -847,6 +824,10 @@ SLIInterpreter::message( int level,
       else if ( level >= M_DEPRECATED )
       {
         message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
+      }
+      else if ( level >= M_PROGRESS )
+      {
+        message( std::cout, M_PROGRESS_NAME, from, text, errorname );
       }
       else if ( level >= M_INFO )
       {
@@ -884,8 +865,7 @@ SLIInterpreter::message( std::ostream& out,
 
   std::strftime( timestring, buflen, "%b %d %H:%M:%S", std::localtime( &tm ) );
 
-  std::string msg =
-    String::compose( "%1 %2 [%3]: ", timestring, from, levelname );
+  std::string msg = String::compose( "%1 %2 [%3]: ", timestring, from, levelname );
   out << std::endl
       << msg << errorname;
 
@@ -940,9 +920,7 @@ SLIInterpreter::message( std::ostream& out,
       // If we've reached the width of the output we'll print
       // a lineshift regardless of whether '\n' is found or not.
       // The printing is done so that no word splitting occurs.
-      size_t space = text_str.find( ' ', i ) < text_str.find( '\n' )
-        ? text_str.find( ' ', i )
-        : text_str.find( '\n' );
+      size_t space = text_str.find( ' ', i ) < text_str.find( '\n' ) ? text_str.find( ' ', i ) : text_str.find( '\n' );
       // If no space is found (i.e. the last word) the space
       // variable is set to the end of the string.
       if ( space == std::string::npos )
@@ -1008,8 +986,7 @@ void
 SLIInterpreter::toggle_stack_display()
 {
   show_stack_ = not show_stack_;
-  std::string msg =
-    std::string( "Stack display is now " ) + ( show_stack_ ? "On" : "Off" );
+  std::string msg = std::string( "Stack display is now " ) + ( show_stack_ ? "On" : "Off" );
   message( M_INFO, "SLIInterpreter", msg.c_str() );
 }
 
@@ -1018,8 +995,7 @@ SLIInterpreter::backtrace_on()
 {
   show_backtrace_ = true;
   opt_tailrecursion_ = false;
-  std::string msg =
-    "Showing stack backtrace on error.  Disabling tail recursion optimization.";
+  std::string msg = "Showing stack backtrace on error.  Disabling tail recursion optimization.";
   message( M_INFO, "SLIInterpreter", msg.c_str() );
 }
 
@@ -1049,8 +1025,7 @@ SLIInterpreter::stack_backtrace( int n )
       continue;
     }
 
-    FunctionDatum* fd =
-      dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
+    FunctionDatum* fd = dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
     if ( fd != 0 )
     {
       fd->backtrace( this, p );
@@ -1166,8 +1141,7 @@ SLIInterpreter::debug_commandline( Token& next )
       }
       else
       {
-        std::cerr << "show: Unknown argument. Type 'help' for help."
-                  << std::endl;
+        std::cerr << "show: Unknown argument. Type 'help' for help." << std::endl;
       }
       continue;
     }
@@ -1177,26 +1151,22 @@ SLIInterpreter::debug_commandline( Token& next )
       if ( arg == "backtrace" )
       {
         show_backtrace_ = not show_backtrace_;
-        std::cerr << "Stack backtrace is now "
-                  << ( show_backtrace_ ? " On." : "Off." ) << std::endl;
+        std::cerr << "Stack backtrace is now " << ( show_backtrace_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "stack" )
       {
         show_stack_ = not show_stack_;
-        std::cerr << "Stack display is now "
-                  << ( show_stack_ ? " On." : "Off." ) << std::endl;
+        std::cerr << "Stack display is now " << ( show_stack_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "catch" )
       {
         catch_errors_ = not catch_errors_;
-        std::cerr << "Catch error mode is now "
-                  << ( catch_errors_ ? " On." : "Off." ) << std::endl;
+        std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "tailrecursion" || arg == "tail" )
       {
         opt_tailrecursion_ = not opt_tailrecursion_;
-        std::cerr << "Tail-recursion optimization is now "
-                  << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
+        std::cerr << "Tail-recursion optimization is now " << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
     }
     else if ( command == "list" || command == "l" )
@@ -1213,8 +1183,7 @@ SLIInterpreter::debug_commandline( Token& next )
     else if ( command == "catch" )
     {
       catch_errors_ = true;
-      std::cerr << "Catch error mode is now "
-                << ( catch_errors_ ? " On." : "Off." ) << std::endl;
+      std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
     }
     else if ( command == "where" || command == "w" )
     {
@@ -1262,9 +1231,7 @@ SLIInterpreter::debug_commandline( Token& next )
     }
     else
     {
-      std::cerr
-        << "Unknown command. Type 'help' for help, or 'quit' to leave debugger."
-        << std::endl;
+      std::cerr << "Unknown command. Type 'help' for help, or 'quit' to leave debugger." << std::endl;
     }
   } while ( true );
 
@@ -1335,8 +1302,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
 {
   int exitcode;
   assert( statusdict->known( "exitcodes" ) );
-  DictionaryDatum exitcodes =
-    getValue< DictionaryDatum >( *statusdict, "exitcodes" );
+  DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
   if ( SLIsignalflag != 0 )
   {
@@ -1395,8 +1361,7 @@ SLIInterpreter::execute_( size_t exitlevel )
 {
   int exitcode;
   assert( statusdict->known( "exitcodes" ) );
-  DictionaryDatum exitcodes =
-    getValue< DictionaryDatum >( *statusdict, "exitcodes" );
+  DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
   if ( SLIsignalflag != 0 )
   {

@@ -65,7 +65,7 @@ References:
  [2] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold 
      Integration with Continuous Spike Times in Discrete Time Neural Network 
      Simulations. Neural Computation 19:47--79
-SeeAlso: iaf_psc_alpha_canon, iaf_psc_alpha_presc, iaf_psc_delta_canon,  testsuite::test_iaf_ps_dc_t_accuracy
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_delta_ps,  testsuite::test_iaf_ps_dc_t_accuracy
 */
 
 (unittest) run
@@ -93,13 +93,13 @@ M_ERROR setverbosity
 %
 % Check if kernel accepts high precision
 %
-0 << 
+<< 
  /tics_per_ms min_exponent neg dexp 
  /resolution 0 dexp                   % 1 ms default 
->> SetStatus
+>> SetKernelStatus
 
 
-0 /ms_per_tic get frexp
+GetKernelStatus /ms_per_tic get frexp
 
 exch
 {0.5 eq} assert_or_die                  % base 2 tic size?
@@ -134,13 +134,12 @@ params begin userdict begin
  dexp /h Set
 
  ResetKernel          % resets tic base and computation time step
- 0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
+ << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
 
  [
-  /iaf_psc_alpha_canon 
-  /iaf_psc_alpha_presc
-  /iaf_psc_delta_canon  % this list can be extended
+  /iaf_psc_alpha_ps
+  /iaf_psc_delta_ps  % this list can be extended
  ]
  {Create dup params SetStatus} Map /neurons Set
 

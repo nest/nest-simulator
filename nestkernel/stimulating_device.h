@@ -34,38 +34,6 @@ class CurrentEvent;
 class DoubleDataEvent;
 class DelayedRateConnectionEvent;
 
-/** @BeginDocumentation
-
-   Name: StimulatingDevice - General properties of stimulating devices.
-
-   Description:
-
-   Stimulating devices inject signals into a network, either as analog signals
-   such a currents or as spike trains. Most stimulating devices are implemented
-   so that they are replicated on each virtual process. Many, but not all
-   devices generating noise or stochastic spike trains provide different signals
-   to each of their recipients; see the documentation of the individual device.
-
-   Stimulating devices share the start, stop, and origin parameters global to
-   devices. Start and stop have the following meaning for stimulating devices
-   (origin is just a global offset):
-   - For spike-emitting devices, only spikes with times t that fulfill
-       start < t <= stop
-     are emitted. Note that spikes that have time t==start are NOT emitted.
-   - For current-emitting devices, the current is activated and deactivated such
-     that the current first affects the target dynamics during the update step
-     (start, start+h], i.e., an effect can be recorded at the earliest at time
-     start+h. The last interval during which the current affects the target's
-     dynamics is (stop-h, stop].
-
-   Parameters:
-   /start  - Actication time, relative to origin.
-   /stop   - Inactivation time, relative to origin.
-   /origin - Reference time for start and stop.
-
-   SeeAlso: Device, RecordingDevice
-*/
-
 namespace nest
 {
 
@@ -160,8 +128,7 @@ StimulatingDevice< EmittedEvent >::StimulatingDevice()
 }
 
 template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice(
-  StimulatingDevice< EmittedEvent > const& sd )
+StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
   : Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
 {
@@ -184,12 +151,11 @@ StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
 
 template <>
 inline bool
-StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active(
-  const Time& T ) const
+StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active( const Time& T ) const
 {
   // same as for the CurrentEvent
   const long step = T.get_steps() + 1;
-  return get_t_min_() <= step && step < get_t_max_();
+  return get_t_min_() <= step and step < get_t_max_();
 }
 
 template <>
@@ -214,14 +180,12 @@ template < typename EmittedEvent >
 inline void
 StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 {
-  ( *d )[ names::element_type ] = LiteralDatum( names::stimulator );
   Device::get_status( d );
 }
 
 template < typename EmittedEvent >
 inline void
-nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type(
-  synindex syn_id )
+nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {

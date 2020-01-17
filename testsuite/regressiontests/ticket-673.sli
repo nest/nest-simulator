@@ -43,7 +43,7 @@ M_ERROR setverbosity
 {  
   /tref Set
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   << /I_e 1000. /t_ref tref >> Create /n Set
   /spike_detector Create /d Set
   n d Connect
@@ -52,10 +52,9 @@ M_ERROR setverbosity
 }
 def
 
-% iaf_psc_alpha_presc is not affected
 /models [
-  /iaf_psc_alpha_canon
-  /iaf_psc_delta_canon
+  /iaf_psc_alpha_ps
+  /iaf_psc_delta_ps
   /iaf_psc_exp_ps
 ] def
 

@@ -48,14 +48,14 @@ template < typename targetidentifierT >
 class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
 {
 private:
-  double weight_; //!< Synaptic weight
+  double weight_{ 1.0 }; //!< Synaptic weight
 
 public:
   //! Type to use for representing common synapse properties
-  typedef nest::CommonSynapseProperties CommonPropertiesType;
+  using CommonPropertiesType = nest::CommonSynapseProperties;
 
   //! Shortcut for base class
-  typedef nest::Connection< targetidentifierT > ConnectionBase;
+  using ConnectionBase = nest::Connection< targetidentifierT >;
 
   /**
    * Default Constructor.
@@ -63,14 +63,11 @@ public:
    */
   DropOddSpikeConnection()
     : ConnectionBase()
-    , weight_( 1.0 )
   {
   }
 
   //! Default Destructor.
-  ~DropOddSpikeConnection()
-  {
-  }
+  ~DropOddSpikeConnection() = default;
 
   /**
    * Helper class defining which types of events can be transmitted.
@@ -93,13 +90,13 @@ public:
   public:
     using nest::ConnTestDummyNodeBase::handles_test_event;
     nest::port
-    handles_test_event( nest::SpikeEvent&, nest::rport )
+    handles_test_event( nest::SpikeEvent&, nest::rport ) override
     {
       return nest::invalid_port_;
     }
 
     nest::port
-    handles_test_event( nest::DSSpikeEvent&, nest::rport )
+    handles_test_event( nest::DSSpikeEvent&, nest::rport ) override
     {
       return nest::invalid_port_;
     }
@@ -120,10 +117,7 @@ public:
    * @param receptor_type  Receptor type for connection
    */
   void
-  check_connection( nest::Node& s,
-    nest::Node& t,
-    nest::rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( nest::Node& s, nest::Node& t, nest::rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -163,9 +157,7 @@ public:
 
 template < typename targetidentifierT >
 inline void
-DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
-  nest::thread t,
-  const CommonPropertiesType& props )
+DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e, nest::thread t, const CommonPropertiesType& props )
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it
   {
@@ -183,8 +175,7 @@ DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
 
 template < typename targetidentifierT >
 void
-DropOddSpikeConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+DropOddSpikeConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, nest::names::weight, weight_ );
@@ -193,9 +184,7 @@ DropOddSpikeConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-DropOddSpikeConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  nest::ConnectorModel& cm )
+DropOddSpikeConnection< targetidentifierT >::set_status( const DictionaryDatum& d, nest::ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, nest::names::weight, weight_ );

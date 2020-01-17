@@ -39,6 +39,10 @@ namespace nest
 class Network;
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
+
 Name: gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
 with exponential postsynaptic currents and adaptation
 
@@ -50,7 +54,7 @@ described in [1].
 
 The single neuron model is defined by the hazard function
 
-   lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
+@f[ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ] @f]
 
 After each spike the membrane potential V_m is reset to V_reset. Spike
 frequency
@@ -86,42 +90,47 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_reset    double - Membrane potential is reset to this value in mV after a
-spike.
-V_T_star   double - Threshold level of the membrane potential in mV.
-E_L        double - Resting potential in mV
-Delta_V    double - Noise level of escape rate in mV.
-C_m        double - Capacitance of the membrane in pF.
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-I_e        double - Constant input current in pA.
-N          long   - Number of neurons in the population.
-len_kernel long   - Refractory effects are accounted for up to len_kernel
-time steps
-lambda_0   double - Firing rate at threshold in 1/s.
-tau_syn_ex double - Time constant for excitatory synaptic currents in ms.
-tau_syn_in double - Time constant for inhibitory synaptic currents in ms.
-tau_sfa    double vector  - Adaptation time constants in ms.
-q_sfa      double vector  - Adaptation kernel amplitudes in ms.
-BinoRand   bool   - If True, binomial random numbers are used, otherwise
-                    we use Poisson distributed spike counts.
+\verbatim embed:rst
+=========== ============= =====================================================
+ V_reset    mV            Membrane potential is reset to this value after
+                          a spike
+ V_T_star   mV            Threshold level of the membrane potential
+ E_L        mV            Resting potential
+ Delta_V    mV            Noise level of escape rate
+ C_m        pF            Capacitance of the membrane
+ tau_m      ms            Membrane time constant
+ t_ref      ms            Duration of refractory period
+ I_e        pA            Constant input current
+ N          integer       Number of neurons in the population
+ len_kernel integer       Refractory effects are accounted for up to len_kernel
+                          time steps
+ lambda_0   1/s           Firing rate at threshold
+ tau_syn_ex ms            Time constant for excitatory synaptic currents
+ tau_syn_in ms            Time constant for inhibitory synaptic currents
+ tau_sfa    list of ms    vector Adaptation time constants
+ q_sfa      list of ms    Adaptation kernel amplitudes
+ BinoRand   boolean        If True, binomial random numbers are used, otherwise
+                          we use Poisson distributed spike counts
+=========== ============= =====================================================
 
 
-Parameter translation to gif_psc_exp:
-
-gif_pop_psc_exp    gif_psc_exp     relation
-----------------------------------------------------
-tau_m              g_L             tau_m = C_m / g_L
-N                  ---             use N gif_psc_exp
-
+=============== ============  =============================
+**Parameter translation to gif_psc_exp**
+-----------------------------------------------------------
+gif_pop_psc_exp  gif_psc_exp  relation
+tau_m            g_L          \f$ tau_m = C_m / g_L \f$
+N                ---          use N gif_psc_exp
+=============== ============  =============================
+\endverbatim
 
 References:
 
-[1] Towards a theory of cortical columns: From spiking neurons to
-    interacting neural populations of finite size
-    Tilo Schwalger, Moritz Deger, Wulfram Gerstner
-    PLoS Comput Biol 2017
-    https://doi.org/10.1371/journal.pcbi.1005507
+\verbatim embed:rst
+.. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
+       columns: From spiking neurons to interacting neural populations of
+       finite size. PLoS Computational Biology.
+       https://doi.org/10.1371/journal.pcbi.1005507
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -183,7 +192,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Number of neurons in the population. */
     long N_;
 
@@ -230,9 +238,9 @@ private:
     /** Binomial random number switch */
     bool BinoRand_;
 
-    Parameters_();                      //!< Sets default parameter values
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_();                                  //!< Sets default parameter values
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -242,7 +250,6 @@ private:
    */
   struct State_
   {
-
     double y0_;        // DC input current
     double I_syn_ex_;  // synaptic current
     double I_syn_in_;  // synaptic current
@@ -257,7 +264,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -304,9 +311,8 @@ private:
 
     librandom::RngPtr rng_; // random number generator of own thread
 
-    librandom::PoissonRandomDev poisson_dev_; // Poisson random number generator
-    librandom::GSL_BinomialRandomDev
-      bino_dev_; // Binomial random number generator
+    librandom::PoissonRandomDev poisson_dev_;   // Poisson random number generator
+    librandom::GSL_BinomialRandomDev bino_dev_; // Binomial random number generator
 
     double x_;                     // internal variable of population dynamics
     double z_;                     // internal variable of population dynamics
@@ -384,10 +390,7 @@ private:
 };
 
 inline port
-gif_pop_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+gif_pop_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -416,8 +419,7 @@ gif_pop_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-gif_pop_psc_exp::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+gif_pop_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -442,10 +444,10 @@ gif_pop_psc_exp::get_status( DictionaryDatum& d ) const
 inline void
 gif_pop_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

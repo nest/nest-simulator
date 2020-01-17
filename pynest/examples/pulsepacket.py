@@ -36,9 +36,9 @@ References
 
 .. [1] Diesmann M. 2002. Dissertation. Conditions for stable propagation of
        synchronous spiking in cortical neural networks: Single neuron dynamics
-       and network properties, http://d-nb.info/968772781/34.
+       and network properties.
+       http://d-nb.info/968772781/34.
 
-KEYWORDS: spike volley, gaussian rate
 """
 
 
@@ -49,7 +49,6 @@ KEYWORDS: spike volley, gaussian rate
 import nest
 import numpy
 import pylab
-import array
 
 # Properties of pulse packet:
 
@@ -92,16 +91,18 @@ Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 # to a single input spike (the equation is given for example in Diesmann [1]_,
 # eq.2.3).
 # It expects:
-# * Time: a time array or a single time point (in sec)
-# * Tau_s and Tau_m: the synaptic and the membrane time constant (in sec)
-# * Cm: the membrane capacity (in Farad)
-# * Weight: the synaptic weight (in Ampere)
+#
+# * ``Time``: a time array or a single time point (in sec)
+# * ``Tau_s`` and ``Tau_m``: the synaptic and the membrane time constant (in sec)
+# * ``Cm``: the membrane capacity (in Farad)
+# * ``Weight``: the synaptic weight (in Ampere)
+#
 # It returns the provoked membrane potential (in mV)
 
 def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
-    term1 = (1 / (Tau_s) - 1 / (Tau_m))
-    term2 = numpy.exp(-Time / (Tau_s))
-    term3 = numpy.exp(-Time / (Tau_m))
+    term1 = (1 / Tau_s - 1 / Tau_m)
+    term2 = numpy.exp(-Time / Tau_s)
+    term3 = numpy.exp(-Time / Tau_m)
     PSP = (Weight / Cm * numpy.exp(1) / Tau_s *
            (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
     return PSP * 1e3
@@ -110,12 +111,14 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
 ###############################################################################
 # This function finds the exact location of the maximum of the PSP caused by a
 # single input spike. The location is obtained by setting the first derivative
-# of the equation for the PSP (see `make_psp()`) to zero. The resulting
-# equation can be expressed in terms of a LambertW function. This function is
+# of the equation for the PSP (see ``make_psp()``) to zero. The resulting
+# equation can be expressed in terms of a `LambertW function`. This function is
 # implemented in nest as a .sli file. In order to access this function in
-# PyNEST we called the function `nest.sli_func()`.
+# PyNEST we called the function ``nest.sli_func()``.
 # This function expects:
-# * Tau_s and Tau_m: the synaptic and membrane time constant (in sec)
+#
+# * ``Tau_s`` and ``Tau_m``: the synaptic and membrane time constant (in sec)
+#
 # It returns the location of the maximum (in sec)
 
 def find_loc_pspmax(tau_s, tau_m):
@@ -143,7 +146,7 @@ gauss = term1 * term2 * Convolution_resolution
 # (see Diesmann 2002, eq. 2.3).
 # Since we do that in discrete time steps, we first construct an array
 # (``t_psp``) that contains the time points we want to consider. Then, the
-# function `make_psp()` (that creates the PSP) takes the time array as its
+# function ``make_psp()`` (that creates the PSP) takes the time array as its
 # first argument.
 
 t_psp = numpy.arange(0, 10 * (Tau_m + Tau_s), Convolution_resolution)
@@ -153,9 +156,9 @@ psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 ###############################################################################
 # Now, we want to normalize the PSP amplitude to one. We therefore have to
 # divide the PSP by its maximum ([1]_ sec 6.1). The function
-# `find_loc_pspmax()` returns the exact time point (`t_pspmax`) when we
-# expect the maximum to occur. The function `make_psp()` calculates the
-# corresponding PSP value, which is our PSP amplitude (`psp_amp`).
+# ``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
+# expect the maximum to occur. The function ``make_psp()`` calculates the
+# corresponding PSP value, which is our PSP amplitude (``psp_amp``).
 
 t_pspmax = find_loc_pspmax(Tau_s, Tau_m)
 psp_amp = make_psp(t_pspmax, Tau_s, Tau_m, Cm, Weight)
@@ -164,18 +167,14 @@ psp_norm = psp / psp_amp
 
 ###############################################################################
 # Now we have all ingredients to compute the membrane potential excursion
-# (``U``). This calculation implies a convolution of the Gaussian with the
+# (`U`). This calculation implies a convolution of the Gaussian with the
 # normalized PSP (see [1]_, eq. 6.9). In order to avoid an offset in the
 # convolution, we need to add a pad of zeros on the left side of the
 # normalized PSP. Later on we want to compare our analytical results with the
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-
-tmp = numpy.zeros(2 * len(psp_norm))
-tmp[len(psp_norm) - 1:-1] += psp_norm
-psp_norm = tmp
-del tmp
+psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1])
 U = a * psp_amp * pylab.convolve(gauss, psp_norm)
 l = len(U)
 t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
@@ -188,10 +187,10 @@ t_U = (convolution_resolution * numpy.linspace(-l / 2., l / 2., l) +
 # Gaussian distribution.
 #
 # We reset the Kernel, define the simulation resolution and set the
-# verbosity using `set_verbosity()` to suppress info messages.
+# verbosity using ``set_verbosity`` to suppress info messages.
 
 nest.ResetKernel()
-nest.SetStatus([0], [{'resolution': simulation_resolution}])
+nest.SetKernelStatus({'resolution': simulation_resolution})
 nest.set_verbosity("M_WARNING")
 
 
@@ -210,20 +209,15 @@ neuron_pars = {
     'E_L': V0,
     'V_reset': V0,
     'V_m': V0
-    }
+}
 neurons = nest.Create('iaf_psc_alpha', n_neurons, neuron_pars)
 ppg_pars = {
     'pulse_times': [pulsetime],
     'activity': a,
     'sdev': sdev
-    }
+}
 ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
-vm_pars = {
-    'record_to': ['memory'],
-    'withtime': True,
-    'withgid': True,
-    'interval': sampling_resolution
-    }
+vm_pars = {'interval': sampling_resolution}
 vm = nest.Create('voltmeter', 1, vm_pars)
 
 
@@ -231,12 +225,12 @@ vm = nest.Create('voltmeter', 1, vm_pars)
 # Now, we connect each pulse generator to one neuron via static synapses.
 # We want to keep all properties of the static synapse constant except the
 # synaptic weight. Therefore we change the weight with  the help of the command
-# `SetDefaults()`.
-# The command `Connect` connects all kinds of nodes/devices. Since multiple
+# ``SetDefaults``.
+# The command ``Connect`` connects all kinds of nodes/devices. Since multiple
 # nodes/devices can be connected in different ways e.g., each source connects
 # to all targets, each source connects to a subset of targets or each source
 # connects to exactly one target, we have to specify the connection. In our
-# case we use the ``one-to-one`` connection routine since we connect one pulse
+# case we use the ``one_to_one`` connection routine since we connect one pulse
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
@@ -254,13 +248,13 @@ nest.Simulate(simtime)
 ###############################################################################
 # Finally, we record the membrane potential, when it occurred and to which
 # neuron it belongs. We obtain this information using the command
-# `nest.GetStatus(vm, 'events')[0]`. The sender and the time point of a voltage
-# data point at position x in the voltage array (`V_m`), can be found at the
+# ``nest.GetStatus(vm, 'events')[0]``. The sender and the time point of a voltage
+# data point at position x in the voltage array (``V_m``), can be found at the
 # same position x in the sender (`senders`) and the time array (`times`).
 
-Vm = nest.GetStatus(vm, 'events')[0]['V_m']
-times = nest.GetStatus(vm, 'events')[0]['times']
-senders = nest.GetStatus(vm, 'events')[0]['senders']
+Vm = vm.get('events', 'V_m')
+times = vm.get('events', 'times')
+senders = vm.get('events', 'senders')
 
 
 ###############################################################################
@@ -279,7 +273,7 @@ pylab.plot(t_U, U + V0, 'r', lw=2, zorder=3, label='analytical solution')
 # Then we plot all individual membrane potentials.
 # The time axes is the range of the simulation time in steps of ms.
 
-Vm_single = [Vm[senders == ii] for ii in neurons]
+Vm_single = [Vm[senders == n.get('global_id')] for n in neurons]
 simtimes = numpy.arange(1, simtime)
 for idn in range(n_neurons):
     if idn == 0:
@@ -300,3 +294,4 @@ pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
 pylab.xlim((-5 * (tau_m + tau_s) + pulsetime,
             10 * (tau_m + tau_s) + pulsetime))
+pylab.show()

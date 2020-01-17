@@ -23,8 +23,8 @@
 import unittest
 import numpy as np
 import scipy.stats
-import test_connect_helpers as hf
-from test_connect_parameters import TestParams
+from . import test_connect_helpers as hf
+from . test_connect_parameters import TestParams
 
 
 @hf.nest.ll_api.check_stack
@@ -71,7 +71,7 @@ class TestAllToAll(TestParams):
             hf.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayWithoutAutapses(self):
-        self.conn_dict['autapses'] = False
+        self.conn_dict['allow_autapses'] = False
         for label in ['weight', 'delay']:
             syn_params = {}
             if label == 'weight':
@@ -103,7 +103,7 @@ class TestAllToAll(TestParams):
 
     def testInputArrayToStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
-        syn_params = {'model': 'stdp_synapse'}
+        syn_params = {'synapse_model': 'stdp_synapse'}
         values = [
             np.arange(self.N1 * self.N2, dtype=float).reshape(self.N2, self.N1)
             for i in range(6)
@@ -125,7 +125,7 @@ class TestAllToAll(TestParams):
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
         self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
-        syn_params = {'model': 'static_synapse'}
+        syn_params = {'synapse_model': 'static_synapse'}
         syn_params['receptor_type'] = {
             'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)

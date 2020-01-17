@@ -40,6 +40,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: step_current_generator - provides a piecewise constant DC input current
 
 Description:
@@ -51,10 +54,15 @@ specified times. The unit of the current is pA.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-amplitude_times   list of doubles - Times at which current changes in ms
-amplitude_values  list of doubles - Amplitudes of step current current in
-                                    pA
-allow_offgrid_times  bool - Default false
+
+\verbatim embed:rst
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
+\endverbatim
+
   If false, times will be rounded to the nearest step if they are
   less than tic/2 from the step, otherwise NEST reports an error.
   If true,  times are rounded to the nearest step if within tic/2
@@ -71,11 +79,12 @@ which typically would not fall onto simulation time steps.
 Examples:
 
 The current can be altered in the following way:
-/step_current_generator Create /sc Set
-sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
 
-The amplitude of the DC will be 0.0 pA in the time interval [0, 0.2),
-2.0 pA in the interval [0.2, 0.5) and 4.0 from then on.
+    /step_current_generator Create /sc Set
+    sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+
+    The amplitude of the DC will be 0.0 pA in the time interval [0, 0.2),
+    2.0 pA in the interval [0.2, 0.5) and 4.0 from then on.
 
 Sends: CurrentEvent
 
@@ -97,6 +106,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -108,13 +130,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );
@@ -146,7 +161,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_& );
+    void set( const DictionaryDatum&, Buffers_&, Node* );
 
     /**
      * Return time as Time object if valid, otherwise throw BadProperty
@@ -204,10 +219,7 @@ private:
 };
 
 inline port
-step_current_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+step_current_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -218,8 +230,7 @@ step_current_generator::send_test_event( Node& target,
 }
 
 inline port
-step_current_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -240,8 +251,8 @@ step_current_generator::get_status( DictionaryDatum& d ) const
 inline void
 step_current_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, B_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, B_, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

@@ -70,6 +70,7 @@ target_include_directories( nest PRIVATE
     ${SLI_MODULE_INCLUDE_DIRS}
     )
 
+
 target_compile_definitions( nest PRIVATE
     -D_BUILD_NEST_CLI
 )
@@ -84,6 +85,7 @@ target_include_directories( nest_lib PRIVATE
     ${SLI_MODULE_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
     )
+
 
 if ( HAVE_PYTHON )
   target_compile_definitions( nest_lib PRIVATE

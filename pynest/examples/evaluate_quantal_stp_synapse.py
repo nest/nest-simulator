@@ -22,19 +22,19 @@
 """Example for the quantal_stp_synapse
 -----------------------------------------
 
-The quantal_stp_synapse is a stochastic version of the Tsodys-Markram model
+The ``quantal_stp_synapse`` is a stochastic version of the Tsodys-Markram model
 for synaptic short term plasticity (STP).
 This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to the quantal release model described by Fuhrmann et
-al. [1] and Loebel et al. [2].
+al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
 available release sites.  This fraction is binomialy distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
-2002 [3].
+2002 [3]_.
 
 The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
@@ -44,34 +44,29 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-* U          double - Maximal fraction of available resources [0,1],
-                      default=0.5
-* u          double - available fraction of resources [0,1], default=0.5
-* p          double - probability that a vesicle is available, default = 1.0
-* n          long - total number of release sites, default = 1
-* a          long - number of available release sites, default = n
-* tau_rec    double - time constant for depression in ms, default=800 ms
-* tau_rec    double - time constant for facilitation in ms, default=0 (off)
+* U         - Maximal fraction of available resources [0,1], default=0.5
+* u         - available fraction of resources [0,1], default=0.5
+* p         - probability that a vesicle is available, default = 1.0
+* n         - total number of release sites, default = 1
+* a         - number of available release sites, default = n
+* tau_rec   - time constant for depression in ms, default=800 ms
+* tau_rec   - time constant for facilitation in ms, default=0 (off)
 
 
 References
 ~~~~~~~~~~~~~
 
-.. [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
-       information by activity-dependent synapses. Journal of Neurophysiology.
+.. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
 .. [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
        M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
        the distribution of synaptic efficacies in the neocortex. Frontiers
        in Computational Neuroscience, 3:27. doi:10.3389/neuro.10.027.
-.. [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
+.. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
+       Neural Networks, 15(2), 155-161.
+       http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 import nest
 import nest.voltage_trace
@@ -80,8 +75,8 @@ import pylab
 
 nest.ResetKernel()
 
-###############################################################################
-# On average, the quantal_stp_synapse converges to the tsodyks2_synapse,
+################################################################################
+# On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
 #
 # First we define the number of trials as well as the number of release sites.
@@ -126,19 +121,18 @@ neuron = nest.Create("iaf_psc_exp", 3)
 ###############################################################################
 # The connection from neuron 1 to neuron 2 is a deterministic synapse.
 
-nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks2_synapse")
 
 ###############################################################################
 # The connection from neuron 1 to neuron 3 has a stochastic
-# quantal_stp_synapse.
+# ``quantal_stp_synapse``.
 
-nest.Connect([neuron[0]], [neuron[2]], syn_spec="quantal_stp_synapse")
+nest.Connect(neuron[0], neuron[2], syn_spec="quantal_stp_synapse")
 
 ###############################################################################
 # The voltmeter will show us the synaptic responses in neurons 2 and 3.
 
 voltmeter = nest.Create("voltmeter", 2)
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 ###############################################################################
 # One dry run to bring all synapses into their rest state.
@@ -146,25 +140,26 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 # simulations this problem does not show, but in small simulations like
 # this, we would see it.
 
-nest.SetStatus([neuron[0]], "I_e", 376.0)
+nest.SetStatus(neuron[0], "I_e", 376.0)
+
 nest.Simulate(500.0)
-nest.SetStatus([neuron[0]], "I_e", 0.0)
+nest.SetStatus(neuron[0], "I_e", 0.0)
 nest.Simulate(1000.0)
 
 ###############################################################################
-# Only now do we connect the voltmeter to the neurons.
+# Only now do we connect the ``voltmeter`` to the neurons.
 
-nest.Connect([voltmeter[0]], [neuron[1]])
-nest.Connect([voltmeter[1]], [neuron[2]])
+nest.Connect(voltmeter[0], neuron[1])
+nest.Connect(voltmeter[1], neuron[2])
 
 ###############################################################################
-# This loop runs over the n_trials trials and performs a standard protocol
+# This loop runs over the `n_trials` trials and performs a standard protocol
 # of a high-rate response, followed by a pause and then a recovery response.
 
 for t in range(n_trials):
-    nest.SetStatus([neuron[0]], "I_e", 376.0)
+    nest.SetStatus(neuron[0], "I_e", 376.0)
     nest.Simulate(500.0)
-    nest.SetStatus([neuron[0]], "I_e", 0.0)
+    nest.SetStatus(neuron[0], "I_e", 0.0)
     nest.Simulate(1000.0)
 
 ###############################################################################
@@ -174,9 +169,8 @@ nest.Simulate(.1)
 
 ###############################################################################
 # Extract the reference trace.
-
-vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus(voltmeter[0], 'events')[0]['V_m'])
 
 vm.shape = (n_trials, 1500)
 vm_reference.shape = (n_trials, 1500)
@@ -186,12 +180,12 @@ vm_reference.shape = (n_trials, 1500)
 
 vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                          for (i, j) in enumerate(vm_reference[0, :])])
+                           for (i, j) in enumerate(vm_reference[0, :])])
 pylab.plot(vm_mean)
 pylab.plot(vm_ref_mean)
 
 ###############################################################################
 # Finally, print the mean-suqared error between the trial-average and the
-# reference trace. The value should be < 10^-9.
+# reference trace. The value should be `< 10^-9`.
 
 print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

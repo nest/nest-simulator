@@ -55,10 +55,14 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int
-hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
+extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup hh
+@ingroup psc
+@ingroup clopath_n
+
 Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
 Clopath synapse.
 
@@ -82,39 +86,51 @@ it is considered a spike.
 Parameters:
 
 The following parameters can be set in the status dictionary.
+\verbatim embed:rst
+=========== ======  ===================================================
+**Dynamic state variables**
+-----------------------------------------------------------------------
+V_m         mV      Membrane potential
+u_bar_plus  mV      Low-pass filtered Membrane potential
+u_bar_minus mV      Low-pass filtered Membrane potential
+u_bar_bar   mV      Low-pass filtered u_bar_minus
+=========== ======  ===================================================
 
-Dynamic state variables:
-V_m          double - Membrane potential in mV.
-u_bar_plus   double - Low-pass filtered Membrane potential in mV.
-u_bar_minus  double - Low-pass filtered Membrane potential in mV.
-u_bar_bar    double - Low-pass filtered u_bar_minus in mV.
+=========== ======  ===========================================================
+**Membrane Parameters**
+-------------------------------------------------------------------------------
+E_L         mV      Leak reversal potential
+C_m         pF      Capacity of the membrane
+g_L         nS      Leak conductance
+tau_ex      ms      Rise time of the excitatory synaptic alpha function
+tau_in      ms      Rise time of the inhibitory synaptic alpha function
+E_Na        mV      Sodium reversal potential
+g_Na        nS      Sodium peak conductance
+E_K         mV      Potassium reversal potential
+g_K         nS      Potassium peak conductance
+Act_m       real    Activation variable m
+Inact_h     real    Inactivation variable h
+Act_n       real    Activation variable n
+I_e         pA      External input current
+=========== ======  ===========================================================
 
-Model parameters:
-E_L        double - Resting membrane potential in mV.
-g_L        double - Leak conductance in nS.
-C_m        double - Capacity of the membrane in pF.
-tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
-tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
-E_Na       double - Sodium reversal potential in mV.
-g_Na       double - Sodium peak conductance in nS.
-E_K        double - Potassium reversal potential in mV.
-g_K        double - Potassium peak conductance in nS.
-Act_m      double - Activation variable m
-Act_h      double - Activation variable h
-Inact_n    double - Inactivation variable n
-I_e        double - Constant external input current in pA.
+============= ======= =======================================================
+**Clopath rule parameters**
+-----------------------------------------------------------------------------
+A_LTD         1/mV    Amplitude of depression
+A_LTP         1/mV^2  Amplitude of facilitation
+theta_plus    mV      Threshold for u
+theta_minus   mV      Threshold for u_bar_[plus/minus]
+A_LTD_const   boolean Flag that indicates whether `A_LTD_` should
+                      be constant (true, default) or multiplied by
+                      u_bar_bar^2 / u_ref_squared (false).
+delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
+                      to compute the synaptic weights.
+U_ref_squared real    Reference value for u_bar_bar_^2.
+============= ======= =======================================================
 
-Clopath rule parameters:
-A_LTD        double - Amplitude of depression in 1/mV.
-A_LTP        double - Amplitude of facilitation in 1/mV^2.
-theta_plus   double - threshold for u in mV.
-theta_minus  double - threshold for u_bar_[plus/minus] in mV.
-A_LTD_const  bool   - Flag that indicates whether A_LTD_ should
-                       be constant (true, default) or multiplied by
-                       u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  double - Delay with which u_bar_[plus/minus] are processed
-                       to compute the synaptic weights.
-U_ref_squared double - Reference value for u_bar_bar_^2.
+\endverbatim
+
 
 Problems/Todo:
 
@@ -123,32 +139,27 @@ initial wavelet/spike at simulation onset
 
 References:
 
-Spiking Neuron Models:
-Single Neurons, Populations, Plasticity
-Wulfram Gerstner, Werner Kistler,  Cambridge University Press
-
-Theoretical Neuroscience:
-Computational and Mathematical Modeling of Neural Systems
-Peter Dayan, L. F. Abbott, MIT Press (parameters taken from here)
-
-Hodgkin, A. L. and Huxley, A. F.,
-A Quantitative Description of Membrane Current
-and Its Application to Conduction and Excitation in Nerve,
-Journal of Physiology, 117, 500-544 (1952)
-
-Clopath et al., Connectivity reflects coding:
-a model of voltage-based STDP with homeostasis.
-Nature Neuroscience, 13:3, 344-352  (2010)
-
-Clopath and Gerstner, Voltage and spike timing interact
-in STDP – a unified model.
-Front. Synaptic Neurosci., 2:25, (2010)
-doi: 10.3389/fnsyn.2010.00025
-
-Voltage-based STDP synapse (Clopath et al. 2010) connected to a Hodgkin-Huxley
-neuron on ModelDB:
-https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2fmode
-  ldb_package%2fstdp_cc.mod
+\verbatim embed:rst
+.. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
+       populations, plasticity. New York: Cambridge university press.
+.. [2] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
+       and Mathematical Modeling of Neural Systems. Cambridge, MA: MIT Press.
+       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127
+.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
+       membrane current and its application to conduction and excitation in
+       nerve. The Journal of Physiology 117.
+       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
+.. [4] Clopath et al. (2010). Connectivity reflects coding: a model of
+       voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
+       DOI: https://doi.org/10.1038/nn.2479
+.. [5] Clopath and Gerstner (2010). Voltage and spike timing interact
+       in STDP – a unified model. Frontiers in Synaptic Neuroscience. 2:25
+       DOI: https://doi.org/10.3389/fnsyn.2010.00025
+.. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
+       Hodgkin-Huxley neuron on ModelDB:
+       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
+       =%2fmodeldb_package%2fstdp_cc.mod
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -199,8 +210,7 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int
-  hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
+  friend int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friend to access the State_ class/member
   friend class RecordablesMap< hh_psc_alpha_clopath >;
@@ -212,25 +222,25 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_;    //!< refractory time in ms
-    double g_Na;      //!< Sodium Conductance in nS
-    double g_K;       //!< Potassium Conductance in nS
-    double g_L;       //!< Leak Conductance in nS
-    double C_m;       //!< Membrane Capacitance in pF
-    double E_Na;      //!< Sodium Reversal Potential in mV
-    double E_K;       //!< Potassium Reversal Potential in mV
-    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE;  //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI;  //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;       //!< Constant Current in pA
-    double tau_plus;  //!< time constant of u_bar_plus in ms
-    double tau_minus; //!< time constant of u_bar_minus in ms
+    double t_ref_;      //!< refractory time in ms
+    double g_Na;        //!< Sodium Conductance in nS
+    double g_K;         //!< Potassium Conductance in nS
+    double g_L;         //!< Leak Conductance in nS
+    double C_m;         //!< Membrane Capacitance in pF
+    double E_Na;        //!< Sodium Reversal Potential in mV
+    double E_K;         //!< Potassium Reversal Potential in mV
+    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;    //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;    //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;         //!< Constant Current in pA
+    double tau_plus;    //!< time constant of u_bar_plus in ms
+    double tau_minus;   //!< time constant of u_bar_minus in ms
     double tau_bar_bar; //!< time constant of u_bar_bar in ms
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -243,7 +253,6 @@ public:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -276,7 +285,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -287,9 +296,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&,
-      hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_clopath& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_clopath > logger_;
@@ -305,10 +313,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -361,10 +368,7 @@ private:
 
 
 inline port
-hh_psc_alpha_clopath::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+hh_psc_alpha_clopath::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -394,8 +398,7 @@ hh_psc_alpha_clopath::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+hh_psc_alpha_clopath::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -418,9 +421,9 @@ inline void
 hh_psc_alpha_clopath::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

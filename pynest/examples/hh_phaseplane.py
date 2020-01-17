@@ -23,7 +23,7 @@
 ----------------------------------------------------------------
 
 hh_phaseplane makes a numerical phase-plane analysis of the Hodgkin-Huxley
-neuron (iaf_psc_alpha). Dynamics is investigated in the V-n space (see remark
+neuron (``hh_psc_alpha``). Dynamics is investigated in the V-n space (see remark
 below). A constant DC can be specified  and its influence on the nullclines
 can be studied.
 
@@ -32,18 +32,9 @@ Remark
 
 To make the two-dimensional analysis possible, the (four-dimensional)
 Hodgkin-Huxley formalism needs to be artificially reduced to two dimensions,
-in this case by 'clamping' the two other variables, m an h, to
-constant values (m_eq and h_eq).
+in this case by 'clamping' the two other variables, `m` and `h`, to
+constant values (`m_eq` and `h_eq`).
 
-References
-~~~~~~~~~~~
-
-See Also
-~~~~~~~~~~
-
-:Authors:
-
-KEYWORDS:
 """
 
 import nest
@@ -77,7 +68,7 @@ neuron = nest.Create('hh_psc_alpha')
 nest.Simulate(1000)
 
 m_eq = nest.GetStatus(neuron)[0]['Act_m']
-h_eq = nest.GetStatus(neuron)[0]['Act_h']
+h_eq = nest.GetStatus(neuron)[0]['Inact_h']
 
 nest.SetStatus(neuron, {'I_e': amplitude})  # Apply external current
 
@@ -94,37 +85,37 @@ count = 0
 for i, V in enumerate(V_vec):
     for j, n in enumerate(n_vec):
         # Set V_m and n
-        nest.SetStatus(neuron, {'V_m': V, 'Inact_n': n,
-                                'Act_m': m_eq, 'Act_h': h_eq})
+        nest.SetStatus(neuron, {'V_m': V, 'Act_n': n,
+                                'Act_m': m_eq, 'Inact_h': h_eq})
         # Find state
         V_m = nest.GetStatus(neuron)[0]['V_m']
-        Inact_n = nest.GetStatus(neuron)[0]['Inact_n']
+        Act_n = nest.GetStatus(neuron)[0]['Act_n']
 
         # Simulate a short while
         nest.Simulate(dt)
 
         # Find difference between new state and old state
         V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V
-        Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n
+        Act_n_new = nest.GetStatus(neuron)[0]['Act_n'] - n
 
         # Store in vector for later analysis
         V_matrix[j, i] = abs(V_m_new)
-        n_matrix[j, i] = abs(Inact_n_new)
-        pp_data[count] = np.array([V_m, Inact_n, V_m_new, Inact_n_new])
+        n_matrix[j, i] = abs(Act_n_new)
+        pp_data[count] = np.array([V_m, Act_n, V_m_new, Act_n_new])
 
         if count % 10 == 0:
             # Write updated state next to old state
             print('')
             print('Vm:  \t', V_m)
             print('new Vm:\t', V_m_new)
-            print('Inact_n:', Inact_n)
-            print('new Inact_n:', Inact_n_new)
+            print('Act_n:', Act_n)
+            print('new Act_n:', Act_n_new)
 
         count += 1
 
 # Set state for AP generation
-nest.SetStatus(neuron, {'V_m': -34., 'Inact_n': 0.2,
-                        'Act_m': m_eq, 'Act_h': h_eq})
+nest.SetStatus(neuron, {'V_m': -34., 'Act_n': 0.2,
+                        'Act_m': m_eq, 'Inact_h': h_eq})
 
 print('')
 print('AP-trajectory')
@@ -134,16 +125,16 @@ ap = np.zeros([1000, 2])
 for i in range(1, 1001):
     # Find state
     V_m = nest.GetStatus(neuron)[0]['V_m']
-    Inact_n = nest.GetStatus(neuron)[0]['Inact_n']
+    Act_n = nest.GetStatus(neuron)[0]['Act_n']
 
     if i % 10 == 0:
         # Write new state next to old state
         print('Vm: \t', V_m)
-        print('Inact_n:', Inact_n)
-    ap[i - 1] = np.array([V_m, Inact_n])
+        print('Act_n:', Act_n)
+    ap[i - 1] = np.array([V_m, Act_n])
 
     # Simulate again
-    nest.SetStatus(neuron, {'Act_m': m_eq, 'Act_h': h_eq})
+    nest.SetStatus(neuron, {'Act_m': m_eq, 'Inact_h': h_eq})
     nest.Simulate(dt)
 
 # Make analysis

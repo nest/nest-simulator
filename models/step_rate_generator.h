@@ -40,6 +40,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: step_rate_generator - provides a piecewise constant input rate
 
 Description:
@@ -53,14 +56,20 @@ at the specified times. The unit of the rate is Hz.
 Parameters:
 
 The following parameters can be set in the status dictionary:
-amplitude_times     list of doubles - Times at which rate changes in ms
-amplitude_values    list of doubles - Amplitudes of rates in Hz
-allow_offgrid_times bool            - Default false
-  If false, times will be rounded to the nearest step if they are
-  less than tic/2 from the step, otherwise NEST reports an error.
-  If true,  times are rounded to the nearest step if within tic/2
-  from the step, otherwise they are rounded up to the *end* of the
-  step.
+
+\verbatim embed:rst
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
+\endverbatim
+
+If false, times will be rounded to the nearest step if they are
+less than tic/2 from the step, otherwise NEST reports an error.
+If true,  times are rounded to the nearest step if within tic/2
+from the step, otherwise they are rounded up to the *end* of the
+step.
 
 Note:
 
@@ -72,11 +81,12 @@ which typically would not fall onto simulation time steps.
 Examples:
 
 The rate can be altered in the following way:
-/step_rate_generator Create /sc Set
-sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
 
-The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
-2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
+   /step_rate_generator Create /sc Set
+   sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+
+   The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
+   2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
 
 Sends: DelayedRateConnectionEvent
 
@@ -90,6 +100,12 @@ class step_rate_generator : public DeviceNode
 public:
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
+
+  bool
+  has_proxies() const
+  {
+    return false;
+  }
 
   // port send_test_event( Node&, rport, synindex, bool );
   void
@@ -116,6 +132,12 @@ public:
   local_receiver() const
   {
     return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
 private:
@@ -148,7 +170,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_& );
+    void set( const DictionaryDatum&, Buffers_&, Node* );
 
     /**
      * Return time as Time object if valid, otherwise throw BadProperty
@@ -206,10 +228,7 @@ private:
 };
 
 inline port
-step_rate_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -220,8 +239,7 @@ step_rate_generator::send_test_event( Node& target,
 }
 
 inline port
-step_rate_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+step_rate_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -242,8 +260,8 @@ step_rate_generator::get_status( DictionaryDatum& d ) const
 inline void
 step_rate_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, B_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, B_, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

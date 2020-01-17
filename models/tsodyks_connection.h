@@ -34,6 +34,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stp
+
 Name: tsodyks_synapse - Synapse type with short term plasticity.
 
 Description:
@@ -54,7 +57,7 @@ to reproduce the results of [1] and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
-1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_tum_2000,
+1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_psc_exp_htum,
 because these neuron models have a postsynaptic current which decays
 exponentially.
 
@@ -84,19 +87,27 @@ an arbitrary postsynaptic effect depending on y(t).
 Parameters:
 
 The following parameters can be set in the status dictionary:
-U         double - maximum probability of release [0,1]
-tau_psc   double - time constant of synaptic current in ms
-tau_fac   double - time constant for facilitation in ms
-tau_rec   double - time constant for depression in ms
-x         double - initial fraction of synaptic vesicles in the readily
-                   releasable pool [0,1]
-y         double - initial fraction of synaptic vesicles in the synaptic
-                   cleft [0,1]
+
+\verbatim embed:rst
+========  ======  ======================================================
+ U        real    Maximum probability of release [0,1]
+ tau_psc  ms      Time constant of synaptic current
+ tau_fac  ms      Time constant for facilitation
+ tau_rec  ms      Time constant for depression
+ x        real    Initial fraction of synaptic vesicles in the readily
+                  releasable pool [0,1]
+ y        real    Initial fraction of synaptic vesicles in the synaptic
+                  cleft [0,1]
+========  ======  ======================================================
+\endverbatim
 
 References:
 
-[1] Tsodyks, Uziel, Markram (2000) Synchrony Generation in Recurrent Networks
-    with Frequency-Dependent Synapses. Journal of Neuroscience, vol 20 RC50
+\verbatim embed:rst
+.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses. Journal of Neuroscience,
+       20 RC50. URL: http://infoscience.epfl.ch/record/183402
+\endverbatim
 
 Transmits: SpikeEvent
 
@@ -104,7 +115,7 @@ FirstVersion: March 2006
 
 Author: Moritz Helias
 
-SeeAlso: synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
+SeeAlso: synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_psc_exp_htum
 */
 template < typename targetidentifierT >
 class TsodyksConnection : public Connection< targetidentifierT >
@@ -172,10 +183,7 @@ public:
   };
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -207,9 +215,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-TsodyksConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+TsodyksConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -227,8 +233,7 @@ TsodyksConnection< targetidentifierT >::send( Event& e,
   double Pyy = std::exp( -h / tau_psc_ );
   double Pzz = std::exp( -h / tau_rec_ );
 
-  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ )
-    / ( tau_psc_ - tau_rec_ );
+  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
   double Pxz = 1.0 - Pzz;
 
   double z = 1.0 - x_ - y_;
@@ -276,8 +281,7 @@ TsodyksConnection< targetidentifierT >::TsodyksConnection()
 }
 
 template < typename targetidentifierT >
-TsodyksConnection< targetidentifierT >::TsodyksConnection(
-  const TsodyksConnection& rhs )
+TsodyksConnection< targetidentifierT >::TsodyksConnection( const TsodyksConnection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , tau_psc_( rhs.tau_psc_ )
@@ -310,8 +314,7 @@ TsodyksConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched

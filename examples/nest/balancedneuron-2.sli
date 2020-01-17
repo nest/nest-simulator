@@ -52,9 +52,9 @@ ResetKernel
 
  M_INFO 1 add setverbosity                 % suppress output from Simulate
 
- 0 <<
+ <<
    /data_path (/tmp)
- >> SetStatus
+ >> SetKernelStatus
 
  /iaf_psc_alpha     Create /neuron Set % target neuron
  /poisson_generator Create /ex_pop Set % excitatory population
@@ -71,11 +71,6 @@ ResetKernel
  ex_pop
  <<
     /rate r_ex n_ex mul % multiply rate and number of neurons
- >> SetStatus
-
- spikes
- <<
-   /withtime false    % suppress output from spike detector
  >> SetStatus
 
  ex_pop neuron epsc d Connect
@@ -143,7 +138,7 @@ ResetKernel
 /sdev potentials SDev def
 
  M_INFO 1 add (blancedneuron) (Mean: ) mean cvs join (mV) join message
- M_INFO 1 add (blancedneuron) (==> Distance from threshold: ) mean neuron GetStatus /V_th get sub cvs join (mV) join message
+ M_INFO 1 add (blancedneuron) (==> Distance from threshold: ) mean neuron GetStatus 0 get /V_th get sub cvs join (mV) join message
  M_INFO 1 add (blancedneuron) (SDev: ) sdev cvs join (mV) join message
 
 endusing % arr

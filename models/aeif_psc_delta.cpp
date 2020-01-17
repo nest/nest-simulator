@@ -32,6 +32,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -50,8 +51,7 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_psc_delta >
-  nest::aeif_psc_delta::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_delta > nest::aeif_psc_delta::recordablesMap_;
 
 namespace nest
 {
@@ -66,27 +66,21 @@ void
 RecordablesMap< aeif_psc_delta >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
-  insert_(
-    names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
+  insert_( names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
+  insert_( names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
 }
 }
 
 
 extern "C" int
-nest::aeif_psc_delta_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::aeif_psc_delta::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_psc_delta& node =
-    *( reinterpret_cast< nest::aeif_psc_delta* >( pnode ) );
+  const nest::aeif_psc_delta& node = *( reinterpret_cast< nest::aeif_psc_delta* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -98,17 +92,14 @@ nest::aeif_psc_delta_dynamics( double,
   const bool is_refractory = node.S_.r_ > 0;
 
   // bind V to the USER DEFINED V_peak_ value in Parameters.
-  const double V =
-    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double V = is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
-      * node.P_.Delta_T
+  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L * node.P_.Delta_T
       * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L )
-                                        + I_spike - w + node.P_.I_e
+  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
                                         + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
@@ -158,8 +149,7 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=(
-  const State_& s )
+nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -195,25 +185,25 @@ nest::aeif_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_peak, V_peak_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::V_reset, V_reset_ );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_peak, V_peak_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::a, a );
-  updateValue< double >( d, names::b, b );
-  updateValue< double >( d, names::Delta_T, Delta_T );
-  updateValue< double >( d, names::tau_w, tau_w );
+  updateValueParam< double >( d, names::a, a, node );
+  updateValueParam< double >( d, names::b, b, node );
+  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
+  updateValueParam< double >( d, names::tau_w, tau_w, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
 
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset_ >= V_peak_ )
   {
@@ -228,8 +218,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
   {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
-    const double max_delta_arg =
-      std::log( std::numeric_limits< double >::max() / 1e20 );
+    const double max_delta_arg = std::log( std::numeric_limits< double >::max() / 1e20 );
     if ( ( V_peak_ - V_th ) / Delta_T >= max_delta_arg )
     {
       throw BadProperty(
@@ -265,7 +254,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 
-  updateValue< bool >( d, names::refractory_input, with_refr_input_ );
+  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 }
 
 void
@@ -276,11 +265,10 @@ nest::aeif_psc_delta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta::State_::set( const DictionaryDatum& d,
-  const Parameters_& )
+nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::w, y_[ W ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::w, y_[ W ], node );
 }
 
 nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
@@ -368,8 +356,7 @@ nest::aeif_psc_delta::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -381,8 +368,7 @@ nest::aeif_psc_delta::init_buffers_()
   }
   else
   {
-    gsl_odeiv_control_init(
-      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
   }
 
   if ( B_.e_ == 0 )
@@ -432,12 +418,9 @@ nest::aeif_psc_delta::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta::update( const Time& origin,
-  const long from,
-  const long to )
+nest::aeif_psc_delta::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
   const double h = Time::get_resolution().get_ms();
@@ -472,8 +455,7 @@ nest::aeif_psc_delta::update( const Time& origin,
         throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
-        || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
@@ -483,8 +465,7 @@ nest::aeif_psc_delta::update( const Time& origin,
       if ( S_.r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] =
-          S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+        S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
 
         // if we have accumulated spikes from refractory period,
         // add and reset accumulator
@@ -502,8 +483,7 @@ nest::aeif_psc_delta::update( const Time& origin,
         // for decay until end of refractory period
         if ( P_.with_refr_input_ )
         {
-          S_.refr_spikes_buffer_ +=
-            B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+          S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
         }
         else
         {
@@ -547,8 +527,7 @@ nest::aeif_psc_delta::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -560,9 +539,7 @@ nest::aeif_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

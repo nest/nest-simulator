@@ -42,6 +42,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: poisson_generator - simulate neuron firing with Poisson processes
                           statistics.
 Description:
@@ -55,11 +58,14 @@ parrot neuron inbetween the poisson generator and the targets.
 Parameters:
 
 The following parameters appear in the element's status dictionary:
-
-rate     double - mean firing rate in Hz
-origin   double - Time origin for device timer in ms
-start    double - begin of device application with resp. to origin in ms
-stop     double - end of device application with resp. to origin in ms
+\verbatim embed:rst
+=======   ======== =========================================================
+ rate     spikes/s Mean firing rate
+ origin   ms       Time origin for device timer
+ start    ms       Begin of device application with resp. to origin
+ stop     ms       End of device application with resp. to origin
+=======   ======== =========================================================
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -114,6 +120,12 @@ public:
     return false;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -145,8 +157,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -164,10 +176,7 @@ private:
 };
 
 inline port
-poisson_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -196,7 +205,7 @@ inline void
 poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

@@ -20,51 +20,58 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-'''
-   This script produces a balanced random network of scale*11250 neurons in
-   which the excitatory-excitatory neurons exhibit STDP with
-   multiplicative depression and power-law potentiation. A mutual
-   equilibrium is obtained between the activity dynamics (low rate in
-   asynchronous irregular regime) and the synaptic weight distribution
-   (unimodal). The number of incoming connections per neuron is fixed
-   and independent of network size (indegree=11250).
+"""
+Random balanced network HPC benchmark
+--------------------------------------
 
-   This is the standard network investigated in:
-   Morrison et al (2007). Spike-timing-dependent plasticity in balanced random
-     networks. Neural Comput 19(6):1437-67
-   Helias et al (2012). Supercomputers ready for use as discovery machines for
-     neuroscience. Front. Neuroinform. 6:26
-   Kunkel et al (2014). Spiking network simulation code for petascale
-     computers. Front. Neuroinform. 8:78
+This script produces a balanced random network of `scale*11250` neurons in
+which the excitatory-excitatory neurons exhibit STDP with
+multiplicative depression and power-law potentiation. A mutual
+equilibrium is obtained between the activity dynamics (low rate in
+asynchronous irregular regime) and the synaptic weight distribution
+(unimodal). The number of incoming connections per neuron is fixed
+and independent of network size (indegree=11250).
 
-   A note on scaling
-   -----------------
+This is the standard network investigated in [1]_, [2]_, [3]_.
 
-   This benchmark was originally developed for very large-scale simulations on
-   supercomputers with more than 1 million neurons in the network and
-   11.250 incoming synapses per neuron. For such large networks, synaptic input
-   to a single neuron will be little correlated across inputs and network
-   activity will remain stable over long periods of time.
+A note on scaling
+~~~~~~~~~~~~~~~~~~
 
-   The original network size corresponds to a scale parameter of 100 or more.
-   In order to make it possible to test this benchmark script on desktop
-   computers, the scale parameter is set to 1 below, while the number of
-   11.250 incoming synapses per neuron is retained. In this limit, correlations
-   in input to neurons are large and will lead to increasing synaptic weights.
-   Over time, network dynamics will therefore become unstable and all neurons
-   in the network will fire in synchrony, leading to extremely slow simulation
-   speeds.
+This benchmark was originally developed for very large-scale simulations on
+supercomputers with more than 1 million neurons in the network and
+11.250 incoming synapses per neuron. For such large networks, synaptic input
+to a single neuron will be little correlated across inputs and network
+activity will remain stable over long periods of time.
 
-   Therefore, the presimulation time is reduced to 50 ms below and the
-   simulation time to 250 ms, while we usually use 100 ms presimulation and
-   1000 ms simulation time.
+The original network size corresponds to a scale parameter of 100 or more.
+In order to make it possible to test this benchmark script on desktop
+computers, the scale parameter is set to 1 below, while the number of
+11.250 incoming synapses per neuron is retained. In this limit, correlations
+in input to neurons are large and will lead to increasing synaptic weights.
+Over time, network dynamics will therefore become unstable and all neurons
+in the network will fire in synchrony, leading to extremely slow simulation
+speeds.
 
-   For meaningful use of this benchmark, you should use a scale > 10 and check
-   that the firing rate reported at the end of the benchmark is below 10 spikes
-   per second.
-'''
+Therefore, the presimulation time is reduced to 50 ms below and the
+simulation time to 250 ms, while we usually use 100 ms presimulation and
+1000 ms simulation time.
 
-from __future__ import print_function  # for Python 2
+For meaningful use of this benchmark, you should use a scale > 10 and check
+that the firing rate reported at the end of the benchmark is below 10 spikes
+per second.
+
+References
+~~~~~~~~~~~~
+
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+       plasticity in balanced random networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
+.. [3] Kunkel et al (2014). Spiking network simulation code for petascale
+       computers. Front. Neuroinform. 8:78
+
+"""
+
 import numpy as np
 import os
 import sys
@@ -77,11 +84,10 @@ M_INFO = 10
 M_ERROR = 30
 
 
-'''Parameter section
+###############################################################################
+# Parameter section
+# Define all relevant parameters: changes should be made here
 
- Define all relevant parameters: changes should be made here
-
-'''
 
 params = {
     'nvp': 1,               # total number of virtual processes
@@ -96,17 +102,15 @@ params = {
     'log_file': 'log',      # naming scheme for the log files
 }
 
-# -----------------------------------------------------------------------------
-
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
-    '''
+    """
     Computes conversion factor for synapse weight from mV to pA
 
     This function is specific to the leaky integrate-and-fire neuron
     model with alpha-shaped postsynaptic currents.
 
-    '''
+    """
 
     # compute time to maximum of V_m after spike input
     # to neuron at rest
@@ -119,17 +123,16 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
         b - t_rise * np.exp(-t_rise / tau_syn))
     return 1. / v_max
 
+###############################################################################
 # For compatiblity with earlier benchmarks, we require a rise time of
-# t_rise = 1.700759 ms and we choose tau_syn to achieve this for given
-# tau_m. This requires numerical inversion of the expression for t_rise
-# in convert_synapse_weight(). We computed this value once and hard-code
+# ``t_rise = 1.700759 ms`` and we choose ``tau_syn`` to achieve this for given
+# ``tau_m``. This requires numerical inversion of the expression for ``t_rise``
+# in ``convert_synapse_weight``. We computed this value once and hard-code
 # it here.
 
 
 tau_syn = 0.32582722403722841
 
-
-# -----------------------------------------------------------------------------
 
 brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
@@ -153,9 +156,11 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
+    ####################################################################
     # Note that Kunkel et al. (2014) report different values. The values
     # in the paper were used for the benchmarks on K, the values given
     # here were used for the benchmark on JUQUEEN.
+
     'randomize_Vm': True,
     'mean_potential': 5.7,
     'sigma_potential': 7.2,
@@ -180,18 +185,17 @@ brunel_params = {
     'filestem': params['path_name']
 }
 
-'''FUNCTION SECTION
-
-'''
+###############################################################################
+# Function Section
 
 
 def build_network(logger):
-    '''Builds the network including setting of simulation and neuron
+    """Builds the network including setting of simulation and neuron
     parameters, creation of neurons and connections
 
     Requires an instance of Logger as argument
 
-    '''
+    """
 
     tic = time.time()  # start timer on construction
 
@@ -220,17 +224,17 @@ def build_network(logger):
                      'Randomzing membrane potentials.')
 
         seed = nest.GetKernelStatus(
-            'rng_seeds')[-1] + 1 + nest.GetStatus([0], 'vp')[0]
+            'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
         rng = np.random.RandomState(seed=seed)
 
-        for node in get_local_nodes(E_neurons):
-            nest.SetStatus([node],
+        for node in nest.GetLocalNodeCollection(E_neurons):
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
 
-        for node in get_local_nodes(I_neurons):
-            nest.SetStatus([node],
+        for node in nest.GetLocalNodeCollection(I_neurons):
+            nest.SetStatus(node,
                            {'V_m': rng.normal(
                                brunel_params['mean_potential'],
                                brunel_params['sigma_potential'])})
@@ -263,8 +267,10 @@ def build_network(logger):
         detector_label = os.path.join(
             brunel_params['filestem'],
             'alpha_' + str(stdp_params['alpha']) + '_spikes')
-        E_detector = nest.Create('spike_detector', 1, {
-            'withtime': True, 'to_file': True, 'label': detector_label})
+        E_detector = nest.Create('spike_detector', params={
+            'record_to': 'ascii',
+            'label': detector_label
+        })
 
     BuildNodeTime = time.time() - tic
 
@@ -288,51 +294,54 @@ def build_network(logger):
     # Connect Poisson generator to neuron
 
     nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
     nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
 
     nest.Connect(E_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'stdp_pl_synapse_hom_hpc'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> excitatory population.')
 
     nest.Connect(I_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_in'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
 
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_ex'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
 
     nest.Connect(I_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_in'})
 
     if params['record_spikes']:
-        local_neurons = list(get_local_nodes(E_neurons))
+        if params['nvp'] != 1:
+            local_neurons = nest.GetLocalNodeCollection(E_neurons)
+        else:
+            local_neurons = E_neurons
 
         if len(local_neurons) < brunel_params['Nrec']:
             nest.message(
                 M_ERROR, 'build_network',
-                '''Spikes can only be recorded from local neurons, but the
+                """Spikes can only be recorded from local neurons, but the
                 number of local neurons is smaller than the number of neurons
-                spikes should be recorded from. Aborting the simulation!''')
+                spikes should be recorded from. Aborting the simulation!""")
             exit(1)
 
         nest.message(M_INFO, 'build_network', 'Connecting spike detectors.')
@@ -349,7 +358,7 @@ def build_network(logger):
 
 
 def run_simulation():
-    '''Performs a simulation, including network construction'''
+    """Performs a simulation, including network construction"""
 
     # open log file
     with Logger(params['log_file']) as logger:
@@ -384,69 +393,39 @@ def run_simulation():
 
         print(nest.GetKernelStatus())
 
-# -----------------------------------------------------------------------------
-
 
 def compute_rate(sdet):
-    '''Compute local approximation of average firing rate
+    """Compute local approximation of average firing rate
 
     This approximation is based on the number of local nodes, number
     of local spikes and total time. Since this also considers devices,
     the actual firing rate is usually underestimated.
 
-    '''
+    """
 
     n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
     n_local_neurons = brunel_params['Nrec']
     simtime = params['simtime']
     return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
 
-#  ----------------------------------------------------------------------------
-
 
 def memory_thisjob():
-    '''Wrapper to obtain current memory usage'''
+    """Wrapper to obtain current memory usage"""
     nest.ll_api.sr('memory_thisjob')
     return nest.ll_api.spp()
 
-#  ----------------------------------------------------------------------------
-
 
 def lambertwm1(x):
-    '''Wrapper for LambertWm1 function'''
+    """Wrapper for LambertWm1 function"""
     nest.ll_api.sr('{} LambertWm1'.format(x))
     return nest.ll_api.spp()
 
-#  ----------------------------------------------------------------------------
-
-
-def get_local_nodes(nodes):
-    '''Generator for efficient looping over local nodes
-
-    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
-    returned by Create. Only works for nodes with proxies, i.e.,
-    regular neurons.
-
-    '''
-
-    nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
-
-    i = 0
-    while i < len(nodes):
-        if nest.GetStatus([nodes[i]], 'local')[0]:
-            yield nodes[i]
-            i += nvp
-        else:
-            i += 1
-
-#  ----------------------------------------------------------------------------
-
 
 class Logger(object):
-    '''Logger context manager used to properly log memory and timing
+    """Logger context manager used to properly log memory and timing
     information from network simulations.
 
-    '''
+    """
 
     def __init__(self, file_name):
         # copy output to cout for ranks 0..max_rank_cout-1
@@ -483,8 +462,6 @@ class Logger(object):
     def __exit__(self, exc_type, exc_val, traceback):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
-
-# -----------------------------------------------------------------------------
 
 
 if __name__ == '__main__':

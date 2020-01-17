@@ -45,6 +45,7 @@ SeeAlso: correlomatrix_detector
 /N_ch       8 def
 
 % First test: parameter setting on model and instance
+(Test 1) ==
 {
   ResetKernel
   /cd1 /correlomatrix_detector Create def
@@ -62,6 +63,7 @@ ResetKernel
 
 
 % Second test: error if trying to set invalid channel number
+(Test 2) ==
 {
   ResetKernel
   /correlomatrix_detector << /N_channels 0 >> SetDefaults
@@ -74,46 +76,51 @@ ResetKernel
 
 
 % Third test: error if uncommensurable delta_tau
+(Test 3) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.25 >> SetDefaults
 } fail_or_die
 
 
 % Fourth test: error if delta_tau even multiple of resolution
+(Test 4) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 1.0 >> SetDefaults
 } fail_or_die
 
 
 % Fifth test: error if uncommensurable tau_max
+(Test 5) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 1.1 /tau_max 2.5 >> SetDefaults
 } fail_or_die
 
 
 % Sixth test: error if uncommensurable change of resolution
+(Test 6) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.1 >> SetDefaults
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   /correlomatrix_detector Create % cannot create now with delta_tau==0.1
-} fail_or_die  
+} fail_or_die
 
 
 % Seventh test: proper number of histogram bins under resolution changes
+(Test 7) ==
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.5 >> SetDefaults
-  0 << /resolution 0.5 >> SetStatus
-  /correlomatrix_detector Create 
+  << /resolution 0.5 >> SetKernelStatus
+  /correlomatrix_detector Create
   1 Simulate % must simulate to force creation of histogram
   [/covariance] get cva [1] Part [1] Part length
   6 eq
@@ -122,7 +129,7 @@ ResetKernel
 
 % Functions for actual correlation tests
 
-% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_gid
+% [spike_times_1 spike_times_2] cdsim -> histogram n_events cd_node_id
 /cdsim
 {
   << >> begin
@@ -130,8 +137,8 @@ ResetKernel
 
     % build and connect
     /correlomatrix_detector Create /cdt Set
-    [0 1] { 
-      /i Set 
+    [0 1] {
+      /i Set
       /spike_generator Create /sg Set
       sg << /precise_times false /spike_times st i get >> SetStatus
       /static_synapse << /receptor_type i >> SetDefaults
@@ -140,8 +147,8 @@ ResetKernel
     } Table /sgens Set
 
     % simulate to max spike time plus 2 min_delay
-    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
-    
+    st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
+
     % get spike counts and histogram
     cdt [ /covariance ] get cva [1] Part [2] Part
     cdt [ /n_events  ] get cva
@@ -158,9 +165,9 @@ def
   2 arraystore /st Set
 
   st cdsim ;
-    
+
   % check spike counts
-  st { length } Map eq 
+  st { length } Map eq
 
   % check histogram
   exch
@@ -173,10 +180,11 @@ def
 
 
 % Eighth test: correlation histogram for time differences in bin centers
+(Test 8) ==
 {
   ResetKernel
-  
-  0 << /resolution 0.1 >> SetStatus
+
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.0 /N_channels 2 >> SetDefaults
 
   [     1.5 2.5 4.5 ]       % input 0
@@ -187,13 +195,14 @@ def
 
 
 % Ninth test: test that reset works
+(Test 9) ==
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau .5 /tau_max 5.0 /N_channels N_ch >> SetDefaults
 
-  % expected histogram: [ 1 0 0 0 1 ] 
+  % expected histogram: [ 1 0 0 0 1 ]
   [ [ 1.0 2.0     6.0 ]       % input 0
     [     2.0 4.0     ]       % input 1
   ]
@@ -204,8 +213,8 @@ def
   Plus 0 gt % ensure we have non-zeros in histogram
   {
     cdt << /N_channels N_ch >> SetStatus
-    cdt [/n_events] get cva Plus 0 eq  
-    cdt [/covariance] get cva [1] Part [1] Part Plus 0.0 eq  
+    cdt [/n_events] get cva Plus 0 eq
+    cdt [/covariance] get cva [1] Part [1] Part Plus 0.0 eq
     and
   }
   { false }

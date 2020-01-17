@@ -32,6 +32,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -47,8 +48,7 @@
 #include "integerdatum.h"
 
 
-nest::RecordablesMap< nest::hh_psc_alpha_clopath >
-  nest::hh_psc_alpha_clopath::recordablesMap_;
+nest::RecordablesMap< nest::hh_psc_alpha_clopath > nest::hh_psc_alpha_clopath::recordablesMap_;
 
 namespace nest
 {
@@ -59,42 +59,26 @@ void
 RecordablesMap< hh_psc_alpha_clopath >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::V_M > );
-  insert_( names::I_syn_ex,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_EXC > );
-  insert_( names::I_syn_in,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_INH > );
-  insert_( names::Act_m,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_M > );
-  insert_( names::Act_h,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_H > );
-  insert_( names::Inact_n,
-    &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_N > );
-  insert_( names::u_bar_plus,
-    &hh_psc_alpha_clopath::
-      get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_PLUS > );
-  insert_( names::u_bar_minus,
-    &hh_psc_alpha_clopath::
-      get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_MINUS > );
-  insert_( names::u_bar_bar,
-    &hh_psc_alpha_clopath::
-      get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_BAR > );
+  insert_( names::V_m, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::V_M > );
+  insert_( names::I_syn_ex, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_EXC > );
+  insert_( names::I_syn_in, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_INH > );
+  insert_( names::Act_m, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_M > );
+  insert_( names::Inact_h, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_H > );
+  insert_( names::Act_n, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::HH_N > );
+  insert_( names::u_bar_plus, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_PLUS > );
+  insert_( names::u_bar_minus, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_MINUS > );
+  insert_( names::u_bar_bar, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::U_BAR_BAR > );
 }
 
 extern "C" int
-hh_psc_alpha_clopath_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
+hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::hh_psc_alpha_clopath::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_psc_alpha_clopath& node =
-    *( reinterpret_cast< nest::hh_psc_alpha_clopath* >( pnode ) );
+  const nest::hh_psc_alpha_clopath& node = *( reinterpret_cast< nest::hh_psc_alpha_clopath* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -115,11 +99,9 @@ hh_psc_alpha_clopath_dynamics( double,
   const double& u_bar_minus = y[ S::U_BAR_MINUS ];
   const double& u_bar_bar = y[ S::U_BAR_BAR ];
 
-  const double alpha_n =
-    ( 0.01 * ( V + 55. ) ) / ( 1. - std::exp( -( V + 55. ) / 10. ) );
+  const double alpha_n = ( 0.01 * ( V + 55. ) ) / ( 1. - std::exp( -( V + 55. ) / 10. ) );
   const double beta_n = 0.125 * std::exp( -( V + 65. ) / 80. );
-  const double alpha_m =
-    ( 0.1 * ( V + 40. ) ) / ( 1. - std::exp( -( V + 40. ) / 10. ) );
+  const double alpha_m = ( 0.1 * ( V + 40. ) ) / ( 1. - std::exp( -( V + 40. ) / 10. ) );
   const double beta_m = 4. * std::exp( -( V + 65. ) / 18. );
   const double alpha_h = 0.07 * std::exp( -( V + 65. ) / 20. );
   const double beta_h = 1. / ( 1. + std::exp( -( V + 35. ) / 10. ) );
@@ -129,16 +111,12 @@ hh_psc_alpha_clopath_dynamics( double,
   const double I_L = node.P_.g_L * ( V - node.P_.E_L );
 
   // V dot -- synaptic input are currents, inhib current is negative
-  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
-                  + I_in ) / node.P_.C_m;
+  f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in ) / node.P_.C_m;
 
   // channel dynamics
-  f[ S::HH_M ] =
-    alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] =
-    alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] =
-    alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
+  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
+  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
 
   // convolved membrane potentials for Clopath stdp
   f[ S::U_BAR_PLUS ] = ( -u_bar_plus + V ) / node.P_.tau_plus;
@@ -187,11 +165,9 @@ nest::hh_psc_alpha_clopath::State_::State_( const Parameters_& )
   }
 
   // equilibrium values for (in)activation variables
-  const double alpha_n = ( 0.01 * ( y_[ 0 ] + 55. ) )
-    / ( 1. - std::exp( -( y_[ 0 ] + 55. ) / 10. ) );
+  const double alpha_n = ( 0.01 * ( y_[ 0 ] + 55. ) ) / ( 1. - std::exp( -( y_[ 0 ] + 55. ) / 10. ) );
   const double beta_n = 0.125 * std::exp( -( y_[ 0 ] + 65. ) / 80. );
-  const double alpha_m =
-    ( 0.1 * ( y_[ 0 ] + 40. ) ) / ( 1. - std::exp( -( y_[ 0 ] + 40. ) / 10. ) );
+  const double alpha_m = ( 0.1 * ( y_[ 0 ] + 40. ) ) / ( 1. - std::exp( -( y_[ 0 ] + 40. ) / 10. ) );
   const double beta_m = 4. * std::exp( -( y_[ 0 ] + 65. ) / 18. );
   const double alpha_h = 0.07 * std::exp( -( y_[ 0 ] + 65. ) / 20. );
   const double beta_h = 1. / ( 1. + std::exp( -( y_[ 0 ] + 35. ) / 10. ) );
@@ -210,8 +186,7 @@ nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::
-operator=( const State_& s )
+nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -246,24 +221,24 @@ nest::hh_psc_alpha_clopath::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d )
+nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_Na, g_Na );
-  updateValue< double >( d, names::E_Na, E_Na );
-  updateValue< double >( d, names::g_K, g_K );
-  updateValue< double >( d, names::E_K, E_K );
-  updateValue< double >( d, names::g_L, g_L );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_Na, g_Na, node );
+  updateValueParam< double >( d, names::E_Na, E_Na, node );
+  updateValueParam< double >( d, names::g_K, g_K, node );
+  updateValueParam< double >( d, names::E_K, E_K, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
-  updateValue< double >( d, names::I_e, I_e );
-  updateValue< double >( d, names::tau_plus, tau_plus );
-  updateValue< double >( d, names::tau_minus, tau_minus );
-  updateValue< double >( d, names::tau_bar_bar, tau_bar_bar );
+  updateValueParam< double >( d, names::I_e, I_e, node );
+  updateValueParam< double >( d, names::tau_plus, tau_plus, node );
+  updateValueParam< double >( d, names::tau_minus, tau_minus, node );
+  updateValueParam< double >( d, names::tau_bar_bar, tau_bar_bar, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -272,8 +247,7 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 or tau_synI <= 0 or tau_plus <= 0 or tau_minus <= 0
-    or tau_bar_bar <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 or tau_plus <= 0 or tau_minus <= 0 or tau_bar_bar <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -288,23 +262,23 @@ nest::hh_psc_alpha_clopath::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
   def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Act_h, y_[ HH_H ] );
-  def< double >( d, names::Inact_n, y_[ HH_N ] );
+  def< double >( d, names::Inact_h, y_[ HH_H ] );
+  def< double >( d, names::Act_n, y_[ HH_N ] );
   def< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ] );
   def< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ] );
   def< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ] );
 }
 
 void
-nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d )
+nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::Act_m, y_[ HH_M ] );
-  updateValue< double >( d, names::Act_h, y_[ HH_H ] );
-  updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
-  updateValue< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ] );
-  updateValue< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ] );
-  updateValue< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
+  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
+  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
+  updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
+  updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
@@ -321,8 +295,7 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
   // init_buffers_().
 }
 
-nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&,
-  hh_psc_alpha_clopath& n )
+nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_clopath& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -345,8 +318,7 @@ nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath()
   recordablesMap_.create();
 }
 
-nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath(
-  const hh_psc_alpha_clopath& n )
+nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath( const hh_psc_alpha_clopath& n )
   : Clopath_Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -397,8 +369,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
 
   if ( B_.s_ == 0 )
   {
-    B_.s_ =
-      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
   else
   {
@@ -451,13 +422,10 @@ nest::hh_psc_alpha_clopath::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_clopath::update( Time const& origin,
-  const long from,
-  const long to )
+nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -494,10 +462,8 @@ nest::hh_psc_alpha_clopath::update( Time const& origin,
       }
     }
 
-    S_.y_[ State_::DI_EXC ] +=
-      B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
-    S_.y_[ State_::DI_INH ] +=
-      B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
+    S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
+    S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value( lag ) * V_.PSCurrInit_I_;
 
     // save data for Clopath synapses
     write_clopath_history( Time::step( origin.get_steps() + lag + 1 ),
@@ -539,14 +505,12 @@ nest::hh_psc_alpha_clopath::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   } // current input, keep negative weight
 }
@@ -560,9 +524,7 @@ nest::hh_psc_alpha_clopath::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

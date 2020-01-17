@@ -38,6 +38,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
                                      spike trains.
 
@@ -49,23 +52,27 @@ spike train.
 
 The instantaneous rate of the process is given by
 
-    f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ))
-        >= 0
-
+@f[  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
+     * \pi/180 )) >= 0
+@f]
 Parameters:
 
 The following parameters can be set in the status dictionary:
 
-rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-amplitude  double - Firing rate modulation amplitude in spikes/second,
-                    default: 0 s^-1
-frequency  double - Modulation frequency in Hz, default: 0 Hz
-phase      double - Modulation phase in degree [0-360], default: 0
-
-individual_spike_trains   bool - See note below, default: true
+\verbatim embed:rst
+======================== ======= ==============================================
+ rate                    real    Mean firing rate in spikes/second,
+                                 default: 0 s^-1
+ amplitude               real    Firing rate modulation amplitude in
+                                 spikes/second, default: 0 s^-1
+ frequency               Hz      Modulation frequency, default: 0 Hz
+ phase                   real    Modulation phase in degree [0-360], default: 0
+ individual_spike_trains boolean See note below, default: true
+======================== ======= ==============================================
+\endverbatim
 
 Remarks:
-O- If amplitude > rate, firing rate is cut off at zero. In this case, the mean
+- If amplitude > rate, firing rate is cut off at zero. In this case, the mean
   firing rate will be less than rate.
 - The state of the generator is reset on calibration.
 - The generator does not support precise spike timing.
@@ -128,6 +135,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -164,7 +177,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_poisson_generator& );
+    void set( const DictionaryDatum&, const sinusoidal_poisson_generator&, Node* );
   };
 
   struct State_
@@ -179,7 +192,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -229,10 +242,7 @@ private:
 };
 
 inline port
-sinusoidal_poisson_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -253,8 +263,7 @@ sinusoidal_poisson_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -277,7 +286,7 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, *this ); // throws if BadProperty
+  ptmp.set( d, *this, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

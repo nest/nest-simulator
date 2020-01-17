@@ -32,10 +32,8 @@
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
-#include "topology_parameter.h"
 #include "vose.h"
 
 namespace nest
@@ -53,18 +51,14 @@ class MaskedLayer;
  * to the given parameters. This method is templated with the dimension
  * of the layers, and is called via the Layer connect call using a
  * visitor pattern. The connect method relays to another method (e.g.,
- * convergent_connect_) implementing the concrete connection
+ * fixed_indegree_) implementing the concrete connection
  * algorithm. It would be more elegant if this was a base class for
  * classes representing different connection algorithms with a virtual
  * connect method, but it is not possible to have a virtual template
  * method.
  *
- * This class distinguishes between target driven and convergent
- * connections, which are both called "convergent" in the Topology module
- * documentation, and between source driven and divergent
- * connections. The true convergent/divergent connections are those with
- * a fixed number of connections (fan in/out). The only difference
- * between source driven and target driven connections is which layer
+ * The difference between the Pairwise_bernoulli_on_source and
+ * Pairwise_bernoulli_on_target connection types is which layer
  * coordinates the mask and parameters are defined in.
  */
 class ConnectionCreator
@@ -72,10 +66,10 @@ class ConnectionCreator
 public:
   enum ConnectionType
   {
-    Target_driven,
-    Source_driven,
-    Convergent,
-    Divergent
+    Pairwise_bernoulli_on_source,
+    Pairwise_bernoulli_on_target,
+    Fixed_indegree,
+    Fixed_outdegree
   };
 
   /**
@@ -92,8 +86,8 @@ public:
    * - "synapse_model": The synapse model to use.
    * - "targets": Which targets (model or lid) to select (dictionary).
    * - "sources": Which targets (model or lid) to select (dictionary).
-   * - "weights": Synaptic weight (dictionary, parametertype, or double).
-   * - "delays": Synaptic delays (dictionary, parametertype, or double).
+   * - "weight": Synaptic weight (dictionary, parametertype, or double).
+   * - "delay": Synaptic delays (dictionary, parametertype, or double).
    * - other parameters are interpreted as synapse parameters, and may
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
@@ -103,10 +97,12 @@ public:
   /**
    * Connect two layers.
    * @param source source layer.
+   * @param source NodeCollection of the source.
    * @param target target layer.
+   * @param target NodeCollection of the target.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target );
+  void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
 private:
   /**
@@ -124,14 +120,11 @@ private:
     void define( MaskedLayer< D >* );
     void define( std::vector< std::pair< Position< D >, index > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin(
-      const Position< D >& pos ) const;
+    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
     typename Ntree< D, index >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator
-    end() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
@@ -147,73 +140,39 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void pairwise_bernoulli_on_source_( Layer< D >& source,
+    NodeCollectionPTR source_nc,
+    Layer< D >& target,
+    NodeCollectionPTR target_nc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void pairwise_bernoulli_on_target_( Layer< D >& source,
+    NodeCollectionPTR source_nc,
+    Layer< D >& target,
+    NodeCollectionPTR target_nc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target );
+  void
+  fixed_indegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target );
-
-  void connect_( index s,
-    Node* target,
-    thread target_thread,
-    double w,
-    double d,
-    index syn );
-
-  /**
-   * Calculate parameter values for this position.
-   *
-   * TODO: remove when all four connection variants are refactored
-   */
-  template < int D >
-  void get_parameters_( const Position< D >& pos,
-    librandom::RngPtr rng,
-    double& weight,
-    double& delay );
+  void
+  fixed_outdegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   ConnectionType type_;
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  Selector source_filter_;
-  Selector target_filter_;
   index number_of_connections_;
-  lockPTR< AbstractMask > mask_;
-  lockPTR< TopologyParameter > kernel_;
+  std::shared_ptr< AbstractMask > mask_;
+  std::shared_ptr< Parameter > kernel_;
   index synapse_model_;
-  lockPTR< TopologyParameter > weight_;
-  lockPTR< TopologyParameter > delay_;
+  std::shared_ptr< Parameter > weight_;
+  std::shared_ptr< Parameter > delay_;
 
   //! Empty dictionary to pass to connect functions
   const static DictionaryDatum dummy_param_;
 };
-
-inline void
-ConnectionCreator::connect_( index s,
-  Node* target,
-  thread target_thread,
-  double w,
-  double d,
-  index syn )
-{
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
-  {
-    // check whether the target is on our thread
-    thread tid = kernel().vp_manager.get_thread_id();
-    if ( tid == target_thread )
-    {
-      // TODO implement in terms of nest-api
-      kernel().connection_manager.connect(
-        s, target, target_thread, syn, dummy_param_, d, w );
-    }
-  }
-}
 
 } // namespace nest
 

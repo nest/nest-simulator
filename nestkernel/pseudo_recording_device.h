@@ -27,9 +27,6 @@
 #include <fstream>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "nest_types.h"
@@ -100,8 +97,7 @@ inline PseudoRecordingDevice::PseudoRecordingDevice()
 {
 }
 
-inline PseudoRecordingDevice::PseudoRecordingDevice(
-  const PseudoRecordingDevice& prd )
+inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice& prd )
   : Device( prd )
 {
 }

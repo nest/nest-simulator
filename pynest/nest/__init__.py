@@ -23,8 +23,14 @@
 Initializer of PyNEST.
 """
 
-from . import ll_api      # noqa
+from . import ll_api                  # noqa
+from .ll_api import set_communicator  # noqa
 
-# Import kernel in __init__ after initializing low-level APIs.
-from . import pynestkernel as kernel      # noqa
-from .hl_api import *      # noqa
+from . import pynestkernel as kernel  # noqa
+from .hl_api import *                 # noqa
+
+from . import random                  # noqa
+from . import math                    # noqa
+from . import spatial_distributions   # noqa
+from . import logic                   # noqa
+from . import spatial                 # noqa needs to be imported last because of documentation generation

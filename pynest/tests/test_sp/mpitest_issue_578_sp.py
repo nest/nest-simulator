@@ -46,8 +46,7 @@ class TestIssue578(unittest.TestCase):
         # Update the SP interval
         nest.EnableStructuralPlasticity()
         nest.SetStructuralPlasticityStatus({
-            'structural_plasticity_update_interval':
-            100,
+            'structural_plasticity_update_interval': 1000.,
         })
 
         growth_curve = {
@@ -75,7 +74,7 @@ class TestIssue578(unittest.TestCase):
             'synaptic_elements': structural_p_elements_E})
 
         # synapses
-        synDictE = {'model': 'static_synapse',
+        synDictE = {'synapse_model': 'static_synapse',
                     'weight': 3.,
                     'pre_synaptic_element': 'Axon_ex',
                     'post_synaptic_element': 'Den_ex'}

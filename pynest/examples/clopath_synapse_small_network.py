@@ -19,30 +19,36 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 Clopath Rule: Bidirectional connections
-------------------
+-----------------------------------------
+
 This script simulates a small network of ten excitatory and three
-inhibitory aeif_psc_delta_clopath neurons. The neurons are randomly connected
+inhibitory ``aeif_psc_delta_clopath`` neurons. The neurons are randomly connected
 and driven by 500 Poisson generators. The synapses from the Poisson generators
 to the excitatory population and those among the neurons of the network
 are Clopath synapses. The rate of the Poisson generators is modulated with
-a Gaussian profile whose center shifts randomly each 100ms between ten
+a Gaussian profile whose center shifts randomly each 100 ms between ten
 equally spaced positions.
 This setup demonstrates that the Clopath synapse is able to establish
-bidirectional connections. The example is adapted from [1] (cf. fig. 5).
+bidirectional connections. The example is adapted from [1]_ (cf. fig. 5).
 
-References:  [1] Clopath et al. (2010) Connectivity reflects coding:
-                a model of voltage-based STDP with homeostasis.
-                Nature Neuroscience 13:3, 344--352
-'''
+References
+~~~~~~~~~~~
+
+.. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
+       a model of voltage-based STDP with homeostasis.
+       Nature Neuroscience 13:3, 344--352
+"""
 
 import nest
 import numpy as np
 import matplotlib.pyplot as pl
 import random
 
-# Set general parameters
+##############################################################################
+# Set the parameters
+
 simulation_time = 1.0e4
 resolution = 0.1
 delay = resolution
@@ -75,83 +81,90 @@ nrn_params = {'V_m': -30.6,
 
 pop_exc = nest.Create(nrn_model, 10, nrn_params)
 pop_inh = nest.Create(nrn_model, 3, nrn_params)
+
+##############################################################################
 # We need parrot neurons since Poisson generators can only be connected
 # with static connections
+
 pop_input = nest.Create('parrot_neuron', 500)  # helper neurons
 pg = nest.Create('poisson_generator', 500)
 wr = nest.Create('weight_recorder', 1)
 
+##############################################################################
 # First connect Poisson generators to helper neurons
-nest.Connect(pg, pop_input, 'one_to_one', {'model': 'static_synapse',
+nest.Connect(pg, pop_input, 'one_to_one', {'synapse_model': 'static_synapse',
                                            'weight': 1.0, 'delay': delay})
 
-# Create input->exc connections
+##############################################################################
+# Create all the connections
+
 nest.CopyModel('clopath_synapse', 'clopath_input_to_exc',
                {'Wmax': 3.0})
 conn_dict_input_to_exc = {'rule': 'all_to_all'}
-syn_dict_input_to_exc = {'model': 'clopath_input_to_exc',
-                         'weight': {'distribution': 'uniform', 'low': 0.5,
-                                    'high': 2.0},
+syn_dict_input_to_exc = {'synapse_model': 'clopath_input_to_exc',
+                         'weight': nest.random.uniform(0.5, 2.0),
                          'delay': delay}
 nest.Connect(pop_input, pop_exc, conn_dict_input_to_exc,
              syn_dict_input_to_exc)
 
 # Create input->inh connections
 conn_dict_input_to_inh = {'rule': 'all_to_all'}
-syn_dict_input_to_inh = {'model': 'static_synapse',
-                         'weight': {'distribution': 'uniform', 'low': 0.0,
-                                    'high': 0.5},
+syn_dict_input_to_inh = {'synapse_model': 'static_synapse',
+                         'weight': nest.random.uniform(0.0, 0.5),
                          'delay': delay}
 nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
 
 # Create exc->exc connections
 nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
                {'Wmax': 0.75, 'weight_recorder': wr[0]})
-syn_dict_exc_to_exc = {'model': 'clopath_exc_to_exc', 'weight': 0.25,
+syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
                        'delay': delay}
-conn_dict_exc_to_exc = {'rule': 'all_to_all', 'autapses': False}
+conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
 nest.Connect(pop_exc, pop_exc, conn_dict_exc_to_exc, syn_dict_exc_to_exc)
 
 # Create exc->inh connections
-syn_dict_exc_to_inh = {'model': 'static_synapse',
+syn_dict_exc_to_inh = {'synapse_model': 'static_synapse',
                        'weight': 1.0, 'delay': delay}
 conn_dict_exc_to_inh = {'rule': 'fixed_indegree', 'indegree': 8}
 nest.Connect(pop_exc, pop_inh, conn_dict_exc_to_inh, syn_dict_exc_to_inh)
 
 # Create inh->exc connections
-syn_dict_inh_to_exc = {'model': 'static_synapse',
+syn_dict_inh_to_exc = {'synapse_model': 'static_synapse',
                        'weight': 1.0, 'delay': delay}
 conn_dict_inh_to_exc = {'rule': 'fixed_outdegree', 'outdegree': 6}
 nest.Connect(pop_inh, pop_exc, conn_dict_inh_to_exc, syn_dict_inh_to_exc)
 
+##############################################################################
 # Randomize the initial membrane potential
-for nrn in pop_exc:
-    nest.SetStatus([nrn, ], {'V_m': np.random.normal(-60.0, 25.0)})
 
-for nrn in pop_inh:
-    nest.SetStatus([nrn, ], {'V_m': np.random.normal(-60.0, 25.0)})
+pop_exc.V_m = nest.random.normal(-60., 25.)
+pop_inh.V_m = nest.random.normal(-60., 25.)
 
+##############################################################################
 # Simulation divided into intervals of 100ms for shifting the Gaussian
-for i in range(int(simulation_time/100.0)):
+
+sim_interval = 100.
+for i in range(int(simulation_time/sim_interval)):
     # set rates of poisson generators
     rates = np.empty(500)
     # pg_mu will be randomly chosen out of 25,75,125,...,425,475
     pg_mu = 25 + random.randint(0, 9) * 50
     for j in range(500):
-        rates[j] = pg_A * \
-            np.exp((-1 * (j - pg_mu) ** 2) / (2 * (pg_sigma) ** 2))
-        nest.SetStatus([pg[j]], {'rate': rates[j]*1.75})
-    nest.Simulate(100.0)
+        rates[j] = pg_A * np.exp((-1 * (j - pg_mu)**2) / (2 * pg_sigma**2))
+        pg[j].set({'rate': rates[j]*1.75})
+    nest.Simulate(sim_interval)
 
+##############################################################################
 # Plot results
+
 fig1, axA = pl.subplots(1, sharex=False)
 
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
 exc_conns = nest.GetConnections(pop_exc, pop_exc)
-exc_conns_senders = np.array(nest.GetStatus(exc_conns, 'source'))
-exc_conns_targets = np.array(nest.GetStatus(exc_conns, 'target'))
-exc_conns_weights = np.array(nest.GetStatus(exc_conns, 'weight'))
+exc_conns_senders = np.array(list(exc_conns.sources()))
+exc_conns_targets = np.array(list(exc_conns.targets()))
+exc_conns_weights = np.array(exc_conns.get('weight'))
 idx_array = np.argsort(exc_conns_senders)
 targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))
 weights = np.reshape(exc_conns_weights[idx_array], (10, 10-1))

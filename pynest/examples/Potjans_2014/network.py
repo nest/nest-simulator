@@ -20,16 +20,15 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-pynest microcircuit network
+Pynest microcircuit network
 ---------------------------
 
 Main file for the microcircuit.
 
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
+Authors
+~~~~~~~~
 
-This example uses the function GetNodes, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
+Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 import nest
@@ -160,6 +159,17 @@ class Network:
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
+        v0_type_options = ['original', 'optimized']
+        if self.net_dict['V0_type'] not in v0_type_options:
+            print(
+                '''
+                '{0}' is not a valid option, replacing it with '{1}'
+                Valid options are {2}
+                '''.format(self.net_dict['V0_type'],
+                           v0_type_options[0],
+                           v0_type_options)
+                )
+            self.net_dict['V0_type'] = v0_type_options[0]
         if nest.Rank() == 0:
             print(
                 'The number of neurons is scaled by a factor of: %.2f'
@@ -182,43 +192,33 @@ class Network:
         # Create cortical populations.
         self.pops = []
         pop_file = open(
-            os.path.join(self.data_path, 'population_GIDs.dat'), 'w+'
+            os.path.join(self.data_path, 'population_nodeids.dat'), 'w+'
             )
         for i, pop in enumerate(self.net_dict['populations']):
             population = nest.Create(
                 self.net_dict['neuron_model'], int(self.nr_neurons[i])
                 )
-            nest.SetStatus(
-                population, {
-                    'tau_syn_ex': self.net_dict['neuron_params']['tau_syn_ex'],
-                    'tau_syn_in': self.net_dict['neuron_params']['tau_syn_in'],
-                    'E_L': self.net_dict['neuron_params']['E_L'],
-                    'V_th': self.net_dict['neuron_params']['V_th'],
-                    'V_reset':  self.net_dict['neuron_params']['V_reset'],
-                    't_ref': self.net_dict['neuron_params']['t_ref'],
-                    'I_e': self.DC_amp_e[i]
-                    }
-                )
+            population.set({
+                'tau_syn_ex': self.net_dict['neuron_params']['tau_syn_ex'],
+                'tau_syn_in': self.net_dict['neuron_params']['tau_syn_in'],
+                'E_L': self.net_dict['neuron_params']['E_L'],
+                'V_th': self.net_dict['neuron_params']['V_th'],
+                'V_reset':  self.net_dict['neuron_params']['V_reset'],
+                't_ref': self.net_dict['neuron_params']['t_ref'],
+                'I_e': self.DC_amp_e[i]
+                }
+            )
+            if self.net_dict['V0_type'] == 'optimized':
+                population.set(V_m=nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                                                      std=self.net_dict['neuron_params']['V0_sd']['optimized'][i]))
+            elif self.net_dict['V0_type'] == 'original':
+                population.set(V_m=nest.random.normal(mean=self.net_dict['neuron_params']['V0_mean']['original'],
+                                                      std=self.net_dict['neuron_params']['V0_sd']['original']))
             self.pops.append(population)
-            pop_file.write('%d  %d \n' % (population[0], population[-1]))
+            pop_file.write('%d  %d \n' % (
+                population[0].get('global_id'),
+                population[-1].get('global_id')))
         pop_file.close()
-        for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            # Using GetNodes is a work-around until NEST 3.0 is released. It
-            # will issue a deprecation warning.
-            local_nodes = nest.GetNodes(
-                [0], {
-                    'model': self.net_dict['neuron_model'],
-                    'thread': thread
-                    }, local_only=True
-                )[0]
-            vp = nest.GetStatus(local_nodes)[0]['vp']
-            # vp is the same for all local nodes on the same thread
-            nest.SetStatus(
-                local_nodes, 'V_m', self.pyrngs[vp].normal(
-                    self.net_dict['neuron_params']['V0_mean'],
-                    self.net_dict['neuron_params']['V0_sd'],
-                    len(local_nodes))
-                    )
 
     def create_devices(self):
         """ Creates the recording devices.
@@ -231,10 +231,7 @@ class Network:
         for i, pop in enumerate(self.pops):
             if 'spike_detector' in self.net_dict['rec_dev']:
                 recdict = {
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'spike_detector')
                     }
                 dummy = nest.Create('spike_detector', params=recdict)
@@ -242,10 +239,7 @@ class Network:
             if 'voltmeter' in self.net_dict['rec_dev']:
                 recdictmem = {
                     'interval': self.sim_dict['rec_V_int'],
-                    'withgid': True,
-                    'withtime': True,
-                    'to_memory': False,
-                    'to_file': True,
+                    'record_to': 'ascii',
                     'label': os.path.join(self.data_path, 'voltmeter'),
                     'record_from': ['V_m'],
                     }
@@ -277,13 +271,12 @@ class Network:
                 self.stim_dict['th_start'] + self.stim_dict['th_duration']
                 )
             self.poisson_th = nest.Create('poisson_generator')
-            nest.SetStatus(
-                self.poisson_th, {
-                    'rate': self.stim_dict['th_rate'],
-                    'start': self.stim_dict['th_start'],
-                    'stop': self.stop_th
-                    }
-                )
+            self.poisson_th.set({
+                'rate': self.stim_dict['th_rate'],
+                'start': self.stim_dict['th_start'],
+                'stop': self.stop_th
+                }
+            )
             nest.Connect(self.poisson_th, self.thalamic_population)
             self.nr_synapses_th = synapses_th_matrix(
                 self.net_dict, self.stim_dict
@@ -310,7 +303,7 @@ class Network:
             self.poisson = []
             for i, target_pop in enumerate(self.pops):
                 poisson = nest.Create('poisson_generator')
-                nest.SetStatus(poisson, {'rate': rate_ext[i]})
+                poisson.set({'rate': rate_ext[i]})
                 self.poisson.append(poisson)
 
     def create_dc_generator(self):
@@ -360,7 +353,7 @@ class Network:
                         'rule': 'fixed_total_number', 'N': synapse_nr
                         }
                     syn_dict = {
-                        'model': 'static_synapse',
+                        'synapse_model': 'static_synapse',
                         'weight': {
                             'distribution': 'normal_clipped', 'mu': weight,
                             'sigma': w_sd
@@ -388,7 +381,7 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
-                'model': 'static_synapse',
+                'synapse_model': 'static_synapse',
                 'weight': self.w_ext,
                 'delay': self.net_dict['poisson_delay']
                 }

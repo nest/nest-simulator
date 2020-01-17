@@ -18,6 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required( VERSION 2.8.12 )
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+include( ProcessDependencies )
 
 # This CMakeLists.txt is configured to build your external module for NEST. For
 # illustrative reasons this module is called 'my' (change SHORT_NAME to your
@@ -37,13 +39,25 @@ set( SHORT_NAME my )
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )
 
-# 2) Add all your sources here
+# 2) Add all your sources here and specify dependencies, e.g., link libraries
 set( MODULE_SOURCES
-    mymodule.h mymodule.cpp
-    pif_psc_alpha.cpp pif_psc_alpha.h
-    drop_odd_spike_connection.h
-    step_pattern_builder.h step_pattern_builder.cpp
-    )
+     mymodule.h mymodule.cpp
+     pif_psc_alpha.cpp pif_psc_alpha.h
+     drop_odd_spike_connection.h
+     step_pattern_builder.h step_pattern_builder.cpp
+     recording_backend_socket.h recording_backend_socket.cpp
+   )
+
+check_have_sfml_audio()
+if ( HAVE_SFML_AUDIO )
+  list( APPEND MODULE_SOURCES   
+        recording_backend_soundclick.h recording_backend_soundclick.cpp
+      )
+  set( USER_LINK_LIBRARIES sfml-audio )
+  add_definitions( -DHAVE_SFML_AUDIO )
+else ()
+  message( "-- Skip build of recording backend >SoundClick<. sfml-audio is not installed." )
+endif ()
 
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
@@ -249,11 +263,21 @@ add_custom_target( dist
     COMMENT "Creating a source distribution from ${MODULE_NAME}..."
     )
 
+# check the user link libraries whether installed or not
+foreach( LINKLIB ${USER_LINK_LIBRARIES} )
+  find_library( LIB_${LINKLIB} ${LINKLIB} )
+  if( NOT LIB_${LINKLIB} )
+    message(FATAL_ERROR "ERROR: " ${LINKLIB} " library not found")
+  else()  
+    message( "-- " ${LINKLIB} " library found")
+  endif()
+endforeach()
 
 if ( BUILD_SHARED_LIBS )
   # When building shared libraries, also create a module for loading at runtime
   # with the `Install` command.
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
+  target_link_libraries(${MODULE_NAME}_module ${USER_LINK_LIBRARIES})
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
       COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
@@ -331,6 +355,7 @@ message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
 message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
+message( "User link libraries  : ${USER_LINK_LIBRARIES}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )

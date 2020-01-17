@@ -54,23 +54,16 @@ protected:
 
   index lcid_ : NUM_BITS_LCID;                       //!< local connection index
   unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;   //!< lag in this min-delay interval
-  thread tid_ : NUM_BITS_TID;         //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID; //!< synapse-type index
+  unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
 
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const thread tid,
-    const synindex syn_id,
-    const index lcid,
-    const unsigned int lag );
+  SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag );
 
-  void set( const thread tid,
-    const synindex syn_id,
-    const index lcid,
-    const unsigned int lag,
-    const double offset );
+  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
 
   /**
    * Returns local connection ID.
@@ -134,8 +127,7 @@ public:
 };
 
 //! check legal size
-using success_spike_data_size =
-  StaticAssert< sizeof( SpikeData ) == 8 >::success;
+using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::success;
 
 inline SpikeData::SpikeData()
   : lcid_( 0 )
@@ -155,10 +147,7 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 {
 }
 
-inline SpikeData::SpikeData( const thread tid,
-  const synindex syn_id,
-  const index lcid,
-  const unsigned int lag )
+inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( lag )
@@ -168,12 +157,9 @@ inline SpikeData::SpikeData( const thread tid,
 }
 
 inline void
-SpikeData::set( const thread tid,
-  const synindex syn_id,
-  const index lcid,
-  const unsigned int lag,
-  const double )
+SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double )
 {
+  assert( 0 <= tid );
   assert( tid <= MAX_TID );
   assert( syn_id <= MAX_SYN_ID );
   assert( lcid <= MAX_LCID );
@@ -270,17 +256,12 @@ public:
     const index lcid,
     const unsigned int lag,
     const double offset );
-  void set( const thread tid,
-    const synindex syn_id,
-    const index lcid,
-    const unsigned int lag,
-    const double offset );
+  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
   double get_offset() const;
 };
 
 //! check legal size
-using success_offgrid_spike_data_size =
-  StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
+using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
 
 inline OffGridSpikeData::OffGridSpikeData()
   : SpikeData()

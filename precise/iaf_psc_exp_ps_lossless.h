@@ -82,7 +82,7 @@ time and offset). If this node is connected to a spike_detector, the
 property "precise_times" of the spike_detector has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
-The iaf_psc_delta_canon neuron accepts connections transmitting
+The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
@@ -202,10 +202,7 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin,
-    const long lag,
-    const double t0,
-    const double dt );
+  void emit_spike_( const Time& origin, const long lag, const double t0, const double dt );
 
   /**
    * Emit a single spike at a precisely given time.
@@ -214,9 +211,7 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin,
-    const long lag,
-    const double spike_offset );
+  void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
@@ -285,8 +280,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    double set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -308,7 +303,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double delta_EL );
+    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -430,10 +425,7 @@ private:
 };
 
 inline port
-iaf_psc_exp_ps_lossless::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -461,8 +453,7 @@ iaf_psc_exp_ps_lossless::handles_test_event( CurrentEvent&, port receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr,
-  port receptor_type )
+iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -482,10 +473,10 @@ iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;           // temporary copy in case of errors
-  double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );   // throws if BadProperty
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

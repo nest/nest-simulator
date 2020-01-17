@@ -27,6 +27,9 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
@@ -53,9 +56,9 @@ nest::poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::poisson_generator::Parameters_::set( const DictionaryDatum& d )
+nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "The rate cannot be negative." );
@@ -106,8 +109,7 @@ nest::poisson_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda(
-    Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
 }
 
 
@@ -118,8 +120,7 @@ nest::poisson_generator::calibrate()
 void
 nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 )
@@ -142,8 +143,9 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-  long n_spikes = V_.poisson_dev_.ldev( rng );
+  // Be careful of storing the rng as its own variable. Creation of sharedPTRs
+  // lead to overhead.
+  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

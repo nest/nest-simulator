@@ -75,13 +75,12 @@ nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  State_& s )
+nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
 {
   if ( not s.published_ )
   {
     updateValue< string >( d, names::port_name, port_name_ );
-    updateValue< double >( d, names::acceptable_latency, acceptable_latency_ );
+    updateValueParam< double >( d, names::acceptable_latency, acceptable_latency_, node );
   }
 }
 
@@ -93,8 +92,7 @@ nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&,
-  const Parameters_& )
+nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
 {
 }
 
@@ -110,8 +108,7 @@ nest::music_message_in_proxy::music_message_in_proxy()
 {
 }
 
-nest::music_message_in_proxy::music_message_in_proxy(
-  const music_message_in_proxy& n )
+nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -126,8 +123,7 @@ nest::music_message_in_proxy::music_message_in_proxy(
 void
 nest::music_message_in_proxy::init_state_( const Node& proto )
 {
-  const music_message_in_proxy& pr =
-    downcast< music_message_in_proxy >( proto );
+  const music_message_in_proxy& pr = downcast< music_message_in_proxy >( proto );
 
   S_ = pr.S_;
 }

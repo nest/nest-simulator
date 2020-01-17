@@ -38,6 +38,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Devices
+@ingroup generator
+
 Name: ac_generator - provides AC input current
 
 Description:
@@ -45,28 +48,36 @@ Description:
 This device produces an ac-current sent by a CurrentEvent. The
 current is given by
 
-        I(t) = offset + amplitude * sin ( om * t + phi )
+       @f[ I(t) = offset + amplitude * \sin ( om * t + \phi ) @f]
 
 where
-
-    om  = 2 * pi * frequency
-    phi = phase / 180 * pi
+    @f[
+    om  = 2 * \pi * frequency \\
+    \phi = phase / 180 * \pi
+    @f]
 
 Parameters:
+\verbatim embed:rst
+==========   ======   ====================================
+ amplitude   pA       Amplitude of sine current
+ offset      pA       Constant amplitude offset
+ frequency   Hz       Frequency
+ phase       degree   Phase of sine current (0-360 deg)
+==========   ======   ====================================
+\endverbatim
 
-amplitude   double -  Amplitude of sine current in pA
-offset      double -  Constant amplitude offset in pA
-frequency   double -  Frequency in Hz
-phase       double -  Phase of sine current (0-360 deg)
 
 Setting start and stop (see StimulatingDevice) only windows the current
 as defined above. It does not shift the time axis.
 
 References:
 
-[1] S. Rotter and M. Diesmann (1999). Exact digital simulation of time-
-invariant linear systems with applications to neuronal modeling,
-Biol. Cybern. 81, 381-402.
+\verbatim embed:rst
+
+.. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
+       invariant linear systems with applications to neuronal modeling,
+       Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
+\endverbatim
 
 Sends: CurrentEvent
 
@@ -87,6 +98,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -98,13 +122,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );
@@ -127,8 +144,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -194,10 +211,7 @@ private:
 };
 
 inline port
-ac_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -231,7 +245,7 @@ inline void
 ac_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // State_ is read-only
 

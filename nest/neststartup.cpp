@@ -46,6 +46,7 @@
 #include "nest.h"
 #include "nestmodule.h"
 #include "model_manager_impl.h"
+#include "exceptions.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -76,19 +77,14 @@ get_engine()
 void
 sli_logging( const nest::LoggingEvent& e )
 {
-  sli_engine->message(
-    static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
+  sli_engine->message( static_cast< int >( e.severity ), e.function.c_str(), e.message.c_str() );
 }
 
-#ifndef _IS_PYNEST
 int
+#ifndef _IS_PYNEST
 neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 #else
-int
-neststartup( int* argc,
-  char*** argv,
-  SLIInterpreter& engine,
-  std::string modulepath )
+neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
   nest::init_nest( argc, argv );
@@ -135,14 +131,11 @@ neststartup( int* argc,
   // the intepreter decides cleans up memory before NEST is ready
   engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
   engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def(
-    "connruledict", nest::kernel().connection_manager.get_connruledict() );
-  engine.def(
-    "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
+  engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
+  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // register sli_neuron
-  nest::kernel().model_manager.register_node_model< nest::sli_neuron >(
-    "sli_neuron" );
+  nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
 
   // now add static modules providing models
   add_static_modules( engine );
@@ -161,8 +154,7 @@ neststartup( int* argc,
 #ifdef HAVE_LIBLTDL
   // dynamic loader module for managing linked and dynamically loaded extension
   // modules
-  nest::DynamicLoaderModule* pDynLoader =
-    new nest::DynamicLoaderModule( engine );
+  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
 // initialize all modules that were linked into at compile time
 // these modules have registered via calling DynamicLoader::registerLinkedModule
@@ -177,11 +169,9 @@ neststartup( int* argc,
 
 #ifdef _IS_PYNEST
   // add the init-script to the list of module initializers
-  ArrayDatum* ad = dynamic_cast< ArrayDatum* >(
-    engine.baselookup( engine.commandstring_name ).datum() );
+  ArrayDatum* ad = dynamic_cast< ArrayDatum* >( engine.baselookup( engine.commandstring_name ).datum() );
   assert( ad != NULL );
-  ad->push_back(
-    new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
+  ad->push_back( new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
 #endif
 
   return engine.startup();
@@ -190,6 +180,7 @@ neststartup( int* argc,
 void
 nestshutdown( int exitcode )
 {
+  nest::kernel().finalize();
   nest::kernel().mpi_manager.mpi_finalize( exitcode );
   nest::KernelManager::destroy_kernel_manager();
 }
@@ -210,3 +201,33 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   return ret;
 }
 #endif
+
+#ifdef _IS_PYNEST
+#ifdef HAVE_MPI4PY
+
+#include <mpi4py/mpi4py.h>
+
+void
+set_communicator( PyObject* pyobj )
+{
+  import_mpi4py();
+
+  // If object is not a mpi4py communicator, bail
+  if ( not PyObject_TypeCheck( pyobj, &PyMPIComm_Type ) )
+  {
+    throw nest::KernelException( "set_communicator: argument is not a mpi4py communicator" );
+  }
+
+  nest::kernel().mpi_manager.set_communicator( *PyMPIComm_Get( pyobj ) );
+}
+
+#else // ! HAVE_MPI4PY
+
+void
+set_communicator( PyObject* )
+{
+  throw nest::KernelException( "set_communicator: NEST not compiled with MPI4PY" );
+}
+
+#endif
+#endif //_IS_PYNEST

@@ -20,10 +20,6 @@
  *
  */
 
-/*
- *  Multimeter support by Yury V. Zaytsev.
- */
-
 /* pp_psc_delta is a stochastically spiking neuron where the potential jumps on
  * each spike arrival.
  */
@@ -35,6 +31,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "numerics.h"
 
@@ -146,20 +143,20 @@ nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
+nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::dead_time, dead_time_ );
-  updateValue< bool >( d, names::dead_time_random, dead_time_random_ );
-  updateValue< long >( d, names::dead_time_shape, dead_time_shape_ );
-  updateValue< bool >( d, names::with_reset, with_reset_ );
-  updateValue< double >( d, names::c_1, c_1_ );
-  updateValue< double >( d, names::c_2, c_2_ );
-  updateValue< double >( d, names::c_3, c_3_ );
-  updateValue< double >( d, names::t_ref_remaining, t_ref_remaining_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::dead_time, dead_time_, node );
+  updateValueParam< bool >( d, names::dead_time_random, dead_time_random_, node );
+  updateValueParam< long >( d, names::dead_time_shape, dead_time_shape_, node );
+  updateValueParam< bool >( d, names::with_reset, with_reset_, node );
+  updateValueParam< double >( d, names::c_1, c_1_, node );
+  updateValueParam< double >( d, names::c_2, c_2_, node );
+  updateValueParam< double >( d, names::c_3, c_3_, node );
+  updateValueParam< double >( d, names::t_ref_remaining, t_ref_remaining_, node );
 
   try
   {
@@ -171,8 +168,8 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     multi_param_ = 0;
     double tau_sfa_temp_;
     double q_sfa_temp_;
-    updateValue< double >( d, names::tau_sfa, tau_sfa_temp_ );
-    updateValue< double >( d, names::q_sfa, q_sfa_temp_ );
+    updateValueParam< double >( d, names::tau_sfa, tau_sfa_temp_, node );
+    updateValueParam< double >( d, names::q_sfa, q_sfa_temp_, node );
     tau_sfa_.push_back( tau_sfa_temp_ );
     q_sfa_.push_back( q_sfa_temp_ );
   }
@@ -199,8 +196,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
   if ( dead_time_shape_ < 1 )
   {
-    throw BadProperty(
-      "Shape of the dead time gamma distribution must not be smaller than 1." );
+    throw BadProperty( "Shape of the dead time gamma distribution must not be smaller than 1." );
   }
 
   if ( tau_m_ <= 0 )
@@ -235,10 +231,10 @@ nest::pp_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y3_ );
-  updateValue< double >( d, names::E_sfa, q_ );
+  updateValueParam< double >( d, names::V_m, y3_, node );
+  updateValueParam< double >( d, names::E_sfa, q_, node );
   // vectors of the state should be initialized with new parameter set.
   initialized_ = false;
 }
@@ -366,15 +362,13 @@ void
 nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
   {
 
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_
-      + B_.spikes_.get_value( lag );
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
     double q_temp_ = 0;
     for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
@@ -425,8 +419,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           // Set dead time interval according to paramters
           if ( P_.dead_time_random_ )
           {
-            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) )
-                      .get_steps();
+            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
           }
           else
           {
@@ -483,8 +476,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -496,9 +488,7 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

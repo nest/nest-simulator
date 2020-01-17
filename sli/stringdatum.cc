@@ -39,8 +39,7 @@ sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory(
 
 template <>
 void
-AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint(
-  std::ostream& out ) const
+AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream& out ) const
 {
   out << '(';
   print( out );

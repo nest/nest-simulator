@@ -36,15 +36,21 @@ BOOST_AUTO_TEST_SUITE( test_seque )
 
 BOOST_AUTO_TEST_CASE( test_size )
 {
-  // TODO: check both branches of if test in size()
-  BlockVector< int > block_vector;
-  int N = block_vector.get_max_block_size() + 10;
-  for ( int i = 0; i < N; ++i )
+  BlockVector< int > block_vector_a;
+  BlockVector< int > block_vector_b;
+  int N_a = block_vector_a.get_max_block_size() + 10;
+  int N_b = block_vector_a.get_max_block_size();
+  for ( int i = 0; i < N_a; ++i )
   {
-    block_vector.push_back( i );
+    block_vector_a.push_back( i );
+  }
+  for ( int i = 0; i < N_b; ++i )
+  {
+    block_vector_b.push_back( i );
   }
 
-  BOOST_REQUIRE( block_vector.size() == ( size_t ) N );
+  BOOST_REQUIRE( block_vector_a.size() == ( size_t ) N_a );
+  BOOST_REQUIRE( block_vector_b.size() == ( size_t ) N_b );
 }
 
 BOOST_AUTO_TEST_CASE( test_random_access )
@@ -161,9 +167,7 @@ BOOST_AUTO_TEST_CASE( test_iterating )
 
   // Iterator decrement operator
   int k = N - 1;
-  for ( BlockVector< int >::const_iterator it = --block_vector.end();
-        it != block_vector.begin();
-        --it )
+  for ( BlockVector< int >::const_iterator it = --block_vector.end(); it != block_vector.begin(); --it )
   {
     BOOST_REQUIRE( *it == k );
     --k;
@@ -179,8 +183,7 @@ BOOST_AUTO_TEST_CASE( test_iterator_arithmetic )
     block_vector.push_back( i );
   }
   BOOST_REQUIRE( *( block_vector.begin() + 1 ) == block_vector[ 1 ] );
-  BOOST_REQUIRE(
-    *( block_vector.begin() + ( N - 1 ) ) == block_vector[ N - 1 ] );
+  BOOST_REQUIRE( *( block_vector.begin() + ( N - 1 ) ) == block_vector[ N - 1 ] );
 
   auto it = block_vector.begin();
   it += N - 5;

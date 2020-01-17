@@ -104,12 +104,10 @@ DictputFunction::execute( SLIInterpreter* i ) const
   if ( i->OStack.load() >= 3 )
   {
     //  call: dict key val
-    DictionaryDatum* dict =
-      dynamic_cast< DictionaryDatum* >( i->OStack.pick( 2 ).datum() );
+    DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.pick( 2 ).datum() );
     if ( dict != 0 )
     {
-      LiteralDatum* key =
-        dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
+      LiteralDatum* key = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
       if ( key != 0 )
       {
         ( *dict )->insert_move( *key, i->OStack.top() );
@@ -173,12 +171,10 @@ DictgetFunction::execute( SLIInterpreter* i ) const
   //  call: dict key -> val
   if ( i->OStack.load() >= 2 )
   {
-    DictionaryDatum* dict =
-      dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
+    DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
     if ( dict != 0 )
     {
-      LiteralDatum* key =
-        dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
+      LiteralDatum* key = dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
       if ( key != 0 )
       {
         Token value = ( *dict )->lookup2( *key );
@@ -237,10 +233,8 @@ DictinfoFunction::execute( SLIInterpreter* i ) const
   //  call: ostream dict
 
   assert( i->OStack.load() > 1 );
-  OstreamDatum* outd =
-    dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  OstreamDatum* outd = dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
   assert( outd != NULL );
   i->EStack.pop();
@@ -269,8 +263,7 @@ Length_dFunction::execute( SLIInterpreter* i ) const
   //  call: dict length_d -> int
 
   assert( i->OStack.load() > 0 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
   i->EStack.pop();
   Token st( new IntegerDatum( ( *dict )->size() ) );
@@ -284,8 +277,7 @@ Empty_DFunction::execute( SLIInterpreter* i ) const
   // call: dict empty_D dict bool
   assert( i->OStack.load() > 0 );
 
-  DictionaryDatum const* const dd =
-    dynamic_cast< DictionaryDatum const* const >( i->OStack.top().datum() );
+  DictionaryDatum const* const dd = dynamic_cast< DictionaryDatum const* const >( i->OStack.top().datum() );
 
   assert( dd != NULL );
 
@@ -463,8 +455,7 @@ DictbeginFunction::execute( SLIInterpreter* i ) const
 
   if ( i->OStack.load() > 0 )
   {
-    DictionaryDatum* dict =
-      dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+    DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
     if ( dict != NULL )
     {
       i->EStack.pop();
@@ -559,12 +550,10 @@ UndefFunction::execute( SLIInterpreter* i ) const
 
   if ( i->OStack.load() > 1 )
   {
-    DictionaryDatum* dict =
-      dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
+    DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
     if ( dict != NULL )
     {
-      LiteralDatum* key =
-        dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
+      LiteralDatum* key = dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
       if ( key != NULL )
       {
         i->EStack.pop();
@@ -663,9 +652,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
     key = dynamic_cast< LiteralDatum* >( i->OStack.pick( n + 1 ).datum() );
     if ( key == NULL )
     {
-      i->message( 30,
-        "DictConstruct",
-        "Literal expected. Maybe initializer list is in the wrong order." );
+      i->message( 30, "DictConstruct", "Literal expected. Maybe initializer list is in the wrong order." );
       i->raiseerror( i->ArgumentTypeError );
       delete dictd;
       return;
@@ -683,9 +670,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
 
   if ( n % 2 != 0 ) // there must be an even number of objects
   {                 // above the mark
-    i->message( 30,
-      "DictConstruct",
-      "Initializer list must be pairs of literal and value." );
+    i->message( 30, "DictConstruct", "Initializer list must be pairs of literal and value." );
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
@@ -705,7 +690,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
    Examples:
    modeldict /iaf_psc_alpha known -> true
    modeldict /parkinson_neuron known -> false
-   /iaf_psc_alpha_presc GetDefaults /Interpol_Order known -> true
+   /iaf_psc_alpha_ps GetDefaults /Interpol_Order known -> false
 
    Author: docu edited by Sirko Straube
 
@@ -717,10 +702,8 @@ KnownFunction::execute( SLIInterpreter* i ) const
 {
   //  call: dict key -> bool
 
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
-  LiteralDatum* key =
-    dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
+  LiteralDatum* key = dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
 
   bool known = ( *dict )->known( *key );
   i->EStack.pop(); // never forget me
@@ -740,8 +723,7 @@ void
 CleardictFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
 #ifdef DICTSTACK_CACHE
   if ( ( *dict )->is_on_dictstack() )
@@ -781,8 +763,7 @@ void
 ClonedictFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
 
   i->OStack.push( DictionaryDatum( new Dictionary( *( *dict ) ) ) );
@@ -851,14 +832,12 @@ Cva_dFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   assert( i->OStack.load() > 0 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
   ArrayDatum* ad = new ArrayDatum();
   ad->reserve( ( *dict )->size() * 2 );
 
-  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end();
-        ++t )
+  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end(); ++t )
   {
     Token nt( new LiteralDatum( ( *t ).first ) );
     ad->push_back_move( nt );
@@ -904,13 +883,11 @@ KeysFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   assert( i->OStack.load() > 0 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
   ArrayDatum* ad = new ArrayDatum();
 
-  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end();
-        ++t )
+  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end(); ++t )
   {
     Token nt( new LiteralDatum( ( *t ).first ) );
     assert( not nt.empty() );
@@ -956,13 +933,11 @@ ValuesFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   assert( i->OStack.load() > 0 );
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.top().datum() );
   assert( dict != NULL );
   ArrayDatum* ad = new ArrayDatum();
 
-  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end();
-        ++t )
+  for ( TokenMap::const_iterator t = ( *dict )->begin(); t != ( *dict )->end(); ++t )
   {
     ad->push_back( ( *t ).second );
   }

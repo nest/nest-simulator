@@ -56,9 +56,7 @@ initialize_property_intvector( DictionaryDatum& d, Name propname )
 }
 
 void
-provide_property( DictionaryDatum& d,
-  Name propname,
-  const std::vector< double >& prop )
+provide_property( DictionaryDatum& d, Name propname, const std::vector< double >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -76,9 +74,7 @@ provide_property( DictionaryDatum& d,
 
 
 void
-provide_property( DictionaryDatum& d,
-  Name propname,
-  const std::vector< long >& prop )
+provide_property( DictionaryDatum& d, Name propname, const std::vector< long >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -95,9 +91,7 @@ provide_property( DictionaryDatum& d,
 }
 
 void
-accumulate_property( DictionaryDatum& d,
-  Name propname,
-  const std::vector< double >& prop )
+accumulate_property( DictionaryDatum& d, Name propname, const std::vector< double >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -113,10 +107,6 @@ accumulate_property( DictionaryDatum& d,
     assert( ( *arrd )->size() == prop.size() );
 
     // add contents of prop to **arrd elementwise
-    std::transform( ( *arrd )->begin(),
-      ( *arrd )->end(),
-      prop.begin(),
-      ( *arrd )->begin(),
-      std::plus< double >() );
+    std::transform( ( *arrd )->begin(), ( *arrd )->end(), prop.begin(), ( *arrd )->begin(), std::plus< double >() );
   }
 }

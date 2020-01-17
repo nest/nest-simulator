@@ -38,6 +38,9 @@ from cpython cimport array
 from cpython.ref cimport PyObject
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
+import nest
+from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+
 
 cdef string SLI_TYPE_BOOL = b"booltype"
 cdef string SLI_TYPE_INTEGER = b"integertype"
@@ -51,6 +54,8 @@ cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
+cdef string SLI_TYPE_NODECOLLECTION = b"nodecollectiontype"
+cdef string SLI_TYPE_NODECOLLECTIONITERATOR = b"nodecollectioniteratortype"
 
 
 DEF CONN_ELMS = 5
@@ -75,206 +80,6 @@ try:
 except ImportError:
     pass
 
-class NESTMappedException(type):
-    """Metaclass for exception namespace that dynamically creates exception classes.
-
-    If a class (self) of this (meta)-type has an unknown attribute requested, __getattr__ defined
-    below gets called, creating a class with that name (the error name) and with an __init__ taking
-    commandname and errormessage (as created in the source) which is a closure on the parent and
-    errorname as well, with a parent of default type (self.default_parent) or
-    self.parents[errorname] if defined. """
-
-    def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of self.default_parent or
-        self.parents[errorname] if one is defined.
-
-        This __getattr__ function also stores the class permanently as an attribute of self for
-        re-use where self is actually the class that triggered the getattr (the class that
-        NESTMappedException is a metaclass of). """
-
-        # Dynamic class construction, first check if we know its parent
-        if errorname in self.parents:
-            parent = getattr(self, self.parents[errorname])
-        else: # otherwise, get the default (SLIException)
-            parent = self.default_parent
-
-        # and now dynamically construct the new class
-        # not NESTMappedException, since that would mean the metaclass would let the new class inherit
-        # this __getattr__, allowing unintended dynamic construction of attributes
-        newclass = type(
-            self.__name__ + '.' + errorname,
-            (parent,),
-            {
-                '__init__': self.init(parent, errorname),
-                '__doc__':
-                """Dynamically created exception {} from {}.
-
-                Created for the namespace: {}.
-                Parent exception: {}.
-                """.format(errorname, self.source, self.__name__, parent.__name__)
-            }
-        )
-
-        # Cache for reuse: __getattr__ should now not get called if requested again
-        setattr(self, errorname, newclass)
-
-        # And now we return the exception
-        return newclass
-
-class NESTErrors(metaclass=NESTMappedException):
-    """Namespace for NEST exceptions, including dynamically created classes from SLI.
-
-    Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException.
-    """
-
-    class NESTError(Exception):
-        """Base exception class for all NEST exceptions.
-        """
-
-        def __init__(self, message, *args, **kwargs):
-            """Initializer for NESTError base class.
-
-            Parameters:
-            -----------
-            message: full error message to report.
-            *args, **kwargs: passed through to Exception base class.
-            """
-
-            Exception.__init__(self, message, *args, **kwargs)
-            self.message = message
-
-    class SLIException(NESTError):
-        """Base class for all exceptions coming from sli.
-        """
-
-        def __init__(self, commandname, errormessage, *args, errorname='SLIException', **kwargs):
-            """Initialize function.
-
-            Parameters:
-            -----------
-            errorname: error name from SLI.
-            commandname: command name from SLI.
-            errormessage: message from SLI.
-            *args, **kwargs: passed through to NESTErrors.NESTError base class.
-            """
-            message = "{} in {}{}".format(errorname, commandname, errormessage)
-            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
-
-            self.errorname   = errorname
-            self.commandname = commandname
-            self.errormessage  = errormessage
-
-    class PyNESTError(NESTError):
-        """Exceptions produced from Python/Cython code.
-        """
-        pass
-
-    @staticmethod
-    def init(parent, errorname):
-        """ Static class method to construct init's for SLIException children.
-
-        Construct our new init with closure on errorname (as a default value) and parent.
-        The default value allows the __init__ to be chained and set by the leaf child.
-        This also moves the paramerization of __init__ away from the class construction logic
-        and next to the SLIException init.
-
-        Parameters:
-        ----------
-        parent: the ancestor of the class needed to properly walk up the MRO (not possible with super() or super(type,...)
-            because of the dynamic creation of the function
-             (used as a closure on the constructed __init__).
-        errorname: the class name for information purposes
-          internally (used as a closure on the constructed __init__).
-        """
-
-        def __init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs):
-            # recursively init the parent class: all of this is only needed to properly set errorname
-            parent.__init__(self, commandname, errormessage, *args, errorname=errorname, **kwargs)
-
-        docstring = \
-            """Initialization function.
-
-            Parameters:
-            -----------
-            commandname: sli command name.
-            errormessage: sli error message.
-            errorname: set by default ("{}") or passed in by child (shouldn't be explicitly set when creating an instance)
-            *args, **kwargs: passed through to base class.
-
-            self will be a descendant of {}.
-            """.format(errorname, parent.__name__)
-
-        try:
-            __init__.__doc__ = docstring
-        except AttributeError:
-            __init__.__func__.__doc__ = docstring
-
-        return __init__
-
-    # source: the dynamically created exceptions come from SLI
-    # default_parent: the dynamically created exceptions are descended from SLIExcepton
-    # parents: unless they happen to be mapped in this list to another exception descended from SLIException
-    #          these should be updated when new exceptions in sli are created that aren't directly descended
-    #          from SLIException (but nothing bad will happen, it's just that otherwise they'll be directly
-    #          descended from SLIException instead of an intermediate exception; they'll still be constructed
-    #          and useable)
-    source = "SLI"
-    default_parent = SLIException
-    parents = {
-        'TypeMismatch': 'InterpreterError',
-        'SystemSignal': 'InterpreterError',
-        'RangeCheck': 'InterpreterError',
-        'ArgumentType': 'InterpreterError',
-        'BadParameterValue': 'SLIException',
-        'DictError': 'InterpreterError',
-        'UndefinedName': 'DictError',
-        'EntryTypeMismatch': 'DictError',
-        'StackUnderflow': 'InterpreterError',
-        'IOError': 'SLIException',
-        'UnaccessedDictionaryEntry': 'DictError',
-        'UnknownModelName': 'KernelException',
-        'NewModelNameExists': 'KernelException',
-        'UnknownModelID': 'KernelException',
-        'ModelInUse': 'KernelException',
-        'UnknownSynapseType': 'KernelException',
-        'UnknownNode': 'KernelException',
-        'NoThreadSiblingsAvailable': 'KernelException',
-        'LocalNodeExpected': 'KernelException',
-        'NodeWithProxiesExpected': 'KernelException',
-        'UnknownReceptorType': 'KernelException',
-        'IncompatibleReceptorType': 'KernelException',
-        'UnknownPort': 'KernelException',
-        'IllegalConnection': 'KernelException',
-        'InexistentConnection': 'KernelException',
-        'UnknownThread': 'KernelException',
-        'BadDelay': 'KernelException',
-        'UnexpectedEvent': 'KernelException',
-        'UnsupportedEvent': 'KernelException',
-        'BadProperty': 'KernelException',
-        'BadParameter': 'KernelException',
-        'DimensionMismatch': 'KernelException',
-        'DistributionError': 'KernelException',
-        'SubnetExpected': 'KernelException',
-        'SimulationError': 'KernelException',
-        'InvalidDefaultResolution': 'KernelException',
-        'InvalidTimeInModel': 'KernelException',
-        'StepMultipleRequired': 'KernelException',
-        'TimeMultipleRequired': 'KernelException',
-        'GSLSolverFailure': 'KernelException',
-        'NumericalInstability': 'KernelException',
-        'KeyError': 'KernelException',
-        'MUSICPortUnconnected': 'KernelException',
-        'MUSICPortHasNoWidth': 'KernelException',
-        'MUSICPortAlreadyPublished': 'KernelException',
-        'MUSICSimulationHasRun': 'KernelException',
-        'MUSICChannelUnknown': 'KernelException',
-        'MUSICPortUnknown': 'KernelException',
-        'MUSICChannelAlreadyMapped': 'KernelException'
-    }
-
-
-# So we don't break any code that currently catches a nest.NESTError
-NESTError = NESTErrors.NESTError
 
 cdef class SLIDatum(object):
 
@@ -363,6 +168,14 @@ cdef class NESTEngine(object):
 
         self.pEngine = NULL
 
+    def set_communicator(self, comm):
+        # extract mpi_comm from mpi4py
+        if nest_has_mpi4py():
+            c_set_communicator(comm)
+        else:
+            raise NESTError("set_communicator: "
+                            "NEST not compiled with MPI4PY")
+
     def init(self, argv, modulepath):
         if self.pEngine is not NULL:
             raise NESTErrors.PyNESTError("engine already initialized")
@@ -434,27 +247,6 @@ cdef class NESTEngine(object):
 
         return ret
 
-    def push_connection_datums(self, conns):
-
-        cdef ConnectionDatum* cdt = NULL
-        cdef ArrayDatum* connectome = new ArrayDatum()
-
-        try:
-            connectome.reserve(len(conns))
-
-            for cnn in conns:
-                if isinstance(cnn, dict):
-                    cdt = new ConnectionDatum(ConnectionID(cnn[CONN_NAME_SRC], cnn[CONN_NAME_THREAD], cnn[CONN_NAME_SYN], cnn[CONN_NAME_PRT]))
-                else:
-                    cdt = new ConnectionDatum(ConnectionID(cnn[0], cnn[1], cnn[2], cnn[3], cnn[4]))
-
-                connectome.push_back(<Datum*> cdt)
-
-            self.pEngine.OStack.push(<Datum*> connectome)
-
-        except:
-            del connectome
-            raise
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 
@@ -503,6 +295,12 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_NODECOLLECTION.decode():
+            ret = <Datum*> new NodeCollectionDatum(deref(<NodeCollectionDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_NODECOLLECTIONITERATOR.decode():
+            ret = <Datum*> new NodeCollectionIteratorDatum(deref(<NodeCollectionIteratorDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_CONNECTION.decode():
+            ret = <Datum*> new ConnectionDatum(deref(<ConnectionDatum*> (<SLIDatum> obj).thisptr))
         else:
             raise NESTErrors.PyNESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
@@ -539,7 +337,14 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             elif numpy.issubdtype(obj.dtype, numpy.floating):
                 ret = python_buffer_to_datum[object, double](obj)
             else:
-                raise NESTErrors.PyNESTError("only vectors of integers or floats are supported")
+                raise NESTError.PyNESTError("only vectors of integers or floats are supported")
+
+        if ret is NULL:
+            try:
+                if isinstance( obj._datum, SLIDatum ) or isinstance( obj._datum[0], SLIDatum):
+                    ret = python_object_to_datum( obj._datum )
+            except:
+                pass
 
         if ret is not NULL:
             return ret
@@ -583,6 +388,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
 
     cdef string obj_str
     cdef object ret = None
+    cdef ignore_none = False
 
     cdef string datum_type = dat.gettypename().toString()
 
@@ -593,46 +399,76 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
+        ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
-        ret = SLILiteral(obj_str.decode())
+        ret = obj_str.decode()
+        if ret == 'None':
+            ret = None
+            ignore_none = True
     elif datum_type == SLI_TYPE_ARRAY:
         ret = sli_array_to_object(<ArrayDatum*> dat)
     elif datum_type == SLI_TYPE_DICTIONARY:
         ret = sli_dict_to_object(<DictionaryDatum*> dat)
     elif datum_type == SLI_TYPE_CONNECTION:
-        ret = sli_connection_to_object(<ConnectionDatum*> dat)
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> dat)), SLI_TYPE_CONNECTION.decode())
+        ret = nest.SynapseCollection(datum)
     elif datum_type == SLI_TYPE_VECTOR_INT:
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
     elif datum_type == SLI_TYPE_MASK:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+        ret = nest.Mask(datum)
     elif datum_type == SLI_TYPE_PARAMETER:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        ret = nest.Parameter(datum)
+    elif datum_type == SLI_TYPE_NODECOLLECTION:
+        datum = SLIDatum()
+        (<SLIDatum> datum)._set_datum(<Datum*> new NodeCollectionDatum(deref(<NodeCollectionDatum*> dat)), SLI_TYPE_NODECOLLECTION.decode())
+        ret = nest.NodeCollection(datum)
+    elif datum_type == SLI_TYPE_NODECOLLECTIONITERATOR:
         ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+        (<SLIDatum> ret)._set_datum(<Datum*> new NodeCollectionIteratorDatum(deref(<NodeCollectionIteratorDatum*> dat)), SLI_TYPE_NODECOLLECTIONITERATOR.decode())
     else:
         raise NESTErrors.PyNESTError("unknown SLI type: {0}".format(datum_type.decode()))
 
-    if ret is None:
+    if ret is None and not ignore_none:
         raise NESTErrors.PyNESTError("conversion resulted in a None object")
 
     return ret
 
 cdef inline object sli_array_to_object(ArrayDatum* dat):
 
-    cdef tmp = [None] * dat.size()
+    # the size of dat has to be explicitly cast to int to avoid
+    # compiler warnings (#1318) during cythonization
+    cdef tmp = [None] * int(dat.size())
 
-    cdef size_t i
+    # i and n have to be cast to size_t (unsigned long int) to avoid
+    # compiler warnings (#1318) in the for loop below
+    cdef size_t i, n
     cdef Token* tok = dat.begin()
 
-    for i in range(len(tmp)):
-        tmp[i] = sli_datum_to_object(tok.datum())
-        inc(tok)
+    n = len(tmp)
+    if not n:
+        return ()
 
-    return tuple(tmp)
+    if tok.datum().gettypename().toString() == SLI_TYPE_CONNECTION:
+        for i in range(n):
+            datum = SLIDatum()
+            (<SLIDatum> datum)._set_datum(<Datum*> new ConnectionDatum(deref(<ConnectionDatum*> tok.datum())), SLI_TYPE_CONNECTION.decode())
+            tmp[i] = datum
+            # Increment
+            inc(tok)
+        return nest.SynapseCollection(tmp)
+    else:
+        for i in range(n):
+            tmp[i] = sli_datum_to_object(tok.datum())
+            inc(tok)
+        return tuple(tmp)
 
 cdef inline object sli_dict_to_object(DictionaryDatum* dat):
 
@@ -650,21 +486,6 @@ cdef inline object sli_dict_to_object(DictionaryDatum* dat):
         inc(dt)
 
     return tmp
-
-cdef inline object sli_connection_to_object(ConnectionDatum* dat):
-
-    cdef array.array arr
-    cdef long[CONN_ELMS] CONN_ARR
-
-    arr = array.clone(ARRAY_LONG, CONN_ELMS, False)
-    CONN_ARR[0] = dat.get_source_gid()
-    CONN_ARR[1] = dat.get_target_gid()
-    CONN_ARR[2] = dat.get_target_thread()
-    CONN_ARR[3] = dat.get_synapse_model_id()
-    CONN_ARR[4] = dat.get_port()
-    memcpy(arr.data.as_longs, &CONN_ARR, CONN_ELMS * sizeof(long))
-
-    return arr
 
 cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ = 0):
 

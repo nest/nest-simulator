@@ -42,14 +42,11 @@ namespace nest
 class histentry
 {
 public:
-  histentry( double t,
-    double Kminus,
-    double triplet_Kminus,
-    size_t access_counter );
+  histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter );
 
   double t_;              //!< point in time when spike occurred (in ms)
   double Kminus_;         //!< value of Kminus at that time
-  double triplet_Kminus_; //!< value of triplet STDP Kminus at that time
+  double Kminus_triplet_; //!< value of triplet STDP Kminus at that time
   //! how often this entry was accessed (to enable removal, once read by all
   //! neurons which need it)
   size_t access_counter_;

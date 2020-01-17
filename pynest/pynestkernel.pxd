@@ -26,7 +26,6 @@ from libcpp.vector cimport vector
 
 from cpython.ref cimport PyObject
 
-
 cdef extern from "name.h":
     cppclass Name:
         string toString() except +
@@ -67,9 +66,16 @@ cdef extern from "mask.h" namespace "nest":
     cppclass MaskDatum:
         MaskDatum(const MaskDatum&)
 
-cdef extern from "topology_parameter.h" namespace "nest":
+cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
+
+cdef extern from "node_collection.h":
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum(const NodeCollectionDatum&)
+
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
@@ -79,8 +85,9 @@ cdef extern from "connection_id.h" namespace "nest":
 cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
-        long get_source_gid()
-        long get_target_gid()
+        ConnectionDatum(const ConnectionDatum&) except +
+        long get_source_node_id()
+        long get_target_node_id()
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()
@@ -136,7 +143,8 @@ cdef extern from "interpret.h":
 cdef extern from "neststartup.h":
     int neststartup(int*, char***, SLIInterpreter&, string) except +
     void nestshutdown(int) except +
-
+    cbool nest_has_mpi4py()
+    void c_set_communicator "set_communicator" (object) with gil
 
 cdef extern from *:
 

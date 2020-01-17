@@ -789,6 +789,17 @@ def
 {
   cout exch info_d
 } bind addtotrie
+[/arraytype]
+{
+  /dictarray Set
+  dictarray length 1 eq dictarray 0 get type /dictionarytype eq and
+  {
+    dictarray 0 get cout exch info_d
+  }
+  {
+    (Argument of info must be a single element array containing a dictionary) M_ERROR message
+  } ifelse
+} bind addtotrie
 [/trietype]
 {
   cout 
@@ -938,11 +949,6 @@ SeeAlso: info, LocateFileNames, searchifstream, searchfile
 */
 statusdict 
 begin
-  /version 
-   prgmajor cvs (.) join_s 
-   prgminor cvs join_s (.) join_s
-   prgpatch cvs join_s 
-  def
   /userargs [] def
   /interactive true def
   /files [] def
@@ -1743,7 +1749,7 @@ SeeAlso: nestrc
      (              -- N E S T --) =
    } ifelse
    (  Copyright (C) 2004 The NEST Initiative) = () =
-   ( Version: ) =only statusdict/rcsinfo :: =
+   ( Version: ) =only statusdict/version :: =
    ( Built: ) =only statusdict/built :: =
    () =
 
@@ -1771,7 +1777,7 @@ SeeAlso: nestrc
    {
        (NEST ) =only
    } ifelse
-   statusdict/rcsinfo :: =only
+   statusdict/version :: =only
    ( (C) 2004 The NEST Initiative) =
 } def
 
@@ -2069,7 +2075,7 @@ moduleinitializers
     printversion
     {
       statusdict begin
-	cout (NEST version ) <- rcsinfo <- (, built on ) <- built <- ( for ) <- host <- endl
+	cout (NEST version ) <- version <- (, built on ) <- built <- ( for ) <- host <- endl
 	(Copyright (C) 2004 The NEST Initiative) <- endl endl
       end
       quit
@@ -2128,15 +2134,6 @@ moduleinitializers
 
 /start {
   {
-    % Check for rcsinfo SLI file and run it. If it does not
-    % exist, put an empty string into statusdict/rcsinfo.
-    mark
-      { (rcsinfo) (r) file } stopped not
-        { (rcsinfo) run }
-        { statusdict /rcsinfo () put }
-      ifelse
-    ] ;
-
     :commandline
     { % we have an interactive session
       welcome
@@ -2200,7 +2197,7 @@ SeeAlso: welcome
     {% $HOME/.slirc is not present
       (HOME) getenv pop % get home directory (we alrady know that $HOME is set)
       (/.nestrc) join /outfile Set
-      statusdict /prgdocdir get (/examples/nestrc.sli) join /infile Set  
+      statusdict /prgdocdir get (/extras/nestrc.sli) join /infile Set  
       
       infile outfile CopyFile 
       {

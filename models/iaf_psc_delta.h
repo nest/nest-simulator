@@ -35,6 +35,10 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Neurons
+@ingroup iaf
+@ingroup psc
+
 Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
 
 Description:
@@ -92,26 +96,34 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacitance of the membrane in pF
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-I_e        double - Constant input current in pA.
-V_min      double - Absolute lower value for the membrane potential in mV
-
-refractory_input bool - If true, do not discard input during
-refractory period. Default: false.
+\verbatim embed:rst
+================= ======= ======================================================
+ V_m              mV      Membrane potential
+ E_L              mV      Resting membrane potential
+ C_m              pF      Capacity of the membrane
+ tau_m            ms      Membrane time constant
+ t_ref            ms      Duration of refractory period
+ V_th             mV      Spike threshold
+ V_reset          mV      Reset potential of the membrane
+ I_e              pA      Constant input current
+ V_min            mV      Absolute lower value for the membrane potenial
+ refractory_input boolean If true, do not discard input during
+                          refractory period. Default: false
+================= ======= ======================================================
+\endverbatim
 
 References:
-[1] Rotter S & Diesmann M (1999) Exact digital simulation of time-invariant
-linear systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-analysis of synchronous spiking in cortical neural networks.
-Neurocomputing 38-40:565-571.
+
+\verbatim embed:rst
+.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
+       time-invariant linear systems with applications to neuronal
+       modeling. Biologial Cybernetics 81:381-402.
+       DOI: https://doi.org/10.1007/s004220050570
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
+       space analysis of synchronous spiking in cortical neural
+       networks. Neurocomputing 38-40:565-571.
+       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+\endverbatim
 
 Sends: SpikeEvent
 
@@ -119,7 +131,7 @@ Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  September 1999, Diesmann, Gewaltig
 
-SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_canon
+SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 */
 class iaf_psc_delta : public Archiving_Node
 {
@@ -203,7 +215,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -233,7 +245,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -298,10 +310,7 @@ private:
 
 
 inline port
-nest::iaf_psc_delta::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+nest::iaf_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -329,8 +338,7 @@ iaf_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -351,10 +359,10 @@ iaf_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

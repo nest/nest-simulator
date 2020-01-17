@@ -82,33 +82,22 @@ private:
   static constexpr uint8_t BITPOS_RANK = NUM_BITS_LCID;
   static constexpr uint8_t BITPOS_TID = BITPOS_RANK + NUM_BITS_RANK;
   static constexpr uint8_t BITPOS_SYN_ID = BITPOS_TID + NUM_BITS_TID;
-  static constexpr uint8_t BITPOS_PROCESSED_FLAG =
-    BITPOS_SYN_ID + NUM_BITS_SYN_ID;
+  static constexpr uint8_t BITPOS_PROCESSED_FLAG = BITPOS_SYN_ID + NUM_BITS_SYN_ID;
 
-  using bits_for_processed_flag =
-    StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
-  using position_of_processed_flag =
-    StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
+  using bits_for_processed_flag = StaticAssert< NUM_BITS_PROCESSED_FLAG == 1U >::success;
+  using position_of_processed_flag = StaticAssert< BITPOS_PROCESSED_FLAG == 63U >::success;
 
   // generate bit-masks used in bit-operations
-  static constexpr uint64_t MASK_LCID =
-    generate_bit_mask( NUM_BITS_LCID, BITPOS_LCID );
-  static constexpr uint64_t MASK_RANK =
-    generate_bit_mask( NUM_BITS_RANK, BITPOS_RANK );
-  static constexpr uint64_t MASK_TID =
-    generate_bit_mask( NUM_BITS_TID, BITPOS_TID );
-  static constexpr uint64_t MASK_SYN_ID =
-    generate_bit_mask( NUM_BITS_SYN_ID, BITPOS_SYN_ID );
-  static constexpr uint64_t MASK_PROCESSED_FLAG =
-    generate_bit_mask( NUM_BITS_PROCESSED_FLAG, BITPOS_PROCESSED_FLAG );
+  static constexpr uint64_t MASK_LCID = generate_bit_mask( NUM_BITS_LCID, BITPOS_LCID );
+  static constexpr uint64_t MASK_RANK = generate_bit_mask( NUM_BITS_RANK, BITPOS_RANK );
+  static constexpr uint64_t MASK_TID = generate_bit_mask( NUM_BITS_TID, BITPOS_TID );
+  static constexpr uint64_t MASK_SYN_ID = generate_bit_mask( NUM_BITS_SYN_ID, BITPOS_SYN_ID );
+  static constexpr uint64_t MASK_PROCESSED_FLAG = generate_bit_mask( NUM_BITS_PROCESSED_FLAG, BITPOS_PROCESSED_FLAG );
 
 public:
   Target();
   Target( const Target& target );
-  Target( const thread tid,
-    const thread rank,
-    const synindex syn_id,
-    const index lcid );
+  Target( const thread tid, const thread rank, const synindex syn_id, const index lcid );
 
   /**
    * Set local connection id.
@@ -185,10 +174,7 @@ inline Target::Target( const Target& target )
   set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
-inline Target::Target( const thread tid,
-  const thread rank,
-  const synindex syn_id,
-  const index lcid )
+inline Target::Target( const thread tid, const thread rank, const synindex syn_id, const index lcid )
   : remote_target_id_( 0 )
 {
   assert( tid <= MAX_TID );
@@ -207,8 +193,7 @@ inline void
 Target::set_lcid( const index lcid )
 {
   assert( lcid <= MAX_LCID );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) )
-    | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_LCID ) ) | ( static_cast< uint64_t >( lcid ) << BITPOS_LCID );
 }
 
 inline index
@@ -221,8 +206,7 @@ inline void
 Target::set_rank( const thread rank )
 {
   assert( rank <= MAX_RANK );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) )
-    | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) ) | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
 
 inline thread
@@ -235,8 +219,7 @@ inline void
 Target::set_tid( const thread tid )
 {
   assert( tid <= MAX_TID );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) )
-    | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
 inline thread
@@ -249,8 +232,7 @@ inline void
 Target::set_syn_id( const synindex syn_id )
 {
   assert( syn_id <= MAX_SYN_ID );
-  remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) )
-    | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
+  remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) ) | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
 }
 
 inline synindex
@@ -265,12 +247,10 @@ Target::set_status( enum_status_target_id set_status_to )
   switch ( set_status_to )
   {
   case TARGET_ID_PROCESSED:
-    remote_target_id_ =
-      remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
+    remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
     break;
   case TARGET_ID_UNPROCESSED:
-    remote_target_id_ =
-      remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
+    remote_target_id_ = remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
     break;
   default:
     throw InternalError( "Invalid remote target id status." );
@@ -280,8 +260,7 @@ Target::set_status( enum_status_target_id set_status_to )
 inline enum_status_target_id
 Target::get_status() const
 {
-  if ( ( remote_target_id_ & MASK_PROCESSED_FLAG )
-    >> BITPOS_PROCESSED_FLAG ) // test single bit
+  if ( ( remote_target_id_ & MASK_PROCESSED_FLAG ) >> BITPOS_PROCESSED_FLAG ) // test single bit
   {
     return ( TARGET_ID_PROCESSED );
   }

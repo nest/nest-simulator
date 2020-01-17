@@ -44,19 +44,20 @@ __all__ = [
     'broadcast',
     'deprecated',
     'get_help_filepath',
+    'get_parameters',
+    'get_parameters_hierarchical_addressing',
     'get_unistring_type',
-    'get_verbosity',
     'get_wrapped_text',
     'is_coercible_to_sli_array',
     'is_iterable',
     'is_literal',
     'is_sequence_of_connections',
-    'is_sequence_of_gids',
+    'is_sequence_of_node_ids',
     'is_string',
     'load_help',
     'model_deprecation_warning',
+    'restructure_data',
     'serializable',
-    'set_verbosity',
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
@@ -65,17 +66,20 @@ __all__ = [
 ]
 
 # These flags are used to print deprecation warnings only once.
-# Only flags for special cases need to be entered here, all flags for
-# deprecated functions will be registered by the @deprecated decorator.
-_deprecation_warning = {'BackwardCompatibilityConnect': True,
-                        'subnet': True,
-                        'aeif_cond_alpha_RK5': True}
+# Only flags for special cases need to be entered here, such as special models
+# or function parameters, all flags for deprecated functions will be registered
+# by the @deprecated decorator, and therefore does not manually need to be placed here.
+_deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
+                                             'replacement': 'replacement_mod'},
+                        'iaf_psc_alpha_canon': {'deprecation_issued': False,
+                                                'replacement': 'iaf_psc_alpha_ps'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
     """Formats deprecation warning."""
 
     return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
 
 warnings.formatwarning = format_Warning
 
@@ -108,21 +112,20 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
     func_name : str
         Name of the deprecated function
     alt_func_name : str, optional
-        Name of the function to use instead
+        Name of the function to use instead. Needed if text=None
     text : str, optional
         Text to display instead of standard text
     """
-    if _deprecation_warning[func_name]:
-        if alt_func_name is None:
-            alt_func_name = 'Connect'
-        if text is None:
-            text = "{0} is deprecated and will be removed in a future \
-            version of NEST.\nPlease use {1} instead!\
-            ".format(func_name, alt_func_name)
-            text = get_wrapped_text(text)
+    if func_name in _deprecation_warning:
+        if not _deprecation_warning[func_name]['deprecation_issued']:
+            if text is None:
+                text = "{0} is deprecated and will be removed in a future \
+                version of NEST.\nPlease use {1} instead!\
+                ".format(func_name, alt_func_name)
+                text = get_wrapped_text(text)
 
-        warnings.warn('\n' + text)   # add LF so text starts on new line
-        _deprecation_warning[func_name] = False
+            warnings.warn('\n' + text)   # add LF so text starts on new line
+            _deprecation_warning[func_name]['deprecation_issued'] = True
 
 
 # Since we need to pass extra arguments to the decorator, we need a
@@ -146,7 +149,7 @@ def deprecated(alt_func_name, text=None):
     """
 
     def deprecated_decorator(func):
-        _deprecation_warning[func.__name__] = True
+        _deprecation_warning[func.__name__] = {'deprecation_issued': False}
 
         @functools.wraps(func)
         def new_func(*args, **kwargs):
@@ -170,6 +173,7 @@ def get_unistring_type():
     if sys.version_info[0] < 3:
         return basestring
     return str
+
 
 uni_str = get_unistring_type()
 
@@ -275,9 +279,9 @@ def is_sequence_of_connections(seq):
     return False
 
 
-def is_sequence_of_gids(seq):
+def is_sequence_of_node_ids(seq):
     """Checks whether the argument is a potentially valid sequence of
-    GIDs (non-negative integers).
+    node IDs (non-negative integers).
 
     Parameters
     ----------
@@ -287,7 +291,7 @@ def is_sequence_of_gids(seq):
     Returns
     -------
     bool:
-        True if object is a potentially valid sequence of GIDs
+        True if object is a potentially valid sequence of node IDs
     """
 
     return all(isinstance(n, int) and n >= 0 for n in seq)
@@ -376,7 +380,7 @@ def __show_help_in_modal_window(objname, hlptxt):
 def get_help_filepath(hlpobj):
     """Get file path of help object
 
-    Prints message if no help is available for hlpobj.
+    Prints message if no help is available for `hlpobj`.
 
     Parameters
     ----------
@@ -504,52 +508,6 @@ def show_help_with_pager(hlpobj, pager=None):
               'in your home directory.'.format(pager))
 
 
-@check_stack
-def get_verbosity():
-    """Return verbosity level of NEST's messages.
-
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
-
-    Returns
-    -------
-    int:
-        The current verbosity level
-    """
-
-    # Defined in hl_api_helper to avoid circular inclusion problem with
-    # hl_api_info.py
-    sr('verbosity')
-    return spp()
-
-
-@check_stack
-def set_verbosity(level):
-    """Change verbosity level for NEST's messages.
-
-    M_ALL=0,  display all messages
-    M_INFO=10, display information messages and above
-    M_DEPRECATED=18, display deprecation warnings and above
-    M_WARNING=20, display warning messages and above
-    M_ERROR=30, display error messages and above
-    M_FATAL=40, display failure messages and above
-
-    Parameters
-    ----------
-    level : str
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
-        'M_INFO' or 'M_ALL'.
-    """
-
-    # Defined in hl_api_helper to avoid circular inclusion problem with
-    # hl_api_info.py
-    sr("{} setverbosity".format(level))
-
-
 def model_deprecation_warning(model):
     """Checks whether the model is to be removed in a future verstion of NEST.
     If so, a deprecation warning is issued.
@@ -560,15 +518,13 @@ def model_deprecation_warning(model):
         Name of model
     """
 
-    deprecated_models = {'subnet': 'GIDCollection',
-                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha'}
-
-    if model in deprecated_models:
-        text = "The {0} model is deprecated and will be removed in a \
-        future version of NEST, use {1} instead.\
-        ".format(model, deprecated_models[model])
-        text = get_wrapped_text(text)
-        show_deprecation_warning(model, text=text)
+    if model in _deprecation_warning:
+        if not _deprecation_warning[model]['deprecation_issued']:
+            text = "The {0} model is deprecated and will be removed in a \
+            future version of NEST, use {1} instead.\
+            ".format(model, _deprecation_warning[model]['replacement'])
+            text = get_wrapped_text(text)
+            show_deprecation_warning(model, text=text)
 
 
 def serializable(data):
@@ -583,12 +539,16 @@ def serializable(data):
     result : str, int, float, list, dict
 
     """
+    try:
+        # Numpy array and NodeCollection can be converted to list
+        result = data.tolist()
+        return result
+    except AttributeError:
+        # Not able to inherently convert to list
+        pass
 
     if isinstance(data, kernel.SLILiteral):
         result = data.name
-
-    elif isinstance(data, numpy.ndarray):
-        result = data.tolist()
 
     elif type(data) in [list, tuple]:
         result = [serializable(d) for d in data]
@@ -596,7 +556,6 @@ def serializable(data):
     elif isinstance(data, dict):
         result = dict([(key, serializable(value))
                        for key, value in data.items()])
-
     else:
         result = data
 
@@ -621,6 +580,120 @@ def to_json(data):
     return data_json
 
 
+def restructure_data(result, keys):
+    """
+    Restructure list of status dictionaries or list of parameter values to dict with lists or single list or int.
+
+    Parameters
+    ----------
+    result: list
+        list of status dictionaries or list (of lists) of parameter values.
+    keys: string or list of strings
+        name(s) of properties
+
+    Returns
+    -------
+    int, list or dict
+    """
+    if is_literal(keys):
+        final_result = result[0] if len(result) == 1 else list(result)
+
+    elif is_iterable(keys):
+        final_result = ({key: [val[i] for val in result]
+                         for i, key in enumerate(keys)} if len(result) != 1
+                        else {key: val[i] for val in result
+                              for i, key in enumerate(keys)})
+
+    elif keys is None:
+        final_result = ({key: [result_dict[key] for result_dict in result]
+                         for key in result[0]} if len(result) != 1
+                        else {key: result_dict[key] for result_dict in result
+                              for key in result[0]})
+    return final_result
+
+
+def get_parameters(nc, param):
+    """
+    Get parameters from nodes.
+
+    Used by NodeCollections `get()` function.
+
+    Parameters
+    ----------
+    nc: NodeCollection
+        nodes to get values from
+    param: string or list of strings
+        string or list of string naming model properties.
+
+    Returns
+    -------
+    int, list:
+        param is a string so the value(s) is returned
+    dict:
+        param is a list of string so a dictionary is returned
+    """
+    # param is single literal
+    if is_literal(param):
+        cmd = '/{} get'.format(param)
+        sps(nc._datum)
+        try:
+            sr(cmd)
+            result = spp()
+        except kernel.NESTError:
+            result = nc.get()[param]  # If the NodeCollection is a composite.
+    # param is array of strings
+    elif is_iterable(param):
+        result = {param_name: nc.get(param_name) for param_name in param}
+    else:
+        raise TypeError("Params should be either a string or an iterable")
+
+    return result
+
+
+def get_parameters_hierarchical_addressing(nc, params):
+    """
+    Get parameters from nodes, hierarchical case.
+
+    Used by NodeCollections `get()` function.
+
+    Parameters
+    ----------
+    nc: NodeCollection
+        nodes to get values from
+    params: tuple
+        first value in the tuple should be a string, second can be a string or a list of string.
+        The first value corresponds to the path into the hierarchical structure
+        while the second value corresponds to the name(s) of the desired
+        properties.
+
+    Returns
+    -------
+    int, list:
+        params[-1] is a string so the value(s) is returned
+    dict:
+        params[-1] is a list of string so a dictionary is returned
+    """
+
+    # Right now, NEST only allows get(arg0, arg1) for hierarchical
+    # addressing, where arg0 must be a string and arg1 can be string
+    # or list of strings.
+    if is_literal(params[0]):
+        value_list = nc.get(params[0])
+        if type(value_list) != tuple:
+            value_list = (value_list,)
+    else:
+        raise TypeError('First argument must be a string, specifying' +
+                        ' path into hierarchical dictionary')
+
+    result = restructure_data(value_list, None)
+
+    if is_literal(params[-1]):
+        result = result[params[-1]]
+    else:
+        result = {key: result[key] for key in params[-1]}
+    return result
+
+
 class SuppressedDeprecationWarning(object):
     """
     Context manager turning off deprecation warnings for given methods.
@@ -642,22 +715,25 @@ class SuppressedDeprecationWarning(object):
         self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
                               else (no_dep_funcs, ))
         self._deprecation_status = {}
-        self._verbosity_level = get_verbosity()
+        sr('verbosity')  # Use sli-version as we cannon import from info because of cirular inclusion problem
+        self._verbosity_level = spp()
 
     def __enter__(self):
 
         for func_name in self._no_dep_funcs:
             self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
-            _deprecation_warning[func_name] = False
+            _deprecation_warning[func_name]['deprecation_issued'] = True
 
             # Suppress only if verbosity level is deprecated or lower
             if self._verbosity_level <= sli_func('M_DEPRECATED'):
-                set_verbosity(sli_func('M_WARNING'))
+                # Use sli-version as we cannon import from info because of cirular inclusion problem
+                sr("{} setverbosity".format(sli_func('M_WARNING')))
 
     def __exit__(self, *args):
 
         # Reset the verbosity level and deprecation warning status
-        set_verbosity(self._verbosity_level)
+        sr("{} setverbosity".format((self._verbosity_level)))
 
-        for func_name, deprec_status in self._deprecation_status.items():
-            _deprecation_warning[func_name] = deprec_status
+        for func_name, deprec_dict in self._deprecation_status.items():
+            _deprecation_warning[func_name]['deprecation_issued'] = (
+                deprec_dict['deprecation_issued'])

@@ -31,6 +31,9 @@ namespace nest
 {
 
 /** @BeginDocumentation
+@ingroup Synapses
+@ingroup stdp
+
 Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
                              plasticity (triplets).
 
@@ -40,36 +43,44 @@ stdp_triplet_synapse is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]).
 
 STDP examples:
-  pair-based   Aplus_triplet = Aminus_triplet = 0.0
-  triplet      Aplus_triplet = Aminus_triplet = 1.0
+    pair-based   Aplus_triplet = Aminus_triplet = 0.0
+    triplet      Aplus_triplet = Aminus_triplet = 1.0
 
 Parameters:
+\verbatim embed:rst
+=================  ======  ===========================================
+ tau_plus          real    Time constant of short presynaptic trace
+                           (tau_plus of [1])
+ tau_plus_triplet  real    Time constant of long presynaptic trace
+                           (tau_x of [1])
+ Aplus             real    Weight of pair potentiation rule
+                           (A_plus_2 of [1])
+ Aplus_triplet     real    Weight of triplet potentiation rule
+                           (A_plus_3 of [1])
+ Aminus            real    Weight of pair depression rule
+                           (A_minus_2 of [1])
+ Aminus_triplet    real    Weight of triplet depression rule
+                           (A_minus_3 of [1])
+ Wmax              real    Maximum allowed weight
+=================  ======  ===========================================
 
-tau_plus           double - time constant of short presynaptic trace
-                            - (tau_plus of [1])
-tau_plus_triplet   double - time constant of long presynaptic trace
-                            - (tau_x of [1])
-Aplus              double - weight of pair potentiation rule
-                          - (A_plus_2 of [1])
-Aplus_triplet      double - weight of triplet potentiation rule
-                          - (A_plus_3 of [1])
-Aminus             double - weight of pair depression rule
-                            (A_minus_2 of [1])
-Aminus_triplet     double - weight of triplet depression rule
-                          - (A_minus_3 of [1])
-Wmax               double - maximum allowed weight
-
-States:
-  Kplus              double: pre-synaptic trace (r_1 of [1])
-  Kplus_triplet      double: triplet pre-synaptic trace (r_2 of [1])
+=============== ======  ===========================================
+**States**
+-------------------------------------------------------------------
+ Kplus          real    Pre-synaptic trace (r_1 of [1])
+ Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1])
+=============== ======  ===========================================
+\endverbatim
 
 Transmits: SpikeEvent
 
 References:
 
-[1] J.-P. Pfister & W. Gerstner (2006) Triplets of Spikes in a Model
-      of Spike Timing-Dependent Plasticity.  The Journal of Neuroscience
-      26(38):9673-9682; doi:10.1523/JNEUROSCI.1425-06.2006
+\verbatim embed:rst
+.. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
+       of spike timing-dependent plasticity.  The Journal of Neuroscience
+       26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
+\endverbatim
 
 Notes:
 - Presynaptic traces r_1 and r_2 of [1] are stored in the connection as
@@ -174,10 +185,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -203,8 +211,7 @@ private:
   inline double
   depress_( double w, double kminus, double Kplus_triplet_ )
   {
-    double new_w =
-      std::abs( w ) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
+    double new_w = std::abs( w ) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
     return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
   }
 
@@ -230,9 +237,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPTripletConnection< targetidentifierT >::send( Event& e,
-  thread t,
-  const CommonSynapseProperties& )
+STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
 
   double t_spike = e.get_stamp().get_ms();
@@ -242,10 +247,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike_ - dendritic_delay,
-    t_spike - dendritic_delay,
-    &start,
-    &finish );
+  target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   while ( start != finish )
@@ -254,16 +256,15 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
     // it is effectively late by that much at the synapse.
     double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
-    // subtract 1.0 yields the triplet_Kminus value just prior to
+    // subtract 1.0 yields the Kminus_triplet value just prior to
     // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
-    double ky = start->triplet_Kminus_ - 1.0;
+    double ky = start->Kminus_triplet_ - 1.0;
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-    weight_ =
-      facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }
 
   // depression due to new pre-synaptic spike
@@ -272,8 +273,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
   // out to the synapse
-  weight_ = depress_(
-    weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
+  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
 
   Kplus_triplet_ += 1.0;
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
@@ -325,8 +325,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -343,9 +342,7 @@ STDPTripletConnection< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -360,8 +357,7 @@ STDPTripletConnection< targetidentifierT >::set_status(
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
-         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

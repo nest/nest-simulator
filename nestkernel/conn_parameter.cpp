@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_names.h"
+#include "kernel_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -69,6 +70,13 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
     return new ArrayDoubleParameter( **dvd, nthreads );
   }
 
+  // Parameter
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+  if ( pd )
+  {
+    return new ParameterConnParameterWrapper( *pd, nthreads );
+  }
+
   // array of integer
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
   if ( ivd )
@@ -76,18 +84,15 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
     return new ArrayIntegerParameter( **ivd, nthreads );
   }
 
-  throw BadProperty( std::string( "Cannot handle parameter type. Received " )
-    + t.datum()->gettypename().toString() );
+  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + t.datum()->gettypename().toString() );
 }
 
-nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
-  const size_t )
+nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )
   : rdv_( 0 )
 {
   if ( not rdv_spec->known( names::distribution ) )
   {
-    throw BadProperty(
-      "Random distribution spec must contain distribution name." );
+    throw BadProperty( "Random distribution spec must contain distribution name." );
   }
 
   const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
@@ -96,9 +101,24 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
     throw BadProperty( "Unknown random deviate: " + rdv_name );
   }
 
-  librandom::RdvFactoryDatum factory = getValue< librandom::RdvFactoryDatum >(
-    RandomNumbers::get_rdvdict()[ rdv_name ] );
+  librandom::RdvFactoryDatum factory =
+    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );
+}
+
+
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
+  : parameter_( pd.get() )
+{
+}
+
+double
+nest::ParameterConnParameterWrapper::value_double( thread target_thread,
+  librandom::RngPtr& rng,
+  index snode_id,
+  Node* target ) const
+{
+  return parameter_->value( rng, snode_id, target, target_thread );
 }

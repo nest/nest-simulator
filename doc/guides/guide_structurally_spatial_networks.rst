@@ -47,15 +47,16 @@ Undocumented features
 
 .. _sec:layers:
 
-Layers
-------
+Structurally distributed nodes
+------------------------------
 
-Neuronal networks can have an organized spatial distribution or *layers*. Layers in NEST 3.0
+Neuronal networks can have an organized spatial distribution, which we call *layers*. Layers in NEST 3.0
 are NodeCollections with spatial metadata. We will first
-illustrate how to place elements in simple layers, where each
-element is a single model neuron.
+illustrate how to place elements in simple grid-like layers, where each
+element is a single model neuron, before describing how the elements can be placed
+freely in space.
 
-We will illustrate the definition and use of layers using examples.
+We will illustrate the definition and use of spatially distributed NodeCollections using examples.
 
 NEST distinguishes between two classes of layers:
 
@@ -75,8 +76,8 @@ Grid-based Layers
 
 .. _sec:verysimple:
 
-A very simple layer
-^^^^^^^^^^^^^^^^^^^
+A very simple example
+^^^^^^^^^^^^^^^^^^^^^
 
 We create a first, grid-based simple layer with the following command:
 
@@ -89,17 +90,19 @@ We create a first, grid-based simple layer with the following command:
 .. figure:: ../topology/user_manual_figures/layer1.png
    :name: fig:layer1
 
-   Simple grid-based layer centered about the origin. Blue circles mark
-   layer elements, the thin square the extent of the layer. Row and
+   Simple grid-based NodeCollection centered about the origin. Blue circles mark
+   the elements, the thin square the extent of the layer. Row and
    column indices are shown in the right and top margins, respectively.
 
 The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
-- We are using the standard ``Create`` function, but in addition to model
-  type, we are also passing a ``nest.spatial.grid`` object as the
-  ``positions`` argument.
+-  We are using the standard ``Create`` function, but in addition to model
+   type, we are also passing a ``nest.spatial.grid`` object as the
+   ``positions`` argument.
 
--  The layer has five *rows* and five *columns*.
+-  The layer has five *rows* and five *columns*, as given by ``shape=[columns, rows]``.
+   Note that a more intuitive way of thinking of *shape* is to think of it as given by
+   ``shape=[num_x, num_y]``.
 
 -  The *center* of the layer is at the origin of the coordinate system,
    :math:`(0,0)`.
@@ -160,7 +163,7 @@ different extent of a layer, i.e., its size in :math:`x`- and
    Same layer as in :numref:`fig_layer1`, but with different extent.
 
 The resulting layer is shown in :numref:`fig_layer2`. The extent is always
-a two-element tuple of floats. In this example, we have grid spacings
+a two-element list of floats. In this example, we have grid spacings
 :math:`dx=0.4` and :math:`dy=0.1`. Changing the extent does not affect
 grid indices.
 
@@ -192,7 +195,7 @@ The following code creates layers centered about :math:`(0,0)`,
    Three layers centered, respectively, about :math:`(0,0)` (blue),
    :math:`(-1,-1)` (green), and :math:`(1.5,0.5)` (red).
 
-The center is given as a two-element tuple of floats. Changing the
+The center is given as a two-element list of floats. Changing the
 center does not affect grid indices: For each of the three layers in
  :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
@@ -209,7 +212,7 @@ Constructing a layer: an example
 
 To see how to construct a layer, consider the following example:
 
--  a layer with :math:`n_r` rows and :math:`n_c` columns;
+-  a layer with :math:`n_y` rows and :math:`n_x` columns;
 
 -  spacing between nodes is :math:`d` in :math:`x`- and
    :math:`y`-directions;
@@ -219,13 +222,13 @@ To see how to construct a layer, consider the following example:
 -  the extent shall be centered about :math:`y=0`.
 
 From Eq. :numref:`dx_dy_extent`, we see that the extent of the layer must be
-:math:`(n_c d, n_r d)`. We now need to find the coordinates
+:math:`(n_x d, n_y d)`. We now need to find the coordinates
 :math:`(c_x, c_y)` of the center of the layer. To place the left edge of
 the extent at :math:`x=0`, we must place the center of the layer at
-:math:`c_x=n_c d / 2` along the :math:`x`-axis, i.e., half the extent
+:math:`c_x=n_x d / 2` along the :math:`x`-axis, i.e., half the extent
 width to the right of :math:`x=0`. Since the layer is to be centered
 about :math:`y=0`, we have :math:`c_y=0`. Thus, the center coordinates
-are :math:`(n_c d/2, 0)`. The layer is created with the following code
+are :math:`(n_x d/2, 0)`. The layer is created with the following code
 and shown in :numref:`fig_layer3a`:
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
@@ -237,7 +240,7 @@ and shown in :numref:`fig_layer3a`:
 .. figure:: ../topology/user_manual_figures/layer3a.png
    :name: fig:layer3a
 
-   Layer with :math:`n_c=5` rows and :math:`n_r=3` columns, spacing
+   Layer with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
    :math:`d=0.1` and the left edge of the extent at :math:`x=0`,
    centered about the :math:`y`-axis. The cross marks the point on the
    extent placed at the origin :math:`(0,0)`, the circle the center of
@@ -273,14 +276,41 @@ Note the following points:
 -  For free layers, element *positions* are specified by the
    ``nest.spatial.free`` object.
 
--  The ``'positions'`` entry must either be a Python ``list`` (or ``tuple``) of
+-  The ``pos`` entry must either be a Python ``list`` (or ``tuple``) of
    element coordinates, i.e., of two-element tuples of floats giving the
-   (:math:`x`, :math:`y`)-coordinates of the elements, or a parameter object.
+   (:math:`x`, :math:`y`)-coordinates of the elements, or a ``Parameter`` object.
+
+-  When using a Parameter object for the positions, the number of dimensions have to be specified
+   by the ``num_dimensions`` variable. num_dimensions can either be 2 or 3.
+
+-  When using a Parameter object you also need to specify how many elements you want to create
+   by specifying ``'n'`` in the ``Create`` call. This is **not** the case when you pass a list to
+   the ``nest.spatial.free`` object.
+
+-  The extent is automatically set when using ``nest.spatial.free``, however, it
+   is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
 -  All layer element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
    periodic boundary conditions are used; see
    Sec. \ :ref:`2.4 <sec:periodic>`.
+
+To create a spatially distributed NodeCollection from a list, do the following:
+
+.. literalinclude:: ../topology/user_manual_scripts/layers.py
+    :start-after: #{ layer4b #}
+    :end-before: #{ end #}
+
+.. _fig_layer4:
+
+.. figure:: ../topology/user_manual_figures/layer4b.png
+   :name: fig:layer4b
+
+   A free layer with 3 elements freely distributed space. The extent is given by the gray lines.
+
+Note that when using a list to specify the positions, neither ``'n'`` nor ``num_dimenstions``
+are specified. Furthermore, the extent is calculated from the node positions, and is here
+:math:`1.45\times 1.45`. The extent could also be set by passing the ``extent`` argument.
 
 .. _sec:3dlayer:
 
@@ -289,8 +319,7 @@ Note the following points:
 
 Although the term “layer” suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
-section may be easily extended with another component in the coordinates
-for the positions:
+section may be easily extended by updating number of dimensions for the positions:
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ layer4_3d #}
@@ -304,6 +333,24 @@ for the positions:
    A free 3D layer with 200 elements uniformly distributed in an extent
    of size :math:`1\times 1\times 1`.
 
+Again it is also possible to specify a list of list to create nodes in a 3-dimensional
+space. Another possibility is to create a 3D grid-layer, with 3 elements passed to
+the shape argument, ``shape=[nx, ny, nz]``:
+
+.. literalinclude:: ../topology/user_manual_scripts/layers.py
+    :start-after: #{ layer4_3d_b #}
+    :end-before: #{ end #}
+
+.. _fig_layer4_3d:
+
+.. figure:: ../topology/user_manual_figures/layer4_3d_b.png
+   :name: fig:layer4_3d_b
+
+   A grid 3D layer with 120 elements distributed on a grid with 4 elements in the x-direction,
+   5 elements in the y-direction and 6 elements in the z-direction, with an extent
+   of size :math:`1\times 1\times 1`.
+
+
 .. _sec:periodic:
 
 Periodic boundary conditions
@@ -313,7 +360,7 @@ Simulations usually model systems much smaller than the biological
 networks we want to study. One problem this entails is that a
 significant proportion of neurons in a model network is close to the
 edges of the network with fewer neighbors than nodes properly inside the
-network. In the :math:`5\times 5`-layer in :numref:`fig_layer1`, e.g., 16
+network. In the :math:`5\times 5`-layer in :numref:`fig_layer1` for instance., 16
 out of 25 nodes form the border of the layer.
 
 One common approach to reducing the effect of boundaries on simulations
@@ -324,8 +371,7 @@ surface of a torus.  :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
-You specify periodic boundary conditions for a layer using the
-dictionary entry ``edge_wrap``:
+You specify periodic boundary conditions for a layer using the entry ``edge_wrap``:
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ player #}
@@ -363,15 +409,16 @@ Chapter \ :ref:`3 <sec:connections>`.
 .. _sec:subnet:
 
 
-Layers as NEST NodeCollection
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Layers as NodeCollection
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 From the perspective of NEST, a layer is a special type of
 *NodeCollection*. From the user perspective, the following points may
 be of interest:
 
--  The NodeCollection has a ``spatial`` property describing the layer
-   properties (``l`` is the layer created above):
+-  The NodeCollection has a ``spatial`` property describing the spatial
+   properties of the NodeCollection (``l`` is the layer created at the beginning
+   of this guide):
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ layer1s #}
@@ -383,15 +430,15 @@ be of interest:
 
 
 
-The ``spatial`` propery is read-only; changing any values will
+The ``spatial`` property is read-only; changing any value will
 not change properties of the layer.
 
 -  NEST sees the elements of the layer in the same way as the
-   elements of any NodeCollection. NodeCollections created as layers can
+   elements of any other NodeCollection. NodeCollections created as layers can
    therefore be used in the same ways as any standard NodeCollection.
    However, operations requiring a NodeCollection with spatial data (e.g.
    ``Connect`` with spatial dependence, or visualization of layers) can
-   only be used on NodeCollections created as layers.
+   only be used on NodeCollections created with spatial distribution.
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ layer1p #}
@@ -400,35 +447,6 @@ not change properties of the layer.
 .. literalinclude:: ../topology/user_manual_scripts/layers.log
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
-
-.. _sec:layerdesign:
-
-.. TODO: Rewrite this section and code example
-
-Designing layers
-~~~~~~~~~~~~~~~~
-
-A paper on a neural network model might describe the network as
-follows [2]_:
-
-   The network consists of :math:`20x20` microcolumns placed on a
-   regular grid spanning :math:`0.5^\circ\times 0.5^\circ` of visual
-   space. Neurons within each microcolumn are organized into L2/3, L4,
-   and L56 subpopulations. Each subpopulation consists of three
-   pyramidal cells and one interneuron. All pyramidal cells are modeled
-   as NEST ``iaf_psc_alpha`` neurons with default parameter values,
-   while interneurons are ``iaf_psc_alpha`` neurons with threshold
-   voltage :math:`V_{\text{th}}=-52`\ mV.
-
-How should you implement such a network in NEST? The recommended approach
-is to ... :
-
-.. literalinclude:: ../topology/user_manual_scripts/layers.py
-    :start-after: #{ layer10 #}
-    :end-before: #{ end #}
-
-We will discuss in Chapter \ :ref:`3.1 <sec:conn_basics>` how to connect
-selectively to different neuron models.
 
 .. _sec:connections:
 

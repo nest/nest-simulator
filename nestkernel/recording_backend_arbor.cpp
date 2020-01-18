@@ -167,7 +167,7 @@ nest::RecordingBackendArbor::cleanup()
 void
 nest::RecordingBackendArbor::exchange_( std::vector< arb::shadow::spike >& local_spikes )
 {
-  arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
+  // arb::shadow::gather_spikes( local_spikes, MPI_COMM_WORLD );
   steps_left_--;
 }
 

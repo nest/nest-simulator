@@ -68,7 +68,7 @@ Description:
 
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]. A spike is emitted when the membrane potential
-is crossed from below. After a spike, and afterhyperpolarizing (AHP) conductance
+is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 

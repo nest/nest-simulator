@@ -152,7 +152,7 @@ public:
   virtual bool one_node_per_process() const;
 
   /**
-   * Returns true if the node if it sends/receives off-grid events This is
+   * Returns true if the node sends/receives off-grid events. This is
    * used to discriminate between different types of nodes when adding
    * new nodes to the network.
    */

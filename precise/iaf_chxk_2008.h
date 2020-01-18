@@ -100,13 +100,17 @@ The following parameters can be set in the status dictionary.
 \endverbatim
 
 Remarks:
-- In accordance with the original Fortran implementation of the model used in [1], the activation time point for the AHP
-following a spike is detemined by linear interpolation within the time step during which the threshold was crossed.
-- iaf_chxk_2008 neurons therefore emit spikes with precise spike time information, but they ignore precise spike times
-when handling synaptic input.
-- In the original Fortran implementation underlying [1], all previous AHP activation was discarded when a new spike
-occured, leading to reduced AHP currents in particular during periods of high spiking activity. Set `ahp_bug` to `true`
-to obtain this behavior in the model.
+- In accordance with the original Fortran implementation of the model used
+  in [1], the activation time point for the AHP following a spike is
+  determined by linear interpolation within the time step during which the
+  threshold was crossed.
+- iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+  information, but they ignore precise spike times when handling synaptic
+  input.
+- In the original Fortran implementation underlying [1], all previous AHP
+  activation was discarded when a new spike occurred, leading to reduced AHP
+  currents in particular during periods of high spiking activity. Set
+  `ahp_bug` to `true` to obtain this behavior in the model.
 
 References:
 

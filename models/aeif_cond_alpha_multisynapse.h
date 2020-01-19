@@ -44,9 +44,8 @@
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-
 aeif_cond_alpha_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
-######################################################################################################
+#####################################################################################################
 
 Description
 +++++++++++
@@ -146,12 +145,7 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Authors
-+++++++
-
-HE Plesser, based on aeif_cond_beta_multisynapse
-
-SeeAlso
+See also
 +++++++
 
 aeif_cond_alpha_multisynapse

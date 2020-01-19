@@ -38,16 +38,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-detector
-
+/* BeginUserDocs: devices, detector
 
 correlation_detector - Device for evaluating cross correlation between two spike sources
-##########################################################################################
+########################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
@@ -82,8 +79,8 @@ receptor_port of the incoming connection: All incoming connections with
 receptor_port = 0 will be pooled as the spike source 1, the ones with
 receptor_port = 1 will be used as spike source 2.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ==================== ======== ==================================================
@@ -148,20 +145,14 @@ See Auto- and crosscorrelation functions for spike
 trains[cross_check_mip_corrdet.py]
 in pynest/examples.
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent
 
-Author:
-++++++++
-
-Moritz Helias
-        Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
-
 FirstVersion: 2007/5/21
 
-SeeAlso:
+See also
 ++++++++
 
 spike_detector, Device, PseudoRecordingDevice

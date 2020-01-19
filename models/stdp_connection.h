@@ -39,22 +39,20 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_synapse - Synapse type for spike-timing dependent plastiicty
-##################################################################
+#################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_synapse is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
@@ -68,13 +66,13 @@ Parameters:
 ========= =======  ======================================================
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
@@ -95,14 +93,7 @@ References:
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias, Abigail Morrison
-
-Adapted by: Philipp Weidel
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, static_synapse

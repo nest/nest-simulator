@@ -29,16 +29,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-binary
-
+/* BeginUserDocs: neurons, binary
 
 ginzburg_neuron - Binary stochastic neuron with sigmoidal activation function
 #############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The ginzburg_neuron is an implementation of a binary neuron that
 is irregularly updated as Poisson time points. At each update
@@ -87,8 +84,8 @@ The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ====== ============= ===========================================================
@@ -101,8 +98,8 @@ Parameters:
 ====== ============= ===========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
@@ -117,24 +114,19 @@ References:
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, PotentialRequest
 
 FirstVersion: February 2010
 
-Author:
-++++++++
-
-Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta

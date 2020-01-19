@@ -61,19 +61,13 @@ namespace nest
 extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 
-/* BeginUserDocs:
-Neurons
-iaf
-cond
-
-
+/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
 
 iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire neuron model
-########################################################################################################
+#######################################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
@@ -113,9 +107,8 @@ the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment iaf_cond_alpha model, all
 synaptic weights must be positive numbers!
 
-
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
@@ -154,18 +147,19 @@ change. USE AT YOUR OWN PERIL!
 @note All parameters that occur for both compartments
 and dendrite are stored as C arrays, with index 0 being soma.
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
@@ -180,12 +174,7 @@ References:
        DOI: https://doi.org/10.1073/pnas.88.24.11569
 
 
-Author:
-++++++++
-
-Plesser
-
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_alpha

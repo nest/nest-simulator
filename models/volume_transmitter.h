@@ -37,16 +37,14 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 volume_transmitter - Node used in combination with neuromodulated synaptic plasticity
-######################################################################################
+#####################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
+
 The volume transmitter is used in combination with neuromodulated
 synaptic plasticty, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
@@ -66,14 +64,15 @@ transmitter, the volume transmitter is passed as a parameter when a
 neuromodulatory synapse is defined. The implementation is based on the
 framework presented in [1]_.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
+
 - deliver_interval - time interval given in d_min time steps, in which
                      the volume signal is delivered from the volume
                      transmitter to the assigned synapses
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
@@ -82,19 +81,12 @@ References:
        4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
 
 
-Author:
-++++++++
-
-Wiebke Potjans, Abigail Morrison
-
-Remarks: major changes to update function after code revision in Apr 2013 (SK)
-
-Receives:
+Receives
 ++++++++
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 stdp_dopamine_synapse

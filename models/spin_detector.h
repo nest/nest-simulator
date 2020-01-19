@@ -37,16 +37,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-detector
-
+/* BeginUserDocs: devices, detector
 
 spin_detector - Device for detecting binary states in neurons
-##############################################################
+#############################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The spin_detector is a recording device. It is used to decode and
 record binary states from spiking activity from a single neuron, or
@@ -77,12 +74,12 @@ be recorded, are recorded.
 
 states are not necessarily written to file in chronological order.
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent
 
-SeeAlso:
+See also
 ++++++++
 
 spike_detector, Device, RecordingDevice

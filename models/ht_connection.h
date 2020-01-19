@@ -29,16 +29,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-ht_synapse
-
+/* BeginUserDocs: synapses, Hill-Tononi synapse
 
 ht_synapse - Synapse with depression after Hill & Tononi (2005)
-################################################################
+###############################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 This synapse implements the depression model described in [1, p 1678].
 See docs/model_details/HillTononi.ipynb for details.
@@ -54,8 +51,8 @@ P(t=0) = 1
 
 w(t) = w_{max} * P(t)   is the resulting synaptic weight
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -67,8 +64,8 @@ The following parameters can be set in the status dictionary:
 ========  ======  =========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
@@ -76,19 +73,14 @@ References:
        DOI: https://doi.org/10.1152/jn.00915.2004
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
 FirstVersion: March 2009
 
-Author:
-++++++++
-
-Hans Ekkehard Plesser, based on markram_synapse
-
-SeeAlso:
+See also
 ++++++++
 
 ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse

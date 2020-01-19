@@ -34,17 +34,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 iaf_psc_delta - Leaky integrate-and-fire neuron model
-#######################################################
+#####################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_psc_delta is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
@@ -94,9 +90,8 @@ optimization levels. A future version of iaf_psc_delta will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -116,9 +111,8 @@ The following parameters can be set in the status dictionary.
 ================= ======= ======================================================
 
 
-References:
-+++++++++++
-
+References
+++++++++++
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
@@ -130,20 +124,17 @@ References:
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  September 1999, Diesmann, Gewaltig
-++++++++
-
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps

@@ -63,16 +63,13 @@ namespace nest
  */
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-ht_neuron
-
+/* BeginUserDocs: neurons, Hill-Tononi neuron
 
 ht_neuron - Neuron model after Hill & Tononi (2005)
-#####################################################
+###################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 This model neuron implements a slightly modified version of the
 neuron model described in [1]_. The most important properties are:
@@ -90,8 +87,8 @@ Documentation and Examples:
 - pynest/examples/intrinsic_currents_spiking.py
 - pynest/examples/intrinsic_currents_subthreshold.py
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 =============== ======= =========================================================
  V_m            mV      Membrane potential
@@ -145,25 +142,20 @@ equilibrate                  If given and true, time-dependent activation
 
 @Note Conductances are unitless in this model and currents are in mV.
 
-Author:
-++++++++
-
-Hans Ekkehard Plesser
-
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: October 2009; full revision November 2016
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
@@ -175,7 +167,7 @@ References:
        DOI: https://doi.org/10.1152/jn.01038.2002
 
 
-SeeAlso:
+See also
 ++++++++
 
 ht_connection

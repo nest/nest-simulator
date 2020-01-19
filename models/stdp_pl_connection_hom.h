@@ -32,23 +32,20 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 stdp_pl_synapse_hom - Synapse type for spike-timing dependent plasticity with power law
 #######################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_pl_synapse is a connector to create synapses with spike time
 dependent plasticity using homoegeneous parameters (as defined in [1]_).
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 =========  ======  ====================================================
  tau_plus  ms      Time constant of STDP window, potentiation
@@ -65,8 +62,8 @@ Remarks:
 The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
@@ -74,19 +71,14 @@ References:
        19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
 FirstVersion: May 2007
 
-Author:
-++++++++
-
-Abigail Morrison
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, stdp_synapse, tsodyks_synapse, static_synapse

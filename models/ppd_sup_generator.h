@@ -40,17 +40,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
-##############################################################################################################
+#############################################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The ppd_sup_generator generator simulates the pooled spike train of a
 population of neurons firing independently with Poisson process with dead
@@ -58,8 +54,8 @@ time statistics.
 The rate parameter can also be sine-modulated. The generator does not
 initialize to equilibrium in this case, initial transients might occur.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
@@ -77,20 +73,16 @@ The following parameters appear in the element's status dictionary:
 
 Remarks:
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1]  Deger M, Helias M, Boucsein C, Rotter S (2011). Statistical properties
         of superimposed stationary spike trains. Journal of Computational
         Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
 
-Authors:
-+++++++++
 
-Moritz Deger, Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice

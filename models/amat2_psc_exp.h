@@ -35,17 +35,13 @@
 
 namespace nest
 {
-/* BeginUserDocs:
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
-#################################################################################################################
+################################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 amat2_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
@@ -86,8 +82,8 @@ Remarks:
 - Expect unstable numerics if time constants that are required to be
   different are very close.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -130,8 +126,8 @@ to
 avoid a degenerate case of the ODE describing the model [1]_.
 For very similar values, numerics will be unstable.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Rotter S, Diesmann M (1999). Exact simulation of
@@ -152,23 +148,17 @@ References:
        DOI: https://doi.org/10.3389/fncom.2011.00042
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: April 2013
-
-Author:
-++++++++
-
-Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
-Thomas Pfeil)
 
 EndUserDocs */
 class amat2_psc_exp : public Archiving_Node

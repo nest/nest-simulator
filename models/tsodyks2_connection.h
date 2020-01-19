@@ -32,15 +32,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stp
+/* BeginUserDocs: synapses, short-term plasticity
 
 tsodyks2_synapse - Synapse type with short term plasticity
-#############################################################
+##########################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to [1]_ and [2]_. It solves Eq (2) from [1]_ and
@@ -54,8 +52,8 @@ The parameter A_se from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -79,8 +77,8 @@ test_tsodyks2_synapse.py in the examples compares the two synapse
 models.
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
@@ -96,19 +94,14 @@ References:
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
 FirstVersion: October 2011
 
-Author:
-++++++++
-
-Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 tsodyks_synapse, synapsedict, stdp_synapse, static_synapse

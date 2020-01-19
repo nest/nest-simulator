@@ -56,17 +56,13 @@ namespace nest
  */
 extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-cond
-
+/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
 
 iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron model
-#################################################################################
+###############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
@@ -74,8 +70,8 @@ of conductance modelled by an alpha function. The alpha function
 is normalised such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = tau_{syn}`.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -96,12 +92,12 @@ The following parameters can be set in the status dictionary.
 =========== ======= ===========================================================
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
@@ -115,8 +111,9 @@ Remarks:
         inputs to the two synapses by the sign of the synaptic weight.
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
@@ -134,13 +131,7 @@ References:
        24(10):2345-2356
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
 
-
-Author:
-++++++++
-
-Schrader, Plesser
-
-SeeAlso:
+See also
 ++++++++
 
 iaf_cond_exp, iaf_cond_alpha_mc

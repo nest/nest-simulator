@@ -45,16 +45,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains
-#################################################################################
+################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
 trains. By default, each target of the generator will receive a different
@@ -66,8 +63,8 @@ The instantaneous rate of the process is given by
 
  f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -81,7 +78,6 @@ The following parameters can be set in the status dictionary:
  order                   real     Gamma order (>= 1), default: 1
  individual_spike_trains boolean  See note below, default: true
 ======================== ======== ==============================================
-
 
 
 Remarks:
@@ -99,18 +95,18 @@ Remarks:
   SetDefaults or CopyModel before a generator node is created, the generator
   will send the same spike train to all of its targets.
 
-Receives:
+Receives
 ++++++++
 
 DataLoggingRequest
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
@@ -121,12 +117,7 @@ References:
 
 FirstVersion: October 2007, May 2013
 
-Author:
-++++++++
-
-Hans E Plesser, Thomas Heiberg
-
-SeeAlso:
+See also
 ++++++++
 
 sinusoidal_poisson_generator, gamma_sup_generator

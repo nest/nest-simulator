@@ -70,9 +70,8 @@ extern "C" int aeif_cond_alpha_dynamics_DT0( double, const double*, double*, voi
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-
 aeif_cond_alpha - Conductance based exponential integrate-and-fire neuron model
-#################################################################################
+###############################################################################
 
 Description
 +++++++++++
@@ -157,13 +156,8 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Authors
-+++++++
-
-M-O Gewaltig; full revision by T Fardet, 2016
-
 Sends
-++++++
++++++
 
 SpikeEvent
 
@@ -180,8 +174,8 @@ References
        activity. Journal of Neurophysiology. 943637-3642
        DOI: https://doi.org/10.1152/jn.00686.2005
 
-SeeAlso
-+++++++
+See also
+++++++++
 
 iaf_cond_alpha, aeif_cond_exp
 

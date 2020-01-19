@@ -37,16 +37,13 @@
 
 namespace nest
 {
-/* BeginUserDocs:
-Devices
-detector
-
+/* BeginUserDocs: devices, detector
 
 correlospinmatrix_detector - Device for measuring the covariance matrix from several inputs
-#############################################################################################
+###########################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The correlospinmatrix_detector is a recording device. It is used
 to record correlations from binary neurons from several binary sources and
@@ -67,8 +64,8 @@ The correlospinmatrix_detector has a variable number of inputs which can be
 set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ================ ========= ====================================================
@@ -119,19 +116,14 @@ See  pynest/examples/correlospinmatrix_detector_two_neuron.py
 for a script reproducing a setting studied in Fig 1 of Grinzburg &
 Sompolinsky (1994) PRE 50(4) p. 3171.
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent
 
-Author:
-++++++++
-
-Moritz Helias
-
 FirstVersion: 2015/08/25
 
-SeeAlso:
+See also
 ++++++++
 
 correlation_detector, correlomatrix_detector, spike_detector,

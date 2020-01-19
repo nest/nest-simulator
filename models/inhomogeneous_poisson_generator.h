@@ -39,24 +39,23 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 inhomogeneous_poisson_generator - provides Poisson spike trains at a piecewise constant rate
-#############################################################################################
+############################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
+
 The inhomogeneous Poisson generator provides Poisson spike trains at a
 piecewise constant rate to the connected node(s). The rate of the process
 is changed at the specified times. The unit of the instantaneous rate
 is spikes/s. By default, each target of the generator will receive
 a different spike train.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
+
 The following parameters can be set in the status dictionary:
 
 
@@ -73,22 +72,17 @@ The following parameters can be set in the status dictionary:
                                       *end* of the step. Default: false
 ==================== ================ =========================================
 
-Receives:
+Receives
 ++++++++
 
 DataLoggingRequest
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Authors:
-++++++++
-
-Renato Duarte, Barna Zajzon
-
-SeeAlso:
+See also
 ++++++++
 
 sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice

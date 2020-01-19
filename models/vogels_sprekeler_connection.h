@@ -30,16 +30,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapses, spike-timing-dependent plasticity
 
 vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent plasticity with constant depression
-#################################################################################################################
+################################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 vogels_sprekeler_synapse is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
@@ -48,8 +45,8 @@ irrespective of the order of the pre and post-synaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 ======  ======  =========================================================
  tau    ms      Time constant of STDP window, potentiation
@@ -60,13 +57,13 @@ Parameters:
 ======  ======  =========================================================
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science,
@@ -75,12 +72,7 @@ References:
 
 FirstVersion: January 2016
 
-Author:
-++++++++
-
-Ankur Sinha
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict

@@ -28,16 +28,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-inst_rate
+/* BeginUserDocs: synapses, instantaneous rate
 
 diffusion_connection - Synapse type for instantaneous rate connections between neurons of type siegert_neuron
 ##############################################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 diffusion_connection is a connector to create
 instantaneous connections between neurons of type siegert_neuron. The
@@ -61,13 +58,13 @@ case of distributed in-degrees (see discussion in chapter 5.2 of [1]_)
 The values of the parameters delay and weight are ignored for
 connections of this type.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 DiffusionConnectionEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A,
@@ -78,12 +75,7 @@ References:
        DOI: https://doi.org/10.3389/fninf.2017.00034
 
 
-Author:
-++++++++
-
-David Dahmen, Jan Hahne, Jannis Schuecker
-
-SeeAlso:
+See also
 ++++++++
 
 siegert_neuron, rate_connection_instantaneous

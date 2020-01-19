@@ -39,23 +39,20 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-generator
-
+/* BeginUserDocs: devices, generator
 
 step_current_generator - provides a piecewise constant DC input current
-########################################################################
+#######################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 The dc_generator provides a piecewise constant DC input to the
 connected node(s).  The amplitude of the current is changed at the
 specified times. The unit of the current is pA.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
@@ -80,17 +77,12 @@ to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for current changes
 which typically would not fall onto simulation time steps.
 
-Sends:
-++++++++
+Sends
++++++
 
 CurrentEvent
 
-Author:
-++++++++
-
-Jochen Martin Eppler, Jens Kremkow
-
-SeeAlso:
+See also
 ++++++++
 
 ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice

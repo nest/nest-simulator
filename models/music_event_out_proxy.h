@@ -43,16 +43,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Devices
-music
-
+/* BeginUserDocs: devices, music
 
 music_event_out_proxy - Device to forward spikes to remote applications using MUSIC
-####################################################################################
+###################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 A music_event_out_proxy is used to send spikes to a remote application that
 also uses MUSIC.
@@ -63,8 +60,8 @@ events is determined during connection setup by using the parameter
 music_channel of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 
@@ -80,16 +77,11 @@ The following properties are available in the status dictionary:
 
 The parameter port_name can be set using SetStatus.
 
-Author:
-++++++++
-
-Moritz Helias, Jochen Martin Eppler
-
 FirstVersion: March 2009
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy

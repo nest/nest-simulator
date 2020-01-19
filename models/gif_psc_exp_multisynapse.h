@@ -35,17 +35,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
 
 gif_psc_exp_multisynapse - Current-based generalized integrate-and-fire neuron model with multiple synaptic time constants
-###########################################################################################################################
+##########################################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gif_psc_exp_multisynapse is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) and Pozzorini et al. (2015), with
@@ -128,8 +124,8 @@ port number has to match the respective "receptor_type" in the connectors.
 
 The shape of post synaptic current is exponential.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -169,8 +165,9 @@ V_T_star   mV               Base threshold
 tau_syn  list of ms        Time constants of the synaptic currents
 =======  ================  ==================================================
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
@@ -184,22 +181,17 @@ References:
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-March 2016, Setareh
-
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse

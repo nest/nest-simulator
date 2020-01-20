@@ -570,34 +570,24 @@ phase_seven() {
 
 phase_eight() {
     echo
-    echo "Phase 8: C++ tests (experimental)"
-    echo "---------------------------------"
+    echo "Phase 8: C++ tests"
+    echo "------------------"
 
-    if command -v ${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests > /dev/null 2>&1; then
+    if command -v ${PREFIX}/bin/run_all_cpptests > /dev/null 2>&1; then
+        # Passing argument result_code=no makes the exit code always 0 unless a fatal crash occurs.
+        CPP_TEST_OUTPUT="$(${PREFIX}/bin/run_all_cpptests --report_format=XML --result_code=no 2>&1)"
 
-        CPP_TEST_OUTPUT="$(${TEST_BASEDIR}/testsuite/cpptests/run_all_cpptests 2>&1)"
-        # TODO:
-        # We should check the return code ($?) of run_all_cpptests here to see
-        # if a fatal crash occured. We cannot simply test $? != 0, since
-        # run_all_cpptests will return a non-zero code if tests fail.
+        CPP_TEST_PASSED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*test_cases_passed="([0-9]+)".*/\1/p')
+        CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*test_cases_failed="([0-9]+)".*/\1/p')
+        CPP_TEST_SKIPPED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*test_cases_skipped="([0-9]+)".*/\1/p')
 
-        # TODO:
-        # The regex for the total number seems fine according to
-        # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
-        # but does the check for failures work as it should?
-        # At some point, we should also count skipped tests.
-        CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
-        CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
+        CPP_TEST_TOTAL=$(( $CPP_TEST_PASSED + $CPP_TEST_FAILED + $CPP_TEST_SKIPPED ))
 
-        # replace empty strings by zero so arithmetic expressions below work
-        CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
-        CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
-        CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
-        CPP_TEST_SKIPPED=0
+        echo "  C++ tests: ${CPP_TEST_TOTAL}"
+        echo "     Passed: ${CPP_TEST_PASSED}"
+        echo "     Skipped: ${CPP_TEST_SKIPPED}"
+        echo "     Failed: ${CPP_TEST_FAILED}"
 
-        echo "  C++ tests : ${CPP_TEST_TOTAL}"
-        echo "     Passed : ${CPP_TEST_PASSED}"
-        echo "     Failed : ${CPP_TEST_FAILED}"
     else
         echo "  Not running C++ tests because NEST was compiled without Boost."
     fi

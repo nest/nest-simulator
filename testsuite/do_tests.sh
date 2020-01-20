@@ -571,7 +571,7 @@ phase_seven() {
 phase_eight() {
     echo
     echo "Phase 8: C++ tests"
-    echo "---------------------------------"
+    echo "------------------"
 
     if command -v ${PREFIX}/bin/run_all_cpptests > /dev/null 2>&1; then
         # Passing argument result_code=no makes the exit code always 0 unless a fatal crash occurs.

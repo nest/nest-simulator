@@ -197,29 +197,27 @@ class Network:
                 self.net_dict['neuron_model'], int(self.nr_neurons[i])
                 )
 
-            population.set({
-                    'tau_syn_ex': self.net_dict['neuron_params']['tau_syn_ex'],
-                    'tau_syn_in': self.net_dict['neuron_params']['tau_syn_in'],
-                    'E_L': self.net_dict['neuron_params']['E_L'],
-                    'V_th': self.net_dict['neuron_params']['V_th'],
-                    'V_reset':  self.net_dict['neuron_params']['V_reset'],
-                    't_ref': self.net_dict['neuron_params']['t_ref'],
-                    'I_e': self.DC_amp_e[i]
-                    })
+            population.set(
+                    tau_syn_ex=self.net_dict['neuron_params']['tau_syn_ex'],
+                    tau_syn_in=self.net_dict['neuron_params']['tau_syn_in'],
+                    E_L=self.net_dict['neuron_params']['E_L'],
+                    V_th=self.net_dict['neuron_params']['V_th'],
+                    V_reset=self.net_dict['neuron_params']['V_reset'],
+                    t_ref=self.net_dict['neuron_params']['t_ref'],
+                    I_e=self.DC_amp_e[i]
+                    )
             if self.net_dict['V0_type'] == 'optimized':
-                population.set({'V_m': nest.random.normal(
-                    self.net_dict['neuron_params']['V0_mean']['optimized'][i],
-                    self.net_dict['neuron_params']['V0_sd']['optimized'][i],
-                    )})
+                population.set(V_m=nest.random.normal(self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                                                      self.net_dict['neuron_params']['V0_sd']['optimized'][i],
+                                                      ))
             elif self.net_dict['V0_type'] == 'original':
-                 population.set({'V_m': nest.random.normal(
-                    self.net_dict['neuron_params']['V0_mean']['original'],
-                    self.net_dict['neuron_params']['V0_sd']['original'],
-                    )})
+                population.set(V_m=nest.random.normal(self.net_dict['neuron_params']['V0_mean']['original'],
+                                                      self.net_dict['neuron_params']['V0_sd']['original'],
+                                                      ))
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
-                population.get('global_id')[0],
-                population.get('global_id')[-1]))
+                population.global_id[0],
+                population.global_id[-1]))
         pop_file.close()
 
     def create_devices(self):
@@ -273,11 +271,11 @@ class Network:
                 self.stim_dict['th_start'] + self.stim_dict['th_duration']
                 )
             self.poisson_th = nest.Create('poisson_generator')
-            self.poisson_th.set({
-                    'rate': self.stim_dict['th_rate'],
-                    'start': self.stim_dict['th_start'],
-                    'stop': self.stop_th
-                    })
+            self.poisson_th.set(
+                rate=self.stim_dict['th_rate'],
+                start=self.stim_dict['th_start'],
+                stop=self.stop_th
+            )
             nest.Connect(self.poisson_th, self.thalamic_population)
             self.nr_synapses_th = synapses_th_matrix(
                 self.net_dict, self.stim_dict
@@ -304,7 +302,7 @@ class Network:
             self.poisson = []
             for i, target_pop in enumerate(self.pops):
                 poisson = nest.Create('poisson_generator')
-                poisson.set({'rate': rate_ext[i]})
+                poisson.rate = rate_ext[i]
                 self.poisson.append(poisson)
 
     def create_dc_generator(self):

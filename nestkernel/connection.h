@@ -345,7 +345,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // each bit in the signal type as a collection of individual flags
   if ( not( source.sends_signal() & target.receives_signal() ) )
   {
-    throw IllegalConnection();
+    throw IllegalConnection( "Source and target neuron are not compatible (e.g., spiking vs binary neuron)." );
   }
 
   target_.set_target( &target );

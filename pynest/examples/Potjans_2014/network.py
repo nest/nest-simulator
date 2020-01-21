@@ -96,7 +96,7 @@ class Network:
         nest.SetKernelStatus(
             {'local_num_threads': self.sim_dict['local_num_threads']}
             )
-        N_tp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        N_tp = nest.GetKernelStatus('total_num_virtual_procs')
         if nest.Rank() == 0:
             print('Number of total processes: %i' % N_tp)
         rng_seeds = list(

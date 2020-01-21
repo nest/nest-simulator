@@ -153,8 +153,6 @@ def synapses_th_matrix(net_dict, stim_dict):
         Dictionary containing parameters of stimulation settings.
     N_full
         Number of neurons in the eight populations.
-    number_N
-        Total number of populations.
     conn_probs
         Connection probabilities of the thalamus to the eight populations.
     scaling
@@ -169,13 +167,12 @@ def synapses_th_matrix(net_dict, stim_dict):
 
     """
     N_full = net_dict['N_full']
-    number_N = len(N_full)
     scaling = net_dict['N_scaling']
     conn_probs = stim_dict['conn_probs_th']
     T_full = stim_dict['n_thal']
     prod = (T_full * N_full).astype(float)
     n_syn_temp = np.log(1. - conn_probs)/np.log((prod - 1.)/prod)
-    K = (((n_syn_temp * (N_full * scaling).astype(int))/N_full).astype(int))
+    K = ((n_syn_temp * (N_full * scaling).astype(int))/N_full).astype(int)
     return K
 
 

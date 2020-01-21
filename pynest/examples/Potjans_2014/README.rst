@@ -8,17 +8,17 @@ This is a PyNEST implementation of the microcircuit model by Potjans and Diesman
 
 The current example contains several files:
 
-* ``helpers.py`` provides helper functions for the simulation and evaluation of the microcircuit.
-* ``network.py`` gathers all parameters and connects the different nodes with each other.
+* ``helpers.py`` provides helper functions for the simulation and evaluates the microcircuit.
+* ``network.py`` gathers all parameters and connects the different nodes with one another.
 * ``network_params.py`` contains the parameters for the network.
 * ``sim_params.py`` contains the simulation parameters.
 * ``stimulus_params.py`` contains the parameters for the stimuli.
-* ``example.py`` use this script to try out the microcircuit.
+* ``example.py`` uses this script to try out the microcircuit.
 
 Instructions
 ############
 
-To run the microcircuit on a local machine, we have to first check that the
+To run the microcircuit on a local machine, we first have to check that the
 variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to
 `0.1`. ``N_scaling`` adjusts the number of neurons and ``K_scaling`` adjusts
 the number of connections to be simulated. The full network can be run by
@@ -37,19 +37,16 @@ The code can be `parallelized <https://www.nest-simulator.org/parallel-computing
 these applications. The number of threads (per MPI process) can be chosen by adjusting
 ``local_num_threads`` in ``sim_params.py``. The number of MPI processes can be
 set by choosing a reasonable value for ``num_mpi_prc`` and then running the
-script with the following command.
+script with the following command:
 
 .. code-block:: python
 
    mpirun -n num_mpi_prc python example.py
 
 
-The default version of the simulation uses Poissonian input, which is defined
-in the file ``network_params.py`` to excite neuronal populations of the
-microcircuit. If no Poissonian input is provided, DC input is calculated, which
-should approximately compensate the Poissonian input. It is also possible to
-add thalamic stimulation to the microcircuit or drive it with constant DC
-input. This can be defined in the file ``stimulus_params.py``.
+By default, the simulation uses Poissonian input to excite neuronal populations of the microcircuit. The file ``network_params.py`` defines Poissonian input.
+If no Poissonian input is provided, DC input is calculated and should approximately compensate the Poissonian input. It is also possible to
+add thalamic stimulation to the microcircuit or drive it with constant DC input. This can be defined in the file ``stimulus_params.py``.
 
 Authors
 #######

@@ -37,7 +37,7 @@ namespace nest
  * @param tau_rise Synaptic rise time constant, in ms
  * @param tau_decay Synaptic decay time constant, in ms
  *
- * Factor used to normalise the synaptic conductance such that incoming
+ * Factor used to normalize the synaptic conductance such that incoming
  * spike causes a peak conductance of 1 nS. The denominator,
  * tau_difference, that appears in the expression of the peak time is
  * computed here to check that it is not zero. Another denominator,
@@ -53,7 +53,7 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
 {
   const double tau_difference = tau_decay - tau_rise;
   double peak_value = 0;
-  double normalisation_factor = 0;
+  double normalization_factor = 0;
   if ( std::abs( tau_difference ) > std::numeric_limits< double >::epsilon() )
   {
     // peak time
@@ -64,14 +64,14 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
   if ( std::abs( peak_value ) < std::numeric_limits< double >::epsilon() )
   {
     // if rise time == decay time use alpha function
-    normalisation_factor = 1. * numerics::e / tau_decay;
+    normalization_factor = 1. * numerics::e / tau_decay;
   }
   else
   {
     // if rise time != decay time use beta function
-    normalisation_factor = ( 1. / tau_rise - 1. / tau_decay ) / peak_value;
+    normalization_factor = ( 1. / tau_rise - 1. / tau_decay ) / peak_value;
   }
-  return normalisation_factor;
+  return normalization_factor;
 }
 
 } // of namespace nest

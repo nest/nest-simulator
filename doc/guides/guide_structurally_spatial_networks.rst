@@ -71,15 +71,15 @@ certain circumstances.
 
 .. _sec:gridbased:
 
-Grid-based Layers
-~~~~~~~~~~~~~~~~~
+Grid-based NodeCollections
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. _sec:verysimple:
 
 A very simple example
 ^^^^^^^^^^^^^^^^^^^^^
 
-We create a first, grid-based simple layer with the following command:
+We create a first, grid-based simple NodeCollection with the following command:
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ layer1 #}
@@ -104,7 +104,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
    Note that a more intuitive way of thinking of *shape* is to think of it as given by
    ``shape=[num_x, num_y]``.
 
--  The *center* of the layer is at the origin of the coordinate system,
+-  The *center* of the NodeCollection is at the origin of the coordinate system,
    :math:`(0,0)`.
 
 -  The *extent* or size of the layer is :math:`1\times  1`. This is the
@@ -128,7 +128,7 @@ but the grid spacing may differ in x- and y-direction.
 -  Layer elements are spaced by the grid spacing and are arranged
    symmetrically about the center.
 
--  The outermost layer elements are placed :math:`dx/2` and :math:`dy/2`
+-  The outermost elements are placed :math:`dx/2` and :math:`dy/2`
    from the borders of the extent.
 
 -  Element *positions* in the coordinate system are given by
@@ -136,7 +136,7 @@ but the grid spacing may differ in x- and y-direction.
    mathematical convention that the :math:`x`-axis runs from left to
    right and the :math:`y`-axis from bottom to top.
 
--  Each element of a grid-based layer has a *row- and column-index* in
+-  Each element of a grid-based NodeCollection has a *row- and column-index* in
    addition to its :math:`(x,y)`-coordinates. Indices are shown in the
    top and right margin of  :numref:`fig_layer1`. Note that row-indices
    follow matrix convention, i.e., run from top to bottom. Following
@@ -162,7 +162,7 @@ different extent of a layer, i.e., its size in :math:`x`- and
 
    Same layer as in :numref:`fig_layer1`, but with different extent.
 
-The resulting layer is shown in :numref:`fig_layer2`. The extent is always
+The resulting NodeCollection is shown in :numref:`fig_layer2`. The extent is always
 a two-element list of floats. In this example, we have grid spacings
 :math:`dx=0.4` and :math:`dy=0.1`. Changing the extent does not affect
 grid indices.
@@ -221,7 +221,7 @@ To see how to construct a layer, consider the following example:
 
 -  the extent shall be centered about :math:`y=0`.
 
-From Eq. :numref:`dx_dy_extent`, we see that the extent of the layer must be
+From Eq. :numref:`dx_dy_extent`, we see that the extent of the NodeCollection must be
 :math:`(n_x d, n_y d)`. We now need to find the coordinates
 :math:`(c_x, c_y)` of the center of the layer. To place the left edge of
 the extent at :math:`x=0`, we must place the center of the layer at
@@ -240,7 +240,7 @@ and shown in :numref:`fig_layer3a`:
 .. figure:: ../topology/user_manual_figures/layer3a.png
    :name: fig:layer3a
 
-   Layer with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
+   NodeCollection with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
    :math:`d=0.1` and the left edge of the extent at :math:`x=0`,
    centered about the :math:`y`-axis. The cross marks the point on the
    extent placed at the origin :math:`(0,0)`, the circle the center of
@@ -254,7 +254,7 @@ Free layers
 *Free layers* do not restrict node positions to a grid, but allow free
 placement within the extent. To this end, the user can specify the
 positions of all nodes explicitly, or pass a random distribution
-parameter to ``nest.spatial.free()``. The following code creates a layer of
+parameter to ``nest.spatial.free()``. The following code creates a NodeCollection of
 50 ``iaf_psc_alpha`` neurons uniformly distributed in a layer with
 extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
@@ -290,7 +290,7 @@ Note the following points:
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
    is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
--  All layer element positions must be *within* the layer’s extent.
+-  All element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
    periodic boundary conditions are used; see
    Sec. \ :ref:`2.4 <sec:periodic>`.
@@ -346,7 +346,7 @@ the shape argument, ``shape=[nx, ny, nz]``:
 .. figure:: ../topology/user_manual_figures/layer4_3d_b.png
    :name: fig:layer4_3d_b
 
-   A grid 3D layer with 120 elements distributed on a grid with 4 elements in the x-direction,
+   A grid 3D NodeCollection with 120 elements distributed on a grid with 4 elements in the x-direction,
    5 elements in the y-direction and 6 elements in the z-direction, with an extent
    of size :math:`1\times 1\times 1`.
 
@@ -371,7 +371,7 @@ surface of a torus.  :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
-You specify periodic boundary conditions for a layer using the entry ``edge_wrap``:
+You specify periodic boundary conditions for a NodeCollection using the entry ``edge_wrap``:
 
 .. literalinclude:: ../topology/user_manual_scripts/layers.py
     :start-after: #{ player #}
@@ -431,7 +431,7 @@ be of interest:
 
 
 The ``spatial`` property is read-only; changing any value will
-not change properties of the layer.
+not change properties of the spatially distributed NodeCollection.
 
 -  NEST sees the elements of the layer in the same way as the
    elements of any other NodeCollection. NodeCollections created as layers can
@@ -454,7 +454,7 @@ Connections
 -----------
 
 The most important feature of the spatially-structured networks is the ability to
-create connections between layers with quite some flexibility. In this
+create connections between NodeCollections with quite some flexibility. In this
 chapter, we will illustrate how to specify and create connections. All
 connections are created using the ``Connect`` function.
 
@@ -478,7 +478,7 @@ Connection
 
 Connection dictionary
    A dictionary specifying the properties of a connection between two
-   layers in a call to ``Connect``.
+   NodeCollections in a call to ``Connect``.
 
 Source
    The *source* of a single connection is the node sending signals
@@ -555,10 +555,10 @@ position-based options available, and so in addition to the usual connection
 schemes there exists additional connection parameters for spatially distributed
 NodeCollections.
 
-In many cases when connecting layers, a
+In many cases when connecting spatially distributed NodeCollections, a
 mask will be specified. Mask specifications are described in
 Sec. \ :ref:`3.3 <sec:conn_masks>`. Only neurons within the mask are considered as potential sources or
-targets. If no mask is given, all neurons in the respective layer are
+targets. If no mask is given, all neurons in the respective NodeCollection are
 considered sources or targets.
 
 Here is a simple example, cf. :numref:`fig_conn1`
@@ -586,11 +586,11 @@ Here is a simple example, cf. :numref:`fig_conn1`
    rectangle centered on the node at :math:`(4,5)`.
 
 In this example, layer ``l`` is both source and target layer. For each
-node in the layer we choose targets according to the rectangular mask
+node in the NodeCollection we choose targets according to the rectangular mask
 centered about each source node. Since the connection probability is 1.0,
 we connect to all nodes within the mask. Note the effect of normal and
 periodic boundary conditions on the connections created for different
-nodes in the layer, as illustrated in :numref:`fig_conn1`.
+nodes in the NodeCollection, as illustrated in :numref:`fig_conn1`.
 
 .. _sec:mapping:
 
@@ -605,7 +605,7 @@ layers. NEST applies the following *coordinate mapping rules*:
 1. All layers have two-dimensional Euclidean coordinate systems.
 
 2. No scaling or coordinate transformation can be applied between
-   layers.
+   NodeCollections with spatial distribution.
 
 3. The displacement :math:`d(D,P)` from node :math:`D` in the driver
    layer to node :math:`P` in the pool layer is measured by first
@@ -624,7 +624,7 @@ Masks
 A mask describes which area of the pool layer shall be searched for
 nodes when connecting for any given node in the driver layer. We will first
 describe geometrical masks defined for all layer types and then consider
-grid-based masks for grid-based layers. If no mask is specified, all
+grid-based masks for grid-based NodeCollections. If no mask is specified, all
 nodes in the pool layer will be searched.
 
 Note that the mask size should not exceed the size of the layer when
@@ -642,7 +642,7 @@ Masks for 2D layers
 ^^^^^^^^^^^^^^^^^^^
 
 NEST currently provides four types of masks usable for 2-dimensional
-free and grid-based layers. They are illustrated in  :numref:`fig_conn2_a`.
+free and grid-based NodeCollections. They are illustrated in  :numref:`fig_conn2_a`.
 The masks are
 
 Rectangular
@@ -751,7 +751,7 @@ from the x-axis to the y-axis.
 Masks for 3D layers
 ^^^^^^^^^^^^^^^^^^^
 
-Similarly, there are three mask types that can be used for 3D layers,
+Similarly, there are three mask types that can be used for 3D NodeCollections,
 
 Box
    All nodes within a cuboid volume are connected. The area is specified
@@ -796,7 +796,7 @@ the (possibly rotated) x-axis is missing.
 .. figure:: ../topology/user_manual_figures/conn_3d.png
    :name: fig:conn3d
 
-   Masks for 3D layers. For all mask types, the driver node is marked by
+   Masks for 3D NodeCollections. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
    masks are red. From left to right: box and spherical masks
    centered about the driver node.
@@ -851,7 +851,7 @@ Note the following:
 -  Grid-based masks are applied by considering grid indices. The
    position of nodes in physical coordinates is ignored.
 
--  In consequence, grid-based masks should only be used between layers
+-  In consequence, grid-based masks should only be used between NodeCollections
    with identical grid spacings.
 
 -  The semantics of the ``'anchor'`` property for grid-based masks
@@ -1045,7 +1045,7 @@ All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
 between neighboring elements is 1. The mask is rectangular, spans the
-entire layer and is centered about the driver node.
+entire NodeCollection and is centered about the driver node.
 
 
 Linear example
@@ -1161,7 +1161,7 @@ interactions between entities are short-range. Periodic boundary
 conditions are well-defined in such cases. In neuronal network models
 with long-range interactions, periodic boundary conditions may not make
 sense. In general, we recommend to use periodic boundary conditions only
-when connection masks are significantly smaller than the layers they are
+when connection masks are significantly smaller than the NodeCollections they are
 applied to.
 
 .. _sec:prescribed_numbers:
@@ -1321,7 +1321,7 @@ Inspecting Spatially distributed NodeCollections
 We strongly recommend that you inspect the NodeConnections created to be sure that
 node placement and connectivity indeed turned out as expected. In this
 chapter, we describe some functions that NEST provide to query and
-visualize networks, layers, and connectivity.
+visualize networks, NodeCollections, and connectivity.
 
 .. _sec:queries:
 

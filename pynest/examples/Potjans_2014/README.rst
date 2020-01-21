@@ -6,22 +6,14 @@ Description
 
  This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann `[1] <https://www.ncbi.nlm.nih.gov/pubmed/23203991>`__. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
--  This example contains several files:
+The current example contains several files:
 
-   -  ``helpers.py``
-      Helper functions for the simulation and evaluation of the
-      microcircuit.
-   -  ``network.py``
-      Gathers all parameters and connects the different nodes with each
-      other.
-   -  ``network_params.py``
-      Contains the parameters for the network.
-   -  ``sim_params.py``
-      Contains the simulation parameters.
-   -  ``stimulus_params.py``
-      Contains the parameters for the stimuli.
-   -  ``example.py``
-      Use this script to try out the microcircuit.
+* ``helpers.py`` provides helper functions for the simulation and evaluation of the microcircuit.
+* ``network.py`` gathers all parameters and connects the different nodes with each other.
+* ``network_params.py`` contains the parameters for the network.
+* ``sim_params.py`` contains the simulation parameters.
+* ``stimulus_params.py`` contains the parameters for the stimuli.
+* ``example.py`` use this script to try out the microcircuit.
 
 How to use
 ##########

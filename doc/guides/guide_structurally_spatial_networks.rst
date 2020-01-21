@@ -471,14 +471,14 @@ Terminology
 We begin by introducing important terminology:
 
 Connection
-   In the context of connections between the elements of
-   layers, we often call the set of all connections between pairs of
+   In the context of connections between the elements of NodeCollections with spatial
+   distributions, we often call the set of all connections between pairs of
    network nodes created by a single call to ``Connect`` a
    *connection*.
 
 Connection dictionary
    A dictionary specifying the properties of a connection between two
-   layers in a call to ``Create``.
+   layers in a call to ``Connect``.
 
 Source
    The *source* of a single connection is the node sending signals
@@ -489,27 +489,6 @@ Target
    The *target* of a single connection is the node receiving signals
    (usually spikes). In a projection, the target layer is the layer from
    which target nodes are chosen.
-
-.. TODO: Can we remove connection type definition? How about convergent and divergent?
-
-.. Connection type
-..    The *connection type* determines how nodes are selected when
-..    ``Connect`` creates connections between layers. It is either
-..    ``'convergent'`` or ``'divergent'``.
-
-.. Convergent connection
-..    When creating a *convergent connection* between layers, Topology visits
-..    each node in the target layer in turn and selects sources for it in the
-..    source layer. Masks and connection probabilities are applied to the
-..    source layer, and periodic boundary conditions are applied in the
-..    source layer, provided that the source layer has periodic boundary
-..    conditions.
-
-.. Divergent connection
-..    When creating a *divergent connection*, Topology visits each node in
-..    the source layer and selects target nodes from the target layer. Masks,
-..    connection probabilities, and boundary conditions are applied in the
-..    target layer.
 
 Driver
    When connecting two layers, the *driver* layer is the one in which
@@ -566,18 +545,19 @@ Multapse
 
 .. _sec:minimalcall:
 
-Connecting layers
-~~~~~~~~~~~~~~~~~
+Connecting spatially distributed nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Connections between are created by calling ``Connect``, as
-with normal NodeCollections. But in addition to the usual ways one could
-connect NodeCollections, having spatial information about the nodes makes
-position-based options available. In many cases when connecting layers, a
+As with "normal" NodeCollections, connections between spatially distributed nodes are created
+by calling ``Connect``. However, having spatial information about the nodes makes
+position-based options available, and so in addition to the usual connection
+schemes there exists additional connection parameters for spatially distributed
+NodeCollections.
+
+In many cases when connecting layers, a
 mask will be specified. Mask specifications are described in
-Sec. \ :ref:`3.3 <sec:conn_masks>`.
-
-Only neurons within the mask are considered as potential sources or
+Sec. \ :ref:`3.3 <sec:conn_masks>`. Only neurons within the mask are considered as potential sources or
 targets. If no mask is given, all neurons in the respective layer are
 considered sources or targets.
 
@@ -593,7 +573,7 @@ Here is a simple example, cf. :numref:`fig_conn1`
    :name: fig:conn1
 
    Left: Minimal connection example from a layer onto itself using a
-   rectangular mask shown as red line for the node at :math:`(0,0)`
+   rectangular mask shown as red for the node at :math:`(0,0)`
    (marked light red). The targets of this node are marked with red
    dots. The targets for the node at :math:`(4,5)` are marked with
    yellow dots. This node has fewer targets since it is at the corner
@@ -642,7 +622,7 @@ Masks
 ~~~~~
 
 A mask describes which area of the pool layer shall be searched for
-nodes to connect for any given node in the driver layer. We will first
+nodes when connecting for any given node in the driver layer. We will first
 describe geometrical masks defined for all layer types and then consider
 grid-based masks for grid-based layers. If no mask is specified, all
 nodes in the pool layer will be searched.
@@ -661,7 +641,7 @@ covered in Chapter \ `5 <#ch:extending>`__.
 Masks for 2D layers
 ^^^^^^^^^^^^^^^^^^^
 
- currently provides four types of masks usable for 2-dimensional
+NEST currently provides four types of masks usable for 2-dimensional
 free and grid-based layers. They are illustrated in  :numref:`fig_conn2_a`.
 The masks are
 
@@ -706,7 +686,7 @@ Elliptical
 
    Masks for 2D layers. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
-   masks by red lines. From left to right, top to bottom: rectangular,
+   masks are red. From left to right, top to bottom: rectangular,
    circular, doughnut and elliptical masks centered about the driver
    node.
 
@@ -742,8 +722,7 @@ examples (cf.  :numref:`fig_conn2_b`).
    :math:`(-1.5,-1.5)`, :math:`(-2,0)`, :math:`(1.5,1.5)` and
    :math:`(2, -1)`, respectively, using the ``'anchor'`` parameter.
 
-.. TODO: missing first part of the sentence?
-
+It is, as of NEST 2.16, possible to rotate the :math:`\textbf{rectangular}`
 and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
 add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 ``azimuth_angle`` is measured in degrees and is the rotational angle
@@ -762,8 +741,8 @@ from the x-axis to the y-axis.
 .. figure:: ../topology/user_manual_figures/conn2_c.png
    :name: fig:conn2_c
 
-   Rotated rectangle and elliptical mask from  :numref:`fig_conn2_a` and
-    :numref:`fig_conn2_b`, where the rectangle mask is rotated
+   Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
+    :numref:`fig_conn2_b`, where the rectangular mask is rotated
    :math:`120^\circ` and the elliptical mask is rotated
    :math:`45^\circ`.
 
@@ -803,12 +782,12 @@ As in the 2D case, you can change the location of the mask relative to
 the driver node by specifying a 3D vector in the ``'anchor'`` entry in
 the mask dictionary. If you want to rotate the box or ellipsoidal masks,
 you can add an ``'azimuth_angle'`` entry in the specific mask dictionary
-for rotation from the x-axis towards the y-axis about the z-axis, or an
+for rotation from the x-axis towards the y-axis about the z-axis, or a
 ``'polar_angle'`` entry, specifying the rotation angle in degrees from
 the z-axis about the (possibly rotated) x axis, from the (possibly
 rotated) y-axis. You can specify both at once of course. If both are
 specified, we first rotate about the z-axis and then about the new
-x-axis. NEST currently do not support rotation in all three directions,
+x-axis. NEST currently does not support rotation in all three directions,
 the rotation from the y-axis about the (possibly rotated) z-axis, from
 the (possibly rotated) x-axis is missing.
 
@@ -819,7 +798,7 @@ the (possibly rotated) x-axis is missing.
 
    Masks for 3D layers. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
-   masks by red lines. From left to right: box and spherical masks
+   masks are red. From left to right: box and spherical masks
    centered about the driver node.
 
 .. _sec:grid_masks:
@@ -829,7 +808,7 @@ Masks for grid-based layers
 
 Grid-based layers can be connected using rectangular *grid masks*. For
 these, you specify the size of the mask not by lower left and upper
-right corner coordinates, but give their size in rows and columns, as in
+right corner coordinates, but give their size in x and y direction, as in
 this example:
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
@@ -838,7 +817,7 @@ this example:
 
 The resulting connections are shown in  :numref:`fig_conn3`. By default the
 top-left corner of a grid mask, i.e., the grid mask element with grid
-index :math:`[0,0]`\  [3]_, is aligned with the driver node. You can
+index :math:`[0,0]`\  [2]_, is aligned with the driver node. You can
 change this alignment by specifying an *anchor* for the mask:
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
@@ -889,7 +868,7 @@ Probabilistic connection rules
 
 Many neuronal network models employ probabilistic connection rules.
 NEST supports probabilistic connections through the
-``pairwise_bernoulli`` rule. The probability can then be a constant,
+``pairwise_bernoulli`` connection rule. The probability can then be a constant,
 depend on the position of the source or the target neuron, or on the
 distance between a driver and a pool node to a connection probability. To
 create dependencies on neuron positions, NEST Parameters objects are used.
@@ -898,7 +877,7 @@ NEST then generates a connection according to this probability.
 Probabilistic connections between layers can be generated in two different
 ways:
 
-Free probabilistic connections using pairwise_bernoulli
+Free probabilistic connections using `pairwise_bernoulli`
    In this case, ``Connect`` considers each driver node :math:`D` in turn.
    For each :math:`D`, it evaluates the parameter value for each pool node
    :math:`P` within the mask and creates a connection according to the
@@ -907,11 +886,11 @@ Free probabilistic connections using pairwise_bernoulli
    most one connection between each driver-pool pair*.
 
 Prescribed number of connections
-   can be obtained by using ``fixed_indegree`` or ``fixed_outdegree``, and
+   can be obtained by using ``fixed_indegree`` or ``fixed_outdegree`` connection rule, and
    specifying the number of connections to create per driver node. See
    Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
 
-A selection of specific NEST parameters are pertaining to spatially structured networks shown in Table
+A selection of specific NEST parameters pertaining to spatially structured networks are shown in Table
 :ref:`tbl_parameters`.
 
 .. _tbl_parameters:
@@ -945,9 +924,9 @@ position can be used. The others can only be used when connecting.
   | | ``nest.spatial.distance.z``           | | Can only be used when connecting.                                     |
   +-----------------------------------------+-------------------------------------------------------------------------+
 
-NEST provides some functions to help create distributions based on for
-example the distance between two neurons, shown in the table below. There
-are also Parameters drawing values from random distributions.
+NEST provides some functions to help create distributions based on the position of the nodes, for
+instance the distance between two neurons, shown in the table below. The table also includes
+Parameters drawing values from random distributions.
 
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
@@ -997,8 +976,8 @@ are also Parameters drawing values from random distributions.
    :name: fig:conn4
 
    Illustration of various connection probabilities. Top left: constant probability,
-   :math:`p=0.5`. Top right: Distance dependent Gaussian probability, green dashed lines show
-   :math:`\sigma`, :math:`2\sigma`, :math:`3\sigma`. Bottom left: Same distance dependent
+   :math:`p=0.5`. Top right: Distance dependent Gaussian probability, green distribution show
+   :math:`\sigma`. Bottom left: Same distance dependent
    Gaussian probability, but all :math:`p<0.5` treated as :math:`p=0`. Bottom
    right: 2D-Gaussian.
 
@@ -1012,7 +991,8 @@ Constant
     :end-before: #{ end #}
 
 Gaussian
-   The distance between neurons is used in a Gaussian distribution. In the example, connection
+   The connection probability is a Gaussian distribution based on the distance
+   between neurons. In the example, connection
    probability is 1 for :math:`d=0` and falls off with a “standard
    deviation” of :math:`\sigma=1`:
 
@@ -1033,7 +1013,7 @@ Cut-off Gaussian
 2D Gaussian
    We conclude with an example using a two-dimensional Gaussian
    distribution, i.e., a Gaussian with different widths in :math:`x`- and
-   :math:`y-` directions. This probability depends on displacement, not
+   :math:`y`- directions. This probability depends on displacement, not
    only on distance:
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
@@ -1051,65 +1031,72 @@ Weights and delays
 
 Parameters, such as those presented in Table :ref:`tbl_parameters`, can
 also be used to specify distance-dependent or randomized weights and
-delays for the connections created by ``Connect``.
+delays for the connections created by ``Connect``. Weight and delays are in NEST
+passed along in a synapse dictionary to the ``Connect`` call.
+
+::
+
+    nest.Connect(nodes, nodes, conn_dict, syn_dict)
+
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
-functions with the following code examples. All examples use a “layer”
+Parameters. The code examples used to generate the figures are shown below.
+All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
 between neighboring elements is 1. The mask is rectangular, spans the
 entire layer and is centered about the driver node.
 
+
 Linear example
+  .. literalinclude:: ../topology/user_manual_scripts/connections.py
+      :start-after: #{ conn5lin #}
+      :end-before: #{ end #}
 
-.. literalinclude:: ../topology/user_manual_scripts/connections.py
-    :start-after: #{ conn5lin #}
-    :end-before: #{ end #}
+  Results are shown in the top panel of  :numref:`fig_conn5`. Connection
+  weights and delays are shown for the leftmost neuron as driver. Weights
+  drop linearly from :math:`1`. From the node at :math:`(20,0)` on, the
+  cutoff sets weights to 0. There are no connections to nodes beyond
+  :math:`(25,0)`, since the mask extends only 25 units to the right of the
+  driver. Delays increase in a stepwise linear fashion, as NEST requires
+  delays to be multiples of the simulation resolution.
 
-Results are shown in the top panel of  :numref:`fig_conn5`. Connection
-weights and delays are shown for the leftmost neuron as driver. Weights
-drop linearly from :math:`1`. From the node at :math:`(20,0)` on, the
-cutoff sets weights to 0. There are no connections to nodes beyond
-:math:`(25,0)`, since the mask extends only 25 units to the right of the
-driver. Delays increase in a stepwise linear fashion, as NEST requires
-delays to be multiples of the simulation resolution.
 
 Linear example with periodic boundary conditions
+  .. literalinclude:: ../topology/user_manual_scripts/connections.py
+      :start-after: #{ conn5linpbc #}
+      :end-before: #{ end #}
 
-.. literalinclude:: ../topology/user_manual_scripts/connections.py
-    :start-after: #{ conn5linpbc #}
-    :end-before: #{ end #}
+  Results are shown in the middle panel of  :numref:`fig_conn5`. This example
+  is identical to the previous, except that the (pool) layer has periodic
+  boundary conditions. Therefore, the left half of the mask about the node
+  at :math:`(0,0)` wraps back to the right half of the layer and that node
+  connects to all nodes in the layer.
 
-Results are shown in the middle panel of  :numref:`fig_conn5`. This example
-is identical to the previous, except that the (pool) layer has periodic
-boundary conditions. Therefore, the left half of the mask about the node
-at :math:`(0,0)` wraps back to the right half of the layer and that node
-connects to all nodes in the layer.
 
-Various functions
+Various spatially dependent distributions
+  .. literalinclude:: ../topology/user_manual_scripts/connections.py
+      :start-after: #{ conn5exp #}
+      :end-before: #{ end #}
 
-.. literalinclude:: ../topology/user_manual_scripts/connections.py
-    :start-after: #{ conn5exp #}
-    :end-before: #{ end #}
+  .. literalinclude:: ../topology/user_manual_scripts/connections.py
+      :start-after: #{ conn5gauss #}
+      :end-before: #{ end #}
 
-.. literalinclude:: ../topology/user_manual_scripts/connections.py
-    :start-after: #{ conn5gauss #}
-    :end-before: #{ end #}
+  Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
+  linear, exponential and Gaussian distributions of the distance between
+  connected nodes, used with weight functions for the node at
+  :math:`(25,0)`.
 
-Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
-linear, exponential and Gaussian distributions of the distance between
-connected nodes, used with weight functions for the node at
-:math:`(25,0)`.
 
 Randomized weights and delays
+  .. literalinclude:: ../topology/user_manual_scripts/connections.py
+      :start-after: #{ conn5uniform #}
+      :end-before: #{ end #}
 
-.. literalinclude:: ../topology/user_manual_scripts/connections.py
-    :start-after: #{ conn5uniform #}
-    :end-before: #{ end #}
-
-By using the ``nest.random.uniform()`` Parameter for weights or delays, one can
-obtain randomized values for weights and delays, as shown by the red
-circles in the bottom panel of :numref:`fig_conn5`.
+  By using the ``nest.random.uniform()`` Parameter for weights or delays, one can
+  obtain randomized values for weights and delays, as shown by the red
+  circles in the bottom panel of :numref:`fig_conn5`.
 
 .. _fig_conn5:
 
@@ -1123,13 +1110,13 @@ Designing distance-dependent Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although NEST comes with some pre-defined functions that can be used to
-create distributions of distance-dependent Parameters, this is not a limit
+create distributions of distance-dependent Parameters, there is no limit
 to how Parameters can be combined.
 
 .. TODO: reference to Parameter documentation
 
-As an example, we will combine Parameters to create a Parameter that is
-linear (actually affine) in the displacement of the nodes, on the form
+As an example, we will now combine some Parameters to create a new Parameter that is
+linear (actually affine) with respect to the displacement between the nodes, of the form
 
 .. math:: p = 0.5 + d_x + 2 d_y.
 
@@ -1140,7 +1127,7 @@ target neuron on the x and y axis, respectively. The Parameter is then simply:
     :start-after: #{ conn_param_design #}
     :end-before: #{ end #}
 
-And can be directly plugged into the ``Connect`` function:
+This can be directly plugged into the ``Connect`` function:
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
     :start-after: #{ conn_param_design_ex #}
@@ -1182,7 +1169,7 @@ applied to.
 Prescribed number of connections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We have so far described how to connect layers by either connecting to all
+We have so far described how to connect spatially distributed NodeCollections by either connecting to all
 nodes inside the mask or by considering each pool node in turn and
 connecting it according to a given probability function. In both cases,
 the number of connections generated depends on mask and connection
@@ -1192,7 +1179,7 @@ Many neuron models in the literature, in contrast, prescribe a certain
 *fan in* (number of incoming connections) or *fan out* (number of outgoing
 connections) for each node. You can achieve this in NEST by
 prescribing the number of connections for each driver node by using
-``fixed_indegree`` or ``fixed_outdegree``.
+``fixed_indegree`` or ``fixed_outdegree`` as connection rule.
 
 Connection generation now proceeds in a different way than before:
 
@@ -1215,6 +1202,15 @@ Connection generation now proceeds in a different way than before:
    loop and NEST will hang. Keep in mind that the number of nodes within
    the mask may vary considerably for free layers with randomly placed
    nodes.
+
+5. If you use the connection rule ``'rule': fixed_indegree`` in the connection
+   dictionary, you also have to specify ``'indegree'``, the number of connections
+   per target node.
+
+6. Similarly, if you use the connection rule ``'rule': fixed_outdegree`` in the connection
+   dictionary, you have to use ``'outdegree'`` to specify the number of connections
+   per source node.
+
 
 The following code generates a network of 1000 randomly placed nodes and
 connects them with a fixed fan out, of 50 outgoing connections per node
@@ -1255,39 +1251,6 @@ Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
 number of connections is prescribed.
 
-.. TODO: Remove this section?
-
-.. _sec:conn_composite:
-
-.. Connecting composite layers
-.. ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. Connections between layers with composite elements are based on the
-.. following principles:
-
-.. -  All nodes within a composite element have the same coordinates, the
-..    coordinates of the element.
-
-.. -  All nodes within a composite element are treated equally. If, e.g.,
-..    an element of the pool layer contains three nodes and connection
-..    probability is 1, then connections with all three nodes will be
-..    created. For probabilistic connection schemes, each of the three
-..    nodes will be considered individually.
-
-.. -  If only nodes of a given model within each element shall be
-..    considered as sources or targets then this can be achieved by adding
-..    a ``'sources'`` or ``'targets'`` entry to the connection dictionary,
-..    which specifies the model to connect.
-
-.. This is exemplified by the following code, which connects pyramidal
-.. cells (``pyr``) to interneurons (``in``) with a circular mask and
-.. uniform probability and interneurons to pyramidal cells with a
-.. rectangular mask unit probability.
-
-.. .. literalinclude:: ../topology/user_manual_scripts/connections.py
-..     :start-after: #{ conn7 #}
-..     :end-before: #{ end #}
-
 .. _sec:conn_synapse:
 
 Synapse models and properties
@@ -1308,22 +1271,22 @@ not be set in distance-dependent ways at present.
 
 .. _sec:dev_subregions:
 
-Connecting devices to subregions of layers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Connecting devices to subregions of NodeCollections
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to connect stimulation and recording devices only to
-specific subregions of layers. A simple way to achieve this is to create
+specific subregions of the layers. A simple way to achieve this is to create
 a layer which contains only the device placed typically in its center.
-For connecting the device layer to a neuron layer, an appropriate mask
+When connecting the device layer to a neuron layer, an appropriate mask
 needs to be specified and optionally also an anchor for shifting the
 center of the mask. As demonstrated in the following example,
-stimulation devices have to be connected as the source layer
+stimulation devices have to be connected as the source layer.
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
     :start-after: #{ conn9 #}
     :end-before: #{ end #}
 
-while recording devices have to be connected as the target layer(see also
+While recording devices, on the other hand, have to be connected as the target layer (see also
 Sec. \ :ref:`3.11 <sec:rec_dev>`):
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
@@ -1332,30 +1295,30 @@ Sec. \ :ref:`3.11 <sec:rec_dev>`):
 
 .. _sec:rec_dev:
 
-Layers and recording devices
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Spatially distributed NodeCollections and recording devices
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generally, one should not create a layer of recording devices,
-especially spike detectors, to record from a layer. Instead,
-create a single spike detector, and connect all neurons in the layer to
-that spike detector:
+Generally, one should not create a layer of recording devices to record from
+another NodeCollection with spatial extent. This is especially true for spike detectors. Instead,
+create a single spike detector and connect all neurons in the spatially
+distributed NodeCollection to that spike detector:
 
 .. literalinclude:: ../topology/user_manual_scripts/connections.py
     :start-after: #{ conn11 #}
     :end-before: #{ end #}
 
 Connecting a layer of neurons to a layer of recording devices as described
-in Sec. \ :ref:`3.10 <sec:dev_subregions>`, such as spike detectors, is
+in Sec. \ :ref:`3.10 <sec:dev_subregions>`, is
 only possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
-and multimeter are not suffering from this restriction, since they are
+and multimeter do not suffer from this restriction, since they are
 connected as sources, not as targets.
 
 .. _sec:inspection:
 
-Inspecting Layers
------------------
+Inspecting Spatially distributed NodeCollections
+------------------------------------------------
 
-We strongly recommend that you inspect the layers created to be sure that
+We strongly recommend that you inspect the NodeConnections created to be sure that
 node placement and connectivity indeed turned out as expected. In this
 chapter, we describe some functions that NEST provide to query and
 visualize networks, layers, and connectivity.
@@ -1367,54 +1330,51 @@ Query functions
 
 The following table presents some query functions provided by NEST.
 
-+---------------------------------+---------------------------------------------+
-| ``nest.PrintNodes()``           | Print the node ID ranges and model names of |
-|                                 | the nodes in the network.                   |
-+---------------------------------+---------------------------------------------+
-| ``nest.GetConnections()``       | Retrieve connections (all or for a given    |
-|                                 | source or target); see also                 |
-|                                 | http://www.nest-simulator.org/connection_ma |
-|                                 | nagement.                                   |
-+---------------------------------+---------------------------------------------+
-| ``nest.GetNodes()``             | Returns a NodeCollection of the layer       |
-|                                 | elements.                                   |
-|                                 |                                             |
-|                                 |                                             |
-+---------------------------------+---------------------------------------------+
-| ``nest.GetPosition()``          | Return the spatial locations of nodes.      |
-+---------------------------------+---------------------------------------------+
-| ``nest.GetTargetNodes()``       | Obtain targets of a list of sources in a    |
-|                                 | given target layer.                         |
-+---------------------------------+---------------------------------------------+
-| ``nest.GetTargetPositions()``   | Obtain positions of targets of a list of    |
-|                                 | sources in a given target layer.            |
-+---------------------------------+---------------------------------------------+
-| ``nest.FindNearestElement()``   | Return the node(s) closest to the           |
-|                                 | location(s) in the given layer(s).          |
-+---------------------------------+---------------------------------------------+
-| ``nest.FindCenterElement()``    | Return node ID(s) of node closest to center |
-|                                 | of layer(s).                                |
-+---------------------------------+---------------------------------------------+
-| ``nest.Displacement()``         | Obtain vector of lateral displacement       |
-|                                 | between nodes, taking periodic boundary     |
-|                                 | conditions into account.                    |
-+---------------------------------+---------------------------------------------+
-| ``nest.Distance()``             | Obtain vector of lateral distances between  |
-|                                 | nodes, taking periodic boundary conditions  |
-|                                 | into account.                               |
-+---------------------------------+---------------------------------------------+
-| ``nest.DumpLayerNodes()``       | Write layer element positions to file.      |
-|                                 |                                             |
-+---------------------------------+---------------------------------------------+
-| ``nest.DumpLayerConnections()`` | Write connectivity information to file.     |
-|                                 | This function may be very useful to check   |
-|                                 | that NEST created the correct               |
-|                                 | connection structure.                       |
-+---------------------------------+---------------------------------------------+
-| ``nest.SelectNodesByMask()``    | Obtain node IDs of nodes/elements inside a  |
-|                                 | masked area of a layer.                     |
-|                                 |                                             |
-+---------------------------------+---------------------------------------------+
++---------------------------------+-----------------------------------------------------+
+| ``nest.PrintNodes()``           | Print the node ID ranges and model names of         |
+|                                 | the nodes in the network.                           |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetConnections()``       | Retrieve connections (all or for a given            |
+|                                 | source or target); see also                         |
+|                                 | http://www.nest-simulator.org/connection_management.|
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetNodes()``             | Returns a NodeCollection of all elements with given |
+|                                 | properties.                                         |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetPosition()``          | Return the spatial locations of nodes.              |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetTargetNodes()``       | Obtain targets of sources in a                      |
+|                                 | given target layer.                                 |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetTargetPositions()``   | Obtain positions of targets of                      |
+|                                 | sources in a given target layer.                    |
++---------------------------------+-----------------------------------------------------+
+| ``nest.FindNearestElement()``   | Return the node(s) closest to the                   |
+|                                 | location(s) in the given NodeCollection.            |
++---------------------------------+-----------------------------------------------------+
+| ``nest.FindCenterElement()``    | Return NodeCollection of node closest to center     |
+|                                 | of layer.                                           |
++---------------------------------+-----------------------------------------------------+
+| ``nest.Displacement()``         | Obtain vector of lateral displacement               |
+|                                 | between nodes, taking periodic boundary             |
+|                                 | conditions into account.                            |
++---------------------------------+-----------------------------------------------------+
+| ``nest.Distance()``             | Obtain vector of lateral distances between          |
+|                                 | nodes, taking periodic boundary conditions          |
+|                                 | into account.                                       |
++---------------------------------+-----------------------------------------------------+
+| ``nest.DumpLayerNodes()``       | Write layer element positions to file.              |
+|                                 |                                                     |
++---------------------------------+-----------------------------------------------------+
+| ``nest.DumpLayerConnections()`` | Write connectivity information to file.             |
+|                                 | This function may be very useful to check           |
+|                                 | that NEST created the correct                       |
+|                                 | connection structure.                               |
++---------------------------------+-----------------------------------------------------+
+| ``nest.SelectNodesByMask()``    | Obtain NodeCollection of elements inside a          |
+|                                 | masked area of a NodeCollection.                    |
+|                                 |                                                     |
++---------------------------------+-----------------------------------------------------+
 
 .. _sec:visualize:
 
@@ -1424,16 +1384,15 @@ Visualization functions
 NEST provides three functions to visualize networks:
 
 +---------------------------------+------------------------------------------+
-| ``PlotLayer()``                 | Plot nodes in a layer.                   |
+| ``PlotLayer()``                 | Plot nodes in a spatially distributed    | 
+|                                 | NodeCollection.                          |
 +---------------------------------+------------------------------------------+
 | ``PlotTargets()``               | Plot all targets of a node in a given    |
-|                                 | layer.                                   |
+|                                 | NodeCollection.                          |
 +---------------------------------+------------------------------------------+
 | ``PlotProbabilityParameter()``  | Add indication of mask and probability   |
-|                                 | ``p`` to  plot of layer. It does *not*   |
-|                                 | wrap masks and ``p`` with respect to     |
-|                                 | periodic boundary conditions. This       |
-|                                 | function is usually called by `          |
+|                                 | ``p`` to  plot of NodeCollection. This   |
+|                                 | function is usually called by            |
 |                                 | `PlotTargets``.                          |
 +---------------------------------+------------------------------------------+
 
@@ -1444,10 +1403,9 @@ NEST provides three functions to visualize networks:
 
    :math:`21\times 21` grid with divergent Gaussian projections onto
    itself. Blue circles mark layer elements, red circles connection
-   targets of the center neuron (marked by large light-red circle). The
-   large red circle is the mask, the dashed green lines mark
-   :math:`\sigma`, :math:`2\sigma` and :math:`3\sigma` of the Gaussian
-   probability distribution.
+   targets of the center neuron. The
+   large red circle is the mask, the green distribution mark
+   the Gaussian probability distribution.
 
 The following code shows a practical example: A :math:`21\times21` network
 which connects to itself with Gaussian connections. The resulting graphics
@@ -1617,9 +1575,5 @@ References
    `www.nest-simulator.org <www.nest-simulator.org>`__.
 
 .. [2]
-   See Nord (2009) for suggestions on how to describe network
-   models.
-
-.. [3]
    See Sec. :ref:`2.1.1 <sec:verysimple>` for the distinction between
    layer coordinates and grid indices

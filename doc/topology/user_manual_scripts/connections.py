@@ -330,7 +330,7 @@ grid_mask_fig(fig, 131, conndict)
 #{ conn3c #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
-            'mask': {'grid': {'shape': [5, 1]},
+            'mask': {'grid': {'shape': [5, 3]},
                      'anchor': [2, 1]}}
 #{ end #}
 grid_mask_fig(fig, 132, conndict)
@@ -434,12 +434,16 @@ fig = plt.figure()
 
 #{ conn5lin #}
 pos = nest.spatial.grid(shape=[51, 1], extent=[51., 1.], center=[25., 0.])
+spatial_nodes = nest.Create('iaf_psc_alpha', positions=pos)
+
 cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
 sdict = {'weight': nest.math.max(1.0 - 0.05 * nest.spatial.distance, 0.),
          'delay': 0.1 + 0.02 * nest.spatial.distance}
+
+nest.Connect(spatial_nodes, spatial_nodes, cdict, sdict)
 #{ end #}
 wd_fig(fig, 311, pos, cdict, sdict, 'weight', label='Weight')
 wd_fig(fig, 311, pos, cdict, sdict, 'delay', label='Delay', clr='red')
@@ -557,39 +561,17 @@ nest.ResetKernel()
 pos = nest.spatial.free(nest.random.uniform(-1., 1.),
                         extent=[2., 2.], edge_wrap=True)
 l = nest.Create('iaf_psc_alpha', 1000, positions=pos)
+
 cdict = {'rule': 'fixed_outdegree',
          'p': nest.math.max(1. - 2 * nest.spatial.distance, 0.),
          'mask': {'circular': {'radius': 1.0}},
          'outdegree': 50,
          'allow_multapses': True, 'allow_autapses': False}
+nest.Connect(l, l, cdict)
 #{ end #}
 pn_fig(fig, 111, l, cdict)
 
 plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
-
-# -----------------------------
-# TODO: Guidelines for converting composite layers
-
-#{ conn7 #}
-# nest.ResetKernel()
-# nest.CopyModel('iaf_psc_alpha', 'pyr')
-# nest.CopyModel('iaf_psc_alpha', 'in')
-# ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
-# cdict_p2i = {'connection_type': 'divergent',
-#              'mask': {'circular': {'radius': 0.5}},
-#              'kernel': 0.8,
-#              'sources': {'model': 'pyr'},
-#              'targets': {'model': 'in'}}
-# cdict_i2p = {'connection_type': 'divergent',
-#              'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
-#                                       'upper_right': [0.2, 0.2]}},
-#              'sources': {'model': 'in'},
-#              'targets': {'model': 'pyr'}}
-# l = tp.CreateLayer(ldict)
-# nest.Connect(l, l, cdict_p2i)
-# nest.Connect(l, l, cdict_i2p)
-#{ end #}
-
 
 # ----------------------------
 
@@ -617,8 +599,8 @@ nest.Connect(l_in, l_ex, {'rule': 'pairwise_bernoulli',
 # ----------------------------
 
 #{ conn9 #}
-nrn_layer = nest.Create(
-    'iaf_psc_alpha', positions=nest.spatial.grid(shape=[20, 20]))
+nrn_layer = nest.Create('iaf_psc_alpha',
+                        positions=nest.spatial.grid(shape=[20, 20]))
 
 stim = nest.Create('poisson_generator',
                    positions=nest.spatial.grid(shape=[1, 1]))

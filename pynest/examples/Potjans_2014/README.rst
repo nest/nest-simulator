@@ -4,7 +4,7 @@ Microcircuit Example
 Description
 ###########
 
- This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann `[1] <https://www.ncbi.nlm.nih.gov/pubmed/23203991>`__. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann (2014) `[1] <https://www.ncbi.nlm.nih.gov/pubmed/23203991>`__. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
 The current example contains several files:
 
@@ -15,8 +15,8 @@ The current example contains several files:
 * ``stimulus_params.py`` contains the parameters for the stimuli.
 * ``example.py`` use this script to try out the microcircuit.
 
-How to use
-##########
+Instructions
+############
 
 To run the microcircuit on a local machine, we have to first check that the
 variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to

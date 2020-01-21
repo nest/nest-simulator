@@ -587,12 +587,12 @@ l_in = nest.Create('iaf_psc_alpha', positions=pos)
 nest.Connect(l_ex, l_in, {'rule': 'pairwise_bernoulli',
                           'p': 0.8,
                           'mask': {'circular': {'radius': 0.5}}},
-                          {'synapse_model': 'exc'})
+                         {'synapse_model': 'exc'})
 nest.Connect(l_in, l_ex, {'rule': 'pairwise_bernoulli',
                           'p': 1.0,
                           'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
                                                    'upper_right': [0.2, 0.2]}}},
-                          {'synapse_model': 'inh'})
+                         {'synapse_model': 'inh'})
 #{ end #}
 
 

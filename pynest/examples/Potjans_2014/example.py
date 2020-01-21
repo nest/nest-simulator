@@ -23,7 +23,7 @@
 Pynest microcircuit example
 ---------------------------
 
-Example file to run the microcircuit.
+Example file to run the microcircuit
 
 This example uses the function ``GetNodes``, which is deprecated. A deprecation
 warning is therefore issued. For details about deprecated functions, see
@@ -43,7 +43,7 @@ from sim_params import sim_dict
 from stimulus_params import stim_dict
 
 ###############################################################################
-# Initialize the network and pass parameters to it.
+# Initialize the network and pass parameters to it
 
 tic = time.time()
 net = network.Network(sim_dict, net_dict, stim_dict)
@@ -62,7 +62,7 @@ print("Time to simulate: %.2f s" % toc)
 
 ###############################################################################
 # Plot a raster plot of the spikes of the simulated neurons and the average
-# spike rate of all populations. For visual purposes only spikes 100 ms
+# spike rate of all populations. For visual purposes only, spikes 100 ms
 # before and 100 ms after the thalamic stimulus time are plotted here by
 # default. The computation of spike rates discards the first 500 ms of
 # the simulation to exclude initialization artifacts.

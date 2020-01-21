@@ -33,22 +33,21 @@ namespace nest
 {
 
 /**
- * TODO: doc
- * @brief Brief description
- * @param param Description
+ * @brief Computes the normalization constant for the beta function
+ * @param tau_rise Synaptic rise time constant, in ms
+ * @param tau_decay Synaptic decay time constant, in ms
  *
  * Factor used to normalise the synaptic conductance such that incoming
- * spike causes a peak conductance of 1 nS. The denominator (denom1) that
- * appears in the expression of the peak time is computed here to check
- * that it is != 0 another denominator denom2 appears in the expression of
- * the normalization factor g0 Both denom1 and denom2 are null if
- * tau_decay = tau_rise, but they can also be null if tau_decay and
- * tau_rise are not equal but very close to each other, due to the
- * numerical precision limits. In such case the beta function reduces to
- * the alpha function, and the normalization factor for the alpha function
- * should be used.
+ * spike causes a peak conductance of 1 nS. The denominator,
+ * tau_difference, that appears in the expression of the peak time is
+ * computed here to check that it is not zero. Another denominator,
+ * peak_value, appears in the expression of the normalization factor. Both
+ * tau_difference and peak_value are zero if tau_decay = tau_rise. But
+ * they can also be zero if tau_decay and tau_rise are not equal but very
+ * close to each other, due to the numerical precision limits. In such
+ * case the beta function reduces to the alpha function, and the
+ * normalization factor for the alpha function should be used.
  */
-
 inline double
 beta_normalization_factor( const double tau_rise, const double tau_decay )
 {

@@ -1,8 +1,8 @@
 Microcircuit Example
-=====================
+====================
 
 Description
------------
+###########
 
  This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann `[1] <https://www.ncbi.nlm.nih.gov/pubmed/23203991>`__. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
@@ -23,7 +23,8 @@ Description
    -  ``example.py``
       Use this script to try out the microcircuit.
 
-**How to use the Microcircuit model example:**
+How to use
+##########
 
 To run the microcircuit on a local machine, we have to first check that the
 variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to
@@ -60,7 +61,7 @@ add thalamic stimulation to the microcircuit or drive it with constant DC
 input. This can be defined in the file ``stimulus_params.py``.
 
 Authors
---------
+#######
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada
 

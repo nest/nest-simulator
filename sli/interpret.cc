@@ -54,7 +54,6 @@
 #include "iostreamdatum.h"
 #include "namedatum.h"
 #include "parser.h"
-#include "psignal.h"
 #include "scanner.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
@@ -491,27 +490,6 @@ SLIInterpreter::SLIInterpreter( void )
   parse = new Parser( std::cin );
 
   initexternals();
-
-#ifndef HAVE_MPI
-  // Set a signal handler if it is not ignored.
-  // If the SIGINT is ignored, we are most likely running as
-  // a background process.
-  // Here, we use a posix conforming substitute for the
-  // ISO C signal function. It is defined in psignal.{h,cc}
-
-  if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGINT, ( Sigfunc* ) SLISignalHandler );
-  }
-  if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGUSR1, ( Sigfunc* ) SLISignalHandler );
-  }
-  if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGUSR2, ( Sigfunc* ) SLISignalHandler );
-  }
-#endif
 
   errordict->insert( quitbyerror_name, baselookup( false_name ) );
 }
@@ -1110,14 +1088,6 @@ SLIInterpreter::debug_commandline( Token& next )
       return c;
     }
 
-    if ( SLIsignalflag != 0 )
-    {
-      std::cerr << "Caught Signal Number " << SLIsignalflag << std::endl;
-      SLIsignalflag = 0;
-      tty.clear();
-      continue;
-    }
-
     if ( command == "show" )
     {
       tty >> arg;
@@ -1304,12 +1274,6 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
-    exitcode = getValue< long >( exitcodes, "unknownerror" );
-    return exitcode;
-  }
-
   try
   {
     do
@@ -1363,27 +1327,16 @@ SLIInterpreter::execute_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
-    exitcode = getValue< long >( exitcodes, "unknownerror" );
-    return exitcode;
-  }
-
   try
   {
     do
     { // loop1  this double loop to keep the try/catch outside the inner loop
       try
       {
-        while ( not SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
+        while ( EStack.load() > exitlevel ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );
-        }
-        if ( SLIsignalflag != 0 )
-        {
-          SLIsignalflag = 0;
-          raisesignal( SLIsignalflag );
         }
       }
       catch ( std::exception& exc )

@@ -117,9 +117,8 @@ ResetKernel
 (Test 7) ==
 {
   ResetKernel
-  << /resolution 0.1 >> SetKernelStatus
-  /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.5 >> SetDefaults
   << /resolution 0.5 >> SetKernelStatus
+  /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.5 >> SetDefaults
   /correlomatrix_detector Create
   1 Simulate % must simulate to force creation of histogram
   [/covariance] get cva [1] Part [1] Part length

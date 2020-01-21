@@ -437,7 +437,7 @@ function( NEST_PROCESS_WITH_OPENMP )
   if ( with-openmp )
     if ( NOT "${with-openmp}" STREQUAL "ON" )
       message( STATUS "Set OpenMP argument: ${with-openmp}")
-      # set variablesin this scope
+      # set variables in this scope
       set( OPENMP_FOUND ON )
       set( OpenMP_C_FLAGS "${with-openmp}" )
       set( OpenMP_CXX_FLAGS "${with-openmp}" )
@@ -456,6 +456,13 @@ function( NEST_PROCESS_WITH_OPENMP )
       message( FATAL_ERROR "CMake can not find OpenMP." )
     endif ()
   endif ()
+
+  # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
+  # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
+  if ( NOT TARGET OpenMP::OpenMP_CXX )
+    add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
+  endif()
+ 
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )

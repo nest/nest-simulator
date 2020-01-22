@@ -4,7 +4,7 @@ Microcircuit Example
 Description
 ###########
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann (2014) `[1] <https://www.ncbi.nlm.nih.gov/pubmed/23203991>`__. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann (2014) [1]_. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
 The current example contains several files:
 
@@ -48,9 +48,14 @@ By default, the simulation uses Poissonian input to excite neuronal populations 
 If no Poissonian input is provided, DC input is calculated and should approximately compensate the Poissonian input. It is also possible to
 add thalamic stimulation to the microcircuit or drive it with constant DC input. This can be defined in the file ``stimulus_params.py``.
 
-Authors
-#######
+References
+##########
 
-Hendrik Rothe, Hannah Bos, Sacha van Albada
+
+.. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
+        microcircuit: relating structure and activity in a full-scale spiking
+        network model. Cerebral Cortex. 24(3):785–806. DOI: 10.1093/cercor/bhs358.
+
+Authors: Hendrik Rothe, Hannah Bos, Sacha van Albada
 
 

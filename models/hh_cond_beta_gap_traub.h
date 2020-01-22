@@ -68,7 +68,7 @@ Description
 +++++++++++
 
 hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
-that also supports gap junction.
+that also supports gap junctions.
 
 This model was specifically developed for a major review of simulators [1]_,
 based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.

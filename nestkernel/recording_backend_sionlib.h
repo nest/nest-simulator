@@ -29,7 +29,7 @@
 
 #include "recording_backend.h"
 
-/* BeginUserDocs: device, backend, HPC
+/* BeginUserDocs: recording backend
 
 .. _sionlib_backend:
 

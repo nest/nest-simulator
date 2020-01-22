@@ -4,7 +4,8 @@ Microcircuit Example
 Description
 ###########
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_. The network model represents 4 layers of cortex, L2/3, L4, L5,
+and L6, each consisting of 2 populations of excitatory and inhibitory neurons. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
 The current example contains several files:
 

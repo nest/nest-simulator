@@ -4,7 +4,7 @@ Microcircuit Example
 Description
 ###########
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann (2014) [1]_. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_. The original sli version can be found `here <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__.
 
 The current example contains several files:
 

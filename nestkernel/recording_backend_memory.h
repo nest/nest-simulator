@@ -26,7 +26,7 @@
 // Includes from nestkernel:
 #include "recording_backend.h"
 
-/* BeginUserDocs: device, backend
+/* BeginUserDocs: recording backend
 
 Store data in main memory
 #########################

@@ -36,7 +36,7 @@
 /* BeginUserDocs: devices, generator
 
 Produce an AC input current
-###########################
+########################################################
 
 Device name
 +++++++++++

@@ -90,7 +90,9 @@ and the parameters from the class Nonlinearities can be set in the
 status dictionary.
 
 FirstVersion: November 2017
+
 EndUserDocs */
+
 template < class TNonlinearities >
 class rate_transformer_node : public Archiving_Node
 {

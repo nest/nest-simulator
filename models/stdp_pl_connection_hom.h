@@ -88,6 +88,7 @@ EndUserDocs */
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
  */
+
 class STDPPLHomCommonProperties : public CommonSynapseProperties
 {
 

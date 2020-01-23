@@ -88,6 +88,7 @@ See also
 SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
 
 EndUserDocs */
+
 class music_event_in_proxy : public DeviceNode
 {
 

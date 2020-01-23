@@ -132,6 +132,7 @@ See also
 pp_psc_delta
 
 EndUserDocs */
+
 class gainfunction_ginzburg
 {
 private:

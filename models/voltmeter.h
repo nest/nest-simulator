@@ -122,7 +122,8 @@ See also
 
 device, RecordingDevice, multimeter
 
-*/
+EndUserDocs */
+
 class voltmeter : public multimeter
 {
 

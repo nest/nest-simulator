@@ -140,6 +140,7 @@ See also
 iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
+
 class iaf_psc_delta : public Archiving_Node
 {
 

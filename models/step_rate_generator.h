@@ -90,6 +90,7 @@ See also
 step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class step_rate_generator : public DeviceNode
 {
 

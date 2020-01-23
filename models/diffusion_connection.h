@@ -81,6 +81,7 @@ See also
 siegert_neuron, rate_connection_instantaneous
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {

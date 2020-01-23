@@ -81,7 +81,9 @@ Parameters
 No parameters to be set in the status dictionary.
 
 FirstVersion: May 2006
+
 EndUserDocs */
+
 class parrot_neuron : public Archiving_Node
 {
 

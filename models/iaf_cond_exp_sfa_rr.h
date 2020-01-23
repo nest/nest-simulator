@@ -144,6 +144,7 @@ iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp,
 iaf_cond_alpha
 
 EndUserDocs */
+
 class iaf_cond_exp_sfa_rr : public Archiving_Node
 {
 

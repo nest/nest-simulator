@@ -119,6 +119,7 @@ See also
 pp_psc_delta
 
 EndUserDocs */
+
 class gainfunction_mcculloch_pitts
 {
 private:

@@ -72,6 +72,7 @@ See also
 mip_generator
 
 EndUserDocs */
+
 class spike_dilutor : public DeviceNode
 {
 

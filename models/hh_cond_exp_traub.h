@@ -146,6 +146,7 @@ See also
 hh_psc_alpha
 
 EndUserDocs */
+
 class hh_cond_exp_traub : public Archiving_Node
 {
 

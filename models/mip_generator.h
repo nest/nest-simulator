@@ -113,6 +113,7 @@ See also
 Device
 
 EndUserDocs */
+
 class mip_generator : public DeviceNode
 {
 

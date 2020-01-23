@@ -106,6 +106,7 @@ See also
 poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
+
 class sinusoidal_poisson_generator : public DeviceNode
 {
 

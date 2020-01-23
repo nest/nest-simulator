@@ -62,6 +62,7 @@ See also
 synapsedict, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class StaticConnectionHomW : public Connection< targetidentifierT >
 {

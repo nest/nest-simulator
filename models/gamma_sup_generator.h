@@ -80,6 +80,7 @@ See also
 ppd_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
+
 class gamma_sup_generator : public DeviceNode
 {
 

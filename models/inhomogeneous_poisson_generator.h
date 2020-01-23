@@ -88,6 +88,7 @@ See also
 sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class inhomogeneous_poisson_generator : public DeviceNode
 {
 

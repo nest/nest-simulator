@@ -141,7 +141,7 @@ References
     Generalized leaky integrate-and-fire models classify multiple neuron types.
     Nature Communications 9:709.
 
-*/
+EndUserDocs */
 
 namespace nest
 {

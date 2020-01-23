@@ -107,6 +107,7 @@ See also
 tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class Tsodyks2Connection : public Connection< targetidentifierT >
 {

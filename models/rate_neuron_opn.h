@@ -104,6 +104,7 @@ See also
 lin_rate, tanh_rate, threshold_lin_rate
 
 EndUserDocs  */
+
 template < class TNonlinearities >
 class rate_neuron_opn : public Archiving_Node
 {

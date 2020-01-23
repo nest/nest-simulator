@@ -122,6 +122,7 @@ See also
 iaf_cond_alpha
 
 EndUserDocs */
+
 class iaf_chxk_2008 : public Archiving_Node
 {
 

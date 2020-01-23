@@ -172,6 +172,7 @@ See also
 hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
 
 EndUserDocs */
+
 class hh_cond_beta_gap_traub : public Archiving_Node
 {
 

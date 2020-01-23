@@ -129,6 +129,7 @@ See also
 Device
 
 EndUserDocs */
+
 class noise_generator : public DeviceNode
 {
 

@@ -147,6 +147,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 FirstVersion: March 2006
 
 EndUserDocs */
+
 class iaf_tum_2000 : public Archiving_Node
 {
 

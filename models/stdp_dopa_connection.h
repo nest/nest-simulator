@@ -109,10 +109,12 @@ See also
 volume_transmitter
 
 EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type dopamine
  * connection.
  */
+
 class STDPDopaCommonProperties : public CommonSynapseProperties
 {
 public:

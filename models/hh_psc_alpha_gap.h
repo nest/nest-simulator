@@ -151,6 +151,7 @@ See also
 hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
 EndUserDocs */
+
 class hh_psc_alpha_gap : public Archiving_Node
 {
 

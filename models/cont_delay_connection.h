@@ -74,6 +74,7 @@ See also
 synapsedict, static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
 {

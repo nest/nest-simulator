@@ -88,6 +88,7 @@ See also
 ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class step_current_generator : public DeviceNode
 {
 

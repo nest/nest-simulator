@@ -86,6 +86,7 @@ See also
 ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class HTConnection : public Connection< targetidentifierT >
 {

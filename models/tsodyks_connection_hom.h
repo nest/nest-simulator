@@ -125,13 +125,13 @@ See also
 
 synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
 
-EndUserDocs iaf_psc_exp, iaf_tum_2000
-*/
+EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
  * TsodyksConnectionHom.
  */
+
 class TsodyksHomCommonProperties : public CommonPropertiesHomW
 {
 

@@ -143,6 +143,7 @@ See also
 correlation_detector, spike_detector, Device, PseudoRecordingDevice
 
 EndUserDocs */
+
 class correlomatrix_detector : public Node
 {
 

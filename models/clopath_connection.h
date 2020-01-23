@@ -98,6 +98,7 @@ See also
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
 EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >

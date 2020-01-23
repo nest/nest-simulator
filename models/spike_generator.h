@@ -180,6 +180,7 @@ See also
 Device, StimulatingDevice, testsuite::test_spike_generator
 
 EndUserDocs */
+
 class spike_generator : public DeviceNode
 {
 

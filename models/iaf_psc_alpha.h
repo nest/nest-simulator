@@ -151,6 +151,7 @@ See also
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs */
+
 class iaf_psc_alpha : public Archiving_Node
 {
 

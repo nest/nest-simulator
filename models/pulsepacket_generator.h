@@ -85,6 +85,7 @@ See also
 spike_generator, StimulatingDevice
 
 EndUserDocs */
+
 class pulsepacket_generator : public Node
 {
 

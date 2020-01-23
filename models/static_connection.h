@@ -56,6 +56,7 @@ See also
 synapsedict, tsodyks_synapse, stdp_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {

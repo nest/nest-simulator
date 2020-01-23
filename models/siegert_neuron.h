@@ -126,6 +126,7 @@ See also
 diffusion_connection
 
 EndUserDocs */
+
 class siegert_neuron : public Archiving_Node
 {
 

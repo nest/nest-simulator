@@ -208,6 +208,7 @@ See also
 aeif_cond_alpha_multisynapse
 
 EndUserDocs */
+
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

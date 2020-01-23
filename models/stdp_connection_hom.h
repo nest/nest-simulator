@@ -108,10 +108,12 @@ See also
 synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
  */
+
 class STDPHomCommonProperties : public CommonSynapseProperties
 {
 

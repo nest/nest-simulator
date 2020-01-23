@@ -136,8 +136,8 @@ See also
 
 iaf_cond_exp, iaf_cond_alpha_mc
 
-EndUserDocs
-*/
+EndUserDocs */
+
 class iaf_cond_alpha : public Archiving_Node
 {
 

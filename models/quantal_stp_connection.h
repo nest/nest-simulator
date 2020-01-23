@@ -100,6 +100,7 @@ See also
 tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class Quantal_StpConnection : public Connection< targetidentifierT >
 {

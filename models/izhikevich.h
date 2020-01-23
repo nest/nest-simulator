@@ -118,6 +118,7 @@ See also
 iaf_psc_delta, mat2_psc_exp
 
 EndUserDocs */
+
 class izhikevich : public Archiving_Node
 {
 

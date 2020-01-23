@@ -119,6 +119,7 @@ See also
 rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
+
 class nonlinearities_gauss_rate
 {
 private:

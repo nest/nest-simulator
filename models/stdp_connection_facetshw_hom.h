@@ -153,8 +153,10 @@ See also
 stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
+
 // template class forward declaration required by common properties friend
 // definition
+
 template < typename targetidentifierT >
 class STDPFACETSHWConnectionHom;
 

@@ -150,6 +150,7 @@ See also
 gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 
 EndUserDocs */
+
 class gif_pop_psc_exp : public Node
 {
 

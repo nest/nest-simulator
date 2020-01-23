@@ -108,6 +108,7 @@ See also
 rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
+
 class nonlinearities_tanh_rate
 {
 private:

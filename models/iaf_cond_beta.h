@@ -145,8 +145,8 @@ See also
 
 iaf_cond_exp, iaf_cond_alpha, iaf_cond_alpha_mc
 
-EndUserDocs
-*/
+EndUserDocs */
+
 class iaf_cond_beta : public Archiving_Node
 {
 

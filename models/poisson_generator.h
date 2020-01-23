@@ -111,6 +111,7 @@ See also
 poisson_generator_ps, Device, parrot_neuron
 
 EndUserDocs */
+
 class poisson_generator : public DeviceNode
 {
 

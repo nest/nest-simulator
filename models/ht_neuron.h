@@ -173,6 +173,7 @@ See also
 ht_connection
 
 EndUserDocs */
+
 class ht_neuron : public Archiving_Node
 {
 public:

@@ -124,6 +124,7 @@ See also
 synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class TsodyksConnection : public Connection< targetidentifierT >
 {

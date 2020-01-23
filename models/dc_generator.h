@@ -76,6 +76,7 @@ See also
 Device, StimulatingDevice
 
 EndUserDocs */
+
 class dc_generator : public DeviceNode
 {
 

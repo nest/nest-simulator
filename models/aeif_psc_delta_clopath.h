@@ -194,6 +194,7 @@ See also
 aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
 EndUserDocs */
+
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 

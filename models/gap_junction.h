@@ -75,6 +75,7 @@ See also
 synapsedict, hh_psc_alpha_gap
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {

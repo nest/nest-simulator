@@ -158,6 +158,7 @@ See also
 spike_detector, Device, PseudoRecordingDevice
 
 EndUserDocs */
+
 class correlation_detector : public Node
 {
 

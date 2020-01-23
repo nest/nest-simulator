@@ -180,6 +180,7 @@ See also
 iaf_cond_exp, aeif_cond_alpha
 
 EndUserDocs */
+
 class aeif_cond_exp : public Archiving_Node
 {
 

@@ -197,6 +197,7 @@ See also
 pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
 
 EndUserDocs */
+
 class gif_psc_exp_multisynapse : public Archiving_Node
 {
 

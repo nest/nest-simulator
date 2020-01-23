@@ -171,6 +171,7 @@ See also
 iaf_psc_alpha, aeif_cond_exp
 
 EndUserDocs */
+
 class aeif_psc_alpha : public Archiving_Node
 {
 

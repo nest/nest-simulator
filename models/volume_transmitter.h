@@ -92,6 +92,7 @@ See also
 stdp_dopamine_synapse
 
 EndUserDocs */
+
 class ConnectorBase;
 
 class volume_transmitter : public Archiving_Node

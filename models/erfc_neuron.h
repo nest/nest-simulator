@@ -129,6 +129,7 @@ See also
 mcculloch_pitts_neuron, ginzburg_neuron
 
 EndUserDocs */
+
 class gainfunction_erfc
 {
 private:

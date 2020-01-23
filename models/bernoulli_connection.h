@@ -88,6 +88,7 @@ See also
 synapsedict, static_synapse, static_synapse_hom_w
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >
 {

@@ -161,6 +161,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 FirstVersion: April 2013
 
 EndUserDocs */
+
 class amat2_psc_exp : public Archiving_Node
 {
 

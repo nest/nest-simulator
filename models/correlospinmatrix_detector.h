@@ -129,6 +129,7 @@ See also
 correlation_detector, correlomatrix_detector, spike_detector,
 
 EndUserDocs */
+
 class correlospinmatrix_detector : public Node
 {
 

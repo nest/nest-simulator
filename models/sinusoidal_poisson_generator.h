@@ -37,7 +37,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains
 ####################################################################################

@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets)
 #####################################################################################

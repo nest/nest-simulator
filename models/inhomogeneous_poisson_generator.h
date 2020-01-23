@@ -39,7 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 inhomogeneous_poisson_generator - provides Poisson spike trains at a piecewise constant rate
 ############################################################################################

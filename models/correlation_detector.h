@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, detector
+/* BeginUserDocs: device, detector
 
 correlation_detector - Device for evaluating cross correlation between two spike sources
 ########################################################################################

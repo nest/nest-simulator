@@ -40,7 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 pulsepacket_generator - Generate sequence of Gaussian pulse packets
 ###################################################################

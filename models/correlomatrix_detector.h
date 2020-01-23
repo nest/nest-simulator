@@ -37,7 +37,7 @@
 
 namespace nest
 {
-/* BeginUserDocs: devices, detector
+/* BeginUserDocs: device, detector
 
 correlomatrix_detector - Device for measuring the covariance matrix from several inputs
 #######################################################################################

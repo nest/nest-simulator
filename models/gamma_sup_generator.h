@@ -40,7 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 gamma_sup_generator - simulate the superimposed spike train of a population of gamma process
 ############################################################################################

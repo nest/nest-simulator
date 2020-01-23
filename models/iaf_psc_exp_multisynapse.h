@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire
 
 iaf_psc_exp_multisynapse - Leaky integrate-and-fire neuron model with multiple ports
 ####################################################################################

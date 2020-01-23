@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, binary
+/* BeginUserDocs: neuron, binary
 
 ginzburg_neuron - Binary stochastic neuron with sigmoidal activation function
 #############################################################################

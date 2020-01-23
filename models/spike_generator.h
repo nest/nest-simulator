@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 spike_generator - A device which generates spikes from an array with spike-times
 ################################################################################

@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire
 
 izhikevich - Izhikevich neuron model
 ####################################

@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, integrate-and-fire, adaptive exponential, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, adaptive exponential, post-synaptic current
 
 aeif_psc_exp - Current-based exponential integrate-and-fire neuron model
 ########################################################################

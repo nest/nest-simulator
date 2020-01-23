@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, static
+/* BeginUserDocs: synapse, static
 
 static_synapse_hom_w - Synapse type for static connections with homogeneous weight
 ##################################################################################

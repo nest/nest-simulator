@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, binary
+/* BeginUserDocs: neuron, binary
 
 mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside activation function
 #######################################################################################

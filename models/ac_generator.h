@@ -33,7 +33,7 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 Produce an AC input current
 ###########################

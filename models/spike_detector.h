@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginUserDocs: device, recorder, spikes
+/* BeginUserDocs: device, recorder, spike
 
 Collecting spikes from neurons
 ##############################

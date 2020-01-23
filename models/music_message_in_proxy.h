@@ -51,7 +51,7 @@
 
 namespace nest
 {
-/* BeginUserDocs: devices, music
+/* BeginUserDocs: device, music
 
 music_message_in_proxy - A device which receives message strings from MUSIC
 ###########################################################################

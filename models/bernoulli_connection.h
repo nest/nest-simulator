@@ -31,7 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, static
+/* BeginUserDocs: synapse, static
 
 bernoulli_synapse - Static synapse with stochastic transmission
 ###############################################################

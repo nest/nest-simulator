@@ -61,7 +61,7 @@ namespace nest
 extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 
-/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire neuron model
 #######################################################################################################

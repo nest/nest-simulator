@@ -41,7 +41,7 @@ namespace nest
 */
 
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 mip_generator - create spike trains as described by the MIP model
 #################################################################

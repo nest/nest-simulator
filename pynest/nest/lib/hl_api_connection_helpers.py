@@ -41,6 +41,7 @@ __all__ = [
 
 
 def _process_conn_spec(conn_spec):
+    """Processes the connectivity specifications from None, string or dictionary to a dictionary."""
     if conn_spec is None:
         # Get default conn_spec
         sr('/Connect /conn_spec GetOption')
@@ -55,6 +56,7 @@ def _process_conn_spec(conn_spec):
 
 
 def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
+    """Processes the synapse specifications from None, string or dictionary to a dictionary."""
     if syn_spec is None:
         return syn_spec
     rule = conn_spec['rule']
@@ -138,6 +140,10 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
+    """
+    Processes the connection and synapse specifications to a single dictionary
+    for the SLI function `ConnectLayers`.
+    """
     allowed_conn_spec_keys = ['mask', 'allow_multapses', 'allow_autapses', 'rule',
                               'indegree', 'outdegree', 'p', 'use_on_source', 'allow_oversized_mask']
     allowed_syn_spec_keys = ['weight', 'delay', 'synapse_model']
@@ -191,6 +197,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
 
 
 def _connect_layers_needed(conn_spec, syn_spec):
+    """Determins if connection has to be made with the SLI function `ConnectLayers`."""
     if isinstance(conn_spec, dict):
         # If a conn_spec entry is based on spatial properties, we must use ConnectLayers.
         for key, item in conn_spec.items():
@@ -212,6 +219,7 @@ def _connect_layers_needed(conn_spec, syn_spec):
 
 
 def _connect_spatial(pre, post, projections):
+    """Connect `pre` to `post` using the specifications in `projections` with the SLI function `ConnectLayers`."""
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
@@ -228,5 +236,6 @@ def _connect_spatial(pre, post, projections):
 
 
 def _connect_nonunique(syn_spec):
+    """Connect with the SLI function `Connect_nonunique`, using synapse specifications in `syn_spec`."""
     sps({} if syn_spec is None else syn_spec)
     sli_run('Connect_nonunique')

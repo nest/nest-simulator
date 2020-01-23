@@ -37,16 +37,38 @@ namespace nest
  * @param tau_rise Synaptic rise time constant, in ms
  * @param tau_decay Synaptic decay time constant, in ms
  *
- * Factor used to normalize the synaptic conductance such that incoming
- * spike causes a peak conductance of 1 nS. The denominator,
- * tau_difference, that appears in the expression of the peak time is
- * computed here to check that it is not zero. Another denominator,
- * peak_value, appears in the expression of the normalization factor. Both
- * tau_difference and peak_value are zero if tau_decay = tau_rise. But
- * they can also be zero if tau_decay and tau_rise are not equal but very
- * close to each other, due to the numerical precision limits. In such
- * case the beta function reduces to the alpha function, and the
- * normalization factor for the alpha function should be used.
+ * Calculates the factor used to normalize the synaptic conductance such
+ * that incoming spike causes a peak conductance of 1 nS.
+ *
+ * The solution to the beta function ODE obtained by the solver is
+ *
+ *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
+ *
+ * with a = 1/tau_rise, b = 1/tau_decay, a != b. The maximum of this
+ * function is at
+ *
+ *   t* = 1/(a-b) ln a/b
+ *
+ * We want to scale the function so that
+ *
+ *   max g == g(t*) == g_peak
+ *
+ * We thus need to set
+ *
+ *   c = g_peak * ( a - b ) / ( e^(-b t*) - e^(-a t*) )
+ *
+ * See Rotter & Diesmann, Biol Cybern 81:381 (1999) and Roth and van Rossum,
+ * Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
+ * MIT Press, 2010.
+ *
+ * The denominator, tau_difference, that appears in the expression of the
+ * peak time is computed here to check that it is not zero. Another
+ * denominator, peak_value, appears in the expression of the normalization
+ * factor. Both tau_difference and peak_value are zero if tau_decay =
+ * tau_rise. But they can also be zero if tau_decay and tau_rise are not
+ * equal but very close to each other, due to the numerical precision
+ * limits. In such case the beta function reduces to the alpha function,
+ * and the normalization factor for the alpha function should be used.
  */
 inline double
 beta_normalization_factor( const double tau_rise, const double tau_decay )

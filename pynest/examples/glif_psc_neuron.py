@@ -161,10 +161,10 @@ nest.Connect(neurons, sd)
 
 nest.Simulate(1000.)
 
-data = mm.get("events")
+data = mm.events
 senders = data["senders"]
 
-spike_data = sd.get("events")
+spike_data = sd.events
 spike_senders = spike_data["senders"]
 spikes = spike_data["times"]
 
@@ -182,7 +182,7 @@ glif_models = ["lif", "lif_r", "lif_asc", "lif_r_asc", "lif_r_asc_a"]
 for i in range(len(glif_models)):
 
     glif_model = glif_models[i]
-    node_id = neurons[i].get("global_id")
+    node_id = neurons[i].global_id
     plt.figure(glif_model)
     gs = gridspec.GridSpec(3, 1, height_ratios=[2, 1, 1])
     t = data["times"][senders == 1]

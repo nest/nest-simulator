@@ -34,7 +34,7 @@ References
 
 """
 
-import pylab as pl
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
 
@@ -45,8 +45,7 @@ T = 1000000.
 tau_max = 100.
 
 csd = nest.Create("correlospinmatrix_detector")
-nest.SetStatus(csd, {"N_channels": 2, "tau_max": tau_max, "Tstart": tau_max,
-                     "delta_tau": h})
+csd.set(N_channels=2, tau_max=tau_max, Tstart=tau_max, delta_tau=h)
 
 nest.SetDefaults('ginzburg_neuron', {'theta': 0.0, 'tau_m': tau_m,
                                      'c_1': 0.0, 'c_2': 2. * m_x, 'c_3': 1.0})
@@ -62,9 +61,7 @@ nest.Connect(n2, csd, syn_spec={"receptor_type": 1})
 
 nest.Simulate(T)
 
-stat = nest.GetStatus(csd)[0]
-
-c = stat["count_covariance"]
+c = csd.get("count_covariance")
 
 m = np.zeros(2, dtype=float)
 for i in range(2):
@@ -79,14 +76,14 @@ for i in range(2):
 
 ts = np.arange(-tau_max, tau_max + h, h)
 
-pl.title("auto- and cross covariance functions")
+plt.title("auto- and cross covariance functions")
 
-pl.plot(ts, cmat[0, 1], 'r', label=r"$c_{12}$")
-pl.plot(ts, cmat[1, 0], 'b', label=r"$c_{21}$")
-pl.plot(ts, cmat[0, 0], 'g', label=r"$c_{11}$")
-pl.plot(ts, cmat[1, 1], 'y', label=r"$c_{22}$")
-pl.xlabel("time $t \; \mathrm{ms}$")
-pl.ylabel(r"$c$")
-pl.legend()
+plt.plot(ts, cmat[0, 1], 'r', label=r"$c_{12}$")
+plt.plot(ts, cmat[1, 0], 'b', label=r"$c_{21}$")
+plt.plot(ts, cmat[0, 0], 'g', label=r"$c_{11}$")
+plt.plot(ts, cmat[1, 1], 'y', label=r"$c_{22}$")
+plt.xlabel(r"time $t \; \mathrm{ms}$")
+plt.ylabel(r"$c$")
+plt.legend()
 
-pl.show()
+plt.show()

@@ -43,7 +43,7 @@ References
 
 import nest
 import numpy as np
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 import random
 
 ##############################################################################
@@ -151,20 +151,20 @@ for i in range(int(simulation_time/sim_interval)):
     pg_mu = 25 + random.randint(0, 9) * 50
     for j in range(500):
         rates[j] = pg_A * np.exp((-1 * (j - pg_mu)**2) / (2 * pg_sigma**2))
-        pg[j].set({'rate': rates[j]*1.75})
+        pg[j].rate = rates[j]*1.75
     nest.Simulate(sim_interval)
 
 ##############################################################################
 # Plot results
 
-fig1, axA = pl.subplots(1, sharex=False)
+fig1, axA = plt.subplots(1, sharex=False)
 
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
 exc_conns = nest.GetConnections(pop_exc, pop_exc)
-exc_conns_senders = np.array(list(exc_conns.sources()))
-exc_conns_targets = np.array(list(exc_conns.targets()))
-exc_conns_weights = np.array(exc_conns.get('weight'))
+exc_conns_senders = np.array(exc_conns.source)
+exc_conns_targets = np.array(exc_conns.target)
+exc_conns_weights = np.array(exc_conns.weight)
 idx_array = np.argsort(exc_conns_senders)
 targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))
 weights = np.reshape(exc_conns_weights[idx_array], (10, 10-1))
@@ -195,4 +195,4 @@ axA.set_xticklabels(['1', '3', '5', '7', '9'])
 axA.set_xlabel("to neuron")
 axA.set_ylabel("from neuron")
 axA.set_title("Change of syn weights before and after simulation")
-pl.show()
+plt.show()

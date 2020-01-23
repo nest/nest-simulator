@@ -135,3 +135,4 @@ nest.Simulate(simtime)
 
 nest.raster_plot.from_device(spike_det, hist=True)
 plt.title('Population dynamics')
+nest.raster_plot.show()

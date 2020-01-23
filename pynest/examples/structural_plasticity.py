@@ -45,7 +45,7 @@ References
 
 import nest
 import numpy
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 import sys
 
 
@@ -229,15 +229,15 @@ class StructralPlasticityExample:
         self.nodes_i = nest.Create('iaf_psc_alpha',
                                    self.number_inhibitory_neurons,
                                    {'synaptic_elements': synaptic_elements_i})
-        nest.SetStatus(self.nodes_e, 'synaptic_elements', synaptic_elements)
-        nest.SetStatus(self.nodes_i, 'synaptic_elements', synaptic_elements_i)
+        self.nodes_e.synaptic_elements = synaptic_elements
+        self.nodes_i.synaptic_elements = synaptic_elements_i
 
     def connect_external_input(self):
         """
         We create and connect the Poisson generator for external input
         """
         noise = nest.Create('poisson_generator')
-        nest.SetStatus(noise, {"rate": self.bg_rate})
+        noise.rate = self.bg_rate
         nest.Connect(noise, self.nodes_e, 'all_to_all',
                      {'weight': self.psc_ext, 'delay': 1.0})
         nest.Connect(noise, self.nodes_i, 'all_to_all',
@@ -251,10 +251,10 @@ class StructralPlasticityExample:
 # network and then store the average.
 
     def record_ca(self):
-        ca_e = nest.GetStatus(self.nodes_e, 'Ca'),  # Calcium concentration
+        ca_e = self.nodes_e.Ca,  # Calcium concentration
         self.mean_ca_e.append(numpy.mean(ca_e))
 
-        ca_i = nest.GetStatus(self.nodes_i, 'Ca'),  # Calcium concentration
+        ca_i = self.nodes_i.Ca,  # Calcium concentration
         self.mean_ca_i.append(numpy.mean(ca_i))
 
 
@@ -267,8 +267,8 @@ class StructralPlasticityExample:
 # inhibitory connections.
 
     def record_connectivity(self):
-        syn_elems_e = nest.GetStatus(self.nodes_e, 'synaptic_elements')
-        syn_elems_i = nest.GetStatus(self.nodes_i, 'synaptic_elements')
+        syn_elems_e = self.nodes_e.synaptic_elements
+        syn_elems_i = self.nodes_i.synaptic_elements
         self.total_connections_e.append(sum(neuron['Axon_ex']['z_connected']
                                             for neuron in syn_elems_e))
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
@@ -280,7 +280,7 @@ class StructralPlasticityExample:
 # at the end of the simulation.
 
     def plot_data(self):
-        fig, ax1 = pl.subplots()
+        fig, ax1 = plt.subplots()
         ax1.axhline(self.growth_curve_e_e['eps'],
                     linewidth=4.0, color='#9999FF')
         ax1.plot(self.mean_ca_e, 'b',
@@ -301,7 +301,7 @@ class StructralPlasticityExample:
         ax2.set_ylabel("Connections")
         ax1.legend(loc=1)
         ax2.legend(loc=4)
-        pl.savefig('StructuralPlasticityExample.eps', format='eps')
+        plt.savefig('StructuralPlasticityExample.eps', format='eps')
 
 
 ####################################################################################

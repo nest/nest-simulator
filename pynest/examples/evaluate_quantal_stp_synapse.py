@@ -71,7 +71,7 @@ References
 import nest
 import nest.voltage_trace
 import numpy
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -140,10 +140,10 @@ voltmeter = nest.Create("voltmeter", 2)
 # simulations this problem does not show, but in small simulations like
 # this, we would see it.
 
-nest.SetStatus(neuron[0], "I_e", 376.0)
+neuron[0].I_e = 376.0
 
 nest.Simulate(500.0)
-nest.SetStatus(neuron[0], "I_e", 0.0)
+neuron[0].I_e = 0.0
 nest.Simulate(1000.0)
 
 ###############################################################################
@@ -157,9 +157,9 @@ nest.Connect(voltmeter[1], neuron[2])
 # of a high-rate response, followed by a pause and then a recovery response.
 
 for t in range(n_trials):
-    nest.SetStatus(neuron[0], "I_e", 376.0)
+    neuron[0].I_e = 376.0
     nest.Simulate(500.0)
-    nest.SetStatus(neuron[0], "I_e", 0.0)
+    neuron[0].I_e = 0.0
     nest.Simulate(1000.0)
 
 ###############################################################################
@@ -169,8 +169,8 @@ nest.Simulate(.1)
 
 ###############################################################################
 # Extract the reference trace.
-vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus(voltmeter[0], 'events')[0]['V_m'])
+vm = numpy.array(voltmeter[1].get('events', 'V_m'))
+vm_reference = numpy.array(voltmeter[0].get('events', 'V_m'))
 
 vm.shape = (n_trials, 1500)
 vm_reference.shape = (n_trials, 1500)
@@ -181,8 +181,9 @@ vm_reference.shape = (n_trials, 1500)
 vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
                            for (i, j) in enumerate(vm_reference[0, :])])
-pylab.plot(vm_mean)
-pylab.plot(vm_ref_mean)
+plt.plot(vm_mean)
+plt.plot(vm_ref_mean)
+plt.show()
 
 ###############################################################################
 # Finally, print the mean-suqared error between the trial-average and the

@@ -71,7 +71,7 @@ s = nest.Create('spike_detector', 2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
-print(nest.GetStatus(m))
+print(m.get())
 nest.Simulate(200)
 
 
@@ -84,7 +84,7 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus(m[j])[0]['events']
+    ev = m[j].events
     t = ev['times']
     r = ev['rate']
 
@@ -128,7 +128,7 @@ nest.Connect(g, p, 'all_to_all')
 nest.Connect(p, s, 'all_to_all')
 
 nest.Simulate(200)
-ev = nest.GetStatus(s)[0]['events']
+ev = s.events
 plt.subplot(222)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
@@ -157,7 +157,7 @@ nest.Connect(g, p, 'all_to_all')
 nest.Connect(p, s, 'all_to_all')
 
 nest.Simulate(200)
-ev = nest.GetStatus(s)[0]['events']
+ev = s.events
 plt.subplot(224)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])

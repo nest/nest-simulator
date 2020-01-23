@@ -79,10 +79,10 @@ nest.SetKernelStatus({'local_num_threads': 1, 'resolution': h,
 
 # Set up network, connect and simulate
 mg = nest.Create('mip_generator')
-nest.SetStatus(mg, {'rate': nu, 'p_copy': pc})
+mg.set(rate=nu, p_copy=pc)
 
 cd = nest.Create('correlation_detector')
-nest.SetStatus(cd, {'tau_max': tau_max, 'delta_tau': delta_tau})
+cd.set(tau_max=tau_max, delta_tau=delta_tau)
 
 sd = nest.Create('spike_detector', params={'time_in_steps': True})
 
@@ -102,7 +102,7 @@ nest.Connect(pn2, cd)
 
 nest.Simulate(T)
 
-n_events = nest.GetStatus(cd)[0]['n_events']
+n_events = cd.get('n_events')
 n1 = n_events[0]
 n2 = n_events[1]
 

@@ -45,7 +45,7 @@ References
 """
 
 import nest
-import pylab as pl
+import matplotlib.pyplot as plt
 import numpy
 
 n_neuron = 500
@@ -144,13 +144,13 @@ nest.Simulate(simtime)
 
 times = sd.get('events', 'times')
 spikes = sd.get('events', 'senders')
-n_spikes = sd.get('n_events')
+n_spikes = sd.n_events
 
 hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 
-pl.figure(1)
-pl.plot(times, spikes, 'o')
-pl.title('Average spike rate (Hz): %.2f' % hz_rate)
-pl.xlabel('time (ms)')
-pl.ylabel('neuron no')
-pl.show()
+plt.figure(1)
+plt.plot(times, spikes, 'o')
+plt.title('Average spike rate (Hz): %.2f' % hz_rate)
+plt.xlabel('time (ms)')
+plt.ylabel('neuron no')
+plt.show()

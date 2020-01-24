@@ -1,5 +1,5 @@
-Microcircuit Example
-====================
+PyNEST Microcircuit Example
+===========================
 
 Description
 ###########

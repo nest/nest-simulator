@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# example.py
+# run_microcircuit.py
 #
 # This file is part of NEST.
 #
@@ -19,21 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Pynest microcircuit example
----------------------------
+"""PyNEST Microcircuit Example
+---------------------------------
 
-This is an example file to run the microcircuit.
+This is an example script for running the microcircuit model and generating
+basic plots of the network activity.
 
-The example uses the function ``GetNodes``, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
-
-Authors: Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 ###############################################################################
-# Import the necessary modules
+# Import the necessary modules.
 
 import time
 import numpy as np
@@ -43,26 +38,27 @@ from sim_params import sim_dict
 from stimulus_params import stim_dict
 
 ###############################################################################
-# Initialize the network and pass parameters to it
+# Initialize the network with simulation, network and stimulation parameters,
+# create and connect all nodes and simulate.
 
 tic = time.time()
 net = network.Network(sim_dict, net_dict, stim_dict)
 toc = time.time() - tic
 print("Time to initialize the network: %.2f s" % toc)
-# Connect all nodes.
+
 tic = time.time()
 net.setup()
 toc = time.time() - tic
-print("Time to create the connections: %.2f s" % toc)
-# Simulate.
+print("Time to create and connect all nodes: %.2f s" % toc)
+
 tic = time.time()
 net.simulate()
 toc = time.time() - tic
 print("Time to simulate: %.2f s" % toc)
 
 ###############################################################################
-# Plot a raster plot of the spikes of the simulated neurons and the average
-# spike rate of all populations. For visual purposes only, spikes 100 ms
+# Plot a spike raster of the simulated neurons and the per-neuron average spike
+# rate of all populations. For visual purposes only, spikes 100 ms
 # before and 100 ms after the thalamic stimulus time are plotted here by
 # default. The computation of spike rates discards the first 500 ms of
 # the simulation to exclude initialization artifacts.

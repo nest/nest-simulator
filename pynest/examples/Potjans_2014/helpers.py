@@ -19,21 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Pynest microcircuit helpers
----------------------------
+"""PyNEST Microcircuit Example: Helpers
+------------------------------------------
 
 Helper functions for the simulation and evaluation of the microcircuit.
 
-Authors
-~~~~~~~~
-
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
-import numpy as np
 import os
 import sys
+import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
@@ -66,10 +61,8 @@ def compute_DC(net_dict, w_ext):
 def get_weight(PSP_val, net_dict):
     """ Computes weight to elicit a change in the membrane potential.
 
-    This function computes the weight which elicits a change in the membrane
-    potential of size PSP_val. To implement this, the weight is calculated to
-    elicit a current that is high enough to implement the desired change in the
-    membrane potential.
+    The weight is calculated as a postsynaptic current that is large enough to
+    elicit a change in the membrane potential of size ``PSP_val``.
 
     Parameters
     ----------
@@ -100,22 +93,17 @@ def get_total_number_of_synapses(net_dict):
     """ Returns the total number of synapses between all populations.
 
     The first index (rows) of the output matrix is the target population
-    and the second (columns) the source population. If a scaling of the
-    synapses is intended this is done in the main simulation script and the
-    variable 'K_scaling' is ignored in this function.
+    and the second (columns) the source population.
+
+    This function accounts for potentially scaled population sizes
+    (``N_scaling``) but a scaling of the synapse numbers is not included.
+    Instead, the main script ``network.py`` applies the corresponding
+    ``K_scaling`` to the result of this function.
 
     Parameters
     ----------
     net_dict
         Dictionary containing parameters of the microcircuit.
-    N_full
-        Number of neurons in all populations.
-    number_N
-        Total number of populations.
-    conn_probs
-        Connection probabilities of the eight populations.
-    scaling
-        Factor that scales the number of neurons.
 
     Returns
     -------
@@ -131,9 +119,6 @@ def get_total_number_of_synapses(net_dict):
     prod = np.outer(N_full, N_full)
     n_syn_temp = np.log(1. - conn_probs)/np.log((prod - 1.) / prod)
     N_full_matrix = np.tile(N_full, (number_N, 1)).T
-    # If the network is scaled the indegrees are calculated in the same
-    # fashion as in the original version of the circuit, which is
-    # written in sli.
     K = (((n_syn_temp * (
         N_full_matrix * scaling).astype(int)) / N_full_matrix).astype(int))
     return K
@@ -142,28 +127,26 @@ def get_total_number_of_synapses(net_dict):
 def synapses_th_matrix(net_dict, stim_dict):
     """ Computes number of synapses between thalamus and microcircuit.
 
-    This function ignores the variable, which scales the number of synapses.
-    If this is intended the scaling is performed in the main simulation script.
+    The first index (rows) of the output matrix is the target population
+    and the second (columns) is the thalamus.
+
+    This function accounts for potentially scaled population sizes
+    (``N_scaling``) but a scaling of the synapse numbers is not included.
+    Instead, the main script ``network.py`` applies the corresponding
+    ``K_scaling`` to the result of this function.
 
     Parameters
     ----------
     net_dict
         Dictionary containing parameters of the microcircuit.
     stim_dict
-        Dictionary containing parameters of stimulation settings.
-    N_full
-        Number of neurons in the eight populations.
-    conn_probs
-        Connection probabilities of the thalamus to the eight populations.
-    scaling
-        Factor that scales the number of neurons.
-    T_full
-        Number of thalamic neurons.
+        Dictionary containing stimulation parameters.
 
     Returns
     -------
     K
-        Total number of synapses.
+        Total number of synapses from the thalamus to the populations with
+        dimensions[len(populations), 1]
 
     """
     N_full = net_dict['N_full']
@@ -177,11 +160,11 @@ def synapses_th_matrix(net_dict, stim_dict):
 
 
 def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
-    """ Adjustment of weights to scaling is performed.
+    """ Adjusts weights to scaling of synapse numbers.
 
     The recurrent and external weights are adjusted to the scaling
-    of the indegrees. Extra DC input is added to compensate the scaling
-    and preserve the mean and variance of the input.
+    of the synapse numbers. Extra DC input is added to compensate for the
+    scaling in order to preserve the mean and variance of the input.
 
     Parameters
     ----------
@@ -199,14 +182,6 @@ def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
         Dictionary containing parameters of the microcircuit.
     stim_dict
         Dictionary containing stimulation parameters.
-    tau_syn_E
-        Time constant of the external postsynaptic excitatory current.
-    full_mean_rates
-        Mean rates of the eight populations in the full scale version.
-    K_ext
-        Number of external connections to the eight populations.
-    bg_rate
-        Rate of the Poissonian spike generator.
 
     Returns
     -------
@@ -258,12 +233,12 @@ def read_name(path, name):
     Returns
     -------
     files
-        Name of all spike detectors, which are located in the path.
+        Names of all spike detectors, which are located in the path.
     node_ids
         Lowest and highest ids of the spike detectors.
 
     """
-    # Import filenames$
+    # load filenames
     files = []
     for file in os.listdir(path):
         if file.endswith('.gdf') and file.startswith(name):
@@ -271,7 +246,7 @@ def read_name(path, name):
             if temp not in files:
                 files.append(temp)
 
-    # Import node IDs
+    # lode node IDs
     node_idfile = open(path + 'population_nodeids.dat', 'r')
     node_ids = []
     for l in node_idfile:
@@ -291,15 +266,15 @@ def load_spike_times(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Lower boundary value to load spike times.
+        Time point to start loading spike times (excluded).
     end
-        Upper boundary value to load spike times.
+        Time point to stop loading spike times (excluded).
 
     Returns
     -------
     data
-        Dictionary containing spike times in the interval from 'begin'
-        to 'end'.
+        Dictionary containing spike times in the interval from ``begin``
+        to ``end``.
 
     """
     files, node_ids = read_name(path, name)
@@ -322,7 +297,7 @@ def load_spike_times(path, name, begin, end):
 
 
 def plot_raster(path, name, begin, end):
-    """ Creates a spike raster plot of the microcircuit.
+    """ Creates a spike raster plot of the network activity.
 
     Parameters
     -----------
@@ -331,9 +306,9 @@ def plot_raster(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Initial value of spike times to plot.
+        Time point to start plotting spikes (exluded).
     end
-        Final value of spike times to plot.
+        Time point to stop plotting spikes (excluded).
 
     Returns
     -------
@@ -370,11 +345,11 @@ def plot_raster(path, name, begin, end):
 
 
 def fire_rate(path, name, begin, end):
-    """ Computes firing rate and standard deviation of it.
+    """ Computes firing rates and standard deviation of it.
 
-    The firing rate of each neuron for each population is computed and stored
+    The firing rate of each neuron in each population is computed and stored
     in a numpy file in the directory of the spike detectors. The mean firing
-    rate and its standard deviation is displayed for each population.
+    rate and its standard deviation are plotted for each population.
 
     Parameters
     -----------
@@ -383,9 +358,9 @@ def fire_rate(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Initial value of spike times to calculate the firing rate.
+        Time point to start calculating the firing rates (excluded).
     end
-        Final value of spike times to calculate the firing rate.
+        Tiem point to stop calculating the firing rates (excluded).
 
     Returns
     -------
@@ -412,10 +387,10 @@ def fire_rate(path, name, begin, end):
 
 
 def boxplot(net_dict, path):
-    """ Creates a boxblot of the firing rates of the eight populations.
+    """ Creates a boxblot of the firing rates of all populations.
 
-    To create the boxplot, the firing rates of each population need to be
-    computed with the function 'fire_rate'.
+    To create the boxplot, the firing rates of each neuron in each population
+    need to be computed with the function ``fire_rate()``.
 
     Parameters
     -----------

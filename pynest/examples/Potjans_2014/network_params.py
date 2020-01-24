@@ -197,11 +197,12 @@ net_dict = {
     # inhibitory connections (in relative units).
     'rel_std_delay': 0.5,
     # Initial conditions for the membrane potential, options are:
-    # 'original': uniform mean and std for all populations.
+    # 'original': uniform mean and std for all populations as used in earlier
+    #             implementations of the model.
     # 'optimized': population-specific mean and std, allowing a reduction of
     # the initial activity burst in the network.
     # Choose either 'original' or 'optimized'.
-    'V0_type': 'original',
+    'V0_type': 'optimized',
     # Parameters of the neurons.
     'neuron_params': {
         # Membrane potential average for the neurons (in mV).

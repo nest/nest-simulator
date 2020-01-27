@@ -15,18 +15,38 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        Install NEST via the PPA repository.
 
-       1. Add the PPA repository for NEST and update apt:
+       1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/pogo-dev-ubuntu-stable-disco.list`` by:
 
        .. code-block:: bash
 
-           sudo add-apt-repository ppa:nest-simulator/nest
-           sudo apt-get update
+          sudo apt install devscripts build-essential software-properties-common dpkg-dev
+          sudo add-apt-repository --enable-source ppa:nest-simulator/nest
 
-       2. Install NEST:
+       2. Disable the the binary package in the repository file by commenting it out.
+
+       3. Import the PPA GPC key and rebuild the package:
 
        .. code-block:: bash
 
-           sudo apt-get install nest
+          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
+          sudo apt update
+          sudo apt source --build nest
+
+       4. Install any missing dependencies, if apt tells you so.
+
+       5. Install the ready Debian package after the rebuild:
+
+       ..  code-block:: bash
+
+           sudo dpkg --install nest_2.18.0-0~201911260924~ubuntu20.04.1_amd64.deb
+
+       6. Test the package:
+
+       .. code-block:: bash
+
+          python3
+          import nest
+
 
    .. tab:: NeuroFedora
 

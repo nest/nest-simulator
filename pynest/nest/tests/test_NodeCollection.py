@@ -600,6 +600,22 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(ValueError):
             param.apply(source, [[1., 2.], [1., 2., 3.]])  # Not consistent dimensions
 
+    def test_array_indexing(self):
+        """NodeCollection array indexing"""
+        n = nest.Create('iaf_psc_alpha', 10)
+        cases = [[1, 2],
+                 [2, 5],
+                 [0, 2, 5, 7, 9],
+                 (2, 5),
+                 ]
+        if HAVE_NUMPY:
+            cases.append(np.array([2, 5]))
+        for case in cases:
+            print(type(case), case)
+            ref = [i + 1 for i in case]
+            sliced = n[case]
+            self.assertEqual(sliced.tolist(), ref)
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeCollection, 'test')

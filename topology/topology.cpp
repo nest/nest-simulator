@@ -196,7 +196,11 @@ get_global_children( const index gid, const MaskDatum& maskd, const std::vector<
 void
 connect_layers( const index source_gid, const index target_gid, const DictionaryDatum& connection_dict )
 {
-  kernel().connection_manager.set_have_connections_changed( true );
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
+  {
+    kernel().connection_manager.set_have_connections_changed( tid );
+  }
 
   AbstractLayer* source = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
   AbstractLayer* target = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );

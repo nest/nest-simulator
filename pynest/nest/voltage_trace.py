@@ -128,12 +128,12 @@ def from_file(fname, title=None, grayscale=False):
 def from_device(detec, neurons=None, title=None, grayscale=False,
                 timeunit="ms"):
     """Plot the membrane potential of a set of neurons recorded by
-    the given Voltmeter or Multimeter.
+    the given voltmeter or multimeter.
 
     Parameters
     ----------
     detec : list
-        Global id of Voltmeter or Multimeter in a list, e.g. [1]
+        Global id of voltmeter or multimeter in a list, e.g. [1]
     neurons : list, optional
         Indices of of neurons to plot
     title : str, optional
@@ -153,7 +153,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
     type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
-    if not type_id.name in ('voltmeter', 'multimeter'):
+    if type_id.name not in ('voltmeter', 'multimeter'):
         raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
     elif type_id.name == 'multimeter':
@@ -228,7 +228,7 @@ def _from_memory(detec):
     """Get voltage traces from memory.
     ----------
     detec : list
-        Global id of Voltmeter or Multimeter
+        Global id of voltmeter or multimeter
     """
     import array
 

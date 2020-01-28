@@ -72,7 +72,7 @@ same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
 Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all
+A multimeter can operate in accumulator mode. In this case, values for all
 recorded variables are added across all recorded nodes (but kept separate in
 time). This can be useful to record average membrane potential in a population.
 
@@ -143,15 +143,15 @@ Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
 
 SeeAlso: Device, RecordingDevice
 */
-class Multimeter : public DeviceNode
+class multimeter : public DeviceNode
 {
 
 public:
-  Multimeter();
-  Multimeter( const Multimeter& );
+  multimeter();
+  multimeter( const multimeter& );
 
   /**
-   * @note Multimeters never have proxies, since they must
+   * @note multimeters never have proxies, since they must
    *       sample their targets through local communication.
    */
   bool
@@ -276,7 +276,7 @@ private:
      * processed. This flag is set to true by update() before dispatching the
      * DataLoggingRequest event and is reset to false by handle() as soon as the
      * first DataLoggingReply has been handled. This is needed when the
-     * Multimeter is running in accumulator mode.
+     * multimeter is running in accumulator mode.
      */
     bool new_request_;
 
@@ -299,7 +299,7 @@ private:
 
 
 inline void
-nest::Multimeter::get_status( DictionaryDatum& d ) const
+nest::multimeter::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
   device_.get_status( d );
@@ -324,13 +324,13 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::Multimeter::set_status( const DictionaryDatum& d )
+nest::multimeter::set_status( const DictionaryDatum& d )
 {
-  // protect Multimeter from being frozen
+  // protect multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
   {
-    throw BadProperty( "Multimeter cannot be frozen." );
+    throw BadProperty( "multimeter cannot be frozen." );
   }
 
   Parameters_ ptmp = P_;
@@ -344,7 +344,7 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
 }
 
 inline SignalType
-nest::Multimeter::sends_signal() const
+nest::multimeter::sends_signal() const
 {
   return ALL;
 }

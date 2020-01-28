@@ -11,9 +11,24 @@ compile NEST from source, see section** :ref:`advanced_install`.
 .. tabs::
 
 
-   .. tab:: Debian/Ubuntu PPA
+   .. tab:: Ubuntu PPA (Debian)
 
-       Install NEST via the PPA repository.
+       **Ubuntu users can install NEST via the PPA repository.**
+
+       1. Add the PPA repository for NEST and update apt:
+
+       .. code-block:: bash
+
+           sudo add-apt-repository ppa:nest-simulator/nest
+           sudo apt-get update
+
+       2. Install NEST:
+
+       .. code-block:: bash
+
+           sudo apt-get install nest
+
+       **Debian users may install NEST via the Ubuntu PPA repository.**
 
        1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/pogo-dev-ubuntu-stable-disco.list`` by:
 
@@ -38,7 +53,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        ..  code-block:: bash
 
-           sudo dpkg --install nest_2.18.0-0~201911260924~ubuntu20.04.1_amd64.deb
+           sudo dpkg --install nest-simulator-x.y.z~NUMBER~ubuntu20.04.1_amd64.deb
 
        6. Test the package:
 

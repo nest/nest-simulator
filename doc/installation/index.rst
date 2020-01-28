@@ -51,7 +51,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
           sudo apt update
           sudo apt source --build nest
 
-       4. Install any missing dependencies, if apt tells you so.
+       4. Install any missing dependencies, if ``apt`` tells you so.
 
        5. Install the ready Debian package after the rebuild:
 

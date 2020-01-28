@@ -11,9 +11,9 @@ compile NEST from source, see section** :ref:`advanced_install`.
 .. tabs::
 
 
-   .. tab:: Ubuntu PPA (Debian)
+   .. tab:: Ubuntu
 
-       **Ubuntu users can install NEST via the PPA repository.**
+       Ubuntu users can install NEST via the PPA repository.
 
        1. Add the PPA repository for NEST and update apt:
 
@@ -28,7 +28,10 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
            sudo apt-get install nest
 
-       **Debian users may install NEST via the Ubuntu PPA repository.**
+
+   .. tab:: Debian
+
+       Debian users can install NEST via the Ubuntu PPA repository.
 
        1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/pogo-dev-ubuntu-stable-disco.list`` by:
 
@@ -37,7 +40,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
           sudo apt install devscripts build-essential software-properties-common dpkg-dev
           sudo add-apt-repository --enable-source ppa:nest-simulator/nest
 
-       2. Disable the the binary package in the repository file by commenting it out.
+       2. Disable the binary package in the repository file by commenting it out.
 
        3. Import the PPA GPC key and rebuild the package:
 

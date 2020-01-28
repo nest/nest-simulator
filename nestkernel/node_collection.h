@@ -323,6 +323,15 @@ public:
    */
   virtual long find( const index ) const = 0;
 
+  /**
+   * Array indexing into NodeCollection.
+   *
+   * @param index_array Array of indices
+   * @return Nodes at indices given in the array.
+   */
+  NodeCollectionPTR array_index( const IntVectorDatum& index_array ) const;
+  NodeCollectionPTR array_index( const TokenArray& index_array ) const;
+
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the //!< NodeCollection
   static NodeCollectionPTR create_();

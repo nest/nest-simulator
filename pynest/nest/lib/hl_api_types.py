@@ -218,6 +218,8 @@ class NodeCollection(object):
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
             return sli_func('Take', self._datum, [key + (key >= 0)])
+        elif isinstance(key, (list, tuple, numpy.ndarray)):
+            return sli_func('Take_arrayindex', self._datum, key)
         else:
             raise IndexError('only integers and slices are valid indices')
 

@@ -229,6 +229,17 @@ def
 
 } def
 
+% Array indexing of NodeCollections
+/Take_arrayindex [/nodecollectiontype /arraytype]
+{
+  Take_arrayindex_g_a
+} def
+
+/Take_arrayindex [/nodecollectiontype /intvectortype]
+{
+  Take_arrayindex_g_iv
+} def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /* BeginDocumentation

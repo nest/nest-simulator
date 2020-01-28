@@ -470,6 +470,16 @@ public:
     void execute( SLIInterpreter* ) const;
   } take_g_afunction;
 
+  class Take_arrayindex_g_aFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } take_arrayindex_g_afunction;
+
+  class Take_arrayindex_g_ivFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } take_arrayindex_g_ivfunction;
+
 #ifdef HAVE_MUSIC
   class SetAcceptableLatencyFunction : public SLIFunction
   {

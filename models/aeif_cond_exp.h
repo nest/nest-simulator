@@ -68,7 +68,7 @@ extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
  */
 extern "C" int aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive exponential, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
 aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model
 #############################################################################

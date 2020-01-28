@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, Hill-Tononi synapse
+/* BeginUserDocs: synapse, Hill-Tononi plasticity
 
 ht_synapse - Synapse with depression after Hill & Tononi (2005)
 ###############################################################

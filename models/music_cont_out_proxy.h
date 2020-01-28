@@ -50,7 +50,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: device, music
+/* BeginUserDocs: device, MUSIC
 
 music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC
 ##############################################################################

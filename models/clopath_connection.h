@@ -40,7 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, spike-timing-dependent plasticity, clopath_synapse
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
 
 clopath_synapse - Synapse type for voltage-based STDP after Clopath
 ###################################################################

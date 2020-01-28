@@ -37,7 +37,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, point process, post-synaptic current
+/* BeginUserDocs: neuron, point process, current-based
 
 pp_pop_psc_delta - Population of point process neurons with leaky integration of delta-shaped PSCs
 ##################################################################################################

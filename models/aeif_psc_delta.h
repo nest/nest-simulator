@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, adaptive exponential, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
 
 aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
 ######################################################################################################

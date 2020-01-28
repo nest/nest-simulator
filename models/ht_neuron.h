@@ -63,7 +63,7 @@ namespace nest
  */
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, Hill-Tononi neuron
+/* BeginUserDocs: neuron, Hill-Tononi plasticity
 
 ht_neuron - Neuron model after Hill & Tononi (2005)
 ###################################################

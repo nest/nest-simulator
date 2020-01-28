@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 iaf_psc_alpha - Leaky integrate-and-fire neuron model
 #####################################################

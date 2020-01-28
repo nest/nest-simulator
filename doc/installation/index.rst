@@ -46,7 +46,8 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        .. code-block:: bash
 
-          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
+          sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
+                           --recv-keys CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
           sudo apt update
           sudo apt source --build nest
 

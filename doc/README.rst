@@ -68,7 +68,7 @@ index via the command line
 Local install of user documentation
 --------------------------------------
 
-If you are using Linux and want to locally install the docs
+If you are using Linux or macOS and want to locally install the docs
 and generate the html files, follow the steps below.
 
 Requirements
@@ -82,7 +82,7 @@ Installation
 ~~~~~~~~~~~~
 
 With the following steps a full development environment is installed -
-even NEST 2.14.0.
+even NEST 2.18.0.
 
 Change to the doc/ folder in the source directory (if you’re not already there).
 
@@ -103,7 +103,6 @@ Now generate the html files. They are then located in ./docs/_build/html.
 ::
 
    make html
-
 
 If you want to deactivate and/or delete the build environment:
 

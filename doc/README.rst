@@ -16,7 +16,7 @@ You will need the NEST source code in your project::
 
 Requirements for building the docs include::
 
- python 3.6
+ python3
  setuptools
  pandoc
  sphinx
@@ -96,22 +96,18 @@ Create and activate the environment.
 
    conda env create -f conda_environment.yml
    conda update -n base conda
-   source activate doc
+   conda activate doc
 
-Now generate the html files. They are then located in ./docs/build/html.
+Now generate the html files. They are then located in ./docs/_build/html.
 
 ::
 
    make html
 
-.. note::
-
-   ``make pdf``, ``make latex`` and other options are possible, too.
-   For more information type ``make help``.
 
 If you want to deactivate and/or delete the build environment:
 
 ::
 
-   source deactivate
-   conda remove --name documentation --all
+   conda deactivate
+   conda remove --name doc --all

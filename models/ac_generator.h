@@ -35,8 +35,8 @@
 
 /* BeginUserDocs: device, generator
 
-Produce an AC input current
-###########################
+Produce an alternating current (AC) input
+#########################################
 
 Device name
 +++++++++++
@@ -46,7 +46,7 @@ ac_generator
 Description
 +++++++++++
 
-This device produces an ac-current sent by a CurrentEvent. The
+This device produces an AC current sent by a CurrentEvent. The
 current is given by
 
 .. math::

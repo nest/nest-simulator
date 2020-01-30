@@ -21,7 +21,7 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 Download NEST source code
 --------------------------
 
-* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz>`_.
+* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
 
 * Follow the installation instructions for :doc:`Linux <installation/linux_install>` or :ref:`macOS <mac_manual>`.

@@ -73,8 +73,8 @@ Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
 Clopath synapse.
 
-Transmits:
-++++++++++
+Sends
++++++
 
 SpikeEvent
 

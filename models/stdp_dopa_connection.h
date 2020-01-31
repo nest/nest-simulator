@@ -98,8 +98,8 @@ References
        DOI: https://doi.org/10.1093/cercor/bhl152
 
 
-Transmits
-+++++++++
+Sends
++++++
 
 SpikeEvent
 

@@ -58,8 +58,8 @@ case of distributed in-degrees (see discussion in chapter 5.2 of [1]_)
 The values of the parameters delay and weight are ignored for
 connections of this type.
 
-Transmits
-+++++++++
+Sends
++++++
 
 DiffusionConnectionEvent
 

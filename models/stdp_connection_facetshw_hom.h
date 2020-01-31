@@ -121,8 +121,8 @@ first presynaptic activity at a synapse.
 
 Common properties can only be set on the synapse model using SetDefaults.
 
-Transmits
-+++++++++
+Sends
++++++
 
 SpikeEvent
 

@@ -111,8 +111,8 @@ References
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
 
 
-Transmits
-+++++++++
+Sends
++++++
 
 SpikeEvent
 

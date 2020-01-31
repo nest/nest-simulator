@@ -49,8 +49,8 @@ the make_symmetric flag.
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
-Transmits
-+++++++++
+Sends
++++++
 
 GapJunctionEvent
 

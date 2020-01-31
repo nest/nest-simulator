@@ -43,8 +43,8 @@ between rate model neurons.
 To create instantaneous rate connections please use
 the synapse type rate_connection_instantaneous.
 
-Transmits
-+++++++++
+Sends
++++++
 
 DelayedRateConnectionEvent
 

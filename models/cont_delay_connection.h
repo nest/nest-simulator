@@ -61,8 +61,8 @@ Alternative 2) is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
-Transmits
-+++++++++
+Sends
++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 

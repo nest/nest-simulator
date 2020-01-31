@@ -40,8 +40,8 @@ namespace nest
 {
 /* BeginUserDocs: device, generator
 
-dc_generator - provides direct current (DC) input current
-#########################################################
+dc_generator - provides direct current (DC) input
+#################################################
 
 Device name
 +++++++++++

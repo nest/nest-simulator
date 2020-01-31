@@ -56,6 +56,11 @@ namespace nest
 music_message_in_proxy - A device which receives message strings from MUSIC
 ###########################################################################
 
+Device name
++++++++++++
+
+music_message_in_proxy
+
 Description
 +++++++++++
 

@@ -46,6 +46,11 @@ namespace nest
 mip_generator - create spike trains as described by the MIP model
 #################################################################
 
+Device name
++++++++++++
+
+mip_generator
+
 Description
 +++++++++++
 

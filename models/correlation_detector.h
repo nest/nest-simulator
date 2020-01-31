@@ -43,6 +43,11 @@ namespace nest
 correlation_detector - Device for evaluating cross correlation between two spike sources
 ########################################################################################
 
+Device name
++++++++++++
+
+correlation_detector
+
 Description
 +++++++++++
 

@@ -45,6 +45,11 @@ namespace nest
 gamma_sup_generator - simulate the superimposed spike train of a population of gamma process
 ############################################################################################
 
+Device name
++++++++++++
+
+gamma_sup_generator
+
 Description
 +++++++++++
 

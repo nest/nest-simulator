@@ -45,6 +45,11 @@ namespace nest
 noise_generator - Device to generate Gaussian white noise current
 #################################################################
 
+Device name
++++++++++++
+
+noise_generator
+
 Description
 +++++++++++
 

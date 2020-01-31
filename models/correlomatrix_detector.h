@@ -42,6 +42,11 @@ namespace nest
 correlomatrix_detector - Device for measuring the covariance matrix from several inputs
 #######################################################################################
 
+Device name
++++++++++++
+
+correlomatrix_detector
+
 Description
 +++++++++++
 

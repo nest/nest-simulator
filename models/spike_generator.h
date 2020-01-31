@@ -43,6 +43,11 @@ namespace nest
 spike_generator - A device which generates spikes from an array with spike-times
 ################################################################################
 
+Device name
++++++++++++
+
+spike_generator
+
 Synopsis: spike_generator Create -> node_id
 
 Description

@@ -38,6 +38,11 @@
 Collecting spikes from neurons
 ##############################
 
+Device name
++++++++++++
+
+spike_detector
+
 The most universal collector device is the ``spike_detector``, which
 collects and records all *spikes* it receives from neurons that are
 connected to it. Each spike received by the spike detector is

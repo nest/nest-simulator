@@ -43,6 +43,11 @@ namespace nest
 dc_generator - provides DC input current
 ########################################
 
+Device name
++++++++++++
+
+dc_generator
+
 Description
 +++++++++++
 

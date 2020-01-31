@@ -44,6 +44,11 @@ namespace nest
 step_current_generator - provides a piecewise constant DC input current
 #######################################################################
 
+Device name
++++++++++++
+
+step_current_generator
+
 Description
 +++++++++++
 

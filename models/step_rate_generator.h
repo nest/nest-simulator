@@ -44,6 +44,11 @@ namespace nest
 step_rate_generator - provides a piecewise constant input rate
 ##############################################################
 
+Device name
++++++++++++
+
+step_rate_generator
+
 Description
 +++++++++++
 

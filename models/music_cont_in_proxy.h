@@ -52,6 +52,11 @@ namespace nest
 music_cont_in_proxy - A device which receives continuous data from MUSIC
 ########################################################################
 
+Device name
++++++++++++
+
+music_cont_in_proxy
+
 Description
 +++++++++++
 

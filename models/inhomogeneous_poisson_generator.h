@@ -44,6 +44,11 @@ namespace nest
 inhomogeneous_poisson_generator - provides Poisson spike trains at a piecewise constant rate
 ############################################################################################
 
+Device name
++++++++++++
+
+inhomogeneous_poisson_generator
+
 Description
 +++++++++++
 

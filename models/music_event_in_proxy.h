@@ -45,6 +45,11 @@ namespace nest
 music_event_in_proxy - A device which receives spikes from MUSIC
 ################################################################
 
+Device name
++++++++++++
+
+music_event_in_proxy
+
 Description
 +++++++++++
 

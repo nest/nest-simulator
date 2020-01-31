@@ -39,6 +39,11 @@ namespace nest
 spike_dilutor - repeats incoming spikes with a certain probability
 ##################################################################
 
+Device name
++++++++++++
+
+spike_dilutor
+
 Description
 +++++++++++
 

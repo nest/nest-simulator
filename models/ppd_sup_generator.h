@@ -45,6 +45,11 @@ namespace nest
 ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
 #############################################################################################################
 
+Device name
++++++++++++
+
+ppd_sup_generator
+
 Description
 +++++++++++
 

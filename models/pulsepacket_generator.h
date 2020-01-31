@@ -45,6 +45,11 @@ namespace nest
 pulsepacket_generator - Generate sequence of Gaussian pulse packets
 ###################################################################
 
+Device name
++++++++++++
+
+pulsepacket_generator
+
 Description
 +++++++++++
 

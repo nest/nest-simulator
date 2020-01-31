@@ -42,6 +42,11 @@
 Sampling continuous quantities from neurons
 ###########################################
 
+Device name
++++++++++++
+
+multimeter
+
 Most sampling use cases are covered by the ``multimeter``, which
 allows to record analog values from neurons. Models which have such
 values expose a ``recordables`` property that lists all recordable

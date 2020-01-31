@@ -50,6 +50,11 @@ namespace nest
 sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains
 ################################################################################
 
+Device name
++++++++++++
+
+sinusoidal_gamma_generator
+
 Description
 +++++++++++
 

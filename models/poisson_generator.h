@@ -46,6 +46,11 @@ namespace nest
 poisson_generator - simulate neuron firing with Poisson processes statistics
 ############################################################################
 
+Device name
++++++++++++
+
+poisson_generator
+
 Description
 +++++++++++
 

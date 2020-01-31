@@ -42,6 +42,11 @@ namespace nest
 sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains
 ####################################################################################
 
+Device name
++++++++++++
+
+sinusoidal_poisson_generator
+
 Description
 +++++++++++
 

@@ -27,7 +27,7 @@
 #  NEST_VERSION_STRING, the full NEST version string
 #
 # In release branches, the string "UNKNOWN" below has to be replaced
-# with the proper version (e.g. "nest-2.20") in order to get the
+# with the proper version (e.g. "nest-2.20.0") in order to get the
 # correct version number if building from tarballs.
 
 
@@ -58,7 +58,7 @@ macro(get_version_info)
     endif()
 
     if (NOT NEST_VERSION_BRANCH)
-        set(NEST_VERSION_BRANCH "UNKNOWN")
+        set(NEST_VERSION_BRANCH "nest-2.20.0")
     endif()
 
     string(SUBSTRING "${NEST_VERSION_BRANCH}" 0 5 isRelease)

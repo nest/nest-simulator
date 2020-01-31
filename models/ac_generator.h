@@ -35,8 +35,8 @@
 
 /* BeginUserDocs: device, generator
 
-Produce an alternating current (AC) input
-#########################################
+ac_generator - Produce an alternating current (AC) input
+########################################################
 
 Device name
 +++++++++++

@@ -44,6 +44,9 @@ Device name
 
 weight_recorder
 
+Description
++++++++++++
+
 The change in synaptic weights over time is a key observable property in
 studies of plasticity in neuronal network models. To access this information, the
 ``weight_recorder`` can be used. In contrast to other recording

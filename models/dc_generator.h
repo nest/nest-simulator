@@ -40,8 +40,8 @@ namespace nest
 {
 /* BeginUserDocs: device, generator
 
-dc_generator - provides DC input current
-########################################
+dc_generator - provides direct current (DC) input current
+#########################################################
 
 Device name
 +++++++++++
@@ -51,7 +51,7 @@ dc_generator
 Description
 +++++++++++
 
-The DC-Generator provides a constant DC Input to the connected node. The unit of the current is pA.
+The dc_generator provides a constant DC Input to the connected node. The unit of the current is pA.
 
 Parameters
 ++++++++++

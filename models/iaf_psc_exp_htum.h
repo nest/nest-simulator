@@ -38,7 +38,7 @@ namespace nest
 /* BeginUserDocs: neuron, integrate-and-fire
 
 iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential PSCs
-##########################################################################
+##############################################################################
 
 Description
 +++++++++++

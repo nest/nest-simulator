@@ -35,8 +35,8 @@
 
 /* BeginUserDocs: device, recorder, spike
 
-Collecting spikes from neurons
-##############################
+spike_detector - Collecting spikes from neurons
+###############################################
 
 Device name
 +++++++++++

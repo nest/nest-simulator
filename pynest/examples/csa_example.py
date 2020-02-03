@@ -64,7 +64,7 @@ except ImportError:
           "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
           "and CSA and libneurosim are available.")
     import sys
-    sys.exit()
+    sys.exit(1)
 
 ###############################################################################
 # To set up the connectivity, We create a ``random`` connection set with a
@@ -117,3 +117,4 @@ visualization.plot_network(allnodes, "csa_example_graph.png")
 
 nest.Simulate(50.0)
 voltage_trace.from_device(vm)
+voltage_trace.show()

@@ -37,6 +37,9 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "node_collection.h"
+
+#include "deprecation_warning.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -48,8 +51,8 @@
 namespace nest
 {
 class Model;
-class Subnet;
 class Archiving_Node;
+class TimeConverter;
 
 
 /**
@@ -75,7 +78,6 @@ class Archiving_Node;
  * to directly subclass from base class Node.
  *
  * @see class Event
- * @see Subnet
  * @ingroup user_interface
  */
 
@@ -85,11 +87,9 @@ class Archiving_Node;
 
    Parameters:
    frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The global id of the node (cf. local_id)
+   global_id  integertype - The node ID of the node (cf. local_id)
    local      booltype    - Whether the node is available on the local process
-   local_id   integertype - The id of the node in the current  (cf. global_id)
    model      literaltype - The model type the node was created from
-   parent     integertype - The global id of the parent subnet
    state      integertype - The state of the node (see the help on elementstates
                             for details)
    thread     integertype - The id of the thread the node is assigned to (valid
@@ -103,7 +103,7 @@ class Archiving_Node;
 class Node
 {
   friend class NodeManager;
-  friend class Subnet;
+  friend class ModelManager;
   friend class proxynode;
   friend class Synapse;
   friend class Model;
@@ -156,9 +156,7 @@ public:
    * used to discriminate between different types of nodes, when adding
    * new nodes to the network.
    */
-
   virtual bool is_off_grid() const;
-
 
   /**
    * Returns true if the node is a proxy node. This is implemented because
@@ -175,45 +173,39 @@ public:
   std::string get_name() const;
 
   /**
+   * Return the element type of the node.
+   * The returned Name is a free label describing the class of network
+   * elements a node belongs to. Currently used values are "neuron",
+   * "recorder", "stimulator", and "other", which are all defined as
+   * static Name objects in the names namespace.
+   * This function is overwritten with a corresponding value in the
+   * derived classes
+   */
+  virtual Name get_element_type() const;
+
+  /**
    * Return global Network ID.
    * Returns the global network ID of the Node.
    * Each node has a unique network ID which can be used to access
-   * the Node comparable to a pointer. By definition, the top-level
-   * subnet has ID=0.
+   * the Node comparable to a pointer.
+   *
+   * The smallest valid node ID is 1.
    */
-  index get_gid() const;
+  index get_node_id() const;
 
   /**
-   * Return local node ID.
-   * Returns the ID of the node within the parent subject.
-   * Local IDs start with 0.
+   * Return lockpointer to the NodeCollection that created this node.
    */
-  index get_lid() const;
-
-  /**
-   * Return the index to the node in the node array of the parent subnet.
-   * @note Since subnets no longer store non-local nodes, LIDs are no
-   *       longer identical to these indices.
-   */
-  index get_subnet_index() const;
+  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
    * Returns the model ID of the model for this node.
-   * Model IDs start with 0, Subnet always having ID 0.
+   * Model IDs start with 0.
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Return pointer to parent subnet.
-   * Each node is member of a subnet whose pointer can be accessed
-   * through this function.
-   * This pointer must be non NULL for all Nodes which are not the
-   * top-level subnet. Only the top-level subnet returns NULL.
-   */
-  Subnet* get_parent() const;
 
   /**
    * Prints out one line of the tree view of the network.
@@ -241,11 +233,6 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Returns true if the node is allocated in the local process.
-   */
-  bool is_local() const;
-
-  /**
    * Set state variables to the default values for the model.
    * Dynamic variables are all observable state variables of a node
    * that change during Node::update().
@@ -253,7 +240,7 @@ public:
    * should have the same values that they had after the node was
    * created. In practice, they will be initialized to the values
    * of the prototype node (model).
-   * @note If the parameters of the model have been changes since the node
+   * @note If the parameters of the model have been changed since the node
    *       was created, the node will be initialized to the present values
    *       set in the model.
    * @note This function is the public interface to the private function
@@ -282,6 +269,15 @@ public:
    *
    */
   virtual void calibrate() = 0;
+
+  /**
+   * Re-calculate time-based properties of the node.
+   * This function is called after a change in resolution.
+   */
+  virtual void
+  calibrate_time( const TimeConverter& tc )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to
@@ -677,11 +673,11 @@ public:
   virtual double get_LTD_value( double t );
 
   /**
-   * write the Kminus, nearest_neighbor_Kminus, and triplet_Kminus
+   * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
   * return the spike history for (t1,t2].
@@ -743,10 +739,12 @@ public:
    */
   void set_model_id( int );
 
-  /**
-   * @returns true if node is a subnet.
+  /** Execute post-initialization actions in node models.
+   * This method is called by NodeManager::add_node() on a node once
+   * is fully initialized, i.e. after node ID, nc, model_id, thread, vp is
+   * set.
    */
-  virtual bool is_subnet() const;
+  void set_initialized();
 
   /**
    * @returns type of signal this node produces
@@ -833,39 +831,15 @@ public:
   virtual index get_local_device_id() const;
 
   /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
+   * Member of DeprecationWarning class to be used by models if parameters are
+   * deprecated.
    */
-  virtual size_t
-  num_thread_siblings() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling( index ) const
-  {
-    assert( false );
-    return 0;
-  }
+  DeprecationWarning deprecation_warning;
 
 private:
-  void set_lid_( index );          //!< Set local id, relative to the parent subnet
-  void set_parent_( Subnet* );     //!< Set pointer to parent subnet.
-  void set_gid_( index );          //!< Set global node id
-  void set_subnet_index_( index ); //!< Index into node array in subnet
+  void set_node_id_( index ); //!< Set global node id
+
+  void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
    *
@@ -888,7 +862,7 @@ protected:
    *       scheme, init_state_() has a default implementation calling
    *       init_dynamic_state_().
    */
-  virtual void init_state_( Node const& ) = 0;
+  virtual void init_state_( Node const& );
 
   /**
    * Private function to initialize the buffers of a node.
@@ -896,7 +870,9 @@ protected:
    * the implementation for initializing the buffers of a node.
    * @see Node::init_buffers()
    */
-  virtual void init_buffers_() = 0;
+  virtual void init_buffers_();
+
+  virtual void set_initialized_();
 
   Model& get_model_() const;
 
@@ -917,9 +893,12 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  index gid_;          //!< Global element id (within network).
-  index lid_;          //!< Local element id (within parent).
-  index subnet_index_; //!< Index of node in parent's node array
+  /**
+   * Global Element ID (node ID).
+   *
+   * The node ID is unique within the network. The smallest valid node ID is 1.
+   */
+  index node_id_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
@@ -933,12 +912,15 @@ private:
    * @see get_model_id(), set_model_id()
    */
   int model_id_;
-  Subnet* parent_;           //!< Pointer to parent.
+
   thread thread_;            //!< thread node is assigned to
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
   bool buffers_initialized_; //!< Buffers have been initialized
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
+  bool initialized_;         //!< set true once a node is fully initialized
+
+  NodeCollectionPTR nc_ptr_;
 };
 
 inline bool
@@ -989,40 +971,35 @@ Node::is_proxy() const
   return false;
 }
 
-inline index
-Node::get_lid() const
+inline Name
+Node::get_element_type() const
 {
-  return lid_;
+  return names::neuron;
 }
 
 inline index
-Node::get_gid() const
+Node::get_node_id() const
 {
-  return gid_;
+  return node_id_;
 }
 
-inline index
-Node::get_subnet_index() const
+inline NodeCollectionPTR
+Node::get_nc() const
 {
-  return subnet_index_;
-}
-
-inline void
-Node::set_gid_( index i )
-{
-  gid_ = i;
+  return nc_ptr_;
 }
 
 inline void
-Node::set_lid_( index i )
+Node::set_node_id_( index i )
 {
-  lid_ = i;
+  node_id_ = i;
 }
 
+
 inline void
-Node::set_subnet_index_( index i )
+Node::set_nc_( NodeCollectionPTR nc_ptr )
 {
-  subnet_index_ = i;
+  nc_ptr_ = nc_ptr;
 }
 
 inline int
@@ -1041,18 +1018,6 @@ inline bool
 Node::is_model_prototype() const
 {
   return vp_ == invalid_thread_;
-}
-
-inline Subnet*
-Node::get_parent() const
-{
-  return parent_;
-}
-
-inline void
-Node::set_parent_( Subnet* c )
-{
-  parent_ = c;
 }
 
 inline void

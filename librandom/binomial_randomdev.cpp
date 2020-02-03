@@ -94,8 +94,6 @@ librandom::BinomialRandomDev::PrecomputeTable( size_t nmax )
 long
 librandom::BinomialRandomDev::ldev( RngPtr rng ) const
 {
-  assert( rng.valid() );
-
   // BP algorithm (steps numbered as in Fishman 1979)
   // Steps 1-7 are in init_()
   unsigned long X;

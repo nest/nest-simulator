@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <string>
-#include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
@@ -35,7 +34,7 @@
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
@@ -53,7 +52,6 @@ namespace nest
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
-class Subnet;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
@@ -64,6 +62,17 @@ class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
 public:
+  /**
+   * Connection type.
+   */
+  enum ConnectionType
+  {
+    CONNECT,
+    CONNECT_FROM_DEVICE,
+    CONNECT_TO_DEVICE,
+    NO_CONNECTION
+  };
+
   ConnectionManager();
   virtual ~ConnectionManager();
 
@@ -85,15 +94,17 @@ public:
   void register_conn_builder( const std::string& name );
 
   ConnBuilder* get_conn_builder( const std::string& name,
-    const GIDCollection& sources,
-    const GIDCollection& targets,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
    */
-  void connect( const GIDCollection&, const GIDCollection&, const DictionaryDatum&, const DictionaryDatum& );
+  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+
+  void connect( TokenArray, TokenArray, const DictionaryDatum& );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -106,7 +117,7 @@ public:
    * numerics::nan indicates this and weight/delay are set only, if they are
    * valid.
    *
-   * \param sgid GID of the sending Node.
+   * \param snode_id node ID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
@@ -114,7 +125,7 @@ public:
    * \param delay Delay of the connection (in ms).
    * \param weight Weight of the connection.
    */
-  void connect( const index sgid,
+  void connect( const index snode_id,
     Node* target,
     thread target_thread,
     const synindex syn_id,
@@ -127,54 +138,36 @@ public:
    * global ID. The connection is established on the thread/process that owns
    * the target node.
    *
-   * \param sgid GID of the sending Node.
-   * \param target GID of the target Node.
+   * \param snode_id node ID of the sending Node.
+   * \param target node ID of the target Node.
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
-  bool connect( const index sgid, const index target, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const index snode_id, const index target, const DictionaryDatum& params, const synindex syn_id );
 
-  index find_connection( const thread tid, const synindex syn_id, const index sgid, const index tgid );
+  index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
-  void disconnect( const thread tid, const synindex syn_id, const index sgid, const index tgid );
-
-  void subnet_connect( Subnet&, Subnet&, int, index syn );
+  void disconnect( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
   /**
-   * Connect, using a dictionary with arrays.
-   * The connection rule is based on the details of the dictionary entries
-   * source and target.
-   * If source and target are both either a GID or a list of GIDs with equal
-   * size, then source and target are connected one-to-one.
-   * If source is a gid and target is a list of GIDs then the sources is
-   * connected to all targets.
-   * If source is a list of GIDs and target is a GID, then all sources are
-   * connected to the target.
-   * At this stage, the task of connect is to separate the dictionary into one
-   * for each thread and then to forward the connect call to the connectors who
-   * can then deal with the details of the connection.
+   * Check whether a connection between the given source and target
+   * nodes can be established on the given thread with id tid.
    *
-   * @note This method is used only by DataConnect.
+   * \returns The type of connection as ConnectionType if the connection should
+   * be made, ConnectionType::NO_CONNECTION otherwise.
    */
-  bool data_connect_connectome( const ArrayDatum& connectome );
-
-  /**
-   * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   * AKA DataConnect
-   */
-  void data_connect_single( const index source_id, DictionaryDatum d, const index syn );
+  ConnectionType connection_required( Node*& source, Node*& target, thread tid );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( const index source_gid,
-    const index target_gid,
+  DictionaryDatum get_synapse_status( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const synindex syn_id,
     const index lcid ) const;
 
   // aka conndatum SetStatus
-  void set_synapse_status( const index source_gid,
-    const index target_gid,
+  void set_synapse_status( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const synindex syn_id,
     const index lcid,
@@ -183,8 +176,8 @@ public:
   /**
    * Return connections between pairs of neurons.
    * The params dictionary can have the following entries:
-   * 'source' a token array with GIDs of source neurons.
-   * 'target' a token array with GIDs of target neuron.
+   * 'source' a token array with node IDs of source neurons.
+   * 'target' a token array with node IDs of target neuron.
    * If either of these does not exist, all neuron are used for the respective
    * entry.
    * 'synapse_model' name of the synapse model, or all synapse models are
@@ -197,8 +190,8 @@ public:
   ArrayDatum get_connections( const DictionaryDatum& params ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
-    TokenArray const* source,
-    TokenArray const* target,
+    NodeCollectionPTR source,
+    NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
 
@@ -222,14 +215,15 @@ public:
 
   const std::vector< Target >& get_remote_targets_of_local_node( const thread tid, const index lid ) const;
 
-  index get_target_gid( const thread tid, const synindex syn_id, const index lcid ) const;
+  index get_target_node_id( const thread tid, const synindex syn_id, const index lcid ) const;
 
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that
-   * are registered with the volume transmitter with gid vt_gid.
+   * are registered with the volume transmitter with node_id vt_node_id.
    */
-  void trigger_update_weight( const long vt_gid, const std::vector< spikecounter >& dopa_spikes, const double t_trig );
+  void
+  trigger_update_weight( const long vt_node_id, const std::vector< spikecounter >& dopa_spikes, const double t_trig );
 
   /**
    * Return minimal connection delay, which is precomputed by
@@ -249,10 +243,10 @@ public:
   send( const thread tid, const synindex syn_id, const index lcid, const std::vector< ConnectorModel* >& cm, Event& e );
 
   /**
-   * Send event e to all device targets of source source_gid
+   * Send event e to all device targets of source source_node_id
    */
-  void send_to_devices( const thread tid, const index source_gid, Event& e );
-  void send_to_devices( const thread tid, const index source_gid, SecondaryEvent& e );
+  void send_to_devices( const thread tid, const index source_node_id, Event& e );
+  void send_to_devices( const thread tid, const index source_node_id, SecondaryEvent& e );
 
   /**
    * Send event e to all targets of source device ldid (local device id)
@@ -316,13 +310,13 @@ public:
   /**
    * Return sort_connections_by_source_, which indicates whether
    * connections_ and source_table_ should be sorted according to
-   * source gid.
+   * source node ID.
    */
   bool get_sort_connections_by_source() const;
 
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
-   * source gid.
+   * source node ID.
    */
   void sort_connections( const thread tid );
 
@@ -389,7 +383,7 @@ public:
 
   bool secondary_connections_exist() const;
 
-  index get_source_gid( const thread tid, const synindex syn_id, const index lcid );
+  index get_source_node_id( const thread tid, const synindex syn_id, const index lcid );
 
   double get_stdp_eps() const;
 
@@ -400,16 +394,17 @@ private:
 
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
 
-  void get_source_gids_( const thread tid, const synindex syn_id, const index tgid, std::vector< index >& sources );
+  void
+  get_source_node_ids_( const thread tid, const synindex syn_id, const index tnode_id, std::vector< index >& sources );
 
   /**
-   * Splits a TokenArray of GIDs to two vectors containing GIDs of neurons and
-   * GIDs of devices.
+   * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and
+   * node IDs of devices.
    */
   void split_to_neuron_device_vectors_( const thread tid,
-    TokenArray const* gid_token_array,
-    std::vector< index >& neuron_gids,
-    std::vector< index >& device_gids ) const;
+    NodeCollectionPTR nodecollection,
+    std::vector< index >& neuron_node_ids,
+    std::vector< index >& device_node_ids ) const;
 
   /**
    * Update delay extrema to current values.
@@ -448,7 +443,7 @@ private:
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
-   * \param s_gid The global id of the sending Node.
+   * \param s_node_id The node ID of the sending Node.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
@@ -457,7 +452,7 @@ private:
    */
   void connect_( Node& source,
     Node& target,
-    const index s_gid,
+    const index s_node_id,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
@@ -475,7 +470,7 @@ private:
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
-   * \param s_gid The global id of the sending Node.
+   * \param s_node_id The node ID of the sending Node.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
@@ -484,7 +479,7 @@ private:
    */
   void connect_to_device_( Node& source,
     Node& target,
-    const index s_gid,
+    const index s_node_id,
     const thread tid,
     const synindex syn_id,
     const DictionaryDatum& params,
@@ -502,7 +497,7 @@ private:
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
-   * \param s_gid The global id of the sending Node.
+   * \param s_node_id The node ID of the sending Node.
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
@@ -530,10 +525,10 @@ private:
   std::vector< std::vector< ConnectorBase* > > connections_;
 
   /**
-   * A structure to hold the global ids of presynaptic neurons during
+   * A structure to hold the node IDs of presynaptic neurons during
    * postsynaptic connection creation, before the connection
    * information has been transferred to the presynaptic side.
-   * Internally arranged in a 3d structure: threads|synapses|gids
+   * Internally arranged in a 3d structure: threads|synapses|node IDs
    */
   SourceTable source_table_;
 
@@ -543,7 +538,7 @@ private:
    */
   std::vector< std::vector< std::vector< size_t > > > secondary_recv_buffer_pos_;
 
-  std::map< index, size_t > buffer_pos_of_source_gid_syn_id_;
+  std::map< index, size_t > buffer_pos_of_source_node_id_syn_id_;
 
   /**
    * A structure to hold the information about targets for each
@@ -589,7 +584,7 @@ private:
   //! simulate.
   CompletedChecker have_connections_changed_;
 
-  //! Whether to sort connections by source gid.
+  //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
 
   //! Whether primary connections (spikes) exist.
@@ -752,9 +747,9 @@ ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id
 }
 
 inline index
-ConnectionManager::get_source_gid( const thread tid, const synindex syn_index, const index lcid )
+ConnectionManager::get_source_node_id( const thread tid, const synindex syn_index, const index lcid )
 {
-  return source_table_.get_gid( tid, syn_index, lcid );
+  return source_table_.get_node_id( tid, syn_index, lcid );
 }
 
 inline bool
@@ -782,9 +777,9 @@ ConnectionManager::get_stdp_eps() const
 }
 
 inline index
-ConnectionManager::get_target_gid( const thread tid, const synindex syn_id, const index lcid ) const
+ConnectionManager::get_target_node_id( const thread tid, const synindex syn_id, const index lcid ) const
 {
-  return connections_[ tid ][ syn_id ]->get_target_gid( tid, lcid );
+  return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
 }
 
 inline void

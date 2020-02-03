@@ -47,70 +47,252 @@
 
 namespace nest
 {
-index
+
+LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
+  : NodeCollectionMetadata()
+  , layer_( layer )
+  , first_node_id_( 0 )
+{
+}
+
+
+AbstractLayerPTR
+get_layer( NodeCollectionPTR nc )
+{
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
+
+  LayerMetadata const* const layer_meta = dynamic_cast< LayerMetadata const* >( meta.get() );
+  if ( not layer_meta )
+  {
+    throw LayerExpected();
+  }
+  return layer_meta->get_layer();
+}
+
+NodeCollectionPTR
 create_layer( const DictionaryDatum& layer_dict )
 {
   layer_dict->clear_access_flags();
 
-  index layernode = AbstractLayer::create_layer( layer_dict );
+  NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
   ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
 
-  return layernode;
+  return layer;
+}
+
+ArrayDatum
+get_position( NodeCollectionPTR layer_nc )
+{
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
+
+  ArrayDatum result;
+  result.reserve( layer_nc->size() );
+
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
+  {
+    index node_id = ( *it ).node_id;
+
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    {
+      throw KernelException( "GetPosition is currently implemented for local nodes only." );
+    }
+
+    const long lid = node_id - first_node_id;
+    Token arr = layer->get_position_vector( lid );
+
+    result.push_back( arr );
+  }
+
+  return result;
+}
+
+ArrayDatum
+displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
+{
+  ArrayDatum layer_to_positions = get_position( layer_to_nc );
+
+  AbstractLayerPTR layer_from = get_layer( layer_from_nc );
+  NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
+
+  int counter = 0;
+  ArrayDatum result;
+
+  // If layer_from has size equal to one, but layer_to do not, we want the
+  // displacement between every node in layer_to against the one in layer_from.
+  // Likewise if layer_to has size 1 and layer_from do not.
+  if ( layer_from_nc->size() == 1 )
+  {
+    index node_id = layer_from_nc->operator[]( 0 );
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    {
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
+    }
+    const long lid = node_id - first_node_id;
+
+    // If layer_from has size 1, we need to iterate over the layer_to positions
+    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    {
+      std::vector< double > pos = getValue< std::vector< double > >( *it );
+      Token disp = layer_from->compute_displacement( pos, lid );
+      result.push_back( disp );
+    }
+  }
+  else
+  {
+    for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
+    {
+      index node_id = ( *it ).node_id;
+      if ( not kernel().node_manager.is_local_node_id( node_id ) )
+      {
+        throw KernelException( "Displacement is currently implemented for local nodes only." );
+      }
+
+      const long lid = node_id - first_node_id;
+
+      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
+      Token disp = layer_from->compute_displacement( pos, lid );
+      result.push_back( disp );
+
+      // We only iterate the layer_to positions vector if it has more than one
+      // element.
+      if ( layer_to_nc->size() != 1 )
+      {
+        ++counter;
+      }
+    }
+  }
+
+  return result;
+}
+
+ArrayDatum
+displacement( NodeCollectionPTR layer_nc, const ArrayDatum point )
+{
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
+
+  int counter = 0;
+  ArrayDatum result;
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
+  {
+    index node_id = ( *it ).node_id;
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    {
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
+    }
+
+    const long lid = node_id - first_node_id;
+
+    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
+    Token disp = layer->compute_displacement( pos, lid );
+    result.push_back( disp );
+
+    // We only iterate the positions vector if it has more than one
+    // element.
+    if ( point.size() != 1 )
+    {
+      ++counter;
+    }
+  }
+  return result;
 }
 
 std::vector< double >
-get_position( const index node_gid )
+distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
-    throw KernelException( "GetPosition is currently implemented for local nodes only." );
-  }
-  Node const* const node = kernel().node_manager.get_node( node_gid );
+  ArrayDatum layer_to_positions = get_position( layer_to_nc );
 
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
+  AbstractLayerPTR layer_from = get_layer( layer_from_nc );
+  NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
+
+  int counter = 0;
+  std::vector< double > result;
+
+  // If layer_from has size equal to one, but layer_to do not, we want the
+  // distance between every node in layer_to against the one in layer_from.
+  // Likewise if layer_to has size 1 and layer_from do not.
+  if ( layer_from_nc->size() == 1 )
   {
-    throw LayerExpected();
+    index node_id = layer_from_nc->operator[]( 0 );
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    {
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
+    }
+    const long lid = node_id - first_node_id;
+
+    // If layer_from has size 1, we need to iterate over the layer_to positions
+    for ( Token const* it = layer_to_positions.begin(); it != layer_to_positions.end(); ++it )
+    {
+      std::vector< double > pos = getValue< std::vector< double > >( *it );
+      double disp = layer_from->compute_distance( pos, lid );
+      result.push_back( disp );
+    }
+  }
+  else
+  {
+    for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
+    {
+      index node_id = ( *it ).node_id;
+      if ( not kernel().node_manager.is_local_node_id( node_id ) )
+      {
+        throw KernelException( "Displacement is currently implemented for local nodes only." );
+      }
+
+      const long lid = node_id - first_node_id;
+
+      std::vector< double > pos = getValue< std::vector< double > >( layer_to_positions[ counter ] );
+      double disp = layer_from->compute_distance( pos, lid );
+      result.push_back( disp );
+
+      // We only iterate the layer_to positions vector if it has more than one
+      // element.
+      if ( layer_to_nc->size() != 1 )
+      {
+        ++counter;
+      }
+    }
   }
 
-  return layer->get_position_vector( node->get_subnet_index() );
+  return result;
 }
 
 std::vector< double >
-displacement( const std::vector< double >& point, const index node_gid )
+distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  AbstractLayerPTR layer = get_layer( layer_nc );
+  NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
+  index first_node_id = meta->get_first_node_id();
+
+  int counter = 0;
+  std::vector< double > result;
+  for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
-    throw KernelException( "Displacement is currently implemented for local nodes only." );
+    index node_id = ( *it ).node_id;
+    if ( not kernel().node_manager.is_local_node_id( node_id ) )
+    {
+      throw KernelException( "Displacement is currently implemented for local nodes only." );
+    }
+
+    const long lid = node_id - first_node_id;
+
+    std::vector< double > pos = getValue< std::vector< double > >( point[ counter ] );
+    double disp = layer->compute_distance( pos, lid );
+    result.push_back( disp );
+
+    // We only iterate the positions vector if it has more than one
+    // element.
+    if ( point.size() != 1 )
+    {
+      ++counter;
+    }
   }
-  Node const* const node = kernel().node_manager.get_node( node_gid );
-
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
-  {
-    throw LayerExpected();
-  }
-
-  return layer->compute_displacement( point, node->get_lid() );
-}
-
-double
-distance( const std::vector< double >& point, const index node_gid )
-{
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
-  {
-    throw KernelException( "Distance is currently implemented for local nodes only." );
-  }
-  Node const* const node = kernel().node_manager.get_node( node_gid );
-
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( not layer )
-  {
-    throw LayerExpected();
-  }
-
-  return layer->compute_distance( point, node->get_lid() );
+  return result;
 }
 
 MaskDatum
@@ -149,52 +331,8 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
   return mask1->minus_mask( *mask2 );
 }
 
-ParameterDatum
-multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
-{
-  return param1->multiply_parameter( *param2 );
-}
-
-ParameterDatum
-divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
-{
-  return param1->divide_parameter( *param2 );
-}
-
-ParameterDatum
-add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
-{
-  return param1->add_parameter( *param2 );
-}
-
-ParameterDatum
-subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
-{
-  return param1->subtract_parameter( *param2 );
-}
-
-ArrayDatum
-get_global_children( const index gid, const MaskDatum& maskd, const std::vector< double >& anchor )
-{
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
-  if ( layer == NULL )
-  {
-    throw LayerExpected();
-  }
-
-  std::vector< index > gids = layer->get_global_nodes( maskd, anchor, false );
-
-  ArrayDatum result;
-  result.reserve( gids.size() );
-  for ( std::vector< index >::iterator it = gids.begin(); it != gids.end(); ++it )
-  {
-    result.push_back( new IntegerDatum( *it ) );
-  }
-  return result;
-}
-
 void
-connect_layers( const index source_gid, const index target_gid, const DictionaryDatum& connection_dict )
+connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
 {
   const thread num_threads = kernel().vp_manager.get_num_threads();
   for ( thread tid = 0; tid < num_threads; ++tid )
@@ -202,103 +340,48 @@ connect_layers( const index source_gid, const index target_gid, const Dictionary
     kernel().connection_manager.set_have_connections_changed( tid );
   }
 
-  AbstractLayer* source = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( source_gid ) );
-  AbstractLayer* target = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( target_gid ) );
+  AbstractLayerPTR source = get_layer( source_nc );
+  AbstractLayerPTR target = get_layer( target_nc );
 
-  if ( ( source == NULL ) || ( target == NULL ) )
-  {
-    throw LayerExpected();
-  }
   connection_dict->clear_access_flags();
-
   ConnectionCreator connector( connection_dict );
-
   ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
-  source->connect( *target, connector );
-}
-
-ParameterDatum
-create_parameter( const DictionaryDatum& param_dict )
-{
-  param_dict->clear_access_flags();
-
-  ParameterDatum datum( TopologyModule::create_parameter( param_dict ) );
-
-  ALL_ENTRIES_ACCESSED( *param_dict, "topology::CreateParameter", "Unread dictionary entries: " );
-
-  return datum;
-}
-
-double
-get_value( const std::vector< double >& point, const ParameterDatum& param )
-{
-  librandom::RngPtr rng = get_global_rng();
-  return param->value( point, rng );
+  source->connect( source_nc, target, target_nc, connector );
 }
 
 void
-dump_layer_nodes( const index layer_gid, OstreamDatum& out )
+dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out )
 {
-  AbstractLayer const* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
+  AbstractLayerPTR layer = get_layer( layer_nc );
 
-  if ( layer != 0 && out->good() )
+  if ( out->good() )
   {
     layer->dump_nodes( *out );
   }
 }
 
 void
-dump_layer_connections( const Token& syn_model, const index layer_gid, OstreamDatum& out_file )
+dump_layer_connections( const Token& syn_model,
+  NodeCollectionPTR source_layer_nc,
+  NodeCollectionPTR target_layer_nc,
+  OstreamDatum& out )
 {
-  std::ostream& out = *out_file;
+  AbstractLayerPTR source_layer = get_layer( source_layer_nc );
+  AbstractLayerPTR target_layer = get_layer( target_layer_nc );
 
-  AbstractLayer* const layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_gid ) );
-  if ( layer == NULL )
+  if ( out->good() )
   {
-    throw TypeMismatch( "any layer type", "something else" );
+    source_layer->dump_connections( *out, source_layer_nc, target_layer, syn_model );
   }
-
-  layer->dump_connections( out, syn_model );
 }
 
-std::vector< index >
-get_element( const index layer_gid, const TokenArray array )
+DictionaryDatum
+get_layer_status( NodeCollectionPTR layer_nc )
 {
-  std::vector< index > node_gids;
+  assert( false && "not implemented" );
 
-  switch ( array.size() )
-  {
-  case 2:
-  {
-    GridLayer< 2 >* layer = dynamic_cast< GridLayer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
-    if ( layer == 0 )
-    {
-      throw TypeMismatch( "grid layer node", "something else" );
-    }
-
-    node_gids =
-      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ) ) );
-  }
-  break;
-
-  case 3:
-  {
-    GridLayer< 3 >* layer = dynamic_cast< GridLayer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
-    if ( layer == 0 )
-    {
-      throw TypeMismatch( "grid layer node", "something else" );
-    }
-
-    node_gids = layer->get_nodes( Position< 3, int >(
-      static_cast< index >( array[ 0 ] ), static_cast< index >( array[ 1 ] ), static_cast< index >( array[ 2 ] ) ) );
-  }
-  break;
-
-  default:
-    throw TypeMismatch( "array with length 2 or 3", "something else" );
-  }
-  return node_gids;
+  return DictionaryDatum();
 }
 
 } // namespace nest

@@ -43,32 +43,50 @@ Functions related to parallel computing
 .. automodule:: nest.lib.hl_api_parallel_computing
     :members:
 
-
-Functions related to subnets
---------------------------------
-
-.. warning::
-
-    Subnets will be deprecated in NEST 3.0
-
-.. automodule:: nest.lib.hl_api_subnets
-    :members:
-
-
-Functions related to topology
------------------------------
+Functions related to spatially distributed nodes
+------------------------------------------------
 
 .. note::
 
- The topology module will be integrated into nest in 3.0
+ This used to be the topology module, which was integrated into nest in 3.0
 
-.. automodule:: pynest.hl_api
+.. automodule:: nest.lib.hl_api_spatial
+    :members:
+
+Functions related to NEST types
+-------------------------------
+
+.. automodule:: nest.lib.hl_api_types
     :members:
 
 Functions related to helper info
 ---------------------------------
 
 .. automodule:: nest.lib.hl_api_helper
+    :members:
+
+Functions related to randomization
+----------------------------------
+
+.. automodule:: nest.random.hl_api_random
+    :members:
+
+Functions related to spatial distributions
+------------------------------------------
+
+.. automodule:: nest.spatial.hl_api_spatial
+    :members:
+
+.. automodule:: nest.spatial_distributions.hl_api_spatial_distributions
+    :members:
+
+Functions related to mathematical expressions
+---------------------------------------------
+
+.. automodule:: nest.math.hl_api_math
+    :members:
+
+.. automodule:: nest.logic.hl_api_logic
     :members:
 
 

@@ -91,7 +91,7 @@
 % spike_det ComputeRate -> rate
 /ComputeRate
 {
-  GetStatus /n_events get /nspikes Set
+  GetStatus 0 get /n_events get /nspikes Set
   % We need to guess how many neurons we record from.
   % This assumes an even distribution of nodes across
   % processes, which is ok for the Brette_et_al_2007
@@ -112,12 +112,11 @@ def
 /BuildNetwork
 {
   % set global kernel parameters
-  0
   <<
      /resolution  dt
      /total_num_virtual_procs virtual_processes
      /overwrite_files true
-  >> SetStatus
+  >> SetKernelStatus
 
   tic % start timer on construction
 
@@ -126,10 +125,10 @@ def
   model    model_params    SetDefaults
 
   (Creating excitatory population.) =  % show message
-  /E_net model [ NE ] LayoutNetwork def
+  /E_neurons model NE Create def
 
   (Creating inhibitory population.) =  % show message
-  /I_net model [ NI ] LayoutNetwork def
+  /I_neurons model NI Create def
 
   (Creating excitatory stimulus generator.) =
   /E_stimulus stimulus Create def
@@ -151,16 +150,10 @@ def
   % neurons they should work on, so we need to extract these
   % lists from the subnetworks
 
-  % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net GetLocalNodes def
-
-  % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net GetLocalNodes def
-
   % all neurons
   /allNeurons E_neurons I_neurons join def
 
-  /N allNeurons length def
+  /N allNeurons size def
 
   /CE NE epsilon mul iround def %number of incoming excitatory connections
   /CI NI epsilon mul iround def %number of incomining inhibitory connections
@@ -205,7 +198,7 @@ def
   %Add external stimulus
 
   (Connecting Poisson stimulus.) =
-  [E_stimulus]
+  E_stimulus
   E_neurons Nstim Take     % pick the first Nstim neurons
   /all_to_all
   /syn_ex
@@ -220,10 +213,10 @@ def
   (Connecting spike detectors.) =
 
   E_neurons Nrec Take     % pick the first Nrec neurons
-  [E_detector] Connect
+  E_detector Connect
 
   I_neurons Nrec Take     % pick the first Nrec neurons
-  [I_detector] Connect
+  I_detector Connect
 
   % read out time used for building
 

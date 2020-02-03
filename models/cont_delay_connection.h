@@ -23,6 +23,7 @@
 #ifndef CONT_DELAY_CONNECTION_H
 #define CONT_DELAY_CONNECTION_H
 
+
 // C++ includes:
 #include <cmath>
 
@@ -50,14 +51,11 @@ Example:
 
     SLI
 
-    0 << /resolution 1.0 >> SetStatus
+    << /resolution 1.0 >> SetKernelStatus
 
-    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-
-    def
+    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
     /n  /iaf_psc_delta_ps Create def
-    /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-    def
+    /sd /spike_detector Create def
 
     /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
     sg n /cont_delay_synapse Connect

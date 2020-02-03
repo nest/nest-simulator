@@ -41,37 +41,34 @@ jobs:
   include:
     - stage: Staticcheck
       python: 3.6.7
-      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading 
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only Python
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only Python
     - stage: Python-Full-build
       python: 3.6.7
-      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: Python-Full-build
-      python: 2.7.13
-      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
+      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: Clang7
       language: cpp
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
     - stage: OsX
       os: osx
       osx_image: xcode10.3 # Python 3.7.5 running on macOS 10.14.4
-      language: shell # language 'python' result in errors on macOS
+      language: shell      # language 'python' results in errors on macOS
       env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
-    
+
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
@@ -87,7 +84,7 @@ addons:
      - cmake
      - libltdl-dev
      - libreadline6-dev
-     - libncurses5-dev 
+     - libncurses5-dev
      - libgsl0-dev
      - python-all-dev
      - ipython
@@ -139,11 +136,13 @@ before_install:
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo ${MATRIX_EVAL}
          eval "${MATRIX_EVAL}"
-         cp extras/install_music.sh extras/install_csa-libneurosim.sh $HOME
+         cp extras/install_csa-libneurosim.sh $HOME
+         cp extras/install_music.sh $HOME
+         cp extras/install_sionlib.sh $HOME
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools
-         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then 
+         if [ $TRAVIS_BUILD_STAGE_NAME = "Clang7" ]; then
            pyenv install --list
            pyenv global 3.6.7
          fi
@@ -165,7 +164,7 @@ before_install:
          if [ "$TRAVIS_OS_NAME" = "linux" ]; then
            pip install --upgrade pip setuptools
          fi
-         
+
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
@@ -231,4 +230,3 @@ deploy:
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control
-

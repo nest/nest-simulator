@@ -135,7 +135,7 @@ main( void )
 {
   // create random number generator type dictionary
   Dictionary rngdict;
-  DictionaryDatum rngdictd( rngdict );
+  DictionaryDatum rngdictd( &rngdict );
 
   // add non-GSL rngs
   register_rng< librandom::KnuthLFG >( "KnuthLFG", rngdictd );

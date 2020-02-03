@@ -44,10 +44,9 @@ M_ERROR setverbosity
 
 {
   ResetKernel
-  0 << /resolution 0.1 >>  SetStatus
+  << /resolution 0.1 >>  SetKernelStatus
   
-  /iaf_psc_alpha Create
-  1 arraystore dup
+  /iaf_psc_alpha Create dup
   << /rule /fixed_indegree /indegree 1000 >>
   << /delay << /distribution /uniform /low 0.11 /high 0.19 >> >>
   Connect

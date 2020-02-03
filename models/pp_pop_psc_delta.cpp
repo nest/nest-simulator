@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "numerics.h"
 
@@ -115,17 +116,17 @@ nest::pp_pop_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
+nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< long >( d, names::N, N_ );
-  updateValue< double >( d, names::rho_0, rho_0_ );
-  updateValue< double >( d, names::delta_u, delta_u_ );
-  updateValue< double >( d, names::len_kernel, len_kernel_ );
+  updateValueParam< long >( d, names::N, N_, node );
+  updateValueParam< double >( d, names::rho_0, rho_0_, node );
+  updateValueParam< double >( d, names::delta_u, delta_u_, node );
+  updateValueParam< double >( d, names::len_kernel, len_kernel_, node );
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValue< std::vector< double > >( d, names::tau_eta, tau_eta_ );
   updateValue< std::vector< double > >( d, names::val_eta, val_eta_ );
 
@@ -178,9 +179,9 @@ nest::pp_pop_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) co
 }
 
 void
-nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, h_ );
+  updateValueParam< double >( d, names::V_m, h_, node );
   initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 

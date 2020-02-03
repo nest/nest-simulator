@@ -90,7 +90,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 
@@ -109,7 +109,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     psg sd Connect
     T Simulate
     
-    sd GetStatus /events get /times get /spikes Set
+    sd /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -183,7 +183,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 
@@ -202,7 +202,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     psg sd Connect
     T Simulate
     
-    sd GetStatus /events get /times get /spikes Set
+    sd /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -272,7 +272,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 
@@ -298,8 +298,8 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     assert_or_die
     
     %and we also check the rates since we simulated anyway
-    sd1 GetStatus /events get /times get /spikes1 Set
-    sd2 GetStatus /events get /times get /spikes2 Set
+    sd1 /events get /times get /spikes1 Set
+    sd2 /events get /times get /spikes2 Set
     
     % rate_sim = size(spikes) / (T*1e-3)
     spikes1 cva size T 1e-3 mul div /rate_sim1 Set /spikes_array1 Set

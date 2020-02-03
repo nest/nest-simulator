@@ -40,9 +40,9 @@ VPManager::get_vp() const
 }
 
 inline thread
-VPManager::suggest_vp_for_gid( const index gid ) const
+VPManager::suggest_vp_for_node_id( const index node_id ) const
 {
-  return gid % get_num_virtual_processes();
+  return node_id % get_num_virtual_processes();
 }
 
 inline thread
@@ -70,20 +70,20 @@ VPManager::thread_to_vp( const thread tid ) const
 }
 
 inline bool
-VPManager::is_gid_vp_local( const index gid ) const
+VPManager::is_node_id_vp_local( const index node_id ) const
 {
-  return ( gid % get_num_virtual_processes() == static_cast< index >( get_vp() ) );
+  return ( node_id % get_num_virtual_processes() == static_cast< index >( get_vp() ) );
 }
 
 inline index
-VPManager::gid_to_lid( const index gid ) const
+VPManager::node_id_to_lid( const index node_id ) const
 {
-  // starts at lid 0 for gids >= 1 (expected value for neurons, excl. gid 0)
-  return ceil( static_cast< double >( gid ) / get_num_virtual_processes() ) - 1;
+  // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
+  return ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
 }
 
 inline index
-VPManager::lid_to_gid( const index lid ) const
+VPManager::lid_to_node_id( const index lid ) const
 {
   const index vp = get_vp();
   return ( lid + static_cast< index >( vp == 0 ) ) * get_num_virtual_processes() + vp;

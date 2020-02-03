@@ -29,8 +29,7 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+#include "recording_backend.h"
 
 namespace nest
 {
@@ -45,11 +44,13 @@ class IOManager : public ManagerInterface
 public:
   virtual void initialize(); // called from meta-manager to construct
   virtual void finalize();   // called from meta-manger to reinit
+  virtual void change_num_threads( thread );
 
   virtual void set_status( const DictionaryDatum& ); // set parameters
   virtual void get_status( DictionaryDatum& );       // get parameters
 
   IOManager(); // Construct only by meta-manager
+  ~IOManager();
 
   /**
    * The prefix for files written by devices.
@@ -65,9 +66,6 @@ public:
    */
   const std::string& get_data_path() const;
 
-  //! Helper function to set device data path and prefix.
-  void set_data_path_prefix_( const DictionaryDatum& d );
-
   /**
    * Indicate if existing data files should be overwritten.
    * @return true if existing data files should be overwritten by devices.
@@ -75,13 +73,60 @@ public:
    */
   bool overwrite_files() const;
 
+  /**
+   * Clean up in all registered recording backends after a single call to run by
+   * calling the backends' post_run_hook() functions
+   */
+  void post_run_hook();
+  void pre_run_hook();
+
+  /**
+   * Clean up in all registered recording backends after a single simulation
+   * step by calling the backends' post_step_hook() functions
+   */
+  void post_step_hook();
+
+  /**
+   * Finalize all registered recording backends after a call to
+   * SimulationManager::simulate() or SimulationManager::cleanup() by
+   * calling the backends' finalize() functions
+   */
+  void cleanup();
+  void prepare();
+
+  template < class RBT >
+  void register_recording_backend( Name );
+
+  bool is_valid_recording_backend( Name ) const;
+
+  void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+
+  void enroll_recorder( Name, const RecordingDevice&, const DictionaryDatum& );
+
+  void set_recording_value_names( Name backend_name,
+    const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
+
+  void check_recording_backend_device_status( Name, const DictionaryDatum& );
+  void get_recording_backend_device_defaults( Name, DictionaryDatum& );
+  void get_recording_backend_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+
 private:
+  void set_data_path_prefix_( const DictionaryDatum& );
+  void register_recording_backends_();
+
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.
-};
-}
 
+  /**
+   * A mapping from names to registered recording backends.
+   */
+  std::map< Name, RecordingBackend* > recording_backends_;
+};
+
+} // namespace nest
 
 inline const std::string&
 nest::IOManager::get_data_path() const

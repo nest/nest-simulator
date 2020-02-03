@@ -185,10 +185,6 @@ librandom::PoissonRandomDev::init_()
 long
 librandom::PoissonRandomDev::ldev( RngPtr r ) const
 {
-
-  // make sure we have an RNG
-  assert( r.valid() );
-
   // the result for lambda == 0 is well defined,
   // added the following two lines of code
   // Diesmann, 26.7.2002

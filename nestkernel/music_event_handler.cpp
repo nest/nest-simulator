@@ -71,7 +71,7 @@ MusicEventHandler::~MusicEventHandler()
 }
 
 void
-MusicEventHandler::register_channel( int channel, nest::Node* mp )
+MusicEventHandler::register_channel( size_t channel, nest::Node* mp )
 {
   if ( channel >= channelmap_.size() )
   {

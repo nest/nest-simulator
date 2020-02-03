@@ -30,6 +30,7 @@
 
 // Includes from nestkernel:
 #include "event.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
@@ -175,6 +176,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::recorder;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -189,6 +196,8 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void calibrate_time( const TimeConverter& tc );
 
 private:
   void init_state_( Node const& );
@@ -233,7 +242,6 @@ private:
 
   struct Parameters_
   {
-
     Time delta_tau_;  //!< width of correlation histogram bins
     Time tau_max_;    //!< maximum time difference of events to detect
     Time Tstart_;     //!< start of recording
@@ -250,7 +258,7 @@ private:
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlomatrix_detector& );
+    bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -266,7 +274,6 @@ private:
    */
   struct State_
   {
-
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
                                    /** Weighted covariance matrix.
@@ -285,7 +292,7 @@ private:
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool );
+    void set( const DictionaryDatum&, const Parameters_&, bool, Node* node );
 
     void reset( const Parameters_& );
   };
@@ -313,15 +320,13 @@ nest::correlomatrix_detector::get_status( DictionaryDatum& d ) const
   device_.get_status( d );
   P_.get( d );
   S_.get( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
 }
 
 inline void
 nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
-  const bool reset_required = ptmp.set( d, *this );
+  const bool reset_required = ptmp.set( d, *this, this );
 
   device_.set_status( d );
   P_ = ptmp;
@@ -329,6 +334,15 @@ nest::correlomatrix_detector::set_status( const DictionaryDatum& d )
   {
     S_.reset( P_ );
   }
+}
+
+inline void
+nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
+{
+  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
+  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
+  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
+  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
 }
 
 } // namespace

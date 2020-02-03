@@ -151,7 +151,7 @@ M_ERROR setverbosity
       /sg2 /spike_generator << /spike_times [ 5.0 ] 
                                /spike_multiplicities [ 2 ] >> Create def
 
-      /syn_spec << /model /static_synapse
+      /syn_spec << /synapse_model /static_synapse
                    /receptor_type 
                      extra_params model known
                      {
@@ -169,10 +169,12 @@ M_ERROR setverbosity
                 >> def  
 
       % n1 receives two spikes with multiplicity 1
-      [ sg1a sg1b ] [ n1 ] /all_to_all syn_spec Connect
+      sg1a sg1b join n1 /all_to_all syn_spec Connect
       
       % n2 receives one spike with multiplicity 2
-      [ sg2 ] [ n2 ] /all_to_all syn_spec Connect
+      sg2 n2 /all_to_all syn_spec Connect
+
+      (Testing model ) =only model ==
 
       /v1_0 n1 /V_m get def
       /v2_0 n2 /V_m get def

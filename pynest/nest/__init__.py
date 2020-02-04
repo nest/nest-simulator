@@ -34,6 +34,7 @@ from . import math                    # noqa
 from . import spatial_distributions   # noqa
 from . import logic                   # noqa
 from . import spatial                 # noqa needs to be imported last because of documentation generation
+from . import web                     # noqa
 
 
 def test():

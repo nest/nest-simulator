@@ -38,7 +38,7 @@ References
 
 import nest
 import nest.voltage_trace
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -53,14 +53,14 @@ neuron = nest.Create("aeif_cond_exp")
 ###############################################################################
 # Set the parameters of the neuron according to the paper.
 
-neuron.set({"V_peak": 20., "E_L": -60.0, "a": 80.0, "b": 80.5, "tau_w": 720.0})
+neuron.set(V_peak=20., E_L=-60.0, a=80.0, b=80.5, tau_w=720.0)
 
 ###############################################################################
 # Create and configure the stimulus which is a step current.
 
 dc = nest.Create("dc_generator")
 
-dc.set({"amplitude": -800.0, "start": 0.0, "stop": 400.0})
+dc.set(amplitude=-800.0, start=0.0, stop=400.0)
 
 ###############################################################################
 # We connect the DC generators.
@@ -81,4 +81,5 @@ nest.Connect(voltmeter, neuron)
 nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
-pylab.axis([0, 1000, -85, 0])
+plt.axis([0, 1000, -85, 0])
+nest.voltage_trace.show()

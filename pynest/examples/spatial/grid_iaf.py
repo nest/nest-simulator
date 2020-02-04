@@ -28,7 +28,7 @@ Hans Ekkehard Plesser, UMB
 """
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -40,14 +40,14 @@ nest.PrintNodes()
 nest.PlotLayer(l1, nodesize=50)
 
 # beautify
-pylab.axis([-1.0, 1.0, -0.75, 0.75])
-pylab.axes().set_aspect('equal', 'box')
-pylab.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
-pylab.axes().set_yticks((-0.5, 0, 0.5))
-pylab.grid(True)
-pylab.xlabel('4 Columns, Extent: 1.5')
-pylab.ylabel('2 Rows, Extent: 1.0')
+plt.axis([-1.0, 1.0, -0.75, 0.75])
+plt.axes().set_aspect('equal', 'box')
+plt.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
+plt.axes().set_yticks((-0.5, 0, 0.5))
+plt.grid(True)
+plt.xlabel('4 Columns, Extent: 1.5')
+plt.ylabel('2 Rows, Extent: 1.0')
 
-pylab.show()
+plt.show()
 
 # plt.savefig('grid_iaf.png')

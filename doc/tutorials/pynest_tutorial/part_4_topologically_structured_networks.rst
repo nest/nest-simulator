@@ -125,8 +125,10 @@ be located?".
 1 - On-grid
 ~~~~~~~~~~~
 
-We have to explicitly specify the spacing of the grid with shape=[m, n],
-where *m* is the number of rows and *n* is the number of columns.
+We have to explicitly specify the spacing of the grid with shape=[n, m],
+where *m* is the number of rows and *n* is the number of columns. It might be
+easier to think of shape as shape=[nx, ny], where nx is number of elements in
+x-direction and ny is number of directions in y-direction.
 The size (*extent*) of the layer has a default size of 1 x 1, but this you can also set yourself.
 The grid spacing i is determined from *m*, *n* and *extent*, and *n*\ x\ *m* elements
 are arranged symmetrically. Note that we can also specify a center to
@@ -322,8 +324,8 @@ target population and a connection dictionary, we simply use
 
 ::
 
-    ex_pop = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 4]))
-    in_pop = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[4, 5]))
+    ex_pop = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[4, 5]))
+    in_pop = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 4]))
     conn_dict_ex = {'rule': 'pairwise_bernoulli',
                     'p': 1.0,
                     'mask': {'circular': {'radius': 0.5}}}
@@ -376,7 +378,7 @@ Section 4.1 *Query functions*.
       'edge_wrap': False,
       'extent': (1.0, 1.0),
       'network_size': 20,
-      'shape': (5, 4)}
+      'shape': (4, 5)}
 
 It may also be useful to look at the ``spatial`` property of the
 NodeCollection, which describes the layer properties. Other useful

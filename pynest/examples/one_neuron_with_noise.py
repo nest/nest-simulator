@@ -59,7 +59,7 @@ voltmeter = nest.Create("voltmeter")
 # not need to set parameters for the neuron and the voltmeter, since they have
 # satisfactory defaults.
 
-nest.SetStatus(noise, [{"rate": 80000.0}, {"rate": 15000.0}])
+noise.set([{"rate": 80000.0}, {"rate": 15000.0}])
 
 ###############################################################################
 # Fourth, the neuron is connected to the ``poisson_generator`` and to the
@@ -79,3 +79,4 @@ nest.Simulate(1000.0)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
+nest.voltage_trace.show()

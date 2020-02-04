@@ -28,7 +28,8 @@ Hans Ekkehard Plesser, UMB
 """
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
+import numpy as np
 
 nest.ResetKernel()
 
@@ -46,31 +47,31 @@ nest.PrintNodes()
 ppyr = nest.GetPosition(ctx_pyr)
 pin = nest.GetPosition(ctx_in)
 
-ppyr_x = pylab.array([x for x, y in ppyr])
-ppyr_y = pylab.array([y for x, y in ppyr])
+ppyr_x = np.array([x for x, y in ppyr])
+ppyr_y = np.array([y for x, y in ppyr])
 
-pin_x = pylab.array([x for x, y in pin])
-pin_y = pylab.array([y for x, y in pin])
+pin_x = np.array([x for x, y in pin])
+pin_y = np.array([y for x, y in pin])
 
 # plot
-pylab.clf()
-pylab.plot(pin_x - 0.05, ppyr_y - 0.05, 'bo', markersize=20,
-           label='Pyramidal', zorder=2)
-pylab.plot(pin_x + 0.05, pin_y + 0.05, 'ro', markersize=20,
-           label='Interneuron', zorder=2)
-pylab.plot(pin_x, ppyr_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
-           markersize=60, markeredgewidth=0, zorder=1, label='_nolegend_')
+plt.clf()
+plt.plot(pin_x - 0.05, ppyr_y - 0.05, 'bo', markersize=20,
+         label='Pyramidal', zorder=2)
+plt.plot(pin_x + 0.05, pin_y + 0.05, 'ro', markersize=20,
+         label='Interneuron', zorder=2)
+plt.plot(pin_x, ppyr_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
+         markersize=60, markeredgewidth=0, zorder=1, label='_nolegend_')
 
 # beautify
-pylab.axis([-1.0, 1.0, -1.0, 1.0])
-pylab.axes().set_aspect('equal', 'box')
-pylab.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
-pylab.axes().set_yticks((-0.5, 0, 0.5))
-pylab.grid(True)
-pylab.xlabel('4 Columns, Extent: 1.5')
-pylab.ylabel('3 Rows, Extent: 1.0')
-pylab.legend(numpoints=1)
+plt.axis([-1.0, 1.0, -1.0, 1.0])
+plt.axes().set_aspect('equal', 'box')
+plt.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
+plt.axes().set_yticks((-0.5, 0, 0.5))
+plt.grid(True)
+plt.xlabel('4 Columns, Extent: 1.5')
+plt.ylabel('3 Rows, Extent: 1.0')
+plt.legend(numpoints=1)
 
-pylab.show()
+plt.show()
 
-# pylab.savefig('ctx_2n.png')
+# plt.savefig('ctx_2n.png')

@@ -51,7 +51,6 @@ See Also
 # We imported all necessary modules for simulation, analysis and plotting.
 
 import nest
-import numpy as np
 import matplotlib.pyplot as plt
 
 ###############################################################################
@@ -138,7 +137,7 @@ nest.Simulate(t_sim)
 # returned by the multimeter. Because all NEST function return arrays,
 # we need to pick out element `0` from the result of ``GetStatus``.
 
-data = nest.GetStatus(mm)[0]['events']
+data = mm.events
 t = data['times']
 
 ###############################################################################

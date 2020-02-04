@@ -46,7 +46,7 @@ reset appropriately between the trials, we do the following steps:
 
 
 import numpy
-import pylab
+import matplotlib.pyplot as plt
 import nest
 
 
@@ -176,7 +176,7 @@ for trial in [0, 1]:
     # (perturbation).
 
     stimulus = nest.Create("spike_generator")
-    nest.SetStatus(stimulus, {'spike_times': []})
+    stimulus.spike_times = []
 
     ###############################################################################
     # We need to reset the random number generator and the clock of
@@ -184,13 +184,13 @@ for trial in [0, 1]:
     # the spike detector.
 
     nest.SetKernelStatus({"rng_seeds": [seed_NEST], 'time': 0.0})
-    nest.SetStatus(spikedetector, {'n_events': 0})
+    spikedetector.n_events = 0
 
     # We assign random initial membrane potentials to all neurons
 
     numpy.random.seed(seed_numpy)
     Vms = Vmin + (Vmax - Vmin) * numpy.random.rand(N)
-    nest.SetStatus(allnodes, "V_m", Vms)
+    allnodes.V_m = Vms
 
     ##############################################################################
     # In the second trial, we add an extra input spike at time ``t_stim`` to the
@@ -202,7 +202,7 @@ for trial in [0, 1]:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
         nest.Connect(stimulus, nest.NodeCollection(id_stim),
                      syn_spec={'weight': Jstim, 'delay': dt})
-        nest.SetStatus(stimulus, {'spike_times': [t_stim]})
+        stimulus.spike_times = [t_stim]
 
     # Now we simulate the network and add a fade out period to discard
     # remaining spikes.
@@ -212,18 +212,19 @@ for trial in [0, 1]:
 
     # Storing the data.
 
-    senders += [nest.GetStatus(spikedetector, 'events')[0]['senders']]
-    spiketimes += [nest.GetStatus(spikedetector, 'events')[0]['times']]
+    senders += [spikedetector.get('events', 'senders')]
+    spiketimes += [spikedetector.get('events', 'times')]
 
 ###############################################################################
 # We plot the spiking activity of the network (first trial in red, second trial
 # in black).
 
-pylab.figure(1)
-pylab.clf()
-pylab.plot(spiketimes[0], senders[0], 'ro', ms=4.)
-pylab.plot(spiketimes[1], senders[1], 'ko', ms=2.)
-pylab.xlabel('time (ms)')
-pylab.ylabel('neuron id')
-pylab.xlim((0, T))
-pylab.ylim((0, N))
+plt.figure(1)
+plt.clf()
+plt.plot(spiketimes[0], senders[0], 'ro', ms=4.)
+plt.plot(spiketimes[1], senders[1], 'ko', ms=2.)
+plt.xlabel('time (ms)')
+plt.ylabel('neuron id')
+plt.xlim((0, T))
+plt.ylim((0, N))
+plt.show()

@@ -41,7 +41,7 @@ Download the source code
 
 .. |link-pregit| raw:: html
 
-   <a href="https://github.com/nest/nest-simulator/releases/tag/v
+* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
 .. |link-postgit| raw:: html
 

@@ -610,14 +610,14 @@ The `spatial` module contains parameters related to spatial positions of the
 nodes.
 
 To create spatially distributed nodes (see section on :ref:`spatially distributed nodes <topo_changes>` for more),
-use ``ǹest.spatial.grid()`` or ``nest.spatial.free``.
+use ``nest.spatial.grid()`` or ``nest.spatial.free``.
 
   +----------------------------------------------------+-------------------------------------------------------+
   | Parameter                                          | Description                                           |
   +====================================================+=======================================================+
   |  ::                                                |                                                       |
   |                                                    | Create spatially positioned nodes distributed on a    |
-  |     nest.spatial.grid(shape, center=None,          | grid with dimensions given by `shape`.                |
+  |     nest.spatial.grid(shape, center=None,          | grid with dimensions given by `shape=[nx, ny(, nz)]`. |
   |         extent=None, edge_wrap=False)              |                                                       |
   +----------------------------------------------------+-------------------------------------------------------+
   |  ::                                                |                                                       |
@@ -1048,12 +1048,14 @@ where ``spatial_data`` can be one of the following
 
 - ``nest.spatial.grid()``
     This creates nodes on a grid, with a prescribed number of rows and
-    columns, and, if specified, an extent and center. Some example grid spatial nodes
+    columns, and, if specified, an extent and center. It can be easier to think of the
+    grid as being defined by number of elements in x-direction and y-direction instead of
+    thinking of rows and columns. Some example grid spatial nodes
     specifications:
 
     ::
 
-        nest.spatial.grid(shape=[5, 4], extent=[2., 2.])  # 5x4 grid in a 2x2 square
+        nest.spatial.grid(shape=[5, 4], extent=[2., 3.])  # 5x4 grid in a 2x3 square
         nest.spatial.grid(shape=[4, 5], center=[1., 1.])  # 4x5 grid in the default 1x1 square, with shifted center
         nest.spatial.grid(shape=[4, 5], edge_wrap=True)  # 4x5 grid with periodic boundary conditions
         nest.spatial.grid(shape=[2, 3, 4])  # 3D 2x3x4 grid
@@ -1127,11 +1129,11 @@ Composite layers:
       |                                           |                                                                      |
       |     l = tp.CreateLayer(                   |     sn_iaf = nest.Create('iaf_psc_alpha'                             |
       |             {'rows': 1,                   |                          positions=nest.spatial.grid(                |
-      |              'columns': 2,                |                              shape=[1, 2]))                          |
+      |              'columns': 2,                |                              shape=[2, 1]))                          |
       |              'elements':                  |                                                                      |
       |                  ['iaf_cond_alpha',       |     sn_poi = nest.Create('poisson_generator',                        |
       |                   'poisson_generator']})  |                           positions=nest.spatial.grid(               |
-      |                                           |                               shape=[1, 3]))                         |
+      |                                           |                               shape=[3, 1]))                         |
       |     Use l when connecting, setting        |                                                                      |
       |     parameters etc.                       |     Use sn_iaf and sn_poi when connecting,                           |
       |                                           |     setting parameters etc.                                          |
@@ -1207,7 +1209,7 @@ probability and rectangular mask on the target layer:
   |                                                         |                                                                      |
   |     l = tp.CreateLayer(                                 |     l = nest.Create('iaf_psc_alpha',                                 |
   |         {'columns': nc, 'rows': nr,                     |                     positions=nest.spatial.grid(                     |
-  |          'elements': 'iaf_psc_alpha',                   |                         shape=[nr, nc],                              |
+  |          'elements': 'iaf_psc_alpha',                   |                         shape=[nc, nr],                              |
   |          'extent': [2., 2.]})                           |                         extent=[2., 2.]))                            |
   |                                                         |                                                                      |
   |     conn_dict = {'connection_type': 'divergent',        |     conn_dict = {'rule': 'pairwise_bernoulli',                       |
@@ -1393,6 +1395,8 @@ be used instead.
   | subnet                                       | no longer needed, use NodeCollection instead  |
   +----------------------------------------------+-----------------------------------------------+
 
+Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
+the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
 
 .. function_rm::
 

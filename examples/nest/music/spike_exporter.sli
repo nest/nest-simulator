@@ -72,8 +72,8 @@ SetStatus
 parrots
 {
   /src Set
-  [src] cvnodecollection /gc Set
-  nc GetStatus /local get
+  [src] cvnodecollection /nc Set
+  nc GetStatus 0 get /local get
   {
     nc mo <</rule /one_to_one >> << /receptor_type i >> Connect
   }
@@ -87,7 +87,7 @@ forall
 % mapping from local index to
 % global MUSIC index for each process
 cout (rank=) <- Rank <- ( ) <- pop
-mo GetStatus /index_map get ==
+mo GetStatus 0 get /index_map get ==
 
 % simulate
 T Simulate

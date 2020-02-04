@@ -83,7 +83,7 @@ set( sli_sources
     )
 
 add_library( sli_lib ${sli_sources} )
-target_link_libraries( sli_lib nestutil )
+target_link_libraries( sli_lib nestutil OpenMP::OpenMP_CXX )
 
 # Make a separate target for linking against readline, so that
 # pynestkernel does not need to link against readline and make
@@ -91,11 +91,11 @@ target_link_libraries( sli_lib nestutil )
 # pull request for more information:
 # https://github.com/nest/nest-simulator/pull/323
 add_library( sli_readline gnureadline.cc gnureadline.h )
-target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
+target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 # add the executable
 add_executable( sli puresli.cc )
-target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} )
+target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_include_directories( sli PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

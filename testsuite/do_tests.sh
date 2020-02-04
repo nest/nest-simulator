@@ -154,12 +154,12 @@ INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
-NPROCS="$(cat /proc/cpuinfo | grep processor | wc -l)"
+NPROCS="$(getconf _NPROCESSORS_ONLN)"
 BASEDIR="$PWD"
 
 print_paths () {
     indent="`printf '%23s'`"
-    echo "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
+    printf "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
 }
 
 echo "================================================================================"

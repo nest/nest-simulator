@@ -28,9 +28,10 @@ import tempfile
 
 
 def check_output(cmd):
+
     cmd = shlex.split(cmd)
     stdout = subprocess.STDOUT
-    output = subprocess.check_output(cmd, stderr=stdout)
+    output = subprocess.check_output(cmd)
     return output.decode("utf-8")
 
 
@@ -73,10 +74,9 @@ failure_xml = """<?xml version="1.0" encoding="utf-8"?>\
 with open(sys.argv[1], "w+") as junitxml:
     for script_name in scripts:
         script = os.path.join(script_dir, script_name)
-
         tmpfile = tempfile.mktemp(".xml")
         pytest_cmd = "python {} --junitxml={}".format(sys.argv[2], tmpfile)
-        cmd = "nest -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
+        cmd = "sli -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
         test_cmd = check_output(cmd)
 
         try:

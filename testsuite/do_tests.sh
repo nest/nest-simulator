@@ -159,14 +159,14 @@ BASEDIR="$PWD"
 
 print_paths () {
     indent="`printf '%23s'`"
-    printf "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
+    echo -e "$1" | sed "s/:/\n$indent/g" | sed '/^\s*$/d'
 }
 
 echo "================================================================================"
 echo
 echo "  NEST testsuite"
 echo "  Date: $(date -u)"
-echo "  Sysinfo: $(uname -s -r -m -o)"
+echo "  Sysinfo: $(uname -s -r -m)"
 echo "  Running ${NPROCS} tests in parallel where possible"
 echo
 echo "  NEST executable .... $NEST"

@@ -69,22 +69,22 @@ def CreateMask(masktype, specs, anchor=None):
     node in the driver population. Several mask types are available. Examples
     are the grid region, the rectangular, circular or doughnut region.
 
-    The command ``CreateMask`` creates a `Mask` object which may be combined
+    The command :py:func:`.CreateMask` creates a `Mask` object which may be combined
     with other `Mask` objects using Boolean operators. The mask is specified
     in a dictionary.
 
-    `Mask` objects can be passed to :py:func:`.Connect` in a connection dictionary with the key `'mask'`.
+    ``Mask`` objects can be passed to :py:func:`.Connect` in a connection dictionary with the key `'mask'`.
 
     Parameters
     ----------
     masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
         for 2D masks, ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
-        ['grid'] only for grid-based layers in 2D
+        ['grid'] only for grid-based layers in 2D.
         The mask name corresponds to the geometrical shape of the mask. There
         are different types for 2- and 3-dimensional layers.
     specs : dict
         Dictionary specifying the parameters of the provided `masktype`,
-        see `Mask types`.
+        see **Mask types**.
     anchor : [tuple/list of floats | dict with the keys `'column'` and \
         `'row'` (for grid masks only)], optional, default: None
         By providing anchor coordinates, the location of the mask relative to
@@ -98,19 +98,20 @@ def CreateMask(masktype, specs, anchor=None):
 
     See also
     --------
-    :py:func:`.Connect`
+    Connect
 
     Notes
     -----
     - All angles must be given in degrees.
 
-    Mask types
-    ----------
+    **Mask types**
+
     Available mask types (`masktype`) and their corresponding parameter
     dictionaries:
 
-    - 2D free and grid-based layers
+    * 2D free and grid-based layers
         ::
+
             'rectangular' :
                 {'lower_left'   : [float, float],
                  'upper_right'  : [float, float],
@@ -129,8 +130,9 @@ def CreateMask(masktype, specs, anchor=None):
                  'azimuth_angle' : float,   # default: 0.0,
                  'anchor' : [float, float], # default: [0.0, 0.0]}
 
-    - 3D free and grid-based layers
+    * 3D free and grid-based layers
         ::
+
             'box' :
                 {'lower_left'  : [float, float, float],
                  'upper_right' : [float, float, float],
@@ -148,7 +150,7 @@ def CreateMask(masktype, specs, anchor=None):
                  'polar_angle' : float,     # default: 0.0,
                  'anchor' : [float, float, float], # default: [0.0, 0.0, 0.0]}}
 
-    - 2D grid-based layers only
+    * 2D grid-based layers only
         ::
 
             'grid' :
@@ -159,12 +161,12 @@ def CreateMask(masktype, specs, anchor=None):
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
             ::
+
                 'anchor' :
                     {'row' : float,
                      'column' : float}
 
-    Example
-    -------
+    **Example**
         ::
 
             import nest
@@ -206,10 +208,10 @@ def GetPosition(nodes):
 
     See also
     --------
-    :py:func:`.Displacement`: Get vector of lateral displacement between nodes.
-    :py:func:`.Distance`: Get lateral distance between nodes.
-    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
-    :py:func:`.DumpLayerNodes`: Write node positions to file.
+    Displacement: Get vector of lateral displacement between nodes.
+    Distance: Get lateral distance between nodes.
+    DumpLayerConnections: Write connectivity information to file.
+    DumpLayerNodes: Write node positions to file.
 
     Notes
     -----
@@ -274,9 +276,9 @@ def Displacement(from_arg, to_arg):
 
     See also
     --------
-    :py:func:`.Distance`: Get lateral distances between nodes.
-    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    Distance: Get lateral distances between nodes.
+    DumpLayerConnections: Write connectivity information to file.
+    GetPosition: Return the spatial locations of nodes.
 
     Notes
     -----
@@ -341,9 +343,9 @@ def Distance(from_arg, to_arg):
 
     See also
     --------
-    :py:func:`.Displacement`: Get vector of lateral displacements between nodes.
-    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    Displacement: Get vector of lateral displacements between nodes.
+    DumpLayerConnections: Write connectivity information to file.
+    GetPosition: Return the spatial locations of nodes.
 
     Notes
     -----
@@ -387,7 +389,8 @@ def FindNearestElement(layer, locations, find_all=False):
 
     * If `locations` is a single 2-element array giving a grid location, return a
       `NodeCollection` of `layer` elements at the given location.
-    * If `locations` is a list of coordinates, the function returns a `NodeCollection` of the nodes at all locations.
+    * If `locations` is a list of coordinates, the function returns a list of `NodeCollection` of the nodes at all
+      locations.
 
     Parameters
     ----------
@@ -405,14 +408,14 @@ def FindNearestElement(layer, locations, find_all=False):
     Returns
     -------
     NodeCollection:
-        `NodeCollection` of node node IDs
+        `NodeCollection` of node IDs if locations is a 2-element list with coordinates of a single position
     list:
-        list of `NodeCollection` if find_all is True
+        list of `NodeCollection` if find_all is True or locations contains more than one position
 
     See also
     --------
-    :py:func:`.FindCenterElement`: Return NodeCollection of node closest to center of layers.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    FindCenterElement: Return NodeCollection of node closest to center of layers.
+    GetPosition: Return the spatial locations of nodes.
 
     Example
     -------
@@ -447,19 +450,22 @@ def FindNearestElement(layer, locations, find_all=False):
 
         if not find_all:
             dx = np.argmin(d)  # finds location of one minimum
-            result.append(layer[dx].get('global_id'))
+            result.append(layer[dx])
         else:
-            minnode_ids = list(layer[:1])
+            minnode = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    minnode_ids = [layer[idx].get('global_id')]
+                    minnode = [layer[idx]]
                     minval = d[idx]
                 elif np.abs(d[idx] - minval) <= 1e-14 * minval:
-                    minnode_ids.append(layer[idx].get('global_id'))
-            result.append(NodeCollection(minnode_ids))
+                    minnode.append(layer[idx])
+            result.append(minnode)
 
-    return NodeCollection(result) if not find_all else result
+    if len(result) == 1:
+        result = result[0]
+
+    return result
 
 
 def _rank_specific_filename(basename):
@@ -500,8 +506,8 @@ def DumpLayerNodes(layer, outname):
 
     See also
     --------
-    :py:func:`.DumpLayerConnections`: Write connectivity information to file.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    DumpLayerConnections: Write connectivity information to file.
+    GetPosition: Return the spatial locations of nodes.
 
     Notes
     -----
@@ -562,9 +568,9 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
 
     See also
     --------
-    :py:func:`.DumpLayerNodes`: Write layer node positions to file.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
-    :py:func:`.GetConnections`: Return connection identifiers between
+    DumpLayerNodes: Write layer node positions to file.
+    GetPosition: Return the spatial locations of nodes.
+    GetConnections: Return connection identifiers between
         sources and targets
 
     Notes
@@ -584,8 +590,8 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[5, 5]))
 
             nest.Connect(s_nodes, s_nodes,
-                        {'rule': 'pairwise_bernoulli', 'p': 1.0},
-                        {'synapse_model': 'static_synapse'})
+                         {'rule': 'pairwise_bernoulli', 'p': 1.0},
+                         {'synapse_model': 'static_synapse'})
 
             # write connectivity information to file
             nest.DumpLayerConnections(s_nodes, s_nodes, 'static_synapse', 'conns.txt')
@@ -613,8 +619,8 @@ def FindCenterElement(layer):
 
     Parameters
     ----------
-    layers : NodeCollection
-        `NodeCollection` of spatially distributed node IDs
+    layer : NodeCollection
+        `NodeCollection` with spatially distributed node IDs
 
     Returns
     -------
@@ -625,8 +631,8 @@ def FindCenterElement(layer):
 
     See also
     --------
-    :py:func:`.FindNearestElement`: Return the node(s) closest to the location(s) in the given `layer`.
-    :py:func:`.GetPosition`: Return the spatial locations of nodes.
+    FindNearestElement: Return the node(s) closest to the location(s) in the given `layer`.
+    GetPosition: Return the spatial locations of nodes.
 
     Example
     -------
@@ -673,8 +679,8 @@ def GetTargetNodes(sources, tgt_layer, syn_model=None):
 
     See also
     --------
-    :py:func:`.GetTargetPositions`: Obtain positions of targets in a given target layer connected to given source.
-    :py:func:`.GetConnections`: Return connection identifiers between
+    GetTargetPositions: Obtain positions of targets in a given target layer connected to given source.
+    GetConnections: Return connection identifiers between
         sources and targets
 
     Notes
@@ -748,7 +754,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
 
     See also
     --------
-    :py:func:`.GetTargetNodes`: Obtain targets of a `NodeCollection` of sources in a given target
+    GetTargetNodes: Obtain targets of a `NodeCollection` of sources in a given target
         population.
 
     Notes
@@ -890,8 +896,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
 
     See also
     --------
-    :py:func:`.PlotProbabilityParameter`: Create a plot of the connection probability and/or mask.
-    :py:func:`.PlotTargets`: Plot all targets of a given source.
+    PlotProbabilityParameter: Create a plot of the connection probability and/or mask.
+    PlotTargets: Plot all targets of a given source.
     matplotlib.figure.Figure : matplotlib Figure class
 
     Notes
@@ -956,7 +962,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter3D(*pos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        ax.scatter(*pos, s=nodesize, c=nodecolor)
         plt.draw_if_interactive()
 
     else:
@@ -996,8 +1002,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         Size of target markers (see scatter for details)
     mask_color : [None | any matplotlib color], optional, default: 'red'
         Color used for line marking mask
-    kernel_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for lines marking kernel
+    probability_cmap : [None | any matplotlib cmap color], optional, default: 'Greens'
+        Color used for lines marking probability parameter.
 
     Returns
     -------
@@ -1005,10 +1011,10 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
     See also
     --------
-    :py:func:`.GetTargetNodes`: Obtain targets of a sources in a given target layer.
-    :py:func:`.GetTargetPositions`: Obtain positions of targets of sources in a given target layer.
-    :py:func:`.probability_parameter`: Add indication of connection probability and mask to axes.
-    :py:func:`.PlotLayer`: Plot all nodes in a spatially distributed population.
+    GetTargetNodes: Obtain targets of a sources in a given target layer.
+    GetTargetPositions: Obtain positions of targets of sources in a given target layer.
+    probability_parameter: Add indication of connection probability and mask to axes.
+    PlotLayer: Plot all nodes in a spatially distributed population.
     matplotlib.pyplot.scatter : matplotlib scatter plot.
 
     Notes
@@ -1225,7 +1231,7 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
     ----------
     source : NodeCollection
         Single node ID `NodeCollection` to use as source.
-    parameter : Parameter object
+    parameter : Parameter
         `Parameter` the probability is based on.
     mask : Dictionary
         Optional specification of a connection mask. Connections will only
@@ -1258,7 +1264,7 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
             z[:, i] = np.array(values)
         img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
                         origin='lower', cmap=prob_cmap, vmin=0., vmax=1.)
-        plt.colorbar(img, ax=ax)
+        plt.colorbar(img, ax=ax, fraction=0.046, pad=0.04)
 
     if mask is not None:
         periodic = source.spatial['edge_wrap']

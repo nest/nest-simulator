@@ -31,8 +31,8 @@ inhibitory neuron is plotted.
 """
 
 import nest
-import pylab
 import numpy
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Assigning the simulation parameters to variables.
@@ -142,14 +142,14 @@ nest.Simulate(T)
 ###############################################################################
 # Plot rates of one excitatory and one inhibitory neuron
 
-data = nest.GetStatus(mm)[0]['events']
-rate_ex = data['rate'][numpy.where(data['senders'] == n_e[0].get('global_id'))]
-rate_in = data['rate'][numpy.where(data['senders'] == n_i[0].get('global_id'))]
-times = data['times'][numpy.where(data['senders'] == n_e[0].get('global_id'))]
+data = mm.events
+rate_ex = data['rate'][numpy.where(data['senders'] == n_e[0].global_id)]
+rate_in = data['rate'][numpy.where(data['senders'] == n_i[0].global_id)]
+times = data['times'][numpy.where(data['senders'] == n_e[0].global_id)]
 
-pylab.figure()
-pylab.plot(times, rate_ex, label='excitatory')
-pylab.plot(times, rate_in, label='inhibitory')
-pylab.xlabel('time (ms)')
-pylab.ylabel('rate (a.u.)')
-pylab.show()
+plt.figure()
+plt.plot(times, rate_ex, label='excitatory')
+plt.plot(times, rate_in, label='inhibitory')
+plt.xlabel('time (ms)')
+plt.ylabel('rate (a.u.)')
+plt.show()

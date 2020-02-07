@@ -87,7 +87,9 @@ exclude_files = [
     'nestrc.sli',
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',
-    'get-pip.py'
+    'get-pip.py',
+    'pynest/examples/arbor_cosim_example/arbor_proxy.py',
+    'pynest/examples/arbor_cosim_example/nest_sender.py'
 ]
 
 templates = {

@@ -333,9 +333,15 @@ public:
 
   /**
    * Sets flag indicating whether connection information needs to be
-   * communicated.
+   * communicated to true.
    */
-  void set_have_connections_changed( const bool changed );
+  void set_have_connections_changed( const thread tid );
+
+  /**
+   * Sets flag indicating whether connection information needs to be
+   * communicated to false.
+   */
+  void unset_have_connections_changed( const thread tid );
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -576,7 +582,7 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  bool have_connections_changed_;
+  CompletedChecker have_connections_changed_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -703,13 +709,7 @@ ConnectionManager::get_remote_targets_of_local_node( const thread tid, const ind
 inline bool
 ConnectionManager::have_connections_changed() const
 {
-  return have_connections_changed_;
-}
-
-inline void
-ConnectionManager::set_have_connections_changed( const bool changed )
-{
-  have_connections_changed_ = changed;
+  return have_connections_changed_.any_true();
 }
 
 inline void

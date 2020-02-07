@@ -59,7 +59,7 @@ References
 
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 
 
 ###############################################################################
@@ -100,12 +100,12 @@ for h in resolutions:
 
         nest.Simulate(simtime)
 
-        vm_status = nest.GetStatus(voltmeter, 'events')[0]
-        sd_status = nest.GetStatus(sd, 'events')[0]
+        vm_status = voltmeter.events
+        sd_status = sd.events
         data[h][model] = {"vm_times": vm_status['times'],
                           "vm_values": vm_status['V_m'],
                           "spikes": sd_status['times'],
-                          "V_th": nest.GetStatus(neuron, 'V_th')[0]}
+                          "V_th": neuron.V_th}
 
 
 ###############################################################################
@@ -122,7 +122,7 @@ for h in resolutions:
 colors = ["#3465a4", "#cc0000"]
 
 for v, h in enumerate(sorted(data)):
-    plot = pylab.subplot(len(data), 1, v + 1)
+    plot = plt.subplot(len(data), 1, v + 1)
     plot.set_title("Resolution: {0} ms".format(h))
 
     for i, model in enumerate(data[h]):
@@ -138,3 +138,5 @@ for v, h in enumerate(sorted(data)):
         plot.legend(loc=4)
     else:
         plot.set_xticklabels('')
+
+plt.show()

@@ -65,10 +65,10 @@ set( models_sources
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
-    iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     iaf_psc_delta.h iaf_psc_delta.cpp
     iaf_psc_exp.h iaf_psc_exp.cpp
-    iaf_tum_2000.h iaf_tum_2000.cpp
+    iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
+    iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     izhikevich.h izhikevich.cpp
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
@@ -122,6 +122,7 @@ set( models_sources
     tsodyks2_connection.h
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
+    voltmeter.h voltmeter.cpp
     volume_transmitter.h volume_transmitter.cpp
     vogels_sprekeler_connection.h
     weight_recorder.h weight_recorder.cpp

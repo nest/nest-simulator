@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
-NEST Spatial Example
+"""
+NEST spatial example
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid with edge_wrap,
 connect with circular mask, flat probability,
@@ -28,15 +28,17 @@ visualize.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
-'''
+"""
 
-import pylab
+import matplotlib.pyplot as plt
+import numpy as np
 import nest
 
 nest.ResetKernel()
 
 pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 
+#######################################################################
 # create and connect two populations
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
@@ -49,13 +51,14 @@ nest.Connect(a, b,
              conn_spec=cdict,
              syn_spec={'weight': nest.random.uniform(0.5, 2.)})
 
-pylab.clf()
+plt.clf()
 
+#####################################################################
 # plot targets of neurons in different grid locations
 
 # first, clear existing figure, get current figure
-pylab.clf()
-fig = pylab.gcf()
+plt.clf()
+fig = plt.gcf()
 
 # plot targets of two source neurons into same figure, with mask
 for src_index in [30 * 15 + 15, 0]:
@@ -64,13 +67,13 @@ for src_index in [30 * 15 + 15, 0]:
     nest.PlotTargets(src, b, mask=cdict['mask'], fig=fig)
 
 # beautify
-pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.grid(True)
-pylab.axis([-2.0, 2.0, -2.0, 2.0])
-pylab.axes().set_aspect('equal', 'box')
-pylab.title('Connection targets')
+plt.axes().set_xticks(np.arange(-1.5, 1.55, 0.5))
+plt.axes().set_yticks(np.arange(-1.5, 1.55, 0.5))
+plt.grid(True)
+plt.axis([-2.0, 2.0, -2.0, 2.0])
+plt.axes().set_aspect('equal', 'box')
+plt.title('Connection targets')
 
-pylab.show()
+plt.show()
 
-# pylab.savefig('connex_ew.pdf')
+# plt.savefig('connex_ew.pdf')

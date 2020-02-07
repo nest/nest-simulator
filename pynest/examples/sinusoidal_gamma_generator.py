@@ -71,8 +71,8 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', n=2, {'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_detector', n=2)
+m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', 2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -88,7 +88,7 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus(m[j])[0]['events']
+    ev = m[j].events
     t = ev['times']
     r = ev['rate']
 
@@ -131,7 +131,7 @@ nest.Connect(g, p)
 nest.Connect(p, s)
 
 nest.Simulate(200)
-ev = nest.GetStatus(s)[0]['events']
+ev = s.events
 plt.subplot(222)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
@@ -160,7 +160,7 @@ nest.Connect(g, p)
 nest.Connect(p, s)
 
 nest.Simulate(200)
-ev = nest.GetStatus(s)[0]['events']
+ev = s[0].events
 plt.subplot(224)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
@@ -184,10 +184,10 @@ def step(t, n, initial, after, seed=1, dt=0.05):
     sd = nest.Create('spike_detector')
     nest.Connect(g, sd)
     nest.Simulate(t / 2)
-    nest.SetStatus(g, after)
+    g.set(after)
     nest.Simulate(t / 2)
 
-    return nest.GetStatus(sd, 'events')[0]
+    return sd.events
 
 
 ###############################################################################
@@ -355,3 +355,4 @@ exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
 plt.plot(exp, 'r')
 plt.title('Modulation Phase: 0 -> Pi')
 plt.xlabel('Time [ms]')
+plt.show()

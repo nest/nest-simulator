@@ -43,11 +43,9 @@ References
 ###############################################################################
 # Import all necessary modules for simulation, analysis and plotting.
 
+import time
 import nest
 import nest.raster_plot
-
-import time
-from numpy import exp
 
 nest.ResetKernel()
 
@@ -156,8 +154,8 @@ ispikes = nest.Create("spike_detector")
 # `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
 # whose name starts with the string assigned to the property `label`.
 
-espikes.set({"label": "brunel-py-ex", "record_to": "ascii"})
-ispikes.set({"label": "brunel-py-in", "record_to": "ascii"})
+espikes.set(label="brunel-py-ex", record_to="ascii")
+ispikes.set(label="brunel-py-in", record_to="ascii")
 
 print("Connecting devices")
 
@@ -241,8 +239,8 @@ endsimulate = time.time()
 # Reading out the total number of spikes received from the spike detector
 # connected to the excitatory population and the inhibitory population.
 
-events_ex = espikes.get("n_events")
-events_in = ispikes.get("n_events")
+events_ex = espikes.n_events
+events_in = ispikes.n_events
 
 ###############################################################################
 # Calculation of the average firing rate of the excitatory and the inhibitory
@@ -285,3 +283,4 @@ print("Simulation time   : %.2f s" % sim_time)
 # Plot a raster of the excitatory neurons and a histogram.
 
 nest.raster_plot.from_device(espikes, hist=True)
+nest.raster_plot.show()

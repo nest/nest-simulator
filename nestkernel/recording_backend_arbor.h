@@ -71,7 +71,7 @@ public:
 
 private:
   void exchange_( std::vector< arb::shadow::spike >& );
-
+  void collect_and_exchange_spikes_();
   bool enrolled_;
   bool prepared_;
 

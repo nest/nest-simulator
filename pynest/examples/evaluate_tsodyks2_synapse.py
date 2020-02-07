@@ -121,12 +121,12 @@ nest.Connect(voltmeter[1], neuron[2])
 # Now simulate the standard STP protocol: a burst of spikes, followed by a
 # pause and a recovery response.
 
-nest.SetStatus(neuron[0], "I_e", 376.0)
+neuron[0].I_e = 376.0
 
 nest.Simulate(500.0)
-nest.SetStatus(neuron[0], "I_e", 0.0)
+neuron[0].I_e = 0.0
 nest.Simulate(500.0)
-nest.SetStatus(neuron[0], "I_e", 376.0)
+neuron[0].I_e = 376.0
 nest.Simulate(500.0)
 
 ###############################################################################
@@ -135,3 +135,4 @@ nest.Simulate(500.0)
 
 nest.voltage_trace.from_device(voltmeter[0])
 nest.voltage_trace.from_device(voltmeter[1])
+nest.voltage_trace.show()

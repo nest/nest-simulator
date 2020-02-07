@@ -50,7 +50,6 @@ See Also
 
 import nest
 import nest.voltage_trace
-import pylab
 from numpy import exp
 
 ###############################################################################
@@ -113,9 +112,9 @@ volts = nest.Create("voltmeter")
 # are configured using ``SetStatus``, which expects a list of node handles and
 # a parameter dictionary or a list of parameter dictionaries.
 
-nest.SetStatus(neurons, neuron_param)
-nest.SetStatus(dc_gen, {"amplitude": I0, "start": TIstart, "stop": TIend})
-nest.SetStatus(volts, {"label": "voltmeter", "interval": 1.})
+neurons.set(neuron_param)
+dc_gen.set(amplitude=I0, start=TIstart, stop=TIend)
+volts.set(label="voltmeter", interval=1.)
 
 ###############################################################################
 # Sixth, the ``dc_generator`` is connected to the first neuron
@@ -146,3 +145,4 @@ nest.Connect(neurons[0], neurons[1], syn_spec="syn")
 
 nest.Simulate(Tend)
 nest.voltage_trace.from_device(volts)
+nest.voltage_trace.show()

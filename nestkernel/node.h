@@ -52,6 +52,7 @@ namespace nest
 {
 class Model;
 class Archiving_Node;
+class TimeConverter;
 
 
 /**
@@ -268,6 +269,15 @@ public:
    *
    */
   virtual void calibrate() = 0;
+
+  /**
+   * Re-calculate time-based properties of the node.
+   * This function is called after a change in resolution.
+   */
+  virtual void
+  calibrate_time( const TimeConverter& tc )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to
@@ -663,11 +673,11 @@ public:
   virtual double get_LTD_value( double t );
 
   /**
-   * write the Kminus, nearest_neighbor_Kminus, and triplet_Kminus
+   * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
   * return the spike history for (t1,t2].

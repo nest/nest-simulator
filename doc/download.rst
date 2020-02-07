@@ -25,34 +25,20 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 Download the source code
 -------------------------
 
-* If you are compiling NEST from source, you can |link-pre|\ |version|\ |link-post|
-
-.. |link-pre| raw:: html
-
-    <a href="https://github.com/nest/nest-simulator/archive/v
-
-.. |link-post| raw:: html
-
-    .tar.gz">download the latest release here</a>
+* If you are compiling NEST from source, you can download the latest release here `<https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
 * Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`.
 
- |link-pregit|\ |version|\ |link-postgit|
-
-.. |link-pregit| raw:: html
-
 * Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-.. |link-postgit| raw:: html
-
-    ">Get the release notes here</a>
+* Get the release notes here `<https://github.com/nest/nest-simulator/releases/tag/v2.20.0>`_.
 
 * You can also test out the `latest developer version <https://github.com/nest/nest-simulator>`_ from GitHub.
 
 
 .. seealso::
 
-   Previous versions and associated release notes can be found at
+   Previous versions and associated release notes can be found a
    https://github.com/nest/nest-simulator/releases/
 
 .. _download_livemedia:
@@ -65,16 +51,7 @@ If you run **Windows**, this is the option for you OR if you just want to run NE
 After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
 
-* Download the |link-preova|\ |version|\ |link-postova|
-
-.. |link-preova| raw:: html
-
-    <a href="https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-
-
-.. |link-postova|  raw:: html
-
-     .ova">latest release of the NEST VM image</a>
-
+* Download the `latest release of the NEST VM image <https://nest-simulator.org/downloads/gplreleases/NEST_2.20.0_Virtual_Box_lubuntu_18.04.ova>`_
 * After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
 

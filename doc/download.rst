@@ -25,13 +25,13 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 Download the source code
 -------------------------
 
-* If you are compiling NEST from source, you can download the latest release here `<https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
+* If you are compiling NEST from source, you can download the latest release `here <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
 * Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`.
 
 * Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-* Get the release notes here `<https://github.com/nest/nest-simulator/releases/tag/v2.20.0>`_.
+* Get the release notes `here <https://github.com/nest/nest-simulator/releases/tag/v2.20.0>`_.
 
 * You can also test out the `latest developer version <https://github.com/nest/nest-simulator>`_ from GitHub.
 

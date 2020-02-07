@@ -38,8 +38,8 @@ Download the source code
 
 .. seealso::
 
-   Previous versions and associated release notes can be found a
-   https://github.com/nest/nest-simulator/releases/
+   Previous versions and associated release notes can be found at
+   `<https://github.com/nest/nest-simulator/releases/>`_
 
 .. _download_livemedia:
 

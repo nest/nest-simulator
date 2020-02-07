@@ -84,8 +84,10 @@ with open(junitxml_filename, "w+") as junitxml:
         try:
             eprint(script_name)
             output = check_output(test_cmd)
+            print(output)
         except subprocess.CalledProcessError as e:
             failing = True
+            print(e.output)
             eprint(e.output)
             with open(tmpfile, "w") as errfile:
                 errfile.write(failure_xml.format(script_name, repr(e.output)))

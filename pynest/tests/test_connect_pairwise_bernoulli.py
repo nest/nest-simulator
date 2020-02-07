@@ -29,6 +29,8 @@ from test_connect_parameters import TestParams
 
 class TestPairwiseBernoulli(TestParams):
 
+    __test__ = True
+
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli'
     p = 0.5

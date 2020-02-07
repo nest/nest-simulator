@@ -520,7 +520,7 @@ phase_seven() {
 
     if test ${PYTHON}; then
 
-        PYTEST_OPTS="-m pytest --tb=auto --disable-warnings"
+        PYTEST_OPTS="-m pytest --tb=auto --color=no --disable-warnings"
         cd "${PREFIX}/share/nest/tests/python"
 
         JUNITFILE="${REPORTDIR}"/pytest-serial.log

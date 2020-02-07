@@ -30,6 +30,8 @@ from test_connect_parameters import TestParams
 
 class TestSymmetricPairwiseBernoulli(TestParams):
 
+    __test__ = True
+
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 60

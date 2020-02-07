@@ -27,6 +27,8 @@ from test_connect_parameters import TestParams
 
 class TestOneToOne(TestParams):
 
+    __test__ = True
+
     # specify connection pattern
     rule = 'one_to_one'
     conn_dict = {'rule': rule}

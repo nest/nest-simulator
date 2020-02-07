@@ -30,6 +30,8 @@ from test_connect_parameters import TestParams
 @hf.nest.ll_api.check_stack
 class TestAllToAll(TestParams):
 
+    __test__ = True
+
     # specify connection pattern
     rule = 'all_to_all'
     conn_dict = {'rule': rule}

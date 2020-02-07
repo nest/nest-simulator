@@ -32,6 +32,8 @@ import test_connect_helpers as hf
 
 class TestParams(unittest.TestCase):
 
+    __test__ = False
+
     # Setting default parameter. These parameter might be overwritten
     # by the classes
     # testing one specific rule.

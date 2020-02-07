@@ -28,6 +28,8 @@ from test_connect_parameters import TestParams
 
 class TestFixedTotalNumber(TestParams):
 
+    __test__ = True
+
     # specify connection pattern and specific params
     rule = 'fixed_total_number'
     conn_dict = {'rule': rule}

@@ -70,12 +70,14 @@ failure_xml = """<?xml version="1.0" encoding="utf-8"?>\
 </testsuite>\
 """
 
+junitxml_filename = sys.argv[1]
+pytest_options = sys.argv[2]
 
-with open(sys.argv[1], "w+") as junitxml:
+with open(junitxml_filename, "w+") as junitxml:
     for script_name in scripts:
         script = os.path.join(script_dir, script_name)
         tmpfile = tempfile.mktemp(".xml")
-        pytest_cmd = "python {} --junitxml={}".format(sys.argv[2], tmpfile)
+        pytest_cmd = "python {} -v --junitxml={}".format(pytest_options, tmpfile)
         cmd = "sli -c '2 ({}) ({}) mpirun =only'".format(pytest_cmd, script)
         test_cmd = check_output(cmd)
 
@@ -86,9 +88,9 @@ with open(sys.argv[1], "w+") as junitxml:
             failing = True
             eprint(e.output)
             with open(tmpfile, "w") as errfile:
-                errfile.write(failure_xml.format(script_name, e.output))
+                errfile.write(failure_xml.format(script_name, repr(e.output)))
 
-        junitxml.write(open(tmpfile, "r").read())
+        junitxml.write(repr(open(tmpfile, "r").read()))
 
         if os.path.exists(tmpfile):
             os.remove(tmpfile)

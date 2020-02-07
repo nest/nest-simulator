@@ -28,6 +28,8 @@ from test_connect_parameters import TestParams
 
 class TestFixedOutDegree(TestParams):
 
+    __test__ = True
+
     # specify connection pattern and specific params
     rule = 'fixed_outdegree'
     conn_dict = {'rule': rule}

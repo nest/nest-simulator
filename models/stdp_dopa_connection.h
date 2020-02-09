@@ -92,7 +92,7 @@ Parameters:
                    A_minus will be the multiplier for depression only
                    if n - b is positive, where n is the instantenous
                    dopamine concentration in the volume transmitter.
-                   Conversely, if n - b is negative, A_plus will be
+                   Conversely, if n - b is negative, A_minus will be
                    the multiplier for potentiation.
  tau_plus  ms      STDP time constant for weight changes caused by
                    pre-before-post spike pairings.

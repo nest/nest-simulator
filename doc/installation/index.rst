@@ -33,7 +33,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        Debian users can install NEST via the Ubuntu PPA repository.
 
-       1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/pogo-dev-ubuntu-stable-disco.list`` by:
+       1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/nest-simulator-ubuntu-nest-XXX.list`` by:
 
        .. code-block:: bash
 
@@ -47,19 +47,21 @@ compile NEST from source, see section** :ref:`advanced_install`.
        .. code-block:: bash
 
           sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
-                           --recv-keys CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
+                           --recv-keys 0CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
           sudo apt update
           sudo apt source --build nest
 
        4. Install any missing dependencies, if ``apt`` tells you so.
 
-       5. Install the ready Debian package after the rebuild:
+       5. After installing the dependencies, enter ``sudo apt source --build nest`` again.
+
+       6. Install the ready Debian package after the rebuild:
 
        ..  code-block:: bash
 
            sudo dpkg --install nest-simulator-x.y.z~NUMBER~ubuntu20.04.1_amd64.deb
 
-       6. Test the package:
+       7. Test the package:
 
        .. code-block:: bash
 

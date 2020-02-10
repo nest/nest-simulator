@@ -95,6 +95,9 @@ with open(junitxml_filename, "w+") as junitxml:
 
         junitxml.write(repr(open(tmpfile, "r").read()))
 
+        print(open(tmpfile).read())
+        eprint(open(tmpfile).read())
+
         if os.path.exists(tmpfile):
             os.remove(tmpfile)
 

@@ -83,8 +83,9 @@ with open(junitxml_filename, "w+") as junitxml:
 
         try:
             eprint(script_name)
+            eprint(test_cmd)
             output = check_output(test_cmd)
-            print(output)
+            eprint(output)
         except subprocess.CalledProcessError as e:
             failing = True
             print(e.output)

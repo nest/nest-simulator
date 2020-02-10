@@ -274,6 +274,62 @@ nest::SourceTable::resize_sources( const thread tid )
 }
 
 bool
+nest::SourceTable::source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source )
+{
+  if ( source.is_processed() or source.is_disabled() )
+  {
+    // looks like we've processed this already, let's continue
+    return false;
+  }
+
+  const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
+
+  // determine whether this thread is responsible for this part of
+  // the MPI buffer; if not we just continue with the next iteration
+  // of the loop
+  if ( source_rank < rank_start or source_rank >= rank_end )
+  {
+    return false;
+  }
+
+  return true; // if we reach this we should process it
+}
+
+bool
+nest::SourceTable::next_entry_has_same_source( const SourceTablePosition& current_position,
+  const Source& current_source ) const
+{
+  if ( ( current_position.lcid + 1
+           < static_cast< long >( sources_[ current_position.tid ][ current_position.syn_id ].size() )
+         and sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid + 1 ].get_node_id()
+           == current_source.get_node_id() ) )
+  {
+    return true;
+  }
+
+  return false;
+}
+
+bool
+nest::SourceTable::previous_entry_has_same_source( const SourceTablePosition& current_position,
+  const Source& current_source ) const
+{
+  // decrease the position without returning a TargetData if the
+  // entry preceding this entry has the same source, but only if
+  // the preceding entry was not processed yet
+  if ( ( current_position.lcid - 1 >= 0 )
+    and ( sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ].get_node_id()
+          == current_source.get_node_id() )
+    and ( not sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ]
+                .is_processed() ) )
+  {
+    return true;
+  }
+
+  return false;
+}
+
+bool
 nest::SourceTable::get_next_target_data( const thread tid,
   const thread rank_start,
   const thread rank_end,
@@ -286,8 +342,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
   // TargetData object or we have reached the end of the sources table
   while ( true )
   {
-    current_position.wrap_position( sources_ );
-    if ( current_position.is_at_end() )
+    current_position.seek_to_next_valid_index( sources_ );
+    if ( current_position.is_invalid() )
     {
       return false; // reached the end of the sources table
     }
@@ -296,21 +352,9 @@ nest::SourceTable::get_next_target_data( const thread tid,
     const Source& const_current_source =
       sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
 
-    if ( const_current_source.is_processed() or const_current_source.is_disabled() )
+    if ( not source_should_be_processed_( rank_start, rank_end, const_current_source ) )
     {
-      // looks like we've processed this already, let's continue
-      --current_position.lcid;
-      continue;
-    }
-
-    source_rank = kernel().mpi_manager.get_process_id_of_node_id( const_current_source.get_node_id() );
-
-    // determine whether this thread is responsible for this part of
-    // the MPI buffer; if not we just continue with the next iteration
-    // of the loop
-    if ( source_rank < rank_start or source_rank >= rank_end )
-    {
-      --current_position.lcid;
+      current_position.decrease();
       continue;
     }
 
@@ -320,33 +364,31 @@ nest::SourceTable::get_next_target_data( const thread tid,
     current_source.set_processed( true );
 
     // we need to set a marker stating whether the entry following this
-    // entry, if existent, has the same source; start by assuming it
-    // has a different source, only change if necessary
+    // entry, if existent, has the same source
     kernel().connection_manager.set_source_has_more_targets(
-      current_position.tid, current_position.syn_id, current_position.lcid, false );
-    if ( ( current_position.lcid + 1
-             < static_cast< long >( sources_[ current_position.tid ][ current_position.syn_id ].size() )
-           and sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid + 1 ].get_node_id()
-             == current_source.get_node_id() ) )
-    {
-      kernel().connection_manager.set_source_has_more_targets(
-        current_position.tid, current_position.syn_id, current_position.lcid, true );
-    }
+      current_position.tid, current_position.syn_id, current_position.lcid,
+      next_entry_has_same_source( current_position, current_source ) );
 
-    // decrease the position without returning a TargetData if the
-    // entry preceding this entry has the same source, but only if
-    // the preceding entry was not processed yet
-    if ( ( current_position.lcid - 1 >= 0 )
-      and ( sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ].get_node_id()
-            == current_source.get_node_id() )
-      and ( not sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ]
-                  .is_processed() ) )
+    // no need to communicate this entry if the previous entry has the
+    // same source
+    if ( previous_entry_has_same_source( current_position, current_source ) )
     {
-      --current_position.lcid;
+      current_position.decrease();
       continue;
     }
-    // otherwise we return a valid TargetData
-    else
+
+    // reaching this means we found a valid TargetData
+
+    // set the source rank
+    source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
+
+    // set values of next_target_data
+    next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
+    next_target_data.set_source_tid(
+      kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
+    next_target_data.reset_marker();
+
+    if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
     {
       // set values of next_target_data
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
@@ -354,33 +396,32 @@ nest::SourceTable::get_next_target_data( const thread tid,
         kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
       next_target_data.reset_marker();
 
-      if ( current_source.is_primary() )
-      {
-        next_target_data.set_is_primary( true );
-        // we store the thread index of the source table, not our own tid!
-        TargetDataFields& target_fields = next_target_data.target_data;
-        target_fields.set_tid( current_position.tid );
-        target_fields.set_syn_id( current_position.syn_id );
-        target_fields.set_lcid( current_position.lcid );
-      }
-      else
-      {
-        next_target_data.set_is_primary( false );
+      next_target_data.set_is_primary( true );
 
-        const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
-          current_position.tid, current_position.syn_id, current_position.lcid );
-
-        // convert receive buffer position to send buffer position
-        // according to buffer layout of MPIAlltoall
-        const size_t send_buffer_pos =
-          kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
-
-        SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
-        secondary_fields.set_send_buffer_pos( send_buffer_pos );
-        secondary_fields.set_syn_id( current_position.syn_id );
-      }
-      --current_position.lcid;
-      return true; // found a valid entry
+      // we store the thread index of the source table, not our own tid!
+      TargetDataFields& target_fields = next_target_data.target_data;
+      target_fields.set_tid( current_position.tid );
+      target_fields.set_syn_id( current_position.syn_id );
+      target_fields.set_lcid( current_position.lcid );
     }
+    else // secondary connection, e.g., gap junctions
+    {
+      next_target_data.set_is_primary( false );
+
+      const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
+        current_position.tid, current_position.syn_id, current_position.lcid );
+
+      // convert receive buffer position to send buffer position
+      // according to buffer layout of MPIAlltoall
+      const size_t send_buffer_pos =
+        kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
+
+      SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
+      secondary_fields.set_send_buffer_pos( send_buffer_pos );
+      secondary_fields.set_syn_id( current_position.syn_id );
+    }
+
+    current_position.decrease();
+    return true; // found a valid entry
   }
 }

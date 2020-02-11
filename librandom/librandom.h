@@ -63,16 +63,14 @@ struct BaseRDist
     
   virtual double drand()
   {
-    std::string msg = String::compose( "Function drand() not implemented for "
-				       "distribution '%1'", name_ );
+    std::string msg = String::compose( "Function drand() not implemented for distribution '%1'", name_ );
     throw KernelException( msg.c_str() );
   }
 
 //TODO: lrand()
   virtual int irand()
   {
-    std::string msg = String::compose( "Function irand() not implemented for "
-				       "distribution '%1'", name_ );
+    std::string msg = String::compose( "Function irand() not implemented for distribution '%1'", name_ );
     throw KernelException( msg.c_str() );
   }
 

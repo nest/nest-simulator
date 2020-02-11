@@ -30,10 +30,13 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
+// C++ includes
+#include <random>
+
 void
 nest::RandomManager::initialize()
 {
-  register_rng_type< random::MT19937 >( "mt19937" );
+  register_rng_type< random::RNG<std::mt19937_64> >( "mt19937" );
 //  register_rng_type< random::Philox >( "philox" );
 //  register_rng_type< random::Threefry >( "threefry" );
   rng_type_ = Name("threefry");
@@ -54,7 +57,7 @@ void
 nest::RandomManager::finalize()
 {
   delete_rngs();
-    
+
   for (auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
   {
     delete *rng;

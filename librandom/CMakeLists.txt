@@ -28,7 +28,6 @@
 set( random_sources
     librandom.h
     rng.h rng.cpp
-    rdist.h rdist.cpp
     )
 
 add_library( random ${random_sources} )

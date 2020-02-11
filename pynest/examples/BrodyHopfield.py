@@ -30,7 +30,7 @@ oscillation. This phenomenon is shown in Fig. 1 of [1]_
 Neurons receive a weak 35 Hz oscillation, a gaussian noise current
 and an increasing DC. The time-locking capability is shown to
 depend on the input current given. The result is then plotted using
-pylab. All parameters are taken from the above paper.
+matplotlib. All parameters are taken from the above paper.
 
 References
 ~~~~~~~~~~~~~
@@ -87,8 +87,8 @@ noise.set(noiseparams)
 # `bias_begin`, the last neuron with amplitude `bias_end`.
 
 neurons.set(neuronparams)
-neurons.set({'I_e': [(n * (bias_end - bias_begin) / N + bias_begin)
-                     for n in range(1, len(neurons) + 1)]})
+neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin)
+               for n in range(1, len(neurons) + 1)]
 
 ###############################################################################
 # Connect alternating current and noise generators as well as
@@ -107,3 +107,4 @@ nest.Simulate(T)
 # Plot the raster plot of the neuronal spiking activity.
 
 nest.raster_plot.from_device(sd, hist=True)
+nest.raster_plot.show()

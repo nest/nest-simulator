@@ -163,15 +163,14 @@ for i in range(M):
 
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
-nest.SetStatus(nest_mm, {'record_from': ['n_events', 'mean'],
-                         'interval': dt_rec})
+nest_mm.set(record_from=['n_events', 'mean'], interval=dt_rec)
 nest.Connect(nest_mm, nest_pops)
 
 # monitor the output using a spike detector
 nest_sd = []
 for i in range(M):
     nest_sd.append(nest.Create('spike_detector'))
-    nest.SetStatus(nest_sd[i], {'time_in_steps': True})
+    nest_sd[i].time_in_steps = True
     nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
     nest.Connect(nest_pops[i], nest_sd[i])
 
@@ -187,11 +186,10 @@ step = np.hstack((np.zeros((M, 1)), step))
 nest_stepcurrent = nest.Create('step_current_generator', M)
 # set the parameters for the step currents
 for i in range(M):
-    nest.SetStatus(nest_stepcurrent[i], {
-        'amplitude_times': tstep[i] + t0,
-        'amplitude_values': step[i] * g_L[i],
-        'origin': t0,
-        'stop': t_end})
+    nest_stepcurrent[i].set(amplitude_times=tstep[i] + t0,
+                            amplitude_values=step[i] * g_L[i],
+                            origin=t0,
+                            stop=t_end)
     pop_ = nest_pops[i]
     nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
 
@@ -209,9 +207,9 @@ Abar = np.ones_like(A_N) * np.nan
 
 # simulate 1 step longer to make sure all t are simulated
 nest.Simulate(t_end + dt)
-data_mm = nest_mm.get('events')
+data_mm = nest_mm.events
 for i, nest_i in enumerate(nest_pops):
-    a_i = data_mm['mean'][data_mm['senders'] == nest_i.get('global_id')]
+    a_i = data_mm['mean'][data_mm['senders'] == nest_i.global_id]
     a = a_i / N[i] / dt
     min_len = np.min([len(a), len(Abar)])
     Abar[:min_len, i] = a[:min_len]
@@ -257,23 +255,20 @@ for k in range(M):
 
 # set single neuron properties
 for i in range(M):
-    nest.SetStatus(nest_pops[i], {
-        'C_m': C_m,
-        'I_e': mu[i] * g_L[i],
-        'lambda_0': c[i],  # in Hz!
-        'Delta_V': Delta_u[i],
-        'g_L': g_L[i],
-        'tau_sfa': tau_theta[i],
-        'q_sfa': J_theta[i] / tau_theta[i],  # [J_theta]= mV*ms -> [q_sfa]=mV
-        'V_T_star': V_th[i],
-        'V_reset': V_reset[i],
-        't_ref': t_ref[i],
-        'tau_syn_ex': max([tau_ex, dt]),
-        'tau_syn_in': max([tau_in, dt]),
-        'E_L': 0.,
-        'V_m': 0.
-    })
-
+    nest_pops[i].set(C_m=C_m,
+                     I_e=mu[i] * g_L[i],
+                     lambda_0=c[i],
+                     Delta_V=Delta_u[i],
+                     g_L=g_L[i],
+                     tau_sfa=tau_theta[i],
+                     q_sfa=J_theta[i] / tau_theta[i],
+                     V_T_star=V_th[i],
+                     V_reset=V_reset[i],
+                     t_ref=t_ref[i],
+                     tau_syn_ex=max([tau_ex, dt]),
+                     tau_syn_in=max([tau_in, dt]),
+                     E_L=0.,
+                     V_m=0.)
 
 # connect the populations
 for i, nest_i in enumerate(nest_pops):
@@ -307,7 +302,7 @@ Nrecord = [5, 0]    # for each population "i" the first Nrecord[i] neurons are r
 nest_mm_Vm = []
 for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
-    nest_mm_Vm[i].set({'record_from': ['V_m'], 'interval': dt_rec})
+    nest_mm_Vm[i].set(record_from=['V_m'], interval=dt_rec)
     if Nrecord[i] != 0:
         nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]])
 
@@ -320,9 +315,14 @@ for i, nest_i in enumerate(nest_pops):
 nest_stepcurrent = nest.Create('step_current_generator', M)
 # set the parameters for the step currents
 for i in range(M):
-    nest_stepcurrent[i].set({
-        'amplitude_times': tstep[i] + t0,
-        'amplitude_values': step[i] * g_L[i], 'origin': t0, 'stop': t_end})
+    nest_stepcurrent[i].set(amplitude_times=tstep[i] + t0,
+                            amplitude_values=step[i] * g_L[i],
+                            origin=t0,
+                            stop=t_end)
+    nest_stepcurrent[i].set(amplitude_times=tstep[i] + t0,
+                            amplitude_values=step[i] * g_L[i],
+                            origin=t0,
+                            stop=t_end)
     # optionally a stopping time may be added by: 'stop': sim_T + t0
     pop_ = nest_pops[i]
     nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})

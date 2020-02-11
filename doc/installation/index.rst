@@ -115,7 +115,7 @@ provide containerized versions of NEST in several formats:
            cd my_nest_scripts
 
        3. Run the Docker container. Replace the ``<version>`` with one
-          of the latest NEST versions (e.g., ``2.18.0``) or use
+          of the latest NEST versions (e.g., ``2.20.0``) or use
           ``latest`` for the most recent build from the source code.
 
        .. code-block:: bash
@@ -229,7 +229,7 @@ these instructions.**
 
    .. tab::  Ubuntu/Debian
 
-       Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.18.0.tar.gz>`_.
+       Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
        Follow instructions for :doc:`linux_install` and take a look at our :doc:`install_options`.
 

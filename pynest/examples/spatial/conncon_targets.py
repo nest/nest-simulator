@@ -29,8 +29,9 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import pylab
 import nest
+import matplotlib.pyplot as plt
+import numpy as np
 
 nest.ResetKernel()
 
@@ -53,8 +54,8 @@ nest.Connect(a, b,
 
 #####################################################################
 # first, clear existing figure, get current figure
-pylab.clf()
-fig = pylab.gcf()
+plt.clf()
+fig = plt.gcf()
 
 # plot targets of two source neurons into same figure, with mask
 for src_index in [30 * 15 + 15, 0]:
@@ -63,13 +64,13 @@ for src_index in [30 * 15 + 15, 0]:
     nest.PlotTargets(src, b, mask=cdict['mask'], fig=fig)
 
 # beautify
-pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
-pylab.grid(True)
-pylab.axis([-2.0, 2.0, -2.0, 2.0])
-pylab.axes().set_aspect('equal', 'box')
-pylab.title('Connection targets')
+plt.axes().set_xticks(np.arange(-1.5, 1.55, 0.5))
+plt.axes().set_yticks(np.arange(-1.5, 1.55, 0.5))
+plt.grid(True)
+plt.axis([-2.0, 2.0, -2.0, 2.0])
+plt.axes().set_aspect('equal', 'box')
+plt.title('Connection targets')
 
-pylab.show()
+plt.show()
 
-# pylab.savefig('conncon_targets.pdf')
+# plt.savefig('conncon_targets.pdf')

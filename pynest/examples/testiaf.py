@@ -36,7 +36,7 @@ starts to recover.
 # First, we import all necessary modules for simulation and plotting
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and
@@ -62,7 +62,7 @@ def build_network(dt):
     nest.SetKernelStatus({"local_num_threads": 1, "resolution": dt})
 
     neuron = nest.Create('iaf_psc_alpha')
-    nest.SetStatus(neuron, "I_e", 376.0)
+    neuron.I_e = 376.0
 
     vm = nest.Create('voltmeter')
     sd = nest.Create('spike_detector')
@@ -94,18 +94,20 @@ for dt in [0.1, 0.5, 1.0]:
 # the values for the membrane potential are stored in potential and the
 # corresponding times in the times array
 
-    potentials = nest.GetStatus(vm, "events")[0]["V_m"]
-    times = nest.GetStatus(vm, "events")[0]["times"]
+    potentials = vm.get('events', 'V_m')
+    times = vm.get('events', 'times')
 
 ###########################################################################
-# Using the pylab library the voltage trace is plotted over time
+# Using the matplotlib library the voltage trace is plotted over time
 
-    pylab.plot(times, potentials, label="dt=%.2f" % dt)
-    print("  Number of spikes: {0}".format(nest.GetStatus(sd, "n_events")[0]))
+    plt.plot(times, potentials, label="dt=%.2f" % dt)
+    print("  Number of spikes: {0}".format(sd.n_events))
 
 ###########################################################################
 # Finally the axis are labelled and a legend is generated
 
-    pylab.legend(loc=3)
-    pylab.xlabel("time (ms)")
-    pylab.ylabel("V_m (mV)")
+    plt.legend(loc=3)
+    plt.xlabel("time (ms)")
+    plt.ylabel("V_m (mV)")
+
+plt.show()

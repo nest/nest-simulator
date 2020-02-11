@@ -90,8 +90,7 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
       )
 
-  file( GLOB pynest_random "nest/random/*" )
-  install( FILES ${pynest_random}
+  install( DIRECTORY nest/random/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/random
       )
 

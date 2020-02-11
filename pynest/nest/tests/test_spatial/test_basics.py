@@ -253,11 +253,12 @@ class BasicsTestCase(unittest.TestCase):
 
         # single location at center
         n = nest.FindNearestElement(l, (0., 0.))
-        self.assertEqual(n, nest.NodeCollection((5,)))
+        self.assertEqual(n, l[4])
 
         # two locations, one layer
         n = nest.FindNearestElement(l, ((0., 0.), (1., 1.)))
-        self.assertEqual(n, nest.NodeCollection((5, 7)))
+        self.assertEqual(n[0], l[4])
+        self.assertEqual(n[1], l[6])
 
         # several closest locations, not all
         n = nest.FindNearestElement(l, (0.5, 0.5))
@@ -266,15 +267,16 @@ class BasicsTestCase(unittest.TestCase):
 
         # several closest locations, all
         n = nest.FindNearestElement(l, (0.5, 0.5), find_all=True)
-        self.assertEqual(len(n), 1)
-        self.assertEqual(n[0], nest.NodeCollection((4, 5, 7, 8)))
+        self.assertEqual(len(n), 4)
+        self.assertEqual(n[0], l[3])
+        self.assertEqual(n[3], l[7])
 
         # complex case
         n = nest.FindNearestElement(l, ((0., 0.), (0.5, 0.5)),
                                     find_all=True)
         self.assertEqual(len(n), 2)
-        self.assertEqual(n[0], nest.NodeCollection((5,)))
-        self.assertEqual(n[1], nest.NodeCollection((4, 5, 7, 8)))
+        self.assertEqual(n[0], [l[4]])
+        self.assertEqual(n[1], [l[3], l[4], l[6], l[7]])
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_GetCenterElement(self):

@@ -27,27 +27,28 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import pylab
 import nest
+import matplotlib.pyplot as plt
+import numpy as np
 
 for ctr in [(0.0, 0.0), (-2.0, 2.0), (0.5, 1.0)]:
-    pylab.figure()
+    plt.figure()
     nest.ResetKernel()
 
     l1 = nest.Create('iaf_psc_alpha',
                      positions=nest.spatial.grid(shape=[4, 3], extent=[2., 1.5],
                                                  center=ctr))
 
-    nest.PlotLayer(l1, nodesize=50, fig=pylab.gcf())
+    nest.PlotLayer(l1, nodesize=50, fig=plt.gcf())
 
     # beautify
-    pylab.axis([-3, 3, -3, 3])
-    pylab.axes().set_aspect('equal', 'box')
-    pylab.axes().set_xticks(pylab.arange(-3.0, 3.1, 1.0))
-    pylab.axes().set_yticks(pylab.arange(-3.0, 3.1, 1.0))
-    pylab.grid(True)
-    pylab.xlabel('4 Columns, Extent: 1.5, Center: %.1f' % ctr[0])
-    pylab.ylabel('2 Rows, Extent: 1.0, Center: %.1f' % ctr[1])
+    plt.axis([-3, 3, -3, 3])
+    plt.axes().set_aspect('equal', 'box')
+    plt.axes().set_xticks(np.arange(-3.0, 3.1, 1.0))
+    plt.axes().set_yticks(np.arange(-3.0, 3.1, 1.0))
+    plt.grid(True)
+    plt.xlabel('4 Columns, Extent: 1.5, Center: %.1f' % ctr[0])
+    plt.ylabel('2 Rows, Extent: 1.0, Center: %.1f' % ctr[1])
 
-    pylab.show()
-    # pylab.savefig('grid_iaf_oc_{}_{}.png'.format(ctr[0], ctr[1]))
+    plt.show()
+    # plt.savefig('grid_iaf_oc_{}_{}.png'.format(ctr[0], ctr[1]))

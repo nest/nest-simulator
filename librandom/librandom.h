@@ -44,13 +44,14 @@ struct BaseRNG
 {
   virtual int operator()() = 0;
   virtual BaseRNG* clone( long seed ) = 0;
+  virtual double drand() = 0;
   virtual double min() = 0;
   virtual double max() = 0;
 };
 
 struct BaseRDist
 {
-  BaseRDist() = delete;    
+  BaseRDist() = delete;
   BaseRDist( Name name )
     : name_( name )
   {
@@ -60,7 +61,7 @@ struct BaseRDist
   virtual void set_status( const DictionaryDatum& ) = 0;
 
   virtual BaseRDist* clone() = 0;
-    
+
   virtual double drand()
   {
     std::string msg = String::compose( "Function drand() not implemented for distribution '%1'", name_ );

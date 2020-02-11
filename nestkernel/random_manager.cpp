@@ -23,29 +23,21 @@
 #include "random_manager.h"
 
 // Includes from librandom:
-#include "clipped_dist.h"
 #include "rng.h"
-#include "rdist.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
+// C++ includes
+#include <random>
+
 void
 nest::RandomManager::initialize()
 {
-  register_rng_type< random::MT19937 >( "mt19937" );
+  register_rng_type< random::RNG<std::mt19937_64> >( "mt19937" );
 //  register_rng_type< random::Philox >( "philox" );
 //  register_rng_type< random::Threefry >( "threefry" );
   rng_type_ = Name("threefry");
-
-  register_rdist_type< random::binomial >( "binomial", true );
-//  register_rdist_type< random::exponential >( "exponential", true );
-//  register_rdist_type< random::gamma >( "gamma", true );
-//  register_rdist_type< random::lognormal >( "lognormal", true );
-//  register_rdist_type< random::normal >( "normal", true );
-//  register_rdist_type< random::poisson >( "poisson", true );
-//  register_rdist_type< random::uniform_int >( "uniform_int", false );
-//  register_rdist_type< random::uniform_real >( "uniform_real", false );
 
   create_rngs_();
 }
@@ -54,7 +46,7 @@ void
 nest::RandomManager::finalize()
 {
   delete_rngs();
-    
+
   for (auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
   {
     delete *rng;
@@ -149,13 +141,7 @@ nest::RandomManager::delete_rngs_()
   {
     index tid = kernel().vp_manager.get_thread_id();
     delete trngs_[ tid ];
-  }  
-}
-
-void
-nest::RandomManager::create_rdist_( index rdist_id )
-{
-  // need some kind of lockpointer object to return the clone in
+  }
 }
 
 template< class RNG >
@@ -164,21 +150,4 @@ nest::RandomManager::register_rng_type_( Name name )
 {
   rngdict_->insert( name, rng_types_.size() );
   rng_types_.push_back( new RNG {} );
-}
-
-template< class RDist >
-void
-nest::RandomManager::register_rdist_type_( Name name, bool register_clipped )
-{
-  rdistdict_.insert( name, rdict_types_.size() );
-  rdist_types_.push_back( new RDist {} );
-
-  if ( register_clipped )
-  {
-    rdistdict_.insert( name.toString() + "_clipped", rdict_types_.size() );
-    rdist_types_.push_back( random::ClippedRedrawDist< RDist > {} );
-
-    rdistdict_.insert( name.toString() + "_clipped_to_boundary", rdict_types_.size() );
-    rdist_types_.push_back( random::ClippedToBoundaryDist< RDist > {} );
-  }
 }

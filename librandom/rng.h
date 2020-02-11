@@ -33,17 +33,20 @@
 // C++ includes
 #include <random>
 
+
 namespace nest {
 
 namespace random {
 
-class MT19937 : public BaseRNG
+template<typename RNG_TYPE_ >
+class RNG : public BaseRNG
 {
-  MT19937() {};
+  RNG() {};
 
-  MT19937( std::mt19937_64 rng )
+  RNG( RNG_TYPE_ rng )
     : rng_( rng )
-  {  
+    , uniform_dist_0_1_(0.0, 1.0)
+  {
   }
 
 public:
@@ -51,26 +54,31 @@ public:
   {
     return rng_();
   }
-    
+
   inline BaseRNG* clone( long seed )
   {
-    return new MT19937 { std::mt19937_64 { seed } };
+    return new RNG { RNG_TYPE_ { seed } };
+  }
+
+  inline double drand()
+  {
+    return uniform_dist_0_1_(rng_);
   }
 
   inline double min()
   {
     return rng_.min();
   }
-      
+
   inline double max()
   {
     return rng_.max();
   }
 
 private:
-  std::mt19937_64 rng_;
+  RNG_TYPE_ rng_;
+  std::uniform_real_distribution<> uniform_dist_0_1_;
 };
-
 
 //class Philox : public BaseRNG
 //{

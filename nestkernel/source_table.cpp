@@ -310,6 +310,47 @@ nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& c
     and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
 }
 
+void
+nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& current_position,
+  const Source& current_source,
+  TargetData& next_target_data ) const
+{
+  const auto node_id = current_source.get_node_id();
+
+  // set values of next_target_data
+  next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( node_id ) );
+  next_target_data.set_source_tid(
+    kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) ) );
+  next_target_data.reset_marker();
+
+  if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
+  {
+    next_target_data.set_is_primary( true );
+
+    // we store the thread index of the source table, not our own tid!
+    TargetDataFields& target_fields = next_target_data.target_data;
+    target_fields.set_tid( current_position.tid );
+    target_fields.set_syn_id( current_position.syn_id );
+    target_fields.set_lcid( current_position.lcid );
+  }
+  else // secondary connection, e.g., gap junctions
+  {
+    next_target_data.set_is_primary( false );
+
+    const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
+      current_position.tid, current_position.syn_id, current_position.lcid );
+
+    // convert receive buffer position to send buffer position
+    // according to buffer layout of MPIAlltoall
+    const size_t send_buffer_pos = kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events(
+      recv_buffer_pos, kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() ) );
+
+    SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
+    secondary_fields.set_send_buffer_pos( send_buffer_pos );
+    secondary_fields.set_syn_id( current_position.syn_id );
+  }
+}
+
 bool
 nest::SourceTable::get_next_target_data( const thread tid,
   const thread rank_start,
@@ -358,49 +399,10 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // reaching this means we found an entry that should be
     // communicated via MPI, so we prepare to return the relevant data
 
-    const auto node_id = current_source.get_node_id();
-
     // set the source rank
-    source_rank = kernel().mpi_manager.get_process_id_of_node_id( node_id );
+    source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
 
-    // set values of next_target_data
-    next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( node_id ) );
-    next_target_data.set_source_tid(
-      kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
-    next_target_data.reset_marker();
-
-    if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
-    {
-      // set values of next_target_data
-      next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
-      next_target_data.set_source_tid(
-        kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
-      next_target_data.reset_marker();
-
-      next_target_data.set_is_primary( true );
-
-      // we store the thread index of the source table, not our own tid!
-      TargetDataFields& target_fields = next_target_data.target_data;
-      target_fields.set_tid( current_position.tid );
-      target_fields.set_syn_id( current_position.syn_id );
-      target_fields.set_lcid( current_position.lcid );
-    }
-    else // secondary connection, e.g., gap junctions
-    {
-      next_target_data.set_is_primary( false );
-
-      const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position(
-        current_position.tid, current_position.syn_id, current_position.lcid );
-
-      // convert receive buffer position to send buffer position
-      // according to buffer layout of MPIAlltoall
-      const size_t send_buffer_pos =
-        kernel().mpi_manager.recv_buffer_pos_to_send_buffer_pos_secondary_events( recv_buffer_pos, source_rank );
-
-      SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
-      secondary_fields.set_send_buffer_pos( send_buffer_pos );
-      secondary_fields.set_syn_id( current_position.syn_id );
-    }
+    populate_target_data_fields_( current_position, current_source, next_target_data );
 
     // we are about to return a valid entry, so mark it as processed
     current_source.set_processed( true );

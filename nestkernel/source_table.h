@@ -118,6 +118,10 @@ private:
   bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
     const Source& current_source ) const;
 
+  void populate_target_data_fields_( const SourceTablePosition& current_position,
+    const Source& current_source,
+    TargetData& next_target_data ) const;
+
 public:
   SourceTable();
   ~SourceTable();

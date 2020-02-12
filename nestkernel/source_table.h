@@ -94,10 +94,27 @@ private:
    */
   static const size_t min_deleted_elements_ = 1000000;
 
+
+  /**
+   * Returns whether this Source object should be considered when
+   * constructing MPI buffers for communicating connections. Returns
+   * false if i) this entry was already processed, or ii) this entry
+   * is disabled (e.g., by structural plastcity) or iii) the reading
+   * thread is not responsible for the particular part of the MPI
+   * buffer where this entry would be written.
+   */
   bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const;
 
+  /**
+   * Returns true if the following entry in the SourceTable has the
+   * same source gid.
+   */
   bool next_entry_has_same_source_( const SourceTablePosition& current_position, const Source& current_source ) const;
 
+  /**
+   * Returns true if the previous entry in the SourceTable has the
+   * same source gid.
+   */
   bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
     const Source& current_source ) const;
 

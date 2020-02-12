@@ -296,7 +296,7 @@ nest::SourceTable::source_should_be_processed_( const thread rank_start, const t
 }
 
 bool
-nest::SourceTable::next_entry_has_same_source( const SourceTablePosition& current_position,
+nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
   if ( ( current_position.lcid + 1
@@ -311,7 +311,7 @@ nest::SourceTable::next_entry_has_same_source( const SourceTablePosition& curren
 }
 
 bool
-nest::SourceTable::previous_entry_has_same_source( const SourceTablePosition& current_position,
+nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
   // decrease the position without returning a TargetData if the
@@ -367,11 +367,11 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // entry, if existent, has the same source
     kernel().connection_manager.set_source_has_more_targets(
       current_position.tid, current_position.syn_id, current_position.lcid,
-      next_entry_has_same_source( current_position, current_source ) );
+      next_entry_has_same_source_( current_position, current_source ) );
 
     // no need to communicate this entry if the previous entry has the
     // same source
-    if ( previous_entry_has_same_source( current_position, current_source ) )
+    if ( previous_entry_has_same_source_( current_position, current_source ) )
     {
       current_position.decrease();
       continue;

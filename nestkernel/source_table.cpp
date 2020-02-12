@@ -290,34 +290,24 @@ bool
 nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
-  if ( ( current_position.lcid + 1
-           < static_cast< long >( sources_[ current_position.tid ][ current_position.syn_id ].size() )
-         and sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid + 1 ].get_node_id()
-           == current_source.get_node_id() ) )
-  {
-    return true;
-  }
+  const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
+  const size_t next_lcid = current_position.lcid + 1;
 
-  return false;
+  return ( next_lcid < local_sources.size()
+	   and local_sources[ next_lcid ].get_node_id() == current_source.get_node_id() );
 }
 
 bool
 nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
-  // decrease the position without returning a TargetData if the
-  // entry preceding this entry has the same source, but only if
-  // the preceding entry was not processed yet
-  if ( ( current_position.lcid - 1 >= 0 )
-    and ( sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ].get_node_id()
-          == current_source.get_node_id() )
-    and ( not sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid - 1 ]
-                .is_processed() ) )
-  {
-    return true;
-  }
+  const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
+  const long previous_lcid = current_position.lcid - 1;  // needs to be a signed type such that negative
+                                                         // values can signal invalid indices
 
-  return false;
+  return ( previous_lcid >= 0
+	   and not local_sources[ previous_lcid ].is_processed()
+	   and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
 }
 
 bool

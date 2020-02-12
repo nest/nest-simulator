@@ -350,8 +350,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     {
       // set values of next_target_data
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
-      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
+      next_target_data.set_source_tid(
+        kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
       next_target_data.reset_marker();
 
       if ( current_source.is_primary() )

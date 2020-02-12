@@ -340,8 +340,7 @@ NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
 {
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
-  size_t rank_first_node =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
+  size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
   size_t offset = ( rank - rank_first_node + num_processes ) % num_processes;
   if ( offset > size() ) // Too few node IDs to be shared among all MPI processes.
   {

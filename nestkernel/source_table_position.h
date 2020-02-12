@@ -132,14 +132,7 @@ SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< B
 inline bool
 SourceTablePosition::is_invalid() const
 {
-  if ( tid < 0 and syn_id < 0 and lcid < 0 )
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return ( tid < 0 and syn_id < 0 and lcid < 0 );
 }
 
 inline void

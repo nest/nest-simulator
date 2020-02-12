@@ -274,16 +274,17 @@ nest::SourceTable::resize_sources( const thread tid )
 }
 
 bool
-nest::SourceTable::source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const
+nest::SourceTable::source_should_be_processed_( const thread rank_start,
+  const thread rank_end,
+  const Source& source ) const
 {
   const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
-  return not ( source.is_processed()
-	       or source.is_disabled()
-	       // is this thread responsible for this part of the MPI
-	       // buffer?
-	       or source_rank < rank_start
-	       or rank_end <= source_rank );
+  return not( source.is_processed() or source.is_disabled()
+           // is this thread responsible for this part of the MPI
+           // buffer?
+           or source_rank < rank_start
+           or rank_end <= source_rank );
 }
 
 bool
@@ -293,8 +294,8 @@ nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& curre
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
   const size_t next_lcid = current_position.lcid + 1;
 
-  return ( next_lcid < local_sources.size()
-	   and local_sources[ next_lcid ].get_node_id() == current_source.get_node_id() );
+  return (
+    next_lcid < local_sources.size() and local_sources[ next_lcid ].get_node_id() == current_source.get_node_id() );
 }
 
 bool
@@ -302,12 +303,11 @@ nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& c
   const Source& current_source ) const
 {
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
-  const long previous_lcid = current_position.lcid - 1;  // needs to be a signed type such that negative
-                                                         // values can signal invalid indices
+  const long previous_lcid = current_position.lcid - 1; // needs to be a signed type such that negative
+                                                        // values can signal invalid indices
 
-  return ( previous_lcid >= 0
-	   and not local_sources[ previous_lcid ].is_processed()
-	   and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
+  return ( previous_lcid >= 0 and not local_sources[ previous_lcid ].is_processed()
+    and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
 }
 
 bool
@@ -347,8 +347,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
       current_position.tid, current_position.syn_id, current_position.lcid,
       next_entry_has_same_source_( current_position, current_source ) );
 
-    // no need to communicate this entry if the previous entry has the
-    // same source
+    // no need to communicate this entry if the previous entry has the same source
     if ( previous_entry_has_same_source_( current_position, current_source ) )
     {
       current_source.set_processed( true ); // no need to look at this entry again
@@ -356,7 +355,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
       continue;
     }
 
-    // reaching this means we found a valid TargetData
+    // reaching this means we found an entry that should be
+    // communicated via MPI, so we prepare to return the relevant data
 
     const auto node_id = current_source.get_node_id();
 

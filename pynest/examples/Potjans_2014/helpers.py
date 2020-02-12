@@ -160,7 +160,7 @@ def synapses_th_matrix(net_dict, stim_dict):
 
 
 def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
-    """ Adjusts weights to scaling of synapse numbers.
+    """ Adjusts weights and external input to scaling of synapse numbers.
 
     The recurrent and external weights are adjusted to the scaling
     of the synapse numbers. Extra DC input is added to compensate for the
@@ -246,7 +246,7 @@ def read_name(path, name):
             if temp not in files:
                 files.append(temp)
 
-    # lode node IDs
+    # load node IDs
     node_idfile = open(path + 'population_nodeids.dat', 'r')
     node_ids = []
     for l in node_idfile:
@@ -360,7 +360,7 @@ def fire_rate(path, name, begin, end):
     begin
         Time point to start calculating the firing rates (excluded).
     end
-        Tiem point to stop calculating the firing rates (excluded).
+        Time point to stop calculating the firing rates (excluded).
 
     Returns
     -------

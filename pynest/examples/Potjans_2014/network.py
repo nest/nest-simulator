@@ -19,16 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Pynest microcircuit network
----------------------------
+"""PyNEST Microcircuit Example: Network
+------------------------------------------
 
-Main file for the microcircuit.
+Main file of the microcircuit defining the ``Network`` class.
 
-Authors
-~~~~~~~~
-
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 import nest
@@ -53,10 +48,10 @@ class Network:
     sim_dict
         dictionary containing all parameters specific to the simulation
         such as the directory the data is stored in and the seeds
-        (see: sim_params.py)
+        (see: ``sim_params.py``)
     net_dict
          dictionary containing all parameters specific to the neurons
-         and the network (see: network_params.py)
+         and the network (see: ``network_params.py``)
 
     Keyword Arguments
     -----------------
@@ -75,21 +70,37 @@ class Network:
         self.data_path = sim_dict['data_path']
         if nest.Rank() == 0:
             if os.path.isdir(self.sim_dict['data_path']):
-                print('data directory already exists')
+                print('Data directory already exists.')
             else:
                 os.mkdir(self.sim_dict['data_path'])
-                print('data directory created')
-            print('Data will be written to %s' % self.data_path)
+                print('Data directory created.')
+            print('Data will be written to: %s' % self.data_path)
+
+        # check if V0_type is correctly set
+        v0_type_options = ['original', 'optimized']
+        if self.net_dict['V0_type'] not in v0_type_options:
+            print(
+                """
+                {0} is not a valid option for V0_type, replacing it with {1}.
+                Valid options are {2}.
+                """.format(self.net_dict['V0_type'],
+                           v0_type_options[0],
+                           v0_type_options)
+                )
+            self.net_dict['V0_type'] = v0_type_options[0]
+
 
     def setup_nest(self):
-        """ Hands parameters to the NEST-kernel.
+        """ Hands parameters to the NEST kernel.
 
-        Resets the NEST-kernel and passes parameters to it.
-        The number of seeds for the NEST-kernel is computed, based on the
-        total number of MPI processes and threads of each.
-
+        Resets the NEST kernel and passes parameters to it.
+        The number of seeds for random number generation are computed based on
+        the total number of virtual processes
+        (number of MPI processes x number of threads per MPI process).
         """
         nest.ResetKernel()
+
+        # compute seeds for random number generation
         master_seed = self.sim_dict['master_seed']
         if nest.Rank() == 0:
             print('Master seed: %i ' % master_seed)
@@ -98,7 +109,7 @@ class Network:
             )
         N_tp = nest.GetKernelStatus('total_num_virtual_procs')
         if nest.Rank() == 0:
-            print('Number of total processes: %i' % N_tp)
+            print('Total number of virtual processes: %i' % N_tp)
         rng_seeds = list(
             range(
                 master_seed + 1 + N_tp,
@@ -112,6 +123,8 @@ class Network:
                 % rng_seeds
                 )
             print('Global random number generator seed: %i' % grng_seed)
+
+        # pass parameters to NEST kernel
         self.sim_resolution = self.sim_dict['sim_resolution']
         kernel_dict = {
             'resolution': self.sim_resolution,
@@ -122,52 +135,62 @@ class Network:
             }
         nest.SetKernelStatus(kernel_dict)
 
+
     def create_populations(self):
         """ Creates the neuronal populations.
 
         The neuronal populations are created and the parameters are assigned
-        to them. The initial membrane potential of the neurons is drawn from a
-        normal distribution. Scaling of the number of neurons and of the
-        synapses is performed. If scaling is performed extra DC input is added
-        to the neuronal populations.
-
+        to them. The initial membrane potential of the neurons is drawn from
+        normal distributions dependent on the parameter ``V0_type``.
+        The number of neurons and synapses is scaled if the parameters
+        ``N_scaling`` and ``K_scaling`` are not 1. Scaling of the synapse number
+        leads to an extra DC input to be added to the neuronal populations.
         """
+        if nest.Rank() == 0:
+            print('Creating neuronal populations.')
+
+        # total number of neurons and synapses and information about weights
+        # and external input before scaling
         self.N_full = self.net_dict['N_full']
-        self.N_scaling = self.net_dict['N_scaling']
-        self.K_scaling = self.net_dict['K_scaling']
         self.synapses = get_total_number_of_synapses(self.net_dict)
-        self.synapses_scaled = self.synapses * self.K_scaling
-        self.nr_neurons = self.N_full * self.N_scaling
-        self.K_ext = self.net_dict['K_ext'] * self.K_scaling
+        
         self.w_from_PSP = get_weight(self.net_dict['PSP_e'], self.net_dict)
         self.weight_mat = get_weight(
             self.net_dict['PSP_mean_matrix'], self.net_dict
             )
         self.weight_mat_std = self.net_dict['PSP_std_matrix']
         self.w_ext = self.w_from_PSP
+
         if self.net_dict['poisson_input']:
             self.DC_amp_e = np.zeros(len(self.net_dict['populations']))
         else:
             if nest.Rank() == 0:
                 print(
                     """
-                    no poisson input provided
-                    calculating dc input to compensate
+                    No Poisson input provided.
+                    Calculating DC input to compensate.
                     """
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
-        v0_type_options = ['original', 'optimized']
-        if self.net_dict['V0_type'] not in v0_type_options:
-            print(
-                '''
-                '{0}' is not a valid option, replacing it with '{1}'
-                Valid options are {2}
-                '''.format(self.net_dict['V0_type'],
-                           v0_type_options[0],
-                           v0_type_options)
+        # scaling factors
+        self.N_scaling = self.net_dict['N_scaling']
+        self.K_scaling = self.net_dict['K_scaling']
+
+        # compute scaled number of neurons and synapses,
+        # adjust weights if synapses are scaled
+        self.nr_neurons = self.N_full * self.N_scaling 
+        self.synapses_scaled = self.synapses * self.K_scaling
+        self.K_ext = self.net_dict['K_ext'] * self.K_scaling
+        
+        if self.K_scaling != 1:
+            synapses_indegree = self.synapses / (
+                self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
+            self.weight_mat, self.w_ext, self.DC_amp_e = adj_w_ext_to_K(
+                synapses_indegree, self.K_scaling, self.weight_mat,
+                self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
                 )
-            self.net_dict['V0_type'] = v0_type_options[0]
+
         if nest.Rank() == 0:
             print(
                 'The number of neurons is scaled by a factor of: %.2f'
@@ -177,17 +200,10 @@ class Network:
                 'The number of synapses is scaled by a factor of: %.2f'
                 % self.K_scaling
                 )
+            if self.K_scaling != 1:
+                print('Weights and external input are adjusted for compensation.')
 
-        # Scaling of the synapses.
-        if self.K_scaling != 1:
-            synapses_indegree = self.synapses / (
-                self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
-            self.weight_mat, self.w_ext, self.DC_amp_e = adj_w_ext_to_K(
-                synapses_indegree, self.K_scaling, self.weight_mat,
-                self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
-                )
-
-        # Create cortical populations.
+        # create cortical populations
         self.pops = []
         pop_file = open(
             os.path.join(self.data_path, 'population_nodeids.dat'), 'w+'
@@ -206,26 +222,33 @@ class Network:
                     t_ref=self.net_dict['neuron_params']['t_ref'],
                     I_e=self.DC_amp_e[i]
                     )
+
             if self.net_dict['V0_type'] == 'optimized':
-                population.set(V_m=nest.random.normal(self.net_dict['neuron_params']['V0_mean']['optimized'][i],
-                                                      self.net_dict['neuron_params']['V0_sd']['optimized'][i],
-                                                      ))
+                population.set(V_m=nest.random.normal(
+                    self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                    self.net_dict['neuron_params']['V0_sd']['optimized'][i],
+                    ))
             elif self.net_dict['V0_type'] == 'original':
-                population.set(V_m=nest.random.normal(self.net_dict['neuron_params']['V0_mean']['original'],
-                                                      self.net_dict['neuron_params']['V0_sd']['original'],
-                                                      ))
+                population.set(V_m=nest.random.normal(
+                    self.net_dict['neuron_params']['V0_mean']['original'],
+                    self.net_dict['neuron_params']['V0_sd']['original'],
+                    ))
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (
                 population.global_id[0],
                 population.global_id[-1]))
         pop_file.close()
 
+
     def create_devices(self):
         """ Creates the recording devices.
 
-        Only devices which are given in net_dict['rec_dev'] are created.
+        Only devices which are given in ``net_dict['rec_dev']`` are created.
 
         """
+        if nest.Rank() == 0:
+            print('Creating recording devices.')
+
         self.spike_detector = []
         self.voltmeter = []
         for i, pop in enumerate(self.pops):
@@ -248,19 +271,38 @@ class Network:
 
         if 'spike_detector' in self.net_dict['rec_dev']:
             if nest.Rank() == 0:
-                print('Spike detectors created')
+                print('Spike detectors created.')
         if 'voltmeter' in self.net_dict['rec_dev']:
             if nest.Rank() == 0:
-                print('Voltmeters created')
+                print('Voltmeters created.')
+
+
+    def create_poisson(self):
+        """ Creates the Poisson generators if specified in
+        ``network_params.py``.
+
+        """
+        if self.net_dict['poisson_input']:
+            if nest.Rank() == 0:
+                print('Creating Poisson generators for background input.')
+
+            rate_ext = self.net_dict['bg_rate'] * self.K_ext
+            self.poisson = []
+            for i, target_pop in enumerate(self.pops):
+                poisson = nest.Create('poisson_generator')
+                poisson.rate = rate_ext[i]
+                self.poisson.append(poisson)
+
 
     def create_thalamic_input(self):
-        """ This function creates the thalamic neuronal population if this
-        is specified in stimulus_params.py.
+        """ Creates the thalamic neuronal population if specified in
+        ``stimulus_params.py``.
 
         """
         if self.stim_dict['thalamic_input']:
             if nest.Rank() == 0:
-                print('Thalamic input provided')
+                print('Creating Thalamic input for external stimulation.')
+
             self.thalamic_population = nest.Create(
                 'parrot_neuron', self.stim_dict['n_thal']
                 )
@@ -286,35 +328,17 @@ class Network:
                 self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
         else:
             if nest.Rank() == 0:
-                print('Thalamic input not provided')
+                print('Thalamic input not provided.')
 
-    def create_poisson(self):
-        """ Creates the Poisson generators.
-
-        If Poissonian input is provided, the Poissonian generators are created
-        and the parameters needed are passed to the Poissonian generator.
-
-        """
-        if self.net_dict['poisson_input']:
-            if nest.Rank() == 0:
-                print('Poisson background input created')
-            rate_ext = self.net_dict['bg_rate'] * self.K_ext
-            self.poisson = []
-            for i, target_pop in enumerate(self.pops):
-                poisson = nest.Create('poisson_generator')
-                poisson.rate = rate_ext[i]
-                self.poisson.append(poisson)
 
     def create_dc_generator(self):
-        """ Creates a DC input generator.
-
-        If DC input is provided, the DC generators are created and the
-        necessary parameters are passed to them.
+        """ Creates DC generators for external stimulation if specified
+        in ``stimulus_params.py``.
 
         """
         if self.stim_dict['dc_input']:
             if nest.Rank() == 0:
-                print('DC generator created')
+                print('Creating DC generators for external stimulation.')
             dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
             self.dc = []
             if nest.Rank() == 0:
@@ -332,14 +356,12 @@ class Network:
                     )
                 self.dc.append(dc)
 
+
     def create_connections(self):
-        """ Creates the recurrent connections.
-
-        The recurrent connections between the neuronal populations are created.
-
-        """
+        """ Creates the recurrent connections between neuronal populations. """
         if nest.Rank() == 0:
-            print('Recurrent connections are established')
+            print('Connecting neuronal populations recurrently.')
+
         mean_delays = self.net_dict['mean_delay_matrix']
         std_delays = self.net_dict['std_delay_matrix']
         for i, target_pop in enumerate(self.pops):
@@ -373,10 +395,12 @@ class Network:
                         syn_spec=syn_dict
                         )
 
+
     def connect_poisson(self):
         """ Connects the Poisson generators to the microcircuit."""
         if nest.Rank() == 0:
-            print('Poisson background input is connected')
+            print('Connecting Poisson generators for background input.')
+
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
@@ -390,10 +414,34 @@ class Network:
                 syn_spec=syn_dict_poisson
                 )
 
-    def connect_thalamus(self):
-        """ Connects the thalamic population to the microcircuit."""
+    def connect_devices(self):
+        """ Connects the recording devices to the microcircuit."""
         if nest.Rank() == 0:
-            print('Thalamus connection established')
+            if ('spike_detector' in self.net_dict['rec_dev'] and
+                    'voltmeter' not in self.net_dict['rec_dev']):
+                print('Connecting spike detectors.')
+            elif ('spike_detector' not in self.net_dict['rec_dev'] and
+                    'voltmeter' in self.net_dict['rec_dev']):
+                print('Connecting voltmeters.')
+            elif ('spike_detector' in self.net_dict['rec_dev'] and
+                    'voltmeter' in self.net_dict['rec_dev']):
+                print('Connecting spike detectors and voltmeters.')
+            else:
+                print('No recording devices will be connected.')
+
+        for i, target_pop in enumerate(self.pops):
+            if 'voltmeter' in self.net_dict['rec_dev']:
+                nest.Connect(self.voltmeter[i], target_pop)
+            if 'spike_detector' in self.net_dict['rec_dev']:
+                nest.Connect(target_pop, self.spike_detector[i])
+
+
+    def connect_thalamus(self):
+        """ Connects the Thalamic input to the neuronal populations. """
+
+        if nest.Rank() == 0:
+            print('Connecting Thalamic input.')
+
         for i, target_pop in enumerate(self.pops):
             conn_dict_th = {
                 'rule': 'fixed_total_number',
@@ -420,78 +468,59 @@ class Network:
                 conn_spec=conn_dict_th, syn_spec=syn_dict_th
                 )
 
+
     def connect_dc_generator(self):
-        """ Connects the DC generator to the microcircuit."""
+        """ Connects the DC generators to the neuronal populations. """
         if nest.Rank() == 0:
-            print('DC Generator connection established')
+            print('Connecting DC generators.')
+
         for i, target_pop in enumerate(self.pops):
             if self.stim_dict['dc_input']:
                 nest.Connect(self.dc[i], target_pop)
 
-    def connect_devices(self):
-        """ Connects the recording devices to the microcircuit."""
-        if nest.Rank() == 0:
-            if ('spike_detector' in self.net_dict['rec_dev'] and
-                    'voltmeter' not in self.net_dict['rec_dev']):
-                print('Spike detector connected')
-            elif ('spike_detector' not in self.net_dict['rec_dev'] and
-                    'voltmeter' in self.net_dict['rec_dev']):
-                print('Voltmeter connected')
-            elif ('spike_detector' in self.net_dict['rec_dev'] and
-                    'voltmeter' in self.net_dict['rec_dev']):
-                print('Spike detector and voltmeter connected')
-            else:
-                print('no recording devices connected')
-        for i, target_pop in enumerate(self.pops):
-            if 'voltmeter' in self.net_dict['rec_dev']:
-                nest.Connect(self.voltmeter[i], target_pop)
-            if 'spike_detector' in self.net_dict['rec_dev']:
-                nest.Connect(target_pop, self.spike_detector[i])
 
     def setup(self):
-        """ Execute subfunctions of the network.
+        """ Executes subfunctions of the network.
 
         This function executes several subfunctions to create neuronal
-        populations, devices and inputs, connects the populations with
+        populations, devices and inputs, and to connect the populations with
         each other and with devices and input nodes.
 
         """
         self.setup_nest()
+
+        # create nodes
         self.create_populations()
         self.create_devices()
-        self.create_thalamic_input()
         self.create_poisson()
+        self.create_thalamic_input()
         self.create_dc_generator()
+
+        # create connections
         self.create_connections()
+        self.connect_devices()
         if self.net_dict['poisson_input']:
             self.connect_poisson()
         if self.stim_dict['thalamic_input']:
             self.connect_thalamus()
         if self.stim_dict['dc_input']:
             self.connect_dc_generator()
-        self.connect_devices()
 
+        
     def simulate(self):
-        """ Simulates the microcircuit."""
+        """ Simulates the microcircuit. """
         nest.Simulate(self.sim_dict['t_sim'])
 
-    def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):
-        """ Displays output of the simulation.
 
-        Calculates the firing rate of each population,
-        creates a spike raster plot and a box plot of the
-        firing rates.
+    def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):
+        """ Displays simulation results.
+
+        Creates a spike raster plot.
+        Calculates the firing rate of each population and displays them as a
+        box plot.
 
         """
         if nest.Rank() == 0:
-            print(
-                'Interval to compute firing rates: %s ms'
-                % np.array2string(fire_rate_time_idx)
-                )
-            fire_rate(
-                self.data_path, 'spike_detector',
-                fire_rate_time_idx[0], fire_rate_time_idx[1]
-                )
             print(
                 'Interval to plot spikes: %s ms'
                 % np.array2string(raster_plot_time_idx)
@@ -499,5 +528,14 @@ class Network:
             plot_raster(
                 self.data_path, 'spike_detector',
                 raster_plot_time_idx[0], raster_plot_time_idx[1]
+                )
+
+            print(
+                'Interval to compute firing rates: %s ms'
+                % np.array2string(fire_rate_time_idx)
+                )
+            fire_rate(
+                self.data_path, 'spike_detector',
+                fire_rate_time_idx[0], fire_rate_time_idx[1]
                 )
             boxplot(self.net_dict, self.data_path)

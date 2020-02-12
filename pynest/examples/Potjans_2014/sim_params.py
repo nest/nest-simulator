@@ -19,16 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Microcircuit simulation parameters
-----------------------------------
+"""PyNEST Microcircuit Example: Simulation Parameters
+--------------------------------------------------------
 
-Simulation parameters for the microcircuit.
-
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 import os
+
 sim_dict = {
     # Simulation time (in ms).
     't_sim': 1000.0,

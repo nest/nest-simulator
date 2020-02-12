@@ -341,9 +341,6 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     Source& current_source = sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
 
-    // we have found a valid entry, so mark it as processed
-    current_source.set_processed( true );
-
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source
     kernel().connection_manager.set_source_has_more_targets(
@@ -354,6 +351,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // same source
     if ( previous_entry_has_same_source_( current_position, current_source ) )
     {
+      current_source.set_processed( true ); // no need to look at this entry again
       current_position.decrease();
       continue;
     }
@@ -403,6 +401,9 @@ nest::SourceTable::get_next_target_data( const thread tid,
       secondary_fields.set_send_buffer_pos( send_buffer_pos );
       secondary_fields.set_syn_id( current_position.syn_id );
     }
+
+    // we are about to return a valid entry, so mark it as processed
+    current_source.set_processed( true );
 
     current_position.decrease();
     return true; // found a valid entry

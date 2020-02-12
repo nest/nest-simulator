@@ -46,8 +46,20 @@ struct SourceTablePosition
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
 
+  /**
+   * Decreases indices until a valid entry is found.
+   */
   void seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources );
+
+  /**
+   * Decreases the inner most index (lcid).
+   */
   void decrease();
+
+  /**
+   * Returns true if the indices point outside the SourceTable, e.g.,
+   * to signal that the end was reached.
+   */
   bool is_invalid() const;
 };
 

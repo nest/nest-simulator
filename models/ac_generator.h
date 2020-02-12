@@ -46,7 +46,7 @@ ac_generator
 Description
 +++++++++++
 
-This device produces an AC current sent by a CurrentEvent. The
+This device produces an AC input sent by CurrentEvents. The
 current is given by
 
 .. math::

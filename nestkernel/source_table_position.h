@@ -120,10 +120,10 @@ SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< B
 
     // if we can not find a valid lcid by decreasing synapse or thread
     // indices, we have read all entries
-    assert( tid < 0 );
-    assert( syn_id < 0 );
-    assert( lcid < 0 );
     return; // reached the end
+    assert( tid == -1 );
+    assert( syn_id == -1 );
+    assert( lcid == -1 );
   }
 }
 
@@ -144,6 +144,7 @@ inline void
 SourceTablePosition::decrease()
 {
   --lcid;
+  assert( lcid >= -1 );
 }
 
 inline bool operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )

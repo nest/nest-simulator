@@ -1,11 +1,11 @@
 Troubleshooting
-==============================
+===============
 
 Here you can find some tips to try to find out why your installation of NEST didn't work.
 
 
 1. CMAKE error says a <package> was not found or <package> is too old
-------------------------------------------------------------------------
+---------------------------------------------------------------------
 
 
 *Please make sure you have followed the installation instructions* :doc:`found here <installation/index>` *and have installed the
@@ -104,12 +104,11 @@ The terminal will display the version number:
 
 
 2. When I try to import nest, I get an error in Python that says 'No Module named NEST' or 'ImportError'
---------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
 
 This error message means something in your environment is not set correctly, depending on how you installed NEST.
 
 1. Check which Python version you are running
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    You must use **Python 3** if you installed NEST with
 
@@ -126,7 +125,6 @@ This error message means something in your environment is not set correctly, dep
 If your Python version is correct and you still have the same error, then try one of the following options:
 
 2a. If you compiled NEST from source
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     * Your path variables may not be set correctly, in that case run:
 
@@ -137,7 +135,6 @@ If your Python version is correct and you still have the same error, then try on
 
 
 2b. If you installed NEST via the conda-forge package
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     * Make sure you have activated the correct environment
 
@@ -190,7 +187,7 @@ If your Python version is correct and you still have the same error, then try on
 
 
 3. Docker crashes! Message from NotebookApp: "Running as root is not recommended. Use --allow-root to bypass."
--------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
     **We strongly recommend that you do not run Docker as root!**
 
@@ -209,7 +206,7 @@ If your Python version is correct and you still have the same error, then try on
        docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
 
 Can't find an answer to your question?
-----------------------------------------------
+--------------------------------------
 
 We may have answered your question on GitHub or in our Mailing List!
 

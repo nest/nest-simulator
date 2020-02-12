@@ -274,7 +274,7 @@ nest::SourceTable::resize_sources( const thread tid )
 }
 
 bool
-nest::SourceTable::source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source )
+nest::SourceTable::source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const
 {
   if ( source.is_processed() or source.is_disabled() )
   {

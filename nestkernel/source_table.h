@@ -94,6 +94,8 @@ private:
    */
   static const size_t min_deleted_elements_ = 1000000;
 
+  bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const;
+
 public:
   SourceTable();
   ~SourceTable();
@@ -128,8 +130,6 @@ public:
    * Returns true if sources_ has been cleared.
    */
   bool is_cleared() const;
-
-  bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source );
 
   bool next_entry_has_same_source( const SourceTablePosition& current_position, const Source& current_source ) const;
 

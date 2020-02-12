@@ -276,23 +276,14 @@ nest::SourceTable::resize_sources( const thread tid )
 bool
 nest::SourceTable::source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const
 {
-  if ( source.is_processed() or source.is_disabled() )
-  {
-    // looks like we've processed this already, let's continue
-    return false;
-  }
-
   const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
-  // determine whether this thread is responsible for this part of
-  // the MPI buffer; if not we just continue with the next iteration
-  // of the loop
-  if ( source_rank < rank_start or source_rank >= rank_end )
-  {
-    return false;
-  }
-
-  return true; // if we reach this we should process it
+  return not ( source.is_processed()
+	       or source.is_disabled()
+	       // is this thread responsible for this part of the MPI
+	       // buffer?
+	       or source_rank < rank_start
+	       or rank_end <= source_rank );
 }
 
 bool

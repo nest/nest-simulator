@@ -71,8 +71,8 @@ References
        19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
 
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
 

@@ -58,8 +58,8 @@ Parameters
 
 FirstVersion: June 2017
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest

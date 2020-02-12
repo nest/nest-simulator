@@ -42,8 +42,8 @@ the parameters target, weight, delay and receiver port for each connection.
 
 FirstVersion: October 2005
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest

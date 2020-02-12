@@ -79,8 +79,8 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
 

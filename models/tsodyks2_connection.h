@@ -94,8 +94,8 @@ References
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
 

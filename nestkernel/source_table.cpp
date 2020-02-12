@@ -360,11 +360,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // reaching this means we found a valid TargetData
 
+    const auto node_id = current_source.get_node_id();
+
     // set the source rank
-    source_rank = kernel().mpi_manager.get_process_id_of_node_id( current_source.get_node_id() );
+    source_rank = kernel().mpi_manager.get_process_id_of_node_id( node_id );
 
     // set values of next_target_data
-    next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
+    next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( node_id ) );
     next_target_data.set_source_tid(
       kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
     next_target_data.reset_marker();

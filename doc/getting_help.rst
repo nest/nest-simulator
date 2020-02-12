@@ -35,7 +35,7 @@ Getting help on the command line interface
        nest.help('name')
 
 Model Information
-~~~~~~~~~~~~~~~~~~~
+-----------------
 
 * To get a complete list of the models available in NEST type:
 

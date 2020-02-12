@@ -51,7 +51,7 @@ dc_generator
 Description
 +++++++++++
 
-The dc_generator provides a constant DC Input to the connected node. The unit of the current is pA.
+The dc_generator provides a constant DC input to the connected node. The unit of the current is pA.
 
 Parameters
 ++++++++++

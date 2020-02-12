@@ -28,9 +28,6 @@
 
 #ifdef HAVE_MUSIC
 
-// C includes:
-#include <mpi.h>
-
 // C++ includes:
 #include <vector>
 

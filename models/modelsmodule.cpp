@@ -153,6 +153,8 @@
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
 #include "music_message_in_proxy.h"
+#include "music_rate_in_proxy.h"
+#include "music_rate_out_proxy.h"
 #endif
 
 namespace nest
@@ -289,6 +291,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< music_cont_in_proxy >( "music_cont_in_proxy" );
   kernel().model_manager.register_node_model< music_cont_out_proxy >( "music_cont_out_proxy" );
   kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
+  kernel().model_manager.register_node_model< music_rate_in_proxy >( "music_rate_in_proxy" );
+  kernel().model_manager.register_node_model< music_rate_out_proxy >( "music_rate_out_proxy" );
 #endif
 
   // register all connection models

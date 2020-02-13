@@ -247,6 +247,42 @@ cdef class NESTEngine(object):
 
         return ret
 
+    def connect_arrays(self, sources, targets, weights, delays):
+        """Calls connect_arrays function, bypassing SLI to expose pointers to the Numpy arrays"""
+        if self.pEngine is NULL:
+            raise NESTErrors.PyNESTError("engine uninitialized")
+        if not HAVE_NUMPY:
+            raise NESTErrors.PyNESTError("Numpy is not available")
+
+        if not isinstance(sources, numpy.ndarray) or not numpy.issubdtype(sources.dtype, numpy.integer):
+            raise TypeError('sources must be a Numpy array of integers')
+        if not isinstance(targets, numpy.ndarray) or not numpy.issubdtype(targets.dtype, numpy.integer):
+            raise TypeError('targets must be a Numpy array of integers')
+        if not isinstance(weights, numpy.ndarray):
+            raise TypeError('weights must be a Numpy array')
+        if not isinstance(delays, numpy.ndarray):
+            raise TypeError('delays must be a Numpy array')
+
+        if not len(sources) == len(targets) == len(weights) == len(delays):
+            raise ValueError('Sources, targets, weights and delays must be arrays of the same length.')
+
+        # Get pointers to the first element in each Numpy array
+        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
+        cdef long* sources_ptr = &sources_mv[0]
+
+        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.long)
+        cdef long* targets_ptr = &targets_mv[0]
+
+        cdef double[::1] weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
+        cdef double* weights_ptr = &weights_mv[0]
+
+        cdef double[::1] delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
+        cdef double* delays_ptr = &delays_mv[0]
+
+        try:
+            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, len(sources) )
+        except RuntimeError as e:
+            raise NESTErrors.PyNESTError(str(e))
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 

@@ -117,6 +117,16 @@ void connect( NodeCollectionPTR sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
 
+/**
+ * @brief Connect arrays of node IDs one-to-one
+ *
+ * Connects an array of sources to an array of targets, with weights and
+ * delays from specified arrays, using the one-to-one rule. Sources,
+ * targets, weights, and delays are given as pointers to the first
+ * element. All arrays must have the same length, n.
+ */
+void connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n );
+
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );

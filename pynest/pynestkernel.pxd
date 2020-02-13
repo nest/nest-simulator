@@ -146,6 +146,9 @@ cdef extern from "neststartup.h":
     cbool nest_has_mpi4py()
     void c_set_communicator "set_communicator" (object) with gil
 
+cdef extern from "nest.h" namespace "nest":
+    void connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n ) except +
+
 cdef extern from *:
 
     # Real support for CSA has to be implemented below the Cython level,

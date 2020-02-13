@@ -191,6 +191,27 @@ connect( NodeCollectionPTR sources,
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
+void
+connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n )
+{
+  DictionaryDatum conn_spec = new Dictionary();
+  DictionaryDatum syn_spec = new Dictionary();
+  ( *conn_spec )[ names::rule ] = "one_to_one";
+  ( *syn_spec )[ names::synapse_model ] = "static_synapse";
+
+  auto s = sources;
+  auto t = targets;
+  auto w = weights;
+  auto d = delays;
+  for ( ; s != sources + n; ++s, ++t, ++w, ++d )
+  {
+    ( *syn_spec )[ names::weight ] = *w;
+    ( *syn_spec )[ names::delay ] = *d;
+    kernel().connection_manager.connect(
+      NodeCollection::create( *s ), NodeCollection::create( *t ), conn_spec, syn_spec );
+  }
+}
+
 ArrayDatum
 get_connections( const DictionaryDatum& dict )
 {

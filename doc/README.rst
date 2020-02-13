@@ -82,7 +82,7 @@ Installation
 ~~~~~~~~~~~~
 
 With the following steps a full development environment is installed -
-even NEST 2.18.0.
+even NEST 2.20.0.
 
 Change to the doc/ folder in the source directory (if you’re not already there).
 

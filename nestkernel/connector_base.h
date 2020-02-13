@@ -178,7 +178,7 @@ public:
    * Set a flag in the connection indicating whether the following
    * connection belongs to the same source.
    */
-  virtual void set_has_source_subsequent_targets( const index lcid, const bool has_subsequent_targets ) = 0;
+  virtual void set_source_has_more_targets( const index lcid, const bool has_more_targets ) = 0;
 
   /**
    * Return lcid of the first connection after start_lcid (inclusive)
@@ -354,7 +354,7 @@ public:
         target_node_ids.push_back( C_[ lcid ].get_target( tid )->get_node_id() );
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
+      if ( not C_[ lcid ].source_has_more_targets() )
       {
         break;
       }
@@ -393,7 +393,7 @@ public:
     {
       ConnectionT& conn = C_[ lcid + lcid_offset ];
       const bool is_disabled = conn.is_disabled();
-      const bool has_source_subsequent_targets = conn.has_source_subsequent_targets();
+      const bool source_has_more_targets = conn.source_has_more_targets();
 
       e.set_port( lcid + lcid_offset );
       if ( not is_disabled )
@@ -401,7 +401,7 @@ public:
         conn.send( e, tid, cp );
         send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
-      if ( not has_source_subsequent_targets )
+      if ( not source_has_more_targets )
       {
         break;
       }
@@ -442,9 +442,9 @@ public:
   }
 
   void
-  set_has_source_subsequent_targets( const index lcid, const bool has_subsequent_targets )
+  set_source_has_more_targets( const index lcid, const bool has_more_targets )
   {
-    C_[ lcid ].set_has_source_subsequent_targets( has_subsequent_targets );
+    C_[ lcid ].set_source_has_more_targets( has_more_targets );
   }
 
   index
@@ -458,7 +458,7 @@ public:
         return lcid;
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
+      if ( not C_[ lcid ].source_has_more_targets() )
       {
         return invalid_index;
       }

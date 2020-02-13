@@ -20,7 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import warnings
 import nest
 import numpy as np
 
@@ -32,51 +31,59 @@ class TestConnectArrays(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_connect_arrays_nonunique_node_ids(self):
-        """Connecting arrays with nonunique node IDs"""
-        nest.Create('iaf_psc_alpha', 4)
-        source = [1, 1, 2, 2]
-        target = [3, 3, 4, 4]
-        nest.Connect(source, target)
-        conns = nest.GetConnections()
-        st_pairs = np.array([(s, t) for s in source for t in target])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
+    def test_connect_arrays(self):
+        """Connecting Numpy arrays of node IDs"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.arange(1, n+1, dtype=np.uint64)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
 
-    def test_connect_numpy_arrays_node_ids(self):
-        """Connecting numpy arrays with nonunique node IDs"""
-        nest.Create('iaf_psc_alpha', 4)
-        source = np.array([1, 1, 2, 2])
-        target = np.array([3, 3, 4, 4])
-        nest.Connect(source, target)
-        conns = nest.GetConnections()
-        st_pairs = np.array([(s, t) for s in source for t in target])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
+        nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays})
 
-    def test_connect_arrays_unique_node_ids(self):
-        """Connecting arrays with unique node IDs"""
-        n = nest.Create('iaf_psc_alpha', 4)
-        node_ids = n.tolist()
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            nest.Connect(node_ids, node_ids)
-            self.assertEqual(len(w), 1)
-            self.assertTrue(issubclass(w[-1].category, UserWarning))
-            self.assertTrue('unique' in str(w[-1].message))
         conns = nest.GetConnections()
-        st_pairs = np.array([(s, t) for s in node_ids for t in node_ids])
-        self.assertTrue(np.array_equal(st_pairs[:, 0], list(conns.sources())))
-        self.assertTrue(np.array_equal(st_pairs[:, 1], list(conns.targets())))
+        for s, t, w, d, c in zip(sources, targets, weights, delays, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
 
-    def test_connect_array_with_nc(self):
-        """Connecting one array with a NodeCollection"""
-        nc = nest.Create('iaf_psc_alpha', 4)
-        node_ids = [1, 1, 2, 2]
+    def test_connect_arrays_wrong_dtype(self):
+        """Raises exception when connecting Numpy arrays with wrong dtype"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.double)
+        targets = np.arange(1, n+1, dtype=np.double)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+
         with self.assertRaises(TypeError):
-            nest.Connect(node_ids, nc)
+            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays})
+
+    def test_connect_arrays_wrong_arraytype(self):
+        """Raises exception when connecting arrays with wrong array type"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = list(range(1, n+1))
+        targets = np.arange(1, n+1, dtype=np.double)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+
         with self.assertRaises(TypeError):
-            nest.Connect(nc, node_ids)
+            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays})
+
+    def test_connect_arrays_unknown_nodes(self):
+        """Raises exception when connecting Numpy arrays with unknown nodes"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+2, dtype=np.uint64)
+        targets = np.arange(1, n+2, dtype=np.uint64)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays})
 
 
 def suite():

@@ -376,16 +376,13 @@ nest::SourceTable::get_next_target_data( const thread tid,
     }
 
     // the current position contains an entry, so we retrieve it
-    const Source& const_current_source =
-      sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
+    Source& current_source = sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
 
-    if ( not source_should_be_processed_( rank_start, rank_end, const_current_source ) )
+    if ( not source_should_be_processed_( rank_start, rank_end, current_source ) )
     {
       current_position.decrease();
       continue;
     }
-
-    Source& current_source = sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid ];
 
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source

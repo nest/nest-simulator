@@ -215,9 +215,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             processed_conn_spec['rule'] == 'one_to_one'):
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
+        if len(processed_syn_spec.keys()) != 3:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
+                             "contain weights, delays, synapse model, and no other elements.")
         weights = numpy.array(processed_syn_spec['weight'])
         delays = numpy.array(processed_syn_spec['delay'])
-        connect_arrays(pre, post, weights, delays)
+        synapse_model = processed_syn_spec['synapse_model']
+        connect_arrays(pre, post, weights, delays, synapse_model)
         return
 
     sps(pre)

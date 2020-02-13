@@ -147,7 +147,7 @@ cdef extern from "neststartup.h":
     void c_set_communicator "set_communicator" (object) with gil
 
 cdef extern from "nest.h" namespace "nest":
-    void connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n ) except +
+    void connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n, string syn_model ) except +
 
 cdef extern from *:
 

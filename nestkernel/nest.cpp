@@ -192,12 +192,12 @@ connect( NodeCollectionPTR sources,
 }
 
 void
-connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n )
+connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n, std::string syn_model )
 {
   DictionaryDatum conn_spec = new Dictionary();
   DictionaryDatum syn_spec = new Dictionary();
   ( *conn_spec )[ names::rule ] = "one_to_one";
-  ( *syn_spec )[ names::synapse_model ] = "static_synapse";
+  ( *syn_spec )[ names::synapse_model ] = syn_model;
 
   auto s = sources;
   auto t = targets;

@@ -247,7 +247,7 @@ cdef class NESTEngine(object):
 
         return ret
 
-    def connect_arrays(self, sources, targets, weights, delays):
+    def connect_arrays(self, sources, targets, weights, delays, synapse_model):
         """Calls connect_arrays function, bypassing SLI to expose pointers to the Numpy arrays"""
         if self.pEngine is NULL:
             raise NESTErrors.PyNESTError("engine uninitialized")
@@ -279,8 +279,10 @@ cdef class NESTEngine(object):
         cdef double[::1] delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
         cdef double* delays_ptr = &delays_mv[0]
 
+        cdef string syn_model_string = synapse_model.encode('UTF-8')
+
         try:
-            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, len(sources) )
+            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, len(sources), syn_model_string )
         except RuntimeError as e:
             raise NESTErrors.PyNESTError(str(e))
 

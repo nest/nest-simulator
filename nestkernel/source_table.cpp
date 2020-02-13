@@ -360,6 +360,11 @@ nest::SourceTable::get_next_target_data( const thread tid,
 {
   SourceTablePosition& current_position = current_positions_[ tid ];
 
+  if ( current_position.is_invalid() )
+  {
+    return false; // nothing to do here
+  }
+
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
   while ( true )

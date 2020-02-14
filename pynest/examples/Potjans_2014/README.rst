@@ -27,13 +27,13 @@ By default, the variables ``N_scaling`` and ``K_scaling`` in ``network_params.py
 The full network can be run by adjusting these values to `1`.
 If this is done, the option to print the time progress should be switched off: ``'print_time': False`` in ``sim_params.py``.
 
-Install required packages:
+To run the simulation, simply use:
 
 .. code-block:: bash
 
-  pip install --user -r requirements.txt
+   python run_microcircuit.py
 
-For running, use ``python run_microcircuit.py``. The output will be saved in the directory ``data``.
+The output will be saved in the directory ``data``.
 
 The code can be `parallelized <https://www.nest-simulator.org/parallel-computing/>`_ using OpenMP and MPI, if NEST has been built with these applications.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.

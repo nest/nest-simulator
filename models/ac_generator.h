@@ -273,3 +273,4 @@ ac_generator::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // AC_GENERATOR_H
+

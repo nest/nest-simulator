@@ -42,6 +42,11 @@ namespace nest
 volume_transmitter - Node used in combination with neuromodulated synaptic plasticity
 #####################################################################################
 
+Device name
++++++++++++
+
+volume_transmitter
+
 Description
 +++++++++++
 

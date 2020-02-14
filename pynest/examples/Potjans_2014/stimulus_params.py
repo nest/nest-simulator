@@ -19,11 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-""" PyNEST Microcircuit Example: Stimulus Parameters
--------------------------------------------------------
+""" PyNEST Microcircuit: Stimulus Parameters
+-----------------------------------------------
 
-External transient stimulation is optional. Thalamic input and DC input
-can be switched on individually.
+A dictionary with parameters for an optional external transient stimulation.
+Thalamic input and DC input can be switched on individually.
 
 """
 

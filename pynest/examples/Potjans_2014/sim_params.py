@@ -19,8 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST Microcircuit Example: Simulation Parameters
---------------------------------------------------------
+"""PyNEST Microcircuit: Simulation Parameters
+------------------------------------------------
+
+A dictionary with parameters defining the simulation.
 
 """
 

@@ -1,5 +1,5 @@
-PyNEST Microcircuit Example
-===========================
+PyNEST Microcircuit
+===================
 
 Description
 ###########
@@ -10,14 +10,13 @@ The original sli version can be found `here <https://github.com/nest/nest-simula
 
 The current example contains several files:
 
-* ``run_microcircuit.py`` is an example script to try out the microcircuit.
-* ``helpers.py`` provides helper functions for the simulation and evaluation of the microcircuit.
-* ``network.py`` gathers all parameters and connects the different nodes with one another.
-* ``network_params.py`` contains the parameters for the network.
-* ``sim_params.py`` contains the simulation parameters.
-* ``stimulus_params.py`` contains the parameters for the stimuli.
-* ``requirements.txt`` contains required Python packages.
-* ``data`` is a folder containing data and figures obtained by executing ``run_microcircuit.py`` with default parameters.
+* ``run_microcircuit.py``: an example script to try out the microcircuit
+* ``network.py``: the main Network class with functions to build and simulate the network
+* ``helpers.py``: helper functions for network construction, simulation and evaluation
+* ``network_params.py``: network and neuron parameters
+* ``stimulus_params.py``: parameters for optional external stimulation
+* ``sim_params.py``: simulation parameters
+* ``reference_data``: reference data and figures obtained by executing ``run_microcircuit.py`` with ``N_scaling`` and ``K_scaling`` set to `1`
 
 Instructions
 ############

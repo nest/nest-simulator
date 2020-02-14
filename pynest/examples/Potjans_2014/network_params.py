@@ -19,10 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST Microcircuit Example: Network Parameters
------------------------------------------------------
+"""PyNEST Microcircuit: Network Parameters
+---------------------------------------------
 
-A dictionary with base network parameters is enhanced with derived parameters.
+A dictionary with base network and neuron parameters is enhanced with derived
+parameters.
 
 """
 

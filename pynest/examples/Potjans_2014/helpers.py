@@ -19,10 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST Microcircuit Example: Helpers
-------------------------------------------
+"""PyNEST Microcircuit: Helper Functions
+-------------------------------------------
 
-Helper functions for the simulation and evaluation of the microcircuit.
+Helper functions for network construction, simulation and evaluation of the
+microcircuit.
 
 """
 

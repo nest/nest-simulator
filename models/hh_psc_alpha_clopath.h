@@ -59,8 +59,8 @@ extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, vo
 
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, Clopath plasticity
 
-hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the Clopath synapse
-#######################################################################################
+hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for Clopath plasticity
+######################################################################################
 
 Description
 +++++++++++

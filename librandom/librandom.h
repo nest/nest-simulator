@@ -45,6 +45,7 @@ struct BaseRNG
   virtual int operator()() = 0;
   virtual BaseRNG* clone( long seed ) = 0;
   virtual double drand() = 0;
+  virtual unsigned long ulrand(unsigned long N) = 0;
   virtual double min() = 0;
   virtual double max() = 0;
 };

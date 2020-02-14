@@ -45,7 +45,7 @@ class RNG : public BaseRNG
 
   RNG( RNG_TYPE_ rng )
     : rng_( rng )
-    , uniform_dist_0_1_(0.0, 1.0)
+    , uniform_double_dist_0_1_(0.0, 1.0)
   {
   }
 
@@ -62,7 +62,14 @@ public:
 
   inline double drand()
   {
-    return uniform_dist_0_1_(rng_);
+    return uniform_double_dist_0_1_(rng_);
+  }
+
+  inline unsigned long  ulrand(unsigned long N)
+  {
+    // TODO: Can probably use list initialization here. Check when it compiles.
+    uniform_ulong_dist_::param_type param(0, N);
+    return uniform_ulong_dist_(rng_, param);
   }
 
   inline double min()
@@ -77,7 +84,8 @@ public:
 
 private:
   RNG_TYPE_ rng_;
-  std::uniform_real_distribution<> uniform_dist_0_1_;
+  std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
+  std::uniform_real_distribution<> uniform_double_dist_0_1_;
 };
 
 //class Philox : public BaseRNG

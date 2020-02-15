@@ -42,7 +42,7 @@
 % targets and inverse looping is used. 
 [1 4]
 {
-  /nrns 1 /iaf_psc_alpha 4 Create cvgidcollection def
+  /nrns /iaf_psc_alpha 4 Create def
   
   nrns nrns /one_to_one Connect
   

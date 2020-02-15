@@ -135,6 +135,12 @@ public:
     return true;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
 private:
   void init_state_( const Node& );
   void init_buffers_();
@@ -171,7 +177,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_poisson_generator& );
+    void set( const DictionaryDatum&, const sinusoidal_poisson_generator&, Node* );
   };
 
   struct State_
@@ -186,7 +192,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -280,7 +286,7 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, *this ); // throws if BadProperty
+  ptmp.set( d, *this, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

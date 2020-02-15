@@ -68,7 +68,7 @@ M_ERROR setverbosity
   {
     [ n ] [ n ] 
     << /rule /one_to_one >> 
-    << /model syn_model /weight 2.0 pname 1.0 >>
+    << /synapse_model syn_model /weight 2.0 pname 1.0 >>
     Connect
   }
   {

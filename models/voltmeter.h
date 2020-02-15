@@ -35,7 +35,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "recording_device.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictutils.h"

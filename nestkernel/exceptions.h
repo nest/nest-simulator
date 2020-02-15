@@ -507,12 +507,22 @@ public:
   {
   }
 
+  UnexpectedEvent( std::string msg )
+    : KernelException( "UnexpectedEvent" )
+    , msg_( msg )
+  {
+  }
+
   ~UnexpectedEvent() throw()
   {
   }
 
   std::string message() const;
+
+private:
+  std::string msg_;
 };
+
 
 /**
  * Exception to be thrown by a Connection object if
@@ -1167,6 +1177,63 @@ private:
   const int channel_;
   const std::string model_;
 };
+
 #endif
+
+class UnmatchedSteps : public KernelException
+{
+public:
+  UnmatchedSteps( int steps_left, int total_steps )
+    : current_step_( total_steps - steps_left )
+    , total_steps_( total_steps )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  const int current_step_;
+  const int total_steps_;
+};
+
+class BackendPrepared : public KernelException
+{
+public:
+  BackendPrepared( const std::string& backend )
+    : backend_( backend )
+  {
+  }
+
+  BackendPrepared( std::string&& backend )
+    : backend_( std::move( backend ) )
+  {
+  }
+
+
+  std::string message() const;
+
+private:
+  const std::string backend_;
+};
+
+class BackendNotPrepared : public KernelException
+{
+public:
+  BackendNotPrepared( const std::string& backend )
+    : backend_( backend )
+  {
+  }
+
+  BackendNotPrepared( std::string&& backend )
+    : backend_( std::move( backend ) )
+  {
+  }
+
+
+  std::string message() const;
+
+private:
+  const std::string backend_;
+};
 }
 #endif

@@ -29,25 +29,16 @@ M_ERROR setverbosity
 
 11 /N_NEURONS Set
 
-/subnet Create /NG Set
-NG ChangeSubnet
-/iaf_psc_alpha N_NEURONS Create pop
-0 ChangeSubnet
-NG GetGlobalNodes /neurons Set
+/iaf_psc_alpha N_NEURONS Create /neurons Set
+/music_event_in_proxy N_NEURONS Create /inputs Set
 
-/subnet Create /INP Set
-INP ChangeSubnet
-/music_event_in_proxy N_NEURONS Create pop
-0 ChangeSubnet
-INP GetGlobalNodes /inputs Set
-
-inputs
+[N_NEURONS] Range
 {
     /channel Set
-    /n Set
-    n << /port_name (in) /music_channel channel >> SetStatus
-    n neurons channel get << /weight 750.0 >> Connect
+    inputs [channel] Take /meip Set
+    meip << /port_name (in) /music_channel channel 1 sub >> SetStatus
+    meip neurons [channel] Take << >> << /weight 750.0 >> Connect
 }
-forallindexed
+forall
 
 1 Simulate

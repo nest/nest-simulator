@@ -77,7 +77,7 @@ larger 1 are delivered consecutively, also in a parallel setting.
 The creation of double connections between binary neurons will
 destroy the decoding scheme, as this effectively duplicates
 every event. Using random connection routines it is therefore
-advisable to set the property 'multapses' to false.
+advisable to set the property 'allow_multapses' to false.
 The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
@@ -135,8 +135,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dictionary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   bool operator()( librandom::RngPtr rng, double_t h );
 };

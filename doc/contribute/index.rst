@@ -2,7 +2,7 @@ Contributing to NEST
 ====================
 
 NEST draws its strength from the many people that use and improve it. We
-are happy to consider your contributions (e.g. own models, bug or
+are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
 Report bugs and request features
@@ -29,4 +29,7 @@ If you have a Python example network to contribute, please refer to our template
 :doc:`templates_styleguides/example_template`
 
 
+Have a question?
+------------------
 
+If you want to get in contact with us, see our :ref:`nest_community` page for ways you can reach us.

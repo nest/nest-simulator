@@ -35,6 +35,9 @@
 #include <string>
 #include <vector>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // External includes:
 #include <music.hh>
 
@@ -185,7 +188,7 @@ private:
     /**
      * Set values from dicitonary.
      */
-    void set( const DictionaryDatum&, State_& );
+    void set( const DictionaryDatum&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -200,7 +203,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -237,14 +240,14 @@ music_message_in_proxy::get_status( DictionaryDatum& d ) const
 inline void
 music_message_in_proxy::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, S_, this ); // throws if BadProperty
 
   State_ stmp = S_;
-  stmp.set( d, P_ ); // throws if BadProperty
+  stmp.set( d, P_, this ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValue< long >( d, names::n_messages, nm ) )
+  if ( updateValueParam< long >( d, names::n_messages, nm, this ) )
   {
     if ( nm == 0 )
     {

@@ -31,6 +31,7 @@
 #include <cstdio>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -232,23 +233,23 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
+nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::E_L, E_L_ );
-  updateValue< double >( d, names::g_L, g_L_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::Delta_V, Delta_V_ );
-  updateValue< double >( d, names::V_T_star, V_T_star_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
+  updateValueParam< double >( d, names::g_L, g_L_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
+  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
+  if ( updateValueParam< double >( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -367,9 +368,9 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d, const Paramete
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(), 0.0 );
 
   sfa_elems_.resize( p.tau_sfa_.size(), 0.0 );

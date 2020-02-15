@@ -48,15 +48,15 @@ M_WARNING setverbosity
   /param_in Set
   /sg_weight Set
 
-  /e_ex n GetStatus param_ex get def
-  /e_in n GetStatus param_in get def
+  /e_ex n GetStatus 0 get param_ex get def
+  /e_in n GetStatus 0 get param_in get def
 
   n << /E_ex e_ex /E_in e_in >> SetStatus
   /sg /spike_generator Create def
   sg << /spike_times [1.0] >> SetStatus
   sg n sg_weight 1.0 Connect
   T Simulate
-  n GetStatus /V_m get
+  n GetStatus 0 get /V_m get
 } def
 
 
@@ -69,71 +69,56 @@ modeldict keys
     model skip_list exch MemberQ not
     {
         % Reference value
-        /n model Create def
-        T Simulate
-        /vm_ref n GetStatus /V_m get def
+    /n model Create def
+    T Simulate
+    /vm_ref n GetStatus 0 get /V_m get def
 
-        {
-        % Default parameters, with excitatory input
-        ResetKernel
-        vm_ref
-        5.0 /E_in /E_ex model get_vm
-        lt dup
-        } assert_or_die
+    {
+      % Default parameters, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_in /E_ex model get_vm
+      lt dup
+    } assert_or_die
 
-        {
-        % Default parameters, with inhibitory input
-        ResetKernel
-        vm_ref
-        -5.0 /E_in /E_ex model get_vm
-        gt
-        } assert_or_die
+    {
+      % Default parameters, with inhibitory input
+      ResetKernel
+      vm_ref
+      -5.0 /E_in /E_ex model get_vm
+      gt
+    } assert_or_die
 
-        {
-        % Flipped parameters, with excitatory input
-        ResetKernel
-        vm_ref
-        5.0 /E_ex /E_in model get_vm
-        gt
-        } assert_or_die
+    {
+      % Flipped parameters, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_ex /E_in model get_vm
+      gt
+    } assert_or_die
 
-        {
-        % Flipped parameters, with inhibitory input
-        ResetKernel
-        vm_ref
-        -5.0 /E_ex /E_in model get_vm
-        lt
-        } assert_or_die
+    {
+      % Flipped parameters, with inhibitory input
+      ResetKernel
+      vm_ref
+      -5.0 /E_ex /E_in model get_vm
+      lt
+    } assert_or_die
 
-        {
-        % E_ex = E_in = E_L, with excitatory input
-        ResetKernel
-        vm_ref
-        5.0 /E_L /E_L model get_vm
+    {
+      % E_ex = E_in = E_L, with excitatory input
+      ResetKernel
+      vm_ref
+      5.0 /E_L /E_L model get_vm
 
-        inaccurate_rest_pot_diff_limit keys model MemberQ
-        {
-            sub abs inaccurate_rest_pot_diff_limit model get lt
-        }
-        {
-            eq
-        } ifelse
-        } assert_or_die
-
-        {
-        % E_ex = E_in = E_L, with inhibitory input
-        ResetKernel
-        vm_ref
-        -5.0 /E_L /E_L model get_vm
-
-        inaccurate_rest_pot_diff_limit keys model MemberQ
-        {
-            sub abs inaccurate_rest_pot_diff_limit model get lt
-        }
-        {
-            eq
-        } ifelse
-        } assert_or_die
+      inaccurate_rest_pot_diff_limit keys model MemberQ
+      {
+        sub abs inaccurate_rest_pot_diff_limit model get lt
+      }
+      {
+        eq
+      } ifelse
+    } assert_or_die
     } if
   }
   {

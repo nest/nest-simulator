@@ -18,9 +18,9 @@ being supported with security updates:
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| <=2.14.0 | :x:                |
-| 2.16.x   | :white_check_mark: |
-| 2.18.x   | :heavy_check_mark: |
+| <=2.16.0 | :x:                |
+| 2.18.x   | :white_check_mark: |
+| 2.20.x   | :heavy_check_mark: |
 
 ## Reporting a Vulnerability
 

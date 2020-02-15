@@ -150,7 +150,7 @@ synapse params
 syns = nest.GetDefaults(nrn_model)['receptor_types']
 init_w = 0.3*nrn_params['proximal']['C_m']
 syn_params = {
-    'model': 'urbanczik_synapse_wr',
+    'synapse_model': 'urbanczik_synapse_wr',
     'receptor_type': syns['proximal_exc'],
     'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
     'eta': 0.17,         # learning rate
@@ -198,7 +198,7 @@ nrn_params = {
 syns = nest.GetDefaults(nrn_model)['receptor_types']
 init_w = 0.2*nrn_params['proximal']['g_L']
 syn_params = {
-    'model': 'urbanczik_synapse_wr',
+    'synapse_model': 'urbanczik_synapse_wr',
     'receptor_type': syns['proximal_exc'],
     'tau_Delta': 100.0,
     'eta': 0.07 / (15.0*15.0*nrn_params['proximal']['C_m']),
@@ -273,7 +273,7 @@ rqs = nest.GetDefaults(nrn_model)['recordables']
 mm = nest.Create('multimeter', params={'record_from': rqs, 'interval': 0.1})
 
 # for recoding the synaptic weights of the Urbanczik synapses
-wr = nest.Create('weight_recorder', params={'to_file': False})
+wr = nest.Create('weight_recorder')
 
 # for recording the spiking of the soma
 sd_soma = nest.Create('spike_detector')
@@ -299,7 +299,7 @@ for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
     for (sg, t_sp) in zip(sg_prox, t_sds):
         nest.SetStatus(
-            [sg, ], {'spike_times': np.array(t_sp) + i*pattern_duration})
+            sg, {'spike_times': np.array(t_sp) + i*pattern_duration})
 
     nest.Simulate(pattern_duration)
 

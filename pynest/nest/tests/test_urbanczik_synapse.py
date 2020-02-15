@@ -67,7 +67,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             n = nest.Create(nm, 2)
 
             nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"model": "urbanczik_synapse", "receptor_type": r_type})
+                         {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
 
         # Ensure that connecting not supported models fails
         for nm in not_supported_models:
@@ -83,7 +83,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             # try to connect with urbanczik synapse
             with self.assertRaises(nest.kernel.NESTError):
                 nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"model": "urbanczik_synapse", "receptor_type": r_type})
+                             {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -132,7 +132,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         syns = nest.GetDefaults(nrn_model)['receptor_types']
         init_w = 100.0
         syn_params = {
-            'model': 'urbanczik_synapse_wr',
+            'synapse_model': 'urbanczik_synapse_wr',
             'receptor_type': syns['proximal_exc'],
             'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
             'eta': 0.75,         # learning rate
@@ -167,7 +167,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
                          'record_from': rqs, 'interval': 0.1})
 
         # for recoding the synaptic weights of the Urbanczik synapses
-        wr = nest.Create('weight_recorder', params={'to_file': False})
+        wr = nest.Create('weight_recorder')
 
         # for recording the spiking of the soma
         sd_soma = nest.Create('spike_detector')

@@ -75,17 +75,17 @@ mc_models = [
 
 # Models that cannot be tested
 ignore_model = [
-    "gif_pop_psc_exp",          # This one commits spikes at same time
-    "hh_cond_exp_traub",        # This one does not support V_reset
-    "hh_cond_beta_gap_traub",   # This one does not support V_reset
-    "hh_psc_alpha",             # This one does not support V_reset
-    "hh_psc_alpha_clopath",     # This one does not support V_reset
-    "hh_psc_alpha_gap",         # This one does not support V_reset
-    "pp_cond_exp_mc_urbanczik", # This one does not support V_reset
-    "iaf_psc_exp_ps_lossless",  # This one use presice times
-    "sli_neuron",               # This one is not optimal for PyNEST
-    "siegert_neuron",           # This one does not connect to voltmeter
-    "step_rate_generator"       # No regular neuron model
+    "gif_pop_psc_exp",           # This one commits spikes at same time
+    "hh_cond_exp_traub",         # This one does not support V_reset
+    "hh_cond_beta_gap_traub",    # This one does not support V_reset
+    "hh_psc_alpha",              # This one does not support V_reset
+    "hh_psc_alpha_clopath",      # This one does not support V_reset
+    "hh_psc_alpha_gap",          # This one does not support V_reset
+    "pp_cond_exp_mc_urbanczik",  # This one does not support V_reset
+    "iaf_psc_exp_ps_lossless",   # This one use presice times
+    "sli_neuron",                # This one is not optimal for PyNEST
+    "siegert_neuron",            # This one does not connect to voltmeter
+    "step_rate_generator"        # No regular neuron model
 ]
 
 tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(

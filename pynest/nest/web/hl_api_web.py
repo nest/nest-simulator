@@ -35,6 +35,22 @@ __all__ = [
     'app'
 ]
 
+from io import StringIO
+import sys
+
+
+class Capturing(list):
+  def __enter__(self):
+    self._stdout = sys.stdout
+    sys.stdout = self._stringio = StringIO()
+    return self
+
+  def __exit__(self, *args):
+    self.extend(self._stringio.getvalue().splitlines())
+    del self._stringio    # free up some memory
+    sys.stdout = self._stdout
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -46,15 +62,32 @@ def nest_index():
     data['response']['version'] = nest.version()
     return jsonify(data)
 
+
+@app.route('/exec', methods=['GET', 'POST'])
+@cross_origin()
+def route_exec():
+    data = init_data(request)
+    args, kwargs = get_arguments(request, data)
+    with Capturing() as output:
+        try:
+            exec(kwargs.get('source', ''))
+            if 'return' in kwargs:
+              data['response']['return'] = nest.hl_api.serializable(locals()[kwargs['return']])
+            data['response']['status'] = 'ok'
+        except Exception as e:
+            data['response']['msg'] = str(e)
+            data['response']['status'] = 'error'
+    data['response']['output'] = '\n'.join(output)
+    return jsonify(data)
+
+
 # --------------------------
 # RESTful API
 # --------------------------
 
-
 nest_calls = dir(nest)
 nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
 nest_calls.sort()
-
 
 @app.route('/api', methods=['GET'])
 @cross_origin()
@@ -192,6 +225,13 @@ def serialize(data, toFixed=False):
             elif isinstance(value, tuple) and len(value) > 0:
                 if isinstance(value[0], tuple) and len(value[0]) > 0:
                     data[key] = [[j.tolist() for j in i] for i in value]
+    return data
+
+
+@get_or_error
+def exec_client(request, data, *args, **kwargs):
+    data['request']['source'] = kwargs['source']
+    exec(kwargs['source'])
     return data
 
 

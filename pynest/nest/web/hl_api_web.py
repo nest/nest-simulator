@@ -76,6 +76,7 @@ nest_calls = dir(nest)
 nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
 nest_calls.sort()
 
+
 @app.route('/api', methods=['GET'])
 @cross_origin()
 def nest_api():
@@ -118,10 +119,10 @@ class Capturing(list):
 def init_data(request, call=None):
     url = request.url_rule.rule.split('/')[1]
     data = {
-      'request': {
-          'url': url,
-      },
-      'response': {}
+        'request': {
+            'url': url,
+        },
+        'response': {}
     }
     if call:
         data['request']['call'] = call

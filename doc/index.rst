@@ -88,8 +88,8 @@ How the documentation is organized
 
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
-Contribute
-##########
+Interested in contributing?
+###########################
 
 * Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
   Find out how to :doc:`cite NEST <citing-nest>` in your work.

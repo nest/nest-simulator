@@ -19,10 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+from io import StringIO
 import array
-import numpy as np
 import inspect
+import numpy as np
+import os
+import sys
 
 import nest
 
@@ -35,20 +37,16 @@ __all__ = [
     'app'
 ]
 
-from io import StringIO
-import sys
-
-
 class Capturing(list):
-  def __enter__(self):
-    self._stdout = sys.stdout
-    sys.stdout = self._stringio = StringIO()
-    return self
+    def __enter__(self):
+      self._stdout = sys.stdout
+      sys.stdout = self._stringio = StringIO()
+      return self
 
-  def __exit__(self, *args):
-    self.extend(self._stringio.getvalue().splitlines())
-    del self._stringio    # free up some memory
-    sys.stdout = self._stdout
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
 
 
 app = Flask(__name__)
@@ -72,7 +70,7 @@ def route_exec():
         try:
             exec(kwargs.get('source', ''))
             if 'return' in kwargs:
-              data['response']['return'] = nest.hl_api.serializable(locals()[kwargs['return']])
+                data['response']['return'] = nest.hl_api.serializable(locals()[kwargs['return']])
             data['response']['status'] = 'ok'
         except Exception as e:
             data['response']['msg'] = str(e)

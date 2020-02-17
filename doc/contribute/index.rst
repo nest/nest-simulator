@@ -6,7 +6,7 @@ are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
 Report bugs and request features
----------------------------------
+--------------------------------
 
 If you find an error in the code or documentaton or want to suggest a feature, submit `an issue on GitHub
 <https://github.com/nest/nest-simulator/issues>`_.
@@ -22,7 +22,7 @@ You can find all the details for our development workflow on the `NEST developer
 For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
 
 Contribute a Python example script
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 If you have a Python example network to contribute, please refer to our template to ensure you cover the required information:
 
@@ -30,6 +30,6 @@ If you have a Python example network to contribute, please refer to our template
 
 
 Have a question?
-------------------
+----------------
 
 If you want to get in contact with us, see our :ref:`nest_community` page for ways you can reach us.

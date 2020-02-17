@@ -59,7 +59,13 @@ def route_exec():
         try:
             exec(kwargs.get('source', ''))
             if 'return' in kwargs:
-                data['response']['return'] = nest.hl_api.serializable(locals()[kwargs['return']])
+                if isinstance(kwargs['return'], list):
+                    return_data = {}
+                    for variable in kwargs['return']:
+                        return_data[variable] = locals()[variable]
+                else:
+                    return_data = locals()[kwargs['return']]
+                data['response']['return'] = nest.hl_api.serializable(return_data)
             data['response']['status'] = 'ok'
         except Exception as e:
             data['response']['msg'] = str(e)
@@ -225,13 +231,6 @@ def serialize(data, toFixed=False):
             elif isinstance(value, tuple) and len(value) > 0:
                 if isinstance(value[0], tuple) and len(value[0]) > 0:
                     data[key] = [[j.tolist() for j in i] for i in value]
-    return data
-
-
-@get_or_error
-def exec_client(request, data, *args, **kwargs):
-    data['request']['source'] = kwargs['source']
-    exec(kwargs['source'])
     return data
 
 

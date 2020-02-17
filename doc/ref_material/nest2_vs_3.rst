@@ -24,7 +24,7 @@ NEST2-to-NEST3 transition guide
 
 .. _setverbosity:
 
-Supress output on startup
+Suppress output on startup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+----------------------------------+

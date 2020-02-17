@@ -19,9 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from io import StringIO
 import array
 import inspect
+import io
 import numpy as np
 import os
 import sys
@@ -36,17 +36,6 @@ from flask_cors import CORS, cross_origin
 __all__ = [
     'app'
 ]
-
-class Capturing(list):
-    def __enter__(self):
-      self._stdout = sys.stdout
-      sys.stdout = self._stringio = StringIO()
-      return self
-
-    def __exit__(self, *args):
-        self.extend(self._stringio.getvalue().splitlines())
-        del self._stringio    # free up some memory
-        sys.stdout = self._stdout
 
 
 app = Flask(__name__)
@@ -113,6 +102,18 @@ def nest_api_call(call):
 # ---------------
 # Helpers for web
 # ---------------
+
+class Capturing(list):
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = io.StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
+
 
 def init_data(request, call=None):
     url = request.url_rule.rule.split('/')[1]

@@ -1,7 +1,7 @@
-NEST 2.X vs. NEST 3.0 conversion reference guide
-==================================================
+NEST2-to-NEST3 transition guide
+===============================
 
-* This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 

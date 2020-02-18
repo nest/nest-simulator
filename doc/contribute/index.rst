@@ -14,8 +14,8 @@ If you find an error in the code or documentaton or want to suggest a feature, s
 Make sure to check that your issue has not already been reported there before creating a new one.
 
 
-Make changes to code or documentation
--------------------------------------
+Change code or documentation
+----------------------------
 
 You can find all the details for our development workflow on the `NEST developer space <http://nest.github.io/nest-simulator>`_.
 

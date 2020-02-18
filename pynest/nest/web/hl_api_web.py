@@ -55,22 +55,23 @@ def nest_index():
 def route_exec():
     data = init_data(request)
     args, kwargs = get_arguments(request, data)
-    with Capturing() as output:
+    with Capturing() as stdout:
         try:
             exec(kwargs.get('source', ''))
             if 'return' in kwargs:
                 if isinstance(kwargs['return'], list):
                     return_data = {}
                     for variable in kwargs['return']:
-                        return_data[variable] = locals()[variable]
+                        return_data[variable] = locals().get(variable, None)
                 else:
-                    return_data = locals()[kwargs['return']]
-                data['response']['return'] = nest.hl_api.serializable(return_data)
+                    return_data = locals().get(kwargs['return'], None)
+                data['response']['data'] = nest.hl_api.serializable(return_data)
             data['response']['status'] = 'ok'
         except Exception as e:
-            data['response']['msg'] = str(e)
+            print(e)
+            data['response']['data'] = None
             data['response']['status'] = 'error'
-    data['response']['output'] = '\n'.join(output)
+    data['response']['stdout'] = '\n'.join(stdout)
     return jsonify(data)
 
 

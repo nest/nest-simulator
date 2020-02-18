@@ -1,16 +1,16 @@
-Getting Help
-=================
+Getting help
+============
 
 
 Have a specific question or problem with NEST?
-------------------------------------------------
+----------------------------------------------
 
 * Check out the :doc:`troubleshooting section <troubleshooting>` for common issues.
 
 If your question is not on there, ask our :doc:`Mailing List <community>`.
 
 Getting help on the command line interface
--------------------------------------------
+------------------------------------------
 
 * The ``helpdesk()`` command will launch the documentation pages on your browser.
   See `Set up the integrated helpdesk`_ to specify the browser of your choice.
@@ -63,7 +63,7 @@ Model Information
 
 
 Set up the integrated helpdesk
---------------------------------
+------------------------------
 
 The command ``helpdesk`` needs to know which browser to launch in order
 to display the help pages. The browser is set as an option of

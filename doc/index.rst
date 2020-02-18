@@ -77,8 +77,8 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 **Have a question or issue with NEST?**
     See our :doc:`Getting Help <getting_help>` page.
 
-How the documentation is organized
-##################################
+Where to find what
+##################
 
 * :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
 

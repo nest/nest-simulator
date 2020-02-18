@@ -30,7 +30,7 @@ Table of Contents
    contribute/index
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
-   NEST-Initiative <https://www.nest-initiative.org/>
+   NEST Initiative <https://www.nest-initiative.org/>
 
 .. toctree::
    :maxdepth: 2

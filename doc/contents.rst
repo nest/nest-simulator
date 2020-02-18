@@ -12,15 +12,15 @@ Table of Contents
    download
    installation/index
    getting_started
-   troubleshooting
    tutorials/index
+   guides/index
+   ref_material/nest3_vs_3
    models/index
    examples/index
    topology/index
-   guides/index
-   getting_help
-   ref_material/nest2_vs_3
    ref_material/pynest_apis
+   troubleshooting
+   getting_help
 
 .. toctree::
    :maxdepth: 2

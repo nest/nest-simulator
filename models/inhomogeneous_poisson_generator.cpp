@@ -19,27 +19,31 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "inhomogeneous_poisson_generator.h"
 
-#include "event_delivery_manager_impl.h"
-#include "kernel_manager.h"
+// C++ includes:
+#include <cmath>
+#include <limits>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "booldatum.h"
-
-
-#include "exceptions.h"
 #include "integerdatum.h"
 #include "arraydatum.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
-#include <cmath>
-#include <limits>
-
-#include "dict_util.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

@@ -23,6 +23,9 @@
 #ifndef TEST_PARAMETER_H
 #define TEST_PARAMETER_H
 
+// C++ includes
+#include <random>
+
 // The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 107000
@@ -32,9 +35,7 @@
 
 // Includes from nestkernel
 #include "nest_datums.h"
-
-// Includes from librandom
-#include "randomgen.h"
+#include "random.h"
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 
@@ -51,8 +52,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ParameterDatum uniform_pd = new nest::UniformParameter( d );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
-  auto rng = librandom::RngPtr( librandom::RandomGen::create_knuthlfg_rng( librandom::RandomGen::DefaultSeed ) );
-
+  auto rng = RNG< std::mt19937_64 >;
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );
 }
 

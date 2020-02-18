@@ -284,5 +284,4 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
       nextspk.second = delta_stamp.get_ms() - new_offset;
     }
   }
-  // std::cerr << "********************************\n";
 }

@@ -136,10 +136,8 @@ Mac OS X 10.5 and later comes with MPI pre-installed and ``--with-mpi`` should
 work. If you should get an error message like this::
 
     libtool: link: /usr/bin/mpicxx -W -Wall -pedantic -Wno-long-long -O0 -g -DNO_UNUSED_SYN -o .libs/nest main.o neststartup.o
-    -Wl,-bind_at_load   ../models/.libs/libmodelmodule.a ../precise/.libs/libprecisemodule.a
-    /Users/plesser/NEST/code/branches/bluegeneP/bld/topology/.lib s/libtopologymodule.dylib
-    /Users/plesser/NEST/code/branches/bluegeneP/bld/developer/.libs/libdevelopermodule.dylib ../nestkernel/.libs/libnest.a
-    ../librandom/.libs /librandom.a ../libnestutil/.libs/libnestutil.a ../sli/.libs/libsli.a -lcurses -lreadline -lpthread -L/opt/local/lib  
+    -Wl,-bind_at_load   ../models/.libs/libmodelmodule.a ../precise/.libs/libprecisemodule.a ../nestkernel/.libs/libnest.a
+    ../libnestutil/.libs/libnestutil.a ../sli/.libs/libsli.a -lcurses -lreadline -lpthread -L/opt/local/lib
     /opt/local/lib/libgsl.dylib /opt/local/lib/libgslcblas.dylib -lm
     Undefined symbols:
      "MPI::Comm::Set_errhandler(MPI::Errhandler const&)", referenced from:

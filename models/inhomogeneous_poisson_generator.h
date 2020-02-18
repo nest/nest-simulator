@@ -25,17 +25,15 @@
 
 // C++ includes:
 #include <random>
+#include <vector>
 
+// Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "nest_types.h"
-#include "stimulating_device.h"
-
-#include <vector>
 #include "nest.h"
+#include "stimulating_device.h"
 #include "ring_buffer.h"
-
 
 namespace nest
 {

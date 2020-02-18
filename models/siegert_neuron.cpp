@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "siegert_neuron.h"
 
 #ifdef HAVE_GSL

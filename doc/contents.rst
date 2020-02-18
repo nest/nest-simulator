@@ -19,8 +19,8 @@ Table of Contents
    examples/index
    topology/index
    ref_material/pynest_apis
-   troubleshooting
    getting_help
+   troubleshooting
 
 .. toctree::
    :maxdepth: 2

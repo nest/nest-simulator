@@ -24,10 +24,8 @@
 #define POISSON_GENERATOR_PS_H
 
 // C++ includes:
+#include <random>
 #include <vector>
-
-// Includes from librandom:
-#include "exp_randomdev.h"
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -170,8 +168,8 @@ private:
 
   struct Variables_
   {
-    double inv_rate_ms_;              //!< 1000.0 / Parameters_.rate_
-    librandom::ExpRandomDev exp_dev_; //!< random deviate generator
+    double inv_rate_ms_;                      //!< 1000.0 / Parameters_.rate_
+    std::exponential_distribution<> exp_dev_; //!< random deviate generator
 
     /**
      * @name update-hook communication.

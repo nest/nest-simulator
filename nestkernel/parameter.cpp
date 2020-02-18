@@ -40,11 +40,11 @@ Parameter::node_id_to_node_ptr_( const index node_id, const thread t ) const
 }
 
 std::vector< double >
-Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array ) const
+Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
 {
   std::vector< double > result;
   result.reserve( token_array.size() );
-  librandom::RngPtr rng = get_global_rng();
+  RngPtr rng = get_global_rng();
 
   // Get source layer from the NodeCollection
   auto source_metadata = nc->get_metadata();
@@ -86,7 +86,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array ) c
 
 
 double
-NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
+NodePosParameter::get_node_pos_( RngPtr rng, Node* node ) const
 {
   if ( not node )
   {
@@ -123,10 +123,10 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   return pos[ dimension_ ];
 }
 double
-SpatialDistanceParameter::value( librandom::RngPtr& rng,
+SpatialDistanceParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer ) const
+  const AbstractLayer& layer )
 {
   switch ( dimension_ )
   {
@@ -172,7 +172,7 @@ RedrawParameter::RedrawParameter( const Parameter& p, const double min, const do
 }
 
 double
-RedrawParameter::value( librandom::RngPtr& rng, Node* node ) const
+RedrawParameter::value( RngPtr rng, Node* node )
 {
   double value;
   size_t num_redraws = 0;
@@ -188,7 +188,7 @@ RedrawParameter::value( librandom::RngPtr& rng, Node* node ) const
 }
 
 double
-RedrawParameter::value( librandom::RngPtr& rng, index snode_id, Node* target, thread target_thread ) const
+RedrawParameter::value( RngPtr rng, index snode_id, Node* target, thread target_thread )
 {
   double value;
   size_t num_redraws = 0;
@@ -204,10 +204,10 @@ RedrawParameter::value( librandom::RngPtr& rng, index snode_id, Node* target, th
 }
 
 double
-RedrawParameter::value( librandom::RngPtr& rng,
+RedrawParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer ) const
+  const AbstractLayer& layer )
 {
   double value;
   size_t num_redraws = 0;

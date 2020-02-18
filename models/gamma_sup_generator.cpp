@@ -58,9 +58,9 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::gamma_sup_generator::Internal_states_::update( double transition_prob, librandom::RngPtr rng )
+nest::gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
-  std::vector< unsigned long > n_trans; // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
+  std::vector< unsigned long > n_trans; // only set from poisson_dist_ og bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -80,8 +80,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, lib
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
         || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
       {
-        poisson_dev_.set_lambda( transition_prob * occ_[ i ] );
-        n_trans[ i ] = poisson_dev_.ldev( rng );
+        poisson_param_type param( transition_prob * occ_[ i ] );
+        n_trans[ i ] = poisson_dist_( *rng, param );
         if ( n_trans[ i ] > occ_[ i ] )
         {
           n_trans[ i ] = occ_[ i ];
@@ -89,8 +89,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, lib
       }
       else
       {
-        bino_dev_.set_p_n( transition_prob, occ_[ i ] );
-        n_trans[ i ] = bino_dev_.ldev( rng );
+        binomial_param_type param( occ_[ i ], transition_prob );
+        n_trans[ i ] = bino_dist_( *rng, param );
       }
     }
     else
@@ -262,17 +262,14 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
 void
 nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 {
-
   // get port number
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
-  // age_distribution object propagates one time step and returns number of
-  // spikes
-  unsigned long n_spikes =
-    B_.internal_states_[ prt ].update( V_.transition_prob_, kernel().rng_manager.get_rng( get_thread() ) );
+  // age_distribution object propagates one time step and returns number of spikes
+  unsigned long n_spikes = B_.internal_states_[ prt ].update( V_.transition_prob_, get_thread_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

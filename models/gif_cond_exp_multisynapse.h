@@ -403,10 +403,9 @@ private:
    */
   struct Variables_
   {
-    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
-    std::vector< double > P_stc_; // decay terms of adaptive threshold elements
-
-    librandom::RngPtr rng_; // random number generator of my own thread
+    std::vector< double > P_sfa_; //!< decay terms of spike-triggered current elements
+    std::vector< double > P_stc_; //!< decay terms of adaptive threshold elements
+    RngPtr rng_;                  //!< random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

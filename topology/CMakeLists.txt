@@ -43,12 +43,11 @@ set( topo_sources
     )
 
 add_library( topology ${topo_sources} )
-target_link_libraries( topology nestutil sli_lib random nestkernel )
+target_link_libraries( topology nestutil sli_lib nestkernel )
 
 target_include_directories( topology PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     )

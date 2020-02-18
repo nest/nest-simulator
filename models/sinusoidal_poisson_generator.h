@@ -23,8 +23,8 @@
 #ifndef SINUSOIDAL_POISSON_GENERATOR_H
 #define SINUSOIDAL_POISSON_GENERATOR_H
 
-// Includes from librandom:
-#include "poisson_randomdev.h"
+// C++ includes:
+#include <random>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -217,7 +217,7 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
 
     double h_;   //! time resolution (ms)
     double sin_; //!< sin(h om) in propagator

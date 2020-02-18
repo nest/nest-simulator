@@ -27,6 +27,7 @@
 #include "config.h"
 
 // C++ includes:
+#include <random>
 #include <string>
 
 // Includes from nestkernel:
@@ -35,8 +36,6 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
 #include "ring_buffer.h"
 #include "recordables_map.h"
 #include "universal_data_logger.h"
@@ -229,9 +228,7 @@ private:
     // by RateConnectionInstantaneous
     std::vector< double > last_y_values;  //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in
-    // order to apply the same random
-    // numbers in each iteration when wfr
-    // is used
+    // order to apply the same random numbers in each iteration when wfr is used
     UniversalDataLogger< rate_neuron_opn > logger_; //!< Logger for all analog data
   };
 
@@ -242,7 +239,6 @@ private:
    */
   struct Variables_
   {
-
     // propagators
     double P1_;
     double P2_;
@@ -250,9 +246,7 @@ private:
     // factor accounting for piecewise constant implementation of noise
     double output_noise_factor_;
 
-    librandom::RngPtr rng_;
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    librandom::NormalRandomDev normal_dev_;   //!< random deviate generator
+    std::normal_distribution<> normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

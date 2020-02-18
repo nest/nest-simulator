@@ -33,9 +33,6 @@
 #include "logging.h"
 #include "logging_event.h"
 
-// Includes from librandom:
-#include "random_numbers.h"
-
 // Includes from nest:
 #include "sli_neuron.h"
 
@@ -110,7 +107,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #endif
 
   addmodule< OOSupportModule >( engine );
-  addmodule< RandomNumbers >( engine );
 
 #if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
   addmodule< GNUReadline >( engine );

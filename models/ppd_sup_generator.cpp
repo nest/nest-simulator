@@ -59,7 +59,7 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bi
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, librandom::RngPtr rng )
+nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr rng )
 {
   unsigned long n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
@@ -74,8 +74,8 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, librando
     http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
     if ( ( occ_active_ >= 100 && hazard_step <= 0.01 ) || ( occ_active_ >= 500 && hazard_step * occ_active_ <= 0.1 ) )
     {
-      poisson_dev_.set_lambda( hazard_step * occ_active_ );
-      n_spikes = poisson_dev_.ldev( rng );
+      poisson_param_type param( hazard_step * occ_active_ );
+      n_spikes = poisson_dist_( *rng, param );
       if ( n_spikes > occ_active_ )
       {
         n_spikes = occ_active_;
@@ -83,8 +83,8 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, librando
     }
     else
     {
-      bino_dev_.set_p_n( hazard_step, occ_active_ );
-      n_spikes = bino_dev_.ldev( rng );
+      binomial_param_type param( occ_active_, hazard_step );
+      n_spikes = bino_dist_( *rng, param );
     }
   }
   else
@@ -283,8 +283,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 
   // age_distribution object propagates one time step and returns number of
   // spikes
-  unsigned long n_spikes =
-    B_.age_distributions_[ prt ].update( V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
+  unsigned long n_spikes = B_.age_distributions_[ prt ].update( V_.hazard_step_t_, get_thread_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

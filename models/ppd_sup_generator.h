@@ -24,11 +24,8 @@
 #define ppd_sup_generator_H
 
 // C++ includes:
+#include <random>
 #include <vector>
-
-// Includes from librandom:
-#include "binomial_randomdev.h"
-#include "poisson_randomdev.h"
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -179,20 +176,18 @@ private:
 
   class Age_distribution_
   {
-
-    librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    //! occupation numbers of ages below dead time
-    std::vector< unsigned long > occ_refractory_;
-    unsigned long occ_active_; //!< summed occupation number of ages above dead time
-    size_t activate_;          //!< rotating pointer
+    std::binomial_distribution<> bino_dist_;      //!< binomial distribution
+    std::poisson_distribution<> poisson_dist_;    //!< poisson distribution
+    std::vector< unsigned long > occ_refractory_; //! occupation numbers of ages below dead time
+    unsigned long occ_active_;                    //!< summed occupation number of ages above dead time
+    size_t activate_;                             //!< rotating pointer
 
   public:
     //! initialize age dist
     Age_distribution_( size_t num_age_bins, unsigned long ini_occ_ref, unsigned long ini_occ_act );
 
     //! update age dist and generate spikes
-    unsigned long update( double hazard_rate, librandom::RngPtr rng );
+    unsigned long update( double hazard_rate, RngPtr rng );
   };
 
 

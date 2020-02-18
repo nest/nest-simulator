@@ -22,9 +22,8 @@
 
 #include "mip_generator.h"
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-#include "random_datums.h"
+// C++ includes
+#include <random>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -33,6 +32,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "random.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -47,7 +47,7 @@ nest::mip_generator::Parameters_::Parameters_()
   , p_copy_( 1.0 )
   , mother_seed_( 0 )
 {
-  rng_ = librandom::RandomGen::create_knuthlfg_rng( mother_seed_ );
+  rng_ = make_rng< std::mt19937_64 >( mother_seed_ );
 }
 
 nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
@@ -85,7 +85,7 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Copy probability must be in [0, 1]." );
   }
 
-  bool reset_rng = updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
+  bool reset_rng = updateValue< RngPtr >( d, names::mother_rng, rng_ );
 
   // order important to avoid short-circuitung
   reset_rng = updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
@@ -138,7 +138,8 @@ nest::mip_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  poisson_param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dist_.param( param );
 }
 
 
@@ -160,7 +161,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
     }
 
     // generate spikes of mother process for each time slice
-    long n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
+    long n_mother_spikes = V_.poisson_dist_( *P_.rng_ );
 
     if ( n_mother_spikes )
     {
@@ -186,7 +187,7 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   // event_hook().
   // reichert
 
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+  RngPtr rng = get_thread_rng( get_thread() );
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;
 

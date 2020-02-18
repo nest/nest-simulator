@@ -26,13 +26,11 @@
 // C++ includes:
 #include <cmath>
 #include <limits>
+#include <random>
 
 // Includes from libnestutil:
 #include "numerics.h"
 #include "dict_util.h"
-
-// Includes from librandom:
-#include "exp_randomdev.h"
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -176,8 +174,8 @@ private:
    */
   struct Variables_
   {
-    librandom::RngPtr rng_;           //!< random number generator of my own thread
-    librandom::ExpRandomDev exp_dev_; //!< random deviate generator
+    RngPtr rng_;                               //!< random number generator of my own thread
+    std::exponential_distribution<> exp_dist_; //!< random deviate generator
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -433,13 +431,13 @@ binary_neuron< TGainfunction >::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_thread_rng( get_thread() );
 
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
   if ( S_.t_next_.is_neg_inf() )
   {
-    S_.t_next_ = Time::ms( V_.exp_dev_( V_.rng_ ) * P_.tau_m_ );
+    S_.t_next_ = Time::ms( V_.exp_dist_( *V_.rng_ ) * P_.tau_m_ );
   }
 }
 
@@ -491,7 +489,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
       }
 
       // draw next update interval from exponential distribution
-      S_.t_next_ += Time::ms( V_.exp_dev_( V_.rng_ ) * P_.tau_m_ );
+      S_.t_next_ += Time::ms( V_.exp_dist_( *V_.rng_ ) * P_.tau_m_ );
 
     } // of if (update now)
 

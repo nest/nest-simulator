@@ -22,10 +22,6 @@
 
 #include "conn_parameter.h"
 
-// Includes from librandom:
-#include "random_datums.h"
-#include "random_numbers.h"
-
 // Includes from nestkernel:
 #include "nest_names.h"
 #include "kernel_manager.h"
@@ -50,10 +46,10 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   }
 
   // random deviate
-  DictionaryDatum* rdv_spec = dynamic_cast< DictionaryDatum* >( t.datum() );
-  if ( rdv_spec )
+  DictionaryDatum* rand_spec = dynamic_cast< DictionaryDatum* >( t.datum() );
+  if ( rand_spec )
   {
-    return new RandomParameter( *rdv_spec, nthreads );
+    return new RandomParameter( *rand_spec, nthreads );
   }
 
   // single integer
@@ -87,25 +83,25 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + t.datum()->gettypename().toString() );
 }
 
-nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )
-  : rdv_( 0 )
+nest::RandomParameter::RandomParameter( const DictionaryDatum& randdv_spec, const size_t )
 {
-  if ( not rdv_spec->known( names::distribution ) )
-  {
-    throw BadProperty( "Random distribution spec must contain distribution name." );
-  }
-
-  const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
-  if ( not RandomNumbers::get_rdvdict().known( rdv_name ) )
-  {
-    throw BadProperty( "Unknown random deviate: " + rdv_name );
-  }
-
-  librandom::RdvFactoryDatum factory =
-    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
-
-  rdv_ = factory->create();
-  rdv_->set_status( rdv_spec );
+  //  if ( not rdv_spec->known( names::distribution ) )
+  //  {
+  //    throw BadProperty( "Random distribution spec must contain distribution name." );
+  //  }
+  //
+  //  const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
+  //
+  //  if ( not RandomNumbers::get_rdvdict().known( rdv_name ) )
+  //  {
+  //    throw BadProperty( "Unknown random deviate: " + rdv_name );
+  //  }
+  //
+  //  librandom::RdvFactoryDatum factory =
+  //    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
+  //
+  //  rdv_ = factory->create();
+  //  rdv_->set_status( rdv_spec );
 }
 
 
@@ -116,7 +112,7 @@ nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const Parame
 
 double
 nest::ParameterConnParameterWrapper::value_double( thread target_thread,
-  librandom::RngPtr& rng,
+  RngPtr rng,
   index snode_id,
   Node* target ) const
 {

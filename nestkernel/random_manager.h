@@ -27,23 +27,20 @@
 #include "config.h"
 
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from librandom:
-#include "librandom.h"
-
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "random.h"
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "name.h"
 
-
-// JME: Maybe caching numbers can help
+// TODO: Maybe caching numbers can help
 
 namespace nest
 {
@@ -51,9 +48,12 @@ namespace nest
 class RandomManager : public ManagerInterface
 {
 public:
-
-  RandomManager() {}
-  ~RandomManager() {}
+  RandomManager()
+  {
+  }
+  ~RandomManager()
+  {
+  }
 
   virtual void initialize();
   virtual void finalize();
@@ -64,71 +64,53 @@ public:
   /**
    * Get random number client of a thread.
    */
-  random::BaseRNG& get_rng( thread tid ) const;
+  RngPtr get_thread_rng( thread tid ) const;
 
   /**
    * Get global random number client.
    * This RNG must be used in a synchronized fashion from all virtual processes.
    **/
-  random::BaseRNG& get_grng() const;
+  RngPtr get_global_rng() const;
 
 private:
+  long rng_seed_;
 
   /** Vector of random number generators for threads. */
-  std::vector< random::BaseRNG* > trngs_;
+  std::vector< RngPtr > thread_rngs_;
 
   /** Global random number generator. */
-  random::BaseRNG* grng_;
+  RngPtr global_rng_;
 
   /** */
-  DictionaryDatum rngdict_;
+  std::string current_rng_type_;
 
   /** */
-  DictionaryDatum rdistdict_;
-
-  Name rng_type_;
-  std::vector< random::BaseRNG* > rng_types;
-  std::vector< random::BaseRDist* > rdist_types;
+  std::map< std::string, RngPtr > rng_types_;
 
   /**
    *
    **/
-  template< class RNG >
-  void register_rng_type( Name name, bool set_as_default );
-
-  /**
-   *
-   **/
-  template< class RDist >
-  void register_rdist_type( Name name, bool register_clipped );
+  template < typename RNG_TYPE_ >
+  void register_rng_type_( std::string name, bool set_as_default );
 
   /**
    *
    **/
   void create_rngs_();
-
-  /**
-   *
-   **/
-  void delete_rngs_();
-
-  /**
-   *
-   **/
-  void create_rdist_();
 };
 
-inline random::BaseRNG&
-nest::RandomManager::get_rng( thread tid ) const
+inline RngPtr
+nest::RandomManager::get_thread_rng( thread tid ) const
 {
-  assert( t < static_cast< nest::thread >( rng_.size() ) );
-  return trngs_[ t ];
+  assert( tid >= 0 );
+  assert( tid < static_cast< thread >( thread_rngs_.size() ) );
+  return thread_rngs_[ tid ];
 }
 
-inline random::BaseRNG&
-nest::RandomManager::get_grng() const
+inline RngPtr
+nest::RandomManager::get_global_rng() const
 {
-  return grng_;
+  return global_rng_;
 }
 
 } // namespace nest

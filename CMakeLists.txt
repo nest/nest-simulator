@@ -235,7 +235,6 @@ add_subdirectory( examples )
 add_subdirectory( extras )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
-add_subdirectory( librandom )
 add_subdirectory( models )
 add_subdirectory( sli )
 add_subdirectory( nest )
@@ -288,7 +287,6 @@ endforeach ()
 set( ALL_LIBS
   "-lnestutil"
   "-lnest"
-  "-lrandom"
   "-lsli"
   "-lnestkernel"
   "-ltopology"

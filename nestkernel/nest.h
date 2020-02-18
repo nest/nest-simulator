@@ -30,9 +30,6 @@
 #include "enum_bitfield.h"
 #include "logging.h"
 
-// Includes from librandom:
-#include "randomgen.h"
-
 // Includes from nestkernel:
 #include "nest_datums.h"
 #include "nest_time.h"
@@ -96,8 +93,8 @@ void register_secondary_connection_model( const std::string& name,
 
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
-librandom::RngPtr get_vp_rng( thread tid );
-librandom::RngPtr get_global_rng();
+RngPtr get_thread_rng( thread tid );
+RngPtr get_global_rng();
 
 void set_kernel_status( const DictionaryDatum& dict );
 DictionaryDatum get_kernel_status();

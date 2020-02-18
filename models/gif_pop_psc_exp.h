@@ -23,18 +23,19 @@
 #ifndef PP_POP_PSC_BETA_H
 #define PP_POP_PSC_BETA_H
 
+// C++ includes:
+#include <random>
+
+// Includes from nestkernel:
 #include "nest.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "poisson_randomdev.h"
-#include "gsl_binomial_randomdev.h"
 #include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
 namespace nest
 {
-
 
 class Network;
 
@@ -309,10 +310,10 @@ private:
     double h_; // simulation time step in ms
     double min_double_;
 
-    librandom::RngPtr rng_; // random number generator of own thread
+    RngPtr rng_; // random number generator of own thread
 
-    librandom::PoissonRandomDev poisson_dev_;   // Poisson random number generator
-    librandom::GSL_BinomialRandomDev bino_dev_; // Binomial random number generator
+    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
+    std::binomial_distribution<> bino_dist_;   //!< binomial distribution
 
     double x_;                     // internal variable of population dynamics
     double z_;                     // internal variable of population dynamics

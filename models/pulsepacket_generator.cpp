@@ -29,9 +29,6 @@
 #include "dict_util.h"
 #include "numerics.h"
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -194,8 +191,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
 
   if ( V_.start_center_idx_ < V_.stop_center_idx_ )
   {
-    // obtain rng
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+    RngPtr rng = get_thread_rng( get_thread() );
 
     bool needtosort = false;
 
@@ -203,7 +199,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double x = P_.sdev_ * V_.norm_dev_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
+        double x = P_.sdev_ * V_.normal_dist_( *rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
         {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );

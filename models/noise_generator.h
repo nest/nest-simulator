@@ -24,10 +24,8 @@
 #define NOISE_GENERATOR_H
 
 // C++ includes:
+#include <random>
 #include <vector>
-
-// Includes from librandom:
-#include "normal_randomdev.h"
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -248,10 +246,11 @@ private:
 
   struct Variables_
   {
-    long dt_steps_;                         //!< update interval in steps
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
-    double omega_;                          //!< Angelfrequency i rad/s
-    double phi_rad_;                        //!< Phase of sine current (0-2Pi rad)
+    std::normal_distribution<> normal_dist_; //!< normal distribution
+
+    long dt_steps_;  //!< update interval in steps
+    double omega_;   //!< Angelfrequency i rad/s
+    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double A_00_;

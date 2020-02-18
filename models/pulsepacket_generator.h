@@ -25,10 +25,8 @@
 
 // C++ includes:
 #include <deque>
+#include <random>
 #include <vector>
-
-// Includes from librandom:
-#include "normal_randomdev.h"
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -146,8 +144,7 @@ private:
 
   struct Variables_
   {
-
-    librandom::NormalRandomDev norm_dev_; //!< random deviate generator
+    std::normal_distribution<> normal_dist_; //!< normal distribution
 
     /** Indices into sorted vector of sorted pulse-center times
      *  (P_.pulse_times_). Spike times to be sent are calculated from

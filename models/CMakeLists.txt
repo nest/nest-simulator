@@ -130,12 +130,11 @@ set( models_sources
     )
 
 add_library( models ${models_sources} )
-target_link_libraries( models nestutil sli_lib nestkernel random )
+target_link_libraries( models nestutil sli_lib nestkernel )
 
 target_include_directories( models PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     )

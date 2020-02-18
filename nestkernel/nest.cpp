@@ -80,18 +80,16 @@ print_nodes_to_stream( std::ostream& ostr )
   kernel().node_manager.print( ostr );
 }
 
-librandom::RngPtr
-get_vp_rng( thread tid )
+RngPtr
+get_thread_rng( thread tid )
 {
-  assert( tid >= 0 );
-  assert( tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ) );
-  return kernel().rng_manager.get_rng( tid );
+  return kernel().random_manager.get_thread_rng( tid );
 }
 
-librandom::RngPtr
+RngPtr
 get_global_rng()
 {
-  return kernel().rng_manager.get_grng();
+  return kernel().random_manager.get_global_rng();
 }
 
 void
@@ -390,7 +388,7 @@ create_parameter( const DictionaryDatum& param_dict )
 double
 get_value( const ParameterDatum& param )
 {
-  librandom::RngPtr rng = get_global_rng();
+  RngPtr rng = get_global_rng();
   return param->value( rng, nullptr );
 }
 
@@ -405,7 +403,7 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 {
   std::vector< double > result;
   result.reserve( nc->size() );
-  librandom::RngPtr rng = get_global_rng();
+  RngPtr rng = get_global_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
     auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );

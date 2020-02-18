@@ -31,9 +31,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "randomgen.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
@@ -302,7 +299,7 @@ private:
     double t_ms_; //!< current time in ms, for communication with event_hook()
     //! current time in steps, for communication with event_hook()
     long t_steps_;
-    librandom::RngPtr rng_; //!< thread-specific random generator
+    RngPtr rng_; //!< thread-specific random generator
   };
 
   double

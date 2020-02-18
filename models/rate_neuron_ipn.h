@@ -27,6 +27,7 @@
 #include "config.h"
 
 // C++ includes:
+#include <random>
 #include <string>
 
 // Includes from nestkernel:
@@ -35,8 +36,6 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
 #include "ring_buffer.h"
 #include "recordables_map.h"
 #include "universal_data_logger.h"
@@ -245,7 +244,6 @@ private:
    */
   struct Variables_
   {
-
     // propagators
     double P1_;
     double P2_;
@@ -253,9 +251,8 @@ private:
     // propagator for noise
     double input_noise_factor_;
 
-    librandom::RngPtr rng_;
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    librandom::NormalRandomDev normal_dev_;   //!< random deviate generator
+    RngPtr rng_;
+    std::normal_distribution<> normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

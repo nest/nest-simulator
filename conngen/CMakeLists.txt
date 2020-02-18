@@ -31,7 +31,6 @@ target_include_directories( conngen PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/sli
-    ${PROJECT_SOURCE_DIR}/librandom
     )
 
 install( TARGETS conngen

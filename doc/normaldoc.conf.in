@@ -750,7 +750,6 @@ INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
 			@PROJECT_SOURCE_DIR@/extras \
 			@PROJECT_SOURCE_DIR@/lib \
 			@PROJECT_SOURCE_DIR@/libnestutil \
-			@PROJECT_SOURCE_DIR@/librandom \
 			@PROJECT_SOURCE_DIR@/models \
 			@PROJECT_SOURCE_DIR@/nest \
 			@PROJECT_SOURCE_DIR@/nestkernel \

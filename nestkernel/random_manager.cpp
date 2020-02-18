@@ -22,22 +22,22 @@
 
 #include "random_manager.h"
 
-// Includes from librandom:
-#include "rng.h"
+// C++ includes:
+#include <cmath>
+#include <random>
+#include <utility>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-
-// C++ includes
-#include <random>
+#include "vp_manager_impl.h"
+#include "random.h"
 
 void
 nest::RandomManager::initialize()
 {
-  register_rng_type< random::RNG<std::mt19937_64> >( "mt19937" );
-//  register_rng_type< random::Philox >( "philox" );
-//  register_rng_type< random::Threefry >( "threefry" );
-  rng_type_ = Name("threefry");
+  register_rng_type_< std::mt19937_64 >( "mt19937_64", true );
+  //  register_rng_type_< Philox >( "philox", false );
+  //  register_rng_type_< Threefry >( "threefry", false );
 
   create_rngs_();
 }
@@ -45,12 +45,6 @@ nest::RandomManager::initialize()
 void
 nest::RandomManager::finalize()
 {
-  delete_rngs();
-
-  for (auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
-  {
-    delete *rng;
-  }
 }
 
 void
@@ -58,30 +52,28 @@ nest::RandomManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::rng_seed, rng_seed_ );
 
-  def< long >( d, names::rng_type, rng_type_ );
+  def< std::string >( d, names::rng_type, current_rng_type_ );
 
   ArrayDatum rng_types;
-  for (auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
+  for ( auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
   {
-    rng_types.push_back( rng.first );
+    rng_types.push_back( rng->first );
   }
   def< ArrayDatum >( d, names::rng_types, rng_types );
-
-
 }
 
 void
 nest::RandomManager::set_status( const DictionaryDatum& d )
 {
   long n_threads;
-  bool n_threads_updated =
-    updateValue< long >( d, names::local_num_threads, n_threads );
+  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
 
   long rng_seed;
   bool rng_seed_updated = updateValue< long >( d, names::rng_seed, rng_seed );
+
   if ( rng_seed_updated )
   {
-    if ( rng_seed < 0 or rng_seed >= 2**32 )
+    if ( rng_seed < 0 or rng_seed >= std::pow( 2, 32 ) )
     {
       throw BadProperty( "RNG seed must be in [0, 2^32)." );
     }
@@ -89,23 +81,23 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
     rng_seed_ = rng_seed;
   }
 
-  long rng_type;
-  bool rng_type_updated = updateValue< long >( d, names::rng_type, rng_type );
+  std::string rng_type;
+  bool rng_type_updated = updateValue< std::string >( d, names::rng_type, rng_type );
+
   if ( rng_type_updated )
   {
     auto rng = rng_types_.find( rng_type );
     if ( rng == rng_types_.end() )
     {
-      throw BadProperty("/rng_type is not a known RNG type. "
-			"See property /rng_types for available types" );
+      std::string msg = "'%1' is not a known RNG type. See /rng_types for available types";
+      throw BadProperty( String::compose( msg, rng_type ) );
     }
 
-    rng_type_ = rng_type;
+    current_rng_type_ = rng_type;
   }
 
   if ( n_threads_updated or rng_seed_updated or rng_type_updated )
   {
-    delete_rngs_();
     create_rngs_();
   }
 }
@@ -114,12 +106,12 @@ void
 nest::RandomManager::create_rngs_()
 {
   long seed = rng_seed_ + kernel().vp_manager.get_num_virtual_processes();
-  grng_ = rng_types_[ rng_type_ ].clone( seed );
+  global_rng_ = rng_types_[ current_rng_type_ ]->clone( seed );
 
   long num_threads = kernel().vp_manager.get_num_threads();
-  trngs_.resize( num_threads );
+  thread_rngs_.resize( num_threads );
 
-#omp parallel
+#pragma omp parallel
   {
     // TODO: draw seeds from a well-defined RNG. For that use a 64-bit seed
     // with the 32 low bits corresponding to the number of vps and the high
@@ -128,26 +120,18 @@ nest::RandomManager::create_rngs_()
     // TODO: Create a VPManager::get_vp() function that combines the two lines below
     index tid = kernel().vp_manager.get_thread_id();
     seed = rng_seed_ + kernel().vp_manager.thread_to_vp( tid );
-    trngs_[ tid ] = rng_types_[ rng_type_ ].clone( seed );
+    thread_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( seed );
   }
 }
 
+template < typename RNG_TYPE_ >
 void
-nest::RandomManager::delete_rngs_()
+nest::RandomManager::register_rng_type_( std::string name, bool set_as_default )
 {
-  delete grng_;
+  rng_types_.insert( std::make_pair( name, new RNG< RNG_TYPE_ >( RNG_TYPE_( 0 ) ) ) );
 
-#omp parallel
+  if ( set_as_default )
   {
-    index tid = kernel().vp_manager.get_thread_id();
-    delete trngs_[ tid ];
+    current_rng_type_ = name;
   }
-}
-
-template< class RNG >
-void
-nest::RandomManager::register_rng_type_( Name name )
-{
-  rngdict_->insert( name, rng_types_.size() );
-  rng_types_.push_back( new RNG {} );
 }

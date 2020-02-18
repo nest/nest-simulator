@@ -29,9 +29,6 @@
 // Includes from libnestutil:
 #include "logging.h"
 
-// Includes from librandom:
-#include "random_datums.h"
-
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "connection_manager_impl.h"
@@ -152,20 +149,17 @@ NestModule::parameter_factory_( void )
 }
 
 /** @BeginDocumentation
-   Name: SetStatus - sets the value of properties of a node, connection, random
-   deviate generator or object
+   Name: SetStatus - sets the value of properties of a node, connection, or object
 
    Synopsis:
    node_id   dict SetStatus -> -
    conn  dict SetStatus -> -
-   rdev  dict SetStatus -> -
    obj   dict SetStatus -> -
 
    Description:
    SetStatus changes properties of a node (specified by its node_id), a connection
-   (specified by a connection object), a random deviate generator (see
-   GetStatus_v for more) or an object as used in object-oriented programming in
-   SLI (see cvo for more). Properties can be inspected with GetStatus.
+   (specified by a connection object), or an object as used in object-oriented
+   programming in SLI (see cvo for more). Properties can be inspected with GetStatus.
 
    Note that many properties are read-only and cannot be changed.
 
@@ -177,8 +171,7 @@ NestModule::parameter_factory_( void )
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set,
-   SetStatus_v, SetStatus_dict
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set, SetStatus_dict
 */
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
@@ -290,20 +283,17 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: GetStatus - return the property dictionary of a node, connection,
-   random deviate generator or object
+   Name: GetStatus - return the property dictionary of a node, connection, or object
 
    Synopsis:
    node_id   GetStatus -> dict
    conn  GetStatus -> dict
-   rdev  GetStatus -> dict
    obj   GetStatus -> dict
 
    Description:
    GetStatus returns a dictionary with the status information
    for a node (specified by its node_id), a connection (specified by a connection
-   object), a random deviate generator (see GetStatus_v for more) or an
-   object as used in object-oriented programming in SLI (see cvo for more).
+   object), or an object as used in object-oriented programming in SLI (see cvo for more).
 
    The interpreter exchanges data with the network element using
    its status dictionary. To abbreviate the access pattern
@@ -333,7 +323,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 
    Author: Marc-Oliver Gewaltig
    Availability: NEST
-   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_v, GetStatus_dict,
+   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_dict,
    GetKernelStatus
 */
 void
@@ -1133,39 +1123,6 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 #endif
-
-/** @BeginDocumentation
-   Name: GetGlobalRNG - return global random number generator
-   Synopsis:
-   GetGlobalRNG -> rngtype
-   Description:
-   This function returns the global random number generator which
-   can be used in situations where the same sequence of random
-   numbers is needed in all MPI processes. The user must EXERT
-   EXTREME CARE to ensure that all MPI processes use exactly
-   the same random numbers while executing a script. NEST performs
-   only a simple test upon each call to Simulate to check if the
-   global RNGs on all MPI processes are still in sync.
-
-   References:
-   [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
-       Advancing the boundaries of high connectivity network simulation
-       with distributed computing. Neural Computation 17(8):1776-1801
-       The article is available at www.nest-simulator.org
-
-   Author: Tobias Potjans, Moritz Helias, Diesmann
-*/
-
-void
-NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const
-{
-  librandom::RngPtr rng = get_global_rng();
-
-  Token rt( new librandom::RngDatum( rng ) );
-  i->OStack.push_move( rt );
-
-  i->EStack.pop();
-}
 
 void
 NestModule::Cvdict_CFunction::execute( SLIInterpreter* i ) const
@@ -2014,8 +1971,6 @@ NestModule::init( SLIInterpreter* i )
 #ifdef HAVE_MPI
   i->createcommand( "MPI_Abort", &mpiabort_ifunction );
 #endif
-
-  i->createcommand( "GetGlobalRNG", &getglobalrngfunction );
 
   i->createcommand( "cvdict_C", &cvdict_Cfunction );
 

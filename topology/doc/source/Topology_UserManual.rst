@@ -1638,7 +1638,7 @@ the brace closing the namespace ``mynest``:
          }
 
        double raw_value(const nest::Position<2>& disp,
-                        librandom::RngPtr&) const
+                        nest::RngPtr&) const
          {
            return a_*disp[0] + b_*disp[1] + c_;
          }

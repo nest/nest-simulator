@@ -22,14 +22,9 @@
 
 #ifndef POISSON_GENERATOR_H
 #define POISSON_GENERATOR_H
-/****************************************/
-/* class poisson_generator              */
-/*                  Vers. 1.0       hep */
-/*                  Implementation: hep */
-/****************************************/
 
-// Includes from librandom:
-#include "poisson_randomdev.h"
+// C++ includes:
+#include <random>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -165,7 +160,7 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< Random deviate generator
+    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
   };
 
   // ------------------------------------------------------------

@@ -23,9 +23,6 @@
 #ifndef QUANTAL_STP_CONNECTION_H
 #define QUANTAL_STP_CONNECTION_H
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 
@@ -205,7 +202,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
+    if ( get_thread_rng( t )->drand() < ( 1.0 - p_decay ) )
     {
       ++a_;
     }
@@ -215,7 +212,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < u_ )
+    if ( get_thread_rng( t )->drand() < u_ )
     {
       ++n_release;
     }

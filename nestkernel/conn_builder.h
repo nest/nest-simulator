@@ -35,9 +35,6 @@
 #include <map>
 #include <vector>
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "node_collection.h"
@@ -141,7 +138,7 @@ protected:
   }
 
   //! Create connection between given nodes, fill parameter values
-  void single_connect_( index, Node&, thread, librandom::RngPtr& );
+  void single_connect_( index, Node&, thread, RngPtr );
   void single_disconnect_( index, Node&, thread );
 
   /**
@@ -295,7 +292,7 @@ protected:
   void sp_disconnect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
+  void inner_connect_( const int, RngPtr, Node*, index, bool );
 };
 
 
@@ -308,7 +305,7 @@ protected:
   void connect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool, long );
+  void inner_connect_( const int, RngPtr, Node*, index, bool, long );
   ParameterDatum indegree_;
 };
 
@@ -345,7 +342,7 @@ protected:
   void connect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index );
+  void inner_connect_( const int, RngPtr, Node*, index );
   ParameterDatum p_; //!< connection probability
 };
 

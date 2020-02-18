@@ -23,8 +23,8 @@
 #ifndef MIP_GENERATOR_H
 #define MIP_GENERATOR_H
 
-// Includes from librandom:
-#include "poisson_randomdev.h"
+// C++ includes:
+#include <random>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -173,7 +173,7 @@ private:
     double rate_;               //!< process rate in Hz
     double p_copy_;             //!< copy probability for each spike in the mother process
     unsigned long mother_seed_; //!< seed of the mother process
-    librandom::RngPtr rng_;     //!< random number generator for mother process
+    RngPtr rng_;                //!< random number generator for mother process
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
@@ -186,7 +186,7 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    std::poisson_distribution<> poisson_dist_; //!< poisson_distribution
   };
 
   // ------------------------------------------------------------

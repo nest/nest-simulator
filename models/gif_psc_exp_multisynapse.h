@@ -332,7 +332,7 @@ private:
     std::vector< double > P11_syn_; // decay terms of synaptic currents
     std::vector< double > P21_syn_; // coefficients for solving membrane potential equation
 
-    librandom::RngPtr rng_; // random number generator of my own thread
+    RngPtr rng_; // random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

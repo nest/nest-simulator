@@ -22,10 +22,6 @@
 
 #include "spike_dilutor.h"
 
-// Includes from librandom:
-#include "gslrandomgen.h"
-#include "random_datums.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
 
@@ -159,13 +155,12 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // event_hook().
   // reichert
 
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;
 
   for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
-    if ( rng->drand() < P_.p_copy_ )
+    if ( get_thread_rng( get_thread() )->drand() < P_.p_copy_ )
     {
       n_spikes++;
     }

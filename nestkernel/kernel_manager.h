@@ -33,7 +33,7 @@
 #include "mpi_manager.h"
 #include "music_manager.h"
 #include "node_manager.h"
-#include "rng_manager.h"
+#include "random_manager.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"
 #include "vp_manager.h"
@@ -190,7 +190,7 @@ public:
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
-  RNGManager rng_manager;
+  RandomManager random_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
   ConnectionManager connection_manager;

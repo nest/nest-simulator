@@ -23,8 +23,8 @@
 #ifndef PP_POP_PSC_DELTA_H
 #define PP_POP_PSC_DELTA_H
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
+// C++ includes:
+#include <random>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -287,8 +287,6 @@ private:
    */
   struct Variables_
   {
-
-
     double P30_;
     double P33_;
 
@@ -299,11 +297,8 @@ private:
     double h_; //!< simulation time step in ms
     double min_double_;
 
-
-    librandom::RngPtr rng_; // random number generator of my own thread
-
-    librandom::BinomialRandomDev binom_dev_; // binomial random generator
-
+    RngPtr rng_;                             // random number generator of my own thread
+    std::binomial_distribution<> bino_dist_; // binomial distribution
 
     int DeadTimeCounts_;
   };

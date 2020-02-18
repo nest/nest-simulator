@@ -23,7 +23,8 @@
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
-#include "poisson_randomdev.h"
+// C++ includes:
+#include <random>
 
 #include "connection.h"
 #include "device_node.h"
@@ -167,8 +168,8 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    double_t h_;                              //! time resolution (ms)
+    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
+    double_t h_;                               //! time resolution (ms)
   };
 
   // ------------------------------------------------------------

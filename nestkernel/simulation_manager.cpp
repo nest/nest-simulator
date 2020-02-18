@@ -423,7 +423,7 @@ nest::SimulationManager::prepare()
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    if ( not kernel().mpi_manager.grng_synchrony( get_global_rng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
         "SimulationManager::prepare",
@@ -590,7 +590,7 @@ nest::SimulationManager::cleanup()
   // Check for synchronicity of global rngs over processes
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    if ( not kernel().mpi_manager.grng_synchrony( get_global_rng()->ulrand( 100000 ) ) )
     {
       throw KernelException(
         "In SimulationManager::cleanup(): "

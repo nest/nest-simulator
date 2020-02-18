@@ -23,8 +23,8 @@
 #ifndef IAF_CHS_2007_H
 #define IAF_CHS_2007_H
 
-// Includes from librandom:
-#include "normal_randomdev.h"
+// C++ includes:
+#include <random>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -250,7 +250,7 @@ private:
     double P22_;
     double P30_;
 
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
+    std::normal_distribution<> normal_dist_; //!< random deviate generator
   };
 
   // Access functions for UniversalDataLogger -------------------------------

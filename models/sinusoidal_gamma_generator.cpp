@@ -289,7 +289,7 @@ nest::sinusoidal_gamma_generator::calibrate()
   device_.calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_thread_rng( get_thread() );
 
   const double t_ms = kernel().simulation_manager.get_time().get_ms();
 

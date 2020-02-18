@@ -3,7 +3,7 @@
 NEST Community
 ===============
 
-Mailing List
+Mailing list
 -------------
 
 The NEST users mailing list is intended to be a forum for questions on the usage

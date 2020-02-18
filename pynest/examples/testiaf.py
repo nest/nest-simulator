@@ -36,11 +36,24 @@ starts to recover.
 # First, we import all necessary modules for simulation and plotting
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and
-# return the handles of the ``spike_detector`` and the ``voltmeter``
+# return the handles of the ``spike_detector`` and the ``voltmeter``. The
+# function takes the simulation resolution as argument
+#
+# The function first resets the simulation kernel and sets the number of
+# threads and the simulation resolution.  The ``iaf_psc_alpha`` neuron is
+# created and the handle is stored in the variable `neuron`. The status of
+# the neuron is changed so it receives an external current. Next a
+# ``voltmeter`` and a ``spike_detector`` are created and their handles stored
+# in the variables `vm` and `sd` respectively.
+#
+# The voltmeter and spike detector are then connected to the neuron. ``Connect``
+# takes the device and neuron handles as input. The voltmeter is connected to the
+# neuron and the neuron to the spike detector because the neuron sends spikes
+# to the detector and the voltmeter 'observes' the neuron.
 
 
 def build_network(dt):
@@ -49,11 +62,9 @@ def build_network(dt):
     nest.SetKernelStatus({"local_num_threads": 1, "resolution": dt})
 
     neuron = nest.Create('iaf_psc_alpha')
-    nest.SetStatus(neuron, "I_e", 376.0)
+    neuron.I_e = 376.0
 
     vm = nest.Create('voltmeter')
-    nest.SetStatus(vm, "withtime", True)
-
     sd = nest.Create('spike_detector')
 
     nest.Connect(vm, neuron)
@@ -63,27 +74,8 @@ def build_network(dt):
 
 
 ###############################################################################
-# The function ``build_network`` takes the resolution as argument.
-# First the Kernel is reset and the number of threads is set to zero as well
-# as the resolution to the specified value dt.  The ``iaf_psc_alpha`` is
-# created and the handle is stored in the variable neuron The status of the
-# neuron is changed so it receives an external current.  Next the ``voltmeter``
-# is created and the handle stored in `vm` and the option ``withtime`` is set,
-# therefore, times are given in the times vector in events. Now the
-# ``spike_detector`` is created and its handle is stored in sd.
-#
-# The voltmeter and spike detector are then connected to the neuron. The
-# ``Connect`` function takes the handles as input.  The voltmeter is connected
-# to the neuron and the neuron to the spikedetector because the neuron sends
-# spikes to the detector and the voltmeter 'observes' the neuron.
-
-###############################################################################
 # The neuron is simulated for three different resolutions and then the
 # voltage trace is plotted
-
-###########################################################################
-# First using ``build_network`` the network is build and the handles of the
-# ``spike_detector`` and the ``voltmeter`` are stored in `vm` and `sd`
 
 for dt in [0.1, 0.5, 1.0]:
     print("Running simulation with dt=%.2f" % dt)
@@ -102,18 +94,20 @@ for dt in [0.1, 0.5, 1.0]:
 # the values for the membrane potential are stored in potential and the
 # corresponding times in the times array
 
-    potentials = nest.GetStatus(vm, "events")[0]["V_m"]
-    times = nest.GetStatus(vm, "events")[0]["times"]
+    potentials = vm.get('events', 'V_m')
+    times = vm.get('events', 'times')
 
 ###########################################################################
-# Using the pylab library the voltage trace is plotted over time
+# Using the matplotlib library the voltage trace is plotted over time
 
-    pylab.plot(times, potentials, label="dt=%.2f" % dt)
-    print("  Number of spikes: {0}".format(nest.GetStatus(sd, "n_events")[0]))
+    plt.plot(times, potentials, label="dt=%.2f" % dt)
+    print("  Number of spikes: {0}".format(sd.n_events))
 
 ###########################################################################
 # Finally the axis are labelled and a legend is generated
 
-    pylab.legend(loc=3)
-    pylab.xlabel("time (ms)")
-    pylab.ylabel("V_m (mV)")
+    plt.legend(loc=3)
+    plt.xlabel("time (ms)")
+    plt.ylabel("V_m (mV)")
+
+plt.show()

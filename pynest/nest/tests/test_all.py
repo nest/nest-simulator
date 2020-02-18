@@ -40,7 +40,6 @@ from . import test_connect_symmetric_pairwise_bernoulli
 from . import test_create
 from . import test_csa
 from . import test_current_recording_generators
-from . import test_dataconnect
 from . import test_erfc_neuron
 from . import test_errors
 from . import test_events
@@ -52,13 +51,13 @@ from . import test_helper_functions
 from . import test_json
 from . import test_labeled_synapses
 from . import test_mc_neuron
-from . import test_networks
 from . import test_onetooneconnect
 from . import test_parrot_neuron_ps
 from . import test_parrot_neuron
 from . import test_pp_psc_delta
 from . import test_pp_psc_delta_stdp
 from . import test_quantal_stp_synapse
+from . import test_random_parameter
 from . import test_rate_copy_model
 from . import test_rate_instantaneous_and_delayed
 from . import test_rate_neuron
@@ -73,7 +72,6 @@ from . import test_stdp_multiplicity
 from . import test_stdp_nn_synapses
 from . import test_stdp_triplet_synapse
 from . import test_threads
-from . import test_use_gid_in_filename
 from . import test_vogels_sprekeler_synapse
 from . import test_weight_recorder
 
@@ -98,7 +96,6 @@ def suite():
     suite.addTest(test_create.suite())
     suite.addTest(test_csa.suite())
     suite.addTest(test_current_recording_generators.suite())
-    suite.addTest(test_dataconnect.suite())
     suite.addTest(test_erfc_neuron.suite())
     suite.addTest(test_errors.suite())
     suite.addTest(test_events.suite())
@@ -110,13 +107,13 @@ def suite():
     suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())
     suite.addTest(test_mc_neuron.suite())
-    suite.addTest(test_networks.suite())
     suite.addTest(test_onetooneconnect.suite())
     suite.addTest(test_parrot_neuron_ps.suite())
     suite.addTest(test_parrot_neuron.suite())
     suite.addTest(test_pp_psc_delta.suite())
     suite.addTest(test_pp_psc_delta_stdp.suite())
     suite.addTest(test_quantal_stp_synapse.suite())
+    suite.addTest(test_random_parameter.suite())
     suite.addTest(test_rate_copy_model.suite())
     suite.addTest(test_rate_instantaneous_and_delayed.suite())
     suite.addTest(test_rate_neuron.suite())
@@ -131,7 +128,6 @@ def suite():
     suite.addTest(test_stdp_multiplicity.suite())
     suite.addTest(test_stdp_triplet_synapse.suite())
     suite.addTest(test_threads.suite())
-    suite.addTest(test_use_gid_in_filename.suite())
     suite.addTest(test_vogels_sprekeler_synapse.suite())
     suite.addTest(test_weight_recorder.suite())
 

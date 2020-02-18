@@ -26,6 +26,7 @@
 #include <algorithm>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from librandom:
@@ -75,13 +76,13 @@ nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg )
+nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
 {
 
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValue< long >( d, names::activity, a_ );
-  neednewpulse = updateValue< double >( d, names::sdev, sdev_ ) || neednewpulse;
+  bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
+  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) || neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );

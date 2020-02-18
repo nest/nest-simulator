@@ -165,7 +165,7 @@ Examples:
     spike = nest.Create('spike_generator', params = {'spike_times':
                                                     np.array([10.0])})
 
-    voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
+    voltmeter = nest.Create('voltmeter')
 
     delays=[1.0, 300.0, 500.0, 700.0]
     w=[1.0, 1.0, 1.0, 1.0]
@@ -271,8 +271,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -291,7 +291,6 @@ private:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state vector State_::y_.
      * This enum identifies the elements of the vector. It must be public to be
@@ -320,7 +319,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
 
   }; // State_
 
@@ -347,10 +346,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver

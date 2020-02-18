@@ -27,6 +27,9 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
@@ -160,7 +163,7 @@ nest::step_current_generator::Parameters_::validate_time_( double t, const Time&
 }
 
 void
-nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b )
+nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* node )
 {
   std::vector< double > new_times;
   const bool times_changed = updateValue< std::vector< double > >( d, names::amplitude_times, new_times );

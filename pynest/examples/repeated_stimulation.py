@@ -105,7 +105,7 @@ nest.Connect(pg, sd)
 
 
 for n in range(num_trials):
-    nest.SetStatus(pg, {'origin': nest.GetKernelStatus()['time']})
+    pg.origin = nest.GetKernelStatus('time')
     nest.Simulate(trial_duration)
 
 
@@ -117,3 +117,4 @@ for n in range(num_trials):
 
 nest.raster_plot.from_device(sd, hist=True, hist_binwidth=100.,
                              title='Repeated stimulation by Poisson generator')
+nest.raster_plot.show()

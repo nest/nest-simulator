@@ -161,7 +161,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( DictionaryDatum const& );
+    void set( DictionaryDatum const&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -171,7 +171,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double tau_epsp_;
 
@@ -208,7 +207,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       noise_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, State_& s );
+    void set( const DictionaryDatum&, State_& s, Node* node );
   };
 
 
@@ -325,9 +324,9 @@ inline void
 iaf_chs_2007::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
+  ptmp.set( d, S_, this );
+  State_ stmp = S_;    // temporary copy in case of errors
+  stmp.set( d, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_time.h"
@@ -119,9 +116,9 @@ public:
   Node& get_receiver() const;
 
   /**
-   * Return GID of receiving Node.
+   * Return node ID of receiving Node.
    */
-  index get_receiver_gid() const;
+  index get_receiver_node_id() const;
 
   /**
    * Return reference to sending Node.
@@ -134,14 +131,14 @@ public:
   void set_sender( Node& );
 
   /**
-   * Return GID of sending Node.
+   * Return node ID of sending Node.
    */
-  index get_sender_gid() const;
+  index get_sender_node_id() const;
 
   /**
-   * Change GID of sending Node.
+   * Change node ID of sending Node.
    */
-  void set_sender_gid( index );
+  void set_sender_node_id( index );
 
   /**
    * Return time stamp of the event.
@@ -259,6 +256,16 @@ public:
   virtual void set_diffusion_factor( weight t ){};
 
   /**
+   * Returns true if the pointer to the sender node is valid.
+   */
+  bool sender_is_valid() const;
+
+  /**
+   * Returns true if the pointer to the receiver node is valid.
+   */
+  bool receiver_is_valid() const;
+
+  /**
    * Check integrity of the event.
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
@@ -273,16 +280,16 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_gid_; //!< GID of sender or -1.
-                     /*
-                      * The original formulation used references to Nodes as
-                      * members, however, in order to avoid the reference of reference
-                      * problem, we store sender and receiver as pointers and use
-                      * references in the interface.
-                      * Thus, we can still ensure that the pointers are never NULL.
-                      */
-  Node* sender_;     //!< Pointer to sender or NULL.
-  Node* receiver_;   //!< Pointer to receiver or NULL.
+  index sender_node_id_; //!< node ID of sender or -1.
+                         /*
+                          * The original formulation used references to Nodes as
+                          * members, however, in order to avoid the reference of reference
+                          * problem, we store sender and receiver as pointers and use
+                          * references in the interface.
+                          * Thus, we can still ensure that the pointers are never NULL.
+                          */
+  Node* sender_;         //!< Pointer to sender or NULL.
+  Node* receiver_;       //!< Pointer to receiver or NULL.
 
 
   /**
@@ -399,22 +406,22 @@ public:
   void operator()();
 
   /**
-   * Return GID of receiving Node.
+   * Return node ID of receiving Node.
    */
-  index get_receiver_gid() const;
+  index get_receiver_node_id() const;
 
   /**
-   * Change GID of receiving Node.
+   * Change node ID of receiving Node.
    */
 
-  void set_receiver_gid( index );
+  void set_receiver_node_id( index );
 
 protected:
-  index receiver_gid_; //!< GID of receiver or 0.
+  index receiver_node_id_; //!< node ID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_gid_( 0 )
+  : receiver_node_id_( 0 )
 {
 }
 
@@ -425,15 +432,15 @@ WeightRecorderEvent::clone() const
 }
 
 inline void
-WeightRecorderEvent::set_receiver_gid( index gid )
+WeightRecorderEvent::set_receiver_node_id( index node_id )
 {
-  receiver_gid_ = gid;
+  receiver_node_id_ = node_id;
 }
 
 inline index
-WeightRecorderEvent::get_receiver_gid( void ) const
+WeightRecorderEvent::get_receiver_node_id( void ) const
 {
-  return receiver_gid_;
+  return receiver_node_id_;
 }
 
 
@@ -771,9 +778,9 @@ ConductanceEvent::get_conductance() const
  * Event for transmitting arbitrary data.
  * This event type may be used for transmitting arbitrary
  * data between events, e.g., images or their FFTs.
- * A lockptr to the data is transmitted.  The date type
+ * A shared_ptr to the data is transmitted.  The date type
  * is given as a template parameter.
- * @note: Data is passed via a lockptr.
+ * @note: Data is passed via a shared_ptr.
  *        The receiver should copy the data at once, otherwise
  *        it may be modified by the sender.
  *        I hope this scheme is thread-safe, as long as the
@@ -785,11 +792,11 @@ ConductanceEvent::get_conductance() const
 template < typename D >
 class DataEvent : public Event
 {
-  lockPTR< D > data_;
+  std::shared_ptr< D > data_;
 
 public:
   void set_pointer( D& data );
-  lockPTR< D > get_pointer() const;
+  std::shared_ptr< D > get_pointer() const;
 };
 
 template < typename D >
@@ -800,7 +807,7 @@ DataEvent< D >::set_pointer( D& data )
 }
 
 template < typename D >
-inline lockPTR< D >
+inline std::shared_ptr< D >
 DataEvent< D >::get_pointer() const
 {
   return data_;
@@ -1254,9 +1261,21 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 // Inline implementations.
 
 inline bool
+Event::sender_is_valid() const
+{
+  return sender_ != nullptr;
+}
+
+inline bool
+Event::receiver_is_valid() const
+{
+  return receiver_ != nullptr;
+}
+
+inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) and ( receiver_ != NULL ) and ( d_ > 0 ) );
+  return ( sender_is_valid() and receiver_is_valid() and ( d_ > 0 ) );
 }
 
 inline void
@@ -1272,9 +1291,9 @@ Event::set_sender( Node& s )
 }
 
 inline void
-Event::set_sender_gid( index gid )
+Event::set_sender_node_id( index node_id )
 {
-  sender_gid_ = gid;
+  sender_node_id_ = node_id;
 }
 
 inline Node&
@@ -1290,10 +1309,10 @@ Event::get_sender( void ) const
 }
 
 inline index
-Event::get_sender_gid( void ) const
+Event::get_sender_node_id( void ) const
 {
-  assert( sender_gid_ > 0 );
-  return sender_gid_;
+  assert( sender_node_id_ > 0 );
+  return sender_node_id_;
 }
 
 inline weight

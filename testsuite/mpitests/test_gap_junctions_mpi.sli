@@ -49,7 +49,7 @@ skip_if_without_gsl
 {
   0.1 /h Set
   
-  0 << 
+  << 
         /total_num_virtual_procs total_vps 
         /resolution h
         /use_wfr true
@@ -57,7 +57,7 @@ skip_if_without_gsl
         /wfr_interpolation_order 3
         /wfr_max_iterations 10
         /wfr_comm_interval 1.0
-    >> SetStatus
+    >> SetKernelStatus
       
   /hh_psc_alpha_gap Create /neuron1 Set
   /hh_psc_alpha_gap Create /neuron2 Set
@@ -69,24 +69,21 @@ skip_if_without_gsl
     /I_e 400.
   >> SetStatus
   
-  /sd /spike_detector << /record_to [/memory] 
-                           /withgid true 
-                           /withtime true 
-                        >> Create def
+  /sd /spike_detector Create def
   
-  [neuron1] [neuron2]
+  neuron1 neuron2
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /weight 10.0 >> 
+  << /synapse_model /gap_junction /weight 10.0 >>
   Connect
   
-  [neuron1] [neuron3]
+  neuron1 neuron3
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /weight 8.0 >> 
+  << /synapse_model /gap_junction /weight 8.0 >>
   Connect
   
-  [neuron1] [neuron4]
+  neuron1 neuron4
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /weight 12.0 >> 
+  << /synapse_model /gap_junction /weight 12.0 >>
   Connect
   
   neuron1 sd Connect

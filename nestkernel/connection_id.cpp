@@ -31,17 +31,21 @@
 namespace nest
 {
 
-ConnectionID::ConnectionID( long source_gid, long target_gid, long target_thread, long synapse_modelid, long port )
-  : source_gid_( source_gid )
-  , target_gid_( target_gid )
+ConnectionID::ConnectionID( long source_node_id,
+  long target_node_id,
+  long target_thread,
+  long synapse_modelid,
+  long port )
+  : source_node_id_( source_node_id )
+  , target_node_id_( target_node_id )
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
   , port_( port )
 {
 }
 
-ConnectionID::ConnectionID( long source_gid, long target_thread, long synapse_modelid, long port )
-  : source_gid_( source_gid )
+ConnectionID::ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port )
+  : source_node_id_( source_node_id )
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
   , port_( port )
@@ -53,10 +57,10 @@ ConnectionID::get_dict() const
 {
   DictionaryDatum dict( new Dictionary );
 
-  // The gid of the presynaptic node
-  def< long >( dict, nest::names::source, source_gid_ );
-  // The gid of the postsynaptic node
-  def< long >( dict, nest::names::target, target_gid_ );
+  // The node ID of the presynaptic node
+  def< long >( dict, nest::names::source, source_node_id_ );
+  // The node ID of the postsynaptic node
+  def< long >( dict, nest::names::target, target_node_id_ );
   // The id of the synapse model
   def< long >( dict, nest::names::synapse_modelid, synapse_modelid_ );
   // The thread of the postsynaptic node
@@ -71,8 +75,8 @@ ArrayDatum
 ConnectionID::to_ArrayDatum() const
 {
   ArrayDatum ad;
-  ad.push_back( new IntegerDatum( source_gid_ ) );
-  ad.push_back( new IntegerDatum( target_gid_ ) );
+  ad.push_back( new IntegerDatum( source_node_id_ ) );
+  ad.push_back( new IntegerDatum( target_node_id_ ) );
   ad.push_back( new IntegerDatum( target_thread_ ) );
   ad.push_back( new IntegerDatum( synapse_modelid_ ) );
   ad.push_back( new IntegerDatum( port_ ) );
@@ -81,15 +85,15 @@ ConnectionID::to_ArrayDatum() const
 
 bool ConnectionID::operator==( const ConnectionID& c ) const
 {
-  return ( source_gid_ == c.source_gid_ ) and ( target_gid_ == c.target_gid_ )
+  return ( source_node_id_ == c.source_node_id_ ) and ( target_node_id_ == c.target_node_id_ )
     and ( target_thread_ == c.target_thread_ ) and ( port_ == c.port_ ) and ( synapse_modelid_ == c.synapse_modelid_ );
 }
 
 void
 ConnectionID::print_me( std::ostream& out ) const
 {
-  out << "<" << source_gid_ << "," << target_gid_ << "," << target_thread_ << "," << synapse_modelid_ << "," << port_
-      << ">";
+  out << "<" << source_node_id_ << "," << target_node_id_ << "," << target_thread_ << "," << synapse_modelid_ << ","
+      << port_ << ">";
 }
 
 } // namespace

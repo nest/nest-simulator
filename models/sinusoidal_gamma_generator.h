@@ -135,7 +135,8 @@ SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
  * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
  * constant with varying \f$a\f$
  *
- * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus parameters
+ * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus
+ parameters
  * are changed at
  *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
  *       \f$t>t_c\f$ as
@@ -185,6 +186,12 @@ public:
   local_receiver() const
   {
     return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
 private:
@@ -237,19 +244,18 @@ private:
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_gamma_generator& );
+    void set( const DictionaryDatum&, const sinusoidal_gamma_generator&, Node* );
   };
 
   struct State_
   {
-
     double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -381,7 +387,7 @@ sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, *this ); // throws if BadProperty
+  ptmp.set( d, *this, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

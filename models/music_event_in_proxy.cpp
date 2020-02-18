@@ -59,6 +59,7 @@ nest::music_event_in_proxy::Parameters_::Parameters_( const Parameters_& op )
 }
 
 nest::music_event_in_proxy::State_::State_()
+  : registered_( false )
 {
 }
 

@@ -57,7 +57,7 @@ to reproduce the results of [1] and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
-1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_tum_2000,
+1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_psc_exp_htum,
 because these neuron models have a postsynaptic current which decays
 exponentially.
 
@@ -120,7 +120,7 @@ FirstVersion: March 2006
 Author: Susanne Kunkel, Moritz Helias
 
 SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
-iaf_psc_exp, iaf_tum_2000
+iaf_psc_exp, iaf_psc_exp_htum
 */
 
 /**

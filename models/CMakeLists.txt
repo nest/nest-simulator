@@ -20,7 +20,6 @@
 set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
-    aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
     aeif_cond_beta_multisynapse.h aeif_cond_beta_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp
@@ -66,10 +65,10 @@ set( models_sources
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
-    iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     iaf_psc_delta.h iaf_psc_delta.cpp
     iaf_psc_exp.h iaf_psc_exp.cpp
-    iaf_tum_2000.h iaf_tum_2000.cpp
+    iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
+    iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     izhikevich.h izhikevich.cpp
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
@@ -81,6 +80,8 @@ set( models_sources
     music_cont_out_proxy.h music_cont_out_proxy.cpp
     music_event_in_proxy.h music_event_in_proxy.cpp
     music_event_out_proxy.h music_event_out_proxy.cpp
+    music_rate_in_proxy.h music_rate_in_proxy.cpp
+    music_rate_out_proxy.h music_rate_out_proxy.cpp
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp

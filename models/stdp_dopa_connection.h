@@ -143,7 +143,7 @@ public:
 
   Node* get_node();
 
-  long get_vt_gid() const;
+  long get_vt_node_id() const;
 
   volume_transmitter* vt_;
   double A_plus_;
@@ -157,11 +157,11 @@ public:
 };
 
 inline long
-STDPDopaCommonProperties::get_vt_gid() const
+STDPDopaCommonProperties::get_vt_node_id() const
 {
   if ( vt_ != 0 )
   {
-    return vt_->get_gid();
+    return vt_->get_node_id();
   }
   else
   {

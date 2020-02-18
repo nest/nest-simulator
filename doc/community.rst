@@ -16,10 +16,10 @@ By subscribing to the mailing list you will also get notified of all NEST relate
 
 Before submitting a question, please take a look at our :doc:`guidelines for the NEST mailing list <contribute/mailing_list_guidelines>`.
 
-Open video meeting for users and developers
---------------------------------------------
+Open video conference
+---------------------
 
-Every two weeks, we have an open video meeting to discuss current issues and developments in NEST.
+Every two weeks, we have an open video conference to discuss current issues and developments in NEST.
 We welcome users with questions regarding their implementations or issues they want help solving to join.
 This is an opportunity to have discussions in real time with developers.
 

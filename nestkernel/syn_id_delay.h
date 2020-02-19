@@ -80,7 +80,7 @@ struct SynIdDelay
   bool
   source_has_more_targets() const
   {
-    return this->more_targets;
+    return more_targets;
   }
 
   /**

@@ -319,16 +319,15 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
 
   // set values of next_target_data
   next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( node_id ) );
-  next_target_data.set_source_tid(
-    kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) ) );
+  next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) ) );
   next_target_data.reset_marker();
 
   if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
   {
     next_target_data.set_is_primary( true );
 
-    // we store the thread index of the source table, not our own tid!
     TargetDataFields& target_fields = next_target_data.target_data;
+    // we store the thread index of the source table, not our own tid!
     target_fields.set_tid( current_position.tid );
     target_fields.set_syn_id( current_position.syn_id );
     target_fields.set_lcid( current_position.lcid );

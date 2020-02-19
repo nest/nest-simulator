@@ -200,32 +200,67 @@ connect_arrays( long* sources,
   size_t n,
   std::string syn_model )
 {
-  DictionaryDatum conn_spec = new Dictionary();
-  DictionaryDatum syn_spec = new Dictionary();
-  ( *conn_spec )[ names::rule ] = "one_to_one";
-  ( *syn_spec )[ names::synapse_model ] = syn_model;
+  std::vector< DictionaryDatum > param_dicts( kernel().vp_manager.get_num_threads(), new Dictionary() );
+  index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
+
+  // Increments pointers to weight, delay, and receptor type, if they are specified.
+  auto increment_wdr = [weights, delays, r_type]( decltype( weights ) w, decltype( delays ) d, decltype( r_type ) r )
+  {
+    if ( weights != nullptr )
+    {
+      ++w;
+    }
+    if ( delays != nullptr )
+    {
+      ++d;
+    }
+    if ( r_type != nullptr )
+    {
+      ++r;
+    }
+  };
 
   auto s = sources;
   auto t = targets;
   auto w = weights;
   auto d = delays;
   auto r = r_type;
+  double weight_buffer = numerics::nan;
+  double delay_buffer = numerics::nan;
   for ( ; s != sources + n; ++s, ++t )
   {
+    if ( 0 >= *s or static_cast< index >( *s ) > kernel().node_manager.size() )
+    {
+      throw UnknownNode( *s );
+    }
+    if ( 0 >= *t or static_cast< index >( *t ) > kernel().node_manager.size() )
+    {
+      throw UnknownNode( *t );
+    }
+
+    const auto tid = kernel().vp_manager.get_thread_id();
+    auto target_node = kernel().node_manager.get_node_or_proxy( *t, tid );
+    if ( target_node->is_proxy() )
+    {
+      increment_wdr( w, d, r );
+      continue;
+    }
     if ( weights != nullptr )
     {
-      ( *syn_spec )[ names::weight ] = *( w++ );
+      weight_buffer = *w;
     }
     if ( delays != nullptr )
     {
-      ( *syn_spec )[ names::delay ] = *( d++ );
+      delay_buffer = *d;
     }
     if ( r_type != nullptr )
     {
-      ( *syn_spec )[ names::receptor_type ] = *( r++ );
+      ( *param_dicts[ tid ] )[ names::receptor_type ] = *r;
     }
+
     kernel().connection_manager.connect(
-      NodeCollection::create( *s ), NodeCollection::create( *t ), conn_spec, syn_spec );
+      *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+    increment_wdr( w, d, r );
   }
 }
 

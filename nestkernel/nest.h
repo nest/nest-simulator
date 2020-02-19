@@ -125,7 +125,13 @@ void connect( NodeCollectionPTR sources,
  * targets, weights, and delays are given as pointers to the first
  * element. All arrays must have the same length, n.
  */
-void connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n, std::string syn_model );
+void connect_arrays( long* sources,
+  long* targets,
+  double* weights,
+  double* delays,
+  long* r_type,
+  size_t n,
+  std::string syn_model );
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 

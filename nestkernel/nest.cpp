@@ -192,7 +192,13 @@ connect( NodeCollectionPTR sources,
 }
 
 void
-connect_arrays( long* sources, long* targets, double* weights, double* delays, size_t n, std::string syn_model )
+connect_arrays( long* sources,
+  long* targets,
+  double* weights,
+  double* delays,
+  long* r_type,
+  size_t n,
+  std::string syn_model )
 {
   DictionaryDatum conn_spec = new Dictionary();
   DictionaryDatum syn_spec = new Dictionary();
@@ -203,10 +209,21 @@ connect_arrays( long* sources, long* targets, double* weights, double* delays, s
   auto t = targets;
   auto w = weights;
   auto d = delays;
-  for ( ; s != sources + n; ++s, ++t, ++w, ++d )
+  auto r = r_type;
+  for ( ; s != sources + n; ++s, ++t )
   {
-    ( *syn_spec )[ names::weight ] = *w;
-    ( *syn_spec )[ names::delay ] = *d;
+    if ( weights != nullptr )
+    {
+      ( *syn_spec )[ names::weight ] = *( w++ );
+    }
+    if ( delays != nullptr )
+    {
+      ( *syn_spec )[ names::delay ] = *( d++ );
+    }
+    if ( r_type != nullptr )
+    {
+      ( *syn_spec )[ names::receptor_type ] = *( r++ );
+    }
     kernel().connection_manager.connect(
       NodeCollection::create( *s ), NodeCollection::create( *t ), conn_spec, syn_spec );
   }

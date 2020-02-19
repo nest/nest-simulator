@@ -41,8 +41,8 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(len(sources))
         syn_model = 'static_synapse'
 
-        nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays,
-                                                      'synapse_model': syn_model})
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                 'synapse_model': syn_model})
 
         conns = nest.GetConnections()
         for s, t, w, d, c in zip(sources, targets, weights, delays, conns):
@@ -50,6 +50,64 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.target, t)
             self.assertEqual(c.weight, w)
             self.assertEqual(c.delay, d)
+
+    def test_connect_arrays_no_delays(self):
+        """Connecting Numpy arrays without specifying delays"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.arange(1, n+1, dtype=np.uint64)
+        weights = np.ones(len(sources))
+        # delays = np.ones(len(sources))
+        syn_model = 'static_synapse'
+
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'synapse_model': syn_model})
+
+        conns = nest.GetConnections()
+        for s, t, w, c in zip(sources, targets, weights, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+
+    def test_connect_arrays_no_weights(self):
+        """Connecting Numpy arrays without specifying weights"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.arange(1, n+1, dtype=np.uint64)
+        # weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+        syn_model = 'static_synapse'
+
+        nest.Connect(sources, targets, syn_spec={'delay': delays, 'synapse_model': syn_model})
+
+        conns = nest.GetConnections()
+        for s, t, d, c in zip(sources, targets, delays, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.delay, d)
+
+    def test_connect_arrays_rtype(self):
+        """Connecting Numpy arrays with specified receptor_type"""
+        n = 10
+        nest.Create('iaf_psc_exp_multisynapse', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.arange(1, n+1, dtype=np.uint64)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+        receptor_type = np.ones(len(sources), dtype=np.uint64)
+        syn_model = 'static_synapse'
+
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays, 'receptor_type': receptor_type,
+                                                 'synapse_model': syn_model})
+
+        conns = nest.GetConnections()
+        for s, t, w, d, r, c in zip(sources, targets, weights, delays, receptor_type, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
+            self.assertEqual(c.receptor, r)
 
     def test_connect_arrays_wrong_dtype(self):
         """Raises exception when connecting Numpy arrays with wrong dtype"""
@@ -62,8 +120,8 @@ class TestConnectArrays(unittest.TestCase):
         syn_model = 'static_synapse'
 
         with self.assertRaises(TypeError):
-            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays,
-                                                          'synapse_model': syn_model})
+            nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                     'synapse_model': syn_model})
 
     def test_connect_arrays_wrong_arraytype(self):
         """Raises exception when connecting arrays with wrong array type"""
@@ -76,8 +134,8 @@ class TestConnectArrays(unittest.TestCase):
         syn_model = 'static_synapse'
 
         with self.assertRaises(TypeError):
-            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays,
-                                                          'synapse_model': syn_model})
+            nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                     'synapse_model': syn_model})
 
     def test_connect_arrays_unknown_nodes(self):
         """Raises exception when connecting Numpy arrays with unknown nodes"""
@@ -90,8 +148,8 @@ class TestConnectArrays(unittest.TestCase):
         syn_model = 'static_synapse'
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(sources, targets, 'one_to_one', {'weight': weights, 'delay': delays,
-                                                          'synapse_model': syn_model})
+            nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                     'synapse_model': syn_model})
 
 
 def suite():

@@ -169,9 +169,13 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
 }
 
 inline Node*
-ModelManager::get_proxy_node( thread tid, index gid )
+ModelManager::get_proxy_node( thread tid, index node_id )
 {
-  return proxy_nodes_[ tid ].at( kernel().modelrange_manager.get_model_id( gid ) );
+  const int model_id = kernel().modelrange_manager.get_model_id( node_id );
+  Node* proxy = proxy_nodes_[ tid ].at( model_id );
+  proxy->set_node_id_( node_id );
+  proxy->set_vp( kernel().vp_manager.node_id_to_vp( node_id ) );
+  return proxy;
 }
 
 

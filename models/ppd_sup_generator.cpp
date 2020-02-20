@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -130,23 +131,23 @@ nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
+nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::dead_time, dead_time_ );
+  updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( 1000.0 / rate_ <= dead_time_ )
   {
     throw BadProperty( "The inverse rate has to be larger than the dead time." );
   }
 
   long n_proc_l = n_proc_;
-  updateValue< long >( d, names::n_proc, n_proc_l );
+  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
@@ -156,9 +157,9 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
     n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 
-  updateValue< double >( d, names::frequency, frequency_ );
+  updateValueParam< double >( d, names::frequency, frequency_, node );
 
-  updateValue< double >( d, names::relative_amplitude, amplitude_ );
+  updateValueParam< double >( d, names::relative_amplitude, amplitude_, node );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
   {
     throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );

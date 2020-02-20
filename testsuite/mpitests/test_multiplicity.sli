@@ -46,10 +46,9 @@ skip_if_not_threaded
 [1 2]
 {
   % set resolution and total/local number of threads
-  0
   <<
     /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /p_source /parrot_neuron 1 Create def
   /p_target /parrot_neuron 1 Create def

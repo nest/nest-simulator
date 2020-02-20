@@ -43,7 +43,7 @@ M_ERROR setverbosity
   /sdefs /static_synapse GetDefaults def
 
   /n /iaf_psc_exp_multisynapse << /tau_syn [0.1 0.2] >> Create def
-  [n] [n] /one_to_one << /model /static_synapse /receptor_type 2 /weight 1234. /delay 2.3 >> Connect
+  n n /one_to_one << /synapse_model /static_synapse /receptor_type 2 /weight 1234. /delay 2.3 >> Connect
 
   /pdefs /static_synapse GetDefaults def
   
@@ -57,7 +57,7 @@ M_ERROR setverbosity
   /n /iaf_psc_exp_multisynapse << /tau_syn [0.1 0.2] >> Create def
   mark
   {
-    [n] [n] /one_to_one << /model /static_synapse /receptor_type 5 /weight 1234. /delay 2.3 >> Connect
+    n n /one_to_one << /synapse_model /static_synapse /receptor_type 5 /weight 1234. /delay 2.3 >> Connect
   }
   stopped
   { 
@@ -78,7 +78,7 @@ M_ERROR setverbosity
   /sdefs /stdp_synapse GetDefaults def
 
   /n /iaf_psc_exp_multisynapse << /tau_syn [0.1 0.2] >> Create def
-  [n] [n] /one_to_one << /model /stdp_synapse /receptor_type 2 /weight 1234. /delay 2.3
+  n n /one_to_one << /synapse_model /stdp_synapse /receptor_type 2 /weight 1234. /delay 2.3
                          /alpha 7. /lambda 0.05 /mu_minus 2. /mu_plus 3. /tau_plus 50. /Wmax 99.
                       >> Connect
 

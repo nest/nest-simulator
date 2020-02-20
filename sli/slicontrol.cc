@@ -991,29 +991,6 @@ Forall_aFunction::execute( SLIInterpreter* i ) const
   i->inc_call_depth();
 }
 
-
-/******************************/
-/* forall_iter                */
-/*  call: obj proc forall     */
-/*  pick   1    0             */
-/******************************/
-void
-Forall_iterFunction::execute( SLIInterpreter* i ) const
-{
-  i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
-  assert( proc );
-
-  i->EStack.push( i->baselookup( i->mark_name ) );
-  i->EStack.push_move( i->OStack.pick( 1 ) ); // push iterator
-  i->EStack.push_move( i->OStack.pick( 0 ) ); // push procedure
-
-  i->EStack.push( i->baselookup( i->iforalliter_name ) );
-  i->OStack.pop( 2 );
-  i->inc_call_depth();
-}
-
-
 /** @BeginDocumentation
    Name: forallindexed - Call a procedure for each element of a list/string
 
@@ -2157,7 +2134,6 @@ const LookupFunction lookupfunction;
 
 const ForFunction forfunction;
 const Forall_aFunction forall_afunction;
-const Forall_iterFunction forall_iterfunction;
 const Forallindexed_aFunction forallindexed_afunction;
 const Forallindexed_sFunction forallindexed_sfunction;
 const Forall_sFunction forall_sfunction;
@@ -2250,7 +2226,6 @@ init_slicontrol( SLIInterpreter* i )
   i->createcommand( "lookup", &lookupfunction );
   i->createcommand( "for", &forfunction );
   i->createcommand( "forall_a", &forall_afunction );
-  i->createcommand( "forall_iter", &forall_iterfunction );
   i->createcommand( "forallindexed_a", &forallindexed_afunction );
   i->createcommand( "forallindexed_s", &forallindexed_sfunction );
   i->createcommand( "forall_s", &forall_sfunction );

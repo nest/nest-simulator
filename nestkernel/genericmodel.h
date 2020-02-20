@@ -59,6 +59,7 @@ public:
   bool has_proxies();
   bool one_node_per_process();
   bool is_off_grid();
+  void calibrate_time( const TimeConverter& tc );
   /**
      @note The decision of whether one node can receive a certain
      event was originally in the node. But in the distributed case,
@@ -88,6 +89,8 @@ public:
   Node const& get_prototype() const;
 
   void set_model_id( int );
+
+  int get_model_id();
 
   void deprecation_warning( const std::string& );
 
@@ -188,6 +191,13 @@ GenericModel< ElementT >::is_off_grid()
 }
 
 template < typename ElementT >
+inline void
+GenericModel< ElementT >::calibrate_time( const TimeConverter& tc )
+{
+  proto_.calibrate_time( tc );
+}
+
+template < typename ElementT >
 inline port
 GenericModel< ElementT >::send_test_event( Node& target, rport receptor, synindex syn_id, bool dummy_target )
 {
@@ -265,5 +275,13 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
+
+template < typename ElementT >
+int
+GenericModel< ElementT >::get_model_id()
+{
+  return proto_.get_model_id();
 }
+}
+
 #endif

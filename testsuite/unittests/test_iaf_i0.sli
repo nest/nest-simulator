@@ -54,10 +54,10 @@ SeeAlso: iaf_psc_alpha
 
 ResetKernel
 
-0 << 
+<< 
        /local_num_threads 1  
        /resolution h  
-     >> SetStatus
+     >> SetKernelStatus
 
 
 
@@ -66,10 +66,10 @@ neuron << /I_e 1000.0 >> SetStatus
 
 % we must manually set the recording interval to single time step
 /voltmeter Create /vm Set
-vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /withgid true /time_in_steps true >> SetStatus
+sd << /time_in_steps true >> SetStatus
 
 
 vm neuron Connect

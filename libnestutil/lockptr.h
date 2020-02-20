@@ -30,12 +30,13 @@
 // C++ includes:
 #include <cassert>
 #include <cstddef>
+#include <memory>
 
 /**
 \class lockPTR
 
  This template is the standard safe-pointer implementation
- of SYNOD.
+ of NEST.
 
  In order for this scheme to work smoothly, the user has to take some
  precautions:
@@ -55,8 +56,8 @@
 
  Since all access to the referenced object is done via a lockPTR, it
  is possible to maintain a count of all active references. If this
- count dropts to zero, the referenced object can savely be destroyed.
- For dynamically allocated objects, delete is envoked on the stored
+ count drops to zero, the referenced object can safely be destroyed.
+ For dynamically allocated objects, delete is invoked on the stored
  pointer.
 
  class lockPTR distinguishes between dynamically and automatically
@@ -67,7 +68,7 @@
  destructor once the reference count drops to zero.
 
  If the lockPTR is initialised with a reference, it assumes that the
- object is automatically allocated. Thus, the lockPTR wil NOT call the
+ object is automatically allocated. Thus, the lockPTR will NOT call the
  destructor.
 
  In some cases it is necessary for a routine to actually get hold of
@@ -89,7 +90,6 @@ class lockPTR
 
   private:
     D* pointee; // pointer to handled Datum object
-    size_t number_of_references;
     bool deletable;
     bool locked;
 
@@ -99,7 +99,6 @@ class lockPTR
   public:
     PointerObject( D* p = NULL )
       : pointee( p )
-      , number_of_references( 1 )
       , deletable( true )
       , locked( false )
     {
@@ -107,7 +106,6 @@ class lockPTR
 
     PointerObject( D& p_o )
       : pointee( &p_o )
-      , number_of_references( 1 )
       , deletable( false )
       , locked( false )
     {
@@ -115,8 +113,6 @@ class lockPTR
 
     ~PointerObject()
     {
-      assert( number_of_references == 0 ); // This will invalidate the still
-                                           // existing pointer!
       assert( not locked );
       if ( ( pointee != NULL ) && deletable && ( not locked ) )
       {
@@ -128,30 +124,6 @@ class lockPTR
     get( void ) const
     {
       return pointee;
-    }
-
-    void
-    addReference( void )
-    {
-      ++number_of_references;
-    }
-
-    void
-    removeReference( void )
-    {
-      //      assert(number_of_references > 0);
-
-      --number_of_references;
-      if ( number_of_references == 0 )
-      {
-        delete this;
-      }
-    }
-
-    size_t
-    references( void ) const
-    {
-      return number_of_references;
     }
 
     bool
@@ -169,19 +141,21 @@ class lockPTR
     void
     lock( void )
     {
-      assert( locked == false );
+      assert( not locked );
+#pragma omp atomic write // To avoid race conditions.
       locked = true;
     }
 
     void
     unlock( void )
     {
-      assert( locked == true );
+      assert( locked );
+#pragma omp atomic write // To avoid race conditions.
       locked = false;
     }
   };
 
-  PointerObject* obj;
+  std::shared_ptr< PointerObject > obj;
 
 public:
   // lockPTR() ; // generated automatically.
@@ -192,13 +166,13 @@ public:
 
   explicit lockPTR( D* p = NULL )
   {
-    obj = new PointerObject( p );
+    obj = std::make_shared< PointerObject >( p );
     assert( obj != NULL );
   }
 
   explicit lockPTR( D& p_o )
   {
-    obj = new PointerObject( p_o );
+    obj = std::make_shared< PointerObject >( p_o );
     assert( obj != NULL );
   }
 
@@ -206,25 +180,17 @@ public:
     : obj( spd.obj )
   {
     assert( obj != NULL );
-    obj->addReference();
   }
 
   virtual ~lockPTR()
   {
     assert( obj != NULL );
-    obj->removeReference();
   }
 
   lockPTR< D > operator=( const lockPTR< D >& spd )
   {
-    //  assert(obj != NULL);
-    // assert(spd.obj != NULL);
-
-    // The following order of the expressions protects
-    // against a=a;
-
-    spd.obj->addReference();
-    obj->removeReference();
+    assert( obj != NULL );
+    assert( spd.obj != NULL );
 
     obj = spd.obj;
 
@@ -363,7 +329,7 @@ public:
   size_t
   references( void ) const
   {
-    return ( obj == NULL ) ? 0 : obj->references();
+    return ( obj == NULL ) ? 0 : obj.use_count();
   }
 };
 

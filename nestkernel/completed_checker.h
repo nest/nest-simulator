@@ -74,6 +74,16 @@ public:
   bool all_true() const;
 
   /**
+   * Returns whether any elements are false. Waits for all threads.
+   */
+  bool any_false() const;
+
+  /**
+   * Returns whether any elements are true. Waits for all threads.
+   */
+  bool any_true() const;
+
+  /**
    * Clears array and sets size to zero.
    */
   void clear();
@@ -118,7 +128,11 @@ CompletedChecker::set( const thread tid, const bool v )
 
 inline bool CompletedChecker::operator[]( const thread tid ) const
 {
-  return a_[ tid ];
+  bool v;
+#pragma omp atomic read
+  v = a_[ tid ];
+
+  return v;
 }
 
 } // namespace nest

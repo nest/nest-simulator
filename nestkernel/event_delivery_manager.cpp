@@ -134,12 +134,6 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 }
 
 void
-EventDeliveryManager::clear_pending_spikes()
-{
-  configure_spike_data_buffers();
-}
-
-void
 EventDeliveryManager::resize_send_recv_buffers_target_data()
 {
   // compute send receive counts and allocate memory for buffers
@@ -566,8 +560,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 
         const index syn_id = spike_data.get_syn_id();
         const index lcid = spike_data.get_lcid();
-        const index source_gid = kernel().connection_manager.get_source_gid( tid, syn_id, lcid );
-        se.set_sender_gid( source_gid );
+        const index source_node_id = kernel().connection_manager.get_source_node_id( tid, syn_id, lcid );
+        se.set_sender_node_id( source_node_id );
 
         kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
       }
@@ -655,7 +649,6 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position )
 {
-  unsigned int num_target_data_written = 0;
   thread source_rank;
   TargetData next_target_data;
   bool valid_next_target_data;
@@ -685,7 +678,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
     if ( valid_next_target_data ) // add valid entry to MPI buffer
     {
-      if ( send_buffer_position.idx( source_rank ) == send_buffer_position.end( source_rank ) )
+      if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
         // entry does not fit in this part of the MPI buffer any more,
         // so we need to reject it
@@ -697,8 +690,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
-        if ( num_target_data_written
-          == ( send_buffer_position.send_recv_count_per_rank * assigned_ranks.size ) ) // buffer is full
+        if ( send_buffer_position.are_all_chunks_filled() ) // buffer is full
         {
           return is_source_table_read;
         }

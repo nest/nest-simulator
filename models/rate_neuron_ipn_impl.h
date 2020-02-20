@@ -35,6 +35,7 @@
 
 // Includes from libnestutil:
 #include "numerics.h"
+#include "dict_util.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -104,18 +105,18 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get( DictionaryDatum& d )
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d )
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::tau, tau_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::mu, mu_ );
-  updateValue< double >( d, names::sigma, sigma_ );
-  updateValue< bool >( d, names::linear_summation, linear_summation_ );
-  updateValue< bool >( d, names::rectify_output, rectify_output_ );
-  updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
+  updateValueParam< double >( d, names::tau, tau_, node );
+  updateValueParam< double >( d, names::lambda, lambda_, node );
+  updateValueParam< double >( d, names::mu, mu_, node );
+  updateValueParam< double >( d, names::sigma, sigma_, node );
+  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
+  updateValueParam< bool >( d, names::rectify_output, rectify_output_, node );
+  updateValueParam< bool >( d, names::mult_coupling, mult_coupling_, node );
 
   // Check for old names
-  if ( updateValue< double >( d, names::mean, mu_ ) )
+  if ( updateValueParam< double >( d, names::mean, mu_, node ) )
   {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
@@ -123,7 +124,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set( const DictionaryDatu
       "name from now on." );
   }
 
-  if ( updateValue< double >( d, names::std, sigma_ ) )
+  if ( updateValueParam< double >( d, names::std, sigma_, node ) )
   {
     LOG( M_WARNING,
       "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
@@ -156,9 +157,9 @@ nest::rate_neuron_ipn< TNonlinearities >::State_::get( DictionaryDatum& d ) cons
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::State_::set( const DictionaryDatum& d )
+nest::rate_neuron_ipn< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ ); // Rate
+  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
 }
 
 template < class TNonlinearities >

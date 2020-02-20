@@ -64,13 +64,41 @@ CompletedChecker::all_true() const
   return true;
 }
 
+bool
+CompletedChecker::any_false() const
+{
+#pragma omp barrier
+  for ( size_t i = 0; i < size_; ++i )
+  {
+    if ( not a_[ i ] )
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+CompletedChecker::any_true() const
+{
+#pragma omp barrier
+  for ( size_t i = 0; i < size_; ++i )
+  {
+    if ( a_[ i ] )
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 void
 CompletedChecker::clear()
 {
   VPManager::assert_single_threaded();
   if ( a_ != NULL )
   {
-    delete a_;
+    delete[] a_;
     a_ = NULL;
     size_ = 0;
   }

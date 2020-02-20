@@ -139,6 +139,7 @@ def get_std_PSP_matrix(PSP_rel, number_of_pop):
     std_mat[:, :] = PSP_rel
     return std_mat
 
+
 net_dict = {
     # Neuron model.
     'neuron_model': 'iaf_psc_exp',
@@ -168,7 +169,7 @@ net_dict = {
              [0.0548, 0.0269, 0.0257, 0.0022, 0.06, 0.3158, 0.0086, 0.],
              [0.0156, 0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396, 0.2252],
              [0.0364, 0.001, 0.0034, 0.0005, 0.0277, 0.008, 0.0658, 0.1443]]
-            ),
+    ),
     # Number of external connections to the different populations.
     # The order corresponds to the order in 'populations'.
     'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
@@ -229,29 +230,29 @@ net_dict = {
         'tau_syn_E': 0.5,
         # Refractory period of the neurons after a spike (in ms).
         't_ref': 2.0}
-    }
+}
 
 updated_dict = {
     # PSP mean matrix.
     'PSP_mean_matrix': get_mean_PSP_matrix(
         net_dict['PSP_e'], net_dict['g'], len(net_dict['populations'])
-        ),
+    ),
     # PSP std matrix.
     'PSP_std_matrix': get_std_PSP_matrix(
         net_dict['PSP_sd'], len(net_dict['populations'])
-        ),
+    ),
     # mean delay matrix.
     'mean_delay_matrix': get_mean_delays(
         net_dict['mean_delay_exc'], net_dict['mean_delay_inh'],
         len(net_dict['populations'])
-        ),
+    ),
     # std delay matrix.
     'std_delay_matrix': get_std_delays(
         net_dict['mean_delay_exc'] * net_dict['rel_std_delay'],
         net_dict['mean_delay_inh'] * net_dict['rel_std_delay'],
         len(net_dict['populations'])
-        ),
-    }
+    ),
+}
 
 
 net_dict.update(updated_dict)

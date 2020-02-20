@@ -37,7 +37,7 @@ install( PROGRAMS
     ${PROJECT_BINARY_DIR}/extras/nest-config
     nest_indirect
     nest_serial
-    nest-web
+    nest-server
     ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

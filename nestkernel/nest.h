@@ -120,10 +120,12 @@ void connect( NodeCollectionPTR sources,
 /**
  * @brief Connect arrays of node IDs one-to-one
  *
- * Connects an array of sources to an array of targets, with weights and
- * delays from specified arrays, using the one-to-one rule. Sources,
- * targets, weights, and delays are given as pointers to the first
- * element. All arrays must have the same length, n.
+ * Connects an array of sources to an array of targets, with weights,
+ * delays, and receptor types from specified arrays, using the one-to-one
+ * rule. Sources, targets, weights, delays, and receptor types are given
+ * as pointers to the first element. All arrays must have the same length,
+ * n. Weights, delays, and receptor types can be unspecified by passing a
+ * nullptr.
  */
 void connect_arrays( long* sources,
   long* targets,

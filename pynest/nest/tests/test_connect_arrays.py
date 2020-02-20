@@ -51,6 +51,31 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.weight, w)
             self.assertEqual(c.delay, d)
 
+    def test_connect_arrays_threaded(self):
+        """Connecting Numpy arrays, threaded"""
+        nest.SetKernelStatus({'local_num_threads': 2})
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.arange(1, n+1, dtype=np.uint64)
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+        syn_model = 'static_synapse'
+
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                 'synapse_model': syn_model})
+
+        conns = nest.GetConnections()
+        # Sorting connection information by source to make it equivalent to the reference.
+        conn_info = [(c.source, c.target, c.weight, c.delay) for c in conns]
+        conn_info.sort(key=lambda conn: conn[0])
+        for s, t, w, d, c in zip(sources, targets, weights, delays, conn_info):
+            conn_s, conn_t, conn_w, conn_d = c
+            self.assertEqual(conn_s, s)
+            self.assertEqual(conn_t, t)
+            self.assertEqual(conn_w, w)
+            self.assertEqual(conn_d, d)
+
     def test_connect_arrays_no_delays(self):
         """Connecting Numpy arrays without specifying delays"""
         n = 10

@@ -44,8 +44,9 @@ M_ERROR setverbosity
 % test neuron-neuron connection
 {
   ResetKernel
-  /iaf_psc_delta 2 Create
-  [1] [2] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  /iaf_psc_delta 1 Create /a Set
+  /iaf_psc_delta 1 Create /b Set
+  a b << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die
 
@@ -54,7 +55,7 @@ M_ERROR setverbosity
   ResetKernel
   /iaf_psc_delta 1 Create /n Set
   /spike_detector 1 Create /d Set
-  [n] [d] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  n d << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die
 
@@ -63,7 +64,7 @@ M_ERROR setverbosity
   ResetKernel
   /spike_generator 1 Create /g Set
   /spike_detector 1 Create /d Set
-  [g] [d] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  g d << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die
 
@@ -72,7 +73,7 @@ M_ERROR setverbosity
   ResetKernel
   /spike_generator 1 Create /g Set
   /iaf_psc_delta 1 Create /n Set
-  [g] [n] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  g n << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die
 
@@ -81,6 +82,6 @@ M_ERROR setverbosity
   ResetKernel
   /iaf_psc_delta 1 Create /n Set
   /volume_transmitter 1 Create /v Set
-  [n] [v] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  n v << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die

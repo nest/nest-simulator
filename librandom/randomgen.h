@@ -195,8 +195,7 @@
 #include <cmath>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
+#include <memory>
 
 // Includes from librandom:
 #include "librandom_names.h"
@@ -211,12 +210,12 @@ namespace librandom
 class RandomGen;
 
 /**
- * Common lock-pointer type for RNG
+ * Common shared_ptr type for RNG
  *
- * A safe pointer that should be used instead of RandomGen*
+ * A smart pointer that should be used instead of RandomGen*
  * in user code to manage random number generators.
  */
-typedef lockPTR< RandomGen > RngPtr;
+typedef std::shared_ptr< RandomGen > RngPtr;
 
 /**
  * Abstract base class for all random generator objects

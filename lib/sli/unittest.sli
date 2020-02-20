@@ -230,7 +230,7 @@ Examples:
 /unittest (7391) require
 /unittest using
   { 1 0 div } fail_or_die    
-  { 0 << /resolution 0 >> SetStatus} fail_or_die
+  { << /resolution 0 >> SetKernelStatus} fail_or_die
 endusing
 
 Author: H. E. Plesser

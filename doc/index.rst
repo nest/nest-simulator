@@ -2,6 +2,20 @@
 Welcome to the NEST simulator documentation!
 ***********************************************
 
+:orange:`Introducing NEST 3.0!`
+-------------------------------
+
+Our aim with NEST 3.0 is to provide a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
+
+
+- We have provided a :doc:`guide to NEST 3.0 <guides/from_nest2_to_nest3>` , including examples of the new functionality.
+
+
+- You can also checkout our :doc:`ref_material/nest2_vs_3` to get a comparison between old and new syntax.
+
+----
+
+If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |
@@ -11,15 +25,13 @@ Welcome to the NEST simulator documentation!
 
 NEST is a simulator for **spiking neural network models**, ideal for networks of any size, for example:
 
-1.  Models of information processing e.g. in the visual or auditory cortex of
+1.  Models of information processing e.g., in the visual or auditory cortex of
     mammals,
 
-2.  Models of network activity dynamics, e.g. laminar cortical networks or
+2.  Models of network activity dynamics, e.g., laminar cortical networks or
     balanced random networks,
 
 3.  Models of learning and plasticity.
-
-
 
 **New to NEST?**
     Start here at our :doc:`Getting Started <getting_started>` page
@@ -95,5 +107,11 @@ The  `NeuralEnsemble <http://neuralensemble.org/>`_ is a community-based initiat
 They host numerous software including `PyNN <http://neuralensemble.org/PyNN/>`_, a simulator-independent language for building neuronal network models and `Elephant (Electrophysiology Analysis Toolkit) <http://neuralensemble.org/elephant/>`_, a package for the analysis of neurophysiology data, using Neo data structures.
 
 
+
+NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
+
+-  use NEST for your research,
+-  modify and improve NEST according to your needs,
+-  distribute NEST to others under the same license.
 
 

@@ -1,0 +1,83 @@
+/*
+ *  test_threaded_spike_detector.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_threaded_spike_detector - test support for spike_detector
+
+   Synopsis: (test_threaded_spike_detector.sli) run -> dies if assertion fails
+
+   Description:
+   Tests that spike_detector works when we use threads.
+
+   Author: Stine B. Vennemo
+   FirstVersion: June 2017
+   SeeAlso: test_threaded_multimeter.sli
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+M_ERROR setverbosity
+
+/run_sd
+{
+  << >> begin
+    /n_threads Set
+
+    /N 10 def  % should not be divisible by thread number
+  
+    ResetKernel
+    GetKernelStatus /num_processes get 1 eq assert % distributed setting not covered
+    << /local_num_threads n_threads >> SetKernelStatus
+
+    % actual neurons
+    /nrns /iaf_psc_alpha N << /I_e 376. >> Create def
+
+    % spike_detector
+    /sd  /spike_detector Create def
+
+    nrns sd Connect
+
+    200. Simulate
+
+    % obtain data 
+    sd /events get dup /times get cva exch /senders get cva
+  end
+}
+def
+
+{
+  << >> begin
+  1 run_sd /r1s Set /r1t Set
+  3 run_sd /r3s Set /r3t Set
+ 
+  r1t Sort r3t Sort eq
+  r1s Sort r3s Sort eq
+ 
+  end
+} assert_or_die
+
+
+endusing

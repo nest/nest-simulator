@@ -134,6 +134,7 @@ public:
    */
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( DiffusionConnectionEvent& );
   void handle( DataLoggingRequest& );
@@ -203,7 +204,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -218,7 +219,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -327,9 +328,9 @@ inline void
 siegert_neuron::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

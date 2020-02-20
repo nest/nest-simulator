@@ -33,6 +33,7 @@
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -208,26 +209,26 @@ nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_reset, V_reset );
-  updateValue< double >( d, names::t_ref, t_ref );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_reset, V_reset, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::tau_rise_ex, tau_rise_ex );
-  updateValue< double >( d, names::tau_decay_ex, tau_decay_ex );
-  updateValue< double >( d, names::tau_rise_in, tau_rise_in );
-  updateValue< double >( d, names::tau_decay_in, tau_decay_in );
+  updateValueParam< double >( d, names::tau_rise_ex, tau_rise_ex, node );
+  updateValueParam< double >( d, names::tau_decay_ex, tau_decay_ex, node );
+  updateValueParam< double >( d, names::tau_rise_in, tau_rise_in, node );
+  updateValueParam< double >( d, names::tau_decay_in, tau_decay_in, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -253,9 +254,9 @@ nest::iaf_cond_beta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
 
 

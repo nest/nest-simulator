@@ -26,6 +26,7 @@
 #include <cmath>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -124,12 +125,12 @@ nest::ac_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ac_generator::Parameters_::set( const DictionaryDatum& d )
+nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::amplitude, amp_ );
-  updateValue< double >( d, names::offset, offset_ );
-  updateValue< double >( d, names::frequency, freq_ );
-  updateValue< double >( d, names::phase, phi_deg_ );
+  updateValueParam< double >( d, names::amplitude, amp_, node );
+  updateValueParam< double >( d, names::offset, offset_, node );
+  updateValueParam< double >( d, names::frequency, freq_, node );
+  updateValueParam< double >( d, names::phase, phi_deg_, node );
 }
 
 

@@ -77,27 +77,23 @@ for the kernel.
 
   ResetKernel
 
-  0 <<  
+  <<  
        /resolution h
-      >> SetStatus
+      >> SetKernelStatus
 
   % build and connect first
   /spike_detector Create /sp Set  
   /poisson_generator_ps Create /pn Set
  
   % now configure
-  sp  << /record_to [ /memory ]
-         /precise_times true
-         /stop Tstop
-      >> 
-  SetStatus
+  sp  << /stop Tstop >> SetStatus
 
   pn << /rate prate >> SetStatus
 
   pn sp 1.0 delay Connect
 
   % check in-delay condition
-  /mindel 0 /min_delay get def
+  /mindel GetKernelStatus /min_delay get def
   Tstop T mindel sub leq assert
 
   % simulate

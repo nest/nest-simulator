@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # run_microcircuit.sh
 #
@@ -19,56 +18,36 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/bin/bash
+# Create output folder (if it does not exist yet) and sim_script.sh
+# and submit to the queue. Adapt to your system as necessary
 
-# creates output folder if it does not exist yet, creates sim_script.sh, 
-# and submits it to the queue
-#
-# adapt to your system as necessary
+OUTPUT_PATH=$(grep '/output_path' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
+OUTPUT_PATH=$(cd $OUTPUT_PATH; pwd)
+N_COMPUTE_NODES=$(grep '/n_compute_nodes' sim_params.sli | cut -d' ' -f2)
+N_MPI_PER_COMPUTE_NODE=$(grep '/n_mpi_procs_per_compute_node' sim_params.sli | cut -d' ' -f2)
+WALLTIME_LIMIT=$(grep '/walltime_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
+MEMORY_LIMIT=$(egrep '/memory_limit' sim_params.sli | cut -d'(' -f2 | cut -d ')' -f1)
 
-# read in parameters and paths from user_params.sli and sim_params.sli
-# output directory
-path=`egrep '/output_path' user_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-# number of compute nodes
-n_compute_nodes=`egrep '/n_compute_nodes' sim_params.sli|cut -f 2 -d ' '`
-# number of MPI processes per compute node
-n_mpi_procs_per_compute_node=`egrep '/n_mpi_procs_per_compute_node' sim_params.sli|cut -f 2 -d ' '`
+NEST_PATH=$(grep '/nest_path' sim_params.sli | cut -d '(' -f2 | cut -d ')' -f1)
+STDOUT=$(grep '/std_out' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
+STDERR=$(grep '/std_err' sim_params.sli | cut -d'(' -f2 | cut -d')' -f1)
 
-# walltime
-walltime=`egrep '/walltime' sim_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-# memory allocation
-memory=`egrep '/memory' sim_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
+mkdir -p $OUTPUT_PATH
+cp 'sim_params.sli' $OUTPUT_PATH
+cp 'network_params.sli' $OUTPUT_PATH
+cp 'microcircuit.sli' $OUTPUT_PATH
+cd $OUTPUT_PATH
 
-# path for mpi 
-mpi_path=`egrep '/mpi' user_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-# path for nest
-nest_path=`egrep '/nest_path' user_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-# standard output file name
-output=`egrep '/std_out' sim_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-# error output file name
-errors=`egrep '/error_out' sim_params.sli|cut -f 2 -d '('|cut -f 1 -d ')'`
-
-# copy simulation scripts to output directory
-mkdir -p $path
-cp 'user_params.sli' $path
-cp 'sim_params.sli' $path
-cp 'network_params.sli' $path
-cp 'microcircuit.sli' $path
-cd $path
-
-# create sim_script.sh
 echo > sim_script.sh
 chmod 755 sim_script.sh
 
-echo "#PBS -o $path/$output" >> sim_script.sh
-echo "#PBS -e $path/$errors" >> sim_script.sh
-echo "#PBS -l walltime=$walltime" >> sim_script.sh
-echo "#PBS -l mem=$memory" >> sim_script.sh
-echo ". $mpi_path" >> sim_script.sh
-echo "cd $path/" >> sim_script.sh
-echo -n "mpirun -machinefile \$PBS_NODEFILE " >> sim_script.sh
-echo "$nest_path $path/microcircuit.sli" >> sim_script.sh
+echo "#PBS -o $OUTPUT_PATH/$STDOUT" >> sim_script.sh
+echo "#PBS -e $OUTPUT_PATH/$STDERR" >> sim_script.sh
+echo "#PBS -l walltime=$WALLTIME_LIMIT" >> sim_script.sh
+echo "#PBS -l mem=$MEMORY_LIMIT" >> sim_script.sh
+echo ". $NEST_PATH/bin/nest_vars.sh" >> sim_script.sh
+echo "NEST_DATA_PATH=$OUTPUT_PATH" >> sim_script.sh
+echo "mpirun -machinefile \$PBS_NODEFILE nest $OUTPUT_PATH/microcircuit.sli" >> sim_script.sh
+echo "unset NEST_DATA_PATH" >> sim_script.sh
 
-# The variable PBS_NODEFILE is set dynamically when invoking qsub
-qsub -l nodes=$n_compute_nodes:ppn=$n_mpi_procs_per_compute_node sim_script.sh
-
+echo qsub -l nodes=$N_COMPUTE_NODES:ppn=$N_MPI_PER_COMPUTE_NODE sim_script.sh

@@ -37,10 +37,7 @@
 [1 2 4]                                          
 {                                                 
  ResetKernel
-
- /n /iaf_psc_alpha Create def
- n n << /weight 1.0 >> Connect
-
+ /iaf_psc_alpha Create dup << /rule /all_to_all >> Connect
 }
 distributed_pass_or_die
 

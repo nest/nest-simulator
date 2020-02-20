@@ -39,14 +39,14 @@ connectivity rule (default: ``all_to_all``) or a dictionary specifying
 the rule and the rule-specific parameters (e.g. ``indegree``), which must
 be given.
 
-In addition switches allowing self-connections (``autapses``, default:
-True) and multiple connections between pairs of neurons (``multapses``,
+In addition switches allowing self-connections (``allow_autapses``, default:
+True) and multiple connections between pairs of neurons (``allow_multapses``,
 default: True) can be contained in the dictionary. The validity of the
 switches is confined by the Connect-call. Thus connecting the same set
-of neurons multiple times with the switch 'multapses' set to False, one
+of neurons multiple times with the switch 'allow_multapses' set to False, one
 particular connection might be established multiple times. The same
 applies to nodes being specified multiple times in the source or target
-vector. Here 'multapses' set to False will result in one potential
+vector. Here 'allow_multapses' set to False will result in one potential
 connection between each occurring node pair.
 
 ``syn_spec`` defines the synapse type and its properties. It can be
@@ -376,7 +376,6 @@ parameters it needs to be defined in two steps:
 For further information on the distributions see :doc:`Random numbers in
 NEST <random_numbers>`.
 
-
 Topological Connections
 -----------------------
 
@@ -504,7 +503,7 @@ Inspecting Connections
 
 ``GetConnections(source=None, target=None, synapse_model=None)``: Return
 an array of identifiers for connections that match the given parameters.
-source and target need to be lists of global ids, model is a string
+source and target need to be lists of node IDs, model is a string
 representing a synapse model. If GetConnections is called without
 parameters, all connections in the network are returned. If a list of
 source neurons is given, only connections from these pre-synaptic
@@ -513,7 +512,7 @@ connections to these post-synaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 Each connection id is a 5-tuple or, if available, a NumPy array with the
-following five entries: source-gid, target-gid, target-thread,
+following five entries: source-node_id, target-node_id, target-thread,
 synapse-id, port.
 
 The result of `GetConnections` can be given as an argument to the
@@ -557,4 +556,3 @@ can then be given as arguments to the `SetStatus()` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
-

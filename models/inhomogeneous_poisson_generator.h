@@ -104,6 +104,12 @@ public:
     return false;
   }
 
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -144,7 +150,7 @@ private:
     //!< Store current values in dictionary
     void get( DictionaryDatum& ) const;
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_& );
+    void set( const DictionaryDatum&, Buffers_&, Node* );
     //!< Align rate time to grid if necessary and insert it into rate_times_
     void assert_valid_rate_time_and_insert( const double_t t );
   };
@@ -211,7 +217,7 @@ inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, B_ ); // throws if BadProperty
+  ptmp.set( d, B_, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

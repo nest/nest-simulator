@@ -16,7 +16,7 @@ Files that only use random generators need only include randomgen.h. Files that 
 
     Class RandomGen      : abstract class allowing seeding and drawing
           GslRandomGen   : derived class implementing GSL-style RNGs
-    
+
           RandomDev      : abstract class allowing drawing only
           GammaRandomDev : Gamma random dev
           NormalRandomDev: Normal random dev
@@ -41,16 +41,16 @@ If this function is called more than once during a program run, only the first c
 
     #include "gslrandomgen.h"
     librandom::GslRngListType::iterator t;
-    for (t  = librandom::GslRandomGen::RngList.begin(); 
-         t != librandom::GslRandomGen::RngList.end(); 
+    for (t  = librandom::GslRandomGen::RngList.begin();
+         t != librandom::GslRandomGen::RngList.end();
          ++t )
         {
           std::cout << std::setw(17) << (*t)->name << " : ";
-          rng = new librandom::GslRandomGen(*t, seed); 
+          rng = new librandom::GslRandomGen(*t, seed);
           rungen(rng, Ngen);   // run generator test
           delete(rng);
         }
- 
+
 Note that functions using librandom do not have to worry about the presence or absence of the GSL: all GSL dependencies are completely contained within librandom.  The only difference will be that far fewer RNG are available when the GSL is missing or too old.
 
 ## Random Deviates
@@ -86,4 +86,4 @@ pointer to the generator in their `*.h` file, and this pointer must be entered i
 
 ## Integration with SLI
 
-The SLI module RandomNumbers, defined in `rangen.*`, creates a dictionary `rngdict`, which contains all defined GSL `rng` types. Elements of this `dict` have type `RngTypeDatum`, with name `"rngtypetype"`, corresponding to or `_gt_` for tries.  The actual RNG objects created from `RngTypeDatum` and a seed are of type `RngDatum`, name `"rngtyp"`, or `_g_` for tries; they are `lockptr` objects.
+The SLI module RandomNumbers, defined in `rangen.*`, creates a dictionary `rngdict`, which contains all defined GSL `rng` types. Elements of this `dict` have type `RngTypeDatum`, with name `"rngtypetype"`, corresponding to or `_gt_` for tries.  The actual RNG objects created from `RngTypeDatum` and a seed are of type `RngDatum`, name `"rngtyp"`, or `_g_` for tries; they are `shared_ptr` objects.

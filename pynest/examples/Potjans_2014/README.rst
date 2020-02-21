@@ -4,11 +4,11 @@ PyNEST Microcircuit
 This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_.
 The network model represents 4 layers of cortex, L2/3, L4, L5, and L6, each consisting of 2 populations of excitatory and inhibitory neurons.
 
-.. |img1| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/microcircuit.png
+.. |img1| image:: microcircuit.png
 
-.. |img2| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/reference_data/raster_plot.png
+.. |img2| image:: reference_data/raster_plot.png
 
-.. |img3| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/reference_data/box_plot.png
+.. |img3| image:: reference_data/box_plot.png
 
 .. table:: 
    :align: center

@@ -51,18 +51,23 @@ Also for the thalamic stimulation, it is possible to replace the default Poisson
 The default random initialization of membrane voltages in this simulation uses population-specific means and standard deviations to reduce an initial activity burst in the network: ``'V_type': 'optimized'`` in ``network_params.py``.
 Previous implementations used the same mean and standard deviation for all populations which corresponds to setting ``'V_type': 'original'``.
 
-Contributors to this PyNEST Microcircuit
-########################################
+Contributions to this PyNEST Microcircuit
+#########################################
 
 Current communicating author: Johanna Senk
 
 2016: first version implemented by Hendrik Rothe, Hannah Bos and Sacha van Albada
-2020: revision of code and documentation, and adaptation to NEST3
+
+2019: optimized initialization of membrane voltages added by Han-Jia Jiang
+
+2020: revision of code and documentation, and adaptation to NEST3 by Johanna Senk, Sara Konradi and Håkon Mørk.
 
 Other Implementations of the Microcircuit Model
 ###############################################
 
-The original `SLI version <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__ by Tobias Potjans and Markus Diesmann is also part of the NEST code base as an example.
+The original `SLI version <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__ by Tobias Potjans and Markus Diesmann (later revised by David Dahmen and Sacha van Albada) is also part of the NEST code base as an example.
+
+A `PyNN version <https://github.com/NeuralEnsemble/PyNN/tree/master/examples/Potjans2014>`__ by Maximilian Schmidt is part of the PyNN code base as an example.
 
 References
 ##########
@@ -70,4 +75,4 @@ References
 
 .. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
         microcircuit: relating structure and activity in a full-scale spiking
-        network model. Cerebral Cortex. 24(3):785–806. DOI: 10.1093/cercor/bhs358.
+        network model. Cerebral Cortex. 24(3):785–806. DOI: `10.1093/cercor/bhs358 <https://doi.org/10.1093/cercor/bhs358>`__.

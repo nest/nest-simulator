@@ -21,6 +21,7 @@ Table of Contents
    getting_help
    ref_material/nest2_vs_3
    ref_material/pynest_apis
+   documentation_workflow
 
 .. toctree::
    :maxdepth: 2

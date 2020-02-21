@@ -265,18 +265,21 @@ cdef class NESTEngine(object):
 
         cdef Datum* nc_datum = python_object_to_datum(node_collection)
 
-        if array.dtype == numpy.bool:
-            array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
-            array_bool_ptr = &array_bool_mv[0]
-            new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
-            return sli_datum_to_object(new_nc_datum)
-        elif numpy.issubdtype(array.dtype, numpy.integer):
-            array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
-            array_long_ptr = &array_long_mv[0]
-            new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
-            return sli_datum_to_object(new_nc_datum)
-        else:
-            raise TypeError('array must be a NumPyArray of ints or bools, got {}'.format(array.dtype))
+        try:
+            if array.dtype == numpy.bool:
+                array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
+                array_bool_ptr = &array_bool_mv[0]
+                new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
+                return sli_datum_to_object(new_nc_datum)
+            elif numpy.issubdtype(array.dtype, numpy.integer):
+                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+                array_long_ptr = &array_long_mv[0]
+                new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
+                return sli_datum_to_object(new_nc_datum)
+            else:
+                raise TypeError('array must be a NumPyArray of ints or bools, got {}'.format(array.dtype))
+        except RuntimeError as e:
+            raise NESTErrors.PyNESTERROR(str(e))
 
 
 

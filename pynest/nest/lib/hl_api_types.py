@@ -219,18 +219,28 @@ class NodeCollection(object):
         elif isinstance(key, (int, numpy.integer)):
             return sli_func('Take', self._datum, [key + (key >= 0)])
         elif isinstance(key, (list, tuple)):
-            print(key)
+            if len(key) == 0:
+                return NodeCollection([])
             # Must check if elements are bool first, because bool inherits from int
             if all(isinstance(x, bool) for x in key):
+                if len(key) != len(self):
+                    raise IndexError('Bool index array must be the same length as NodeCollection')
                 np_key = numpy.array(key, dtype=numpy.bool)
-            elif all(isinstance(x, int) for x in key):
+            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
             else:
-                raise TypeError('Indices must be integers')
+                raise TypeError('Indices must be integers or bools')
             return take_array_index(self._datum, np_key)
         elif isinstance(key, numpy.ndarray):
-            if not (numpy.issubdtype(key.dtype, numpy.bool) or numpy.issubdtype(key.dtype, numpy.integer)):
+            if len(key) == 0:
+                return NodeCollection([])
+            if len(key.shape) != 1:
+                raise TypeError('NumPy indices must one dimensional')
+            is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
+            if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
                 raise TypeError('NumPy indices must be an array of integers or bools')
+            if is_booltype and len(key) != len(self):
+                raise IndexError('Bool index array must be the same length as NodeCollection')
             return take_array_index(self._datum, key)
         else:
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')

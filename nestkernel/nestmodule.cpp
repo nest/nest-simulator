@@ -1478,6 +1478,7 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+
 #ifdef HAVE_MUSIC
 /** @BeginDocumentation
    Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port

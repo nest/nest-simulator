@@ -282,7 +282,6 @@ cdef class NESTEngine(object):
             raise NESTErrors.PyNESTERROR(str(e))
 
 
-
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 
     cdef Datum* ret = NULL

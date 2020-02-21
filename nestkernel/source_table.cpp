@@ -291,6 +291,8 @@ bool
 nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
+  assert( not current_position.is_invalid() );
+
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
   const size_t next_lcid = current_position.lcid + 1;
 
@@ -302,6 +304,8 @@ bool
 nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
+  assert( not current_position.is_invalid() );
+
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
   const long previous_lcid = current_position.lcid - 1; // needs to be a signed type such that negative
                                                         // values can signal invalid indices

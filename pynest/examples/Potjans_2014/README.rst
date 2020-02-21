@@ -4,6 +4,21 @@ PyNEST Microcircuit
 This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_.
 The network model represents 4 layers of cortex, L2/3, L4, L5, and L6, each consisting of 2 populations of excitatory and inhibitory neurons.
 
+.. |img1| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/microcircuit.png
+
+.. |img2| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/reference_data/raster_plot.png
+
+.. |img3| image:: https://github.com/jhnnsnk/nest-simulator/blob/nest-3-microcircuit/pynest/examples/Potjans_2014/reference_data/box_plot.png
+
+.. table:: 
+   :align: center
+
+   +--------+--------+--------+
+   | |img1| | |img2| | |img3| |
+   +--------+--------+--------+
+   
+Left: network sketch from [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
+
 File Structure
 ##############
 
@@ -76,3 +91,8 @@ References
 .. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
         microcircuit: relating structure and activity in a full-scale spiking
         network model. Cerebral Cortex. 24(3):785–806. DOI: `10.1093/cercor/bhs358 <https://doi.org/10.1093/cercor/bhs358>`__.
+        
+.. [2]  van Albada SJ., Rowley AG., Senk J., Hopkins M., Schmidt M., Stokes AB., Lester DR., Diesmann M. and Furber SB. 2018.
+        Performance Comparison of the Digital Neuromorphic Hardware SpiNNaker
+        and the Neural Network Simulation Software NEST for a Full-Scale Cortical Microcircuit Model.
+        Front. Neurosci. 12:291. DOI: `10.3389/fnins.2018.00291 <https://doi.org/10.3389/fnins.2018.00291>`__.

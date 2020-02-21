@@ -143,6 +143,19 @@ NodeCollection::create( const TokenArray& node_idsarray )
   return NodeCollection::create_( node_ids );
 }
 
+
+NodeCollectionPTR
+NodeCollection::create( const std::vector< index >& node_ids_vector )
+{
+  if ( node_ids_vector.size() == 0 )
+  {
+    return NodeCollection::create_();
+  }
+  auto node_ids = node_ids_vector; // Create a copy to be able to sort
+  std::sort( node_ids.begin(), node_ids.end() );
+  return NodeCollection::create_( node_ids );
+}
+
 NodeCollectionPTR
 NodeCollection::create_()
 {
@@ -201,32 +214,6 @@ bool
 NodeCollection::valid() const
 {
   return fingerprint_ == kernel().get_fingerprint();
-}
-
-NodeCollectionPTR
-NodeCollection::array_index( const IntVectorDatum& index_array ) const
-{
-  std::vector< index > node_ids;
-  node_ids.reserve( index_array->size() );
-  for ( std::vector< long >::const_iterator it = index_array->begin(); it != index_array->end(); ++it )
-  {
-    node_ids.push_back( operator[]( static_cast< index >( getValue< long >( *it ) ) ) );
-  }
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
-}
-
-NodeCollectionPTR
-NodeCollection::array_index( const TokenArray& index_array ) const
-{
-  std::vector< index > node_ids;
-  node_ids.reserve( index_array.size() );
-  for ( const auto& node_id_token : index_array )
-  {
-    node_ids.push_back( operator[]( static_cast< index >( getValue< long >( node_id_token ) ) ) );
-  }
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive( index first,

@@ -218,10 +218,19 @@ class NodeCollection(object):
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
             return sli_func('Take', self._datum, [key + (key >= 0)])
-        elif isinstance(key, (list, tuple, numpy.ndarray)):
-            return sli_func('Take_arrayindex', self._datum, key)
+        elif isinstance(key, (list, tuple)):
+            print(key)
+            if all(isinstance(x, int) for x in key):
+                np_key = numpy.array(key, dtype=numpy.uint64)
+            else:
+                raise TypeError('Indices must be integers')
+            return take_array_index(self._datum, np_key)
+        elif isinstance(key, numpy.ndarray):
+            if not numpy.issubdtype(key.dtype, numpy.integer):
+                raise TypeError('NumPy indices must be an array of integers')
+            return take_array_index(self._datum, key)
         else:
-            raise IndexError('only integers and slices are valid indices')
+            raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)

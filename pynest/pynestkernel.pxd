@@ -146,6 +146,10 @@ cdef extern from "neststartup.h":
     cbool nest_has_mpi4py()
     void c_set_communicator "set_communicator" (object) with gil
 
+cdef extern from "nest.h" namespace "nest":
+    Datum* node_collection_array_index(const Datum* node_collection, const long* array, unsigned long n) except +
+    Datum* node_collection_array_index(const Datum* node_collection, const cbool* array, unsigned long n) except +
+
 cdef extern from *:
 
     # Real support for CSA has to be implemented below the Cython level,

@@ -247,6 +247,38 @@ cdef class NESTEngine(object):
 
         return ret
 
+    def take_array_index(self, node_collection, array):
+        if self.pEngine is NULL:
+            raise NESTErrors.PyNESTError("engine uninitialized")
+
+        if not (isinstance(node_collection, SLIDatum) and (<SLIDatum> node_collection).dtype == SLI_TYPE_NODECOLLECTION.decode()):
+            raise TypeError('node_collection must be a NodeCollection, got {}'.format(type(node_collection)))
+        if not isinstance(array, numpy.ndarray):
+            raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(type(array)))
+
+        # Get pointers to the first element in the Numpy array
+        cdef long[::1] array_long_mv
+        cdef long* array_long_ptr
+
+        cdef cbool[::1] array_bool_mv
+        cdef cbool* array_bool_ptr
+
+        cdef Datum* nc_datum = python_object_to_datum(node_collection)
+
+        if array.dtype == numpy.bool:
+            array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
+            array_bool_ptr = &array_bool_mv[0]
+            new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
+            return sli_datum_to_object(new_nc_datum)
+        elif numpy.issubdtype(array.dtype, numpy.integer):
+            array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+            array_long_ptr = &array_long_mv[0]
+            new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
+            return sli_datum_to_object(new_nc_datum)
+        else:
+            raise TypeError('array must be a NumPyArray of ints or bools, got {}'.format(array.dtype))
+
+
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 

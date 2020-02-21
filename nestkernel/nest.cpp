@@ -425,4 +425,19 @@ apply( const ParameterDatum& param, const DictionaryDatum& positions )
   return param->apply( source_nc, target_tkns );
 }
 
+Datum*
+node_collection_array_index( const Datum* datum, const long* array, unsigned long n )
+{
+  const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
+  assert( node_collection->size() >= n );
+  std::vector< index > node_ids;
+  node_ids.reserve( n );
+
+  for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
+  {
+    node_ids.push_back( node_collection->operator[]( *node_ptr ) );
+  }
+  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+}
+
 } // namespace nest

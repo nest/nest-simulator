@@ -1478,33 +1478,6 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-void
-NestModule::Take_arrayindex_g_aFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-  auto nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
-  auto index_array = getValue< TokenArray >( i->OStack.pick( 0 ) );
-
-  NodeCollectionDatum new_nc = nodecollection->array_index( index_array );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( new_nc );
-  i->EStack.pop();
-}
-void
-NestModule::Take_arrayindex_g_ivFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 2 );
-  auto nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
-  auto index_array = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-
-  NodeCollectionDatum new_nc = nodecollection->array_index( index_array );
-
-  i->OStack.pop( 2 );
-  i->OStack.push( new_nc );
-  i->EStack.pop();
-}
-
 #ifdef HAVE_MUSIC
 /** @BeginDocumentation
    Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port
@@ -2064,8 +2037,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( ":lt_q_q", &lt_q_qfunction );
   i->createcommand( "get_g_i", &get_g_ifunction );
   i->createcommand( "Take_g_a", &take_g_afunction );
-  i->createcommand( "Take_arrayindex_g_a", &take_arrayindex_g_afunction );
-  i->createcommand( "Take_arrayindex_g_iv", &take_arrayindex_g_ivfunction );
 
 #ifdef HAVE_MUSIC
   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );

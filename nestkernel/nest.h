@@ -191,6 +191,8 @@ double get_value( const ParameterDatum& param );
 bool is_spatial( const ParameterDatum& param );
 std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
 std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
+
+Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 }
 
 

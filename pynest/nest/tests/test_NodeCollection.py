@@ -616,6 +616,21 @@ class TestNodeCollection(unittest.TestCase):
             sliced = n[case]
             self.assertEqual(sliced.tolist(), ref)
 
+    def test_array_indexing_bools(self):
+        """NodeCollection array indexing with bools"""
+        n = nest.Create('iaf_psc_alpha', 5)
+        cases = [[True for _ in range(len(n))],
+                 [False for _ in range(len(n))],
+                 [True, False, True, False, True],
+                 ]
+        if HAVE_NUMPY:
+            cases.append(np.array([True, False, True, False, True], dtype=np.bool))
+        for case in cases:
+            print(type(case), case)
+            ref = [i for i, b in zip(range(1, 11), case) if b]
+            sliced = n[case]
+            self.assertEqual(sliced.tolist(), ref)
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeCollection, 'test')

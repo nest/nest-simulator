@@ -193,6 +193,7 @@ std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDa
 std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
+Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
 }
 
 

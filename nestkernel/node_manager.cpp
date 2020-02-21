@@ -196,7 +196,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       //   - node ID local to this vp
       //   - node_id >= min_node_id
       const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_node_id_vp = kernel().vp_manager.suggest_vp_for_node_id( min_node_id );
+      const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
@@ -404,7 +404,7 @@ NodeManager::is_local_node( Node* n ) const
 bool
 NodeManager::is_local_node_id( index node_id ) const
 {
-  const thread vp = kernel().vp_manager.suggest_vp_for_node_id( node_id );
+  const thread vp = kernel().vp_manager.node_id_to_vp( node_id );
   return kernel().vp_manager.is_local_vp( vp );
 }
 
@@ -441,7 +441,7 @@ NodeManager::get_node_or_proxy( index node_id )
 {
   assert( 0 < node_id and node_id <= size() );
 
-  thread vp = kernel().vp_manager.suggest_vp_for_node_id( node_id );
+  thread vp = kernel().vp_manager.node_id_to_vp( node_id );
   if ( not kernel().vp_manager.is_local_vp( vp ) )
   {
     return kernel().model_manager.get_proxy_node( 0, node_id );
@@ -460,7 +460,7 @@ NodeManager::get_node_or_proxy( index node_id )
 Node*
 NodeManager::get_mpi_local_node_or_device_head( index node_id )
 {
-  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp_for_node_id( node_id ) );
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 

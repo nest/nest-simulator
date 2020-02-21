@@ -322,14 +322,14 @@ nest::SourceTable::get_next_target_data( const thread tid,
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source; start by assuming it
     // has a different source, only change if necessary
-    kernel().connection_manager.set_has_source_subsequent_targets(
+    kernel().connection_manager.set_source_has_more_targets(
       current_position.tid, current_position.syn_id, current_position.lcid, false );
     if ( ( current_position.lcid + 1
              < static_cast< long >( sources_[ current_position.tid ][ current_position.syn_id ].size() )
            and sources_[ current_position.tid ][ current_position.syn_id ][ current_position.lcid + 1 ].get_node_id()
              == current_source.get_node_id() ) )
     {
-      kernel().connection_manager.set_has_source_subsequent_targets(
+      kernel().connection_manager.set_source_has_more_targets(
         current_position.tid, current_position.syn_id, current_position.lcid, true );
     }
 
@@ -350,8 +350,8 @@ nest::SourceTable::get_next_target_data( const thread tid,
     {
       // set values of next_target_data
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( current_source.get_node_id() ) );
-      next_target_data.set_source_tid( kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp_for_node_id( current_source.get_node_id() ) ) );
+      next_target_data.set_source_tid(
+        kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( current_source.get_node_id() ) ) );
       next_target_data.reset_marker();
 
       if ( current_source.is_primary() )

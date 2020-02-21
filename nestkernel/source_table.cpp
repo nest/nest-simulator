@@ -389,8 +389,9 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // we need to set a marker stating whether the entry following this
     // entry, if existent, has the same source
-    kernel().connection_manager.set_source_has_more_targets(
-      current_position.tid, current_position.syn_id, current_position.lcid,
+    kernel().connection_manager.set_source_has_more_targets( current_position.tid,
+      current_position.syn_id,
+      current_position.lcid,
       next_entry_has_same_source_( current_position, current_source ) );
 
     // no need to communicate this entry if the previous entry has the same source

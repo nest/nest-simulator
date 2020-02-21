@@ -606,15 +606,26 @@ class TestNodeCollection(unittest.TestCase):
         cases = [[1, 2],
                  [2, 5],
                  [0, 2, 5, 7, 9],
-                 (2, 5),
+                 (5, 2),
+                 []
                  ]
+        fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection
+                      ([2, 5.5], TypeError),  # Not all indices are ints
+                      ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
+                      ]
         if HAVE_NUMPY:
-            cases.append(np.array([2, 5]))
+            cases += [np.array(c) for c in cases]
+            fail_cases += [(np.array(c), e) for c, e in fail_cases]
         for case in cases:
             print(type(case), case)
             ref = [i + 1 for i in case]
+            ref.sort()
             sliced = n[case]
             self.assertEqual(sliced.tolist(), ref)
+        for case, err in fail_cases:
+            print(type(case), case)
+            with self.assertRaises(err):
+                sliced = n[case]
 
     def test_array_indexing_bools(self):
         """NodeCollection array indexing with bools"""
@@ -623,13 +634,24 @@ class TestNodeCollection(unittest.TestCase):
                  [False for _ in range(len(n))],
                  [True, False, True, False, True],
                  ]
+        fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
+                      ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
+                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
+                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
+                      ]
         if HAVE_NUMPY:
-            cases.append(np.array([True, False, True, False, True], dtype=np.bool))
+            cases += [np.array(c) for c in cases]
+            fail_cases += [(np.array(c), e) for c, e in fail_cases]
         for case in cases:
             print(type(case), case)
             ref = [i for i, b in zip(range(1, 11), case) if b]
             sliced = n[case]
             self.assertEqual(sliced.tolist(), ref)
+        for case, err in fail_cases:
+            print(type(case), case)
+            with self.assertRaises(err):
+                sliced = n[case]
 
 
 def suite():

@@ -191,6 +191,98 @@ connect( NodeCollectionPTR sources,
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
 
+void
+connect_arrays( long* sources,
+  long* targets,
+  double* weights,
+  double* delays,
+  long* r_type,
+  size_t n,
+  std::string syn_model )
+{
+  std::vector< DictionaryDatum > param_dicts( kernel().vp_manager.get_num_threads(), new Dictionary() );
+  index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
+
+  // Increments pointers to weight, delay, and receptor type, if they are specified.
+  auto increment_wdr = [weights, delays, r_type]( decltype( weights ) w, decltype( delays ) d, decltype( r_type ) r )
+  {
+    if ( weights != nullptr )
+    {
+      ++w;
+    }
+    if ( delays != nullptr )
+    {
+      ++d;
+    }
+    if ( r_type != nullptr )
+    {
+      ++r;
+    }
+  };
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+  {
+    const auto tid = kernel().vp_manager.get_thread_id();
+    try
+    {
+      auto s = sources;
+      auto t = targets;
+      auto w = weights;
+      auto d = delays;
+      auto r = r_type;
+      double weight_buffer = numerics::nan;
+      double delay_buffer = numerics::nan;
+      for ( ; s != sources + n; ++s, ++t )
+      {
+        if ( 0 >= *s or static_cast< index >( *s ) > kernel().node_manager.size() )
+        {
+          throw UnknownNode( *s );
+        }
+        if ( 0 >= *t or static_cast< index >( *t ) > kernel().node_manager.size() )
+        {
+          throw UnknownNode( *t );
+        }
+        auto target_node = kernel().node_manager.get_node_or_proxy( *t, tid );
+        if ( target_node->is_proxy() )
+        {
+          increment_wdr( w, d, r );
+          continue;
+        }
+        if ( weights != nullptr )
+        {
+          weight_buffer = *w;
+        }
+        if ( delays != nullptr )
+        {
+          delay_buffer = *d;
+        }
+        if ( r_type != nullptr )
+        {
+          ( *param_dicts[ tid ] )[ names::receptor_type ] = *r;
+        }
+
+        kernel().connection_manager.connect(
+          *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        increment_wdr( w, d, r );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+  // check if any exceptions have been raised
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( exceptions_raised.at( tid ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+    }
+  }
+}
+
 ArrayDatum
 get_connections( const DictionaryDatum& dict )
 {

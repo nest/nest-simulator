@@ -24,12 +24,11 @@ Functions for connection handling
 """
 
 import numpy
-import warnings
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
-from .hl_api_connection_helpers import (_connect_layers_needed, _connect_nonunique, _connect_spatial,
+from .hl_api_connection_helpers import (_connect_layers_needed, _connect_spatial,
                                         _process_conn_spec, _process_spatial_projections, _process_syn_spec)
 from .hl_api_nodes import Create
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
@@ -143,11 +142,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Notes
     -----
-    It is possible to connect arrays of nonunique node IDs by
-    passing the arrays as `pre` and `post`, together with a `syn_spec` dictionary.
-    However this should only be done if you know what you're doing. This will
-    connect all nodes in `pre` to all nodes in `post` and apply the specified
-    synapse specifications.
+    It is possible to connect Numpy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
+    with a one-to-one connection specification, and a `syn_spec` dictionary containing weight and delay
+    values in Numpy arrays.
 
     If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
     nodes are considered as potential targets for each source node. Connections with spatial nodes can also
@@ -203,6 +200,17 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     :ref:`connection_mgnt`
     """
 
+    connect_np_arrays = False
+    if isinstance(pre, numpy.ndarray) or isinstance(post, numpy.ndarray):
+        if not (isinstance(pre, numpy.ndarray) and isinstance(post, numpy.ndarray)):
+            raise TypeError("Sources and targets must either both be NodeCollections, "
+                            "or Numpy arrays with conn_spec=None")
+        elif conn_spec is not None:
+            raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be specified")
+        else:
+            connect_np_arrays = True
+            conn_spec = 'one_to_one'
+
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
@@ -210,22 +218,25 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     processed_syn_spec = _process_syn_spec(
         syn_spec, processed_conn_spec, len(pre), len(post))
 
-    pre_is_array_of_node_ids = isinstance(pre, (list, tuple, numpy.ndarray))
-    post_is_array_of_node_ids = isinstance(post, (list, tuple, numpy.ndarray))
-    # If pre and post are arrays of node IDs and no conn_spec is specified,
-    # the node IDs are connected all_to_all. If the arrays contain unique
-    # node IDs, a warning is issued.
-    if pre_is_array_of_node_ids and post_is_array_of_node_ids and conn_spec is None:
+    # If pre and post are arrays of node IDs, and conn_spec is unspecified,
+    # the node IDs are connected one-to-one.
+    if connect_np_arrays:
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
-        if len(numpy.unique(pre)) == len(pre) and len(numpy.unique(post)) == len(post):
-            warnings.warn('Connecting two arrays of node IDs should only be done in cases where one or both the arrays '
-                          'contain non-unique node IDs. Use NodeCollections when connecting two collections of '
-                          'unique node IDs.')
-        # Connect_nonunique doesn't support connecting numpy arrays
-        sps(list(pre))
-        sps(list(post))
-        _connect_nonunique(processed_syn_spec)
+        weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
+        delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
+        receptor_type = (numpy.array(processed_syn_spec['receptor_type'])
+                         if 'receptor_type' in processed_syn_spec else None)
+        try:
+            synapse_model = processed_syn_spec['synapse_model']
+        except KeyError:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
+                             "contain a synapse model.")
+        # Check that syn_spec only contains allowed keys
+        if len(set(processed_syn_spec.keys()) - set(['weight', 'delay', 'synapse_model', 'receptor_type'])) != 0:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary can "
+                             "only contain weights, delays, synapse model, and r_port.")
+        connect_arrays(pre, post, weights, delays, receptor_type, synapse_model)
         return
 
     sps(pre)

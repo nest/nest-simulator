@@ -32,7 +32,6 @@ from .hl_api_types import Mask, Parameter
 
 __all__ = [
     '_connect_layers_needed',
-    '_connect_nonunique',
     '_connect_spatial',
     '_process_conn_spec',
     '_process_spatial_projections',
@@ -233,9 +232,3 @@ def _connect_spatial(pre, post, projections):
     projections = fixdict(projections)
     sps(projections)
     sr('ConnectLayers')
-
-
-def _connect_nonunique(syn_spec):
-    """Connect with the SLI function `Connect_nonunique`, using synapse specifications in `syn_spec`."""
-    sps({} if syn_spec is None else syn_spec)
-    sli_run('Connect_nonunique')

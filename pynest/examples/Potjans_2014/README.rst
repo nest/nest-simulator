@@ -77,12 +77,10 @@ Current communicating author: Johanna Senk
 
 2020: revision of code and documentation, and adaptation to NEST3 by Johanna Senk, Sara Konradi and Håkon Mørk.
 
-Other Implementations of the Microcircuit Model
-###############################################
+Citation
+########
 
-The original `SLI version <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__ by Tobias Potjans and Markus Diesmann (later revised by David Dahmen and Sacha van Albada) is also part of the NEST code base as an example.
-
-A `PyNN version <https://github.com/NeuralEnsemble/PyNN/tree/master/examples/Potjans2014>`__ is part of the PyNN code base as an example.
+If you use this code, we ask you to cite the paper by Potjans and Diesmann [1]_ and the NEST release on Zenodo.
 
 Acknowledgments
 ###############
@@ -90,6 +88,13 @@ Acknowledgments
 This project has received funding from the European Union Seventh Framework Programme ([FP7/2007-2013]) under grant agreement n° 604102 (Human Brain Project, HBP), and the European Union’s Horizon 2020 Framework Programme for Research and Innovation under Specific Grant Agreement No. 720270 (Human Brain Project SGA1) and No. 785907 (Human Brain Project SGA2).
 
 Funding for [1]_: This work was supported by the Helmholtz Alliance on Systems Biology; European Union (FACETS, grant 15879 and BrainScaleS, grant 269921); Deutsch-Israelische Projektkooperation (DIP, grant F1.2); Bundesministerium für Bildung und Forschung, Germany (BMBF, grant 01GQ0420 to BCCN Freiburg), and the Next-Generation Supercomputer Project of the Ministry of education, culture, sports, science and technology (MEXT), Japan. Funding to pay the Open Access publication charges for this article was provided by Research Center Juelich a member of the Helmholtz Association.
+
+Other Implementations of the Microcircuit Model
+###############################################
+
+The original `SLI version <https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014>`__ by Tobias Potjans and Markus Diesmann (later revised by David Dahmen and Sacha van Albada) is also part of the NEST code base as an example.
+
+A `PyNN version <https://github.com/NeuralEnsemble/PyNN/tree/master/examples/Potjans2014>`__ is part of the PyNN code base as an example.
 
 References
 ##########

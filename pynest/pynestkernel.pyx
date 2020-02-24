@@ -257,16 +257,17 @@ cdef class NESTEngine(object):
             raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(type(array)))
 
         # Get pointers to the first element in the Numpy array
-        cdef long[::1] array_long_mv
+        cdef long[:] array_long_mv
         cdef long* array_long_ptr
 
-        cdef cbool[::1] array_bool_mv
+        cdef cbool[:] array_bool_mv
         cdef cbool* array_bool_ptr
 
         cdef Datum* nc_datum = python_object_to_datum(node_collection)
 
         try:
             if array.dtype == numpy.bool:
+                # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
                 array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
                 array_bool_ptr = &array_bool_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))

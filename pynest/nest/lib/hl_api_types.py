@@ -226,6 +226,7 @@ class NodeCollection(object):
                 if len(key) != len(self):
                     raise IndexError('Bool index array must be the same length as NodeCollection')
                 np_key = numpy.array(key, dtype=numpy.bool)
+            # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
             else:
@@ -235,7 +236,7 @@ class NodeCollection(object):
             if len(key) == 0:
                 return NodeCollection([])
             if len(key.shape) != 1:
-                raise TypeError('NumPy indices must one dimensional')
+                raise TypeError('NumPy indices must one-dimensional')
             is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
             if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
                 raise TypeError('NumPy indices must be an array of integers or bools')

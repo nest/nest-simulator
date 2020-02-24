@@ -602,7 +602,7 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_Create_accepts_empty_params_dict(self):
         """
-        Passing an empty parameter dictionary should not crash.
+        Create with empty parameter dictionary
         """
         nest.Create('iaf_psc_delta', params={})
 

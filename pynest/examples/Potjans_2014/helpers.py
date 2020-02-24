@@ -233,19 +233,22 @@ def read_name(path, name):
 
     Returns
     -------
-    files
+    sd_names
         Names of all spike detectors, which are located in the path.
     node_ids
         Lowest and highest ids of the spike detectors.
 
     """
     # load filenames
-    files = []
-    for file in os.listdir(path):
-        if file.endswith('.gdf') and file.startswith(name):
-            temp = file.split('-')[0] + '-' + file.split('-')[1]
-            if temp not in files:
-                files.append(temp)
+    sd_files = []
+    sd_names = []
+    for fn in sorted(os.listdir(path)):
+        if fn.startswith(name):
+            sd_files.append(fn)
+            # spike detector name and its ID
+            fnsplit = '-'.join(fn.split('-')[:-1])
+            if fnsplit not in sd_names:
+                sd_names.append(fnsplit)
 
     # load node IDs
     node_idfile = open(path + 'population_nodeids.dat', 'r')
@@ -253,8 +256,7 @@ def read_name(path, name):
     for l in node_idfile:
         a = l.split()
         node_ids.append([int(a[0]), int(a[1])])
-    files = sorted(files)
-    return files, node_ids
+    return sd_files, sd_names, np.array(node_ids)
 
 
 def load_spike_times(path, name, begin, end):
@@ -278,23 +280,24 @@ def load_spike_times(path, name, begin, end):
         to ``end``.
 
     """
-    files, node_ids = read_name(path, name)
+    sd_files, sd_names, node_ids = read_name(path, name)
     data = {}
-    for i in list(range(len(files))):
-        all_names = os.listdir(path)
-        temp3 = [
-            all_names[x] for x in list(range(len(all_names)))
-            if all_names[x].endswith('gdf') and
-            all_names[x].startswith('spike') and
-            (all_names[x].split('-')[0] + '-' + all_names[x].split('-')[1]) in
-            files[i]
-            ]
-        data_temp = [np.loadtxt(os.path.join(path, f)) for f in temp3]
-        data_concatenated = np.concatenate(data_temp)
-        data_raw = data_concatenated[np.argsort(data_concatenated[:, 1])]
-        idx = ((data_raw[:, 1] > begin) * (data_raw[:, 1] < end))
-        data[i] = data_raw[idx]
-    return data
+    dtype = {'names': ('sender', 'time_ms'), # as in header
+             'formats': ('i4', 'f8')}
+    for i,name in enumerate(sd_names):
+        data_i_raw = np.array([[]], dtype=dtype)
+        for j,f in enumerate(sd_files):
+            if name in f:
+                # skip header while loading
+                ld = np.loadtxt(os.path.join(path, f), skiprows=3, dtype=dtype)
+                data_i_raw = np.append(data_i_raw, ld)
+
+        data_i_raw = np.sort(data_i_raw, order='time_ms')
+        # begin and end are included if they exist
+        low = np.searchsorted(data_i_raw['time_ms'], v=begin, side='left')
+        high = np.searchsorted(data_i_raw['time_ms'], v=end, side='right')
+        data[i] = data_i_raw[low:high]
+    return sd_names, node_ids, data
 
 
 def plot_raster(path, name, begin, end):
@@ -316,31 +319,24 @@ def plot_raster(path, name, begin, end):
     None
 
     """
-    files, node_ids = read_name(path, name)
-    data_all = load_spike_times(path, name, begin, end)
-    highest_node_id = node_ids[-1][-1]
-    node_ids_numpy = np.asarray(node_ids)
-    node_ids_numpy_changed = abs(node_ids_numpy - highest_node_id) + 1
-    L23_label_pos = (node_ids_numpy_changed[0][0] + node_ids_numpy_changed[1][1])/2
-    L4_label_pos = (node_ids_numpy_changed[2][0] + node_ids_numpy_changed[3][1])/2
-    L5_label_pos = (node_ids_numpy_changed[4][0] + node_ids_numpy_changed[5][1])/2
-    L6_label_pos = (node_ids_numpy_changed[6][0] + node_ids_numpy_changed[7][1])/2
-    ylabels = ['L23', 'L4', 'L5', 'L6']
-    color_list = [
-        '#000000', '#888888', '#000000', '#888888',
-        '#000000', '#888888', '#000000', '#888888'
-        ]
-    Fig1 = plt.figure(1, figsize=(8, 6))
-    for i in list(range(len(files))):
-        times = data_all[i][:, 1]
-        neurons = np.abs(data_all[i][:, 0] - highest_node_id) + 1
+    fs = 18
+    ylabels = ['L2/3', 'L4', 'L5', 'L6']
+    color_list = np.tile(['#000000', '#888888'], 4)
+
+    sd_names, node_ids, data = load_spike_times(path, name, begin, end)
+    last_node_id = node_ids[-1,-1]
+    mod_node_ids = np.abs(node_ids - last_node_id) + 1
+
+    label_pos = [(mod_node_ids[i,0] + mod_node_ids[i+1,1])/2. for i in np.arange(0,8,2)]
+
+    fig = plt.figure(1, figsize=(8, 6))
+    for i,n in enumerate(sd_names):
+        times = data[i]['time_ms']
+        neurons = np.abs(data[i]['sender'] - last_node_id) + 1
         plt.plot(times, neurons, '.', color=color_list[i])
-    plt.xlabel('time [ms]', fontsize=18)
-    plt.xticks(fontsize=18)
-    plt.yticks(
-        [L23_label_pos, L4_label_pos, L5_label_pos, L6_label_pos],
-        ylabels, rotation=10, fontsize=18
-        )
+    plt.xlabel('time [ms]', fontsize=fs)
+    plt.xticks(fontsize=fs)
+    plt.yticks(label_pos, ylabels, fontsize=fs)
     plt.savefig(os.path.join(path, 'raster_plot.png'), dpi=300)
     plt.show()
 
@@ -368,21 +364,19 @@ def fire_rate(path, name, begin, end):
     None
 
     """
-    files, node_ids = read_name(path, name)
-    data_all = load_spike_times(path, name, begin, end)
+    sd_names, node_ids, data = load_spike_times(path, name, begin, end)
     rates_averaged_all = []
     rates_std_all = []
-    for h in list(range(len(files))):
-        n_fil = data_all[h][:, 0]
-        n_fil = n_fil.astype(int)
+    for i,n in enumerate(sd_names):
+        n_fil = data[i]['sender']
         count_of_n = np.bincount(n_fil)
-        count_of_n_fil = count_of_n[node_ids[h][0]-1:node_ids[h][1]]
+        count_of_n_fil = count_of_n[node_ids[i][0]-1:node_ids[i][1]]
         rate_each_n = count_of_n_fil * 1000. / (end - begin)
         rate_averaged = np.mean(rate_each_n)
         rate_std = np.std(rate_each_n)
         rates_averaged_all.append(float('%.3f' % rate_averaged))
         rates_std_all.append(float('%.3f' % rate_std))
-        np.save(os.path.join(path, ('rate' + str(h) + '.npy')), rate_each_n)
+        np.save(os.path.join(path, ('rate' + str(i) + '.npy')), rate_each_n)
     print('Mean rates: %r Hz' % rates_averaged_all)
     print('Standard deviation of rates: %r Hz' % rates_std_all)
 

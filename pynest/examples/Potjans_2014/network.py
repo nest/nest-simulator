@@ -27,9 +27,9 @@ build and simulate the network.
 
 """
 
-import nest
-import numpy as np
 import os
+import numpy as np
+import nest
 from helpers import adj_w_ext_to_K
 from helpers import synapses_th_matrix
 from helpers import get_total_number_of_synapses

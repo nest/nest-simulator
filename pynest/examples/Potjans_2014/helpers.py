@@ -263,15 +263,15 @@ def load_spike_times(path, name, begin, end):
     """ Loads spike times of each spike detector.
 
     Parameters
-    -----------
+    ----------
     path
         Path where the files with the spike times are stored.
     name
         Name of the spike detector.
     begin
-        Time point to start loading spike times (excluded).
+        Time point to start loading spike times (included).
     end
-        Time point to stop loading spike times (excluded).
+        Time point to stop loading spike times (included).
 
     Returns
     -------
@@ -310,9 +310,9 @@ def plot_raster(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Time point to start plotting spikes (exluded).
+        Time point to start plotting spikes (included).
     end
-        Time point to stop plotting spikes (excluded).
+        Time point to stop plotting spikes (included).
 
     Returns
     -------
@@ -341,12 +341,12 @@ def plot_raster(path, name, begin, end):
     plt.show()
 
 
-def fire_rate(path, name, begin, end):
-    """ Computes firing rates and standard deviation of it.
+def firing_rates(path, name, begin, end):
+    """ Computes mean and standard deviation of firing rates per population.
 
     The firing rate of each neuron in each population is computed and stored
-    in a numpy file in the directory of the spike detectors. The mean firing
-    rate and its standard deviation are plotted for each population.
+    in a .dat file in the directory of the spike detectors. The mean firing
+    rate and its standard deviation are printed out for each population.
 
     Parameters
     -----------
@@ -355,9 +355,9 @@ def fire_rate(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Time point to start calculating the firing rates (excluded).
+        Time point to start calculating the firing rates (included).
     end
-        Time point to stop calculating the firing rates (excluded).
+        Time point to stop calculating the firing rates (included).
 
     Returns
     -------
@@ -365,20 +365,21 @@ def fire_rate(path, name, begin, end):
 
     """
     sd_names, node_ids, data = load_spike_times(path, name, begin, end)
-    rates_averaged_all = []
-    rates_std_all = []
+    all_mean_rates = []
+    all_std_rates = []
     for i,n in enumerate(sd_names):
-        n_fil = data[i]['sender']
-        count_of_n = np.bincount(n_fil)
-        count_of_n_fil = count_of_n[node_ids[i][0]-1:node_ids[i][1]]
-        rate_each_n = count_of_n_fil * 1000. / (end - begin)
-        rate_averaged = np.mean(rate_each_n)
-        rate_std = np.std(rate_each_n)
-        rates_averaged_all.append(float('%.3f' % rate_averaged))
-        rates_std_all.append(float('%.3f' % rate_std))
-        np.save(os.path.join(path, ('rate' + str(i) + '.npy')), rate_each_n)
-    print('Mean rates: %r Hz' % rates_averaged_all)
-    print('Standard deviation of rates: %r Hz' % rates_std_all)
+        senders = data[i]['sender']
+        # 1 more bin than node ids per population
+        bins = np.arange(node_ids[i,0], node_ids[i,1]+2) 
+        spike_count_per_neuron, _ = np.histogram(senders, bins=bins)
+        rate_per_neuron = spike_count_per_neuron * 1000. / (end - begin)
+        np.savetxt(os.path.join(path, ('rate' + str(i) + '.dat')),
+                   rate_per_neuron)
+        # zeros are included    
+        all_mean_rates.append(float('%.3f' % np.mean(rate_per_neuron)))
+        all_std_rates.append(float('%.3f' % np.std(rate_per_neuron)))
+    print('Mean rates: %r Hz' % all_mean_rates)
+    print('Standard deviation of rates: %r Hz' % all_std_rates)
 
 
 def boxplot(net_dict, path):
@@ -392,38 +393,43 @@ def boxplot(net_dict, path):
     net_dict
         Dictionary containing parameters of the microcircuit.
     path
-        Path were the firing rates are stored.
+        Patnp.mean(rate_per_neuron)h were the firing rates are stored.
 
     Returns
     -------
     None
 
     """
+    fs = 18
     pops = net_dict['N_full']
-    reversed_order_list = list(range(len(pops) - 1, -1, -1))
-    list_rates_rev = []
-    for h in reversed_order_list:
-        list_rates_rev.append(
-            np.load(os.path.join(path, ('rate' + str(h) + '.npy')))
-            )
-    pop_names = net_dict['populations']
+    pop_names = [string.replace('23', '2/3') for string in net_dict['populations']]
     label_pos = list(range(len(pops), 0, -1))
     color_list = ['#888888', '#000000']
-    medianprops = dict(linestyle='-', linewidth=2.5, color='firebrick')
+    medianprops = dict(linestyle='-', linewidth=2.5, color='green')
+    meanprops = dict(linestyle='--', linewidth= 2.5, color='blue')
+    
+    rates_per_neuron_rev = []
+    for i in np.arange(len(pops))[::-1]:
+        rates_per_neuron_rev.append(
+            np.loadtxt(os.path.join(path, ('rate' + str(i) + '.dat'))))
+
     fig, ax1 = plt.subplots(figsize=(10, 6))
-    bp = plt.boxplot(list_rates_rev, 0, 'rs', 0, medianprops=medianprops)
+    bp = plt.boxplot(rates_per_neuron_rev, 0, 'rs', 0, medianprops=medianprops,
+        meanprops=meanprops, meanline=True, showmeans=True)
     plt.setp(bp['boxes'], color='black')
     plt.setp(bp['whiskers'], color='black')
     plt.setp(bp['fliers'], color='red', marker='+')
-    for h in list(range(len(pops))):
+
+    # boxcolors
+    for i in np.arange(len(pops)):
         boxX = []
         boxY = []
-        box = bp['boxes'][h]
+        box = bp['boxes'][i]
         for j in list(range(5)):
             boxX.append(box.get_xdata()[j])
             boxY.append(box.get_ydata()[j])
         boxCoords = list(zip(boxX, boxY))
-        k = h % 2
+        k = i % 2
         boxPolygon = Polygon(boxCoords, facecolor=color_list[k])
         ax1.add_patch(boxPolygon)
     plt.xlabel('firing rate [Hz]', fontsize=18)

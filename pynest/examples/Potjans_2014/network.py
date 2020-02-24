@@ -35,7 +35,7 @@ from helpers import synapses_th_matrix
 from helpers import get_total_number_of_synapses
 from helpers import get_weight
 from helpers import plot_raster
-from helpers import fire_rate
+from helpers import firing_rates
 from helpers import boxplot
 from helpers import compute_DC
 
@@ -513,30 +513,43 @@ class Network:
         nest.Simulate(self.sim_dict['t_sim'])
 
 
-    def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):
+    def evaluate(self, raster_plot_interval, firing_rates_interval):
         """ Displays simulation results.
 
         Creates a spike raster plot.
         Calculates the firing rate of each population and displays them as a
         box plot.
 
+        Parameters
+        ----------
+        raster_plot_interval
+            Times to start and stop loading spike times for raster plot
+            (included).
+        firing_rates_interval
+            Times to start and stop lading spike times for computing firing
+            rates (included).
+
+        Returns
+        -------
+            None
+
         """
         if nest.Rank() == 0:
             print(
                 'Interval to plot spikes: %s ms'
-                % np.array2string(raster_plot_time_idx)
+                % np.array2string(raster_plot_interval)
                 )
             plot_raster(
                 self.data_path, 'spike_detector',
-                raster_plot_time_idx[0], raster_plot_time_idx[1]
+                raster_plot_interval[0], raster_plot_interval[1]
                 )
 
             print(
                 'Interval to compute firing rates: %s ms'
-                % np.array2string(fire_rate_time_idx)
+                % np.array2string(firing_rates_interval)
                 )
-            fire_rate(
+            firing_rates(
                 self.data_path, 'spike_detector',
-                fire_rate_time_idx[0], fire_rate_time_idx[1]
+                firing_rates_interval[0], firing_rates_interval[1]
                 )
             boxplot(self.net_dict, self.data_path)

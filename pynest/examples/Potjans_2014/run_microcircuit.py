@@ -33,8 +33,8 @@ basic plots of the network activity.
 import time
 import numpy as np
 import network
-from network_params import net_dict
 from sim_params import sim_dict
+from network_params import net_dict
 from stimulus_params import stim_dict
 
 ###############################################################################
@@ -57,14 +57,13 @@ toc = time.time() - tic
 print("Time to simulate: %.2f s" % toc)
 
 ###############################################################################
-# Plot a spike raster of the simulated neurons and the per-neuron average spike
-# rate of all populations. For visual purposes only, spikes 100 ms
+# Plot a spike raster of the simulated neurons and the per-neuron averaged
+# spike rate of all populations. For visual purposes only, spikes 100 ms
 # before and 100 ms after the thalamic stimulus time are plotted here by
 # default. The computation of spike rates discards the first 500 ms of
 # the simulation to exclude initialization artifacts.
 
-raster_plot_time_idx = np.array(
-    [stim_dict['th_start'] - 100.0, stim_dict['th_start'] + 100.0]
-    )
-fire_rate_time_idx = np.array([500.0, sim_dict['t_sim']])
-net.evaluate(raster_plot_time_idx, fire_rate_time_idx)
+raster_plot_interval = np.array([stim_dict['th_start'] - 100.0,
+                                 stim_dict['th_start'] + 100.0])
+firing_rates_interval = np.array([500.0, sim_dict['t_sim']])
+net.evaluate(raster_plot_interval, firing_rates_interval)

@@ -338,6 +338,39 @@ or a ``nest.Parameter``
 Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
 will point out which parameters can be set and which are read-only.
 
+.. _connect_arrays:
+
+New functionality for connecting arrays of node IDs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While you should aim to use NodeCollections to create connections as much as possible,
+there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
+In those cases it may be inefficient to convert each node ID in the pair to NodeCollections
+to be passed to the ``Connect()`` function, especially if there are thousands or millions of
+pairs to connect.
+
+To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.
+Connections are then created one-to-one.
+
+::
+
+ nest.Create('iaf_psc_alpha', 10)
+ # Node IDs in the arrays do not have to be unique.
+ sources = np.array([1, 5, 7, 5], dtype=np.uint64)
+ targets = np.array([2, 2, 4, 4], dtype=np.uint64)
+ nest.Connect(sources, targets)
+
+You may also add specifications to the ``syn_spec`` dictionary to define the synapse model,
+or specify weights, delays, or receptor type for each connection, as arrays. All arrays have
+to have lengths equal to those of ``sources`` and ``targets``.
+
+::
+
+ weights = np.array([0.5, 0.5, 2., 2.])
+ delays = np.array([1., 1., 2., 2.])
+ nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                          'synapse_model': 'static_synapse'})
+
 
 .. _SynapseCollection:
 
@@ -1265,7 +1298,7 @@ modular infrastructure for handling recordings: each modality is now
 taken care of by a specific recording backend and each recorder can
 use one of them to handle its data.
 
-NEST 3.0 supports the same recording backends for all modalities 
+NEST 3.0 supports the same recording backends for all modalities
 as in NEST 2.x. If compiled with support for `SIONlib
 <http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
 writing binary files in parallel becomes available. This is especially
@@ -1280,7 +1313,7 @@ more of the flags `to_file`, `to_memory`, or `to_screen` to *True*.
 
 In NEST 3.0, the individual flags are gone, and the `record_to`
 property now expects the name of the backend you want to use. Recording to
-multiple modalities from a single device is no longer possible. 
+multiple modalities from a single device is no longer possible.
 Individual devices have to be created and configured if this
 functionality is needed.
 
@@ -1334,7 +1367,7 @@ backend.
 
 All details about the new infrastructure can be found in the guide on
 :doc:`recording from simulations <recording_from_simulations>`.
-  
+
 
 What's removed?
 ---------------

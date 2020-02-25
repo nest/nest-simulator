@@ -125,9 +125,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Parameters
     ----------
-    pre : NodeCollection (or list)
+    pre : NodeCollection (or array)
         Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection (or list)
+    post : NodeCollection (or array)
         Postsynaptic nodes, as object representing the IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
@@ -143,8 +143,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Notes
     -----
     It is possible to connect Numpy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
-    with a one-to-one connection specification, and a `syn_spec` dictionary containing weight and delay
-    values in Numpy arrays.
+    with a one-to-one connection specification. You may also specify weight and delay for each connection as
+    in NumPy arrays in the `syn_spec` dictionary.
 
     If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
     nodes are considered as potential targets for each source node. Connections with spatial nodes can also

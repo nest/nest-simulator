@@ -38,21 +38,17 @@ class Network:
     
     Instantiating a Network object already initializes the NEST kernel.
 
-    Arguments
+    Parameters
     ---------
     sim_dict
-        dictionary containing all parameters specific to the simulation
-        such as the directory the data is stored in and the seeds
-        (see: ``sim_params.py``)
+        Dictionary containing all parameters specific to the simulation
+        (see: ``sim_params.py``).
     net_dict
-         dictionary containing all parameters specific to the neurons
-         and the network (see: ``network_params.py``)
-
-    Keyword Arguments
-    -----------------
+         Dictionary containing all parameters specific to the neuron and
+         network models (see: ``network_params.py``).
     stim_dict
-        dictionary containing all parameter specific to the stimulus
-        (see: stimulus_params.py)
+        Optional dictionary containing all parameter specific to the stimulus
+        (see: ``stimulus_params.py``)
 
     """
     def __init__(self, sim_dict, net_dict, stim_dict=None):
@@ -62,27 +58,19 @@ class Network:
             self.stim_dict = stim_dict
         else:
             self.stim_dict = None
+
+        # data directory
         self.data_path = sim_dict['data_path']
         if nest.Rank() == 0:
-            if os.path.isdir(self.sim_dict['data_path']):
-                print('Data directory already exists.')
+            if os.path.isdir(self.data_path):
+                message = '  Directory already existed.'
+                if self.sim_dict['overwrite_files']:
+                    message += ' Existing data will be overwritten.'
             else:
-                os.mkdir(self.sim_dict['data_path'])
-                print('Data directory created.')
-            print('Data will be written to: %s' % self.data_path)
-
-        # check if V0_type is correctly set
-        v0_type_options = ['original', 'optimized']
-        if self.net_dict['V0_type'] not in v0_type_options:
-            print(
-                """
-                {0} is not a valid option for V0_type, replacing it with {1}.
-                Valid options are {2}.
-                """.format(self.net_dict['V0_type'],
-                           v0_type_options[0],
-                           v0_type_options)
-                )
-            self.net_dict['V0_type'] = v0_type_options[0]
+                os.mkdir(self.data_path)
+                message = '  Directory has been created.'
+            print('Data will be written to: {}\n{}'.format(self.data_path,
+                                                           message))
 
         # initialize the NEST kernel
         self.__setup_nest()
@@ -95,10 +83,14 @@ class Network:
 
         """
         self.__create_neuronal_populations()
-        self.__create_recording_devices()
-        self.__create_poisson_bg_input()
-        self.__create_thalamic_stim_input()
-        self.__create_dc_stim_input()
+        if len(self.net_dict['rec_dev']) > 0:
+            self.__create_recording_devices()
+        if self.net_dict['poisson_input']:
+            self.__create_poisson_bg_input()
+        if self.stim_dict['thalamic_input']:
+            self.__create_thalamic_stim_input()
+        if self.stim_dict['dc_input']:
+            self.__create_dc_stim_input()
 
 
     def connect(self):
@@ -109,7 +101,9 @@ class Network:
 
         """
         self.__connect_neuronal_populations()
-        self.__connect_recording_devices()
+
+        if len(self.net_dict['rec_dev']) > 0:
+            self.__connect_recording_devices()
         if self.net_dict['poisson_input']:
             self.__connect_poisson_bg_input()
         if self.stim_dict['thalamic_input']:
@@ -175,23 +169,21 @@ class Network:
         """
         nest.ResetKernel()
 
-        # compute seeds for random number generation
-        master_seed = self.sim_dict['master_seed']
-        if nest.Rank() == 0:
-            print('Master seed: %i ' % master_seed)
+        # set seeds for random number generation
         nest.SetKernelStatus(
-            {'local_num_threads': self.sim_dict['local_num_threads']}
-            )
+            {'local_num_threads': self.sim_dict['local_num_threads']})
         N_vp = nest.GetKernelStatus('total_num_virtual_procs')
-        if nest.Rank() == 0:
-            print('Total number of virtual processes: %i' % N_vp)
-        
+       
+        master_seed = self.sim_dict['master_seed']
         grng_seed = master_seed + N_vp
         rng_seeds = (master_seed + N_vp + 1 + np.arange(N_vp)).tolist()
+
         if nest.Rank() == 0:
-            print('Global random number generator seed: %i' % grng_seed)
+            print('Master seed: %i ' % master_seed)
+            print('  Total number of virtual processes: %i' % N_vp)
+            print('  Global random number generator seed: %i' % grng_seed)
             print(
-                'Seeds for random number generators of virtual processes: %r'
+                '  Seeds for random number generators of virtual processes: %r'
                 % rng_seeds
                 )
 
@@ -326,15 +318,17 @@ class Network:
             print('Creating recording devices.')
 
         if 'spike_detector' in self.net_dict['rec_dev']:
+            if nest.Rank() == 0:
+                print('  Creating spike detectors.')
             sd_dic = {'record_to': 'ascii',
                       'label': os.path.join(self.data_path, 'spike_detector')}
             self.spike_detectors = nest.Create('spike_detector',
                                                n=self.num_pops,
                                                params=sd_dic) 
-            if nest.Rank() == 0:
-                print('Spike detectors created.')
 
         if 'voltmeter' in self.net_dict['rec_dev']:
+            if nest.Rank() == 0:
+                print('  Creating voltmeters.')
             vm_dic = {'interval': self.sim_dict['rec_V_int'],
                       'record_to': 'ascii',
                       'record_from': ['V_m'],
@@ -342,9 +336,6 @@ class Network:
             self.voltmeters = nest.Create('voltmeter',
                                           n=self.num_pops,
                                           params=vm_dic)
-
-            if nest.Rank() == 0:
-                print('Voltmeters created.')
 
 
     def __create_poisson_bg_input(self):
@@ -354,13 +345,12 @@ class Network:
         in ``create_neuronal_populations()``.
 
         """
-        if self.net_dict['poisson_input']:
-            if nest.Rank() == 0:
-                print('Creating Poisson generators for background input.')
+        if nest.Rank() == 0:
+            print('Creating Poisson generators for background input.')
 
-            self.poisson_bg_input = nest.Create('poisson_generator',
-                                                n=self.num_pops)
-            self.poisson_bg_input.rate = self.net_dict['bg_rate'] * self.K_ext
+        self.poisson_bg_input = nest.Create('poisson_generator',
+                                            n=self.num_pops)
+        self.poisson_bg_input.rate = self.net_dict['bg_rate'] * self.K_ext
 
 
     def __create_thalamic_stim_input(self):
@@ -368,33 +358,27 @@ class Network:
         ``stimulus_params.py``.
 
         """
-        if self.stim_dict['thalamic_input']:
-            if nest.Rank() == 0:
-                print('Creating Thalamic input for external stimulation.')
+        if nest.Rank() == 0:
+            print('Creating thalamic input for external stimulation.')
 
-            self.thalamic_population = nest.Create(
-                'parrot_neuron', self.stim_dict['n_thal']
-                )
-            self.thalamic_weight = helpers.weight_as_current_from_potential(
-                self.stim_dict['PSP_th'], self.net_dict
-                )
-            self.stop_th = (
-                self.stim_dict['th_start'] + self.stim_dict['th_duration']
-                )
-            self.poisson_th = nest.Create('poisson_generator')
-            self.poisson_th.set(
-                rate=self.stim_dict['th_rate'],
-                start=self.stim_dict['th_start'],
-                stop=self.stop_th
-            )
-            nest.Connect(self.poisson_th, self.thalamic_population)
-            self.nr_synapses_th = helpers.total_num_synapses_thalamus(
-                self.net_dict, self.stim_dict
-                )
-            if self.K_scaling != 1:
-                self.thalamic_weight = self.thalamic_weight / (
-                    self.K_scaling ** 0.5)
-                self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
+        self.thalamic_population = nest.Create('parrot_neuron',
+                                               n=self.stim_dict['n_thal'])
+        self.thalamic_weight = helpers.weight_as_current_from_potential(
+            self.stim_dict['PSP_th'], self.net_dict)
+        self.stop_th = (
+            self.stim_dict['th_start'] + self.stim_dict['th_duration'])
+        self.poisson_th = nest.Create('poisson_generator')
+        self.poisson_th.set(
+            rate=self.stim_dict['th_rate'],
+            start=self.stim_dict['th_start'],
+            stop=self.stop_th)
+        
+        self.nr_synapses_th = helpers.total_num_synapses_thalamus(
+            self.net_dict, self.stim_dict)
+        if self.K_scaling != 1:
+            self.thalamic_weight = self.thalamic_weight / (
+                self.K_scaling ** 0.5)
+            self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
 
 
     def __create_dc_stim_input(self):
@@ -402,17 +386,16 @@ class Network:
         in ``stimulus_params.py``.
 
         """
-        if self.stim_dict['dc_input']:
-            dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
-            if nest.Rank() == 0:
-                print(""" Creating DC generators for external stimulation.
-                      dc_amp_stim = {} pA""".format(dc_amp_stim))
+        dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
+        if nest.Rank() == 0:
+            print(""" Creating DC generators for external stimulation.
+                  dc_amp_stim = {} pA""".format(dc_amp_stim))
 
-            dc_dic = {'amplitude': dc_amp_stim,
-                      'start': self.stim_dict['dc_start'],
-                      'stop': (self.stim_dict['dc_start'] \
-                              + self.stim_dict['dc_dur'])} 
-            self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
+        dc_dic = {'amplitude': dc_amp_stim,
+                  'start': self.stim_dict['dc_start'],
+                  'stop': (self.stim_dict['dc_start'] \
+                          + self.stim_dict['dc_dur'])} 
+        self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
                                              params=dic_dic)
 
 
@@ -458,15 +441,14 @@ class Network:
     def __connect_recording_devices(self):
         """ Connects the recording devices to the microcircuit."""
 
-        if len(self.net_dict['rec_dev']) > 0:
-            if nest.Rank == 0:
-                print('Connecting created recording devices.')
+        if nest.Rank == 0:
+            print('Connecting recording devices.')
 
-            for i, target_pop in enumerate(self.pops):
-                if 'spike_detector' in self.net_dict['rec_dev']:
-                    nest.Connect(target_pop, self.spike_detectors[i])
-                if 'voltmeter' in self.net_dict['rec_dev']:
-                    nest.Connect(self.voltmeters[i], target_pop)
+        for i, target_pop in enumerate(self.pops):
+            if 'spike_detector' in self.net_dict['rec_dev']:
+                nest.Connect(target_pop, self.spike_detectors[i])
+            if 'voltmeter' in self.net_dict['rec_dev']:
+                nest.Connect(self.voltmeters[i], target_pop)
 
 
     def __connect_poisson_bg_input(self):
@@ -494,6 +476,10 @@ class Network:
         if nest.Rank() == 0:
             print('Connecting Thalamic input.')
 
+        # connect Poisson input to thalamic population
+        nest.Connect(self.poisson_th, self.thalamic_population)
+
+        # connect thalamic population to neuronal populations
         for i, target_pop in enumerate(self.pops):
             conn_dict_th = {
                 'rule': 'fixed_total_number',

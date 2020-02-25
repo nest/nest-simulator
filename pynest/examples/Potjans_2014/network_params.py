@@ -144,7 +144,8 @@ net_dict = {
     'neuron_model': 'iaf_psc_exp',
     # The default recording device is the spike_detector. If you also
     # want to record the membrane potentials of the neurons, add
-    # 'voltmeter' to the list.
+    # 'voltmeter' to the list. Nothing will be recorded if an empty list is
+    # given.
     'rec_dev': ['spike_detector'],
     # names of the simulated neuronal populations
     'populations': ['L23E', 'L23I', 'L4E', 'L4I', 'L5E', 'L5I', 'L6E', 'L6I'],

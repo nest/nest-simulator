@@ -34,6 +34,7 @@ import time
 time_start = time.time()
 
 import numpy as np
+import nest
 import network
 from sim_params import sim_dict
 from network_params import net_dict
@@ -70,10 +71,12 @@ net.evaluate(raster_plot_interval, firing_rates_interval)
 time_evaluate = time.time()
 
 ###############################################################################
-# Summarize time measurements.
+# Summarize time measurements. Rank 0 usually takes longest because of the
+# data evaluation and printouts.
 
 print(
-  '\nTotal time:           {:.3f} s\n'.format(time_evaluate - time_start)
+    '\nTimes of Rank {}:\n'.format(nest.Rank())
+  + '  Total time:         {:.3f} s\n'.format(time_evaluate - time_start)
   + '  Time to initialize: {:.3f} s\n'.format(time_network - time_start)
   + '  Time to create:     {:.3f} s\n'.format(time_create - time_network)
   + '  Time to connect:    {:.3f} s\n'.format(time_connect - time_create)

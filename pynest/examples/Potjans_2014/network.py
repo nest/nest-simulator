@@ -175,22 +175,18 @@ class Network:
         nest.SetKernelStatus(
             {'local_num_threads': self.sim_dict['local_num_threads']}
             )
-        N_tp = nest.GetKernelStatus('total_num_virtual_procs')
+        N_vp = nest.GetKernelStatus('total_num_virtual_procs')
         if nest.Rank() == 0:
-            print('Total number of virtual processes: %i' % N_tp)
-        rng_seeds = list(
-            range(
-                master_seed + 1 + N_tp,
-                master_seed + 1 + (2 * N_tp)
-                )
-            )
-        grng_seed = master_seed + N_tp
+            print('Total number of virtual processes: %i' % N_vp)
+        
+        grng_seed = master_seed + N_vp
+        rng_seeds = (master_seed + N_vp + 1 + np.arange(N_vp)).tolist()
         if nest.Rank() == 0:
+            print('Global random number generator seed: %i' % grng_seed)
             print(
                 'Seeds for random number generators of virtual processes: %r'
                 % rng_seeds
                 )
-            print('Global random number generator seed: %i' % grng_seed)
 
         # pass parameters to NEST kernel
         self.sim_resolution = self.sim_dict['sim_resolution']

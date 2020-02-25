@@ -28,9 +28,11 @@ basic plots of the network activity.
 """
 
 ###############################################################################
-# Import the necessary modules.
+# Import the necessary modules and start the time measurements.
 
 import time
+time_start = time.time()
+
 import numpy as np
 import network
 from sim_params import sim_dict
@@ -41,20 +43,17 @@ from stimulus_params import stim_dict
 # Initialize the network with simulation, network and stimulation parameters,
 # create and connect all nodes and simulate.
 
-tic = time.time()
 net = network.Network(sim_dict, net_dict, stim_dict)
-toc = time.time() - tic
-print("Time to initialize the network: %.2f s" % toc)
+time_network = time.time()
 
-tic = time.time()
-net.setup()
-toc = time.time() - tic
-print("Time to create and connect all nodes: %.2f s" % toc)
+net.create()
+time_create = time.time() 
 
-tic = time.time()
+net.connect()
+time_connect = time.time()
+
 net.simulate()
-toc = time.time() - tic
-print("Time to simulate: %.2f s" % toc)
+time_simulate = time.time()
 
 ###############################################################################
 # Plot a spike raster of the simulated neurons and a box plot of the firing
@@ -68,3 +67,15 @@ raster_plot_interval = np.array([stim_dict['th_start'] - 100.0,
                                  stim_dict['th_start'] + 100.0])
 firing_rates_interval = np.array([500.0, sim_dict['t_sim']])
 net.evaluate(raster_plot_interval, firing_rates_interval)
+time_evaluate = time.time()
+
+###############################################################################
+# Summarize time measurements.
+
+print(
+  '\nTotal time:           {:.3f} s\n'.format(time_evaluate - time_start)
+  + '  Time to initialize: {:.3f} s\n'.format(time_network - time_start)
+  + '  Time to create:     {:.3f} s\n'.format(time_create - time_network)
+  + '  Time to connect:    {:.3f} s\n'.format(time_connect - time_create)
+  + '  Time to simulate:   {:.3f} s\n'.format(time_simulate - time_connect)
+  + '  Time to evaluate:   {:.3f} s\n'.format(time_evaluate - time_simulate))

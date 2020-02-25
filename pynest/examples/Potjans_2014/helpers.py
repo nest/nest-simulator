@@ -255,7 +255,6 @@ def plot_raster(path, name, begin, end):
     plt.xticks(fontsize=fs)
     plt.yticks(label_pos, ylabels, fontsize=fs)
     plt.savefig(os.path.join(path, 'raster_plot.png'), dpi=300)
-    plt.show()
 
 
 def firing_rates(path, name, begin, end):
@@ -353,7 +352,6 @@ def boxplot(net_dict, path):
     plt.yticks(label_pos, pop_names, fontsize=18)
     plt.xticks(fontsize=18)
     plt.savefig(os.path.join(path, 'box_plot.png'), dpi=300)
-    plt.show()
 
 
 def __gather_metadata(path, name):

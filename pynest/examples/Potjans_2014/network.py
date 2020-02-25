@@ -35,6 +35,8 @@ import helpers
 class Network:
     """ Provides functions to setup NEST, to create and connect all nodes of
     the network, to simulate, and to evaluate the resulting spike data.
+    
+    Instantiating a Network object already initializes the NEST kernel.
 
     Arguments
     ---------
@@ -82,25 +84,30 @@ class Network:
                 )
             self.net_dict['V0_type'] = v0_type_options[0]
 
-
-    def setup(self):
-        """ Executes subfunctions of the network.
-
-        This function executes several subfunctions to create neuronal
-        populations, devices and inputs, and to connect the populations with
-        each other and with devices and input nodes.
-
-        """
+        # initialize the NEST kernel
         self.__setup_nest()
 
-        # create nodes
+
+    def create(self):
+        """ Creates all network nodes.
+
+        Neuronal populations and recording and stimulating devices are created.
+
+        """
         self.__create_neuronal_populations()
         self.__create_recording_devices()
         self.__create_poisson_bg_input()
         self.__create_thalamic_stim_input()
         self.__create_dc_stim_input()
 
-        # create connections
+
+    def connect(self):
+        """ Connects the network.
+        
+        Recurrent connections among neurons of the neuronal populations are 
+        established, and recording and stimulating devices are connected.
+
+        """
         self.__connect_neuronal_populations()
         self.__connect_recording_devices()
         if self.net_dict['poisson_input']:

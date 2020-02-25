@@ -213,6 +213,8 @@ class Network:
         if nest.Rank() == 0:
             print('Creating neuronal populations.')
 
+        self.num_pops = len(self.net_dict['populations'])
+
         # total number of neurons and synapses and information about weights
         # and external input before scaling
         self.N_full = self.net_dict['N_full']
@@ -308,7 +310,7 @@ class Network:
 
 
     def __create_recording_devices(self):
-        """ Creates the recording devices.
+        """ Creates one recording device of each kind per population.
 
         Only devices which are given in ``net_dict['rec_dev']`` are created.
 
@@ -316,30 +318,24 @@ class Network:
         if nest.Rank() == 0:
             print('Creating recording devices.')
 
-        self.spike_detector = []
-        self.voltmeter = []
-        for i, pop in enumerate(self.pops):
-            if 'spike_detector' in self.net_dict['rec_dev']:
-                recdict = {
-                    'record_to': 'ascii',
-                    'label': os.path.join(self.data_path, 'spike_detector')
-                    }
-                dummy = nest.Create('spike_detector', params=recdict)
-                self.spike_detector.append(dummy)
-            if 'voltmeter' in self.net_dict['rec_dev']:
-                recdictmem = {
-                    'interval': self.sim_dict['rec_V_int'],
-                    'record_to': 'ascii',
-                    'label': os.path.join(self.data_path, 'voltmeter'),
-                    'record_from': ['V_m'],
-                    }
-                volt = nest.Create('voltmeter', params=recdictmem)
-                self.voltmeter.append(volt)
-
         if 'spike_detector' in self.net_dict['rec_dev']:
+            sd_dic = {'record_to': 'ascii',
+                      'label': os.path.join(self.data_path, 'spike_detector')}
+            self.spike_detectors = nest.Create('spike_detector',
+                                               n=self.num_pops,
+                                               params=sd_dic) 
             if nest.Rank() == 0:
                 print('Spike detectors created.')
+
         if 'voltmeter' in self.net_dict['rec_dev']:
+            vm_dic = {'interval': self.sim_dict['rec_V_int'],
+                      'record_to': 'ascii',
+                      'record_from': ['V_m'],
+                      'label': os.path.join(self.data_path, 'voltmeter')}
+            self.voltmeters = nest.Create('voltmeter',
+                                          n=self.num_pops,
+                                          params=vm_dic)
+
             if nest.Rank() == 0:
                 print('Voltmeters created.')
 
@@ -355,12 +351,9 @@ class Network:
             if nest.Rank() == 0:
                 print('Creating Poisson generators for background input.')
 
-            rate_ext = self.net_dict['bg_rate'] * self.K_ext
-            self.poisson = []
-            for i, target_pop in enumerate(self.pops):
-                poisson = nest.Create('poisson_generator')
-                poisson.rate = rate_ext[i]
-                self.poisson.append(poisson)
+            self.poisson_bg_input = nest.Create('poisson_generator',
+                                                n=self.num_pops)
+            self.poisson_bg_input.rate = self.net_dict['bg_rate'] * self.K_ext
 
 
     def __create_thalamic_stim_input(self):
@@ -395,9 +388,6 @@ class Network:
                 self.thalamic_weight = self.thalamic_weight / (
                     self.K_scaling ** 0.5)
                 self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
-        else:
-            if nest.Rank() == 0:
-                print('Thalamic input not provided.')
 
 
     def __create_dc_stim_input(self):
@@ -406,24 +396,17 @@ class Network:
 
         """
         if self.stim_dict['dc_input']:
-            if nest.Rank() == 0:
-                print('Creating DC generators for external stimulation.')
             dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
-            self.dc = []
             if nest.Rank() == 0:
-                print('DC_amp_stim', dc_amp_stim)
-            for i, target_pop in enumerate(self.pops):
-                dc = nest.Create(
-                    'dc_generator', params={
-                        'amplitude': dc_amp_stim[i],
-                        'start': self.stim_dict['dc_start'],
-                        'stop': (
-                            self.stim_dict['dc_start'] +
-                            self.stim_dict['dc_dur']
-                            )
-                        }
-                    )
-                self.dc.append(dc)
+                print(""" Creating DC generators for external stimulation.
+                      dc_amp_stim = {} pA""".format(dc_amp_stim))
+
+            dc_dic = {'amplitude': dc_amp_stim,
+                      'start': self.stim_dict['dc_start'],
+                      'stop': (self.stim_dict['dc_start'] \
+                              + self.stim_dict['dc_dur'])} 
+            self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
+                                             params=dic_dic)
 
 
     def __connect_neuronal_populations(self):
@@ -467,24 +450,16 @@ class Network:
 
     def __connect_recording_devices(self):
         """ Connects the recording devices to the microcircuit."""
-        if nest.Rank() == 0:
-            if ('spike_detector' in self.net_dict['rec_dev'] and
-                    'voltmeter' not in self.net_dict['rec_dev']):
-                print('Connecting spike detectors.')
-            elif ('spike_detector' not in self.net_dict['rec_dev'] and
-                    'voltmeter' in self.net_dict['rec_dev']):
-                print('Connecting voltmeters.')
-            elif ('spike_detector' in self.net_dict['rec_dev'] and
-                    'voltmeter' in self.net_dict['rec_dev']):
-                print('Connecting spike detectors and voltmeters.')
-            else:
-                print('No recording devices will be connected.')
 
-        for i, target_pop in enumerate(self.pops):
-            if 'voltmeter' in self.net_dict['rec_dev']:
-                nest.Connect(self.voltmeter[i], target_pop)
-            if 'spike_detector' in self.net_dict['rec_dev']:
-                nest.Connect(target_pop, self.spike_detector[i])
+        if len(self.net_dict['rec_dev']) > 0:
+            if nest.Rank == 0:
+                print('Connecting created recording devices.')
+
+            for i, target_pop in enumerate(self.pops):
+                if 'spike_detector' in self.net_dict['rec_dev']:
+                    nest.Connect(target_pop, self.spike_detectors[i])
+                if 'voltmeter' in self.net_dict['rec_dev']:
+                    nest.Connect(self.voltmeters[i], target_pop)
 
 
     def __connect_poisson_bg_input(self):
@@ -500,7 +475,7 @@ class Network:
                 'delay': self.net_dict['poisson_delay']
                 }
             nest.Connect(
-                self.poisson[i], target_pop,
+                self.poisson_bg_input[i], target_pop,
                 conn_spec=conn_dict_poisson,
                 syn_spec=syn_dict_poisson
                 )
@@ -541,9 +516,10 @@ class Network:
 
     def __connect_dc_stim_input(self):
         """ Connects the DC generators to the neuronal populations. """
-        if nest.Rank() == 0:
-            print('Connecting DC generators.')
 
-        for i, target_pop in enumerate(self.pops):
-            if self.stim_dict['dc_input']:
-                nest.Connect(self.dc[i], target_pop)
+        if self.stim_dict['dc_input']:
+            if nest.Rank() == 0:
+                print('Connecting DC generators.')
+
+            for i, target_pop in enumerate(self.pops):
+                nest.Connect(self.dc_stim_input[i], target_pop)

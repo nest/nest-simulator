@@ -26,9 +26,6 @@
 // C++ includes:
 #include <cmath>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "randomdev.h"
 #include "randomgen.h"
@@ -98,8 +95,8 @@ class GammaRandomDev : public RandomDev
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   GammaRandomDev( RngPtr, double a_in = 1.0 ); //!< create with fixed RNG
   GammaRandomDev( double a_in = 1.0 );         //!< create w/o fixed RNG for threaded simulations

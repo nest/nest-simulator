@@ -41,7 +41,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         self.decay_duration = 5.0
         self.synapse_model = "vogels_sprekeler_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             "weight": 5.0,
             "eta": 0.001,
@@ -68,7 +68,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         """Get synapse parameter status."""
         stats = nest.GetConnections(self.pre_neuron,
                                     synapse_model=self.synapse_model)
-        return nest.GetStatus(stats, [which])[0][0]
+        return stats.get(which)
 
     def decay(self, time, Kvalue):
         """Decay variables."""
@@ -211,9 +211,9 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
                                    source=self.pre_neuron)
         # disable depression to make it get to max weight
         # increase eta to cause enough facilitation
-        nest.SetStatus(conn, "Wmax", limited_weight)
-        nest.SetStatus(conn, "eta", 5.)
-        nest.SetStatus(conn, "alpha", 0.)
+        conn.set(Wmax=limited_weight)
+        conn.set(eta=5.)
+        conn.set(alpha=0.)
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0])
@@ -231,6 +231,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

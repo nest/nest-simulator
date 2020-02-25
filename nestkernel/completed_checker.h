@@ -128,7 +128,11 @@ CompletedChecker::set( const thread tid, const bool v )
 
 inline bool CompletedChecker::operator[]( const thread tid ) const
 {
-  return a_[ tid ];
+  bool v;
+#pragma omp atomic read
+  v = a_[ tid ];
+
+  return v;
 }
 
 } // namespace nest

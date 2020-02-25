@@ -26,8 +26,7 @@ configuration file:
         nest.Connect([n], music_out, "one_to_one",{'music_channel': i})
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"withgid": True, "withtime": True, "to_file": True,
-        "label": "send", "file_extension": "spikes"})
+    nest.SetStatus(sdetector, {"record_to": "ascii", "label": "send"})
 
     nest.Connect(neurons, sdetector)
 
@@ -73,8 +72,7 @@ simulate for one second.
     parrots = nest.Create("parrot_neuron", 2)
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"withgid": True, "withtime": True, "to_file": True,
-        "label": "receive", "file_extension": "spikes"})
+    nest.SetStatus(sdetector, {"record_to": ["ascii"], "label": "receive"})
 
     nest.Connect(music_in, parrots, 'one_to_one', {"weight":1.0, "delay": 2.0})
     nest.Connect(parrots, sdetector)

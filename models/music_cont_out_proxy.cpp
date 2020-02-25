@@ -31,7 +31,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
+#include "nest_datums.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -52,7 +52,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , port_name_( "cont_out" )
   , record_from_()
-  , target_gids_()
+  , targets_( new NodeCollectionPrimitive() )
 {
 }
 
@@ -60,7 +60,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , port_name_( p.port_name_ )
   , record_from_( p.record_from_ )
-  , target_gids_( p.target_gids_ )
+  , targets_( p.targets_ )
 {
   interval_.calibrate();
 }
@@ -107,7 +107,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::record_from ] = ad_record_from;
-  ( *d )[ names::targets ] = target_gids_;
+  ( *d )[ names::targets ] = new NodeCollectionDatum( targets_ );
 }
 
 void
@@ -164,16 +164,12 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   {
     if ( record_from_.empty() )
     {
-      throw BadProperty( "The property record_from must be set before passing target_gids." );
+      throw BadProperty( "The property record_from must be set before passing targets." );
     }
 
     if ( state.published_ == false )
     {
-      ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
-      for ( Token* t = mca.begin(); t != mca.end(); ++t )
-      {
-        target_gids_.push_back( getValue< long >( *t ) );
-      }
+      targets_ = getValue< NodeCollectionDatum >( d, names::targets );
     }
     else
     {
@@ -250,28 +246,23 @@ nest::music_cont_out_proxy::calibrate()
     assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
 
     const index synmodel_id = static_cast< index >( synmodel );
-    std::vector< long >::const_iterator t;
+    std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();
-    for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
+    for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
-      // check whether the target is on this process
-      if ( kernel().node_manager.is_local_gid( *t ) )
+      const index tnode_id = ( *P_.targets_ )[ i ];
+      if ( kernel().node_manager.is_local_node_id( tnode_id ) )
       {
-        kernel().connection_manager.connect( get_gid(), *t, dummy_params, synmodel_id );
-      }
-    }
-    std::vector< MUSIC::GlobalIndex > music_index_map;
-    for ( size_t i = 0; i < P_.target_gids_.size(); i++ )
-    {
-      if ( kernel().node_manager.is_local_gid( P_.target_gids_[ i ] ) )
-      {
+        kernel().connection_manager.connect( get_node_id(), tnode_id, dummy_params, synmodel_id );
+
         for ( size_t j = 0; j < P_.record_from_.size(); ++j )
         {
           music_index_map.push_back( P_.record_from_.size() * i + j );
         }
       }
     }
+
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
     {
@@ -297,7 +288,7 @@ nest::music_cont_out_proxy::calibrate()
     B_.data_.resize( per_port_width * S_.port_width_ );
 
     // Check if any port is out of bounds
-    if ( P_.target_gids_.size() > S_.port_width_ )
+    if ( P_.targets_->size() > S_.port_width_ )
     {
       throw MUSICChannelUnknown( get_name(), P_.port_name_, S_.port_width_ + 1 );
     }
@@ -323,20 +314,25 @@ nest::music_cont_out_proxy::calibrate()
 void
 nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 {
+  P_.get( d );
+  S_.get( d );
+
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
-
-  P_.get( d );
-  S_.get( d );
 }
 
 void

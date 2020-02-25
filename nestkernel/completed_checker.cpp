@@ -98,7 +98,7 @@ CompletedChecker::clear()
   VPManager::assert_single_threaded();
   if ( a_ != NULL )
   {
-    delete a_;
+    delete[] a_;
     a_ = NULL;
     size_ = 0;
   }

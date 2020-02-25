@@ -40,8 +40,6 @@
 #include "namedatum.h"
 #include "stringdatum.h"
 
-extern int SLIsignalflag;
-
 // Access to environement variables.
 #ifdef __APPLE__
 #include <crt_externs.h>
@@ -244,6 +242,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_gsl_name( "have_gsl" )
   , have_music_name( "have_music" )
   , have_libneurosim_name( "have_libneurosim" )
+  , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
@@ -365,6 +364,7 @@ SLIStartup::init( SLIInterpreter* i )
       SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
+  // check for sli-init.sli
   if ( not checkpath( slihomepath, fname ) )
   {
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Your NEST installation seems broken. \n" );
@@ -377,9 +377,10 @@ SLIStartup::init( SLIInterpreter* i )
 
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Bye." );
 
-    SLIsignalflag = 255;                     // this exits the interpreter.
-    debug_ = false;                          // switches off the -d/--debug switch!
-    i->verbosity( SLIInterpreter::M_QUIET ); // suppress all further output.
+    // We cannot call i->terminate() here because the interpreter is not
+    // fully configured yet. If running PyNEST, the Python process will
+    // terminate.
+    std::exit( EXITCODE_FATAL );
   }
   else
   {
@@ -468,6 +469,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( false ) ) );
+#endif
+
+#ifdef HAVE_SIONLIB
+  statusdict->insert( have_sionlib_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_sionlib_name, Token( new BoolDatum( false ) ) );
 #endif
 
 #ifdef NDEBUG

@@ -223,7 +223,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
   next_rec_[ rt ] = 0;
 
   reply.set_sender( host );
-  reply.set_sender_gid( host.get_gid() );
+  reply.set_sender_node_id( host.get_node_id() );
   reply.set_receiver( request.get_sender() );
   reply.set_port( request.get_port() );
 
@@ -292,8 +292,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
+    // not recording anything
     return;
-  } // not recording anything
+  }
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -384,8 +385,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
 {
   if ( num_vars_ < 1 )
   {
+    // nothing to do
     return;
-  } // nothing to do
+  }
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.
@@ -423,7 +425,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   next_rec_[ rt ] = 0;
 
   reply.set_sender( host );
-  reply.set_sender_gid( host.get_gid() );
+  reply.set_sender_node_id( host.get_node_id() );
   reply.set_receiver( request.get_sender() );
   reply.set_port( request.get_port() );
 

@@ -1,0 +1,53 @@
+/*
+ *  test_rows_cols_pos.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+% this test ensures that one can specify either shape or positions,
+% but not both
+
+(unittest) run
+/unittest using
+
+% correct, shape
+{
+  ResetKernel
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
+} pass_or_die
+
+% correct, positions
+{
+  ResetKernel
+  << /positions [[0. 0.]] /elements /iaf_psc_alpha >> CreateLayer
+} pass_or_die
+
+% incorrect, shape and positions
+{
+  ResetKernel
+  << /shape [ 1 1 ] /positions [[0. 0.]] /elements /iaf_psc_alpha >> CreateLayer
+} fail_or_die
+
+% incorrect, single element shape
+{
+  ResetKernel
+  << /shape [ 1 ] /elements /iaf_psc_alpha >> CreateLayer
+} fail_or_die
+
+endusing

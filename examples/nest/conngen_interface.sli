@@ -92,14 +92,14 @@ cg [ 13 14 ] cv_iv [ 15 16 ] cv_iv << >> /static_synapse CGConnect
   { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
 
 
-% Test if the gidcollection variant works
-/cvgc /cvgidcollection load def
+% Test if the nodecollection variant works
+/cvnc /cvnodecollection load def
 ResetKernel
 /iaf_psc_alpha 16 Create ;
-cg [  1  2 ] cvgc [  3  4 ] cvgc                       CGConnect
-cg [  5  6 ] cvgc [  7  8 ] cvgc << >>                 CGConnect
-cg [  9 10 ] cvgc [ 11 12 ] cvgc       /static_synapse CGConnect
-cg [ 13 14 ] cvgc [ 15 16 ] cvgc << >> /static_synapse CGConnect
+cg [  1  2 ] cvnc [  3  4 ] cvnc                       CGConnect
+cg [  5  6 ] cvnc [  7  8 ] cvnc << >>                 CGConnect
+cg [  9 10 ] cvnc [ 11 12 ] cvnc       /static_synapse CGConnect
+cg [ 13 14 ] cvnc [ 15 16 ] cvnc << >> /static_synapse CGConnect
 
 << /source [  1  2 ] >> GetConnections
   { GetStatus /target get } Map [  3  4 ] eq assert_or_die

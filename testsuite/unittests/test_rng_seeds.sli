@@ -43,9 +43,9 @@ FirstVersion: October 2008
 [1 2 4] {
   /n_threads Set
   ResetKernel
-  0 << /local_num_threads n_threads >> SetStatus
-  0 GetStatus /rng_seeds get
-  [0 /total_num_virtual_procs get] Range eq assert_or_die
+  << /local_num_threads n_threads >> SetKernelStatus
+  GetKernelStatus /rng_seeds get
+  [GetKernelStatus /total_num_virtual_procs get] Range eq assert_or_die
 } forall
 
 
@@ -53,8 +53,8 @@ FirstVersion: October 2008
 [1 2 4] {
   /n_threads Set
   ResetKernel
-  0 << /local_num_threads n_threads >> SetStatus
-  /seeds [0 /total_num_virtual_procs get] Range 100 add def
-  0 << /rng_seeds seeds >> SetStatus
-  0 GetStatus /rng_seeds get seeds eq assert_or_die
+  << /local_num_threads n_threads >> SetKernelStatus
+  /seeds [GetKernelStatus /total_num_virtual_procs get] Range 100 add def
+  << /rng_seeds seeds >> SetKernelStatus
+  GetKernelStatus /rng_seeds get seeds eq assert_or_die
 } forall

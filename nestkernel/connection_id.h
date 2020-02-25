@@ -36,31 +36,31 @@ public:
   ConnectionID()
   {
   }
-  ConnectionID( long source_gid, long target_gid, long target_thread, long synapse_modelid, long port );
-  ConnectionID( long source_gid, long target_thread, long synapse_modelid, long port );
+  ConnectionID( long source_node_id, long target_node_id, long target_thread, long synapse_modelid, long port );
+  ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( const ConnectionID& );
 
   DictionaryDatum get_dict() const;
   ArrayDatum to_ArrayDatum() const;
   bool operator==( const ConnectionID& c ) const;
   void print_me( std::ostream& out ) const;
-  long get_source_gid() const;
-  long get_target_gid() const;
+  long get_source_node_id() const;
+  long get_target_node_id() const;
   long get_target_thread() const;
   long get_synapse_model_id() const;
   long get_port() const;
 
 protected:
-  long source_gid_;
-  long target_gid_;
+  long source_node_id_;
+  long target_node_id_;
   long target_thread_;
   long synapse_modelid_;
   long port_;
 };
 
 inline ConnectionID::ConnectionID( const ConnectionID& cid )
-  : source_gid_( cid.source_gid_ )
-  , target_gid_( cid.target_gid_ )
+  : source_node_id_( cid.source_node_id_ )
+  , target_node_id_( cid.target_node_id_ )
   , target_thread_( cid.target_thread_ )
   , synapse_modelid_( cid.synapse_modelid_ )
   , port_( cid.port_ )
@@ -68,15 +68,15 @@ inline ConnectionID::ConnectionID( const ConnectionID& cid )
 }
 
 inline long
-ConnectionID::get_source_gid() const
+ConnectionID::get_source_node_id() const
 {
-  return source_gid_;
+  return source_node_id_;
 }
 
 inline long
-ConnectionID::get_target_gid() const
+ConnectionID::get_target_node_id() const
 {
-  return target_gid_;
+  return target_node_id_;
 }
 
 inline long

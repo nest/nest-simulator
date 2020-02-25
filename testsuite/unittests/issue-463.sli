@@ -41,7 +41,7 @@ skip_if_not_threaded
 
 M_ERROR setverbosity
 
-0 << /total_num_virtual_procs 4 >> SetStatus
+<< /total_num_virtual_procs 4 >> SetKernelStatus
 
 % Create source and target neurons
 /iaf_psc_alpha 20 Create
@@ -52,7 +52,7 @@ M_ERROR setverbosity
 /Warr [1 50] Range cv_dv def
 
 % Define connection and synapse dictionaries
-/syn_dict << /model /static_synapse /weight Warr >> def
+/syn_dict << /synapse_model /static_synapse /weight Warr >> def
 /conn_dict << /rule /fixed_indegree /indegree 5 >> def
 
 net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
@@ -61,11 +61,11 @@ net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
 
 net2 % loop on all neurons of target subnet
 {
-        /neuron2 exch def
+        /neuron2 exch dup cvnodecollection def
         % gets all connections to the target neuron
-        /conn << /target [neuron2] >> GetConnections def
+        /conn << /target neuron2 >> GetConnections def
 
-        /sdict_lst conn GetSynapseStatus def % gets info on synapses
+        /sdict_lst conn GetStatus def % gets info on synapses
 
         sdict_lst % loop on synapses that connect to target neuron
         {

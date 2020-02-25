@@ -55,35 +55,32 @@ def non_dale():
 
     modelList = []
 
-    layerList = [('A', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': 'iaf_psc_alpha'}),
-                 ('B', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': 'iaf_psc_alpha'})]
+    layerList = [('A', 'iaf_psc_alpha', [N, N], [1., 1.]),
+                 ('B', 'iaf_psc_alpha', [N, N], [1., 1.])]
 
-    common = {'connection_type': 'divergent',
-              'synapse_model': 'static_synapse',
-              'delays': 1.0}
+    common_connspec = {'rule': 'pairwise_bernoulli'}
+    common_synspec = {'synapse_model': 'static_synapse',
+                      'delay': 1.0}
+
     connectList = [
         ('A', 'B',
-         modCopy(common, {'mask': {'circular': {'radius': 0.2}},
-                          'kernel': 0.8,
-                          'weights': 2.0})),
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.2}}, 'p': 0.8}),
+         modCopy(common_synspec, {'weight': 2.0})),
         ('A', 'B',
-         modCopy(common, {'mask': {'circular': {'radius': 0.3}},
-                          'kernel': 0.4,
-                          'weights': -2.0})),
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.3}}, 'p': 0.4}),
+         modCopy(common_synspec, {'weight': -2.0})),
         ('B', 'A',
-         modCopy(common, {'mask': {'rectangular':
-                                   {'lower_left': [-0.4, -0.2],
-                                    'upper_right': [0.4, 0.2]}},
-                          'kernel': 1.0,
-                          'weights': 2.0})),
+         modCopy(common_connspec, {'mask': {'rectangular':
+                                            {'lower_left': [-0.4, -0.2],
+                                             'upper_right': [0.4, 0.2]}},
+                                   'p': 1.0}),
+         modCopy(common_synspec, {'weight': 2.0})),
         ('B', 'A',
-         modCopy(common, {'mask': {'rectangular':
-                                   {'lower_left': [-0.2, -0.4],
-                                    'upper_right': [0.2, 0.4]}},
-                          'kernel': 1.0,
-                          'weights': -2.0})),
+         modCopy(common_connspec, {'mask': {'rectangular':
+                                            {'lower_left': [-0.2, -0.4],
+                                             'upper_right': [0.2, 0.4]}},
+                                   'p': 1.0}),
+         modCopy(common_synspec, {'weight': -2.0})),
     ]
 
     return layerList, connectList, modelList

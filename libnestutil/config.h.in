@@ -176,6 +176,12 @@
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
 
+/* Is SIONlib available? */
+#cmakedefine HAVE_SIONLIB 1
+
+/* Is mpi4py available? */
+#cmakedefine HAVE_MPI4PY 1
+
 /* Bit counts for Target members */
 #define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
 #define TARGET_BITS_SPLIT_STANDARD 0

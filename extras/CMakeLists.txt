@@ -29,6 +29,10 @@ install( FILES EditorSupport/vim/syntax/sli.vim
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
     )
 
+install( FILES nestrc.sli
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
+    )
+
 install( PROGRAMS
     ${PROJECT_BINARY_DIR}/extras/nest-config
     nest_indirect

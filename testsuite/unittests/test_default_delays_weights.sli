@@ -70,33 +70,33 @@ ResetKernel
 /d 15.5 def
 /w 23.4 def
 
-/iaf_psc_alpha 5 Create ;
+/iaf_psc_alpha 5 Create /neurons Set
 
 % default weight and delay
-[1] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse >> Connect
+neurons [1 1] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse >> Connect
 
 % default weight; delay = 15ms
-[2] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /delay d >> Connect
+neurons [2 2] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /delay d >> Connect
 
 % default delay; weight = 23
-[3] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /weight w >> Connect
+neurons [3 3] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /weight w >> Connect
 
 % delay = 15ms ; weight = 23
-[4] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse /delay d /weight w >> Connect
+neurons [4 4] Take neurons [5 5] Take /one_to_one << /synapse_model /static_synapse /delay d /weight w >> Connect
 
-<< /source [1] >> GetConnections GetSynapseStatus 0 get /syn Set
+<< /source neurons [1 1] Take >> GetConnections GetStatus 0 get /syn Set
 { defaults /weight get syn /weight get eq } assert_or_die
 { defaults /delay get syn /delay get eq } assert_or_die
 
-<< /source [2] >> GetConnections GetSynapseStatus 0 get /syn Set
+<< /source neurons [2 2] Take >> GetConnections GetStatus 0 get /syn Set
 { defaults /weight get syn /weight get eq } assert_or_die
 { d syn /delay get eq } assert_or_die
 
-<< /source [3] >> GetConnections GetSynapseStatus 0 get /syn Set
+<< /source neurons [3 3] Take >> GetConnections GetStatus 0 get /syn Set
 { w syn /weight get eq } assert_or_die
 { defaults /delay get syn /delay get eq } assert_or_die
 
-<< /source [4] >> GetConnections GetSynapseStatus 0 get /syn Set
+<< /source neurons [4 4] Take >> GetConnections GetStatus 0 get /syn Set
 { w syn /weight get eq } assert_or_die
 { d syn /delay get eq } assert_or_die
 

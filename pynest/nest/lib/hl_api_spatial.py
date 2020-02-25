@@ -37,7 +37,6 @@ try:
     import matplotlib as mpl
     import matplotlib.path as mpath
     import matplotlib.patches as mpatches
-    import matplotlib.pyplot as plt
     HAVE_MPL = True
 except ImportError:
     HAVE_MPL = False
@@ -848,6 +847,8 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
 
+    import matplotlib.pyplot as plt
+
     # thin gray line indicating extent
     llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
     urx, ury = llx + xext, lly + yext
@@ -919,6 +920,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             nest.PlotLayer(s_nodes)
             plt.show()
     """
+
+    import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
@@ -1044,6 +1047,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             plt.show()
     """
 
+    import matplotlib.pyplot as plt
+
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 
@@ -1117,10 +1122,14 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
     """Create Matplotlib Patch objects representing the mask"""
+
+    import matplotlib.pyplot as plt
+
     edge_color = 'black'
     alpha = 0.2
     line_width = 2
     mask_patches = []
+
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])
     else:
@@ -1246,6 +1255,9 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
         A matplotlib axes instance to plot in. If none is given,
         a new one is created.
     """
+
+    import matplotlib.pyplot as plt
+
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 

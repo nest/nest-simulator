@@ -83,7 +83,7 @@ EventDeliveryManager::initialize()
   reset_timers_counters();
   spike_register_.resize( num_threads );
   off_grid_spike_register_.resize( num_threads );
-  gather_completed_checker_.resize( num_threads, false );
+  gather_completed_checker_.initialize( num_threads, false );
   // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
   buffer_size_target_data_has_changed_ = false;
@@ -107,7 +107,6 @@ EventDeliveryManager::finalize()
   // clear the spike buffers
   std::vector< std::vector< std::vector< std::vector< Target > > > >().swap( spike_register_ );
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > > >().swap( off_grid_spike_register_ );
-  gather_completed_checker_.clear();
 
   send_buffer_secondary_events_.clear();
   recv_buffer_secondary_events_.clear();
@@ -308,16 +307,17 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
   std::vector< SpikeDataT >& recv_buffer )
 {
   // Assume all threads have some work to do
-  gather_completed_checker_.set( tid, false );
+  gather_completed_checker_[ tid ].set_false();
   assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  while ( not gather_completed_checker_.all_true() )
+  while ( gather_completed_checker_.any_false() )
   {
-    // Assume this is the last gather round and change to false
-    // otherwise
-    gather_completed_checker_.set( tid, true );
+// Assume this is the last gather round and change to false
+// otherwise
+#pragma omp barrier
+    gather_completed_checker_[ tid ].set_true();
 
 #pragma omp single
     {
@@ -335,13 +335,13 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // Collocate spikes to send buffer
     const bool collocate_completed =
       collocate_spike_data_buffers_( tid, assigned_ranks, send_buffer_position, spike_register_, send_buffer );
-    gather_completed_checker_.logical_and( tid, collocate_completed );
+    gather_completed_checker_[ tid ].logical_and( collocate_completed );
 
     if ( off_grid_spiking_ )
     {
       const bool collocate_completed_off_grid = collocate_spike_data_buffers_(
         tid, assigned_ranks, send_buffer_position, off_grid_spike_register_, send_buffer );
-      gather_completed_checker_.logical_and( tid, collocate_completed_off_grid );
+      gather_completed_checker_[ tid ].logical_and( collocate_completed_off_grid );
     }
 
 #pragma omp barrier
@@ -374,13 +374,13 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     // Deliver spikes from receive buffer to ring buffers.
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
-    gather_completed_checker_.logical_and( tid, deliver_completed );
+    gather_completed_checker_[ tid ].logical_and( deliver_completed );
 
 // Exit gather loop if all local threads and remote processes are
 // done.
 #pragma omp barrier
     // Resize mpi buffers, if necessary and allowed.
-    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_spike_buffers() )
+    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_spike_buffers() )
     {
 #pragma omp single
       {
@@ -583,7 +583,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
   // assume all threads have some work to do
-  gather_completed_checker_.set( tid, false );
+  gather_completed_checker_[ tid ].set_false();
   assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
@@ -591,11 +591,12 @@ EventDeliveryManager::gather_target_data( const thread tid )
   kernel().connection_manager.prepare_target_table( tid );
   kernel().connection_manager.reset_source_table_entry_point( tid );
 
-  while ( not gather_completed_checker_.all_true() )
+  while ( gather_completed_checker_.any_false() )
   {
-    // assume this is the last gather round and change to false
-    // otherwise
-    gather_completed_checker_.set( tid, true );
+// assume this is the last gather round and change to false
+// otherwise
+#pragma omp barrier
+    gather_completed_checker_[ tid ].set_true();
 
 #pragma omp single
     {
@@ -611,7 +612,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
 
     const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
-    gather_completed_checker_.logical_and( tid, gather_completed );
+    gather_completed_checker_[ tid ].logical_and( gather_completed );
 
     if ( gather_completed_checker_.all_true() )
     {
@@ -627,11 +628,11 @@ EventDeliveryManager::gather_target_data( const thread tid )
     } // of omp single
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
-    gather_completed_checker_.logical_and( tid, distribute_completed );
+    gather_completed_checker_[ tid ].logical_and( distribute_completed );
 #pragma omp barrier
 
     // resize mpi buffers, if necessary and allowed
-    if ( not gather_completed_checker_.all_true() and kernel().mpi_manager.adaptive_target_buffers() )
+    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp single
       {

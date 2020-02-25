@@ -45,8 +45,8 @@ nest::SourceTable::initialize()
   assert( sizeof( Source ) == 8 );
   const thread num_threads = kernel().vp_manager.get_num_threads();
   sources_.resize( num_threads );
-  is_cleared_.resize( num_threads );
-  saved_entry_point_.resize( num_threads );
+  is_cleared_.initialize( num_threads, false );
+  saved_entry_point_.initialize( num_threads, false );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
 
@@ -55,17 +55,15 @@ nest::SourceTable::initialize()
     const thread tid = kernel().vp_manager.get_thread_id();
     sources_[ tid ].resize( 0 );
     resize_sources( tid );
-    is_cleared_[ tid ] = false;
-    saved_entry_point_[ tid ] = false;
   } // of omp parallel
 }
 
 void
 nest::SourceTable::finalize()
 {
-  if ( not is_cleared() )
+  for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid )
   {
-    for ( thread tid = 0; tid < static_cast< thread >( sources_.size() ); ++tid )
+    if ( is_cleared_[ tid ].is_false() )
     {
       clear( tid );
     }
@@ -78,13 +76,7 @@ nest::SourceTable::finalize()
 bool
 nest::SourceTable::is_cleared() const
 {
-  bool all_cleared = true;
-  // we only return true, if is_cleared is true for all threads
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    all_cleared &= is_cleared_[ tid ];
-  }
-  return all_cleared;
+  return is_cleared_.all_true();
 }
 
 std::vector< BlockVector< nest::Source > >&

@@ -111,11 +111,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
 
-    /* NOTE:
-     * The multiplicity unrolling here is essential for the correct operation of
-     * plastic synapses. Do not remove unrolling without careful analysis.
-     * See https://github.com/nest/nest-simulator/issues/126
-     */
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       spike_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
@@ -134,11 +130,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
 
-    /* NOTE:
-     * The multiplicity unrolling here is essential for the correct operation of
-     * plastic synapses. Do not remove unrolling without careful analysis.
-     * See https://github.com/nest/nest-simulator/issues/126
-     */
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );

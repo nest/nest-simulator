@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
 
-def compute_DC(net_dict, w_ext):
+def dc_input_compensating_poisson(net_dict, w_ext):
     """ Computes DC input if no Poisson input is provided to the microcircuit.
 
     Parameters
@@ -59,8 +59,8 @@ def compute_DC(net_dict, w_ext):
     return DC
 
 
-def get_weight(PSP_val, net_dict):
-    """ Computes weight to elicit a change in the membrane potential.
+def weight_as_current_from_potential(PSP_val, net_dict):
+    """ Computes weight as postsynaptic current from postsynaptic potential.
 
     The weight is calculated as a postsynaptic current that is large enough to
     elicit a change in the membrane potential of size ``PSP_val``.
@@ -90,7 +90,7 @@ def get_weight(PSP_val, net_dict):
     return PSC_e
 
 
-def get_total_number_of_synapses(net_dict):
+def total_num_synapses_populations(net_dict):
     """ Returns the total number of synapses between all populations.
 
     The first index (rows) of the output matrix is the target population
@@ -125,7 +125,7 @@ def get_total_number_of_synapses(net_dict):
     return K
 
 
-def synapses_th_matrix(net_dict, stim_dict):
+def total_num_synapses_thalamus(net_dict, stim_dict):
     """ Computes number of synapses between thalamus and microcircuit.
 
     The first index (rows) of the output matrix is the target population
@@ -160,7 +160,8 @@ def synapses_th_matrix(net_dict, stim_dict):
     return K
 
 
-def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
+def adjust_weights_and_input_to_synapse_scaling(
+        K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
     """ Adjusts weights and external input to scaling of synapse numbers.
 
     The recurrent and external weights are adjusted to the scaling
@@ -216,90 +217,6 @@ def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
     return w_new, w_ext_new, I_ext
 
 
-def read_name(path, name):
-    """ Reads names and ids of spike detector.
-
-    The names of the spike detectors are gathered and the lowest and
-    highest id of each spike detector is computed. If the simulation was
-    run on several threads or mpi-processes, one name per spike detector
-    per mpi-process/thread is extracted.
-
-    Parameters
-    ------------
-    path
-        Path where the spike detector files are stored.
-    name
-        Name of the spike detector.
-
-    Returns
-    -------
-    sd_names
-        Names of all spike detectors, which are located in the path.
-    node_ids
-        Lowest and highest ids of the spike detectors.
-
-    """
-    # load filenames
-    sd_files = []
-    sd_names = []
-    for fn in sorted(os.listdir(path)):
-        if fn.startswith(name):
-            sd_files.append(fn)
-            # spike detector name and its ID
-            fnsplit = '-'.join(fn.split('-')[:-1])
-            if fnsplit not in sd_names:
-                sd_names.append(fnsplit)
-
-    # load node IDs
-    node_idfile = open(path + 'population_nodeids.dat', 'r')
-    node_ids = []
-    for l in node_idfile:
-        a = l.split()
-        node_ids.append([int(a[0]), int(a[1])])
-    return sd_files, sd_names, np.array(node_ids)
-
-
-def load_spike_times(path, name, begin, end):
-    """ Loads spike times of each spike detector.
-
-    Parameters
-    ----------
-    path
-        Path where the files with the spike times are stored.
-    name
-        Name of the spike detector.
-    begin
-        Time point to start loading spike times (included).
-    end
-        Time point to stop loading spike times (included).
-
-    Returns
-    -------
-    data
-        Dictionary containing spike times in the interval from ``begin``
-        to ``end``.
-
-    """
-    sd_files, sd_names, node_ids = read_name(path, name)
-    data = {}
-    dtype = {'names': ('sender', 'time_ms'), # as in header
-             'formats': ('i4', 'f8')}
-    for i,name in enumerate(sd_names):
-        data_i_raw = np.array([[]], dtype=dtype)
-        for j,f in enumerate(sd_files):
-            if name in f:
-                # skip header while loading
-                ld = np.loadtxt(os.path.join(path, f), skiprows=3, dtype=dtype)
-                data_i_raw = np.append(data_i_raw, ld)
-
-        data_i_raw = np.sort(data_i_raw, order='time_ms')
-        # begin and end are included if they exist
-        low = np.searchsorted(data_i_raw['time_ms'], v=begin, side='left')
-        high = np.searchsorted(data_i_raw['time_ms'], v=end, side='right')
-        data[i] = data_i_raw[low:high]
-    return sd_names, node_ids, data
-
-
 def plot_raster(path, name, begin, end):
     """ Creates a spike raster plot of the network activity.
 
@@ -323,7 +240,7 @@ def plot_raster(path, name, begin, end):
     ylabels = ['L2/3', 'L4', 'L5', 'L6']
     color_list = np.tile(['#000000', '#888888'], 4)
 
-    sd_names, node_ids, data = load_spike_times(path, name, begin, end)
+    sd_names, node_ids, data = __load_spike_times(path, name, begin, end)
     last_node_id = node_ids[-1,-1]
     mod_node_ids = np.abs(node_ids - last_node_id) + 1
 
@@ -364,7 +281,7 @@ def firing_rates(path, name, begin, end):
     None
 
     """
-    sd_names, node_ids, data = load_spike_times(path, name, begin, end)
+    sd_names, node_ids, data = __load_spike_times(path, name, begin, end)
     all_mean_rates = []
     all_std_rates = []
     for i,n in enumerate(sd_names):
@@ -437,3 +354,89 @@ def boxplot(net_dict, path):
     plt.xticks(fontsize=18)
     plt.savefig(os.path.join(path, 'box_plot.png'), dpi=300)
     plt.show()
+
+
+def __gather_metadata(path, name):
+    """ Reads names and ids of spike detectors and first and last ids of
+    neurons in each population.
+
+    If the simulation was run on several threads or MPI-processes, one name per
+    spike detector per MPI-process/thread is extracted.
+
+    Parameters
+    ------------
+    path
+        Path where the spike detector files are stored.
+    name
+        Name of the spike detector, typically ``spike_detector``.
+
+    Returns
+    -------
+    sd_files
+        Names of all files written by spike detectors.
+    sd_names
+        Names of all spike detectors.
+    node_ids
+        Lowest and highest id of nodes in each population.
+
+    """
+    # load filenames
+    sd_files = []
+    sd_names = []
+    for fn in sorted(os.listdir(path)):
+        if fn.startswith(name):
+            sd_files.append(fn)
+            # spike detector name and its ID
+            fnsplit = '-'.join(fn.split('-')[:-1])
+            if fnsplit not in sd_names:
+                sd_names.append(fnsplit)
+
+    # load node IDs
+    node_idfile = open(path + 'population_nodeids.dat', 'r')
+    node_ids = []
+    for l in node_idfile:
+        a = l.split()
+        node_ids.append([int(a[0]), int(a[1])])
+    return sd_files, sd_names, np.array(node_ids)
+
+
+def __load_spike_times(path, name, begin, end):
+    """ Loads spike times of each spike detector.
+
+    Parameters
+    ----------
+    path
+        Path where the files with the spike times are stored.
+    name
+        Name of the spike detector.
+    begin
+        Time point to start loading spike times (included).
+    end
+        Time point to stop loading spike times (included).
+
+    Returns
+    -------
+    data
+        Dictionary containing spike times in the interval from ``begin``
+        to ``end``.
+
+    """
+    sd_files, sd_names, node_ids = __gather_metadata(path, name)
+    data = {}
+    dtype = {'names': ('sender', 'time_ms'), # as in header
+             'formats': ('i4', 'f8')}
+    for i,name in enumerate(sd_names):
+        data_i_raw = np.array([[]], dtype=dtype)
+        for j,f in enumerate(sd_files):
+            if name in f:
+                # skip header while loading
+                ld = np.loadtxt(os.path.join(path, f), skiprows=3, dtype=dtype)
+                data_i_raw = np.append(data_i_raw, ld)
+
+        data_i_raw = np.sort(data_i_raw, order='time_ms')
+        # begin and end are included if they exist
+        low = np.searchsorted(data_i_raw['time_ms'], v=begin, side='left')
+        high = np.searchsorted(data_i_raw['time_ms'], v=end, side='right')
+        data[i] = data_i_raw[low:high]
+    return sd_names, node_ids, data
+

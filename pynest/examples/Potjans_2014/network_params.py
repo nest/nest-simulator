@@ -185,6 +185,7 @@ net_dict = {
     # rate of the Poissonian spike generator (in Hz)
     'bg_rate': 8.,
     # turn Poisson input on or off (True or False)
+    # if False: DC input is applied for compensation
     'poisson_input': True,
     # delay of the Poisson generator (in ms)
     'poisson_delay': 1.5,

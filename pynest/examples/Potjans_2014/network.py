@@ -10,7 +10,7 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#
+#/
 # NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,19 +30,11 @@ build and simulate the network.
 import os
 import numpy as np
 import nest
-from helpers import adj_w_ext_to_K
-from helpers import synapses_th_matrix
-from helpers import get_total_number_of_synapses
-from helpers import get_weight
-from helpers import plot_raster
-from helpers import firing_rates
-from helpers import boxplot
-from helpers import compute_DC
-
+import helpers
 
 class Network:
-    """ Handles the setup of the network parameters and
-    provides functions to connect the network and devices.
+    """ Provides functions to setup NEST, to create and connect all nodes of
+    the network, to simulate, and to evaluate the resulting spike data.
 
     Arguments
     ---------
@@ -91,7 +83,82 @@ class Network:
             self.net_dict['V0_type'] = v0_type_options[0]
 
 
-    def setup_nest(self):
+    def setup(self):
+        """ Executes subfunctions of the network.
+
+        This function executes several subfunctions to create neuronal
+        populations, devices and inputs, and to connect the populations with
+        each other and with devices and input nodes.
+
+        """
+        self.__setup_nest()
+
+        # create nodes
+        self.__create_neuronal_populations()
+        self.__create_recording_devices()
+        self.__create_poisson_bg_input()
+        self.__create_thalamic_stim_input()
+        self.__create_dc_stim_input()
+
+        # create connections
+        self.__connect_neuronal_populations()
+        self.__connect_recording_devices()
+        if self.net_dict['poisson_input']:
+            self.__connect_poisson_bg_input()
+        if self.stim_dict['thalamic_input']:
+            self.__connect_thalamic_stim_input()
+        if self.stim_dict['dc_input']:
+            self.__connect_dc_stim_input()
+
+        
+    def simulate(self):
+        """ Simulates the microcircuit. """
+        nest.Simulate(self.sim_dict['t_sim'])
+
+
+    def evaluate(self, raster_plot_interval, firing_rates_interval):
+        """ Displays simulation results.
+
+        Creates a spike raster plot.
+        Calculates the firing rate of each population and displays them as a
+        box plot.
+
+        Parameters
+        ----------
+        raster_plot_interval
+            Times to start and stop loading spike times for raster plot
+            (included).
+        firing_rates_interval
+            Times to start and stop lading spike times for computing firing
+            rates (included).
+
+        Returns
+        -------
+            None
+
+        """
+        if nest.Rank() == 0:
+            print(
+                'Interval to plot spikes: %s ms'
+                % np.array2string(raster_plot_interval)
+                )
+            helpers.plot_raster(
+                self.data_path, 'spike_detector',
+                raster_plot_interval[0], raster_plot_interval[1]
+                )
+
+            print(
+                'Interval to compute firing rates: %s ms'
+                % np.array2string(firing_rates_interval)
+                )
+            helpers.firing_rates(
+                self.data_path, 'spike_detector',
+                firing_rates_interval[0], firing_rates_interval[1]
+                )
+            helpers.boxplot(self.net_dict, self.data_path)
+
+
+    def __setup_nest(self):
         """ Hands parameters to the NEST kernel.
 
         Resets the NEST kernel and passes parameters to it.
@@ -137,7 +204,7 @@ class Network:
         nest.SetKernelStatus(kernel_dict)
 
 
-    def create_populations(self):
+    def __create_neuronal_populations(self):
         """ Creates the neuronal populations.
 
         The neuronal populations are created and the parameters are assigned
@@ -153,10 +220,11 @@ class Network:
         # total number of neurons and synapses and information about weights
         # and external input before scaling
         self.N_full = self.net_dict['N_full']
-        self.synapses = get_total_number_of_synapses(self.net_dict)
+        self.synapses = helpers.total_num_synapses_populations(self.net_dict)
         
-        self.w_from_PSP = get_weight(self.net_dict['PSP_e'], self.net_dict)
-        self.weight_mat = get_weight(
+        self.w_from_PSP = helpers.weight_as_current_from_potential(
+            self.net_dict['PSP_e'], self.net_dict)
+        self.weight_mat = helpers.weight_as_current_from_potential(
             self.net_dict['PSP_mean_matrix'], self.net_dict
             )
         self.weight_mat_std = self.net_dict['PSP_std_matrix']
@@ -172,7 +240,8 @@ class Network:
                     Calculating DC input to compensate.
                     """
                     )
-            self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
+            self.DC_amp_e = helpers.dc_input_compensating_poisson(
+                self.net_dict, self.w_ext)
 
         # scaling factors
         self.N_scaling = self.net_dict['N_scaling']
@@ -187,7 +256,8 @@ class Network:
         if self.K_scaling != 1:
             synapses_indegree = self.synapses / (
                 self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
-            self.weight_mat, self.w_ext, self.DC_amp_e = adj_w_ext_to_K(
+            self.weight_mat, self.w_ext, self.DC_amp_e = \
+                helpers.adjust_weights_and_input_to_synapse_scaling(
                 synapses_indegree, self.K_scaling, self.weight_mat,
                 self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
                 )
@@ -241,7 +311,7 @@ class Network:
         pop_file.close()
 
 
-    def create_devices(self):
+    def __create_recording_devices(self):
         """ Creates the recording devices.
 
         Only devices which are given in ``net_dict['rec_dev']`` are created.
@@ -278,9 +348,11 @@ class Network:
                 print('Voltmeters created.')
 
 
-    def create_poisson(self):
-        """ Creates the Poisson generators if specified in
-        ``network_params.py``.
+    def __create_poisson_bg_input(self):
+        """ Creates the Poisson generators for ongoing background input if
+        specified in ``network_params.py``.
+        If ``poisson_input`` is ``False``, DC input is applied for compensation
+        in ``create_neuronal_populations()``.
 
         """
         if self.net_dict['poisson_input']:
@@ -295,7 +367,7 @@ class Network:
                 self.poisson.append(poisson)
 
 
-    def create_thalamic_input(self):
+    def __create_thalamic_stim_input(self):
         """ Creates the thalamic neuronal population if specified in
         ``stimulus_params.py``.
 
@@ -307,7 +379,7 @@ class Network:
             self.thalamic_population = nest.Create(
                 'parrot_neuron', self.stim_dict['n_thal']
                 )
-            self.thalamic_weight = get_weight(
+            self.thalamic_weight = helpers.weight_as_current_from_potential(
                 self.stim_dict['PSP_th'], self.net_dict
                 )
             self.stop_th = (
@@ -320,7 +392,7 @@ class Network:
                 stop=self.stop_th
             )
             nest.Connect(self.poisson_th, self.thalamic_population)
-            self.nr_synapses_th = synapses_th_matrix(
+            self.nr_synapses_th = helpers.total_num_synapses_thalamus(
                 self.net_dict, self.stim_dict
                 )
             if self.K_scaling != 1:
@@ -332,7 +404,7 @@ class Network:
                 print('Thalamic input not provided.')
 
 
-    def create_dc_generator(self):
+    def __create_dc_stim_input(self):
         """ Creates DC generators for external stimulation if specified
         in ``stimulus_params.py``.
 
@@ -358,7 +430,7 @@ class Network:
                 self.dc.append(dc)
 
 
-    def create_connections(self):
+    def __connect_neuronal_populations(self):
         """ Creates the recurrent connections between neuronal populations. """
         if nest.Rank() == 0:
             print('Connecting neuronal populations recurrently.')
@@ -397,25 +469,7 @@ class Network:
                         )
 
 
-    def connect_poisson(self):
-        """ Connects the Poisson generators to the microcircuit."""
-        if nest.Rank() == 0:
-            print('Connecting Poisson generators for background input.')
-
-        for i, target_pop in enumerate(self.pops):
-            conn_dict_poisson = {'rule': 'all_to_all'}
-            syn_dict_poisson = {
-                'synapse_model': 'static_synapse',
-                'weight': self.w_ext,
-                'delay': self.net_dict['poisson_delay']
-                }
-            nest.Connect(
-                self.poisson[i], target_pop,
-                conn_spec=conn_dict_poisson,
-                syn_spec=syn_dict_poisson
-                )
-
-    def connect_devices(self):
+    def __connect_recording_devices(self):
         """ Connects the recording devices to the microcircuit."""
         if nest.Rank() == 0:
             if ('spike_detector' in self.net_dict['rec_dev'] and
@@ -437,7 +491,26 @@ class Network:
                 nest.Connect(target_pop, self.spike_detector[i])
 
 
-    def connect_thalamus(self):
+    def __connect_poisson_bg_input(self):
+        """ Connects the Poisson generators to the microcircuit."""
+        if nest.Rank() == 0:
+            print('Connecting Poisson generators for background input.')
+
+        for i, target_pop in enumerate(self.pops):
+            conn_dict_poisson = {'rule': 'all_to_all'}
+            syn_dict_poisson = {
+                'synapse_model': 'static_synapse',
+                'weight': self.w_ext,
+                'delay': self.net_dict['poisson_delay']
+                }
+            nest.Connect(
+                self.poisson[i], target_pop,
+                conn_spec=conn_dict_poisson,
+                syn_spec=syn_dict_poisson
+                )
+
+
+    def __connect_thalamic_stim_input(self):
         """ Connects the Thalamic input to the neuronal populations. """
 
         if nest.Rank() == 0:
@@ -470,7 +543,7 @@ class Network:
                 )
 
 
-    def connect_dc_generator(self):
+    def __connect_dc_stim_input(self):
         """ Connects the DC generators to the neuronal populations. """
         if nest.Rank() == 0:
             print('Connecting DC generators.')
@@ -478,78 +551,3 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             if self.stim_dict['dc_input']:
                 nest.Connect(self.dc[i], target_pop)
-
-
-    def setup(self):
-        """ Executes subfunctions of the network.
-
-        This function executes several subfunctions to create neuronal
-        populations, devices and inputs, and to connect the populations with
-        each other and with devices and input nodes.
-
-        """
-        self.setup_nest()
-
-        # create nodes
-        self.create_populations()
-        self.create_devices()
-        self.create_poisson()
-        self.create_thalamic_input()
-        self.create_dc_generator()
-
-        # create connections
-        self.create_connections()
-        self.connect_devices()
-        if self.net_dict['poisson_input']:
-            self.connect_poisson()
-        if self.stim_dict['thalamic_input']:
-            self.connect_thalamus()
-        if self.stim_dict['dc_input']:
-            self.connect_dc_generator()
-
-        
-    def simulate(self):
-        """ Simulates the microcircuit. """
-        nest.Simulate(self.sim_dict['t_sim'])
-
-
-    def evaluate(self, raster_plot_interval, firing_rates_interval):
-        """ Displays simulation results.
-
-        Creates a spike raster plot.
-        Calculates the firing rate of each population and displays them as a
-        box plot.
-
-        Parameters
-        ----------
-        raster_plot_interval
-            Times to start and stop loading spike times for raster plot
-            (included).
-        firing_rates_interval
-            Times to start and stop lading spike times for computing firing
-            rates (included).
-
-        Returns
-        -------
-            None
-
-        """
-        if nest.Rank() == 0:
-            print(
-                'Interval to plot spikes: %s ms'
-                % np.array2string(raster_plot_interval)
-                )
-            plot_raster(
-                self.data_path, 'spike_detector',
-                raster_plot_interval[0], raster_plot_interval[1]
-                )
-
-            print(
-                'Interval to compute firing rates: %s ms'
-                % np.array2string(firing_rates_interval)
-                )
-            firing_rates(
-                self.data_path, 'spike_detector',
-                firing_rates_interval[0], firing_rates_interval[1]
-                )
-            boxplot(self.net_dict, self.data_path)

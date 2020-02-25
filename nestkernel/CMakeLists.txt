@@ -23,7 +23,6 @@ set( nestkernel_sources
     archiving_node.h archiving_node.cpp
     clopath_archiving_node.h clopath_archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
-    completed_checker.h completed_checker.cpp
     sibling_container.h sibling_container.cpp
     subnet.h subnet.cpp
     connection.h
@@ -54,6 +53,7 @@ set( nestkernel_sources
     multirange.h multirange.cpp
     node.h node.cpp
     nodelist.h nodelist.cpp
+    per_thread_bool_indicator.h per_thread_bool_indicator.cpp
     proxynode.h proxynode.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h

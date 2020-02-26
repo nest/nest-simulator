@@ -2,7 +2,7 @@ PyNEST Microcircuit
 ===================
 
 This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_.
-The network model represents 4 layers of cortex, L2/3, L4, L5, and L6, each consisting of 2 populations of excitatory and inhibitory neurons.
+The network model represents four layers of cortex, L2/3, L4, L5, and L6, each consisting of two populations of excitatory and inhibitory neurons.
 
 .. |img1| image:: microcircuit.png
 
@@ -28,15 +28,15 @@ File Structure
 * ``network_params.py``: network and neuron parameters
 * ``stimulus_params.py``: parameters for optional external stimulation
 * ``sim_params.py``: simulation parameters
-* ``reference_data``: reference data and figures obtained by executing ``run_microcircuit.py`` with ``N_scaling`` and ``K_scaling`` set to `1`
+* ``reference_data``: reference data and figures obtained by executing ``run_microcircuit.py`` with default parameters
 
 Running the Simulation
 ######################
 
 By default, the variables ``N_scaling`` and ``K_scaling`` in ``network_params.py`` are set to
 `0.1` which is a good choice for running the microcircuit on a local machine.
-``N_scaling`` adjusts the number of neurons and ``K_scaling`` adjusts the number of connections to be simulated.
-The full network can be run by adjusting these values to `1`.
+``N_scaling`` adjusts the number of neurons and ``K_scaling`` adjusts the indegrees.
+The full network can be run by setting these values to `1`.
 If this is done, the option to print the time progress should be switched off: ``'print_time': False`` in ``sim_params.py``.
 
 To run the simulation, simply use:
@@ -49,19 +49,18 @@ The output will be saved in the directory ``data``.
 
 The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these applications.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
-The number of MPI processes can be set by choosing a reasonable value for ``num_mpi_prc`` and then running the script with the following command:
+The command for running the script with two MPI processes would be:
 
 .. code-block:: bash
 
-   mpirun -n num_mpi_prc python run_microcircuit.py
+   mpirun -n 2 python run_microcircuit.py
 
 Note on Parameters
 ##################
 
 By default, the simulation uses external Poissonian input to excite all neuronal populations of the microcircuit, see ``poisson_input': True`` in ``network_params.py``.
 If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated DC input.
-In addition to this ongoing external drive, a thalamic stimulation can be switched on in ``stimulus_params.py``; the default is ``'thalamic_input': False``.
-Also for the thalamic stimulation, it is possible to replace the default Poissonian input by DC input.
+In addition to this ongoing external drive, a thalamic stimulation or a stimulation by an external DC input can be switched on in ``stimulus_params.py`` (the default for both types of stimuli is ``False``).
 
 The default random initialization of membrane voltages in this simulation uses population-specific means and standard deviations to reduce an initial activity burst in the network: ``'V_type': 'optimized'`` in ``network_params.py``.
 Previous implementations used the same mean and standard deviation for all populations which corresponds to setting ``'V_type': 'original'``.

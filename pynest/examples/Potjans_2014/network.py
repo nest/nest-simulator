@@ -221,19 +221,19 @@ class Network:
  
         # thalamic input
         if self.stim_dict['thalamic_input']:
-            nr_synapses_th = helpers.num_synapses_from_conn_probs(
+            num_th_synapses = helpers.num_synapses_from_conn_probs(
                 self.stim_dict['conn_probs_th'],
-                self.stim_dict['n_thal'],
+                self.stim_dict['num_th_neurons'],
                 self.net_dict['full_num_neurons'])[0]
-            self.thalamic_weight = helpers.weight_as_current_from_potential(
+            self.weight_th = helpers.weight_as_current_from_potential(
                 self.stim_dict['PSP_th'],
                 self.net_dict['neuron_params']['C_m'],
                 self.net_dict['neuron_params']['tau_m'],
                 self.net_dict['neuron_params']['tau_syn'])
             if self.net_dict['K_scaling'] != 1:
-                nr_synapses_th *= self.net_dict['K_scaling']
-                self.thalamic_weight /= np.sqrt(self.net_dict['K_scaling'])
-            self.nr_synapses_th = nr_synapses_th.astype(int)
+                num_th_synapses *= self.net_dict['K_scaling']
+                self.weight_th /= np.sqrt(self.net_dict['K_scaling'])
+            self.num_th_synapses = num_th_synapses.astype(int)
             
         if nest.Rank() == 0:
             message = ''
@@ -391,7 +391,7 @@ class Network:
             print('Creating thalamic input for external stimulation.')
 
         self.thalamic_population = nest.Create('parrot_neuron',
-                                               n=self.stim_dict['n_thal'])
+                                               n=self.stim_dict['num_th_neurons'])
 
         self.poisson_th = nest.Create('poisson_generator')
         self.poisson_th.set(
@@ -501,14 +501,14 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             conn_dict_th = {
                 'rule': 'fixed_total_number',
-                'N': self.nr_synapses_th[i]
+                'N': self.num_th_synapses[i]
                 }
             syn_dict_th = {
                 'weight': {
                     'distribution': 'normal_clipped',
-                    'mu': self.thalamic_weight,
+                    'mu': self.weight_th,
                     'sigma': (
-                        self.thalamic_weight * self.net_dict['PSP_sd']
+                        self.weight_th * self.net_dict['PSP_sd']
                         ),
                     'low': 0.0
                     },

@@ -252,10 +252,11 @@ def firing_rates(path, name, begin, end):
         np.savetxt(os.path.join(path, ('rate' + str(i) + '.dat')),
                    rate_per_neuron)
         # zeros are included    
-        all_mean_rates.append(float('%.3f' % np.mean(rate_per_neuron)))
-        all_std_rates.append(float('%.3f' % np.std(rate_per_neuron)))
-    print('Mean rates: %r Hz' % all_mean_rates)
-    print('Standard deviation of rates: %r Hz' % all_std_rates)
+        all_mean_rates.append(np.mean(rate_per_neuron))
+        all_std_rates.append(np.std(rate_per_neuron))
+    print('Mean rates: {} Hz'.format(np.around(all_mean_rates, decimals=3)))
+    print('Standard deviation of rates: {} Hz'.format(
+        np.around(all_std_rates, decimals=3)))
 
 
 def boxplot(net_dict, path):

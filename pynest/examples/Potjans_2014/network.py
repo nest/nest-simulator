@@ -59,21 +59,21 @@ class Network:
         else:
             self.stim_dict = None
 
-        # derive parameters based on input dictionaries
-        self.__derive_parameters()
-
         # data directory
         self.data_path = sim_dict['data_path']
         if nest.Rank() == 0:
             if os.path.isdir(self.data_path):
                 message = '  Directory already existed.'
                 if self.sim_dict['overwrite_files']:
-                    message += ' Existing data will be overwritten.'
+                    message += ' Old data will be overwritten.'
             else:
                 os.mkdir(self.data_path)
                 message = '  Directory has been created.'
-            print('Data will be written to: {}\n{}'.format(self.data_path,
+            print('Data will be written to: {}\n{}\n'.format(self.data_path,
                                                            message))
+        
+        # derive parameters based on input dictionaries
+        self.__derive_parameters()
 
         # initialize the NEST kernel
         self.__setup_nest()
@@ -142,19 +142,12 @@ class Network:
 
         """
         if nest.Rank() == 0:
-            print(
-                'Interval to plot spikes: %s ms'
-                % np.array2string(raster_plot_interval)
-                )
-            helpers.plot_raster(
-                self.data_path, 'spike_detector',
-                raster_plot_interval[0], raster_plot_interval[1]
-                )
+            print('Interval to plot spikes: {} ms'.format(raster_plot_interval))
+            helpers.plot_raster(self.data_path, 'spike_detector',
+                raster_plot_interval[0], raster_plot_interval[1])
 
-            print(
-                'Interval to compute firing rates: %s ms'
-                % np.array2string(firing_rates_interval)
-                )
+            print('Interval to compute firing rates: {} ms'.format(
+                firing_rates_interval))
             helpers.firing_rates(
                 self.data_path, 'spike_detector',
                 firing_rates_interval[0], firing_rates_interval[1]
@@ -200,7 +193,7 @@ class Network:
             DC_amp = np.zeros(self.num_pops)
         else:
             if nest.Rank() == 0:
-                print('DC input compensates for missing Poisson input')
+                print('DC input compensates for missing Poisson input.\n')
             DC_amp = helpers.dc_input_compensating_poisson(
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],
@@ -243,19 +236,23 @@ class Network:
             self.nr_synapses_th = nr_synapses_th.astype(int)
             
         if nest.Rank() == 0:
-            message = 'Neuron numbers are scaled by {:.3f}.\n'.format(
-                self.net_dict['N_scaling'])
-            message += 'Indegrees are scaled by {:.3f}'.format(
-                self.net_dict['K_scaling'])
+            message = ''
+            if self.net_dict['N_scaling'] != 1:
+                message += \
+                    'Neuron numbers are scaled by a factor of {:.3f}.\n'.format(
+                    self.net_dict['N_scaling'])
             if self.net_dict['K_scaling'] != 1:
-                message += '\n Weights and DC input are adjusted to compensate.'
+                message += \
+                    'Indegrees are scaled by a factor of {:.3f}.'.format(
+                     self.net_dict['K_scaling'])
+                message += '\n  Weights and DC input are adjusted to compensate.\n'
             print(message)
 
 
     def __setup_nest(self):
         """ Hands parameters to the NEST kernel.
 
-        Resets the NEST kernel and passes parameters to it.
+        Reset the NEST kernel and pass parameters to it.
         The number of seeds for random number generation are computed based on
         the total number of virtual processes
         (number of MPI processes x number of threads per MPI process).
@@ -272,13 +269,11 @@ class Network:
         rng_seeds = (master_seed + N_vp + 1 + np.arange(N_vp)).tolist()
 
         if nest.Rank() == 0:
-            print('Master seed: %i ' % master_seed)
-            print('  Total number of virtual processes: %i' % N_vp)
-            print('  Global random number generator seed: %i' % grng_seed)
-            print(
-                '  Seeds for random number generators of virtual processes: %r'
-                % rng_seeds
-                )
+            print('Master seed: {} '.format(master_seed))
+            print('  Total number of virtual processes: {}'.format(N_vp))
+            print('  Global random number generator seed: {}'.format(grng_seed))
+            print('  Seeds for random number generators of virtual processes: '
+                + '{}'.format(rng_seeds))
 
         # pass parameters to NEST kernel
         self.sim_resolution = self.sim_dict['sim_resolution']
@@ -331,9 +326,8 @@ class Network:
                     self.net_dict['neuron_params']['V0_sd']['original'],
                     ))
             self.pops.append(population)
-            pop_file.write('%d  %d \n' % (
-                population.global_id[0],
-                population.global_id[-1]))
+            pop_file.write('{} {}\n'.format(population.global_id[0],
+                                            population.global_id[-1]))
         pop_file.close()
 
 
@@ -350,7 +344,7 @@ class Network:
             if nest.Rank() == 0:
                 print('  Creating spike detectors.')
             sd_dict = {'record_to': 'ascii',
-                      'label': os.path.join(self.data_path, 'spike_detector')}
+                       'label': os.path.join(self.data_path, 'spike_detector')}
             self.spike_detectors = nest.Create('spike_detector',
                                                n=self.num_pops,
                                                params=sd_dict) 
@@ -359,9 +353,9 @@ class Network:
             if nest.Rank() == 0:
                 print('  Creating voltmeters.')
             vm_dict = {'interval': self.sim_dict['rec_V_int'],
-                      'record_to': 'ascii',
-                      'record_from': ['V_m'],
-                      'label': os.path.join(self.data_path, 'voltmeter')}
+                       'record_to': 'ascii',
+                       'record_from': ['V_m'],
+                       'label': os.path.join(self.data_path, 'voltmeter')}
             self.voltmeters = nest.Create('voltmeter',
                                           n=self.num_pops,
                                           params=vm_dict)
@@ -413,8 +407,7 @@ class Network:
         """
         dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
         if nest.Rank() == 0:
-            print(""" Creating DC generators for external stimulation.
-                  dc_amp_stim = {} pA""".format(dc_amp_stim))
+            print('Creating DC generators for external stimulation.')
 
         dc_dict = {'amplitude': dc_amp_stim,
                   'start': self.stim_dict['dc_start'],
@@ -496,10 +489,10 @@ class Network:
 
 
     def __connect_thalamic_stim_input(self):
-        """ Connects the Thalamic input to the neuronal populations. """
+        """ Connects the thalamic input to the neuronal populations. """
 
         if nest.Rank() == 0:
-            print('Connecting Thalamic input.')
+            print('Connecting thalamic input.')
 
         # connect Poisson input to thalamic population
         nest.Connect(self.poisson_th, self.thalamic_population)

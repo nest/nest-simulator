@@ -88,7 +88,7 @@ net_dict = {
     # mean amplitude of excitatory postsynaptic potential (in mV)
     'PSP_e': 0.15,
     # relative standard deviation of the postsynaptic potential
-    'PSP_sd': 0.1,
+    'PSP_std': 0.1,
     # relative inhibitory synaptic strength
     'g': -4,
     # rate of the Poissonian spike generator (in Hz)
@@ -120,8 +120,8 @@ net_dict = {
                     'optimized': [-68.28, -63.16, -63.33, -63.45,
                                   -63.11, -61.66, -66.72, -61.43]},
         # standard deviation of the average membrane potential (in mV)
-        'V0_sd': {'original': 10.0,
-                  'optimized': [5.36, 4.57, 4.74, 4.94,
+        'V0_std': {'original': 10.0,
+                   'optimized': [5.36, 4.57, 4.74, 4.94,
                                 4.94, 4.55, 5.46, 4.48]},
         # reset membrane potential of the neurons (in mV)
         'E_L': -65.0,
@@ -153,8 +153,8 @@ updated_dict = {
         
     # matrix of standard deviations of PSPs
     'std_PSP_matrix': get_exc_inh_matrix(
-        net_dict['PSP_sd'],
-        net_dict['PSP_sd'],
+        net_dict['PSP_std'],
+        net_dict['PSP_std'],
         len(net_dict['populations'])
     ),
     # matrix of mean delays

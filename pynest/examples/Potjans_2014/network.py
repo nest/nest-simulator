@@ -318,12 +318,12 @@ class Network:
             if self.net_dict['V0_type'] == 'optimized':
                 population.set(V_m=nest.random.normal(
                     self.net_dict['neuron_params']['V0_mean']['optimized'][i],
-                    self.net_dict['neuron_params']['V0_sd']['optimized'][i],
+                    self.net_dict['neuron_params']['V0_std']['optimized'][i],
                     ))
             elif self.net_dict['V0_type'] == 'original':
                 population.set(V_m=nest.random.normal(
                     self.net_dict['neuron_params']['V0_mean']['original'],
-                    self.net_dict['neuron_params']['V0_sd']['original'],
+                    self.net_dict['neuron_params']['V0_std']['original'],
                     ))
             self.pops.append(population)
             pop_file.write('{} {}\n'.format(population.global_id[0],
@@ -429,7 +429,7 @@ class Network:
                 synapse_nr = self.num_synapses[i][j]
                 if synapse_nr >= 0.:
                     weight = self.mean_weight_matrix[i][j]
-                    w_sd = abs(weight * self.std_weight_matrix[i][j])
+                    w_std = abs(weight * self.std_weight_matrix[i][j])
                     conn_dict_rec = {
                         'rule': 'fixed_total_number', 'N': synapse_nr
                         }
@@ -437,7 +437,7 @@ class Network:
                         'synapse_model': 'static_synapse',
                         'weight': {
                             'distribution': 'normal_clipped', 'mu': weight,
-                            'sigma': w_sd
+                            'sigma': w_std
                             },
                         'delay': {
                             'distribution': 'normal_clipped',
@@ -508,14 +508,14 @@ class Network:
                     'distribution': 'normal_clipped',
                     'mu': self.weight_th,
                     'sigma': (
-                        self.weight_th * self.net_dict['PSP_sd']
+                        self.weight_th * self.net_dict['PSP_std']
                         ),
                     'low': 0.0
                     },
                 'delay': {
                     'distribution': 'normal_clipped',
                     'mu': self.stim_dict['delay_th'][i],
-                    'sigma': self.stim_dict['delay_th_sd'][i],
+                    'sigma': self.stim_dict['delay_th_std'][i],
                     'low': self.sim_resolution
                     }
                 }

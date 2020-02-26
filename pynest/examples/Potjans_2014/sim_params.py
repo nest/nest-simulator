@@ -29,27 +29,25 @@ A dictionary with parameters defining the simulation.
 import os
 
 sim_dict = {
-    # Simulation time (in ms).
+    # simulation time (in ms)
     't_sim': 1000.0,
-    # Resolution of the simulation (in ms).
+    # Resolution of the simulation (in ms)
     'sim_resolution': 0.1,
-    # The default recording device is the spike_detector. If you also
-    # want to record the membrane potentials of the neurons, add
-    # 'voltmeter' to the list. Nothing will be recorded if an empty list is
-    # given.
+    # list of recording devices, default is 'spike_detector'. a 'voltmeter' can
+    # be added to record membrane voltages of the neurons. nothing will be
+    # recorded if an empty list is given.
     'rec_dev': ['spike_detector'],
-    # Path to save the output data.
+    # path to save the output data
     'data_path': os.path.join(os.getcwd(), 'data/'),
-    # Masterseed for NEST and NumPy.
+    # masterseed for NEST and NumPy
     'master_seed': 555,
-    # Number of threads per MPI process.
+    # number of threads per MPI process
     'local_num_threads': 1,
-    # Recording interval of the membrane potential (in ms).
+    # recording interval of the membrane potential (in ms)
     'rec_V_int': 1.0,
-    # If True, data will be overwritten,
-    # If False, a NESTError is raised if the files already exist.
+    # if True, data will be overwritten,
+    # if False, a NESTError is raised if the files already exist
     'overwrite_files': True,
-    # Print the time progress, this should only be used when the simulation
-    # is run on a local machine.
-    'print_time': True
-    }
+    # print the time progress, this should only be used when the simulation
+    # is run on a local machine
+    'print_time': True}

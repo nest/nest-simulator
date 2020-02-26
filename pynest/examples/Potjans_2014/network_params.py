@@ -29,6 +29,7 @@ parameters.
 
 import numpy as np
 
+
 def get_exc_inh_matrix(val_exc, val_inh, num_pops):
     """ Creates a matrix for excitatory and inhibitory values.
 
@@ -52,17 +53,19 @@ def get_exc_inh_matrix(val_exc, val_inh, num_pops):
     matrix[:, 1:num_pops:2] = val_inh
     return matrix
 
+
 net_dict = {
     # neuron model
     'neuron_model': 'iaf_psc_exp',
     # names of the simulated neuronal populations
     'populations': ['L23E', 'L23I', 'L4E', 'L4I', 'L5E', 'L5I', 'L6E', 'L6I'],
-    # number of neurons in the different populations (the order of the
-    # elements corresponds to the names of the variable 'populations')
-    'full_num_neurons': np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
-    # Mean rates of the different populations in the non-scaled version
-    # of the microcircuit. Necessary for the scaling of the network.
-    # The order corresponds to the order in 'populations'.
+    # number of neurons in the different populations (same order as
+    # 'populations')
+    'full_num_neurons':
+        np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
+    # mean rates of the different populations in the non-scaled version
+    # of the microcircuit (same order as in 'populations');
+    # necessary for the scaling of the network
     'full_mean_rates':
         np.array([0.971, 2.868, 4.746, 5.396, 8.142, 9.078, 0.991, 7.523]),
     # connection probabilities (the first index corresponds to the targets
@@ -76,10 +79,9 @@ net_dict = {
              [0.1004, 0.0622, 0.0505, 0.0057, 0.0831, 0.3726, 0.0204, 0.],
              [0.0548, 0.0269, 0.0257, 0.0022, 0.06, 0.3158, 0.0086, 0.],
              [0.0156, 0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396, 0.2252],
-             [0.0364, 0.001, 0.0034, 0.0005, 0.0277, 0.008, 0.0658, 0.1443]]
-    ),
-    # number of external connections to the different populations (the order
-    # corresponds to the order in 'populations')
+             [0.0364, 0.001, 0.0034, 0.0005, 0.0277, 0.008, 0.0658, 0.1443]]),
+    # number of external connections to the different populations (same order
+    # as in 'populations')
     'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
     # factor to scale the indegrees
     'K_scaling': 0.1,
@@ -111,9 +113,8 @@ net_dict = {
     # 'optimized': population-specific mean and standard deviation, allowing a
     #              reduction of the initial activity burst in the network
     #              (default)
-    # choose either 'original' or 'optimized'
     'V0_type': 'optimized',
-    # prameters of the neuron model
+    # parameters of the neuron model
     'neuron_params': {
         # membrane qpotential average for the neurons (in mV)
         'V0_mean': {'original': -58.0,
@@ -122,7 +123,7 @@ net_dict = {
         # standard deviation of the average membrane potential (in mV)
         'V0_std': {'original': 10.0,
                    'optimized': [5.36, 4.57, 4.74, 4.94,
-                                4.94, 4.55, 5.46, 4.48]},
+                                 4.94, 4.55, 5.46, 4.48]},
         # reset membrane potential of the neurons (in mV)
         'E_L': -65.0,
         # threshold potential of the neurons (in mV)
@@ -136,8 +137,7 @@ net_dict = {
         # time constant of postsynaptic currents (in ms)
         'tau_syn': 0.5,
         # refractory period of the neurons after a spike (in ms)
-        't_ref': 2.0}
-}
+        't_ref': 2.0}}
 
 # derive matrix of mean PSPs,
 # the weight of the connection from L4E to L23E is doubled
@@ -145,30 +145,28 @@ mean_PSP_matrix = get_exc_inh_matrix(
     net_dict['PSP_e'],
     net_dict['PSP_e'] * net_dict['g'],
     len(net_dict['populations']))
-mean_PSP_matrix[0,2] *= 2
+mean_PSP_matrix[0, 2] *= 2
 
 updated_dict = {
     # matrix of mean PSPs
     'mean_PSP_matrix': mean_PSP_matrix,
-        
+
     # matrix of standard deviations of PSPs
     'std_PSP_matrix': get_exc_inh_matrix(
         net_dict['PSP_std'],
         net_dict['PSP_std'],
-        len(net_dict['populations'])
-    ),
+        len(net_dict['populations'])),
+
     # matrix of mean delays
     'mean_delay_matrix': get_exc_inh_matrix(
         net_dict['mean_delay_exc'],
         net_dict['mean_delay_inh'],
-        len(net_dict['populations'])
-    ),
+        len(net_dict['populations'])),
+
     # matrix of standard deviations of delays
     'std_delay_matrix': get_exc_inh_matrix(
         net_dict['mean_delay_exc'] * net_dict['rel_std_delay'],
         net_dict['mean_delay_inh'] * net_dict['rel_std_delay'],
-        len(net_dict['populations'])
-    ),
-}
+        len(net_dict['populations']))}
 
 net_dict.update(updated_dict)

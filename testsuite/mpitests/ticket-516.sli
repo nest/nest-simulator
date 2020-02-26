@@ -37,10 +37,7 @@
   (Number of virtual processes: ) n_vp cvs join =
   (Rank: ) Rank cvs join =
 
-  << /grng_seed master_seed n_vp add
-     /rng_seeds [master_seed n_vp add 1 add
-                 master_seed n_vp 2 mul add] Range
-  >> SetKernelStatus
+  << /rng_seed master_seed >> SetKernelStatus
 
   /layer << /shape [ 10 10 ] /edge_wrap false /elements /iaf_psc_delta >> CreateLayer def
 

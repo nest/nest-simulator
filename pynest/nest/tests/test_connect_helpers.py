@@ -284,11 +284,7 @@ def reset_seed(seed, nr_threads):
     '''
 
     nest.ResetKernel()
-    nest.SetKernelStatus({'local_num_threads': nr_threads})
-    nr_procs = nest.GetKernelStatus()['total_num_virtual_procs']
-    seeds = [((nr_procs + 1) * seed + k) for k in range(nr_procs)]
-    nest.SetKernelStatus({'rng_seeds': seeds,
-                          'grng_seed': nr_procs * (seed + 1) + seed})
+    nest.SetKernelStatus({'local_num_threads': nr_threads, 'rng_seed': seed})
 
 # copied from Masterthesis, Daniel Hjertholm
 

@@ -31,7 +31,7 @@ This test ensures that delays drawn from continuous distribution are not
 rounded up strictly.
 
 Remarks: This test is probabilistic, so there is a minuscule chance of it
-      failing even if all is well. 
+      failing even if all is well.
 
 Author: Hans Ekkehard Plesser
 */
@@ -45,12 +45,12 @@ M_ERROR setverbosity
 {
   ResetKernel
   << /resolution 0.1 >>  SetKernelStatus
-  
+
   /iaf_psc_alpha Create dup
   << /rule /fixed_indegree /indegree 1000 >>
-  << /delay << /distribution /uniform /low 0.11 /high 0.19 >> >>
+  << /delay << /uniform << /min 0.11 /max 0.19 >> >> CreateParameter >>
   Connect
-  
+
   % delays are drawn randomly from [0.11, 0.19), so about half should
   % be rounded down to 0.1, half up to 0.2
   << >> GetConnections { /delay get } Map
@@ -58,7 +58,7 @@ M_ERROR setverbosity
   exch
   { 0.15 gt } Select length 100 gt
   and
-} 
+}
 assert_or_die
 
 endusing

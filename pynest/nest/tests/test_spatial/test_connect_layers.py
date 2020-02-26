@@ -34,7 +34,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         dim = [4, 5]
         extent = [10., 10.]
         nest.ResetKernel()
-        nest.SetKernelStatus({'grng_seed': 123, 'rng_seeds': [456]})
+        nest.SetKernelStatus({'rng_seed': 123})
         self.layer = nest.Create(
             'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
 
@@ -219,7 +219,7 @@ class ConnectLayersTestCase(unittest.TestCase):
                 }
             }
         }
-        self._check_connections(conn_spec, 52)
+        self._check_connections(conn_spec, 51)
 
     def test_connect_layers_bernoulli_kernel_mask_source(self):
         """
@@ -236,7 +236,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             },
             'use_on_source': True
         }
-        self._check_connections(conn_spec, 52)
+        self._check_connections(conn_spec, 51)
 
     def test_connect_nonlayers_mask(self):
         """Throw when connecting non-layer NodeCollections with mask."""

@@ -92,7 +92,7 @@ struct RNG : public BaseRNG
   inline unsigned long
   ulrand( unsigned long N )
   {
-    std::uniform_int_distribution< unsigned long >::param_type param( 0, N );
+    std::uniform_int_distribution< unsigned long >::param_type param( 0, N - 1 );
     return uniform_ulong_dist_( rng_, param );
   }
 

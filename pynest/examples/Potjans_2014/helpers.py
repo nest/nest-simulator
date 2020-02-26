@@ -292,8 +292,8 @@ def boxplot(path, populations):
     pop_names = [string.replace('23', '2/3') for string in populations]
     label_pos = list(range(len(populations), 0, -1))
     color_list = ['#af143c', '#595289']
-    medianprops = dict(linestyle='-', linewidth=2.5, color='green')
-    meanprops = dict(linestyle='--', linewidth=2.5, color='yellow')
+    medianprops = dict(linestyle='-', linewidth=2.5, color='black')
+    meanprops = dict(linestyle='--', linewidth=2.5, color='lightgray')
 
     rates_per_neuron_rev = []
     for i in np.arange(len(populations))[::-1]:

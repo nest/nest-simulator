@@ -30,25 +30,24 @@ basic plots of the network activity.
 ###############################################################################
 # Import the necessary modules and start the time measurements.
 
+from stimulus_params import stim_dict
+from network_params import net_dict
+from sim_params import sim_dict
+import network
+import nest
+import numpy as np
 import time
 time_start = time.time()
 
-import numpy as np
-import nest
-import network
-from sim_params import sim_dict
-from network_params import net_dict
-from stimulus_params import stim_dict
-
 ###############################################################################
 # Initialize the network with simulation, network and stimulation parameters,
-# create and connect all nodes and simulate.
+# then create and connect all nodes, and finally simulate.
 
 net = network.Network(sim_dict, net_dict, stim_dict)
 time_network = time.time()
 
 net.create()
-time_create = time.time() 
+time_create = time.time()
 
 net.connect()
 time_connect = time.time()
@@ -76,9 +75,9 @@ time_evaluate = time.time()
 
 print(
     '\nTimes of Rank {}:\n'.format(nest.Rank())
-  + '  Total time:         {:.3f} s\n'.format(time_evaluate - time_start)
-  + '  Time to initialize: {:.3f} s\n'.format(time_network - time_start)
-  + '  Time to create:     {:.3f} s\n'.format(time_create - time_network)
-  + '  Time to connect:    {:.3f} s\n'.format(time_connect - time_create)
-  + '  Time to simulate:   {:.3f} s\n'.format(time_simulate - time_connect)
-  + '  Time to evaluate:   {:.3f} s\n'.format(time_evaluate - time_simulate))
+    + '  Total time:         {:.3f} s\n'.format(time_evaluate - time_start)
+    + '  Time to initialize: {:.3f} s\n'.format(time_network - time_start)
+    + '  Time to create:     {:.3f} s\n'.format(time_create - time_network)
+    + '  Time to connect:    {:.3f} s\n'.format(time_connect - time_create)
+    + '  Time to simulate:   {:.3f} s\n'.format(time_simulate - time_connect)
+    + '  Time to evaluate:   {:.3f} s\n'.format(time_evaluate - time_simulate))

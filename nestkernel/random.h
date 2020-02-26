@@ -41,24 +41,27 @@ using poisson_param_type = std::poisson_distribution<>::param_type;
 
 struct BaseRNG; // forward declaration
 using RngPtr = std::shared_ptr< BaseRNG >;
+using rng_result_type = unsigned long;
 
 struct BaseRNG
 {
-  virtual int operator()() = 0;
+  virtual rng_result_type operator()() = 0;
   virtual RngPtr clone( unsigned long seed ) = 0;
   virtual double drand() = 0;
   virtual unsigned long ulrand( unsigned long N ) = 0;
-  virtual double min() = 0;
-  virtual double max() = 0;
+  virtual rng_result_type min() = 0;
+  virtual rng_result_type max() = 0;
   virtual void seed( unsigned long seed ) = 0;
 };
 
 template < typename RNG_TYPE_ >
 struct RNG : public BaseRNG
 {
+  using result_type = rng_result_type;
+
   RNG(){};
 
-  RNG( unsigned long seed )
+  RNG( result_type seed )
     : rng_( seed )
   {
   }
@@ -69,13 +72,13 @@ struct RNG : public BaseRNG
   {
   }
 
-  inline int operator()() override
+  inline result_type operator()() override
   {
     return rng_();
   }
 
   inline RngPtr
-  clone( unsigned long seed ) override
+  clone( result_type seed ) override
   {
     return std::make_shared< RNG< RNG_TYPE_ > >( seed );
   }
@@ -93,20 +96,20 @@ struct RNG : public BaseRNG
     return uniform_ulong_dist_( rng_, param );
   }
 
-  inline double
+  inline result_type
   min() override
   {
     return rng_.min();
   }
 
-  inline double
+  inline result_type
   max() override
   {
     return rng_.max();
   }
 
   inline void
-  seed( unsigned long seed ) override
+  seed( result_type seed ) override
   {
     return rng_.seed( seed );
   }

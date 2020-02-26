@@ -70,18 +70,18 @@ def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
     Parameters
     ----------
     PSP
-        Mean amplitude of postsynaptic potential.
+        Mean amplitude of postsynaptic potential (in mV).
     C_m
-        Membrane capacitance.
+        Membrane capacitance (in pF).
     tau_m
-        Membrane time constant.
+        Membrane time constant (in ms).
     tau_syn
-        Synaptic time constant.
+        Synaptic time constant (in ms).
 
     Returns
     -------
     PSC
-        Amplitude of postynaptic current.
+        Amplitude of postynaptic current (in pA).
 
     """
     PSC_over_PSP= (((C_m) ** (-1) * tau_m * tau_syn / (
@@ -98,18 +98,18 @@ def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
     Parameters
     ----------
     bg_rate
-        Rate of external Poisson generators.
+        Rate of external Poisson generators (in Hz).
     K_ext
         External indegrees.
     tau_syn
-        Synaptic time constant.
+        Synaptic time constant (in ms).
     PSC_ext
-        Weight of external connections.
+        Weight of external connections (in pA).
 
     Returns
     -------
     DC
-        DC input, which compensates lacking Poisson input.
+        DC input (in pA) which compensates lacking Poisson input.
     """
     DC = bg_rate * K_ext * PSC_ext * tau_syn * 0.001
     return DC
@@ -133,30 +133,30 @@ def adjust_weights_and_input_to_synapse_scaling(
     K_scaling
         Scaling factor for indegrees.
     mean_PSC_matrix
-        Weight matrix.
+        Weight matrix (in pA).
     PSC_ext
-        External weight.
+        External weight (in pA).
     tau_syn
-        Synaptic time constant.
+        Synaptic time constant (in ms).
     full_mean rates
-        Firing rates of the full network.
+        Firing rates of the full network (in Hz).
     DC_amp
-        DC input current.
+        DC input current (in pA).
     poisson_input
         True if Poisson input is used.
     bg_rate
-        Firing rate of Poisson generators.
+        Firing rate of Poisson generators (in Hz).
     K_ext
         External indegrees.
 
     Returns
     -------
     PSC_matrix_new
-        Adjusted weight matrix.
+        Adjusted weight matrix (in pA).
     PSC_ext_new
-        Adjusted external weight.
+        Adjusted external weight (in pA).
     DC_amp_new
-        Adjusted DC input.
+        Adjusted DC input (in pA).
 
     """
     PSC_matrix_new = mean_PSC_matrix / np.sqrt(K_scaling)
@@ -187,9 +187,9 @@ def plot_raster(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Time point to start plotting spikes (included).
+        Time point (in ms) to start plotting spikes (included).
     end
-        Time point to stop plotting spikes (included).
+        Time point (in ms) to stop plotting spikes (included).
 
     Returns
     -------
@@ -231,9 +231,9 @@ def firing_rates(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Time point to start calculating the firing rates (included).
+        Time point (in ms) to start calculating the firing rates (included).
     end
-        Time point to stop calculating the firing rates (included).
+        Time point (in ms) to stop calculating the firing rates (included).
 
     Returns
     -------
@@ -368,9 +368,9 @@ def __load_spike_times(path, name, begin, end):
     name
         Name of the spike detector.
     begin
-        Time point to start loading spike times (included).
+        Time point (in ms) to start loading spike times (included).
     end
-        Time point to stop loading spike times (included).
+        Time point (in ms) to stop loading spike times (included).
 
     Returns
     -------

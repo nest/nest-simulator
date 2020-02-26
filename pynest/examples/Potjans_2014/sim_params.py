@@ -36,7 +36,7 @@ sim_dict = {
     # Path to save the output data.
     'data_path': os.path.join(os.getcwd(), 'data/'),
     # Masterseed for NEST and NumPy.
-    'master_seed': 55,
+    'master_seed': 555,
     # Number of threads per MPI process.
     'local_num_threads': 1,
     # Recording interval of the membrane potential (in ms).

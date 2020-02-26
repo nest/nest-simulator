@@ -152,7 +152,7 @@ class Network:
                 self.data_path, 'spike_detector',
                 firing_rates_interval[0], firing_rates_interval[1]
                 )
-            helpers.boxplot(self.net_dict, self.data_path)
+            helpers.boxplot(self.data_path, self.net_dict['populations'])
 
 
     def __derive_parameters(self):
@@ -164,11 +164,11 @@ class Network:
         # total number of synapses between neuronal populations before scaling
         full_num_synapses = helpers.num_synapses_from_conn_probs(
             self.net_dict['conn_probs'],
-            self.net_dict['N_full'],
-            self.net_dict['N_full'])
+            self.net_dict['full_num_neurons'],
+            self.net_dict['full_num_neurons'])
 
         # scaled numbers of neurons and synapses
-        self.num_neurons = (self.net_dict['N_full'] \
+        self.num_neurons = (self.net_dict['full_num_neurons'] \
                 * self.net_dict['N_scaling']).astype(int)
         self.num_synapses = (full_num_synapses \
             * self.net_dict['N_scaling'] \
@@ -178,7 +178,7 @@ class Network:
 
         # conversion from PSP to PSC
         mean_PSC_matrix = helpers.weight_as_current_from_potential(
-            self.net_dict['PSP_mean_matrix'],
+            self.net_dict['mean_PSP_matrix'],
             self.net_dict['neuron_params']['C_m'],
             self.net_dict['neuron_params']['tau_m'],
             self.net_dict['neuron_params']['tau_syn'])
@@ -204,7 +204,7 @@ class Network:
         if self.net_dict['K_scaling'] != 1:
             mean_PSC_matrix, PSC_ext, DC_amp = \
                 helpers.adjust_weights_and_input_to_synapse_scaling(
-                    self.net_dict['N_full'],
+                    self.net_dict['full_num_neurons'],
                     full_num_synapses, self.net_dict['K_scaling'],
                     mean_PSC_matrix, PSC_ext,
                     self.net_dict['neuron_params']['tau_syn'],
@@ -215,7 +215,7 @@ class Network:
 
         # store final parameters as class attributes
         self.mean_weight_matrix = mean_PSC_matrix
-        self.std_weight_matrix = self.net_dict['PSP_std_matrix']
+        self.std_weight_matrix = self.net_dict['std_PSP_matrix']
         self.weight_ext = PSC_ext
         self.DC_amp = DC_amp
  
@@ -224,7 +224,7 @@ class Network:
             nr_synapses_th = helpers.num_synapses_from_conn_probs(
                 self.stim_dict['conn_probs_th'],
                 self.stim_dict['n_thal'],
-                self.net_dict['N_full'])[0]
+                self.net_dict['full_num_neurons'])[0]
             self.thalamic_weight = helpers.weight_as_current_from_potential(
                 self.stim_dict['PSP_th'],
                 self.net_dict['neuron_params']['C_m'],

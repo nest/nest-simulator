@@ -29,115 +29,28 @@ parameters.
 
 import numpy as np
 
-
-def get_mean_delays(mean_delay_exc, mean_delay_inh, number_of_pop):
-    """ Creates matrix containing the delays of all connections.
+def get_exc_inh_matrix(val_exc, val_inh, num_pops):
+    """ Creates a matrix for excitatory and inhibitory values.
 
     Parameters
     ----------
-    mean_delay_exc
-        Delay of the excitatory connections.
-    mean_delay_inh
-        Delay of the inhibitory connections.
-    number_of_pop
+    val_exc
+        Excitatory value.
+    val_inh
+        Inhibitory value.
+    num_pops
         Number of populations.
 
     Returns
     -------
-    mean_delays
-        Matrix specifying the mean delay of all connections.
+    matrix
+        A matrix of of size (num_pops x num_pops).
 
     """
-
-    dim = number_of_pop
-    mean_delays = np.zeros((dim, dim))
-    mean_delays[:, 0:dim:2] = mean_delay_exc
-    mean_delays[:, 1:dim:2] = mean_delay_inh
-    return mean_delays
-
-
-def get_std_delays(std_delay_exc, std_delay_inh, number_of_pop):
-    """ Creates matrix containing the standard deviations of all delays.
-
-    Parameters
-    ----------
-    std_delay_exc
-        Standard deviation of excitatory delays.
-    std_delay_inh
-        Standard deviation of inhibitory delays.
-    number_of_pop
-        Number of populations in the microcircuit.
-
-    Returns
-    -------
-    std_delays
-        Matrix specifying the standard deviations of all delays.
-
-    """
-
-    dim = number_of_pop
-    std_delays = np.zeros((dim, dim))
-    std_delays[:, 0:dim:2] = std_delay_exc
-    std_delays[:, 1:dim:2] = std_delay_inh
-    return std_delays
-
-
-def get_mean_PSP_matrix(PSP_e, g, number_of_pop):
-    """ Creates a matrix of the mean evoked postsynaptic potential.
-
-    The function creates a matrix of the mean evoked postsynaptic
-    potentials between the recurrent connections of the microcircuit.
-    The weight of the connection from L4E to L23E is doubled.
-
-    Parameters
-    ----------
-    PSP_e
-        Mean evoked potential.
-    g
-        Relative strength of the inhibitory to excitatory connection.
-    number_of_pop
-        Number of populations in the microcircuit.
-
-    Returns
-    -------
-    weights
-        Matrix of the weights for the recurrent connections.
-
-    """
-    dim = number_of_pop
-    weights = np.zeros((dim, dim))
-    exc = PSP_e
-    inh = PSP_e * g
-    weights[:, 0:dim:2] = exc
-    weights[:, 1:dim:2] = inh
-    weights[0, 2] = exc * 2
-    return weights
-
-
-def get_std_PSP_matrix(PSP_rel, number_of_pop):
-    """ Relative standard deviation matrix of postsynaptic potentials created.
-
-    The relative standard deviation matrix of the evoked postsynaptic potentials
-    for the recurrent connections of the microcircuit is created.
-
-    Parameters
-    ----------
-    PSP_rel
-        Relative standard deviation of the evoked postsynaptic potential.
-    number_of_pop
-        Number of populations in the microcircuit.
-
-    Returns
-    -------
-    std_mat
-        Matrix of the standard deviation of postsynaptic potentials.
-
-    """
-    dim = number_of_pop
-    std_mat = np.zeros((dim, dim))
-    std_mat[:, :] = PSP_rel
-    return std_mat
-
+    matrix = np.zeros((num_pops, num_pops))
+    matrix[:, 0:num_pops:2] = val_exc
+    matrix[:, 1:num_pops:2] = val_inh
+    return matrix
 
 net_dict = {
     # neuron model
@@ -151,7 +64,7 @@ net_dict = {
     'populations': ['L23E', 'L23I', 'L4E', 'L4I', 'L5E', 'L5I', 'L6E', 'L6I'],
     # number of neurons in the different populations (the order of the
     # elements corresponds to the names of the variable 'populations')
-    'N_full': np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
+    'full_num_neurons': np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
     # Mean rates of the different populations in the non-scaled version
     # of the microcircuit. Necessary for the scaling of the network.
     # The order corresponds to the order in 'populations'.
@@ -231,22 +144,32 @@ net_dict = {
         't_ref': 2.0}
 }
 
+# derive matrix of mean PSPs,
+# the weight of the connection from L4E to L23E is doubled
+mean_PSP_matrix = get_exc_inh_matrix(
+    net_dict['PSP_e'],
+    net_dict['PSP_e'] * net_dict['g'],
+    len(net_dict['populations']))
+mean_PSP_matrix[0,2] *= 2
+
 updated_dict = {
     # matrix of mean PSPs
-    'PSP_mean_matrix': get_mean_PSP_matrix(
-        net_dict['PSP_e'], net_dict['g'], len(net_dict['populations'])
-    ),
+    'mean_PSP_matrix': mean_PSP_matrix,
+        
     # matrix of standard deviations of PSPs
-    'PSP_std_matrix': get_std_PSP_matrix(
-        net_dict['PSP_sd'], len(net_dict['populations'])
+    'std_PSP_matrix': get_exc_inh_matrix(
+        net_dict['PSP_sd'],
+        net_dict['PSP_sd'],
+        len(net_dict['populations'])
     ),
     # matrix of mean delays
-    'mean_delay_matrix': get_mean_delays(
-        net_dict['mean_delay_exc'], net_dict['mean_delay_inh'],
+    'mean_delay_matrix': get_exc_inh_matrix(
+        net_dict['mean_delay_exc'],
+        net_dict['mean_delay_inh'],
         len(net_dict['populations'])
     ),
     # matrix of standard deviations of delays
-    'std_delay_matrix': get_std_delays(
+    'std_delay_matrix': get_exc_inh_matrix(
         net_dict['mean_delay_exc'] * net_dict['rel_std_delay'],
         net_dict['mean_delay_inh'] * net_dict['rel_std_delay'],
         len(net_dict['populations'])

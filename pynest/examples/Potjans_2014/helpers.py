@@ -102,9 +102,9 @@ def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
     K_ext
         External indegrees.
     tau_syn
-        Synaptic time constant in ms.
+        Synaptic time constant.
     PSC_ext
-        Weight of external connections in pA.
+        Weight of external connections.
 
     Returns
     -------
@@ -116,7 +116,7 @@ def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
 
 
 def adjust_weights_and_input_to_synapse_scaling(
-    N_full, full_num_synapses, K_scaling, mean_PSC_matrix, PSC_ext, tau_syn,
+    full_num_neurons, full_num_synapses, K_scaling, mean_PSC_matrix, PSC_ext, tau_syn,
     full_mean_rates, DC_amp, poisson_input, bg_rate, K_ext):
     """ Adjusts weights and external input to scaling of indegrees.
 
@@ -126,7 +126,7 @@ def adjust_weights_and_input_to_synapse_scaling(
 
     Parameters
     ----------
-    N_full
+    full_num_neurons
         Total numbers of neurons.
     full_num_synapses
         Total numbers of synapses.
@@ -164,7 +164,7 @@ def adjust_weights_and_input_to_synapse_scaling(
     
     # recurrent input of full network
     indegree_matrix = \
-        full_num_synapses / N_full.reshape(len(K_ext), 1)
+        full_num_synapses / full_num_neurons.reshape(len(K_ext), 1)
     input_rec = np.sum(mean_PSC_matrix * indegree_matrix * full_mean_rates,
                        axis=1)
 
@@ -259,7 +259,7 @@ def firing_rates(path, name, begin, end):
         np.around(all_std_rates, decimals=3)))
 
 
-def boxplot(net_dict, path):
+def boxplot(path, populations):
     """ Creates a boxblot of the firing rates of all populations.
 
     To create the boxplot, the firing rates of each neuron in each population
@@ -267,10 +267,10 @@ def boxplot(net_dict, path):
 
     Parameters
     -----------
-    net_dict
-        Dictionary containing parameters of the microcircuit.
     path
-        Patnp.mean(rate_per_neuron)h were the firing rates are stored.
+        Path were the firing rates are stored.
+    populations
+        Names of neuronal populations.
 
     Returns
     -------
@@ -278,15 +278,14 @@ def boxplot(net_dict, path):
 
     """
     fs = 18
-    pops = net_dict['N_full']
-    pop_names = [string.replace('23', '2/3') for string in net_dict['populations']]
-    label_pos = list(range(len(pops), 0, -1))
+    pop_names = [string.replace('23', '2/3') for string in populations]
+    label_pos = list(range(len(populations), 0, -1))
     color_list = ['#888888', '#000000']
     medianprops = dict(linestyle='-', linewidth=2.5, color='green')
     meanprops = dict(linestyle='--', linewidth= 2.5, color='blue')
     
     rates_per_neuron_rev = []
-    for i in np.arange(len(pops))[::-1]:
+    for i in np.arange(len(populations))[::-1]:
         rates_per_neuron_rev.append(
             np.loadtxt(os.path.join(path, ('rate' + str(i) + '.dat'))))
 
@@ -298,7 +297,7 @@ def boxplot(net_dict, path):
     plt.setp(bp['fliers'], color='red', marker='+')
 
     # boxcolors
-    for i in np.arange(len(pops)):
+    for i in np.arange(len(populations)):
         boxX = []
         boxY = []
         box = bp['boxes'][i]

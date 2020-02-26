@@ -75,7 +75,7 @@ Current communicating author: Johanna Senk
 
 2019: optimized initialization of membrane voltages added by Han-Jia Jiang
 
-2020: revision of code and documentation, and adaptation to NEST3 by Johanna Senk, Sara Konradi and Håkon Mørk.
+2020: revision of code and documentation, and adaptation to NEST3 by Johanna Senk
 
 Citation
 ########

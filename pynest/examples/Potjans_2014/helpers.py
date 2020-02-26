@@ -27,14 +27,15 @@ microcircuit.
 
 """
 
+from matplotlib.patches import Polygon
+import matplotlib.pyplot as plt
 import os
 import sys
 import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
+
 
 def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
     """Computes the total number of synapses between two populations from
@@ -53,12 +54,12 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
 
     Returns
     -------
-    K
+    num_synapses
         Matrix of synapse numbers.
     """
     prod = np.outer(popsize1, popsize2)
-    K = np.log(1. - conn_probs)/np.log((prod - 1.) / prod)
-    return K
+    num_synapses = np.log(1. - conn_probs) / np.log((prod - 1.) / prod)
+    return num_synapses
 
 
 def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
@@ -84,7 +85,7 @@ def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
         Amplitude of postynaptic current (in pA).
 
     """
-    PSC_over_PSP= (((C_m) ** (-1) * tau_m * tau_syn / (
+    PSC_over_PSP = (((C_m) ** (-1) * tau_m * tau_syn / (
         tau_syn - tau_m) * ((tau_m / tau_syn) ** (
             - tau_m / (tau_m - tau_syn)) - (tau_m / tau_syn) ** (
                 - tau_syn / (tau_m - tau_syn)))) ** (-1))
@@ -116,8 +117,17 @@ def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
 
 
 def adjust_weights_and_input_to_synapse_scaling(
-    full_num_neurons, full_num_synapses, K_scaling, mean_PSC_matrix, PSC_ext, tau_syn,
-    full_mean_rates, DC_amp, poisson_input, bg_rate, K_ext):
+        full_num_neurons,
+        full_num_synapses,
+        K_scaling,
+        mean_PSC_matrix,
+        PSC_ext,
+        tau_syn,
+        full_mean_rates,
+        DC_amp,
+        poisson_input,
+        bg_rate,
+        K_ext):
     """ Adjusts weights and external input to scaling of indegrees.
 
     The recurrent and external weights are adjusted to the scaling
@@ -161,7 +171,7 @@ def adjust_weights_and_input_to_synapse_scaling(
     """
     PSC_matrix_new = mean_PSC_matrix / np.sqrt(K_scaling)
     PSC_ext_new = PSC_ext / np.sqrt(K_scaling)
-    
+
     # recurrent input of full network
     indegree_matrix = \
         full_num_synapses / full_num_neurons.reshape(len(K_ext), 1)
@@ -196,18 +206,19 @@ def plot_raster(path, name, begin, end):
     None
 
     """
-    fs = 18
+    fs = 18  # fontsize
     ylabels = ['L2/3', 'L4', 'L5', 'L6']
-    color_list = np.tile(['#000000', '#888888'], 4)
+    color_list = np.tile(['#595289', '#af143c'], 4)
 
     sd_names, node_ids, data = __load_spike_times(path, name, begin, end)
-    last_node_id = node_ids[-1,-1]
+    last_node_id = node_ids[-1, -1]
     mod_node_ids = np.abs(node_ids - last_node_id) + 1
 
-    label_pos = [(mod_node_ids[i,0] + mod_node_ids[i+1,1])/2. for i in np.arange(0,8,2)]
+    label_pos = [(mod_node_ids[i, 0] + mod_node_ids[i + 1, 1]) /
+                 2. for i in np.arange(0, 8, 2)]
 
-    fig = plt.figure(1, figsize=(8, 6))
-    for i,n in enumerate(sd_names):
+    plt.figure(figsize=(8, 6))
+    for i, n in enumerate(sd_names):
         times = data[i]['time_ms']
         neurons = np.abs(data[i]['sender'] - last_node_id) + 1
         plt.plot(times, neurons, '.', color=color_list[i])
@@ -243,15 +254,15 @@ def firing_rates(path, name, begin, end):
     sd_names, node_ids, data = __load_spike_times(path, name, begin, end)
     all_mean_rates = []
     all_std_rates = []
-    for i,n in enumerate(sd_names):
+    for i, n in enumerate(sd_names):
         senders = data[i]['sender']
         # 1 more bin than node ids per population
-        bins = np.arange(node_ids[i,0], node_ids[i,1]+2) 
+        bins = np.arange(node_ids[i, 0], node_ids[i, 1] + 2)
         spike_count_per_neuron, _ = np.histogram(senders, bins=bins)
         rate_per_neuron = spike_count_per_neuron * 1000. / (end - begin)
         np.savetxt(os.path.join(path, ('rate' + str(i) + '.dat')),
                    rate_per_neuron)
-        # zeros are included    
+        # zeros are included
         all_mean_rates.append(np.mean(rate_per_neuron))
         all_std_rates.append(np.std(rate_per_neuron))
     print('Mean rates: {} Hz'.format(np.around(all_mean_rates, decimals=3)))
@@ -263,12 +274,12 @@ def boxplot(path, populations):
     """ Creates a boxblot of the firing rates of all populations.
 
     To create the boxplot, the firing rates of each neuron in each population
-    need to be computed with the function ``fire_rate()``.
+    need to be computed with the function ``firing_rate()``.
 
     Parameters
     -----------
     path
-        Path were the firing rates are stored.
+        Path where the firing rates are stored.
     populations
         Names of neuronal populations.
 
@@ -280,18 +291,18 @@ def boxplot(path, populations):
     fs = 18
     pop_names = [string.replace('23', '2/3') for string in populations]
     label_pos = list(range(len(populations), 0, -1))
-    color_list = ['#888888', '#000000']
+    color_list = ['#af143c', '#595289']
     medianprops = dict(linestyle='-', linewidth=2.5, color='green')
-    meanprops = dict(linestyle='--', linewidth= 2.5, color='blue')
-    
+    meanprops = dict(linestyle='--', linewidth=2.5, color='yellow')
+
     rates_per_neuron_rev = []
     for i in np.arange(len(populations))[::-1]:
         rates_per_neuron_rev.append(
             np.loadtxt(os.path.join(path, ('rate' + str(i) + '.dat'))))
 
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    plt.figure(figsize=(8, 6))
     bp = plt.boxplot(rates_per_neuron_rev, 0, 'rs', 0, medianprops=medianprops,
-        meanprops=meanprops, meanline=True, showmeans=True)
+                     meanprops=meanprops, meanline=True, showmeans=True)
     plt.setp(bp['boxes'], color='black')
     plt.setp(bp['whiskers'], color='black')
     plt.setp(bp['fliers'], color='red', marker='+')
@@ -307,10 +318,10 @@ def boxplot(path, populations):
         boxCoords = list(zip(boxX, boxY))
         k = i % 2
         boxPolygon = Polygon(boxCoords, facecolor=color_list[k])
-        ax1.add_patch(boxPolygon)
-    plt.xlabel('firing rate [Hz]', fontsize=18)
-    plt.yticks(label_pos, pop_names, fontsize=18)
-    plt.xticks(fontsize=18)
+        plt.gca().add_patch(boxPolygon)
+    plt.xlabel('firing rate [Hz]', fontsize=fs)
+    plt.yticks(label_pos, pop_names, fontsize=fs)
+    plt.xticks(fontsize=fs)
     plt.savefig(os.path.join(path, 'box_plot.png'), dpi=300)
 
 
@@ -381,11 +392,11 @@ def __load_spike_times(path, name, begin, end):
     """
     sd_files, sd_names, node_ids = __gather_metadata(path, name)
     data = {}
-    dtype = {'names': ('sender', 'time_ms'), # as in header
+    dtype = {'names': ('sender', 'time_ms'),  # as in header
              'formats': ('i4', 'f8')}
-    for i,name in enumerate(sd_names):
+    for i, name in enumerate(sd_names):
         data_i_raw = np.array([[]], dtype=dtype)
-        for j,f in enumerate(sd_files):
+        for j, f in enumerate(sd_files):
             if name in f:
                 # skip header while loading
                 ld = np.loadtxt(os.path.join(path, f), skiprows=3, dtype=dtype)
@@ -397,4 +408,3 @@ def __load_spike_times(path, name, begin, end):
         high = np.searchsorted(data_i_raw['time_ms'], v=end, side='right')
         data[i] = data_i_raw[low:high]
     return sd_names, node_ids, data
-

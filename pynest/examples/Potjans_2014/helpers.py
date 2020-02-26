@@ -36,185 +36,145 @@ if 'DISPLAY' not in os.environ:
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
+def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
+    """Computes the total number of synapses between two populations from
+    connection probabilities.
 
-def dc_input_compensating_poisson(net_dict, w_ext):
+    Here it is irrelevant which population is source and which target.
+
+    Paramters
+    ---------
+    conn_probs
+        Matrix of connection probabilities.
+    popsize1
+        Size of first poulation.
+    popsize2
+        Size of second population.
+
+    Returns
+    -------
+    K
+        Matrix of synapse numbers.
+    """
+    prod = np.outer(popsize1, popsize2)
+    K = np.log(1. - conn_probs)/np.log((prod - 1.) / prod)
+    return K
+
+
+def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
+    """ Computes weight as postsynaptic current from postsynaptic potential.
+
+    The weight is calculated as a postsynaptic current that is large enough to
+    elicit a change in the membrane potential of size ``PSP_e``.
+
+    Parameters
+    ----------
+    PSP
+        Mean amplitude of postsynaptic potential.
+    C_m
+        Membrane capacitance.
+    tau_m
+        Membrane time constant.
+    tau_syn
+        Synaptic time constant.
+
+    Returns
+    -------
+    PSC
+        Amplitude of postynaptic current.
+
+    """
+    PSC_over_PSP= (((C_m) ** (-1) * tau_m * tau_syn / (
+        tau_syn - tau_m) * ((tau_m / tau_syn) ** (
+            - tau_m / (tau_m - tau_syn)) - (tau_m / tau_syn) ** (
+                - tau_syn / (tau_m - tau_syn)))) ** (-1))
+    PSC = PSC_over_PSP * PSP
+    return PSC
+
+
+def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
     """ Computes DC input if no Poisson input is provided to the microcircuit.
 
     Parameters
     ----------
-    net_dict
-        Parameters of the microcircuit.
-    w_ext
-        Weight of external connections.
+    bg_rate
+        Rate of external Poisson generators.
+    K_ext
+        External indegrees.
+    tau_syn
+        Synaptic time constant in ms.
+    PSC_ext
+        Weight of external connections in pA.
 
     Returns
     -------
     DC
         DC input, which compensates lacking Poisson input.
     """
-    DC = (
-        net_dict['bg_rate'] * net_dict['K_ext'] *
-        w_ext * net_dict['neuron_params']['tau_syn_E'] * 0.001
-        )
+    DC = bg_rate * K_ext * PSC_ext * tau_syn * 0.001
     return DC
 
 
-def weight_as_current_from_potential(PSP_val, net_dict):
-    """ Computes weight as postsynaptic current from postsynaptic potential.
-
-    The weight is calculated as a postsynaptic current that is large enough to
-    elicit a change in the membrane potential of size ``PSP_val``.
-
-    Parameters
-    ----------
-    PSP_val
-        Evoked postsynaptic potential.
-    net_dict
-        Dictionary containing parameters of the microcircuit.
-
-    Returns
-    -------
-    PSC_e
-        Weight value(s).
-
-    """
-    C_m = net_dict['neuron_params']['C_m']
-    tau_m = net_dict['neuron_params']['tau_m']
-    tau_syn_ex = net_dict['neuron_params']['tau_syn_ex']
-
-    PSC_e_over_PSP_e = (((C_m) ** (-1) * tau_m * tau_syn_ex / (
-        tau_syn_ex - tau_m) * ((tau_m / tau_syn_ex) ** (
-            - tau_m / (tau_m - tau_syn_ex)) - (tau_m / tau_syn_ex) ** (
-                - tau_syn_ex / (tau_m - tau_syn_ex)))) ** (-1))
-    PSC_e = (PSC_e_over_PSP_e * PSP_val)
-    return PSC_e
-
-
-def total_num_synapses_populations(net_dict):
-    """ Returns the total number of synapses between all populations.
-
-    The first index (rows) of the output matrix is the target population
-    and the second (columns) the source population.
-
-    This function accounts for potentially scaled population sizes
-    (``N_scaling``) but a scaling of the synapse numbers is not included.
-    Instead, the main script ``network.py`` applies the corresponding
-    ``K_scaling`` to the result of this function.
-
-    Parameters
-    ----------
-    net_dict
-        Dictionary containing parameters of the microcircuit.
-
-    Returns
-    -------
-    K
-        Total number of synapses with
-        dimensions [len(populations), len(populations)].
-
-    """
-    N_full = net_dict['N_full']
-    number_N = len(N_full)
-    conn_probs = net_dict['conn_probs']
-    scaling = net_dict['N_scaling']
-    prod = np.outer(N_full, N_full)
-    n_syn_temp = np.log(1. - conn_probs)/np.log((prod - 1.) / prod)
-    N_full_matrix = np.tile(N_full, (number_N, 1)).T
-    K = (((n_syn_temp * (
-        N_full_matrix * scaling).astype(int)) / N_full_matrix).astype(int))
-    return K
-
-
-def total_num_synapses_thalamus(net_dict, stim_dict):
-    """ Computes number of synapses between thalamus and microcircuit.
-
-    The first index (rows) of the output matrix is the target population
-    and the second (columns) is the thalamus.
-
-    This function accounts for potentially scaled population sizes
-    (``N_scaling``) but a scaling of the synapse numbers is not included.
-    Instead, the main script ``network.py`` applies the corresponding
-    ``K_scaling`` to the result of this function.
-
-    Parameters
-    ----------
-    net_dict
-        Dictionary containing parameters of the microcircuit.
-    stim_dict
-        Dictionary containing stimulation parameters.
-
-    Returns
-    -------
-    K
-        Total number of synapses from the thalamus to the populations with
-        dimensions[len(populations), 1]
-
-    """
-    N_full = net_dict['N_full']
-    scaling = net_dict['N_scaling']
-    conn_probs = stim_dict['conn_probs_th']
-    T_full = stim_dict['n_thal']
-    prod = (T_full * N_full).astype(float)
-    n_syn_temp = np.log(1. - conn_probs)/np.log((prod - 1.)/prod)
-    K = ((n_syn_temp * (N_full * scaling).astype(int))/N_full).astype(int)
-    return K
-
-
 def adjust_weights_and_input_to_synapse_scaling(
-        K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
-    """ Adjusts weights and external input to scaling of synapse numbers.
+    N_full, full_num_synapses, K_scaling, mean_PSC_matrix, PSC_ext, tau_syn,
+    full_mean_rates, DC_amp, poisson_input, bg_rate, K_ext):
+    """ Adjusts weights and external input to scaling of indegrees.
 
     The recurrent and external weights are adjusted to the scaling
-    of the synapse numbers. Extra DC input is added to compensate for the
+    of the indegrees. Extra DC input is added to compensate for the
     scaling in order to preserve the mean and variance of the input.
 
     Parameters
     ----------
-    K_full
-        Total number of connections between the eight populations.
+    N_full
+        Total numbers of neurons.
+    full_num_synapses
+        Total numbers of synapses.
     K_scaling
-        Scaling factor for the connections.
-    w
-        Weight matrix of the connections of the eight populations.
-    w_from_PSP
-        Weight of the external connections.
-    DC
-        DC input to the eight populations.
-    net_dict
-        Dictionary containing parameters of the microcircuit.
-    stim_dict
-        Dictionary containing stimulation parameters.
+        Scaling factor for indegrees.
+    mean_PSC_matrix
+        Weight matrix.
+    PSC_ext
+        External weight.
+    tau_syn
+        Synaptic time constant.
+    full_mean rates
+        Firing rates of the full network.
+    DC_amp
+        DC input current.
+    poisson_input
+        True if Poisson input is used.
+    bg_rate
+        Firing rate of Poisson generators.
+    K_ext
+        External indegrees.
 
     Returns
     -------
-    w_new
+    PSC_matrix_new
         Adjusted weight matrix.
-    w_ext_new
+    PSC_ext_new
         Adjusted external weight.
-    I_ext
-        Extra DC input.
+    DC_amp_new
+        Adjusted DC input.
 
     """
-    tau_syn_E = net_dict['neuron_params']['tau_syn_E']
-    full_mean_rates = net_dict['full_mean_rates']
-    w_mean = w_from_PSP
-    K_ext = net_dict['K_ext']
-    bg_rate = net_dict['bg_rate']
-    w_new = w / np.sqrt(K_scaling)
-    I_ext = np.zeros(len(net_dict['populations']))
-    x1_all = w * K_full * full_mean_rates
-    x1_sum = np.sum(x1_all, axis=1)
-    if net_dict['poisson_input']:
-        x1_ext = w_mean * K_ext * bg_rate
-        w_ext_new = w_mean / np.sqrt(K_scaling)
-        I_ext = 0.001 * tau_syn_E * (
-            (1. - np.sqrt(K_scaling)) * x1_sum + (
-                1. - np.sqrt(K_scaling)) * x1_ext) + DC
-    else:
-        w_ext_new = w_from_PSP / np.sqrt(K_scaling)
-        I_ext = 0.001 * tau_syn_E * (
-            (1. - np.sqrt(K_scaling)) * x1_sum) + DC
-    return w_new, w_ext_new, I_ext
+    PSC_matrix_new = mean_PSC_matrix / np.sqrt(K_scaling)
+    PSC_ext_new = PSC_ext / np.sqrt(K_scaling)
+    
+    # recurrent input of full network
+    indegree_matrix = \
+        full_num_synapses / N_full.reshape(len(K_ext), 1)
+    input_rec = np.sum(mean_PSC_matrix * indegree_matrix * full_mean_rates,
+                       axis=1)
+
+    DC_amp_new = DC_amp \
+        + 0.001 * tau_syn * (1. - np.sqrt(K_scaling)) * input_rec
+
+    if poisson_input:
+        input_ext = PSC_ext * K_ext * bg_rate
+        DC_amp_new += 0.001 * tau_syn * (1. - np.sqrt(K_scaling)) * input_ext
+    return PSC_matrix_new, PSC_ext_new, DC_amp_new
 
 
 def plot_raster(path, name, begin, end):

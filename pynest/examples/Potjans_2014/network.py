@@ -59,6 +59,9 @@ class Network:
         else:
             self.stim_dict = None
 
+        # derive parameters based on input dictionaries
+        self.__derive_parameters()
+
         # data directory
         self.data_path = sim_dict['data_path']
         if nest.Rank() == 0:
@@ -159,6 +162,96 @@ class Network:
             helpers.boxplot(self.net_dict, self.data_path)
 
 
+    def __derive_parameters(self):
+        """
+        Derives and adjusts parameters and stores them as class attributes.
+        """
+        self.num_pops = len(self.net_dict['populations'])
+
+        # total number of synapses between neuronal populations before scaling
+        full_num_synapses = helpers.num_synapses_from_conn_probs(
+            self.net_dict['conn_probs'],
+            self.net_dict['N_full'],
+            self.net_dict['N_full'])
+
+        # scaled numbers of neurons and synapses
+        self.num_neurons = (self.net_dict['N_full'] \
+                * self.net_dict['N_scaling']).astype(int)
+        self.num_synapses = (full_num_synapses \
+            * self.net_dict['N_scaling'] \
+            * self.net_dict['K_scaling']).astype(int)
+        self.ext_indegrees = (self.net_dict['K_ext'] \
+            * self.net_dict['K_scaling']).astype(int)
+
+        # conversion from PSP to PSC
+        mean_PSC_matrix = helpers.weight_as_current_from_potential(
+            self.net_dict['PSP_mean_matrix'],
+            self.net_dict['neuron_params']['C_m'],
+            self.net_dict['neuron_params']['tau_m'],
+            self.net_dict['neuron_params']['tau_syn'])
+        PSC_ext = helpers.weight_as_current_from_potential(
+            self.net_dict['PSP_e'],
+            self.net_dict['neuron_params']['C_m'],
+            self.net_dict['neuron_params']['tau_m'],
+            self.net_dict['neuron_params']['tau_syn'])
+
+        # DC input compensates for potentially missing Poisson input
+        if self.net_dict['poisson_input']:
+            DC_amp = np.zeros(self.num_pops)
+        else:
+            if nest.Rank() == 0:
+                print('DC input compensates for missing Poisson input')
+            DC_amp = helpers.dc_input_compensating_poisson(
+                self.net_dict['bg_rate'], self.net_dict['K_ext'],
+                self.net_dict['neuron_params']['tau_syn'],
+                PSC_ext)
+            print(DC_amp)
+
+        # adjust weights and DC amplitude if the number of synapses is scaled
+        if self.net_dict['K_scaling'] != 1:
+            mean_PSC_matrix, PSC_ext, DC_amp = \
+                helpers.adjust_weights_and_input_to_synapse_scaling(
+                    self.net_dict['N_full'],
+                    full_num_synapses, self.net_dict['K_scaling'],
+                    mean_PSC_matrix, PSC_ext,
+                    self.net_dict['neuron_params']['tau_syn'],
+                    self.net_dict['full_mean_rates'],
+                    DC_amp,
+                    self.net_dict['poisson_input'],
+                    self.net_dict['bg_rate'], self.net_dict['K_ext'])
+
+        # store final parameters as class attributes
+        self.mean_weight_matrix = mean_PSC_matrix
+        self.std_weight_matrix = self.net_dict['PSP_std_matrix']
+        self.weight_ext = PSC_ext
+        self.DC_amp = DC_amp
+ 
+        # thalamic input
+        if self.stim_dict['thalamic_input']:
+            nr_synapses_th = helpers.num_synapses_from_conn_probs(
+                self.stim_dict['conn_probs_th'],
+                self.stim_dict['n_thal'],
+                self.net_dict['N_full'])[0]
+            self.thalamic_weight = helpers.weight_as_current_from_potential(
+                self.stim_dict['PSP_th'],
+                self.net_dict['neuron_params']['C_m'],
+                self.net_dict['neuron_params']['tau_m'],
+                self.net_dict['neuron_params']['tau_syn'])
+            if self.net_dict['K_scaling'] != 1:
+                nr_synapses_th *= self.net_dict['K_scaling']
+                self.thalamic_weight /= np.sqrt(self.net_dict['K_scaling'])
+            self.nr_synapses_th = nr_synapses_th.astype(int)
+            
+        if nest.Rank() == 0:
+            message = 'Neuron numbers are scaled by {:.3f}.\n'.format(
+                self.net_dict['N_scaling'])
+            message += 'Indegrees are scaled by {:.3f}'.format(
+                self.net_dict['K_scaling'])
+            if self.net_dict['K_scaling'] != 1:
+                message += '\n Weights and DC input are adjusted to compensate.'
+            print(message)
+
+
     def __setup_nest(self):
         """ Hands parameters to the NEST kernel.
 
@@ -205,90 +298,26 @@ class Network:
         The neuronal populations are created and the parameters are assigned
         to them. The initial membrane potential of the neurons is drawn from
         normal distributions dependent on the parameter ``V0_type``.
-        The number of neurons and synapses is scaled if the parameters
-        ``N_scaling`` and ``K_scaling`` are not 1. Scaling of the synapse number
-        leads to an extra DC input to be added to the neuronal populations.
         """
         if nest.Rank() == 0:
             print('Creating neuronal populations.')
 
-        self.num_pops = len(self.net_dict['populations'])
-
-        # total number of neurons and synapses and information about weights
-        # and external input before scaling
-        self.N_full = self.net_dict['N_full']
-        self.synapses = helpers.total_num_synapses_populations(self.net_dict)
-        
-        self.w_from_PSP = helpers.weight_as_current_from_potential(
-            self.net_dict['PSP_e'], self.net_dict)
-        self.weight_mat = helpers.weight_as_current_from_potential(
-            self.net_dict['PSP_mean_matrix'], self.net_dict
-            )
-        self.weight_mat_std = self.net_dict['PSP_std_matrix']
-        self.w_ext = self.w_from_PSP
-
-        if self.net_dict['poisson_input']:
-            self.DC_amp_e = np.zeros(len(self.net_dict['populations']))
-        else:
-            if nest.Rank() == 0:
-                print(
-                    """
-                    No Poisson input provided.
-                    Calculating DC input to compensate.
-                    """
-                    )
-            self.DC_amp_e = helpers.dc_input_compensating_poisson(
-                self.net_dict, self.w_ext)
-
-        # scaling factors
-        self.N_scaling = self.net_dict['N_scaling']
-        self.K_scaling = self.net_dict['K_scaling']
-
-        # compute scaled number of neurons and synapses,
-        # adjust weights if synapses are scaled
-        self.nr_neurons = self.N_full * self.N_scaling 
-        self.synapses_scaled = self.synapses * self.K_scaling
-        self.K_ext = self.net_dict['K_ext'] * self.K_scaling
-        
-        if self.K_scaling != 1:
-            synapses_indegree = self.synapses / (
-                self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
-            self.weight_mat, self.w_ext, self.DC_amp_e = \
-                helpers.adjust_weights_and_input_to_synapse_scaling(
-                synapses_indegree, self.K_scaling, self.weight_mat,
-                self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
-                )
-
-        if nest.Rank() == 0:
-            print(
-                'The number of neurons is scaled by a factor of: %.2f'
-                % self.N_scaling
-                )
-            print(
-                'The number of synapses is scaled by a factor of: %.2f'
-                % self.K_scaling
-                )
-            if self.K_scaling != 1:
-                print('Weights and external input are adjusted for compensation.')
-
-        # create cortical populations
         self.pops = []
         pop_file = open(
             os.path.join(self.data_path, 'population_nodeids.dat'), 'w+'
             )
         for i, pop in enumerate(self.net_dict['populations']):
-            population = nest.Create(
-                self.net_dict['neuron_model'], int(self.nr_neurons[i])
-                )
+            population = nest.Create(self.net_dict['neuron_model'],
+                                     self.num_neurons[i])
 
             population.set(
-                    tau_syn_ex=self.net_dict['neuron_params']['tau_syn_ex'],
-                    tau_syn_in=self.net_dict['neuron_params']['tau_syn_in'],
+                    tau_syn_ex=self.net_dict['neuron_params']['tau_syn'],
+                    tau_syn_in=self.net_dict['neuron_params']['tau_syn'],
                     E_L=self.net_dict['neuron_params']['E_L'],
                     V_th=self.net_dict['neuron_params']['V_th'],
                     V_reset=self.net_dict['neuron_params']['V_reset'],
                     t_ref=self.net_dict['neuron_params']['t_ref'],
-                    I_e=self.DC_amp_e[i]
+                    I_e=self.DC_amp[i]
                     )
 
             if self.net_dict['V0_type'] == 'optimized':
@@ -320,22 +349,22 @@ class Network:
         if 'spike_detector' in self.net_dict['rec_dev']:
             if nest.Rank() == 0:
                 print('  Creating spike detectors.')
-            sd_dic = {'record_to': 'ascii',
+            sd_dict = {'record_to': 'ascii',
                       'label': os.path.join(self.data_path, 'spike_detector')}
             self.spike_detectors = nest.Create('spike_detector',
                                                n=self.num_pops,
-                                               params=sd_dic) 
+                                               params=sd_dict) 
 
         if 'voltmeter' in self.net_dict['rec_dev']:
             if nest.Rank() == 0:
                 print('  Creating voltmeters.')
-            vm_dic = {'interval': self.sim_dict['rec_V_int'],
+            vm_dict = {'interval': self.sim_dict['rec_V_int'],
                       'record_to': 'ascii',
                       'record_from': ['V_m'],
                       'label': os.path.join(self.data_path, 'voltmeter')}
             self.voltmeters = nest.Create('voltmeter',
                                           n=self.num_pops,
-                                          params=vm_dic)
+                                          params=vm_dict)
 
 
     def __create_poisson_bg_input(self):
@@ -350,12 +379,18 @@ class Network:
 
         self.poisson_bg_input = nest.Create('poisson_generator',
                                             n=self.num_pops)
-        self.poisson_bg_input.rate = self.net_dict['bg_rate'] * self.K_ext
+        self.poisson_bg_input.rate = \
+            self.net_dict['bg_rate'] * self.ext_indegrees
 
 
     def __create_thalamic_stim_input(self):
         """ Creates the thalamic neuronal population if specified in
         ``stimulus_params.py``.
+
+        Thalamic neurons are of type ``parrot_neuron`` and receive input from a
+        Poisson generator.
+        Note that the number of thalamic neurons is not scaled with
+        ``Ǹ_scaling``.
 
         """
         if nest.Rank() == 0:
@@ -363,22 +398,12 @@ class Network:
 
         self.thalamic_population = nest.Create('parrot_neuron',
                                                n=self.stim_dict['n_thal'])
-        self.thalamic_weight = helpers.weight_as_current_from_potential(
-            self.stim_dict['PSP_th'], self.net_dict)
-        self.stop_th = (
-            self.stim_dict['th_start'] + self.stim_dict['th_duration'])
+
         self.poisson_th = nest.Create('poisson_generator')
         self.poisson_th.set(
             rate=self.stim_dict['th_rate'],
             start=self.stim_dict['th_start'],
-            stop=self.stop_th)
-        
-        self.nr_synapses_th = helpers.total_num_synapses_thalamus(
-            self.net_dict, self.stim_dict)
-        if self.K_scaling != 1:
-            self.thalamic_weight = self.thalamic_weight / (
-                self.K_scaling ** 0.5)
-            self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
+            stop=(self.stim_dict['th_start'] + self.stim_dict['th_duration']))
 
 
     def __create_dc_stim_input(self):
@@ -391,12 +416,12 @@ class Network:
             print(""" Creating DC generators for external stimulation.
                   dc_amp_stim = {} pA""".format(dc_amp_stim))
 
-        dc_dic = {'amplitude': dc_amp_stim,
+        dc_dict = {'amplitude': dc_amp_stim,
                   'start': self.stim_dict['dc_start'],
                   'stop': (self.stim_dict['dc_start'] \
                           + self.stim_dict['dc_dur'])} 
         self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
-                                             params=dic_dic)
+                                             params=dc_dict)
 
 
     def __connect_neuronal_populations(self):
@@ -408,10 +433,10 @@ class Network:
         std_delays = self.net_dict['std_delay_matrix']
         for i, target_pop in enumerate(self.pops):
             for j, source_pop in enumerate(self.pops):
-                synapse_nr = int(self.synapses_scaled[i][j])
+                synapse_nr = self.num_synapses[i][j]
                 if synapse_nr >= 0.:
-                    weight = self.weight_mat[i][j]
-                    w_sd = abs(weight * self.weight_mat_std[i][j])
+                    weight = self.mean_weight_matrix[i][j]
+                    w_sd = abs(weight * self.std_weight_matrix[i][j])
                     conn_dict_rec = {
                         'rule': 'fixed_total_number', 'N': synapse_nr
                         }
@@ -460,7 +485,7 @@ class Network:
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
                 'synapse_model': 'static_synapse',
-                'weight': self.w_ext,
+                'weight': self.weight_ext,
                 'delay': self.net_dict['poisson_delay']
                 }
             nest.Connect(
@@ -483,7 +508,7 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             conn_dict_th = {
                 'rule': 'fixed_total_number',
-                'N': int(self.nr_synapses_th[i])
+                'N': self.nr_synapses_th[i]
                 }
             syn_dict_th = {
                 'weight': {

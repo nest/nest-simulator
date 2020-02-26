@@ -225,12 +225,8 @@ net_dict = {
         'C_m': 250.0,
         # membrane time constant (in ms)
         'tau_m': 10.0,
-        # time constant of postsynaptic excitatory currents (in ms)
-        'tau_syn_ex': 0.5,
-        # time constant of postsynaptic inhibitory currents (in ms)
-        'tau_syn_in': 0.5,
-        # time constant of external postsynaptic excitatory current (in ms)
-        'tau_syn_E': 0.5,
+        # time constant of postsynaptic currents (in ms)
+        'tau_syn': 0.5,
         # refractory period of the neurons after a spike (in ms)
         't_ref': 2.0}
 }

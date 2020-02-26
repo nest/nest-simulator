@@ -45,13 +45,6 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
     return new ScalarDoubleParameter( *dd, nthreads );
   }
 
-  // random deviate
-  DictionaryDatum* rand_spec = dynamic_cast< DictionaryDatum* >( t.datum() );
-  if ( rand_spec )
-  {
-    return new RandomParameter( *rand_spec, nthreads );
-  }
-
   // single integer
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( id )
@@ -82,28 +75,6 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
 
   throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + t.datum()->gettypename().toString() );
 }
-
-nest::RandomParameter::RandomParameter( const DictionaryDatum& randdv_spec, const size_t )
-{
-  //  if ( not rdv_spec->known( names::distribution ) )
-  //  {
-  //    throw BadProperty( "Random distribution spec must contain distribution name." );
-  //  }
-  //
-  //  const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
-  //
-  //  if ( not RandomNumbers::get_rdvdict().known( rdv_name ) )
-  //  {
-  //    throw BadProperty( "Unknown random deviate: " + rdv_name );
-  //  }
-  //
-  //  librandom::RdvFactoryDatum factory =
-  //    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
-  //
-  //  rdv_ = factory->create();
-  //  rdv_->set_status( rdv_spec );
-}
-
 
 nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
   : parameter_( pd.get() )

@@ -379,39 +379,6 @@ private:
   mutable std::vector< std::vector< long >::const_iterator > next_;
 };
 
-/**
- * Random scalar value.
- *
- * On each request, it returns a new value drawn from the given deviate.
- */
-class RandomParameter : public ConnParameter
-{
-public:
-  RandomParameter( const DictionaryDatum&, const size_t );
-
-  double
-  value_double( thread, RngPtr rng, index, Node* ) const
-  {
-    return 4; //( rdv_ )( *rng );
-  }
-
-  long
-  value_int( thread, RngPtr rng, index, Node* ) const
-  {
-    return 4; //( rdv_ )( *rng );
-  }
-
-  inline bool
-  is_array() const
-  {
-    return false;
-  }
-
-private:
-  // TODO: check if the RandomParameter is still used
-  const std::normal_distribution<> rdv_;
-};
-
 class ParameterConnParameterWrapper : public ConnParameter
 {
 public:

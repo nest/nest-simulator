@@ -172,7 +172,7 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(len(sources))
         syn_model = 'static_synapse'
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.kernel.NESTErrors.UnknownNode):
             nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
                                                      'synapse_model': syn_model})
 

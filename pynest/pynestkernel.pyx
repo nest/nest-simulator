@@ -308,7 +308,8 @@ cdef class NESTEngine(object):
         try:
             connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, r_type_ptr, len(sources), syn_model_string )
         except RuntimeError as e:
-            raise NESTErrors.PyNESTError(str(e))
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls('connect_arrays', '') from None
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 

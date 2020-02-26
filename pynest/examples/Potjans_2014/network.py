@@ -86,7 +86,7 @@ class Network:
 
         """
         self.__create_neuronal_populations()
-        if len(self.net_dict['rec_dev']) > 0:
+        if len(self.sim_dict['rec_dev']) > 0:
             self.__create_recording_devices()
         if self.net_dict['poisson_input']:
             self.__create_poisson_bg_input()
@@ -105,7 +105,7 @@ class Network:
         """
         self.__connect_neuronal_populations()
 
-        if len(self.net_dict['rec_dev']) > 0:
+        if len(self.sim_dict['rec_dev']) > 0:
             self.__connect_recording_devices()
         if self.net_dict['poisson_input']:
             self.__connect_poisson_bg_input()
@@ -334,13 +334,13 @@ class Network:
     def __create_recording_devices(self):
         """ Creates one recording device of each kind per population.
 
-        Only devices which are given in ``net_dict['rec_dev']`` are created.
+        Only devices which are given in ``sim_dict['rec_dev']`` are created.
 
         """
         if nest.Rank() == 0:
             print('Creating recording devices.')
 
-        if 'spike_detector' in self.net_dict['rec_dev']:
+        if 'spike_detector' in self.sim_dict['rec_dev']:
             if nest.Rank() == 0:
                 print('  Creating spike detectors.')
             sd_dict = {'record_to': 'ascii',
@@ -349,7 +349,7 @@ class Network:
                                                n=self.num_pops,
                                                params=sd_dict) 
 
-        if 'voltmeter' in self.net_dict['rec_dev']:
+        if 'voltmeter' in self.sim_dict['rec_dev']:
             if nest.Rank() == 0:
                 print('  Creating voltmeters.')
             vm_dict = {'interval': self.sim_dict['rec_V_int'],
@@ -463,9 +463,9 @@ class Network:
             print('Connecting recording devices.')
 
         for i, target_pop in enumerate(self.pops):
-            if 'spike_detector' in self.net_dict['rec_dev']:
+            if 'spike_detector' in self.sim_dict['rec_dev']:
                 nest.Connect(target_pop, self.spike_detectors[i])
-            if 'voltmeter' in self.net_dict['rec_dev']:
+            if 'voltmeter' in self.sim_dict['rec_dev']:
                 nest.Connect(self.voltmeters[i], target_pop)
 
 

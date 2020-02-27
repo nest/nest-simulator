@@ -345,7 +345,7 @@ New functionality for connecting arrays of node IDs
 
 While you should aim to use NodeCollections to create connections whenever possible,
 there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
-In those cases it may be inefficient to convert the individual IDs in the pair to NodeCollections
+In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
 to be passed to the ``Connect()`` function, especially if there are thousands or millions of
 pairs to connect.
 
@@ -354,22 +354,22 @@ This variant of ``Connect()`` will create connections in a one-to-one fashion.
 
 ::
 
- nest.Create('iaf_psc_alpha', 10)
- # Node IDs in the arrays must address existing nodes, but may occur multiple times.
- sources = np.array([1, 5, 7, 5], dtype=np.uint64)
- targets = np.array([2, 2, 4, 4], dtype=np.uint64)
- nest.Connect(sources, targets)
+   nest.Create('iaf_psc_alpha', 10)
+   # Node IDs in the arrays must address existing nodes, but may occur multiple times.
+   sources = np.array([1, 5, 7, 5], dtype=np.uint64)
+   targets = np.array([2, 2, 4, 4], dtype=np.uint64)
+   nest.Connect(sources, targets)
 
-You may also add specifications to the ``syn_spec`` dictionary to define the synapse model,
-or specify weights, delays, or receptor type for each connection, as arrays. All arrays have
+You may also add specifications to the ``syn_spec`` dictionary to define the synapse model.
+You can also specify weights, delays, and receptor type for each connection as arrays. All arrays have
 to have lengths equal to those of ``sources`` and ``targets``.
 
 ::
 
- weights = np.array([0.5, 0.5, 2., 2.])
- delays = np.array([1., 1., 2., 2.])
- nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
-                                          'synapse_model': 'static_synapse'})
+   weights = np.array([0.5, 0.5, 2., 2.])
+   delays = np.array([1., 1., 2., 2.])
+   syn_spec = {'weight': weights, 'delay': delays, 'synapse_model': 'static_synapse'}
+   nest.Connect(sources, targets, syn_spec=syn_spec)
 
 
 .. _SynapseCollection:

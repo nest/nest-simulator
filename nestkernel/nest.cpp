@@ -268,8 +268,7 @@ connect_arrays( long* sources,
     }
     catch ( std::exception& err )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
+      // We must create a new exception here, err's lifetime ends at the end of the catch block.
       exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }

@@ -38,6 +38,11 @@
 namespace nest
 {
 
+/**
+ * A wrapper class for an integer that is only allowed to take the
+ * values 0 and 1. Used by PerThreadBoolIndicator to create a
+ * thread-safe vector indicating per-thread status. See issue #1394.
+ */
 class BoolIndicatorUInt64
 {
 public:
@@ -92,6 +97,7 @@ BoolIndicatorUInt64::logical_and( const bool status )
  * A thread-safe vector to keep track of the status across threads,
  * for example during gather operations. Uses a vector of integers
  * instead of a vector of bools to guarantee thread safety.
+ * See issue #1394.
  */
 class PerThreadBoolIndicator
 {

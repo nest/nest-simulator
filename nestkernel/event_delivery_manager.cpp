@@ -314,9 +314,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   while ( gather_completed_checker_.any_false() )
   {
-// Assume this is the last gather round and change to false
-// otherwise
-#pragma omp barrier
+    // Assume this is the last gather round and change to false
+    // otherwise
     gather_completed_checker_[ tid ].set_true();
 
 #pragma omp single
@@ -593,9 +592,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
   while ( gather_completed_checker_.any_false() )
   {
-// assume this is the last gather round and change to false
-// otherwise
-#pragma omp barrier
+    // assume this is the last gather round and change to false
+    // otherwise
     gather_completed_checker_[ tid ].set_true();
 
 #pragma omp single

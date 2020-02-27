@@ -56,8 +56,6 @@ private:
   static constexpr std::uint_fast64_t true_uint64 = true;
   static constexpr std::uint_fast64_t false_uint64 = false;
   std::uint_fast64_t status_;
-
-  friend class PerThreadBoolIndicator;
 };
 
 /**

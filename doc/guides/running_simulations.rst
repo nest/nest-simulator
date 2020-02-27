@@ -1,5 +1,5 @@
 Running simulations
-==============================
+===================
 
 Introduction
 ------------
@@ -38,7 +38,7 @@ propagates the internal state of a neuron or device.
 Simulation resolution and update interval
 -----------------------------------------
 
-Each connection in NEST has it's own specific *delay* that defines the
+Each connection in NEST has its own specific *delay* that defines the
 time it takes until an event reaches the target node. We define the
 minimum delay *dmin* as the smallest transmission delay and *dmax* as
 the largest delay in the network. From this definition follows that no
@@ -48,9 +48,7 @@ the elements are effectively decoupled for this interval.
 .. figure:: ../_static/img/time_definitions-300x61.png
    :alt: Definitions of the minimimum delay and the simulation resolution
 
-   Definitions of the minimimum delay and the simulation resolution.
-
-Definitions of minimum delay (dmin) and simulation resolution (h).
+   Definitions of minimum delay (*dmin*) and simulation resolution (*h*).
 
 Two major optimizations in NEST are built on this decoupling:
 
@@ -119,6 +117,8 @@ threshold crossing during the interval. Please see the documentation on
 for details about neuron update in continuous time and the
 :doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
+
+.. _stepped_simulations:
 
 Splitting a simulation into multiple intervals
 ----------------------------------------------
@@ -193,16 +193,9 @@ a Poisson spike train using different seeds and output files for each run:
         nrn= nest.Create('iaf_psc_alpha')
         sd = nest.Create('spike_detector',
                             params={'label': 'spikes-run{:02d}'.format(n),
-                                    'to_file': True})
+                                    'record_to': 'ascii'})
     
         nest.Connect(pg, nrn)
         nest.Connect(nrn, sd)
     
         nest.Simulate(100)
-    
-The ``ResetNetwork()`` function available in NEST 2 is incomplete in that it
-only resets the state of neurons and devices to default values and deletes
-spikes that are in the delivery pipeline. It does does not reset plastic
-synapses or delete spikes from the spike buffers of neurons. We will
-therefore remove the function in NEST 3 and already now **advise against
-using** ``ResetNetwork()``.

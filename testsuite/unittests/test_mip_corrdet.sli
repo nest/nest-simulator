@@ -63,13 +63,12 @@ ResetKernel
 
 userdict begin
 
-0
 << 
     /local_num_threads 1
     /resolution h
     /overwrite_files true
     /grng_seed 0 % because test data was produced for seed = 0
->> SetStatus
+>> SetKernelStatus
 
 % check, if we can set another rng
 /mip_generator << /mother_rng rngdict/MT19937 :: 101 CreateRNG >> SetDefaults
@@ -89,13 +88,7 @@ userdict begin
 >> SetStatus
 
 /spike_detector Create dup /sd Set
-<<
-    /to_file true
-    /to_memory false
-    /withtime true
-    /withgid true
-    /time_in_steps true
->> SetStatus
+<< /time_in_steps true >> SetStatus
 
 /parrot_neuron Create /pn1 Set
 /parrot_neuron Create /pn2 Set
@@ -124,9 +117,8 @@ pn2 cd Connect
 
 T Simulate
 
-cd GetStatus
-dup /histogram get cva /hist Set
-/n_events get cva arrayload ; /n2 Set /n1 Set
+cd /histogram get cva /hist Set
+cd /n_events get cva arrayload ; /n2 Set /n1 Set
 
 n1 T tau_max sub div 1000.0 mul /lmbd1 Set
 n2 T tau_max sub div 1000.0 mul /lmbd2 Set

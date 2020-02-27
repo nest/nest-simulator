@@ -109,6 +109,7 @@ public:
    */
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -156,7 +157,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Time constant in ms. */
     double tau_;
 
@@ -188,7 +188,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -210,7 +210,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -352,9 +352,9 @@ inline void
 rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -366,7 +366,7 @@ rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

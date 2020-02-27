@@ -24,129 +24,127 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "node_collection.h"
 #include "kernel_manager.h"
+#include "parameter.h"
 
 // Includes from sli:
 #include "dictutils.h"
 #include "integerdatum.h"
 
 // Includes from topology:
+#include "connection_creator_impl.h"
 #include "free_layer.h"
 #include "grid_layer.h"
+#include "layer_impl.h"
+#include "mask_impl.h"
+#include "topology.h"
 #include "topology_names.h"
 
 namespace nest
 {
 
-index AbstractLayer::cached_ntree_layer_ = -1;
-index AbstractLayer::cached_vector_layer_ = -1;
+NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
+NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
 }
 
-index
+NodeCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
-  const char* layer_model_name = 0;
-  std::vector< long > element_ids;
-  std::string element_name;
-  Token element_model;
+  AbstractLayer* layer_local = 0;
 
-  const Token& t = layer_dict->lookup( names::elements );
-  ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
+  auto element_name = getValue< std::string >( layer_dict, names::elements );
+  auto element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
 
-  if ( ad )
+  if ( element_model.empty() )
   {
-
-    for ( Token* tp = ad->begin(); tp != ad->end(); ++tp )
-    {
-
-      element_name = std::string( *tp );
-      element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
-
-      if ( element_model.empty() )
-      {
-        throw UnknownModelName( element_name );
-      }
-      // Creates several nodes if the next element in
-      // the elements variable is a number.
-      if ( ( tp + 1 != ad->end() ) && dynamic_cast< IntegerDatum* >( ( tp + 1 )->datum() ) )
-      {
-        // Select how many nodes that should be created.
-        const long number = getValue< long >( *( ++tp ) );
-        for ( long i = 0; i < number; ++i )
-        {
-          element_ids.push_back( static_cast< long >( element_model ) );
-        }
-      }
-      else
-      {
-        element_ids.push_back( static_cast< long >( element_model ) );
-      }
-    }
+    throw UnknownModelName( element_name );
   }
-  else
-  {
-
-    element_name = getValue< std::string >( layer_dict, names::elements );
-    element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
-
-    if ( element_model.empty() )
-    {
-      throw UnknownModelName( element_name );
-    }
-    element_ids.push_back( static_cast< long >( element_model ) );
-  }
+  auto element_id = static_cast< long >( element_model );
 
   if ( layer_dict->known( names::positions ) )
   {
-    if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns ) or layer_dict->known( names::layers ) )
+    if ( layer_dict->known( names::shape ) )
     {
-      throw BadProperty( "Can not specify both positions and rows or columns." );
+      throw BadProperty( "Cannot specify both positions and shape." );
     }
-    TokenArray positions = getValue< TokenArray >( layer_dict, names::positions );
+    int num_dimensions = 0;
 
-    if ( positions.size() == 0 )
+    const Token& tkn = layer_dict->lookup( names::positions );
+    if ( tkn.is_a< TokenArray >() )
+    {
+      TokenArray positions = getValue< TokenArray >( tkn );
+      length = positions.size();
+      std::vector< double > pos = getValue< std::vector< double > >( positions[ 0 ] );
+      num_dimensions = pos.size();
+    }
+    else if ( tkn.is_a< ParameterDatum >() )
+    {
+      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
+      auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
+      // To avoid nasty segfaults, we check that the parameter is indeed a DimensionParameter.
+      if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
+      {
+        throw KernelException( "When 'positions' is a Parameter, it must be a DimensionParameter." );
+      }
+      length = getValue< long >( layer_dict, names::n );
+      num_dimensions = positions->get_num_dimensions();
+    }
+    else
+    {
+      throw KernelException( "'positions' must be an array or a DimensionParameter." );
+    }
+
+    if ( length == 0 )
     {
       throw BadProperty( "Empty positions array." );
     }
 
-    std::vector< double > pos = getValue< std::vector< double > >( positions[ 0 ] );
-    if ( pos.size() == 2 )
+    if ( num_dimensions == 2 )
     {
-      layer_model_name = "topology_layer_free";
+      layer_local = new FreeLayer< 2 >();
     }
-    else if ( pos.size() == 3 )
+    else if ( num_dimensions == 3 )
     {
-      layer_model_name = "topology_layer_free_3d";
+      layer_local = new FreeLayer< 3 >();
     }
     else
     {
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
     }
-
-    length = positions.size();
   }
-  else if ( layer_dict->known( names::columns ) )
+  else if ( layer_dict->known( names::shape ) )
   {
+    std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
 
-    if ( not layer_dict->known( names::rows ) )
+    if ( not std::all_of( shape.begin(),
+           shape.end(),
+           []( long x )
+           {
+             return x > 0;
+           } ) )
     {
-      throw BadProperty( "Both columns and rows must be given." );
+      throw BadProperty( "All shape entries must be positive." );
     }
 
-    length = getValue< long >( layer_dict, names::columns ) * getValue< long >( layer_dict, names::rows );
+    int num_dimensions = shape.size();
+    length = std::accumulate( std::begin( shape ), std::end( shape ), 1, std::multiplies< long >() );
 
-    if ( layer_dict->known( names::layers ) )
+    if ( num_dimensions == 2 )
     {
-      layer_model_name = "topology_layer_grid_3d";
-      length *= getValue< long >( layer_dict, names::layers );
+      layer_local = new GridLayer< 2 >();
+    }
+    else if ( num_dimensions == 3 )
+    {
+      layer_local = new GridLayer< 3 >();
     }
     else
     {
-      layer_model_name = "topology_layer_grid";
+      throw BadProperty( "Shape must be of length 2 or 3." );
     }
   }
   else
@@ -154,113 +152,28 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     throw BadProperty( "Unknown layer type." );
   }
 
-  assert( layer_model_name != 0 );
-  Token layer_model = kernel().model_manager.get_modeldict()->lookup( layer_model_name );
-  if ( layer_model.empty() )
-  {
-    throw UnknownModelName( layer_model_name );
-  }
-  index layer_node = kernel().node_manager.add_node( layer_model );
+  assert( layer_local );
+  std::shared_ptr< AbstractLayer > layer_safe( layer_local );
+  NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
-  // Remember original subnet
-  const index cwnode = kernel().node_manager.get_cwn()->get_gid();
+  // We have at least one element, create a NodeCollection for it
+  NodeCollectionPTR node_collection = kernel().node_manager.add_node( element_id, length );
 
-  kernel().node_manager.go_to( layer_node );
+  node_collection->set_metadata( layer_meta );
 
-  // Create layer nodes.
-  for ( size_t i = 0; i < element_ids.size(); ++i )
-  {
-    kernel().node_manager.add_node( element_ids[ i ], length );
-  }
-  // Return to original subnet
-  kernel().node_manager.go_to( cwnode );
+  get_layer( node_collection )->node_collection_ = node_collection;
 
-  // Set layer parameters according to input dictionary.
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( layer_node ) );
-  layer->depth_ = element_ids.size();
-  layer->set_status( layer_dict );
+  layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
 
-  return layer_node;
+  layer_local->set_status( layer_dict );
+
+  return node_collection;
 }
 
-std::vector< Node* >::iterator
-AbstractLayer::local_begin( int depth )
+NodeCollectionMetadataPTR
+AbstractLayer::get_metadata() const
 {
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
-  std::vector< Node* >::iterator iter = local_begin();
-  for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() >= first_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::iterator
-AbstractLayer::local_end( int depth )
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth = gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
-  std::vector< Node* >::iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() > last_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::const_iterator
-AbstractLayer::local_begin( int depth ) const
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
-  std::vector< Node* >::const_iterator iter = local_begin();
-  for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() >= first_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::const_iterator
-AbstractLayer::local_end( int depth ) const
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth = gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
-  std::vector< Node* >::const_iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() > last_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
+  return node_collection_->get_metadata();
 }
 
 } // namespace nest

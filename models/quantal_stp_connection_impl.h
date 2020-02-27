@@ -38,8 +38,7 @@ namespace nest
 
 
 /* Polymorphic version of update_value.
- * This version is needed, because DataConnect will pass all properties as
- * doubles. This code will take either an int or a double and convert is to an
+ * This code will take either an int or a double and convert is to an
  * int.
  */
 bool

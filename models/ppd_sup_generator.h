@@ -99,11 +99,18 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return false;
-  } // does not use off_grid events
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
 
   /**
    * Import sets of overloaded virtual functions.
@@ -163,8 +170,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -265,7 +272,7 @@ inline void
 ppd_sup_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

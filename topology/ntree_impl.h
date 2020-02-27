@@ -296,14 +296,16 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
 
     // Move to next sibling
     ntree_ = ntree_->parent_->children_[ ntree_->my_subquad_ + 1 ];
+    // Create anchored position in two steps to avoid creating a new Position object.
+    anchored_position_ = ntree_->lower_left_;
+    anchored_position_ -= anchor_;
 
-    if ( mask_->inside( Box< D >( ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+    if ( mask_->inside( Box< D >( anchored_position_, anchored_position_ + ntree_->extent_ ) ) )
     {
       return first_leaf_inside_();
     }
 
-  } while (
-    mask_->outside( Box< D >( ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) );
+  } while ( mask_->outside( Box< D >( anchored_position_, anchored_position_ + ntree_->extent_ ) ) );
 
   return first_leaf_();
 }
@@ -348,19 +350,19 @@ typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
   Ntree< D, T, max_capacity, max_depth >::masked_iterator::
   operator++()
 {
-  node_++;
+  ++node_;
 
   if ( allin_top_ == 0 )
   {
-    while ( ( node_ < ntree_->nodes_.size() ) && ( not mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
+    while (
+      ( node_ < ntree_->nodes_.size() ) && ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
     {
-      node_++;
+      ++node_;
     }
   }
 
   while ( node_ >= ntree_->nodes_.size() )
   {
-
     next_leaf_();
 
     node_ = 0;
@@ -371,9 +373,10 @@ typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
 
     if ( allin_top_ == 0 )
     {
-      while ( ( node_ < ntree_->nodes_.size() ) && ( not mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
+      while (
+        ( node_ < ntree_->nodes_.size() ) && ( not anchored_position_inside_mask( ntree_->nodes_[ node_ ].first ) ) )
       {
-        node_++;
+        ++node_;
       }
     }
   }

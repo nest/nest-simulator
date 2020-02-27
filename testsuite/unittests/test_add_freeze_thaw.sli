@@ -51,56 +51,65 @@ ResetKernel
 % run on multiple threads if possible
 statusdict/threading :: (no) neq 
 {
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
 }
 if
+
+/node_pop_a /iaf_psc_alpha blocksize << /I_e -50.0 >> Create def
 
 % first test: one block of neurons
 {
   % hyperpolarizing, avoids spikes
-  /iaf_psc_alpha blocksize << /I_e -50.0 >> Create
   simtime Simulate
-  true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
+  true
+  node_pop_a
+  { 
+    /V_m get Vmref lt and 
+  } forall
 } assert_or_die
+
+/node_pop_b /iaf_psc_alpha blocksize << /I_e -50.0 >> Create def
+/all_nodes node_pop_a node_pop_b join def
 
 % second test: additional block of neurons
 {
   % reset existing neurons
-  0 GetGlobalLeaves { << /V_m Vmref >> SetStatus } forall
+  all_nodes { << /V_m Vmref >> SetStatus } forall
   
-  % add more neurons
-  /iaf_psc_alpha blocksize << /I_e -50.0 >> Create
   simtime Simulate
-  true 0 GetGlobalLeaves { /V_m get Vmref lt and } Fold
+  true
+  all_nodes
+  { 
+    /V_m get Vmref lt and 
+  } forall
 } assert_or_die
 
 % third test: freeze some neurons
 {
-  /nodes 0 GetGlobalLeaves def
   
   % reset existing neurons
-  nodes { << /V_m Vmref >> SetStatus } forall
+  all_nodes { << /V_m Vmref >> SetStatus } forall
 
-  /frozen_nodes nodes blocksize Take def
-  /thawed_nodes nodes nodes length blocksize sub neg Take def
+  /frozen_nodes node_pop_a def
+  /thawed_nodes node_pop_b def
 
   frozen_nodes  { << /frozen true >> SetStatus } forall
 
   simtime Simulate
-  true frozen_nodes { /V_m get Vmref eq and } Fold
-  true thawed_nodes { /V_m get Vmref lt and } Fold
+  true frozen_nodes { /V_m get Vmref eq and } forall
+  true thawed_nodes { /V_m get Vmref lt and } forall
   and   
 } assert_or_die
 
 % fourth test: thaw them again
 {
-  /nodes 0 GetGlobalLeaves def
-  
+  all_nodes
+    
   % reset existing neurons
-  nodes { << /V_m Vmref /frozen false >> SetStatus } forall
+  all_nodes { << /V_m Vmref /frozen false >> SetStatus } forall
 
   simtime Simulate
-  true nodes { /V_m get Vmref lt and } Fold
+  true all_nodes { /V_m get Vmref lt and } forall
 } assert_or_die
 
 

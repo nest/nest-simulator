@@ -37,6 +37,6 @@ n2 << /I_e 600. >> SetStatus
 
 mcoproxy << /port_name (voltage_out) >> SetStatus
 mcoproxy << /record_from [/V_m] >> SetStatus
-mcoproxy << /targets [n1 n2] >> SetStatus
+mcoproxy << /targets n1 n2 join >> SetStatus
 
 20 Simulate

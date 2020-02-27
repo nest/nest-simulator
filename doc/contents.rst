@@ -6,7 +6,7 @@ Table of Contents
    index
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: User Documentation
 
    download
@@ -19,6 +19,7 @@ Table of Contents
    topology/index
    guides/index
    getting_help
+   ref_material/nest2_vs_3
    ref_material/pynest_apis
 
 .. toctree::

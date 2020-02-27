@@ -51,22 +51,20 @@ M_ERROR setverbosity
 {
   ResetKernel
 
-  /iaf_psc_alpha 10 Create pop
-
-  /set1 1 5 cvgidcollection def
-  /set2 6 10 cvgidcollection def
+  /set1 /iaf_psc_alpha 5 Create def
+  /set2 /iaf_psc_alpha 5 Create def
 
     set1 set2 
     << /rule /one_to_one 
        /make_symmetric true >> 
-    << /model /stdp_synapse 
+    << /synapse_model /stdp_synapse
        /weight <. 1.0 2.0 3.0 4.0 5.0 .>
        /delay <. 1.5 2.5 3.5 4.5 5.5 .>
        /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >>
     Connect
 
-    << /source [1 5] Range >> GetConnections /fwd Set
-    << /source [6 10] Range >> GetConnections /bck Set
+    << /source set1 >> GetConnections /fwd Set
+    << /source set2 >> GetConnections /bck Set
 
     [ fwd bck ]
     {

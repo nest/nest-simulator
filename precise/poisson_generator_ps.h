@@ -33,6 +33,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
 
@@ -80,11 +81,18 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
 
   using Node::event_hook;
 
@@ -92,6 +100,8 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void calibrate_time( const TimeConverter& tc );
 
 private:
   void init_state_( const Node& );
@@ -136,8 +146,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -221,7 +231,7 @@ inline void
 poisson_generator_ps::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // If the rate is changed, the event_hook must handle the interval from
   // the rate change to the first subsequent spike.
@@ -237,6 +247,13 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline void
+poisson_generator_ps::calibrate_time( const TimeConverter& tc )
+{
+  V_.t_min_active_ = tc.from_old_tics( V_.t_min_active_.get_tics() );
+  V_.t_max_active_ = tc.from_old_tics( V_.t_max_active_.get_tics() );
 }
 
 } // namespace

@@ -145,7 +145,7 @@ NodeCollection::create( const TokenArray& node_idsarray )
 
 
 NodeCollectionPTR
-NodeCollection::create( const size_t node_id )
+NodeCollection::create( const index node_id )
 {
   return NodeCollection::create_( { node_id } );
 }

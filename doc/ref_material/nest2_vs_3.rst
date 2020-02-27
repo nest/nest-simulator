@@ -78,7 +78,7 @@ Functions related to connection
 |                                             | *is given by synapse_model,*                  |
 |                                             | *not model.*                                  |
 +---------------------------------------------+-----------------------------------------------+
-| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(array, array,              |
+| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(np.array, np.array,        |
 | model="static_synapse")                     | conn_spec=None, syn_spec=None,                |
 |                                             | return_SynapseCollection=False)               |
 +---------------------------------------------+-----------------------------------------------+

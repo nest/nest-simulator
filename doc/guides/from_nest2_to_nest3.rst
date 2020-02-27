@@ -343,19 +343,19 @@ will point out which parameters can be set and which are read-only.
 New functionality for connecting arrays of node IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-While you should aim to use NodeCollections to create connections as much as possible,
+While you should aim to use NodeCollections to create connections whenever possible,
 there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
-In those cases it may be inefficient to convert each node ID in the pair to NodeCollections
+In those cases it may be inefficient to convert the individual IDs in the pair to NodeCollections
 to be passed to the ``Connect()`` function, especially if there are thousands or millions of
 pairs to connect.
 
 To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.
-Connections are then created one-to-one.
+This variant of ``Connect()`` will create connections in a one-to-one fashion.
 
 ::
 
  nest.Create('iaf_psc_alpha', 10)
- # Node IDs in the arrays do not have to be unique.
+ # Node IDs in the arrays must address existing nodes, but may occur multiple times.
  sources = np.array([1, 5, 7, 5], dtype=np.uint64)
  targets = np.array([2, 2, 4, 4], dtype=np.uint64)
  nest.Connect(sources, targets)

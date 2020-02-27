@@ -125,9 +125,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Parameters
     ----------
-    pre : NodeCollection (or array)
+    pre : NodeCollection (or np.array)
         Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection (or array)
+    post : NodeCollection (or np.array)
         Postsynaptic nodes, as object representing the IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
@@ -142,7 +142,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Notes
     -----
-    It is possible to connect Numpy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
+    It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
     with a one-to-one connection specification. You may also specify weight and delay for each connection as
     in NumPy arrays in the `syn_spec` dictionary.
 
@@ -206,7 +206,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             raise TypeError("Sources and targets must either both be NodeCollections, "
                             "or Numpy arrays with conn_spec=None")
         elif conn_spec is not None:
-            raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be specified")
+            raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
         else:
             connect_np_arrays = True
             conn_spec = 'one_to_one'

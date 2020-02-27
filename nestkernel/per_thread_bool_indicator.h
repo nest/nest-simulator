@@ -26,6 +26,7 @@
 // C++ includes:
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 
 // Includes from nestkernel:
 #include "nest_types.h"
@@ -52,9 +53,9 @@ public:
   void logical_and( const bool status );
 
 private:
-  static const uint_fast64_t true_uint64 = true;
-  static const uint_fast64_t false_uint64 = false;
-  uint_fast64_t status_;
+  static constexpr std::uint_fast64_t true_uint64 = true;
+  static constexpr std::uint_fast64_t false_uint64 = false;
+  std::uint_fast64_t status_;
 
   friend class PerThreadBoolIndicator;
 };

@@ -248,23 +248,23 @@ cdef class NESTEngine(object):
         return ret
 
     def connect_arrays(self, sources, targets, weights, delays, receptor_type, synapse_model):
-        """Calls connect_arrays function, bypassing SLI to expose pointers to the Numpy arrays"""
+        """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
         if self.pEngine is NULL:
             raise NESTErrors.PyNESTError("engine uninitialized")
         if not HAVE_NUMPY:
-            raise NESTErrors.PyNESTError("Numpy is not available")
+            raise NESTErrors.PyNESTError("NumPy is not available")
 
         if not isinstance(sources, numpy.ndarray) or not numpy.issubdtype(sources.dtype, numpy.integer):
-            raise TypeError('sources must be a Numpy array of integers')
+            raise TypeError('sources must be a NumPy array of integers')
         if not isinstance(targets, numpy.ndarray) or not numpy.issubdtype(targets.dtype, numpy.integer):
-            raise TypeError('targets must be a Numpy array of integers')
+            raise TypeError('targets must be a NumPy array of integers')
         if weights is not None and not isinstance(weights, numpy.ndarray):
-            raise TypeError('weights must be a Numpy array')
+            raise TypeError('weights must be a NumPy array')
         if delays is not None and  not isinstance(delays, numpy.ndarray):
-            raise TypeError('delays must be a Numpy array')
+            raise TypeError('delays must be a NumPy array')
         if receptor_type is not None and not (isinstance(receptor_type, numpy.ndarray) and
                                               numpy.issubdtype(receptor_type.dtype, numpy.integer)):
-            raise TypeError('receptor_type must be a Numpy array of integers')
+            raise TypeError('receptor_type must be a NumPy array of integers')
 
         if not len(sources) == len(targets):
             raise ValueError('Sources and targets must be arrays of the same length.')
@@ -278,7 +278,7 @@ cdef class NESTEngine(object):
             if not len(sources) == len(receptor_type):
                 raise ValueError('receptor_type must be an array of the same length as sources and targets.')
 
-        # Get pointers to the first element in each Numpy array
+        # Get pointers to the first element in each NumPy array
         cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
         cdef long* sources_ptr = &sources_mv[0]
 

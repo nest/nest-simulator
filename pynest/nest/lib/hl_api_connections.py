@@ -204,7 +204,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     if isinstance(pre, numpy.ndarray) or isinstance(post, numpy.ndarray):
         if not (isinstance(pre, numpy.ndarray) and isinstance(post, numpy.ndarray)):
             raise TypeError("Sources and targets must either both be NodeCollections, "
-                            "or Numpy arrays with conn_spec=None")
+                            "or NumPy arrays with conn_spec=None")
         elif conn_spec is not None:
             raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
         else:

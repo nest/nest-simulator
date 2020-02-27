@@ -32,7 +32,7 @@ class TestConnectArrays(unittest.TestCase):
         nest.ResetKernel()
 
     def test_connect_arrays(self):
-        """Connecting Numpy arrays of node IDs"""
+        """Connecting NumPy arrays of node IDs"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
@@ -52,7 +52,7 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.delay, d)
 
     def test_connect_arrays_threaded(self):
-        """Connecting Numpy arrays, threaded"""
+        """Connecting NumPy arrays, threaded"""
         nest.SetKernelStatus({'local_num_threads': 2})
         n = 10
         nest.Create('iaf_psc_alpha', n)
@@ -77,7 +77,7 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(conn_d, d)
 
     def test_connect_arrays_no_delays(self):
-        """Connecting Numpy arrays without specifying delays"""
+        """Connecting NumPy arrays without specifying delays"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
@@ -95,7 +95,7 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.weight, w)
 
     def test_connect_arrays_no_weights(self):
-        """Connecting Numpy arrays without specifying weights"""
+        """Connecting NumPy arrays without specifying weights"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
@@ -113,7 +113,7 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.delay, d)
 
     def test_connect_arrays_rtype(self):
-        """Connecting Numpy arrays with specified receptor_type"""
+        """Connecting NumPy arrays with specified receptor_type"""
         n = 10
         nest.Create('iaf_psc_exp_multisynapse', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
@@ -135,7 +135,7 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.receptor, r)
 
     def test_connect_arrays_wrong_dtype(self):
-        """Raises exception when connecting Numpy arrays with wrong dtype"""
+        """Raises exception when connecting NumPy arrays with wrong dtype"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.double)
@@ -163,7 +163,7 @@ class TestConnectArrays(unittest.TestCase):
                                                      'synapse_model': syn_model})
 
     def test_connect_arrays_unknown_nodes(self):
-        """Raises exception when connecting Numpy arrays with unknown nodes"""
+        """Raises exception when connecting NumPy arrays with unknown nodes"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+2, dtype=np.uint64)

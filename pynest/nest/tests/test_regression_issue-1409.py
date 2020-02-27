@@ -46,7 +46,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
 
             parrots = nest.Create('parrot_neuron', num_neurons)
             poisson_generator = nest.Create('poisson_generator', num_pg)
-            nest.SetStatus(poisson_generator, 'rate', 2000.)
+            poisson_generator.rate = 2000.
 
             nest.Connect(poisson_generator, parrots, 'all_to_all')
 

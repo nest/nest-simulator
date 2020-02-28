@@ -272,12 +272,12 @@ def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0,
             numpy.amin(ts), numpy.amax(ts),
             float(hist_binwidth)
         )
-        n, bins = _histogram(ts, bins=t_bins)
+        n, _ = _histogram(ts, bins=t_bins)
         num_neurons = len(numpy.unique(neurons))
         heights = 1000 * n / (hist_binwidth * num_neurons)
 
         plt.bar(t_bins, heights, width=hist_binwidth, color=color_bar,
-                  edgecolor=color_edge)
+                edgecolor=color_edge)
         plt.yticks([
             int(x) for x in
             numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)

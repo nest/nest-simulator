@@ -308,16 +308,16 @@ ctrpos = nest.GetPosition(E_ctr)
 
 ax = plt.gca()
 ax.add_patch(plt.Circle(ctrpos, radius=0.02, zorder=99,
-                          fc='r', alpha=0.4, ec='none'))
+                        fc='r', alpha=0.4, ec='none'))
 ax.add_patch(
     plt.Rectangle(ctrpos + np.array((-0.4, -0.2)), 0.8, 0.4, zorder=1,
-                    fc='none', ec='r', lw=3))
+                  fc='none', ec='r', lw=3))
 ax.add_patch(
     plt.Rectangle(ctrpos + np.array((-0.2, -0.4)), 0.4, 0.8, zorder=1,
-                    fc='none', ec='r', lw=3))
+                  fc='none', ec='r', lw=3))
 ax.add_patch(
     plt.Rectangle(ctrpos + np.array((-0.5, -0.5)), 1.0, 1.0, zorder=1,
-                    fc='none', ec='k', lw=3))
+                  fc='none', ec='k', lw=3))
 ax.set(aspect='equal', xlim=[-0.5, 0.5], ylim=[-0.5, 0.5],
        xticks=[], yticks=[])
 
@@ -328,17 +328,17 @@ plt.scatter(Itpos[:, 0], Itpos[:, 1])
 ctrpos = nest.GetPosition(E_ctr)
 ax = plt.gca()
 ax.add_patch(plt.Circle(ctrpos, radius=0.02, zorder=99,
-                          fc='r', alpha=0.4, ec='none'))
+                        fc='r', alpha=0.4, ec='none'))
 ax.add_patch(plt.Circle(ctrpos, radius=0.1, zorder=2,
-                          fc='none', ec='r', lw=2, ls='dashed'))
+                        fc='none', ec='r', lw=2, ls='dashed'))
 ax.add_patch(plt.Circle(ctrpos, radius=0.2, zorder=2,
-                          fc='none', ec='r', lw=2, ls='dashed'))
+                        fc='none', ec='r', lw=2, ls='dashed'))
 ax.add_patch(plt.Circle(ctrpos, radius=0.3, zorder=2,
-                          fc='none', ec='r', lw=2, ls='dashed'))
+                        fc='none', ec='r', lw=2, ls='dashed'))
 ax.add_patch(plt.Circle(ctrpos, radius=0.5, zorder=2,
-                          fc='none', ec='r', lw=3))
+                        fc='none', ec='r', lw=3))
 ax.add_patch(plt.Rectangle((-0.5, -0.5), 1.0, 1.0, zorder=1,
-                             fc='none', ec='k', lw=3))
+                           fc='none', ec='k', lw=3))
 ax.set(aspect='equal', xlim=[-0.5, 0.5], ylim=[-0.5, 0.5],
        xticks=[], yticks=[])
 plt.show()

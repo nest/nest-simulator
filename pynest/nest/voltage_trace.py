@@ -195,7 +195,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
             try:
                 plotids.append(
                     plt.plot(time_values, voltages[neuron],
-                               line_style, label="Neuron %i" % neuron)
+                             line_style, label="Neuron %i" % neuron)
                 )
             except KeyError:
                 print("INFO: Wrong ID: {0}".format(neuron))
@@ -265,4 +265,3 @@ def _from_memory(detec):
             v[currentsender].append(float(potentials[s]))
 
     return t, v
-

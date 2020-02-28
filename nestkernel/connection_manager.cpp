@@ -94,7 +94,7 @@ nest::ConnectionManager::initialize()
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
 
-  have_connections_changed_.resize( num_threads, true );
+  have_connections_changed_.resize( num_threads, false );
   check_primary_connections_.resize( num_threads, false );
   check_secondary_connections_.resize( num_threads, false );
 

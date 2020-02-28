@@ -171,12 +171,12 @@ class Network:
             self.net_dict['full_num_neurons'])
 
         # scaled numbers of neurons and synapses
-        self.num_neurons = (self.net_dict['full_num_neurons']
+        self.num_neurons = (self.net_dict['full_num_neurons'] \
                             * self.net_dict['N_scaling']).astype(int)
-        self.num_synapses = (full_num_synapses
-                             * self.net_dict['N_scaling']
+        self.num_synapses = (full_num_synapses \
+                             * self.net_dict['N_scaling'] \
                              * self.net_dict['K_scaling']).astype(int)
-        self.ext_indegrees = (self.net_dict['K_ext']
+        self.ext_indegrees = (self.net_dict['K_ext'] \
                               * self.net_dict['K_scaling']).astype(int)
 
         # conversion from PSPs to PSCs
@@ -274,7 +274,7 @@ class Network:
             print('Master seed: {} '.format(master_seed))
             print('  Total number of virtual processes: {}'.format(N_vp))
             print('  Global random number generator seed: {}'.format(grng_seed))
-            print('  Seeds for random number generators of virtual processes: '
+            print('  Seeds for random number generators of virtual processes: ' \
                   + '{}'.format(rng_seeds))
 
         # pass parameters to NEST kernel
@@ -409,7 +409,7 @@ class Network:
 
         dc_dict = {'amplitude': dc_amp_stim,
                    'start': self.stim_dict['dc_start'],
-                   'stop': (self.stim_dict['dc_start']
+                   'stop': (self.stim_dict['dc_start'] \
                             + self.stim_dict['dc_dur'])}
         self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
                                          params=dc_dict)
@@ -431,7 +431,7 @@ class Network:
                         'weight': {
                             'distribution': 'normal_clipped',
                             'mu': self.mean_weight_matrix[i][j],
-                            'sigma': abs(self.mean_weight_matrix[i][j]
+                            'sigma': abs(self.mean_weight_matrix[i][j] \
                                          * self.std_weight_matrix[i][j])},
                         'delay': {
                             'distribution': 'normal_clipped',

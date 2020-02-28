@@ -422,7 +422,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 
       if ( P_.ahp_bug )
       {
-        // Bug in original Fortran implementation by Casti et al ignores
+        // Bug in original Fortran implementation by Casti et al. ignores
         // AHP conductance from previous spikes: at any time, only the
         // alpha function "kicked off" by the most recent spike is included
         S_.y[ State_::G_AHP ] = delta_g;

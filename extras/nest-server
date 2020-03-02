@@ -16,11 +16,11 @@ log() {
 }
 
 pid() {
-  pgrep -f "uwsgi --module nest.web:app --http-socket $HOST:$PORT --uid $USER"
+  pgrep -f "uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER"
 }
 
 ps-aux() {
-  ps aux | grep "[u]wsgi --module nest.web:app"
+  ps aux | grep "[u]wsgi --module nest.server:app"
 }
 
 ps-check() {
@@ -39,12 +39,12 @@ start() {
     echo "NEST Server is already serving at http://$HOST:$PORT."
   else
     if [ $DAEMONIZE == 1 ]; then
-      uwsgi --module nest.web:app --http-socket $HOST:$PORT --uid $USER --daemonize "/tmp/nest-server.log"
+      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER --daemonize "/tmp/nest-server.log"
       echo "NEST Server is serving at http://$HOST:$PORT."
       read -p "Press any key to stop... "
       stop
     else
-      uwsgi --module nest.web:app --http-socket $HOST:$PORT --uid $USER
+      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER
     fi
   fi
 }
@@ -57,9 +57,9 @@ status() {
 stop() {
   if [ `pid` ]; then
     kill -9 `pid`
-    echo "NEST server serving at http://$HOST:$PORT has stopped."
+    echo "NEST Server serving at http://$HOST:$PORT has stopped."
   else
-    echo "NEST server is not serving at http://$HOST:$PORT."
+    echo "NEST Server is not serving at http://$HOST:$PORT."
   fi
 }
 

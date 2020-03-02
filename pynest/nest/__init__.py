@@ -36,7 +36,7 @@ from . import logic                   # noqa
 from . import spatial                 # noqa needs to be imported last because of documentation generation
 
 try:
-    from . import web                 # noqa
+    from . import server              # noqa
 except ImportError:
     pass
 

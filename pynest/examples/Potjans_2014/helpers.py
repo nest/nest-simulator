@@ -187,7 +187,7 @@ def adjust_weights_and_input_to_synapse_scaling(
     return PSC_matrix_new, PSC_ext_new, DC_amp_new
 
 
-def plot_raster(path, name, begin, end):
+def plot_raster(path, name, begin, end, N_scaling):
     """ Creates a spike raster plot of the network activity.
 
     Parameters
@@ -200,6 +200,8 @@ def plot_raster(path, name, begin, end):
         Time point (in ms) to start plotting spikes (included).
     end
         Time point (in ms) to stop plotting spikes (included).
+    N_scaling
+        Scaling factor for number of neurons.
 
     Returns
     -------
@@ -217,11 +219,16 @@ def plot_raster(path, name, begin, end):
     label_pos = [(mod_node_ids[i, 0] + mod_node_ids[i + 1, 1]) /
                  2. for i in np.arange(0, 8, 2)]
 
+    stp = 1
+    if N_scaling > 0.1:
+        stp = int(10. * N_scaling)
+        print('  Only spikes of neurons in steps of {} are shown.'.format(stp))
+
     plt.figure(figsize=(8, 6))
     for i, n in enumerate(sd_names):
         times = data[i]['time_ms']
         neurons = np.abs(data[i]['sender'] - last_node_id) + 1
-        plt.plot(times, neurons, '.', color=color_list[i])
+        plt.plot(times[::stp], neurons[::stp], '.', color=color_list[i])
     plt.xlabel('time [ms]', fontsize=fs)
     plt.xticks(fontsize=fs)
     plt.yticks(label_pos, ylabels, fontsize=fs)

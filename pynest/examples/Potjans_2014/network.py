@@ -149,7 +149,8 @@ class Network:
                 self.data_path,
                 'spike_detector',
                 raster_plot_interval[0],
-                raster_plot_interval[1])
+                raster_plot_interval[1],
+                self.net_dict['N_scaling'])
 
             print('Interval to compute firing rates: {} ms'.format(
                 firing_rates_interval))
@@ -274,8 +275,9 @@ class Network:
             print('Master seed: {} '.format(master_seed))
             print('  Total number of virtual processes: {}'.format(N_vp))
             print('  Global random number generator seed: {}'.format(grng_seed))
-            print('  Seeds for random number generators of virtual processes: ' +
-                  '{}'.format(rng_seeds))
+            print(
+                '  Seeds for random number generators of virtual processes: ' +
+                '{}'.format(rng_seeds))
 
         # pass parameters to NEST kernel
         self.sim_resolution = self.sim_dict['sim_resolution']

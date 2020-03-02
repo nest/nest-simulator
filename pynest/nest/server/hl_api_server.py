@@ -45,6 +45,8 @@ CORS(app)
 @app.route('/', methods=['GET'])
 @cross_origin()
 def nest_index():
+    """ Route to fetch metadata of NEST Server.
+    """
     data = init_data(request)
     data['response']['version'] = nest.version()
     return jsonify(data)
@@ -53,18 +55,29 @@ def nest_index():
 @app.route('/exec', methods=['GET', 'POST'])
 @cross_origin()
 def route_exec():
+    """ Route to execute script in Python.
+    """
     data = init_data(request)
     args, kwargs = get_arguments(request, data)
     with Capturing() as stdout:
         try:
-            exec(kwargs.get('source', ''))
+            source = kwargs.get('source', '')
+            globals = {'__builtins__' : None}
+            locals = {
+              'list': list,
+              'nest': nest,
+              'np': np,
+              'print': print,
+              'set': set,
+            }
+            exec(source, globals, locals)
             if 'return' in kwargs:
                 if isinstance(kwargs['return'], list):
                     return_data = {}
                     for variable in kwargs['return']:
-                        return_data[variable] = locals().get(variable, None)
+                        return_data[variable] = locals.get(variable, None)
                 else:
-                    return_data = locals().get(kwargs['return'], None)
+                    return_data = locals.get(kwargs['return'], None)
                 data['response']['data'] = nest.hl_api.serializable(return_data)
             data['response']['status'] = 'ok'
         except Exception as e:
@@ -87,6 +100,8 @@ nest_calls.sort()
 @app.route('/api', methods=['GET'])
 @cross_origin()
 def nest_api():
+    """ Route to list call functions in NEST.
+    """
     data = init_data(request)
     response = api_client(request, nest_calls, data)
     return jsonify(response)
@@ -95,6 +110,8 @@ def nest_api():
 @app.route('/api/<call>', methods=['GET', 'POST'])
 @cross_origin()
 def nest_api_call(call):
+    """ Route to call function in NEST.
+    """
     data = init_data(request, call)
     args, kwargs = get_arguments(request, data)
     if call in nest_calls:
@@ -107,11 +124,13 @@ def nest_api_call(call):
     return jsonify(response)
 
 
-# ---------------
-# Helpers for web
-# ---------------
+# ----------------------
+# Helpers for the server
+# ----------------------
 
 class Capturing(list):
+    """ Monitor stdout contents i.e. print.
+    """
     def __enter__(self):
         self._stdout = sys.stdout
         sys.stdout = self._stringio = io.StringIO()
@@ -124,6 +143,8 @@ class Capturing(list):
 
 
 def init_data(request, call=None):
+    """ Create data variable in dictionary for JSON response.
+    """
     url = request.url_rule.rule.split('/')[1]
     data = {
         'request': {
@@ -137,6 +158,8 @@ def init_data(request, call=None):
 
 
 def get_arguments(request, data):
+    """ Get arguments from the request.
+    """
     args, kwargs = [], {}
     if request.is_json:
         json = data['request']['json'] = request.get_json()
@@ -159,14 +182,14 @@ def get_arguments(request, data):
 
 
 def get_or_error(func):
+    """ Wrapper to get data or error content.
+    """
     def func_wrapper(request, call, data, *args, **kwargs):
         try:
             data = func(request, call, data, *args, **kwargs)
             if 'data' not in data['response']:
                 return data
             response = data['response']['data']
-            if response is not None:
-                data['response']['data'] = serialize(response, toFixed=False)
             data['response']['status'] = 'ok'
         except Exception as e:
             data['response']['msg'] = str(e)
@@ -175,68 +198,40 @@ def get_or_error(func):
     return func_wrapper
 
 
-def NodeCollection(data):
-    if 'nodes' in data:
-        data['nodes'] = nest.NodeCollection(data['nodes'])
-    if 'source' in data:
-        data['source'] = nest.NodeCollection(data['source'])
-    if 'target' in data:
-        data['target'] = nest.NodeCollection(data['target'])
-    if 'pre' in data:
-        data['pre'] = nest.NodeCollection(data['pre'])
-    if 'post' in data:
-        data['post'] = nest.NodeCollection(data['post'])
-    return data
+def NodeCollection(kwargs):
+    """ Get Node Collection as arguments for NEST functions.
+    """
+    keys = ['nodes', 'source', 'target', 'pre', 'post']
+    for key in keys:
+        if key in kwargs:
+            kwargs[key] = nest.NodeCollection(kwargs[key])
+    return kwargs
 
 
-def serialize(data, toFixed=False):
-    SLILiterals = [
-        'element_type',
-        'model',
-        'record_from',
-        'record_to',
-        'recordables',
-        'synapse_model',
-        'type_id',
-    ]
-
-    params_infinite = [
-        'V_min',
-        'alpha',
-    ]
-
-    data = NodeCollection(data)
-    if type(data) in [array.array, np.ndarray]:
-        data = data.tolist()
-    if isinstance(data, list) or isinstance(data, tuple):
-        data = [serialize(d) for d in data]
-        data.sort()
-    elif isinstance(data, dict):
-        for key, value in data.items():
-            if key in SLILiterals:
-                if isinstance(value, tuple):
-                    data[key] = [d.name for d in data[key]]
-                else:
-                    data[key] = value.name
-            elif key == 'events':
-                for ekey, event in value.items():
-                    if type(event) is np.ndarray:
-                        data[key][ekey] = event.tolist()
-            elif toFixed:
-                data[key] = str(data[key])
-            elif type(value) is np.ndarray:
-                data[key] = value.tolist()
-            elif key in params_infinite:
-                if np.isinf(value):
-                    data[key] = str(value)
-            elif isinstance(value, tuple) and len(value) > 0:
-                if isinstance(value[0], tuple) and len(value[0]) > 0:
-                    data[key] = [[j.tolist() for j in i] for i in value]
-    return data
+def serialize(call, kwargs):
+    """ Serialize arguments with keywords for call functions in NEST.
+    """
+    kwargs = NodeCollection(kwargs)
+    if call.startswith('Set'):
+        status = {}
+        if call == 'SetDefaults':
+            status = nest.GetDefaults(kwargs['model'])
+        elif call == 'SetKernelStatus':
+            status = nest.GetKernelStatus()
+        elif call == 'SetStructuralPlasticityStatus':
+            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
+        elif call == 'SetStatus':
+            status = nest.GetStatus(kwargs['nodes'])
+        for key, val in kwargs['params'].items():
+            if key in status:
+                kwargs['params'][key] = type(status[key])(val)
+    return kwargs
 
 
 @get_or_error
 def api_client(request, call, data, *args, **kwargs):
+    """ API Client to call function in NEST.
+    """
     if callable(call):
         data['request']['call'] = call.__name__
         if str(kwargs.get('return_doc', 'false')) == 'true':
@@ -244,16 +239,9 @@ def api_client(request, call, data, *args, **kwargs):
         elif str(kwargs.get('return_source', 'false')) == 'true':
             response = inspect.getsource(call)
         else:
-            if call.__name__ == 'SetKernelStatus':
-                kernelStatus = nest.GetKernelStatus()
-                for paramKey, paramVal in kwargs['params'].items():
-                    kwargs['params'][paramKey] = type(kernelStatus[paramKey])(paramVal)
-            elif call.__name__ == 'SetStatus':
-                status = nest.GetStatus(kwargs['nodes'])
-                for paramKey, paramVal in kwargs['params'].items():
-                    kwargs['params'][paramKey] = type(status[paramKey])(paramVal)
-            response = call(*args, **kwargs)
+            response = call(*args, **serialize(call.__name__, kwargs))
     else:
+        data['request']['call'] = call
         response = call
     data['response']['data'] = nest.hl_api.serializable(response)
     return data

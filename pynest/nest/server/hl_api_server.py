@@ -62,7 +62,7 @@ def route_exec():
     with Capturing() as stdout:
         try:
             source = kwargs.get('source', '')
-            globals = {'__builtins__' : None}
+            globals = {'__builtins__': None}
             locals = {
               'list': list,
               'nest': nest,

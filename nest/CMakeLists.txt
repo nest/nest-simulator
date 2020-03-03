@@ -53,6 +53,10 @@ else ()
         )
 endif ()
 
+if ( HAVE_BOOST )
+  include_directories( ${BOOST_INCLUDE_DIR} )
+endif ()
+
 target_link_libraries( nest
     nestutil nestkernel random sli_lib sli_readline
     ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )

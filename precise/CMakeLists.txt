@@ -17,6 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+if ( HAVE_BOOST )
+  include_directories( ${BOOST_INCLUDE_DIR} )
+endif ()
+
 set( precise_sources
     slice_ring_buffer.cpp slice_ring_buffer.h
     iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h

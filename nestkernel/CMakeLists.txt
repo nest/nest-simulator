@@ -114,6 +114,10 @@ if ( HAVE_MPI )
   )
 endif ()
 
+if ( HAVE_BOOST )
+  include_directories( ${BOOST_INCLUDE_DIR} )
+endif ()
+
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
     nestutil random sli_lib

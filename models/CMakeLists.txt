@@ -17,6 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+if ( HAVE_BOOST )
+  include_directories( ${BOOST_INCLUDE_DIR} )
+endif ()
+
 set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp

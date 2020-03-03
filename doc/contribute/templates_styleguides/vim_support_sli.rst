@@ -1,7 +1,7 @@
-VIM support for SLI files
+Vim support for SLI files
 =========================
 
-A simple syntax file for VIM users is provided below. Copy it to your vim configuration folder to make it available to VIM:
+A simple syntax file for Vim users is provided below. Copy it to your Vim configuration folder to make it available to Vim:
 
 
 .. code-block::

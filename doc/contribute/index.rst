@@ -24,10 +24,7 @@ For making changes to the PyNEST APIs, please see our :doc:`templates_styleguide
 Contribute a Python example script
 ----------------------------------
 
-If you have a Python example network to contribute, please refer to our template to ensure you cover the required information:
-
-:doc:`templates_styleguides/example_template`
-
+If you have a Python example network to contribute, please refer to our :doc:`templates_styleguides/example_template` to ensure you cover the required information.
 
 Have a question?
 ----------------

@@ -20,6 +20,8 @@ You can find all the details for our development workflow on the `NEST developer
 
 For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
 
+If you use VIM and would like to edit SLI files, please refer to our :doc:`templates_styleguides/vim_support_sli`.
+
 Contribute a Python example script
 ----------------------------------
 

@@ -438,7 +438,6 @@ a constant input current, and add a second neuron.
 
 ::
 
-    import plt
     import nest
     neuron1 = nest.Create("iaf_psc_alpha")
     neuron1.set(I_e=376.0)

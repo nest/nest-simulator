@@ -847,6 +847,8 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
     # thin gray line indicating extent
@@ -921,6 +923,8 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             plt.show()
     """
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
@@ -1047,6 +1051,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             plt.show()
     """
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
@@ -1123,6 +1129,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
     """Create Matplotlib Patch objects representing the mask"""
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
     edge_color = 'black'
@@ -1256,6 +1264,8 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
         a new one is created.
     """
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:

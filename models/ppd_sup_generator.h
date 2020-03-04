@@ -40,10 +40,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
 #############################################################################################################
+
+Device name
++++++++++++
+
+ppd_sup_generator
 
 Description
 +++++++++++
@@ -88,6 +93,7 @@ See also
 gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class ppd_sup_generator : public DeviceNode
 {
 

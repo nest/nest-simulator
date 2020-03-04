@@ -33,9 +33,9 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
-Produce an AC input current
+ac_generator - Produce an alternating current (AC) input
 ########################################################
 
 Device name
@@ -46,7 +46,7 @@ ac_generator
 Description
 +++++++++++
 
-This device produces an ac-current sent by a CurrentEvent. The
+This device produces an AC input sent by CurrentEvents. The
 current is given by
 
 .. math::
@@ -273,3 +273,4 @@ ac_generator::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // AC_GENERATOR_H
+

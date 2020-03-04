@@ -45,10 +45,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains
 ################################################################################
+
+Device name
++++++++++++
+
+sinusoidal_gamma_generator
 
 Description
 +++++++++++

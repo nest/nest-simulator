@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent plasticity with constant depression
 ################################################################################################################
@@ -78,9 +78,11 @@ See also
 synapsedict
 
 EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing)
 // derived from generic connection template
+
 template < typename targetidentifierT >
 class VogelsSprekelerConnection : public Connection< targetidentifierT >
 {

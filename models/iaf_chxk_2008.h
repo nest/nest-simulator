@@ -56,8 +56,7 @@ namespace nest
  */
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
-
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
 ################################################################################################
@@ -122,6 +121,7 @@ See also
 iaf_cond_alpha
 
 EndUserDocs */
+
 class iaf_chxk_2008 : public Archiving_Node
 {
 

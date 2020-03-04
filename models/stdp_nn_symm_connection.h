@@ -39,7 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 stdp_nn_symm_synapse - Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
 ###############################################################################################################################
@@ -114,6 +114,7 @@ EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPNNSymmConnection : public Connection< targetidentifierT >
 {

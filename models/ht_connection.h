@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, Hill-Tononi synapse
+/* BeginUserDocs: synapse, Hill-Tononi plasticity
 
 ht_synapse - Synapse with depression after Hill & Tononi (2005)
 ###############################################################
@@ -73,8 +73,8 @@ References
        DOI: https://doi.org/10.1152/jn.00915.2004
 
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
 
@@ -86,6 +86,7 @@ See also
 ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class HTConnection : public Connection< targetidentifierT >
 {

@@ -56,7 +56,7 @@ namespace nest
  */
 extern "C" int iaf_cond_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron model
 #############################################################################
@@ -118,6 +118,7 @@ See also
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs*/
+
 class iaf_cond_exp : public Archiving_Node
 {
 

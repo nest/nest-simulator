@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, short-term plasticity
+/* BeginUserDocs: synapse, short-term plasticity
 
 tsodyks_synapse - Synapse type with short term plasticity
 #########################################################
@@ -124,6 +124,7 @@ See also
 synapsedict, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class TsodyksConnection : public Connection< targetidentifierT >
 {

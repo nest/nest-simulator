@@ -35,7 +35,7 @@
 
 namespace nest
 {
-/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
 ################################################################################################################
@@ -161,6 +161,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 FirstVersion: April 2013
 
 EndUserDocs */
+
 class amat2_psc_exp : public Archiving_Node
 {
 

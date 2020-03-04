@@ -46,8 +46,8 @@ namespace nest
 
 /* BeginUserDocs: voltmeter
 
-voltmeter - Device to record membrane potential from neurons.
-Synopsis: voltmeter Create
+voltmeter - Device to record membrane potential from neurons
+############################################################
 
 Description
 +++++++++++
@@ -122,7 +122,8 @@ See also
 
 device, RecordingDevice, multimeter
 
-*/
+EndUserDocs */
+
 class voltmeter : public multimeter
 {
 

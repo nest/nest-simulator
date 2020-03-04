@@ -31,7 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, static
+/* BeginUserDocs: synapse, static
 
 bernoulli_synapse - Static synapse with stochastic transmission
 ###############################################################
@@ -88,6 +88,7 @@ See also
 synapsedict, static_synapse, static_synapse_hom_w
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class BernoulliConnection : public Connection< targetidentifierT >
 {

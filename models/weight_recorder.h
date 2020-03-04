@@ -36,8 +36,16 @@
 
 /* BeginUserDocs: device, recorder
 
-Recording weights from synapses
-###############################
+weight_recorder - Recording weights from synapses
+#################################################
+
+Device name
++++++++++++
+
+weight_recorder
+
+Description
++++++++++++
 
 The change in synaptic weights over time is a key observable property in
 studies of plasticity in neuronal network models. To access this information, the

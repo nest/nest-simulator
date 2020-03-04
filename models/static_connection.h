@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, static
+/* BeginUserDocs: synapse, static
 
 static_synapse - Synapse type for static connections
 ####################################################
@@ -56,6 +56,7 @@ See also
 synapsedict, tsodyks_synapse, stdp_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {

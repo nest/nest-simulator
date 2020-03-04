@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, binary
+/* BeginUserDocs: neuron, binary
 
 mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside activation function
 #######################################################################################
@@ -119,6 +119,7 @@ See also
 pp_psc_delta
 
 EndUserDocs */
+
 class gainfunction_mcculloch_pitts
 {
 private:

@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets)
 #####################################################################################
@@ -103,9 +103,11 @@ See also
 stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 // connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPTripletConnection : public Connection< targetidentifierT >
 {

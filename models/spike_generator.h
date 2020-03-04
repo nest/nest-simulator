@@ -38,10 +38,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 spike_generator - A device which generates spikes from an array with spike-times
 ################################################################################
+
+Device name
++++++++++++
+
+spike_generator
 
 Synopsis: spike_generator Create -> node_id
 
@@ -180,6 +185,7 @@ See also
 Device, StimulatingDevice, testsuite::test_spike_generator
 
 EndUserDocs */
+
 class spike_generator : public DeviceNode
 {
 

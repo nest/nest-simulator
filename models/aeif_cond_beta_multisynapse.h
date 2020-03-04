@@ -56,7 +56,7 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, adaptive exponential, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
 aeif_cond_beta_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
 ####################################################################################################
@@ -208,6 +208,7 @@ See also
 aeif_cond_alpha_multisynapse
 
 EndUserDocs */
+
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

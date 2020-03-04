@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, parrot
+/* BeginUserDocs: neuron, parrot
 
 parrot_neuron - Neuron that repeats incoming spikes
 ###################################################
@@ -81,7 +81,9 @@ Parameters
 No parameters to be set in the status dictionary.
 
 FirstVersion: May 2006
+
 EndUserDocs */
+
 class parrot_neuron : public Archiving_Node
 {
 

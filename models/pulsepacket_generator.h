@@ -40,10 +40,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 pulsepacket_generator - Generate sequence of Gaussian pulse packets
 ###################################################################
+
+Device name
++++++++++++
+
+pulsepacket_generator
 
 Description
 +++++++++++
@@ -74,8 +79,8 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
 
@@ -85,6 +90,7 @@ See also
 spike_generator, StimulatingDevice
 
 EndUserDocs */
+
 class pulsepacket_generator : public Node
 {
 

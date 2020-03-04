@@ -39,10 +39,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 step_rate_generator - provides a piecewise constant input rate
 ##############################################################
+
+Device name
++++++++++++
+
+step_rate_generator
 
 Description
 +++++++++++
@@ -90,6 +95,7 @@ See also
 step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class step_rate_generator : public DeviceNode
 {
 

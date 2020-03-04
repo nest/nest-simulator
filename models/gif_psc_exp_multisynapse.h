@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 gif_psc_exp_multisynapse - Current-based generalized integrate-and-fire neuron model with multiple synaptic time constants
 ##########################################################################################################################
@@ -197,6 +197,7 @@ See also
 pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
 
 EndUserDocs */
+
 class gif_psc_exp_multisynapse : public Archiving_Node
 {
 

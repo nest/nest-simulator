@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
 tanh_rate - rate model with hyperbolic tangent non-linearity
 ############################################################
@@ -108,6 +108,7 @@ See also
 rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
+
 class nonlinearities_tanh_rate
 {
 private:

@@ -39,7 +39,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
 gauss_rate - rate model with Gaussian gain function
 ###################################################
@@ -119,6 +119,7 @@ See also
 rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
+
 class nonlinearities_gauss_rate
 {
 private:

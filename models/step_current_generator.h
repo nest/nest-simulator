@@ -39,10 +39,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 step_current_generator - provides a piecewise constant DC input current
 #######################################################################
+
+Device name
++++++++++++
+
+step_current_generator
 
 Description
 +++++++++++
@@ -88,6 +93,7 @@ See also
 ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
+
 class step_current_generator : public DeviceNode
 {
 

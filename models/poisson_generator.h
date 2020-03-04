@@ -41,10 +41,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 poisson_generator - simulate neuron firing with Poisson processes statistics
 ############################################################################
+
+Device name
++++++++++++
+
+poisson_generator
 
 Description
 +++++++++++
@@ -111,6 +116,7 @@ See also
 poisson_generator_ps, Device, parrot_neuron
 
 EndUserDocs */
+
 class poisson_generator : public DeviceNode
 {
 

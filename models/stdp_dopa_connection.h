@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent plasticity
 #############################################################################################
@@ -109,10 +109,12 @@ See also
 volume_transmitter
 
 EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type dopamine
  * connection.
  */
+
 class STDPDopaCommonProperties : public CommonSynapseProperties
 {
 public:

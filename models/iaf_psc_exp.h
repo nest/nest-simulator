@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs
 #########################################################################
@@ -159,6 +159,7 @@ See also
 iaf_psc_exp_ps
 
 EndUserDocs */
+
 class iaf_psc_exp : public Archiving_Node
 {
 

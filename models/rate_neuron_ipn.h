@@ -44,7 +44,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
 rate_neuron_ipn - Base class for rate model with input noise
 ############################################################
@@ -99,6 +99,7 @@ See also
 lin_rate, tanh_rate, threshold_lin_rate
 
 EndUserDocs  */
+
 template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
 {

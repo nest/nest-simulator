@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, continuous delays
+/* BeginUserDocs: synapse, continuous delay
 
 cont_delay_synapse - Synapse type for continuous delays
 #######################################################
@@ -74,6 +74,7 @@ See also
 synapsedict, static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
 {

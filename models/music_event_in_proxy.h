@@ -40,10 +40,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, music
+/* BeginUserDocs: devices, MUSIC
 
 music_event_in_proxy - A device which receives spikes from MUSIC
 ################################################################
+
+Device name
++++++++++++
+
+music_event_in_proxy
 
 Description
 +++++++++++
@@ -88,6 +93,7 @@ See also
 SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
 
 EndUserDocs */
+
 class music_event_in_proxy : public DeviceNode
 {
 

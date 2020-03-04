@@ -37,10 +37,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, detector
+/* BeginUserDocs: device, detector
 
 spin_detector - Device for detecting binary states in neurons
 #############################################################
+
+Device name
++++++++++++
+
+spin_detector
 
 Description
 +++++++++++

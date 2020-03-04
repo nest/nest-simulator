@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, adaptive exponential, integrate-and-fire, clopath_neuron, post-synaptic current
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, Clopath plasticity, current-based
 
 aeif_psc_delta_clopath - Adaptive exponential integrate-and-fire neuron
 #######################################################################
@@ -194,6 +194,7 @@ See also
 aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
 EndUserDocs */
+
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 

@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, point process, post-synaptic current
+/* BeginUserDocs: neuron, point process, current-based
 
 pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs
 ###############################################################################
@@ -191,6 +191,7 @@ See also
 pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
+
 class pp_psc_delta : public Archiving_Node
 {
 

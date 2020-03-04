@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire
 
 iaf_chs_2007 - Spike-response model used in Carandini et al. 2007
 #################################################################
@@ -112,6 +112,7 @@ SpikeEvent, DataLoggingRequest
 FirstVersion: May 2012
 
 EndUserDocs */
+
 class iaf_chs_2007 : public Archiving_Node
 {
 

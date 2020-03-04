@@ -43,10 +43,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, music
+/* BeginUserDocs: device, MUSIC
 
 music_event_out_proxy - Device to forward spikes to remote applications using MUSIC
 ###################################################################################
+
+Device name
++++++++++++
+
+music_event_out_proxy
 
 Description
 +++++++++++
@@ -87,6 +92,7 @@ See also
 music_event_in_proxy, music_cont_in_proxy, music_message_in_proxy
 
 EndUserDocs */
+
 class music_event_out_proxy : public DeviceNode
 {
 

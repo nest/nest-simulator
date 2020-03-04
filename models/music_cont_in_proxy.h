@@ -47,10 +47,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, music
+/* BeginUserDocs: device, MUSIC
 
 music_cont_in_proxy - A device which receives continuous data from MUSIC
 ########################################################################
+
+Device name
++++++++++++
+
+music_cont_in_proxy
 
 Description
 +++++++++++
@@ -89,6 +94,7 @@ See also
 music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 
 EndUserDocs */
+
 class music_cont_in_proxy : public DeviceNode
 {
 

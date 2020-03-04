@@ -58,7 +58,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, post-synaptic current, Hodgkin-Huxley, gap
+/* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, gap junction
 
 hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support
 ########################################################################
@@ -151,6 +151,7 @@ See also
 hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
 EndUserDocs */
+
 class hh_psc_alpha_gap : public Archiving_Node
 {
 

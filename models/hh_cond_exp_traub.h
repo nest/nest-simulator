@@ -55,7 +55,7 @@ namespace nest
  */
 extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, Hodgkin-Huxley, conductance-based
+/* BeginUserDocs: neuron, Hodgkin-Huxley, conductance-based
 
 hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
 #######################################################################
@@ -146,6 +146,7 @@ See also
 hh_psc_alpha
 
 EndUserDocs */
+
 class hh_cond_exp_traub : public Archiving_Node
 {
 

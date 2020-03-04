@@ -37,10 +37,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: volume transmitter
+/* BeginUserDocs: device, generator
 
 volume_transmitter - Node used in combination with neuromodulated synaptic plasticity
 #####################################################################################
+
+Device name
++++++++++++
+
+volume_transmitter
 
 Description
 +++++++++++
@@ -92,6 +97,7 @@ See also
 stdp_dopamine_synapse
 
 EndUserDocs */
+
 class ConnectorBase;
 
 class volume_transmitter : public Archiving_Node

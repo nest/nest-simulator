@@ -57,7 +57,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, Hodgkin-Huxley, post-synaptic current, Clopath synapse
+/* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, Clopath plasticity
 
 hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for Clopath plasticity
 ######################################################################################
@@ -175,6 +175,7 @@ See also
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
 EndUserDocs */
+
 class hh_psc_alpha_clopath : public Clopath_Archiving_Node
 {
 

@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
 lin_rate - Linear rate model
 ############################

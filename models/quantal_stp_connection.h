@@ -32,7 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, short-term plasticity
+/* BeginUserDocs: synapse, short-term plasticity
 
 quantal_stp_synapse - Probabilistic synapse model with short term plasticity
 ############################################################################
@@ -100,6 +100,7 @@ See also
 tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class Quantal_StpConnection : public Connection< targetidentifierT >
 {

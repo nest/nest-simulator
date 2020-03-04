@@ -48,7 +48,7 @@ namespace nest
 
 extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neurons, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 gif_cond_exp - Conductance-based generalized integrate-and-fire neuron model
 ############################################################################
@@ -213,6 +213,7 @@ See also
 pp_psc_delta, gif_cond_exp_multisynapse, gif_psc_exp, gif_psc_exp_multisynapse
 
 EndUserDocs  */
+
 class gif_cond_exp : public Archiving_Node
 {
 

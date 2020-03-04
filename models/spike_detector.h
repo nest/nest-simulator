@@ -33,10 +33,18 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginUserDocs: device, recorder, spikes
+/* BeginUserDocs: device, recorder, spike
 
-Collecting spikes from neurons
-##############################
+spike_detector - Collecting spikes from neurons
+###############################################
+
+Device name
++++++++++++
+
+spike_detector
+
+Description
++++++++++++
 
 The most universal collector device is the ``spike_detector``, which
 collects and records all *spikes* it receives from neurons that are

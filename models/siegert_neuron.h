@@ -45,10 +45,10 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
-siegert_neuron
-##############
+siegert_neuron - model for mean-field analysis of spiking networks
+##################################################################
 
 Description
 +++++++++++
@@ -126,6 +126,7 @@ See also
 diffusion_connection
 
 EndUserDocs */
+
 class siegert_neuron : public Archiving_Node
 {
 

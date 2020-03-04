@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, rate
+/* BeginUserDocs: neuron, rate
 
 sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
 ##############################################################
@@ -111,6 +111,7 @@ See also
 rate_connection_instantaneous, rate_connection_delayed
 
 EndUserDocs */
+
 class nonlinearities_sigmoid_rate_gg_1998
 {
 private:

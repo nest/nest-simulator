@@ -34,7 +34,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire
 
 izhikevich - Izhikevich neuron model
 ####################################
@@ -118,6 +118,7 @@ See also
 iaf_psc_delta, mat2_psc_exp
 
 EndUserDocs */
+
 class izhikevich : public Archiving_Node
 {
 

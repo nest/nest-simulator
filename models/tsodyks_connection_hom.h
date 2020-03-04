@@ -31,7 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, short-term plasticity
+/* BeginUserDocs: synapse, short-term plasticity
 
 tsodyks_synapse_hom - Synapse type with short term plasticity using homogenous parameters
 #########################################################################################
@@ -125,13 +125,13 @@ See also
 
 synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
 
-EndUserDocs iaf_psc_exp, iaf_tum_2000
-*/
+EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
  * TsodyksConnectionHom.
  */
+
 class TsodyksHomCommonProperties : public CommonPropertiesHomW
 {
 

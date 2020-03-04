@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent-plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent-plasticity
 
 stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent plasticity using homogenous parameters
 ##########################################################################################################
@@ -153,8 +153,10 @@ See also
 stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
+
 // template class forward declaration required by common properties friend
 // definition
+
 template < typename targetidentifierT >
 class STDPFACETSHWConnectionHom;
 

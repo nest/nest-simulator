@@ -40,7 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, spike-timing-dependent plasticity, clopath_synapse
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
 
 clopath_synapse - Synapse type for voltage-based STDP after Clopath
 ###################################################################
@@ -73,8 +73,8 @@ Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
 Clopath synapse.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
@@ -98,6 +98,7 @@ See also
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
 EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >

@@ -28,7 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, gap
+/* BeginUserDocs: synapse, gap
 
 gap_junction - Synapse type for gap-junction connections
 ########################################################
@@ -49,8 +49,8 @@ the make_symmetric flag.
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
-Transmits
-+++++++++
+Sends
++++++
 
 GapJunctionEvent
 
@@ -75,6 +75,7 @@ See also
 synapsedict, hh_psc_alpha_gap
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {

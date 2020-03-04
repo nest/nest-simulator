@@ -38,7 +38,7 @@ namespace nest
 
 class Network;
 
-/* BeginUserDocs: neurons, integrate-and-fire, post-synaptic current
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 gif_pop_psc_exp - Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and adaptation
 ############################################################################################################################
@@ -150,6 +150,7 @@ See also
 gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 
 EndUserDocs */
+
 class gif_pop_psc_exp : public Node
 {
 

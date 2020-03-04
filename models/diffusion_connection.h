@@ -28,7 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapses, instantaneous rate
+/* BeginUserDocs: synapse, instantaneous rate
 
 diffusion_connection - Synapse type for instantaneous rate connections between neurons of type siegert_neuron
 ##############################################################################################################
@@ -81,6 +81,7 @@ See also
 siegert_neuron, rate_connection_instantaneous
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {

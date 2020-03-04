@@ -40,10 +40,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, generator
+/* BeginUserDocs: device, generator
 
 noise_generator - Device to generate Gaussian white noise current
 #################################################################
+
+Device name
++++++++++++
+
+noise_generator
 
 Description
 +++++++++++
@@ -129,6 +134,7 @@ See also
 Device
 
 EndUserDocs */
+
 class noise_generator : public DeviceNode
 {
 

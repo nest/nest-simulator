@@ -151,6 +151,7 @@ See also
 aeif_cond_alpha_multisynapse
 
 EndUserDocs */
+
 namespace nest
 {
 /**

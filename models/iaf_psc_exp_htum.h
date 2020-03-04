@@ -35,15 +35,15 @@
 namespace nest
 {
 
-/* BeginUserDocs: neurons, integrate-and-fire
+/* BeginUserDocs: neuron, integrate-and-fire
 
-iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs
-##########################################################################
+iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential PSCs
+##############################################################################
 
 Description
 +++++++++++
 
-iaf_tum_2000 is an implementation of a leaky integrate-and-fire model
+iaf_psc_exp_htum is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
@@ -147,7 +147,8 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 FirstVersion: March 2006
 
 EndUserDocs */
-class iaf_tum_2000 : public Archiving_Node
+
+class iaf_psc_exp_htum : public Archiving_Node
 {
 
 public:

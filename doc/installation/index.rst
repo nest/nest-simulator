@@ -241,7 +241,7 @@ these instructions.**
 
    .. tab:: macOS
 
-       For further options on installing NEST on macOS, see :ref:`mac_manual` for Macs.
+       For further options on installing NEST on macOS, see :doc:`mac_install` for Macs.
 
 
    .. tab:: HPC systems

@@ -62,8 +62,17 @@ The VM image of NEST is available in the OVA format, and is suitable, for exampl
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
 After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
+* Download the |link-preova|\ |version|\ |link-postova|
 
-* Download the `latest release of the NEST VM image <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
+.. |link-preova| raw:: html
+
+    <a href="https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-
+
+.. |link-postova|  raw:: html
+
+     .ova">latest release of the NEST VM image</a>
+
+* Download the `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
 
 * After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 

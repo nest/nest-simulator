@@ -337,9 +337,9 @@ private:
     double h_;       //!< simulation time step in ms
     double dt_rate_; //!< rate parameter of dead time distribution
 
-    RngPtr rng_;                               //!< random number generator of my own thread
-    std::gamma_distribution<> gamma_dist_;     //!< gamma distribution
-    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
+    RngPtr rng_;                        //!< random number generator of my own thread
+    gamma_distribution gamma_dist_;     //!< gamma distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
 
     int DeadTimeCounts_;
   };

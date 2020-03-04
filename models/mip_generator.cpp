@@ -138,7 +138,7 @@ nest::mip_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  poisson_param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
   V_.poisson_dist_.param( param );
 }
 
@@ -161,7 +161,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
     }
 
     // generate spikes of mother process for each time slice
-    long n_mother_spikes = V_.poisson_dist_( *P_.rng_ );
+    long n_mother_spikes = V_.poisson_dist_( P_.rng_ );
 
     if ( n_mother_spikes )
     {

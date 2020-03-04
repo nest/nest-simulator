@@ -186,7 +186,7 @@ private:
 
   struct Variables_
   {
-    std::poisson_distribution<> poisson_dist_; //!< poisson_distribution
+    poisson_distribution poisson_dist_; //!< poisson_distribution
   };
 
   // ------------------------------------------------------------

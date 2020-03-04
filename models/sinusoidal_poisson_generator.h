@@ -217,7 +217,7 @@ private:
 
   struct Variables_
   {
-    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
 
     double h_;   //! time resolution (ms)
     double sin_; //!< sin(h om) in propagator

@@ -1444,7 +1444,7 @@ nest::FixedTotalNumberBuilder::connect_()
   // norm is equivalent to size_targets
   unsigned int sum_partitions = 0; // corresponds to sum_n
 
-  std::binomial_distribution<> bino_dist;
+  binomial_distribution bino_dist;
   for ( int k = 0; k < M; k++ )
   {
     // If we have distributed all connections on the previous processes we exit the loop. It is important to
@@ -1458,8 +1458,8 @@ nest::FixedTotalNumberBuilder::connect_()
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
       double p_local = num_local_targets / ( size_targets - sum_dist );
 
-      binomial_param_type param( N_ - sum_partitions, p_local );
-      num_conns_on_vp[ k ] = bino_dist( *grng, param );
+      binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+      num_conns_on_vp[ k ] = bino_dist( grng, param );
     }
 
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
@@ -1697,8 +1697,8 @@ nest::SymmetricBernoulliBuilder::connect_()
 
     try
     {
-      std::binomial_distribution<> bino_dist;
-      binomial_param_type param( sources_->size(), p_ );
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type param( sources_->size(), p_ );
 
       unsigned long indegree;
       index snode_id;
@@ -1714,7 +1714,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-          indegree = bino_dist( *rng, param );
+          indegree = bino_dist( rng, param );
         }
         assert( indegree < sources_->size() );
 

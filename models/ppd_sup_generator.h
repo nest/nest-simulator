@@ -176,9 +176,9 @@ private:
 
   class Age_distribution_
   {
-    std::binomial_distribution<> bino_dist_;      //!< binomial distribution
-    std::poisson_distribution<> poisson_dist_;    //!< poisson distribution
-    std::vector< unsigned long > occ_refractory_; //! occupation numbers of ages below dead time
+    binomial_distribution bino_dist_;             //!< binomial distribution
+    poisson_distribution poisson_dist_;           //!< poisson distribution
+    std::vector< unsigned long > occ_refractory_; //!< occupation numbers of ages below dead time
     unsigned long occ_active_;                    //!< summed occupation number of ages above dead time
     size_t activate_;                             //!< rotating pointer
 

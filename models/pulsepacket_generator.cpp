@@ -199,7 +199,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double x = P_.sdev_ * V_.normal_dist_( *rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
+        double x = P_.sdev_ * V_.normal_dist_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
         {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );

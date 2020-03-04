@@ -144,7 +144,7 @@ private:
 
   struct Variables_
   {
-    std::normal_distribution<> normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_; //!< normal distribution
 
     /** Indices into sorted vector of sorted pulse-center times
      *  (P_.pulse_times_). Spike times to be sent are calculated from

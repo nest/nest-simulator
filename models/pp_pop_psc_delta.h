@@ -297,8 +297,8 @@ private:
     double h_; //!< simulation time step in ms
     double min_double_;
 
-    RngPtr rng_;                             // random number generator of my own thread
-    std::binomial_distribution<> bino_dist_; // binomial distribution
+    RngPtr rng_;                      // random number generator of my own thread
+    binomial_distribution bino_dist_; // binomial distribution
 
     int DeadTimeCounts_;
   };

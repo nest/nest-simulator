@@ -80,8 +80,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
         || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
       {
-        poisson_param_type param( transition_prob * occ_[ i ] );
-        n_trans[ i ] = poisson_dist_( *rng, param );
+        poisson_distribution::param_type param( transition_prob * occ_[ i ] );
+        n_trans[ i ] = poisson_dist_( rng, param );
         if ( n_trans[ i ] > occ_[ i ] )
         {
           n_trans[ i ] = occ_[ i ];
@@ -89,8 +89,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
       }
       else
       {
-        binomial_param_type param( occ_[ i ], transition_prob );
-        n_trans[ i ] = bino_dist_( *rng, param );
+        binomial_distribution::param_type param( occ_[ i ], transition_prob );
+        n_trans[ i ] = bino_dist_( rng, param );
       }
     }
     else

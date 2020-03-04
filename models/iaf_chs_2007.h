@@ -250,7 +250,7 @@ private:
     double P22_;
     double P30_;
 
-    std::normal_distribution<> normal_dist_; //!< random deviate generator
+    normal_distribution normal_dist_; //!< random deviate generator
   };
 
   // Access functions for UniversalDataLogger -------------------------------

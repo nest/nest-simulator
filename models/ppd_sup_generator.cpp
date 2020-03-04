@@ -74,8 +74,8 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr r
     http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
     if ( ( occ_active_ >= 100 && hazard_step <= 0.01 ) || ( occ_active_ >= 500 && hazard_step * occ_active_ <= 0.1 ) )
     {
-      poisson_param_type param( hazard_step * occ_active_ );
-      n_spikes = poisson_dist_( *rng, param );
+      poisson_distribution::param_type param( hazard_step * occ_active_ );
+      n_spikes = poisson_dist_( rng, param );
       if ( n_spikes > occ_active_ )
       {
         n_spikes = occ_active_;
@@ -83,8 +83,8 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr r
     }
     else
     {
-      binomial_param_type param( occ_active_, hazard_step );
-      n_spikes = bino_dist_( *rng, param );
+      binomial_distribution::param_type param( occ_active_, hazard_step );
+      n_spikes = bino_dist_( rng, param );
     }
   }
   else

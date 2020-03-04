@@ -312,8 +312,8 @@ private:
 
     RngPtr rng_; // random number generator of own thread
 
-    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
-    std::binomial_distribution<> bino_dist_;   //!< binomial distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    binomial_distribution bino_dist_;   //!< binomial distribution
 
     double x_;                     // internal variable of population dynamics
     double z_;                     // internal variable of population dynamics

@@ -168,8 +168,8 @@ private:
 
   struct Variables_
   {
-    double inv_rate_ms_;                      //!< 1000.0 / Parameters_.rate_
-    std::exponential_distribution<> exp_dev_; //!< random deviate generator
+    double inv_rate_ms_;               //!< 1000.0 / Parameters_.rate_
+    exponential_distribution exp_dev_; //!< random deviate generator
 
     /**
      * @name update-hook communication.

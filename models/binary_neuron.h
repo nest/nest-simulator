@@ -174,8 +174,8 @@ private:
    */
   struct Variables_
   {
-    RngPtr rng_;                               //!< random number generator of my own thread
-    std::exponential_distribution<> exp_dist_; //!< random deviate generator
+    RngPtr rng_;                        //!< random number generator of my own thread
+    exponential_distribution exp_dist_; //!< random deviate generator
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -437,7 +437,7 @@ binary_neuron< TGainfunction >::calibrate()
   // only if not yet initialized
   if ( S_.t_next_.is_neg_inf() )
   {
-    S_.t_next_ = Time::ms( V_.exp_dist_( *V_.rng_ ) * P_.tau_m_ );
+    S_.t_next_ = Time::ms( V_.exp_dist_( V_.rng_ ) * P_.tau_m_ );
   }
 }
 
@@ -489,7 +489,7 @@ binary_neuron< TGainfunction >::update( Time const& origin, const long from, con
       }
 
       // draw next update interval from exponential distribution
-      S_.t_next_ += Time::ms( V_.exp_dist_( *V_.rng_ ) * P_.tau_m_ );
+      S_.t_next_ += Time::ms( V_.exp_dist_( V_.rng_ ) * P_.tau_m_ );
 
     } // of if (update now)
 

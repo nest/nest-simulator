@@ -246,7 +246,7 @@ private:
     // factor accounting for piecewise constant implementation of noise
     double output_noise_factor_;
 
-    std::normal_distribution<> normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

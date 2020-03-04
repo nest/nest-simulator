@@ -305,7 +305,7 @@ public:
   double
   value( RngPtr rng, Node* ) override
   {
-    return mean_ + normal_dist( *rng ) * std_;
+    return mean_ + normal_dist( rng ) * std_;
   }
 
   Parameter*
@@ -316,7 +316,7 @@ public:
 
 private:
   double mean_, std_;
-  std::normal_distribution< double > normal_dist;
+  normal_distribution normal_dist;
 };
 
 
@@ -349,7 +349,7 @@ public:
   double
   value( RngPtr rng, Node* ) override
   {
-    return std::exp( mean_ + normal_dist( *rng ) * std_ );
+    return std::exp( mean_ + normal_dist( rng ) * std_ );
   }
 
   Parameter*
@@ -360,7 +360,7 @@ public:
 
 private:
   double mean_, std_;
-  std::normal_distribution<> normal_dist;
+  normal_distribution normal_dist;
 };
 
 

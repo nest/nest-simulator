@@ -166,8 +166,8 @@ private:
 
   struct Variables_
   {
-    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
-    double_t h_;                               //! time resolution (ms)
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    double_t h_;                        //! time resolution (ms)
   };
 
   // ------------------------------------------------------------

@@ -109,7 +109,7 @@ nest::poisson_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  poisson_param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
   V_.poisson_dist_.param( param );
 }
 
@@ -144,7 +144,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  long n_spikes = V_.poisson_dist_( *get_thread_rng( get_thread() ) );
+  long n_spikes = V_.poisson_dist_( get_thread_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

@@ -277,8 +277,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
       }
       else
       {
-        poisson_param_type param( S_.rate_ * V_.h_ );
-        long n_spikes = V_.poisson_dist_( *rng, param );
+        poisson_distribution::param_type param( S_.rate_ * V_.h_ );
+        long n_spikes = V_.poisson_dist_( rng, param );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
         kernel().event_delivery_manager.send( *this, se, lag );
@@ -292,8 +292,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
 void
 nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  poisson_param_type param( S_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dist_( *get_thread_rng( get_thread() ), param );
+  poisson_distribution::param_type param( S_.rate_ * V_.h_ );
+  long n_spikes = V_.poisson_dist_( get_thread_rng( get_thread() ), param );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

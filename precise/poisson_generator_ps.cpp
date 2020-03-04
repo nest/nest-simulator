@@ -250,7 +250,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     {
       // exponential case: spike occurs with exponential probability in
       // [dead_time, infinity)
-      spike_offset = V_.inv_rate_ms_ * V_.exp_dev_( *rng ) + P_.dead_time_;
+      spike_offset = V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
     }
 
     // spike_offset is now time from t_min_active_ til first spike.
@@ -270,7 +270,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 
     // Draw time of next spike
     // Time of spike relative to current nextspk.first stamp
-    const double new_offset = -nextspk.second + V_.inv_rate_ms_ * V_.exp_dev_( *rng ) + P_.dead_time_;
+    const double new_offset = -nextspk.second + V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
 
     if ( new_offset < 0 ) // still in same stamp
     {

@@ -385,8 +385,8 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long 
         if ( p_argument > V_.min_double_ )
         {
           const auto n = S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ];
-          binomial_param_type param( n, p_argument );
-          S_.n_spikes_ages_[ i ] = V_.bino_dist_( *V_.rng_, param );
+          binomial_distribution::param_type param( n, p_argument );
+          S_.n_spikes_ages_[ i ] = V_.bino_dist_( V_.rng_, param );
         }
         else
         {

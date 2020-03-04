@@ -159,9 +159,9 @@ private:
 
   class Internal_states_
   {
-    std::binomial_distribution<> bino_dist_;   //!< binomial distribution
-    std::poisson_distribution<> poisson_dist_; //!< poisson distribution
-    std::vector< unsigned long > occ_;         //!< occupation numbers of internal states
+    binomial_distribution bino_dist_;   //!< binomial distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    std::vector< unsigned long > occ_;  //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,

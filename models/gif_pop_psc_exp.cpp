@@ -405,8 +405,8 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
     // we draw a Bernoulli random number instead of Poisson.
     if ( 1. - ( n_expect_ + 1. ) * std::exp( -n_expect_ ) > V_.min_double_ )
     {
-      poisson_param_type param( n_expect_ );
-      n_t_ = V_.poisson_dist_( *V_.rng_ );
+      poisson_distribution::param_type param( n_expect_ );
+      n_t_ = V_.poisson_dist_( V_.rng_ );
     }
     else
     {
@@ -448,10 +448,10 @@ nest::gif_pop_psc_exp::draw_binomial( const double n_expect_ )
   }
   else
   {
-    binomial_param_type param( P_.N_, p_bino_ );
-    return V_.bino_dist_( *V_.rng_, param );
+    binomial_distribution::param_type param( P_.N_, p_bino_ );
+    return V_.bino_dist_( V_.rng_, param );
   }
-  return V_.bino_dist_( *V_.rng_ );
+  return V_.bino_dist_( V_.rng_ );
 }
 
 

@@ -343,7 +343,7 @@ nest::pp_psc_delta::calibrate()
   {
     // Choose dead time rate parameter such that mean equals dead_time
     V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_;
-    gamma_param_type param( P_.dead_time_shape_ );
+    gamma_distribution::param_type param( P_.dead_time_shape_ );
     V_.gamma_dist_.param( param );
   }
 
@@ -411,8 +411,8 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
         else
         {
           // Draw Poisson random number of spikes
-          poisson_param_type param( rate * V_.h_ * 1e-3 );
-          n_spikes = V_.poisson_dist_( *V_.rng_, param );
+          poisson_distribution::param_type param( rate * V_.h_ * 1e-3 );
+          n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
@@ -420,7 +420,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           // Set dead time interval according to paramters
           if ( P_.dead_time_random_ )
           {
-            S_.r_ = Time( Time::ms( V_.gamma_dist_( *V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
+            S_.r_ = Time( Time::ms( V_.gamma_dist_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
           }
           else
           {

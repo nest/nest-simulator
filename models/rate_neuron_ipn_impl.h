@@ -229,7 +229,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
   // initialize random numbers
   for ( unsigned int i = 0; i < buffer_size; i++ )
   {
-    B_.random_numbers[ i ] = V_.normal_dist_( *get_thread_rng( get_thread() ) );
+    B_.random_numbers[ i ] = V_.normal_dist_( get_thread_rng( get_thread() ) );
   }
 
   B_.logger_.reset(); // includes resize
@@ -379,7 +379,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     B_.random_numbers.resize( buffer_size, numerics::nan );
     for ( unsigned int i = 0; i < buffer_size; i++ )
     {
-      B_.random_numbers[ i ] = V_.normal_dist_( *get_thread_rng( get_thread() ) );
+      B_.random_numbers[ i ] = V_.normal_dist_( get_thread_rng( get_thread() ) );
     }
   }
 

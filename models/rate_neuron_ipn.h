@@ -252,7 +252,7 @@ private:
     double input_noise_factor_;
 
     RngPtr rng_;
-    std::normal_distribution<> normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

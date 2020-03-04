@@ -33,7 +33,7 @@ Download the source code
 
 .. |link-post| raw:: html
 
-    .tar.gz">download the latest release here</a>
+    .tar.gz">download the latest release here</a>.
 
 * Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`. |link-pregit|\ |version|\ |link-postgit|
 
@@ -43,9 +43,7 @@ Download the source code
 
 .. |link-postgit| raw:: html
 
-    ">Get the release notes here</a>
-
-* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
+    ">Get the release notes here</a>.
 
 * You can also test out the `latest developer version <https://github.com/nest/nest-simulator>`_ from GitHub.
 

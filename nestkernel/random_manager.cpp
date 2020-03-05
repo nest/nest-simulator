@@ -105,8 +105,8 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 void
 nest::RandomManager::create_rngs_()
 {
-  long seed = rng_seed_ + kernel().vp_manager.get_num_virtual_processes();
-  global_rng_ = rng_types_[ current_rng_type_ ]->clone( seed );
+  // Seed for the global rng must be invariant with different numbers of VPs.
+  global_rng_ = rng_types_[ current_rng_type_ ]->clone( rng_seed_ );
 
   long num_threads = kernel().vp_manager.get_num_threads();
   thread_rngs_.resize( num_threads );
@@ -117,10 +117,9 @@ nest::RandomManager::create_rngs_()
     // with the 32 low bits corresponding to the number of vps and the high
     // ones being the ones specified by the user
 
-    // TODO: Create a VPManager::get_vp() function that combines the two lines below
-    index tid = kernel().vp_manager.get_thread_id();
-    seed = rng_seed_ + kernel().vp_manager.thread_to_vp( tid );
-    thread_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( seed );
+    const auto tid = kernel().vp_manager.get_thread_id();
+    const long local_seed = rng_seed_ + 1 + kernel().vp_manager.get_vp();
+    thread_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( local_seed );
   }
 }
 

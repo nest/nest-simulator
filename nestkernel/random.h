@@ -180,16 +180,19 @@ struct RNG final : public BaseRNG
   {
     return d( rng_, p );
   }
+
   inline double operator()( std::uniform_real_distribution<>& d,
     std::uniform_real_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
+
   inline unsigned long operator()( std::poisson_distribution< unsigned long >& d,
     std::poisson_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
   }
+
   inline double operator()( std::normal_distribution<>& d, std::normal_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
@@ -199,10 +202,12 @@ struct RNG final : public BaseRNG
   {
     return d( rng_, p );
   }
+
   inline double operator()( std::gamma_distribution<>& d, std::gamma_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
+
   inline double operator()( std::exponential_distribution<>& d,
     std::exponential_distribution<>::param_type& p ) override
   {
@@ -295,7 +300,7 @@ struct distribution
    * @param params New contents of the distribution's associated parameter set.
    */
   inline void
-  param( param_type& params )
+  param( const param_type& params )
   {
     distribution_.param( params );
   }

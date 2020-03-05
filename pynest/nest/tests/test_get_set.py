@@ -293,25 +293,16 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nest.Connect(nodes, multi_sd, 'one_to_one')
         nest.Simulate(50)
 
-        ref_dict = single_sd.get('events')
-        self.assertGreater(len(ref_dict['senders']), 0)
-        ref_dict['senders'] = [ref_dict['senders']]
-        ref_dict['times'] = [ref_dict['times']]
+        ref_values = single_sd.get('events', ['senders', 'times'])
+        ref_df = pandas.DataFrame({key: [ref_values[key]] for key in ['senders', 'times']},
+                                  index=tuple(single_sd.tolist()))
+        sd_df = single_sd.get('events', ['senders', 'times'], output='pandas')
+        pt.assert_frame_equal(sd_df, ref_df)
 
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd.tolist()))
-        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
-                                            output='pandas'),
-                              ref_df)
-
-        ref_dict = {'times': [[41.4], [42.800000000000004], [40.0], [], [46.800000000000004], [], [39.6], [40.6], [],
-                              [48.7]],
-                    'senders': [[12], [13], [14], [], [16], [], [18], [19], [], [21]]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd.tolist()))
-        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
-                                           output='pandas'),
-                              ref_df)
+        ref_values = multi_sd.get('events', ['senders', 'times'])
+        ref_df = pandas.DataFrame(ref_values, index=tuple(multi_sd.tolist()))
+        sd_df = multi_sd.get('events', ['senders', 'times'], output='pandas')
+        pt.assert_frame_equal(sd_df, ref_df)
 
     def test_get_JSON(self):
         """
@@ -385,23 +376,22 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nest.Connect(nodes, multi_sd, 'one_to_one')
         nest.Simulate(50)
 
-        ref_dict = single_sd.get('events')
-        ref_dict['senders'] = list(ref_dict['senders'])
-        ref_dict['times'] = list(ref_dict['times'])
-        self.assertGreater(len(ref_dict['senders']), 0)
-        self.assertEqual(
-            json.loads(single_sd.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        sd_ref = single_sd.get('events', ['senders', 'times'])
+        sd_json = single_sd.get('events', ['senders', 'times'], output='json')
+        sd_dict = json.loads(sd_json)
+        self.assertEqual(len(sd_dict.keys()), 2)
+        self.assertEqual(sorted(sd_dict.keys()), sorted(sd_ref.keys()))
+        for key in ['senders', 'times']:
+            self.assertEqual(list(sd_ref[key]), list(sd_dict[key]))
 
-        ref = multi_sd.get('events')
-        ref_dict = {'senders': [list(entry['senders']) for entry in ref],
-                    'times': [list(entry['times']) for entry in ref]}
-        self.assertGreater(len(ref_dict['senders']), 0)
-        self.assertEqual(
-            json.loads(multi_sd.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        multi_sd_ref = multi_sd.get('events', ['senders', 'times'])
+        multi_sd_json = multi_sd.get('events', ['senders', 'times'], output='json')
+        multi_sd_dict = json.loads(multi_sd_json)
+        self.assertEqual(len(multi_sd_dict.keys()), 2)
+        self.assertEqual(sorted(multi_sd_dict.keys()), sorted(multi_sd_ref.keys()))
+        for key in ['senders', 'times']:
+            multi_sd_ref_element = [list(element) for element in multi_sd_ref[key]]
+            self.assertEqual(multi_sd_ref_element, multi_sd_dict[key])
 
     def test_set(self):
         """

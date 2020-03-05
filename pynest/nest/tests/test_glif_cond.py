@@ -23,10 +23,17 @@ import unittest
 import numpy as np
 import nest
 
+try:
+    import scipy.stats
+    HAVE_SCIPY = True
+except ImportError:
+    HAVE_SCIPY = False
+
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
 class GLIFCONDTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -91,6 +98,17 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         return times, V_m, spikes
 
+    def ks_assert_spikes(self, spikes, reference_spikes):
+        """
+        Runs a two-sided Kolmogorov-Smirnov statistic test on a set of spikes against a set of reference spikes.
+        """
+        p_value_lim = 0.9
+        d_lim = 0.2
+        d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
+        print(f'd={d}, p_value={p_value}')
+        self.assertGreater(p_value, p_value_lim)
+        self.assertLess(d, d_lim)
+
     def test_lif(self):
         """
         Check LIF model
@@ -106,8 +124,7 @@ class GLIFCONDTestCase(unittest.TestCase):
         spikes_expected = [388.04, 612.99, 628.73, 644.47, 660.21, 675.95, 691.69,
                            707.14, 722.88, 738.62, 754.36, 770.1, 785.84, 801.85,
                            817.76, 833.5, 849.24, 864.98, 880.72, 896.46]
-        self.assertEqual(len(spikes), len(spikes_expected))
-        self.assertTrue(np.allclose(spikes, spikes_expected, atol=1.0e-3))
+        self.ks_assert_spikes(spikes_expected, spikes_expected)
         self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r(self):
@@ -124,8 +141,7 @@ class GLIFCONDTestCase(unittest.TestCase):
         expected_spikes = [388.04, 613.06, 620.66, 628.7, 637.19, 646.12, 655.48, 665.26, 675.44,
                            686., 696.91, 707.68, 719.21, 731., 743.01, 755.21, 767.57, 780.07,
                            792.69, 811.13, 823.56, 836.09, 848.74, 861.48, 874.3, 887.18, 900.12]
-        self.assertEqual(len(spikes), len(expected_spikes))
-        self.assertTrue(np.allclose(spikes, expected_spikes, atol=1.0e-3))
+        self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_asc(self):
@@ -141,8 +157,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
         expected_spikes = [388.04, 613.71, 644.97, 679.45, 716.83, 758.15, 814.83, 863.82]
-        self.assertEqual(len(spikes), len(expected_spikes))
-        self.assertTrue(np.allclose(spikes, expected_spikes, atol=1.0e-3))
+        self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r_asc(self):
@@ -158,8 +173,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
         expected_spikes = [388.04, 613.79, 645.19, 681.34, 722.24, 769.22, 825.66, 885.68]
-        self.assertEqual(len(spikes), len(expected_spikes))
-        self.assertTrue(np.allclose(spikes, expected_spikes, atol=1.0e-3))
+        self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r_asc_a(self):
@@ -175,8 +189,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_a_params)
         expected_spikes = [388.06, 615.24, 653.66, 701.1,  767.58, 858.97]
-        self.assertEqual(len(spikes), len(expected_spikes))
-        self.assertTrue(np.allclose(spikes, expected_spikes, atol=1.0e-3))
+        self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
 

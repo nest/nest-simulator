@@ -270,7 +270,7 @@ class TestGrowthCurve(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.SetKernelStatus({"total_num_virtual_procs": 4})
+        nest.SetKernelStatus({"total_num_virtual_procs": 4, "rng_seed": 0})
         nest.set_verbosity('M_ERROR')
 
         self.sim_time = 10000.0

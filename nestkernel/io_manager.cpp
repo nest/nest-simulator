@@ -320,9 +320,13 @@ nest::IOManager::get_input_backend_( Name backend_name )
   printf( "This is the backend name: %s\n", backend_name.toString().c_str() );
   backend = input_backends_.find( backend_name );
   if ( backend != input_backends_.end() )
+  {
     back = ( backend->second );
+  }
   else
+  {
     back = 0;
+  }
   return back;
 }
 

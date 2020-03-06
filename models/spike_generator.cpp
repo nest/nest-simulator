@@ -342,7 +342,7 @@ nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
 
   const Time& origin = device_.get_origin();
   // For the input backend
-  if ( !input_spikes.empty() )
+  if ( not input_spikes.empty() )
   {
 
     DictionaryDatum d = DictionaryDatum( new Dictionary );
@@ -352,13 +352,17 @@ nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
     {
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
       if ( ptmp.precise_times_ )
+      {
         times_ms[ n ] -= ptmp.spike_offsets_[ n ];
+      }
     }
     for ( double input_spike : input_spikes )
     {
       times_ms.push_back( input_spike );
       if ( ptmp.precise_times_ )
+      {
         printf( "precise not supported\n" );
+      }
     }
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 

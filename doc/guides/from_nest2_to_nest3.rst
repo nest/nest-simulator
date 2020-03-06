@@ -358,11 +358,11 @@ This variant of ``Connect()`` will create connections in a one-to-one fashion.
    # Node IDs in the arrays must address existing nodes, but may occur multiple times.
    sources = np.array([1, 5, 7, 5], dtype=np.uint64)
    targets = np.array([2, 2, 4, 4], dtype=np.uint64)
-   nest.Connect(sources, targets)
+   syn_spec = {'synapse_model': 'static_synapse'}
+   nest.Connect(sources, targets, syn_spec=syn_spec)
 
-You may also add specifications to the ``syn_spec`` dictionary to define the synapse model.
-You can also specify weights, delays, and receptor type for each connection as arrays. All arrays have
-to have lengths equal to those of ``sources`` and ``targets``.
+The synapse model has to be specified. You can also specify weights, delays, and receptor type
+for each connection as arrays. All arrays have to have lengths equal to those of ``sources`` and ``targets``.
 
 ::
 

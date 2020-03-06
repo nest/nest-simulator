@@ -143,8 +143,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Notes
     -----
     It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
-    with a one-to-one connection specification. You may also specify weight and delay for each connection as
-    in NumPy arrays in the `syn_spec` dictionary.
+    with no connection specification, and a synapse specification, `syn_spec`, with at least the synapse model.
+    You may also specify weight, delay, and receptor type for each connection as NumPy arrays in the `syn_spec`
+    dictionary.
 
     If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
     nodes are considered as potential targets for each source node. Connections with spatial nodes can also

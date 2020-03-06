@@ -264,9 +264,12 @@ extern const Name index_map;
 extern const Name individual_spike_trains;
 extern const Name init_flag;
 extern const Name inner_radius;
+extern const Name input_backends;
+extern const Name input_from;
 extern const Name instant_unblock_NMDA;
 extern const Name instantiations;
 extern const Name interval;
+extern const Name internal;
 extern const Name is_refractory;
 
 extern const Name Kplus;

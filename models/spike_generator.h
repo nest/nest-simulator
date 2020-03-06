@@ -34,6 +34,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
+#include "input_device.h"
 
 namespace nest
 {
@@ -173,8 +174,9 @@ Sends
 SpikeEvent
 
 EndUserDocs */
-
-class spike_generator : public DeviceNode
+SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
+*/
+class spike_generator : public InputDevice
 {
 
 public:
@@ -196,7 +198,9 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+  void update_from_backend(std::vector<double> input_spikes) override;
 
+  Type get_type() const;
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -305,6 +309,7 @@ spike_generator::send_test_event( Node& target, rport receptor_type, synindex sy
 inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
+  InputDevice::get_status(d);
   P_.get( d );
   device_.get_status( d );
 }

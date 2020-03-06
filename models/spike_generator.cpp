@@ -288,7 +288,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::spike_generator()
-  : DeviceNode()
+  : InputDevice()
   , device_()
   , P_()
   , S_()
@@ -296,7 +296,7 @@ nest::spike_generator::spike_generator()
 }
 
 nest::spike_generator::spike_generator( const spike_generator& n )
-  : DeviceNode( n )
+  : InputDevice( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -326,6 +326,7 @@ nest::spike_generator::init_buffers_()
 void
 nest::spike_generator::calibrate()
 {
+  InputDevice::calibrate( InputBackend::NO_DOUBLE_VALUE_NAMES, InputBackend::NO_LONG_VALUE_NAMES );
   device_.calibrate();
 }
 
@@ -333,6 +334,41 @@ nest::spike_generator::calibrate()
 /* ----------------------------------------------------------------
  * Other functions
  * ---------------------------------------------------------------- */
+
+void
+nest::spike_generator::update_from_backend(std::vector<double> input_spikes) {
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  const Time& origin = device_.get_origin();
+  // For the input backend
+  if ( !input_spikes.empty() ){
+
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    const size_t n_spikes = P_.spike_stamps_.size();
+    for ( size_t n = 0; n < n_spikes; ++n )
+    {
+      times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
+      if ( ptmp.precise_times_ )
+        times_ms[ n ] -= ptmp.spike_offsets_[ n ];
+    }
+    for (double input_spike : input_spikes)
+    {
+      times_ms.push_back( input_spike );
+      if ( ptmp.precise_times_ )
+        printf("precise not supported\n");
+    }
+    ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
+
+    ptmp.set( d, S_, origin,Time::step( times_ms[times_ms.size()-1] ), this );
+
+  }
+
+ // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+
+}
+
 
 void
 nest::spike_generator::update( Time const& sliceT0, const long from, const long to )
@@ -433,6 +469,8 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // throws if BadProperty
   ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
 
+  InputDevice::set_status(d);
+
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
@@ -440,4 +478,10 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
+}
+
+nest::InputDevice::Type
+nest::spike_generator::get_type() const
+{
+  return InputDevice::SPIKE_GENERATOR;
 }

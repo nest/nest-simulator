@@ -243,9 +243,12 @@ const Name index_map( "index_map" );
 const Name individual_spike_trains( "individual_spike_trains" );
 const Name init_flag( "init_flag" );
 const Name inner_radius( "inner_radius" );
+const Name input_backends( "input_backends" );
+const Name input_from( "input_from" );
 const Name instant_unblock_NMDA( "instant_unblock_NMDA" );
 const Name instantiations( "instantiations" );
 const Name interval( "interval" );
+const Name internal( "internal" );
 const Name is_refractory( "is_refractory" );
 
 const Name Kplus( "Kplus" );

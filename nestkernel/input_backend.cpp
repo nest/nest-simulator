@@ -1,5 +1,5 @@
 /*
- *  io_manager_impl.h
+ *  input_backend.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,32 +20,9 @@
  *
  */
 
-#ifndef IO_MANAGER_IMPL_H
-#define IO_MANAGER_IMPL_H
+#include "input_backend.h"
 
-#include "io_manager.h"
-
-namespace nest
-{
-template < class RBType >
-void
-IOManager::register_recording_backend( Name name )
-{
-  RBType* recording_backend = new RBType();
-  recording_backend->pre_run_hook();
-
-  recording_backends_.insert( std::make_pair( name, recording_backend ) );
-}
-
-template < class RBType >
-void
-IOManager::register_input_backend( Name name )
-{
-  RBType* input_backend = new RBType();
-  input_backend->pre_run_hook();
-
-  input_backends_.insert( std::make_pair( name, input_backend ) );
-}
-}
-
-#endif /* #ifndef IO_MANAGER_IMPL_H */
+const std::vector< Name > nest::InputBackend::NO_DOUBLE_VALUE_NAMES;
+const std::vector< Name > nest::InputBackend::NO_LONG_VALUE_NAMES;
+const std::vector< double > nest::InputBackend::NO_DOUBLE_VALUES;
+const std::vector< long > nest::InputBackend::NO_LONG_VALUES;

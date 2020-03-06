@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 #include "recording_backend.h"
+#include "input_backend.h"
 
 namespace nest
 {
@@ -96,21 +97,33 @@ public:
 
   template < class RBT >
   void register_recording_backend( Name );
+  void register_input_backend( Name );
 
   bool is_valid_recording_backend( Name ) const;
+  bool is_valid_input_backend( Name ) const;
 
   void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  std::vector <double> read( InputDevice& );
 
   void enroll_recorder( Name, const RecordingDevice&, const DictionaryDatum& );
+  void enroll_input( Name, InputDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( Name backend_name,
-    const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
+  const RecordingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names );
+
+  void set_input_value_names( Name backend_name,
+  const InputDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names );
 
   void check_recording_backend_device_status( Name, const DictionaryDatum& );
   void get_recording_backend_device_defaults( Name, DictionaryDatum& );
   void get_recording_backend_device_status( Name, const RecordingDevice&, DictionaryDatum& );
+  void check_input_backend_device_status( Name, const DictionaryDatum& );
+  void get_input_backend_device_defaults( Name, DictionaryDatum& );
+  void get_input_backend_device_status( Name, const InputDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
@@ -124,6 +137,12 @@ private:
    * A mapping from names to registered recording backends.
    */
   std::map< Name, RecordingBackend* > recording_backends_;
+  /**
+   * A mapping from names to registered input backends
+   */
+  std::map< Name, InputBackend* > input_backends_;
+  InputBackend* get_input_backend_( Name );
+
 };
 
 } // namespace nest

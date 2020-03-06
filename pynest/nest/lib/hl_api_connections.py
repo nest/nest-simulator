@@ -216,13 +216,16 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
     processed_syn_spec = _process_syn_spec(
-        syn_spec, processed_conn_spec, len(pre), len(post))
+        syn_spec, processed_conn_spec, len(pre), len(post), connect_np_arrays)
 
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
     if connect_np_arrays:
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
+        if processed_syn_spec is None:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
+                             "be specified and contain at least the synapse model.")
         weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
         receptor_type = (numpy.array(processed_syn_spec['receptor_type'])

@@ -254,15 +254,15 @@ cdef class NESTEngine(object):
         if not HAVE_NUMPY:
             raise NESTErrors.PyNESTError("NumPy is not available")
 
-        if not isinstance(sources, numpy.ndarray) or not numpy.issubdtype(sources.dtype, numpy.integer):
+        if not (isinstance(sources, numpy.ndarray) and sources.ndim > 0) or not numpy.issubdtype(sources.dtype, numpy.integer):
             raise TypeError('sources must be a NumPy array of integers')
-        if not isinstance(targets, numpy.ndarray) or not numpy.issubdtype(targets.dtype, numpy.integer):
+        if not (isinstance(targets, numpy.ndarray) and targets.ndim > 0) or not numpy.issubdtype(targets.dtype, numpy.integer):
             raise TypeError('targets must be a NumPy array of integers')
-        if weights is not None and not isinstance(weights, numpy.ndarray):
+        if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim > 0):
             raise TypeError('weights must be a NumPy array')
-        if delays is not None and  not isinstance(delays, numpy.ndarray):
+        if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim > 0):
             raise TypeError('delays must be a NumPy array')
-        if receptor_type is not None and not (isinstance(receptor_type, numpy.ndarray) and
+        if receptor_type is not None and not ((isinstance(receptor_type, numpy.ndarray) and receptor_type.ndim > 0) and
                                               numpy.issubdtype(receptor_type.dtype, numpy.integer)):
             raise TypeError('receptor_type must be a NumPy array of integers')
 

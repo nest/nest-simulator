@@ -48,42 +48,42 @@ public:
   {
   }
 
-   /**
-   * Enroll an `InputDevice` with the `InputBackend`.
-   *
-   * When this function is called by an `InputDevice` @p device,
-   * the `InputBackend` can set up per-device data structures and
-   * properties. Individual device instances can be identified using
-   * the `thread` and `node_id` of the @p device.
-   *
-   * This function is called from the set_initialized_() function of
-   * the @p device and their set_status() function. The companion
-   * function @p set_value_names() is called from Node::pre_run_hook()
-   * and makes the names of values to be recorded known.
-   *
-   * A backend needs to be able to cope with multiple calls to this
-   * function, as multiple calls to set_status() may occur on the @p
-   * device. For already enrolled devices this usually means that only
-   * the parameters in @p params have to be set, but no further
-   * actions are needed.
-   *
-   * Each recording backend must ensure that enrollment (including all
-   * settings made by the user) is persistent over multiple calls to
-   * Prepare, while the enrollment of all devices should end with a
-   * call to finalize().
-   *
-   * A common implementation of this function will create an entry in
-   * a thread-local map, associating the device's node ID with the
-   * device-specific backend properties and an output facility of some
-   * kind.
-   *
-   * @param device the RecordingDevice to be enrolled
-   * @param params device-specific backend parameters
-   *
-   * @see set_value_names(), disenroll(), write(),
-   *
-   * @ingroup NESTio
-   */
+  /**
+  * Enroll an `InputDevice` with the `InputBackend`.
+  *
+  * When this function is called by an `InputDevice` @p device,
+  * the `InputBackend` can set up per-device data structures and
+  * properties. Individual device instances can be identified using
+  * the `thread` and `node_id` of the @p device.
+  *
+  * This function is called from the set_initialized_() function of
+  * the @p device and their set_status() function. The companion
+  * function @p set_value_names() is called from Node::pre_run_hook()
+  * and makes the names of values to be recorded known.
+  *
+  * A backend needs to be able to cope with multiple calls to this
+  * function, as multiple calls to set_status() may occur on the @p
+  * device. For already enrolled devices this usually means that only
+  * the parameters in @p params have to be set, but no further
+  * actions are needed.
+  *
+  * Each recording backend must ensure that enrollment (including all
+  * settings made by the user) is persistent over multiple calls to
+  * Prepare, while the enrollment of all devices should end with a
+  * call to finalize().
+  *
+  * A common implementation of this function will create an entry in
+  * a thread-local map, associating the device's node ID with the
+  * device-specific backend properties and an output facility of some
+  * kind.
+  *
+  * @param device the RecordingDevice to be enrolled
+  * @param params device-specific backend parameters
+  *
+  * @see set_value_names(), disenroll(), write(),
+  *
+  * @ingroup NESTio
+  */
   virtual void enroll( InputDevice& device, const DictionaryDatum& params ) = 0;
 
   /**
@@ -107,7 +107,7 @@ public:
   /**
    * To make the names of input quantities known to the
    * `InputBackend`, the vectors @p double_value_names and @p
-   * long_value_names can be set appropriately. 
+   * long_value_names can be set appropriately.
    *
    * @param device the device to set the value names for
    * @param double_value_names the names for double values to be recorded
@@ -162,7 +162,7 @@ public:
    */
   virtual void post_step_hook() = 0;
 
-  virtual void  initialize() = 0;
+  virtual void initialize() = 0;
   virtual void finalize() = 0;
 
   /**
@@ -201,23 +201,23 @@ public:
   {
   }
 
-   /**
-   * Check if the given per-device properties are valid and usable by
-   * the backend.
-   *
-   * This function is used to validate properties when SetDefaults is
-   * called on a recording device. If the properties are found to be
-   * valid, they will be cached in the recording device and set for
-   * individual instances by means of the call to enroll from the
-   * device's set_initialized_() function. In case the properties are
-   * invalid, this function is expected to throw BadProperty.
-   *
-   * @param params the parameter dictionary to validate
-   *
-   * @see get_device_defaults(), get_device_status()
-   *
-   * @ingroup NESTio
-   */
+  /**
+  * Check if the given per-device properties are valid and usable by
+  * the backend.
+  *
+  * This function is used to validate properties when SetDefaults is
+  * called on a recording device. If the properties are found to be
+  * valid, they will be cached in the recording device and set for
+  * individual instances by means of the call to enroll from the
+  * device's set_initialized_() function. In case the properties are
+  * invalid, this function is expected to throw BadProperty.
+  *
+  * @param params the parameter dictionary to validate
+  *
+  * @see get_device_defaults(), get_device_status()
+  *
+  * @ingroup NESTio
+  */
   virtual void check_device_status( const DictionaryDatum& params ) const = 0;
 
   /**
@@ -273,7 +273,6 @@ public:
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
   static const std::vector< double > NO_DOUBLE_VALUES;
   static const std::vector< long > NO_LONG_VALUES;
-
 };
 
 } // namespace

@@ -336,12 +336,14 @@ nest::spike_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::update_from_backend(std::vector<double> input_spikes) {
+nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
+{
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
   const Time& origin = device_.get_origin();
   // For the input backend
-  if ( !input_spikes.empty() ){
+  if ( !input_spikes.empty() )
+  {
 
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
@@ -352,21 +354,19 @@ nest::spike_generator::update_from_backend(std::vector<double> input_spikes) {
       if ( ptmp.precise_times_ )
         times_ms[ n ] -= ptmp.spike_offsets_[ n ];
     }
-    for (double input_spike : input_spikes)
+    for ( double input_spike : input_spikes )
     {
       times_ms.push_back( input_spike );
       if ( ptmp.precise_times_ )
-        printf("precise not supported\n");
+        printf( "precise not supported\n" );
     }
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 
-    ptmp.set( d, S_, origin,Time::step( times_ms[times_ms.size()-1] ), this );
-
+    ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
   }
 
- // if we get here, temporary contains consistent set of properties
+  // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
-
 }
 
 
@@ -469,7 +469,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // throws if BadProperty
   ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
 
-  InputDevice::set_status(d);
+  InputDevice::set_status( d );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

@@ -29,18 +29,17 @@
 #include "input_device.h"
 
 void
-nest::InputBackendInternal::enroll( InputDevice& device,
-  const DictionaryDatum& params )
+nest::InputBackendInternal::enroll( InputDevice& device, const DictionaryDatum& params )
 {
-	  thread tid = device.get_thread();
-	  index node_id = device.get_node_id();
+  thread tid = device.get_thread();
+  index node_id = device.get_node_id();
 
-	  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
-	  if ( device_it != devices_[ tid ].end() )
-	  {
-	    devices_[ tid ].erase( device_it );
-	  }
-	  devices_[ tid ].insert( std::make_pair( node_id, &device ) );
+  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+  if ( device_it != devices_[ tid ].end() )
+  {
+    devices_[ tid ].erase( device_it );
+  }
+  devices_[ tid ].insert( std::make_pair( node_id, &device ) );
 }
 
 void
@@ -62,7 +61,6 @@ nest::InputBackendInternal::initialize()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
-  
 }
 
 void
@@ -80,13 +78,13 @@ nest::InputBackendInternal::cleanup()
 void
 nest::InputBackendInternal::finalize()
 {
-    printf("Closing\n\n" );
+  printf( "Closing\n\n" );
 }
 
 void
 nest::InputBackendInternal::set_value_names( const InputDevice& device,
   const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names)
+  const std::vector< Name >& long_value_names )
 {
   // nothing to do
 }
@@ -109,7 +107,7 @@ nest::InputBackendInternal::get_status( DictionaryDatum& d ) const
 void
 nest::InputBackendInternal::set_status( const DictionaryDatum& d )
 {
-    // nothing to do
+  // nothing to do
 }
 
 void
@@ -142,5 +140,3 @@ nest::InputBackendInternal::get_device_status( const nest::InputDevice& device,
 {
   // nothing to do
 }
-
-

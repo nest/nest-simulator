@@ -103,20 +103,20 @@ public:
   bool is_valid_input_backend( Name ) const;
 
   void write( Name, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
-  std::vector <double> read( InputDevice& );
+  std::vector< double > read( InputDevice& );
 
   void enroll_recorder( Name, const RecordingDevice&, const DictionaryDatum& );
   void enroll_input( Name, InputDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( Name backend_name,
-  const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names );
+    const RecordingDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void set_input_value_names( Name backend_name,
-  const InputDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names );
+    const InputDevice& device,
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names );
 
   void check_recording_backend_device_status( Name, const DictionaryDatum& );
   void get_recording_backend_device_defaults( Name, DictionaryDatum& );
@@ -142,7 +142,6 @@ private:
    */
   std::map< Name, InputBackend* > input_backends_;
   InputBackend* get_input_backend_( Name );
-
 };
 
 } // namespace nest

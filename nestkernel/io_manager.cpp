@@ -197,7 +197,7 @@ IOManager::set_status( const DictionaryDatum& d )
     for ( iti = input_backends_.begin(); iti != input_backends_.end(); ++iti )
     {
       DictionaryDatum input_backend_status;
-      if ( updateValue< DictionaryDatum >(input_backends, iti->first, input_backend_status ) )
+      if ( updateValue< DictionaryDatum >( input_backends, iti->first, input_backend_status ) )
       {
         iti->second->set_status( input_backend_status );
       }
@@ -222,7 +222,7 @@ IOManager::get_status( DictionaryDatum& d )
   ( *d )[ names::recording_backends ] = recording_backends;
 
   DictionaryDatum input_backends( new Dictionary );
-  for (const auto& it : input_backends_ )
+  for ( const auto& it : input_backends_ )
   {
     DictionaryDatum input_backend_status( new Dictionary );
     it.second->get_status( input_backend_status );
@@ -315,14 +315,14 @@ IOManager::is_valid_input_backend( Name backend_name ) const
 nest::InputBackend*
 nest::IOManager::get_input_backend_( Name backend_name )
 {
-  nest::InputBackend *back;
+  nest::InputBackend* back;
   std::map< Name, InputBackend* >::const_iterator backend;
-  printf("This is the backend name: %s\n",backend_name.toString().c_str());
+  printf( "This is the backend name: %s\n", backend_name.toString().c_str() );
   backend = input_backends_.find( backend_name );
-  if( backend != input_backends_.end() )
-  	back = ( backend->second );
-  else 
-        back = 0;
+  if ( backend != input_backends_.end() )
+    back = ( backend->second );
+  else
+    back = 0;
   return back;
 }
 
@@ -367,7 +367,6 @@ nest::IOManager::enroll_input( Name backend_name, InputDevice& device, const Dic
       it.second->disenroll( device );
     }
   }
-
 }
 
 
@@ -436,7 +435,7 @@ IOManager::register_recording_backends_()
   recording_backends_.insert( std::make_pair( "arbor", new RecordingBackendArbor() ) );
 #endif
   recording_backends_.insert( std::make_pair( "mpi", new RecordingBackendMPI() ) );
-  input_backends_.insert(std::make_pair( "mpi", new InputBackendMPI() ) );  
+  input_backends_.insert( std::make_pair( "mpi", new InputBackendMPI() ) );
 #endif
 #ifdef HAVE_SIONLIB
   recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );

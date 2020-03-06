@@ -39,7 +39,7 @@ public:
    * InputBackend constructor
    * The actual initialization is happening in RecordingBackend::initialize()
    */
-  InputBackendInternal()=default;
+  InputBackendInternal() = default;
 
   /**
    * InputBackend destructor
@@ -71,14 +71,13 @@ public:
 
   void check_device_status( const DictionaryDatum& ) const override;
   void set_value_names( const InputDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& double_value_names,
+    const std::vector< Name >& long_value_names ) override;
 
   void get_device_defaults( DictionaryDatum& ) const override;
   void get_device_status( const InputDevice& device, DictionaryDatum& params_dictionary ) const override;
 
 private:
-
   /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the gid of a device on a given thread
@@ -86,7 +85,6 @@ private:
   */
   typedef std::vector< std::map< int, const InputDevice* > > device_map;
   device_map devices_;
-
 };
 
 } // namespace

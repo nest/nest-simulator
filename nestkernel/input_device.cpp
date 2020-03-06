@@ -42,8 +42,9 @@ nest::InputDevice::InputDevice( const InputDevice& id )
 }
 
 void
-nest::InputDevice::set_initialized_() {
-  kernel().io_manager.enroll_input(P_.input_from_, *this, backend_params_);
+nest::InputDevice::set_initialized_()
+{
+  kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
 }
 
 void
@@ -63,15 +64,14 @@ nest::InputDevice::get_label() const
 nest::InputDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
-  , input_from_(names::internal)
+  , input_from_( names::internal )
 {
-
 }
 
 nest::InputDevice::Parameters_::Parameters_( const Parameters_& p )
-        : label_( p.label_ )
-        , time_in_steps_(p.time_in_steps_)
-        , input_from_( p.input_from_ )
+  : label_( p.label_ )
+  , time_in_steps_( p.time_in_steps_ )
+  , input_from_( p.input_from_ )
 {
 }
 
@@ -80,31 +80,33 @@ nest::InputDevice::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
-  ( *d )[ names::input_from ] = LiteralDatum(input_from_);
+  ( *d )[ names::input_from ] = LiteralDatum( input_from_ );
 }
 
 void
-nest::InputDevice::Parameters_::set(
-					 const DictionaryDatum& d)
+nest::InputDevice::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
   bool time_in_steps = time_in_steps_;
   updateValue< bool >( d, names::time_in_steps, time_in_steps );
 
-//  if ( time_in_steps != time_in_steps_ and n_events != 0 ) I don't understand n_events
-// probabily link with S_.n_events_
-  if ( time_in_steps != time_in_steps_)
+  //  if ( time_in_steps != time_in_steps_ and n_events != 0 ) I don't understand n_events
+  // probabily link with S_.n_events_
+  if ( time_in_steps != time_in_steps_ )
   {
-    throw BadProperty("Property /time_in_steps cannot be set if recordings exist. "
-		      "Please clear the events first by setting /n_events to 0.");
+    throw BadProperty(
+      "Property /time_in_steps cannot be set if recordings exist. "
+      "Please clear the events first by setting /n_events to 0." );
   }
   time_in_steps_ = time_in_steps;
   std::string input_from;
-  if ( updateValue< std::string >( d, names::input_from, input_from ) ) {
-    if (not kernel().io_manager.is_valid_input_backend(input_from)) {
-      std::string msg = String::compose("Unknown input backend '%1'", input_from);
-      throw BadProperty(msg);
+  if ( updateValue< std::string >( d, names::input_from, input_from ) )
+  {
+    if ( not kernel().io_manager.is_valid_input_backend( input_from ) )
+    {
+      std::string msg = String::compose( "Unknown input backend '%1'", input_from );
+      throw BadProperty( msg );
     }
     input_from_ = input_from;
   }
@@ -131,7 +133,7 @@ nest::InputDevice::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::InputDevice::State_::set( const DictionaryDatum& d)
+nest::InputDevice::State_::set( const DictionaryDatum& d )
 {
   size_t n_events = n_events_;
   if ( updateValue< long >( d, names::n_events, n_events ) )
@@ -142,7 +144,8 @@ nest::InputDevice::State_::set( const DictionaryDatum& d)
     }
     else
     {
-      throw BadProperty( "Property /n_events can only be set "
+      throw BadProperty(
+        "Property /n_events can only be set "
         "to 0 (which clears all stored events)." );
     }
   }
@@ -156,11 +159,11 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
     throw BadProperty( "Input parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
   }
 
-  Parameters_ ptmp = P_;    // temporary copy in case of errors
-  ptmp.set( d); // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
 
-  State_ stmp = S_;         // temporary copy in case of errors
-  stmp.set( d );     // throws if BadProperty
+  State_ stmp = S_; // temporary copy in case of errors
+  stmp.set( d );    // throws if BadProperty
 
   Device::set_status( d );
 

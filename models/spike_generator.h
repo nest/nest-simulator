@@ -198,7 +198,7 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-  void update_from_backend(std::vector<double> input_spikes) override;
+  void update_from_backend( std::vector< double > input_spikes ) override;
 
   Type get_type() const;
   /**
@@ -309,7 +309,7 @@ spike_generator::send_test_event( Node& target, rport receptor_type, synindex sy
 inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
-  InputDevice::get_status(d);
+  InputDevice::get_status( d );
   P_.get( d );
   device_.get_status( d );
 }

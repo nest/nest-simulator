@@ -1,5 +1,5 @@
 /*
- *  recording_backend.h
+ *  input_backend.h
  *
  *  This file is part of NEST.
  *

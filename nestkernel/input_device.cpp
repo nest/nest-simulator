@@ -1,5 +1,5 @@
 /*
- *  recording_device.cpp
+ *  input_device.cpp
  *
  *  This file is part of NEST.
  *

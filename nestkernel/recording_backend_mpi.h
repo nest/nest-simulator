@@ -1,5 +1,5 @@
 /*
- *  recording_backend_screen.h
+ *  recording_backend_mpi.h
  *
  *  This file is part of NEST.
  *

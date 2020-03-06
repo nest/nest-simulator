@@ -1,5 +1,5 @@
 /*
- *  recording_device.h
+ *  input_device.h
  *
  *  This file is part of NEST.
  *

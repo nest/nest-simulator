@@ -275,6 +275,45 @@ private:
   double lower_, range_;
 };
 
+/**
+ * Random parameter with uniform distribution in [0,max), yielding integer values.
+ */
+class UniformIntParameter : public Parameter
+{
+public:
+  /**
+   * Parameters:
+   * max - maximum value
+   */
+  UniformIntParameter( const DictionaryDatum& d )
+    : Parameter( d )
+    , max_( 1.0 )
+  {
+    updateValue< long >( d, names::max, max_ );
+    if ( max_ <= 0 )
+    {
+      throw BadProperty(
+        "nest::UniformIntParameter: "
+        "max > 0 required." );
+    }
+  }
+
+  double
+  value( RngPtr rng, Node* ) override
+  {
+    return rng->ulrand( max_ );
+  }
+
+  Parameter*
+  clone() const override
+  {
+    return new UniformIntParameter( *this );
+  }
+
+private:
+  double max_;
+};
+
 
 /**
  * Random parameter with normal distribution.

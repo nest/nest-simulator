@@ -59,6 +59,18 @@ class RandomParameterTestCase(unittest.TestCase):
 
         self.ks_assert(param, cdf, cdf_args)
 
+    def test_uniform_int(self):
+        """Test uniform_int distribution Parameter"""
+        w_min = 0
+        w_max = 100
+
+        cdf = 'randint'
+        cdf_args = (w_min, w_max)
+        # Parameter distribution is in the range [0, max)
+        param = nest.random.uniform_int(w_max)
+
+        self.ks_assert(param, cdf, cdf_args)
+
     def test_normal(self):
         """Test normal distribution Parameter"""
         mean = 2.3

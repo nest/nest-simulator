@@ -110,6 +110,9 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       vose.h vose.cpp
+      input_device.h input_device.cpp
+      input_backend.h input_backend.cpp
+      input_backend_internal.h input_backend_internal.cpp
       )
 
 if ( HAVE_SIONLIB )
@@ -121,9 +124,11 @@ endif ()
 
 if ( HAVE_RECORDINGBACKEND_ARBOR )
   set( nestkernel_sources
-       ${nestkernel_sources}
-       recording_backend_arbor.h recording_backend_arbor.cpp
-       )
+    ${nestkernel_sources}
+    recording_backend_arbor.h recording_backend_arbor.cpp
+    recording_backend_mpi.h recording_backend_mpi.cpp
+    input_backend_mpi.h input_backend_mpi.cpp
+  )
 endif ()
 
 add_library( nestkernel ${nestkernel_sources} )

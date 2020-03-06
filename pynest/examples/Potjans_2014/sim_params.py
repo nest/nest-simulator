@@ -29,9 +29,12 @@ A dictionary with parameters defining the simulation.
 import os
 
 sim_dict = {
+    # presimulation time (in ms). can be used run an initial simulation before
+    # the main simulation for separate time measurements. 
+    't_presim': 0.0,
     # simulation time (in ms)
     't_sim': 1000.0,
-    # Resolution of the simulation (in ms)
+    # resolution of the simulation (in ms)
     'sim_resolution': 0.1,
     # list of recording devices, default is 'spike_detector'. a 'voltmeter' can
     # be added to record membrane voltages of the neurons. nothing will be

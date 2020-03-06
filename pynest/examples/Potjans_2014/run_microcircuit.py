@@ -42,6 +42,8 @@ time_start = time.time()
 ###############################################################################
 # Initialize the network with simulation, network and stimulation parameters,
 # then create and connect all nodes, and finally simulate.
+# The times for a presimulation and the main simulation are taken
+# independently.
 
 net = network.Network(sim_dict, net_dict, stim_dict)
 time_network = time.time()
@@ -52,7 +54,10 @@ time_create = time.time()
 net.connect()
 time_connect = time.time()
 
-net.simulate()
+net.simulate(sim_dict['t_presim'])
+time_presimulate = time.time()
+
+net.simulate(sim_dict['t_sim'])
 time_simulate = time.time()
 
 ###############################################################################
@@ -60,12 +65,13 @@ time_simulate = time.time()
 # rates for each population.
 # For visual purposes only, spikes 100 ms before and 100 ms after the thalamic
 # stimulus time are plotted here by default.
-# The computation of spike rates discards the first 500 ms of the simulation to
+# The computation of spike rates discards at least 500 ms of the simulation to
 # exclude initialization artifacts.
 
 raster_plot_interval = np.array([stim_dict['th_start'] - 100.0,
                                  stim_dict['th_start'] + 100.0])
-firing_rates_interval = np.array([500.0, sim_dict['t_sim']])
+firing_rates_interval = np.array([np.max([sim_dict['t_presim'], 500.]),
+                                 sim_dict['t_presim'] + sim_dict['t_sim']])
 net.evaluate(raster_plot_interval, firing_rates_interval)
 time_evaluate = time.time()
 
@@ -73,11 +79,11 @@ time_evaluate = time.time()
 # Summarize time measurements. Rank 0 usually takes longest because of the
 # data evaluation and printouts.
 
-print(
-    '\nTimes of Rank {}:\n'.format(nest.Rank())
-    + '  Total time:         {:.3f} s\n'.format(time_evaluate - time_start)
-    + '  Time to initialize: {:.3f} s\n'.format(time_network - time_start)
-    + '  Time to create:     {:.3f} s\n'.format(time_create - time_network)
-    + '  Time to connect:    {:.3f} s\n'.format(time_connect - time_create)
-    + '  Time to simulate:   {:.3f} s\n'.format(time_simulate - time_connect)
-    + '  Time to evaluate:   {:.3f} s\n'.format(time_evaluate - time_simulate))
+print('\nTimes of Rank {}:\n'.format(nest.Rank()) +
+      '  Total time:          {:.3f} s\n'.format(time_evaluate - time_start) +
+      '  Time to initialize:  {:.3f} s\n'.format(time_network - time_start) +
+      '  Time to create:      {:.3f} s\n'.format(time_create - time_network) +
+      '  Time to connect:     {:.3f} s\n'.format(time_connect - time_create) +
+      '  Time to presimulate: {:.3f} s\n'.format(time_presimulate - time_create) +
+      '  Time to simulate:    {:.3f} s\n'.format(time_simulate - time_presimulate) +
+      '  Time to evaluate:    {:.3f} s\n'.format(time_evaluate - time_simulate))

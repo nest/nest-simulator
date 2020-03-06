@@ -115,12 +115,19 @@ class Network:
         if self.stim_dict['dc_input']:
             self.__connect_dc_stim_input()
 
-    def simulate(self):
-        """ Simulates the microcircuit. """
-        if nest.Rank() == 0:
-            print('Simulating.')
+    def simulate(self, t_sim):
+        """ Simulates the microcircuit.
 
-        nest.Simulate(self.sim_dict['t_sim'])
+        Parameters
+        ----------
+        t_sim
+            Simulation time (in ms).
+
+        """
+        if nest.Rank() == 0:
+            print('Simulating {} ms.'.format(t_sim))
+
+        nest.Simulate(t_sim)
 
     def evaluate(self, raster_plot_interval, firing_rates_interval):
         """ Displays simulation results.

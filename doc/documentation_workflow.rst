@@ -76,7 +76,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 
 .. code-block:: bash
 
-    cd [path to NEST Simulator source]/doc
+    cd [path to NEST Simulator source code]/doc
 
 2. Generate HTML files:
 
@@ -88,7 +88,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 
 .. code-block:: bash
 
-   cd </path/to/nest_source>/doc/_build/html
+   cd [path to NEST Simulator source code]/doc/_build/html
    firefox FILENAME.html
 
 4. If you add further changes to your files, repeat steps 1-3.

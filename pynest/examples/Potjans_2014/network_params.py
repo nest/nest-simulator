@@ -67,8 +67,8 @@ net_dict = {
     # 'populations')
     'full_num_neurons':
         np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
-    # mean rates of the different populations in the non-scaled version
-    # of the microcircuit (same order as in 'populations');
+    # mean rates of the different populations in the non-scaled version of the
+    # microcircuit (in spikes/s; same order as in 'populations');
     # necessary for the scaling of the network
     'full_mean_rates':
         np.array([0.971, 2.868, 4.746, 5.396, 8.142, 9.078, 0.991, 7.523]),
@@ -84,7 +84,7 @@ net_dict = {
              [0.0548, 0.0269, 0.0257, 0.0022, 0.06, 0.3158, 0.0086, 0.],
              [0.0156, 0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396, 0.2252],
              [0.0364, 0.001, 0.0034, 0.0005, 0.0277, 0.008, 0.0658, 0.1443]]),
-    # number of external connections to the different populations (same order
+    # indegree of external connections to the different populations (same order
     # as in 'populations')
     'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
     # mean amplitude of excitatory postsynaptic potential (in mV)
@@ -93,12 +93,12 @@ net_dict = {
     'PSP_std': 0.1,
     # relative inhibitory synaptic strength
     'g': -4,
-    # rate of the Poissonian spike generator (in Hz)
+    # rate of the Poissonian spike generator (in spikes/s)
     'bg_rate': 8.,
     # turn Poisson input on or off (True or False)
     # if False: DC input is applied for compensation
     'poisson_input': True,
-    # delay of the Poisson generator (in ms)
+    # delay from the Poisson generator to the network (in ms)
     'poisson_delay': 1.5,
     # mean delay of excitatory connections (in ms)
     'mean_delay_exc': 1.5,
@@ -140,12 +140,12 @@ net_dict = {
         't_ref': 2.0}}
 
 # derive matrix of mean PSPs,
-# the weight of the connection from L4E to L23E is doubled
+# the mean PSP of the connection from L4E to L23E is doubled
 mean_PSP_matrix = get_exc_inh_matrix(
     net_dict['PSP_e'],
     net_dict['PSP_e'] * net_dict['g'],
     len(net_dict['populations']))
-mean_PSP_matrix[0, 2] *= 2
+mean_PSP_matrix[0, 2] = 2. * net_dict['PSP_e']
 
 updated_dict = {
     # matrix of mean PSPs

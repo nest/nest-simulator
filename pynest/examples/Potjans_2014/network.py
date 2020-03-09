@@ -305,7 +305,6 @@ class Network:
             print('Creating neuronal populations.')
 
         self.pops = []
-        nodeids = []
         for i in np.arange(self.num_pops):
             population = nest.Create(self.net_dict['neuron_model'],
                                      self.num_neurons[i])
@@ -329,14 +328,14 @@ class Network:
                     self.net_dict['neuron_params']['V0_std']['original']))
 
             self.pops.append(population)
-            nodeids.append([population[0].global_id, population[-1].global_id])
 
         # write node ids to file
         if nest.Rank() == 0:
             fn = os.path.join(self.data_path, 'population_nodeids.dat')
             with open(fn, 'w+') as f:
-                for i in np.arange(self.num_pops):
-                    f.write('{} {}\n'.format(nodeids[i][0], nodeids[i][1]))
+                for pop in self.pops:
+                    f.write('{} {}\n'.format(pop[0].global_id,
+                                             pop[-1].global_id))
 
     def __create_recording_devices(self):
         """ Creates one recording device of each kind per population.

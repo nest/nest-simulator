@@ -71,19 +71,35 @@ time_simulate = time.time()
 raster_plot_interval = np.array([stim_dict['th_start'] - 100.0,
                                  stim_dict['th_start'] + 100.0])
 firing_rates_interval = np.array([np.max([sim_dict['t_presim'], 500.]),
-                                 sim_dict['t_presim'] + sim_dict['t_sim']])
+                                  sim_dict['t_presim'] + sim_dict['t_sim']])
 net.evaluate(raster_plot_interval, firing_rates_interval)
 time_evaluate = time.time()
 
 ###############################################################################
 # Summarize time measurements. Rank 0 usually takes longest because of the
-# data evaluation and printouts.
+# data evaluation and print calls.
 
-print('\nTimes of Rank {}:\n'.format(nest.Rank()) +
-      '  Total time:          {:.3f} s\n'.format(time_evaluate - time_start) +
-      '  Time to initialize:  {:.3f} s\n'.format(time_network - time_start) +
-      '  Time to create:      {:.3f} s\n'.format(time_create - time_network) +
-      '  Time to connect:     {:.3f} s\n'.format(time_connect - time_create) +
-      '  Time to presimulate: {:.3f} s\n'.format(time_presimulate - time_create) +
-      '  Time to simulate:    {:.3f} s\n'.format(time_simulate - time_presimulate) +
-      '  Time to evaluate:    {:.3f} s\n'.format(time_evaluate - time_simulate))
+print(
+    '\nTimes of Rank {}:\n'.format(
+        nest.Rank()) +
+    '  Total time:          {:.3f} s\n'.format(
+        time_evaluate -
+        time_start) +
+    '  Time to initialize:  {:.3f} s\n'.format(
+        time_network -
+        time_start) +
+    '  Time to create:      {:.3f} s\n'.format(
+        time_create -
+        time_network) +
+    '  Time to connect:     {:.3f} s\n'.format(
+        time_connect -
+        time_create) +
+    '  Time to presimulate: {:.3f} s\n'.format(
+        time_presimulate -
+        time_create) +
+    '  Time to simulate:    {:.3f} s\n'.format(
+        time_simulate -
+        time_presimulate) +
+    '  Time to evaluate:    {:.3f} s\n'.format(
+        time_evaluate -
+        time_simulate))

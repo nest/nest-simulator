@@ -40,7 +40,7 @@ stim_dict = {
     'th_start': 700.0,
     # duration of the thalamic input (in ms)
     'th_duration': 10.0,
-    # rate of the thalamic input (in Hz)
+    # rate of the thalamic input (in spikes/s)
     'th_rate': 120.0,
     # number of thalamic neurons
     'num_th_neurons': 902,

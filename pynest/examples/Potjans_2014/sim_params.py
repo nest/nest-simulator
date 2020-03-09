@@ -29,15 +29,15 @@ A dictionary with parameters defining the simulation.
 import os
 
 sim_dict = {
-    # presimulation time (in ms). can be used run an initial simulation before
-    # the main simulation for separate time measurements. 
+    # presimulation time (in ms); can be used to run an initial simulation
+    # before the main simulation for separate time measurements
     't_presim': 0.0,
     # simulation time (in ms)
     't_sim': 1000.0,
     # resolution of the simulation (in ms)
     'sim_resolution': 0.1,
-    # list of recording devices, default is 'spike_detector'. a 'voltmeter' can
-    # be added to record membrane voltages of the neurons. nothing will be
+    # list of recording devices, default is 'spike_detector'. A 'voltmeter' can
+    # be added to record membrane voltages of the neurons. Nothing will be
     # recorded if an empty list is given.
     'rec_dev': ['spike_detector'],
     # path to save the output data
@@ -51,6 +51,6 @@ sim_dict = {
     # if True, data will be overwritten,
     # if False, a NESTError is raised if the files already exist
     'overwrite_files': True,
-    # print the time progress, this should only be used when the simulation
-    # is run on a local machine
+    # print the time progress. This should only be used when the simulation
+    # is run on a local machine.
     'print_time': True}

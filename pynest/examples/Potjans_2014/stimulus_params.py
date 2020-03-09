@@ -28,9 +28,6 @@ Thalamic input and DC input can be switched on individually.
 """
 
 import numpy as np
-from network_params import net_dict
-
-num_pops = len(net_dict['populations'])
 
 stim_dict = {
     # optional thalamic input
@@ -59,10 +56,10 @@ stim_dict = {
     # optional DC input
     # turn DC input on or off (True or False)
     'dc_input': False,
-    # start of the DC generator (in ms)
+    # start of the DC input (in ms)
     'dc_start': 0.0,
-    # duration of the DC generator (in ms)
+    # duration of the DC input (in ms)
     'dc_dur': 1000.0,
-    # amplitude of the DC generator (in pA),
-    # final amplitude will be obtained by multiplying with 'K_ext'
-    'dc_amp': 0.3 * np.ones(num_pops)}
+    # amplitude of the DC input (in pA); final amplitude is population-specific
+    # and will be obtained by multiplication with 'K_ext'
+    'dc_amp': 0.3}

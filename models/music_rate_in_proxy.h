@@ -167,7 +167,7 @@ private:
 
   struct Buffers_
   {
-    double data_;
+    std::vector< double > data_; //!< The buffer for incoming data
   };
 
   // ------------------------------------------------------------

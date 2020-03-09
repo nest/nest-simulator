@@ -176,13 +176,13 @@ class Network:
             self.net_dict['full_num_neurons'])
 
         # scaled numbers of neurons and synapses
-        self.num_neurons = (self.net_dict['full_num_neurons'] *
-                            self.net_dict['N_scaling']).astype(int)
-        self.num_synapses = (full_num_synapses *
-                             self.net_dict['N_scaling'] *
-                             self.net_dict['K_scaling']).astype(int)
-        self.ext_indegrees = (self.net_dict['K_ext'] *
-                              self.net_dict['K_scaling']).astype(int)
+        self.num_neurons = np.round((self.net_dict['full_num_neurons'] *
+                                     self.net_dict['N_scaling'])).astype(int)
+        self.num_synapses = np.round((full_num_synapses *
+                                      self.net_dict['N_scaling'] *
+                                      self.net_dict['K_scaling'])).astype(int)
+        self.ext_indegrees = np.round((self.net_dict['K_ext'] *
+                                       self.net_dict['K_scaling'])).astype(int)
 
         # conversion from PSPs to PSCs
         mean_PSC_matrix = helpers.weight_as_current_from_potential(
@@ -206,7 +206,6 @@ class Network:
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],
                 PSC_ext)
-            print(DC_amp)
 
         # adjust weights and DC amplitude if the indegree is scaled
         if self.net_dict['K_scaling'] != 1:
@@ -299,14 +298,14 @@ class Network:
         The neuronal populations are created and the parameters are assigned
         to them. The initial membrane potential of the neurons is drawn from
         normal distributions dependent on the parameter ``V0_type``.
+
+        The first and last neuron id of each population is written to file.
         """
         if nest.Rank() == 0:
             print('Creating neuronal populations.')
 
         self.pops = []
-        pop_file = open(
-            os.path.join(self.data_path, 'population_nodeids.dat'), 'w+')
-
+        nodeids = []
         for i in np.arange(self.num_pops):
             population = nest.Create(self.net_dict['neuron_model'],
                                      self.num_neurons[i])
@@ -330,9 +329,14 @@ class Network:
                     self.net_dict['neuron_params']['V0_std']['original']))
 
             self.pops.append(population)
-            pop_file.write('{} {}\n'.format(population[0].global_id,
-                                            population[-1].global_id))
-        pop_file.close()
+            nodeids.append([population[0].global_id, population[-1].global_id])
+
+        # write node ids to file
+        if nest.Rank() == 0:
+            fn = os.path.join(self.data_path, 'population_nodeids.dat')
+            with open(fn, 'w+') as f:
+                for i in np.arange(self.num_pops):
+                    f.write('{} {}\n'.format(nodeids[i][0], nodeids[i][1]))
 
     def __create_recording_devices(self):
         """ Creates one recording device of each kind per population.

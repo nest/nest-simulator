@@ -150,7 +150,7 @@ nest::music_rate_in_proxy::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::data ] = DoubleVectorDatum( new std::vector< double >(1, B_.data_ ) );
+  ( *d )[ names::data ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
 }
 
 void

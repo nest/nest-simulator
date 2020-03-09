@@ -514,13 +514,15 @@ class Network:
                 'weight': nest.math.redraw(
                     nest.random.normal(
                         mean=self.weight_th,
-                        std=self.weight_th * self.net_dict['PSP_std']),
+                        std=self.weight_th *
+                        self.net_dict['PSP_std']),
                     min=0.0,
                     max=np.Inf),
                 'delay': nest.math.redraw(
                     nest.random.normal(
-                        mean=self.stim_dict['delay_th'][i],
-                        std=self.stim_dict['delay_th_std'][i]),
+                        mean=self.stim_dict['mean_delay_th'],
+                        std=self.stim_dict['mean_delay_th'] *
+                        self.stim_dict['rel_std_delay_th']),
                     min=self.sim_resolution,
                     max=np.Inf)}
 

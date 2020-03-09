@@ -326,26 +326,9 @@ public:
    * mean  - mean value
    * sigma - standard distribution
    */
-  NormalParameter( const DictionaryDatum& d )
-    : Parameter( d )
-    , mean_( 0.0 )
-    , std_( 1.0 )
-  {
-    updateValue< double >( d, names::mean, mean_ );
-    updateValue< double >( d, names::std, std_ );
-    if ( std_ <= 0 )
-    {
-      throw BadProperty(
-        "nest::NormalParameter: "
-        "std > 0 required." );
-    }
-  }
+  NormalParameter( const DictionaryDatum& d );
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return mean_ + normal_dist( rng ) * std_;
-  }
+  double value( RngPtr rng, Node* ) override;
 
   Parameter*
   clone() const override
@@ -355,7 +338,7 @@ public:
 
 private:
   double mean_, std_;
-  normal_distribution normal_dist;
+  std::vector< normal_distribution > normal_dists_;
 };
 
 
@@ -370,26 +353,9 @@ public:
    * mu    - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
-  LognormalParameter( const DictionaryDatum& d )
-    : Parameter( d )
-    , mean_( 0.0 )
-    , std_( 1.0 )
-  {
-    updateValue< double >( d, names::mean, mean_ );
-    updateValue< double >( d, names::std, std_ );
-    if ( std_ <= 0 )
-    {
-      throw BadProperty(
-        "nest::LognormalParameter: "
-        "std > 0 required." );
-    }
-  }
+  LognormalParameter( const DictionaryDatum& d );
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return std::exp( mean_ + normal_dist( rng ) * std_ );
-  }
+  double value( RngPtr rng, Node* ) override;
 
   Parameter*
   clone() const override
@@ -399,7 +365,7 @@ public:
 
 private:
   double mean_, std_;
-  normal_distribution normal_dist;
+  std::vector< lognormal_distribution > lognormal_dists_;
 };
 
 

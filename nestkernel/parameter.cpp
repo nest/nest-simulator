@@ -84,6 +84,59 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   return result;
 }
 
+NormalParameter::NormalParameter( const DictionaryDatum& d )
+  : Parameter( d )
+  , mean_( 0.0 )
+  , std_( 1.0 )
+{
+  updateValue< double >( d, names::mean, mean_ );
+  updateValue< double >( d, names::std, std_ );
+  if ( std_ <= 0 )
+  {
+    throw BadProperty(
+      "nest::NormalParameter: "
+      "std > 0 required." );
+  }
+  normal_distribution dist;
+  normal_distribution::param_type param( mean_, std_ );
+  dist.param( param );
+  assert( normal_dists_.size() == 0 );
+  normal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+}
+
+double
+NormalParameter::value( RngPtr rng, Node* )
+{
+  return normal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+}
+
+
+LognormalParameter::LognormalParameter( const DictionaryDatum& d )
+  : Parameter( d )
+  , mean_( 0.0 )
+  , std_( 1.0 )
+{
+  updateValue< double >( d, names::mean, mean_ );
+  updateValue< double >( d, names::std, std_ );
+  if ( std_ <= 0 )
+  {
+    throw BadProperty(
+      "nest::LognormalParameter: "
+      "std > 0 required." );
+  }
+  lognormal_distribution dist;
+  const lognormal_distribution::param_type param( mean_, std_ );
+  dist.param( param );
+  assert( lognormal_dists_.size() == 0 );
+  lognormal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+}
+
+double
+LognormalParameter::value( RngPtr rng, Node* )
+{
+  return lognormal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+}
+
 
 double
 NodePosParameter::get_node_pos_( RngPtr rng, Node* node ) const

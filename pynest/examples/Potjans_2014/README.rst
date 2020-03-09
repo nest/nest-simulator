@@ -63,7 +63,7 @@ Note on parameters
 ##################
 
 By default, the simulation uses external Poissonian input to excite all neuronal populations of the microcircuit, i.e., ``poisson_input': True`` in ``network_params.py``.
-If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated DC input.
+If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated direct current (DC) input.
 In addition to this ongoing external drive, a thalamic stimulation or a stimulation by an external DC input can be switched on in ``stimulus_params.py`` (the default for both types of stimuli is ``False``).
 
 The default random initialization of membrane voltages in this simulation uses population-specific means and standard deviations to reduce an initial activity burst in the network: ``'V_type': 'optimized'`` in ``network_params.py``.

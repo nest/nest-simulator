@@ -65,8 +65,20 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
 def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
     """ Computes weight as postsynaptic current from postsynaptic potential.
 
-    The weight is calculated as a postsynaptic current that is large enough to
-    elicit a change in the membrane potential of size ``PSP_e``.
+    The time course of the postsynaptic potential ``v`` is computed as
+    :math: `v(t)=(i*h)(t)`
+    with the exponential postsynaptic current
+    :math:`i(t)=J\mathrm{e}^{-t/\tau_\mathrm{syn}}\Theta (t)`,
+    the voltage impulse response
+    :math:`h(t)=\frac{1}{\tau_\mathrm{m}}\mathrm{e}^{-t/\tau_\mathrm{m}}\Theta (t)`,
+    and with
+    :math:`\Theta(t)=1` if :math:`t\leq 0` and zero otherwise.
+
+    The parameter ``PSP`` is considered as the maximum of ``v``, i.e., it is
+    computed by setting the derivative of ``v(t)`` to zero.
+
+    The amplitude of the postsynaptic current ``J`` corresponds to the
+    synaptic weight ``PSC`` which is computed by this function.
 
     Parameters
     ----------
@@ -85,10 +97,13 @@ def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
         Amplitude of postynaptic current (in pA).
 
     """
-    PSC_over_PSP = (((C_m) ** (-1) * tau_m * tau_syn / (
-        tau_syn - tau_m) * ((tau_m / tau_syn) ** (
-            - tau_m / (tau_m - tau_syn)) - (tau_m / tau_syn) ** (
-                - tau_syn / (tau_m - tau_syn)))) ** (-1))
+
+    sub = 1. / (tau_syn - tau_m)
+    pre = tau_m * tau_syn / C_m * sub
+    frac = (tau_m / tau_syn) ** sub
+
+    PSC_over_PSP = 1. / (pre * (frac**tau_m - frac**tau_syn))
+
     PSC = PSC_over_PSP * PSP
     return PSC
 

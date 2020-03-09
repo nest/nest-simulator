@@ -37,6 +37,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "event_delivery_manager_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

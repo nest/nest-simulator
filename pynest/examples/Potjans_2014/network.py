@@ -326,6 +326,10 @@ class Network:
                 population.set(V_m=nest.random.normal(
                     self.net_dict['neuron_params']['V0_mean']['original'],
                     self.net_dict['neuron_params']['V0_std']['original']))
+            else:
+                raise Exception(
+                    'V0_type incorrect. ' +
+                    'Valid options are "optimized" and "original".')
 
             self.pops.append(population)
 

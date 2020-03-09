@@ -163,7 +163,7 @@ def adjust_weights_and_input_to_synapse_scaling(
         External weight (in pA).
     tau_syn
         Synaptic time constant (in ms).
-    full_mean rates
+    full_mean_rates
         Firing rates of the full network (in Hz).
     DC_amp
         DC input current (in pA).
@@ -189,7 +189,7 @@ def adjust_weights_and_input_to_synapse_scaling(
 
     # recurrent input of full network
     indegree_matrix = \
-        full_num_synapses / full_num_neurons.reshape(len(K_ext), 1)
+        full_num_synapses / full_num_neurons[:, np.newaxis]
     input_rec = np.sum(mean_PSC_matrix * indegree_matrix * full_mean_rates,
                        axis=1)
 
@@ -386,9 +386,9 @@ def __gather_metadata(path, name):
     node_idfile = open(path + 'population_nodeids.dat', 'r')
     node_ids = []
     for l in node_idfile:
-        a = l.split()
-        node_ids.append([int(a[0]), int(a[1])])
-    return sd_files, sd_names, np.array(node_ids)
+        node_ids.append(l.split())
+    node_ids = np.array(node_ids, dtype='i4')
+    return sd_files, sd_names, node_ids
 
 
 def __load_spike_times(path, name, begin, end):

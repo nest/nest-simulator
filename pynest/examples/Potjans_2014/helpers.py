@@ -326,7 +326,7 @@ def boxplot(path, populations):
         k = i % 2
         boxPolygon = Polygon(boxCoords, facecolor=color_list[k])
         plt.gca().add_patch(boxPolygon)
-    plt.xlabel('firing rate [Hz]', fontsize=fs)
+    plt.xlabel('firing rate [spikes/s]', fontsize=fs)
     plt.yticks(label_pos, pop_names, fontsize=fs)
     plt.xticks(fontsize=fs)
     plt.savefig(os.path.join(path, 'box_plot.png'), dpi=300)

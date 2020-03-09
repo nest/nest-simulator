@@ -89,7 +89,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 .. code-block:: bash
 
    cd </path/to/nest_source>/doc/_build/html
-   Firefox FILENAME.html
+   firefox FILENAME.html
 
 4. If you add further changes to your files, repeat steps 1-3.
 

@@ -287,8 +287,8 @@ def firing_rates(path, name, begin, end):
         # zeros are included
         all_mean_rates.append(np.mean(rate_per_neuron))
         all_std_rates.append(np.std(rate_per_neuron))
-    print('Mean rates: {} Hz'.format(np.around(all_mean_rates, decimals=3)))
-    print('Standard deviation of rates: {} Hz'.format(
+    print('Mean rates: {} spikes/s'.format(np.around(all_mean_rates, decimals=3)))
+    print('Standard deviation of rates: {} spikes/s'.format(
         np.around(all_std_rates, decimals=3)))
 
 

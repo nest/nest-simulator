@@ -1,8 +1,8 @@
 Documentation workflow
-======================
+######################
 
 What you need to know
----------------------
++++++++++++++++++++++
 
 We use **Sphinx** to generate documentation and **Read the Docs** to publish it.
 
@@ -15,14 +15,14 @@ Using **GitHub** allows the NEST simulator documentation to live alongside its c
   :alt: Alternative text
 
 Changing the documentation
---------------------------
+++++++++++++++++++++++++++
 
 If you notice something out of place, you can submit an `issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub repository.
 
 You can also make changes directly to your forked copy of the `NEST source code repository <https://github.com/nest/nest-simulator>`_ and create a `pull request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the workflow below!
 
 Setting up your environment
----------------------------
++++++++++++++++++++++++++++
 
 To keep things simple, we have created a conda environment for you. Installing it will enable you to smoothly generate documentation for NEST.
 
@@ -52,14 +52,14 @@ If you are using Linux and want to install a full development environment:
    conda remove --name doc --all
 
 Generating with Sphinx
-----------------------
+++++++++++++++++++++++
 
 Now that you activated your environment, you can generate HTML files using `Sphinx <https://www.sphinx-doc.org/en/master/>`_.
 
 Sphinx uses reStructuredText. To learn more on how to use it, check out this `quick reference <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_.
 
 Editing and creating pages
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
 
@@ -94,7 +94,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 4. If you add further changes to your files, repeat steps 1-3.
 
 Optional: Previewing on Read the Docs
--------------------------------------
++++++++++++++++++++++++++++++++++++++
 
 You can then preview your documentation on your Read the Docs account.
 
@@ -119,12 +119,12 @@ You can then preview your documentation on your Read the Docs account.
 This allows you to preview your work on your Read the Docs account. In order to see the changes on the official NEST simulator documentation, please submit a pull request (see below).
 
 Creating pull request
--------------------
++++++++++++++++++++++
 
 When you feel your documentation work is finished, you can create a pull request to the ``master`` branch of the NEST Source Code Repository. Your pull request will be reviewed by our NEST Documentation Team.
 
 Developer documentation
------------------------
++++++++++++++++++++++++
 
 For **developer documentation**, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.

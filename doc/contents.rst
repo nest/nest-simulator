@@ -21,7 +21,6 @@ Table of Contents
    getting_help
    ref_material/nest2_vs_3
    ref_material/pynest_apis
-   documentation_workflow
 
 .. toctree::
    :maxdepth: 2
@@ -29,6 +28,7 @@ Table of Contents
 
    community
    contribute/index
+   documentation_workflow
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
    NEST-Initiative <https://www.nest-initiative.org/>

@@ -2027,6 +2027,7 @@ NestModule::init( SLIInterpreter* i )
 
   register_parameter< ConstantParameter >( "constant" );
   register_parameter< UniformParameter >( "uniform" );
+  register_parameter< UniformIntParameter >( "uniform_int" );
   register_parameter< NormalParameter >( "normal" );
   register_parameter< LognormalParameter >( "lognormal" );
   register_parameter< ExponentialParameter >( "exponential" );

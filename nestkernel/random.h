@@ -46,6 +46,7 @@ using uniform_int_distribution = distribution< std::uniform_int_distribution< un
 using uniform_real_distribution = distribution< std::uniform_real_distribution<> >;
 using poisson_distribution = distribution< std::poisson_distribution< unsigned long > >;
 using normal_distribution = distribution< std::normal_distribution<> >;
+using lognormal_distribution = distribution< std::lognormal_distribution<> >;
 using binomial_distribution = distribution< std::binomial_distribution< unsigned long > >;
 using gamma_distribution = distribution< std::gamma_distribution<> >;
 using exponential_distribution = distribution< std::exponential_distribution<> >;
@@ -70,6 +71,7 @@ struct BaseRNG
   virtual double operator()( std::uniform_real_distribution<>& d ) = 0;
   virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d ) = 0;
   virtual double operator()( std::normal_distribution<>& d ) = 0;
+  virtual double operator()( std::lognormal_distribution<>& d ) = 0;
   virtual unsigned long operator()( std::binomial_distribution< unsigned long >& d ) = 0;
   virtual double operator()( std::gamma_distribution<>& d ) = 0;
   virtual double operator()( std::exponential_distribution<>& d ) = 0;
@@ -87,6 +89,7 @@ struct BaseRNG
   virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d,
     std::poisson_distribution< unsigned long >::param_type& p ) = 0;
   virtual double operator()( std::normal_distribution<>& d, std::normal_distribution<>::param_type& p ) = 0;
+  virtual double operator()( std::lognormal_distribution<>& d, std::lognormal_distribution<>::param_type& p ) = 0;
   virtual unsigned long operator()( std::binomial_distribution< unsigned long >& d,
     std::binomial_distribution< unsigned long >::param_type& p ) = 0;
   virtual double operator()( std::gamma_distribution<>& d, std::gamma_distribution<>::param_type& p ) = 0;
@@ -105,7 +108,7 @@ struct BaseRNG
   virtual double drand() = 0;
 
   /**
-   * @brief Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N].
+   * @brief Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N).
    * @param N Maximum value that can be drawn.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
@@ -160,6 +163,11 @@ struct RNG final : public BaseRNG
     return d( rng_ );
   }
 
+  inline double operator()( std::lognormal_distribution<>& d ) override
+  {
+    return d( rng_ );
+  }
+
   inline unsigned long operator()( std::binomial_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
@@ -197,6 +205,12 @@ struct RNG final : public BaseRNG
   {
     return d( rng_, p );
   }
+
+  inline double operator()( std::lognormal_distribution<>& d, std::lognormal_distribution<>::param_type& p ) override
+  {
+    return d( rng_, p );
+  }
+
   inline unsigned long operator()( std::binomial_distribution< unsigned long >& d,
     std::binomial_distribution< unsigned long >::param_type& p ) override
   {

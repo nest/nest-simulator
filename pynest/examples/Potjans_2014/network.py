@@ -57,10 +57,7 @@ class Network:
     def __init__(self, sim_dict, net_dict, stim_dict=None):
         self.sim_dict = sim_dict
         self.net_dict = net_dict
-        if stim_dict is not None:
-            self.stim_dict = stim_dict
-        else:
-            self.stim_dict = None
+        self.stim_dict = stim_dict
 
         # data directory
         self.data_path = sim_dict['data_path']
@@ -310,7 +307,7 @@ class Network:
         pop_file = open(
             os.path.join(self.data_path, 'population_nodeids.dat'), 'w+')
 
-        for i, pop in enumerate(self.net_dict['populations']):
+        for i in np.arange(self.num_pops):
             population = nest.Create(self.net_dict['neuron_model'],
                                      self.num_neurons[i])
 
@@ -333,8 +330,8 @@ class Network:
                     self.net_dict['neuron_params']['V0_std']['original']))
 
             self.pops.append(population)
-            pop_file.write('{} {}\n'.format(population.global_id[0],
-                                            population.global_id[-1]))
+            pop_file.write('{} {}\n'.format(population[0].global_id,
+                                            population[-1].global_id))
         pop_file.close()
 
     def __create_recording_devices(self):
@@ -389,7 +386,7 @@ class Network:
         Thalamic neurons are of type ``parrot_neuron`` and receive input from a
         Poisson generator.
         Note that the number of thalamic neurons is not scaled with
-        ``Ǹ_scaling``.
+        ``N_scaling``.
 
         """
         if nest.Rank() == 0:
@@ -435,23 +432,28 @@ class Network:
                         'rule': 'fixed_total_number',
                         'N': self.num_synapses[i][j]}
 
+                    if self.mean_weight_matrix[i][j] < 0:
+                        w_min = np.NINF
+                        w_max = 0.0
+                    else:
+                        w_min = 0.0
+                        w_max = np.Inf
+
                     syn_dict = {
                         'synapse_model': 'static_synapse',
-                        'weight': {
-                            'distribution': 'normal_clipped',
-                            'mu': self.mean_weight_matrix[i][j],
-                            'sigma': abs(self.mean_weight_matrix[i][j] *
-                                         self.std_weight_matrix[i][j])},
-                        'delay': {
-                            'distribution': 'normal_clipped',
-                            'mu': self.net_dict['mean_delay_matrix'][i][j],
-                            'sigma': self.net_dict['std_delay_matrix'][i][j],
-                            'low': self.sim_resolution}}
-
-                    if self.mean_weight_matrix[i][j] < 0:
-                        syn_dict['weight']['high'] = 0.0
-                    else:
-                        syn_dict['weight']['low'] = 0.0
+                        'weight': nest.math.redraw(
+                            nest.random.normal(
+                                mean=self.mean_weight_matrix[i][j],
+                                std=abs(self.mean_weight_matrix[i][j] *
+                                        self.std_weight_matrix[i][j])),
+                            min=w_min,
+                            max=w_max),
+                        'delay': nest.math.redraw(
+                            nest.random.normal(
+                                mean=self.net_dict['mean_delay_matrix'][i][j],
+                                std=self.net_dict['std_delay_matrix'][i][j]),
+                            min=self.sim_resolution,
+                            max=np.Inf)}
 
                     nest.Connect(
                         source_pop, target_pop,
@@ -502,16 +504,18 @@ class Network:
                 'N': self.num_th_synapses[i]}
 
             syn_dict_th = {
-                'weight': {
-                    'distribution': 'normal_clipped',
-                    'mu': self.weight_th,
-                    'sigma': self.weight_th * self.net_dict['PSP_std'],
-                    'low': 0.0},
-                'delay': {
-                    'distribution': 'normal_clipped',
-                    'mu': self.stim_dict['delay_th'][i],
-                    'sigma': self.stim_dict['delay_th_std'][i],
-                    'low': self.sim_resolution}}
+                'weight': nest.math.redraw(
+                    nest.random.normal(
+                        mean=self.weight_th,
+                        std=self.weight_th * self.net_dict['PSP_std']),
+                    min=0.0,
+                    max=np.Inf),
+                'delay': nest.math.redraw(
+                    nest.random.normal(
+                        mean=self.stim_dict['delay_th'][i],
+                        std=self.stim_dict['delay_th_std'][i]),
+                    min=self.sim_resolution,
+                    max=np.Inf)}
 
             nest.Connect(
                 self.thalamic_population, target_pop,

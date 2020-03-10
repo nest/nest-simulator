@@ -119,7 +119,7 @@ class TestAllToAll(TestParams):
     # test single threaded for now
     def testRPortDistribution(self):
         n_rport = 10
-        nr_neurons = 40
+        nr_neurons = 100
         hf.nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}

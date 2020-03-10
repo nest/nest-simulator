@@ -26,6 +26,13 @@ import unittest
 import nest
 import numpy as np
 
+
+try:
+    import scipy.stats
+    HAVE_SCIPY = True
+except ImportError:
+    HAVE_SCIPY = False
+
 nest.set_verbosity('M_ERROR')
 
 
@@ -44,6 +51,25 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
+
+    def _check_connections_statistical(self, conn_spec, p, num_pairs):
+        """Helper function which asserts that the number of connections created are based on a bernoulli distribution.
+        The connection function is iterated N times, then the distribution of number of created connections are tested
+        against a bernoulli distribution using a Kolmogorov-Smirnov test."""
+        self.assertEqual(conn_spec['rule'], 'pairwise_bernoulli')
+        N = 500
+        p_val_lim = 0.1
+        ks_stat_lim = 0.2
+        n_conns = np.zeros(N)
+        for i in range(N):
+            nest.Connect(self.layer, self.layer, conn_spec)
+            num_connections = nest.GetKernelStatus('num_connections')
+            n_conns[i] = num_connections - np.sum(n_conns)
+        ref = [scipy.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs)) for _ in range(N)]
+        ks_stat, p_val = scipy.stats.ks_2samp(n_conns, ref)
+        print(f'ks_stat={ks_stat}, p_val={p_val}')
+        self.assertGreater(p_val, p_val_lim)
+        self.assertLess(ks_stat, ks_stat_lim)
 
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
         """Helper function which asserts that connecting with or without allowing autapses gives
@@ -207,11 +233,13 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         self._check_connections(conn_spec, 108)
 
+    @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask(self):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""
+        p = 0.5
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 0.5,
+            'p': p,
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
@@ -219,15 +247,17 @@ class ConnectLayersTestCase(unittest.TestCase):
                 }
             }
         }
-        self._check_connections(conn_spec, 51)
+        self._check_connections_statistical(conn_spec, p, 108)
 
+    @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask_source(self):
         """
         Connecting layers with pairwise_bernoulli, kernel and mask on source
         """
+        p = 0.5
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 0.5,
+            'p': p,
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
@@ -236,7 +266,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             },
             'use_on_source': True
         }
-        self._check_connections(conn_spec, 51)
+        self._check_connections_statistical(conn_spec, p, 108)
 
     def test_connect_nonlayers_mask(self):
         """Throw when connecting non-layer NodeCollections with mask."""

@@ -37,7 +37,7 @@ find_library( LTDL_LIBRARY
     HINTS ${LTDL_ROOT_DIR}/lib
     )
 find_program( LIBTOOL_EXECUTABLE
-    NAMES glibtool libtool
+    NAMES glibtool libtool libtoolize
     HINTS ${LTDL_ROOT_DIR}/bin
     )
 

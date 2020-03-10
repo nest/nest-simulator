@@ -68,7 +68,7 @@ endif ()
 install( DIRECTORY conngen model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
-install( FILES index.html quickref.html doc_header.txt
+install( FILES index.html doc_header.txt
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 if ( DOXYGEN_FOUND )

@@ -66,9 +66,7 @@ ResetKernel
 
 
 % create n_neurons neurons
-/subnet Create dup ChangeSubnet /iaf_psc_alpha n_neurons Create ;
-GetGlobalLeaves /neurons Set   
-0 ChangeSubnet
+/neurons /iaf_psc_alpha n_neurons Create def
 
 /static_synapse /syn << /weight JE >> CopyModel
 
@@ -76,7 +74,7 @@ GetGlobalLeaves /neurons Set
 
 /poisson /poisson_generator Create def   
 
-[poisson] neurons << /rule /all_to_all >> << /model /static_synapse /weight JE >> Connect
+poisson neurons << /rule /all_to_all >> << /synapse_model /static_synapse /weight JE >> Connect
     
 simtime Simulate
 

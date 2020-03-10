@@ -202,7 +202,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Number of neurons in the population. */
     int N_; // by Hesam
 
@@ -230,9 +229,9 @@ private:
     /** -------------- */
     std::vector< double > val_eta_;
 
-    Parameters_();                      //!< Sets default parameter values
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_();                                  //!< Sets default parameter values
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -242,7 +241,6 @@ private:
    */
   struct State_
   {
-
     double y0_;
     double h_;
 
@@ -261,7 +259,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -395,10 +393,10 @@ pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 pp_pop_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

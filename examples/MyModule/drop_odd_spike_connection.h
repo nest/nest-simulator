@@ -48,14 +48,14 @@ template < typename targetidentifierT >
 class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
 {
 private:
-  double weight_; //!< Synaptic weight
+  double weight_{ 1.0 }; //!< Synaptic weight
 
 public:
   //! Type to use for representing common synapse properties
-  typedef nest::CommonSynapseProperties CommonPropertiesType;
+  using CommonPropertiesType = nest::CommonSynapseProperties;
 
   //! Shortcut for base class
-  typedef nest::Connection< targetidentifierT > ConnectionBase;
+  using ConnectionBase = nest::Connection< targetidentifierT >;
 
   /**
    * Default Constructor.
@@ -63,14 +63,11 @@ public:
    */
   DropOddSpikeConnection()
     : ConnectionBase()
-    , weight_( 1.0 )
   {
   }
 
   //! Default Destructor.
-  ~DropOddSpikeConnection()
-  {
-  }
+  ~DropOddSpikeConnection() = default;
 
   /**
    * Helper class defining which types of events can be transmitted.
@@ -93,13 +90,13 @@ public:
   public:
     using nest::ConnTestDummyNodeBase::handles_test_event;
     nest::port
-    handles_test_event( nest::SpikeEvent&, nest::rport )
+    handles_test_event( nest::SpikeEvent&, nest::rport ) override
     {
       return nest::invalid_port_;
     }
 
     nest::port
-    handles_test_event( nest::DSSpikeEvent&, nest::rport )
+    handles_test_event( nest::DSSpikeEvent&, nest::rport ) override
     {
       return nest::invalid_port_;
     }

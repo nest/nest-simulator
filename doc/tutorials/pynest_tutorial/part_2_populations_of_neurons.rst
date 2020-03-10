@@ -4,7 +4,7 @@ Part 2: Populations of neurons
 Introduction
 ------------
 
-In this handout we look at creating and parameterising batches of
+In this section we look at creating and parameterising batches of
 ``neurons``, and connecting them. When you have worked through this
 material, you will know how to:
 
@@ -34,7 +34,7 @@ subdirectory: ``pynest/examples/``.
 Creating parameterised populations of nodes
 -------------------------------------------
 
-In the previous handout, we introduced the function
+In the previous section, we introduced the function
 ``Create(model, n=1, params=None)``. Its mandatory argument is the model
 name, which determines what type the nodes to be created should be. Its
 two optional arguments are ``n``, which gives the number of nodes to be
@@ -48,7 +48,7 @@ exploit the optional arguments of ``Create()``:
     ndict = {"I_e": 200.0, "tau_m": 20.0}
     neuronpop = nest.Create("iaf_psc_alpha", 100, params=ndict)
 
-The variable ``neuronpop`` is a tuple of all the ids of the created
+The variable ``neuronpop`` is a NodeCollection representing all the ids of the created
 neurons.
 
 Parameterising the neurons at creation is more efficient than using
@@ -109,49 +109,43 @@ populations and will also be returned by the function ``Models()``.
 It is also possible to create populations with an inhomogeneous set of
 parameters. You would typically create the complete set of parameters,
 depending on experimental constraints, and then create all the neurons
-in one go. To do this supply a list of dictionaries of the same length
+in one go. To do this supply a dictionaries with lists of the same length
 as the number of neurons (or synapses) created:
 
 ::
 
-    parameter_list = [{"I_e": 200.0, "tau_m": 20.0}, {"I_e": 150.0, "tau_m": 30.0}]
+    parameter_list = {"I_e": [200.0, 150.0], "tau_m": [20.0, 30.0]}
     epop3 = nest.Create("exc_iaf_psc_alpha", 2, parameter_list)
 
 Setting parameters for populations of neurons
 ---------------------------------------------
 
-It is not always possible to set all parameters for a neuron model at or
-before creation. A classic example of this is when some parameter should
-be drawn from a random distribution. Of course, it is always possible to
-make a loop over the population and set the status of each one:
+It is not always the case that we want to set the parameters directly when we are creating
+the nodes. Or, we might not want to set the same parameter for all nodes
+in the NodeCollection. A classic example of this is when some parameter should
+be drawn from a random distribution. As previously stated, you can use a dictionary
+of lists to set different values for each node, ``Create()``, ``set()``
+and ``SetStatus()`` all take this option. If you have a lot of nodes in your NodeCollection,
+list comprehension is the way to go:
 
 ::
 
     Vth=-55.
     Vrest=-70.
-    for neuron in epop1:
-        nest.SetStatus([neuron], {"V_m": Vrest+(Vth-Vrest)*numpy.random.rand()})
+    dVms =  {"V_m": [Vrest+(Vth-Vrest)*numpy.random.rand() for x in range(len(epop1))]}
+    epop1.set(dVms)
 
-However, ``SetStatus()`` expects a list of nodes and can set the
-parameters for each of them, which is more efficient, and thus to be
-preferred. One way to do it is to give a list of dictionaries which is
-the same length as the number of nodes to be parameterised, for example
-using a list comprehension:
-
-::
-
-    dVms =  [{"V_m": Vrest+(Vth-Vrest)\*numpy.random.rand()} for x in epop1]
-    nest.SetStatus(epop1, dVms)
-
-If we only need to randomise one parameter then there is a more concise
-way by passing in the name of the parameter and a list of its desired
-values. Once again, the list must be the same size as the number of
-nodes to be parameterised:
+Another way to randomize the parameters is by using NEST's random parameters and
+distributions. NEST has a number of these parameters which can be used to set the
+node parameters as well as connection parameters like probability, weights and delays.
+The parameters can be combined, and they can be used with some mathematical functions
+provided by NEST. Be aware that the complexity of your parameter might affect
+the performance of your network. 
 
 ::
 
-    Vms = Vrest+(Vth-Vrest)\*numpy.random.rand(len(epop1))
-    nest.SetStatus(epop1, "V_m", Vms)
+    epop1.set({"V_m": Vrest + nest.random.uniform(0.0, Vth-Vrest)})
+
 
 Note that we are being rather lax with random numbers here. Really we
 have to take more care with them, especially if we are using multiple
@@ -161,7 +155,7 @@ later.
 Generating populations of neurons with deterministic connections
 ----------------------------------------------------------------
 
-In the previous handout two neurons were connected using synapse
+In the previous section two neurons were connected using synapse
 specifications. In this section we extend this example to two
 populations of ten neurons each.
 
@@ -170,10 +164,10 @@ populations of ten neurons each.
     import pylab
     import nest
     pop1 = nest.Create("iaf_psc_alpha", 10)
-    nest.SetStatus(pop1, {"I_e": 376.0})
+    pop1.set({"I_e": 376.0})
     pop2 = nest.Create("iaf_psc_alpha", 10)
     multimeter = nest.Create("multimeter", 10)
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    multimeter.set({"record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected
 via the default rule, namely ``all_to_all``. Each neuron of ``pop1`` is
@@ -184,7 +178,7 @@ connections.
 
     nest.Connect(pop1, pop2, syn_spec={"weight":20.0})
 
-Alternatively, the neurons can be connected with the ``one_to_one``.
+Alternatively, the neurons can be connected with the ``one_to_one`` rule.
 This means that the first neuron in ``pop1`` is connected to the first
 neuron in ``pop2``, the second to the second, etc., creating ten
 connections in total.
@@ -204,13 +198,12 @@ patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
 containing the key ``rule`` and the key for parameters associated to the
 rule. Please see :doc:`Connection management <../../guides/connection_management>`
-for an illustrated guide to the usage of ``Connect``.
+for an illustrated guide to the usage of ``Connect``, as well as the example below.
 
 Connecting populations with random connections
 ----------------------------------------------
 
-In the previous handout we looked at the connectivity patterns
-``one_to_one`` and ``all_to_all``. However, we often want to look at
+As just mentioned, we often want to look at
 networks with a sparser connectivity than all-to-all. Here we introduce
 four connectivity patterns which generate random connections between two
 populations of neurons.
@@ -260,8 +253,8 @@ are generated by iterating through all possible source-target pairs and
 creating each connection with the probability ``p`` (keyword ``p``).
 
 In addition to the rule specific parameters ``indegree``, ``outdegree``,
-``N`` and ``p``, the ``conn_spec`` can contain the keywords ``autapses``
-and ``multapses`` (set to ``False`` or ``True``) allowing or forbidding
+``N`` and ``p``, the ``conn_spec`` can contain the keywords ``allow_autapses``
+and ``allow_multapses`` (set to ``False`` or ``True``) allowing or forbidding
 self-connections and multiple connections between two neurons,
 respectively.
 
@@ -285,23 +278,25 @@ between 100 and 150ms:
 ::
 
     pg = nest.Create("poisson_generator")
-    nest.SetStatus(pg, {"start": 100.0, "stop": 150.0})
+    pg.set({"start": 100.0, "stop": 150.0})
 
 This functionality is useful for setting up experimental protocols with
 stimuli that start and stop at particular times.
 
 So far we have accessed the data recorded by devices directly, by
 extracting the value of ``events``. However, for larger or longer
-simulations, we may prefer to write the data to file for later analysis
-instead. All recording devices allow the specification of where data is
-stored over the parameters ``to_memory`` (default: ``True``),
-``to_file`` (default: ``False``) and ``to_screen`` (default: ``False``).
-The following code sets up a ``multimeter`` to record data to a named
-file:
+simulations, we may prefer to write the data to file for later
+analysis instead. All recording devices allow the specification of
+where data is stored over the parameter ``record_to``, which is set to
+the name of the recording backend to use.  To dump recorded data to a
+file, set ``/ascii``, to print to the screen, use ``/screen`` and to
+hold the data in memory, set ``/memory``, which is also the default
+for all recording devices. The following code sets up a ``multimeter``
+to record data to a named file:
 
 ::
 
-    recdict = {"to_memory" : False, "to_file" : True, "label" : "epop_mp"}
+    recdict = {"record_to" : "ascii", "label" : "epop_mp"}
     mm1 = nest.Create("multimeter", params=recdict)
 
 If no name for the file is specified using the ``label`` parameter, NEST
@@ -309,7 +304,7 @@ will generate its own using the name of the device, and its id. If the
 simulation is multithreaded or distributed, multiple files will be
 created, one for each process and/or thread. For more information on how
 to customise the behaviour and output format of recording devices,
-please read the documentation for ``RecordingDevice``.
+please read the documentation for :doc:`RecordingDevice <../../guides/recording_from_simulations>`.
 
 Resetting simulations
 ---------------------
@@ -327,15 +322,13 @@ there is typically no need to throw out the whole network and create and
 connect everything, it is enough to re-parameterise the network. A good
 strategy here is to create and connect your network outside the loop,
 and then carry out the parametrisation, simulation and data collection
-steps within the loop. Here it is often helpful to call the function
-``ResetNetwork()`` within each loop iteration. It resets all nodes to
-their default configuration and wipes the data from recording devices.
+steps within the loop.
 
 Command overview
 ----------------
 
 These are the new functions we introduced for the examples in this
-handout.
+section.
 
 Getting and setting basic settings and parameters of NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -347,7 +340,6 @@ Getting and setting basic settings and parameters of NEST
    -  Parameter dictionary if called without argument
    -  Single parameter value if called with single parameter name
    -  List of parameter values if called with list of parameter names
-   -  Set parameters for the simulation kernel.
 
 Models
 ~~~~~~
@@ -377,8 +369,3 @@ Simulation control
    all custom models created with ``CopyModel()``. The parameters of
    built-in models are reset to their defaults. Calling this function is
    equivalent to restarting NEST.
-
--  ``ResetNetwork()``
-
-   Reset all nodes and connections to the defaults of their respective
-   model.

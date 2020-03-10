@@ -47,63 +47,46 @@ def simple():
 
     modelList = [('iaf_psc_alpha', m, {}) for m in ['E', 'I']]
 
-    layerList = [('IG', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                         'elements': 'poisson_generator'}),
-                 ('RG', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                         'elements': ['E', 'I']})]
+    layerList = [('IG', 'poisson_generator', [N, N], [1., 1.]),
+                 ('RG_E', 'E', [N, N], [1., 1.]),
+                 ('RG_I', 'I', [N, N], [1., 1.])]
 
-    common = {'connection_type': 'divergent',
-              'synapse_model': 'static_synapse',
-              'delays': 1.0}
+    common_connspec = {'rule': 'pairwise_bernoulli'}
+    common_synspec = {'synapse_model': 'static_synapse',
+                      'delay': 1.0}
     connectList = [
-        ('IG', 'RG',
-         modCopy(common, {'targets': {'model': 'E'},
-                          'mask': {'circular': {'radius': 0.2}},
-                          'kernel': 0.8,
-                          'weights': 2.0})),
-        ('IG', 'RG',
-         modCopy(common, {'targets': {'model': 'I'},
-                          'mask': {'circular': {'radius': 0.3}},
-                          'kernel': 0.4,
-                          'weights': 2.0})),
-        ('RG', 'RG',
-         modCopy(common, {'sources': {'model': 'E'},
-                          'targets': {'model': 'E'},
-                          'mask': {'rectangular':
-                                   {'lower_left': [-0.4, -0.2],
-                                    'upper_right': [0.4, 0.2]}},
-                          'kernel': 1.0,
-                          'weights': 2.0})),
-        ('RG', 'RG',
-         modCopy(common, {'sources': {'model': 'E'},
-                          'targets': {'model': 'E'},
-                          'mask': {'rectangular':
-                                   {'lower_left': [-0.2, -0.4],
-                                    'upper_right': [0.2, 0.4]}},
-                          'kernel': 1.0,
-                          'weights': 2.0})),
-        ('RG', 'RG',
-         modCopy(common, {'sources': {'model': 'E'},
-                          'targets': {'model': 'I'},
-                          'mask': {'circular': {'radius': 0.5}},
-                          'kernel': {'gaussian':
-                                     {'p_center': 1.0,
-                                      'sigma': 0.1}},
-                          'weights': 5.0})),
-        ('RG', 'RG',
-         modCopy(common, {'sources': {'model': 'I'},
-                          'targets': {'model': 'E'},
-                          'mask': {'circular': {'radius': 0.25}},
-                          'kernel': {'gaussian':
-                                     {'p_center': 1.0,
-                                      'sigma': 0.2}},
-                          'weights': -3.0})),
-        ('RG', 'RG',
-         modCopy(common, {'sources': {'model': 'I'},
-                          'targets': {'model': 'I'},
-                          'mask': {'circular': {'radius': 1.0}},
-                          'kernel': 0.5,
-                          'weights': -0.5}))
+        ('IG', 'RG_E',
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.2}},
+                                   'p': 0.8}),
+         modCopy(common_synspec, {'weight': 2.0})),
+        ('IG', 'RG_I',
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.3}},
+                                   'p': 0.4}),
+         modCopy(common_synspec, {'weight': 2.0})),
+        ('RG_E', 'RG_E',
+         modCopy(common_connspec, {'mask': {'rectangular':
+                                            {'lower_left': [-0.4, -0.2],
+                                             'upper_right': [0.4, 0.2]}},
+                                   'p': 1.0}),
+         modCopy(common_synspec, {'weight': 2.0})),
+        ('RG_E', 'RG_E',
+         modCopy(common_connspec, {'mask': {'rectangular':
+                                            {'lower_left': [-0.2, -0.4],
+                                             'upper_right': [0.2, 0.4]}},
+                                   'p': 1.0}),
+         modCopy(common_synspec, {'weight': 2.0})),
+        ('RG_E', 'RG_I',
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.5}},
+                                   'p': 'nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.1)'}),
+         modCopy(common_synspec, {'weight': 5.0})),
+        ('RG_I', 'RG_E',
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 0.25}},
+                                   'p': 'nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.2)'}),
+         modCopy(common_synspec, {'weight': -3.0})),
+        ('RG_I', 'RG_I',
+         modCopy(common_connspec, {'mask': {'circular': {'radius': 1.0}},
+                                   'p': 0.5}),
+         modCopy(common_synspec, {'weight': -0.5}))
     ]
 
     return layerList, connectList, modelList

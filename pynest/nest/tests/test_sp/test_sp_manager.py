@@ -52,7 +52,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
                 syn_dict = {
-                    'model': syn_model,
+                    'synapse_model': syn_model,
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
@@ -75,7 +75,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             {
                 'structural_plasticity_synapses': {
                     'syn1': {
-                        'model': syn_model,
+                        'synapse_model': syn_model,
                         'pre_synaptic_element': 'SE1',
                         'post_synaptic_element': 'SE2',
                     }
@@ -90,7 +90,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 syn_dict = {
-                    'model': syn_model,
+                    'synapse_model': syn_model,
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }

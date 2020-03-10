@@ -62,7 +62,7 @@ in a scenario with two processes with two threads each.
 .. figure:: ../_static/img/Node_distribution.png
 
  sg=spike\_generator, iaf=iaf\_psc\_alpha, sd=spike\_detector. Numbers to
- the left and right indicate global ids.
+ the left and right indicate node IDs.
  The *proxy* object in the figure is a conceptual way of keeping the id of the
  real node free on remote processes).
 
@@ -84,8 +84,8 @@ Neurons are assigned to one of the virtual processes in a round-robin fashion.
 On all other virtual processes, no object is created. Proxies ensure the id
 of the real node on a given VP is kept free.
 
-The virtual process :math:`id_{vp}` on which a neuron with global id :math:`gid_{node}` is
-allocated is given by :math:`id_{vp} = gid_{node} %N_{vp}`, where :math:`N_{vp}` is the total
+The virtual process :math:`id_{vp}` on which a neuron with node ID :math:`node_id_{node}` is
+allocated is given by :math:`id_{vp} = node_id_{node} %N_{vp}`, where :math:`N_{vp}` is the total
 number of virtual processes in the simulation.
 
 Device Distribution
@@ -96,17 +96,17 @@ minimize their interaction. Devices thus do not have proxies on remote virtual
 processes.
 
 For recording devices configured to record to a file (property
-`to_file` set to `true`), the distribution results in multiple
+`record_to` set to `ascii`), the distribution results in multiple
 data files, each containing the data from one thread. The files names
 are composed according to the following scheme
 
 .. code-block:: bash
 
-    [model|label]-gid-vp.[dat|gdf]
+    [model|label]-node_id-vp.[dat|gdf]
 
 The first part is the name of the `model` (e.g. ``voltmeter`` or
 ``spike_detector``) or, if set, the `label` of the recording device. Next is
-the global id (GID) of the recording device, followed by the id of the VP
+the node ID of the recording device, followed by the id of the VP
 assigned to the recorder. Spike files have the file extension ``gdf`` and
 analog recordings from the ``multimeter`` have ``dat`` as file extension.
 
@@ -281,7 +281,7 @@ of all four neurons are recorded to files.
     SetKernelStatus({"total_num_virtual_procs": 4})
     pg = Create("poisson_generator", params={"rate": 50000.0})
     n = Create("iaf_psc_alpha", 4)
-    sd = Create("spike_detector", params={"to_file": True})
+    sd = Create("spike_detector", params={"record_to": "ascii"})
     Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
     Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})
     Connect([n[1]], [n[2]], syn_spec={'weight': 1000.0, 'delay': 1.0})
@@ -310,4 +310,3 @@ virtual process (*spike_detector-6-0.gdf*, *spike_detector-6-1.gdf*,
 the three data directories shows that they all contain the same spikes,
 which means that the simulation results are indeed the same
 independently of the details of parallelization.
-

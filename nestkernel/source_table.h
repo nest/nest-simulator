@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "mpi_manager.h"
 #include "nest_types.h"
+#include "per_thread_bool_indicator.h"
 #include "source.h"
 #include "source_table_position.h"
 
@@ -47,14 +48,14 @@ namespace nest
 class TargetData;
 
 /**
- * This data structure stores the global ids of presynaptic neurons
+ * This data structure stores the node IDs of presynaptic neurons
  * during postsynaptic connection creation, before the connection
  * information has been transferred to the presynaptic side. The core
  * structure is the three dimensional sources vector, which is
  * arranged as follows:
  * 1st dimension: threads
  * 2nd dimension: synapse types
- * 3rd dimension: global ids
+ * 3rd dimension: node IDs
  * After all connections have been created, the information stored in
  * this structure is transferred to the presynaptic side and the
  * sources vector can be cleared.
@@ -63,14 +64,14 @@ class SourceTable
 {
 private:
   /**
-   * 3D structure storing gids of presynaptic neurons.
+   * 3D structure storing node IDs of presynaptic neurons.
    */
   std::vector< std::vector< BlockVector< Source > > > sources_;
 
   /**
    * Whether the 3D structure has been deleted.
    */
-  std::vector< bool > is_cleared_;
+  PerThreadBoolIndicator is_cleared_;
 
   //! Needed during readout of sources_.
   std::vector< SourceTablePosition > current_positions_;
@@ -83,7 +84,7 @@ private:
    * the next communication round, while filling up (possible)
    * remaining parts of the MPI buffer.
    */
-  std::vector< bool > saved_entry_point_;
+  PerThreadBoolIndicator saved_entry_point_;
 
   /**
    * Minimal number of sources that need to be deleted per synapse
@@ -93,6 +94,34 @@ private:
    * @see SourceTable::clean()
    */
   static const size_t min_deleted_elements_ = 1000000;
+
+
+  /**
+   * Returns whether this Source object should be considered when
+   * constructing MPI buffers for communicating connections. Returns
+   * false if i) this entry was already processed, or ii) this entry
+   * is disabled (e.g., by structural plastcity) or iii) the reading
+   * thread is not responsible for the particular part of the MPI
+   * buffer where this entry would be written.
+   */
+  bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const;
+
+  /**
+   * Returns true if the following entry in the SourceTable has the
+   * same source gid.
+   */
+  bool next_entry_has_same_source_( const SourceTablePosition& current_position, const Source& current_source ) const;
+
+  /**
+   * Returns true if the previous entry in the SourceTable has the
+   * same source gid.
+   */
+  bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
+    const Source& current_source ) const;
+
+  void populate_target_data_fields_( const SourceTablePosition& current_position,
+    const Source& current_source,
+    TargetData& next_target_data ) const;
 
 public:
   SourceTable();
@@ -117,7 +146,7 @@ public:
   /**
    * Adds a source to sources_.
    */
-  void add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary );
+  void add_source( const thread tid, const synindex syn_id, const index node_id, const bool is_primary );
 
   /**
    * Clears sources_.
@@ -160,9 +189,9 @@ public:
   void reset_entry_point( const thread tid );
 
   /**
-   * Returns the global id of the source at tid|syn_id|lcid.
+   * Returns the node ID of the source at tid|syn_id|lcid.
    */
-  index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
+  index get_node_id( const thread tid, const synindex syn_id, const index lcid ) const;
 
   /**
    * Returns a reference to all sources local on thread; necessary
@@ -195,17 +224,17 @@ public:
 
   /**
    * Computes MPI buffer positions for unique combination of source
-   * GID and synapse type across all threads for all secondary
+   * node ID and synapse type across all threads for all secondary
    * connections.
    */
   void compute_buffer_pos_for_unique_secondary_sources( const thread tid,
-    std::map< index, size_t >& buffer_pos_of_source_gid_syn_id_ );
+    std::map< index, size_t >& buffer_pos_of_source_node_id_syn_id_ );
 
   /**
    * Finds the first entry in sources_ at the given thread id and
-   * synapse type that is equal to sgid.
+   * synapse type that is equal to snode_id.
    */
-  index find_first_source( const thread tid, const synindex syn_id, const index sgid ) const;
+  index find_first_source( const thread tid, const synindex syn_id, const index snode_id ) const;
 
   /**
    * Marks entry in sources_ at given position as disabled.
@@ -218,16 +247,16 @@ public:
   index remove_disabled_sources( const thread tid, const synindex syn_id );
 
   /**
-   * Returns global ids for entries in sources_ for the given thread
+   * Returns node IDs for entries in sources_ for the given thread
    * id, synapse type and local connections ids.
    */
-  void get_source_gids( const thread tid,
+  void get_source_node_ids( const thread tid,
     const synindex syn_id,
     const std::vector< index >& source_lcids,
     std::vector< index >& sources );
 
   /**
-   * Returns the number of unique global ids for given thread id and
+   * Returns the number of unique node IDs for given thread id and
    * synapse type in sources_. This number corresponds to the number
    * of targets that need to be communicated during construction of
    * the presynaptic connection infrastructure.
@@ -241,16 +270,16 @@ public:
   void resize_sources( const thread tid );
 
   /**
-   * Encodes combination of global id and synapse types as single
+   * Encodes combination of node ID and synapse types as single
    * long number.
    */
-  index pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const;
+  index pack_source_node_id_and_syn_id( const index source_node_id, const synindex syn_id ) const;
 };
 
 inline void
-SourceTable::add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary )
+SourceTable::add_source( const thread tid, const synindex syn_id, const index node_id, const bool is_primary )
 {
-  const Source src( gid, is_primary );
+  const Source src( node_id, is_primary );
   sources_[ tid ][ syn_id ].push_back( src );
 }
 
@@ -262,7 +291,7 @@ SourceTable::clear( const thread tid )
     it->clear();
   }
   sources_[ tid ].clear();
-  is_cleared_[ tid ] = true;
+  is_cleared_[ tid ].set_true();
 }
 
 inline void
@@ -282,7 +311,7 @@ SourceTable::reject_last_target_data( const thread tid )
 inline void
 SourceTable::save_entry_point( const thread tid )
 {
-  if ( not saved_entry_point_[ tid ] )
+  if ( saved_entry_point_[ tid ].is_false() )
   {
     saved_positions_[ tid ].tid = current_positions_[ tid ].tid;
     saved_positions_[ tid ].syn_id = current_positions_[ tid ].syn_id;
@@ -302,7 +331,7 @@ SourceTable::save_entry_point( const thread tid )
       assert( current_positions_[ tid ].lcid == -1 );
       saved_positions_[ tid ].lcid = -1;
     }
-    saved_entry_point_[ tid ] = true;
+    saved_entry_point_[ tid ].set_true();
   }
 }
 
@@ -310,7 +339,7 @@ inline void
 SourceTable::restore_entry_point( const thread tid )
 {
   current_positions_[ tid ] = saved_positions_[ tid ];
-  saved_entry_point_[ tid ] = false;
+  saved_entry_point_[ tid ].set_false();
 }
 
 inline void
@@ -361,18 +390,18 @@ SourceTable::no_targets_to_process( const thread tid )
 }
 
 inline index
-SourceTable::find_first_source( const thread tid, const synindex syn_id, const index sgid ) const
+SourceTable::find_first_source( const thread tid, const synindex syn_id, const index snode_id ) const
 {
   // binary search in sorted sources
   const BlockVector< Source >::const_iterator begin = sources_[ tid ][ syn_id ].begin();
   const BlockVector< Source >::const_iterator end = sources_[ tid ][ syn_id ].end();
-  BlockVector< Source >::const_iterator it = std::lower_bound( begin, end, Source( sgid, true ) );
+  BlockVector< Source >::const_iterator it = std::lower_bound( begin, end, Source( snode_id, true ) );
 
   // source found by binary search could be disabled, iterate through
   // sources until a valid one is found
   while ( it != end )
   {
-    if ( it->get_gid() == sgid and not it->is_disabled() )
+    if ( it->get_node_id() == snode_id and not it->is_disabled() )
     {
       const index lcid = it - begin;
       return lcid;
@@ -380,28 +409,28 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const i
     ++it;
   }
 
-  // no enabled entry with this sgid found
+  // no enabled entry with this snode ID found
   return invalid_index;
 }
 
 inline void
 SourceTable::disable_connection( const thread tid, const synindex syn_id, const index lcid )
 {
-  // disabling a source changes its gid to 2^62 -1
+  // disabling a source changes its node ID to 2^62 -1
   // source here
   assert( not sources_[ tid ][ syn_id ][ lcid ].is_disabled() );
   sources_[ tid ][ syn_id ][ lcid ].disable();
 }
 
 inline void
-SourceTable::get_source_gids( const thread tid,
+SourceTable::get_source_node_ids( const thread tid,
   const synindex syn_id,
   const std::vector< index >& source_lcids,
   std::vector< index >& sources )
 {
   for ( std::vector< index >::const_iterator cit = source_lcids.begin(); cit != source_lcids.end(); ++cit )
   {
-    sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_gid() );
+    sources.push_back( sources_[ tid ][ syn_id ][ *cit ].get_node_id() );
   }
 }
 
@@ -414,9 +443,9 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
         cit != sources_[ tid ][ syn_id ].end();
         ++cit )
   {
-    if ( last_source != ( *cit ).get_gid() )
+    if ( last_source != ( *cit ).get_node_id() )
     {
-      last_source = ( *cit ).get_gid();
+      last_source = ( *cit ).get_node_id();
       ++n;
     }
   }
@@ -424,13 +453,13 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
 }
 
 inline index
-SourceTable::pack_source_gid_and_syn_id( const index source_gid, const synindex syn_id ) const
+SourceTable::pack_source_node_id_and_syn_id( const index source_node_id, const synindex syn_id ) const
 {
-  assert( source_gid < 72057594037927936 );
+  assert( source_node_id < 72057594037927936 );
   assert( syn_id < invalid_synindex );
-  // syn_id is maximally 256, so shifting gid by 8 bits and storing
+  // syn_id is maximally 256, so shifting node ID by 8 bits and storing
   // syn_id in the lowest 8 leads to a unique number
-  return ( source_gid << 8 ) + syn_id;
+  return ( source_node_id << 8 ) + syn_id;
 }
 
 } // namespace nest

@@ -27,6 +27,9 @@
 #include <functional> // for bind2nd
 #include <numeric>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
@@ -96,29 +99,29 @@ nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n )
+nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
 {
   bool reset = false;
   double t;
-  if ( updateValue< double >( d, names::delta_tau, t ) )
+  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
+  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
+  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
+  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -138,7 +141,10 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 }
 
 void
-nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required )
+nest::correlation_detector::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  bool reset_required,
+  Node* node )
 {
   std::vector< long > nev;
   if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )

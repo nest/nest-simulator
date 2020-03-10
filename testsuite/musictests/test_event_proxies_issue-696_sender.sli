@@ -30,36 +30,28 @@ M_ERROR setverbosity
 10 /N_THREADS Set
 11 /N_NEURONS Set
 
-0 << /local_num_threads N_THREADS /resolution 0.1 >> SetStatus
+<< /local_num_threads N_THREADS /resolution 0.1 >> SetKernelStatus
 
-/subnet Create /SNG Set
-SNG ChangeSubnet
-/spike_generator N_NEURONS Create pop
-0 ChangeSubnet
-SNG GetGlobalNodes /generators Set
+/spike_generator N_NEURONS Create /generators Set
+/parrot_neuron N_NEURONS Create /neurons Set
 
-/subnet Create /PNG Set
-PNG ChangeSubnet
-/parrot_neuron N_NEURONS Create pop
-0 ChangeSubnet
-PNG GetGlobalNodes /neurons Set
-generators
+[N_NEURONS] Range
 {
-    /i Set /sg Set
+    /i Set
+    generators [i] Take /sg Set
     sg << /spike_times [0.1 0.2 0.3] >> SetStatus
-    sg neurons i get << /delay 0.1 >> Connect
+    sg neurons [i] Take << >> << /delay 0.1 >> Connect
 }
-forallindexed
+forall
 
-/music_event_out_proxy Create /meop Set
-meop << /port_name (out) >> SetStatus
+/music_event_out_proxy << /port_name (out) >> Create /meop Set
 
-neurons
+[N_NEURONS] Range
 {
     /channel Set
-    /n Set
-    n meop << /music_channel channel >> Connect
+    neurons [channel] Take /n Set
+    n meop << >> << /music_channel channel 1 sub >> Connect
 }
-forallindexed
+forall
 
 1 Simulate

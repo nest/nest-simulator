@@ -33,7 +33,7 @@ Ensure that NEST throws an exception if one tries to connect poisson_generator
 
 spike_generator slips through this test, since it usually sends SpikeEvent. But it
 is no danger if it sends DSSpikeEvents for weighted spikes, since it sends precisely
-one DSSpikeEvent per spike. 
+one DSSpikeEvent per spike.
 
 Author: Hans Ekkehard Plesser, 2014-11-06
  */
@@ -58,8 +58,8 @@ M_ERROR setverbosity
     ResetKernel
     Create /stim Set
     /iaf_psc_alpha Create /n Set
-    stim n /static_synapse Connect
-    stim n /static_synapse Connect
+    stim n /all_to_all /static_synapse Connect
+    stim n /all_to_all /static_synapse Connect
   } forall
 } pass_or_die
 
@@ -73,8 +73,8 @@ M_ERROR setverbosity
     /iaf_psc_alpha Create /n Set
     /synmodel stimname cvs (_syn) join cvlit def
     /static_synapse synmodel CopyModel
-    stim n synmodel Connect
-    stim n synmodel Connect
+    stim n /all_to_all synmodel Connect
+    stim n /all_to_all synmodel Connect
   } forall
 } pass_or_die
 
@@ -88,8 +88,8 @@ stimulators
   /iaf_psc_alpha Create /n Set
   /synmodel stimname cvs (_syn) join cvlit def
   /static_synapse synmodel CopyModel
-  stim n /static_synapse Connect
-  { stim n synmodel Connect } fail_or_die 
-} forall 
+  stim n /all_to_all /static_synapse Connect
+  { stim n /all_to_all synmodel Connect } fail_or_die
+} forall
 
 endusing

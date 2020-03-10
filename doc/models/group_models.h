@@ -25,7 +25,7 @@
  * And further groups can be included as appropriate.
  * For examples, see the ../models/*.h directory.
  *
- * /
+ */
 /** @defgroup Devices
  *
  *  This module is for the devices of NEST

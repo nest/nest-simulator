@@ -46,6 +46,7 @@ def _skipIf(condition, _):
     else:
         return lambda obj: obj
 
+
 # Python 2.6-
 if not hasattr(unittest, 'skipIf'):
     unittest.skipIf = _skipIf

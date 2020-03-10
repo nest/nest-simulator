@@ -1450,12 +1450,12 @@ functions, please see the online Python and SLI documentation.
 |                       | http://www.nest-simulator.org/connection_ma |
 |                       | nagement.                                   |
 +-----------------------+---------------------------------------------+
-| ``nest.GetNodes()``   | Applied to a layer, returns GIDs of the     |
+| ``nest.GetNodes()``   | Applied to a layer, returns node IDs of the     |
 |                       | layer elements. For simple layers, these    |
 |                       | are the actual model neurons, for composite |
 |                       | layers the top-level subnets.               |
 +-----------------------+---------------------------------------------+
-| ``nest.GetLeaves()``  | Applied to a layer, returns GIDs of all     |
+| ``nest.GetLeaves()``  | Applied to a layer, returns node IDs of all     |
 |                       | actual model neurons, ignoring subnets.     |
 +-----------------------+---------------------------------------------+
 | ``tp.GetPosition()``  | Return the spatial locations of nodes.      |
@@ -1474,7 +1474,7 @@ functions, please see the online Python and SLI documentation.
 | ``tp.FindNearestEleme | Return the node(s) closest to the           |
 | nt()``                | location(s) in the given layer(s).          |
 +-----------------------+---------------------------------------------+
-| ``tp.FindCenterElemen | Return GID(s) of node closest to center of  |
+| ``tp.FindCenterElemen | Return node ID(s) of node closest to center of  |
 | t()``                 | layer(s).                                   |
 +-----------------------+---------------------------------------------+
 | ``tp.Displacement()`` | Obtain vector of lateral displacement       |
@@ -1493,7 +1493,7 @@ functions, please see the online Python and SLI documentation.
 |                       | that Topology created the correct           |
 |                       | connection structure.                       |
 +-----------------------+---------------------------------------------+
-| ``tp.SelectNodesByMas | Obtain GIDs of nodes/elements inside a      |
+| ``tp.SelectNodesByMas | Obtain node IDs of nodes/elements inside a      |
 | k()``                 | masked area of a layer. Part of NEST since  |
 |                       | NEST 2.14.                                  |
 +-----------------------+---------------------------------------------+
@@ -1822,7 +1822,7 @@ Module from NEST version 2.12 to 2.14.
    NEST 2.14. To specify the mask, the ``major_axis``, ``minor_axis``
    and (for ellipsoidal masks) ``polar_axis`` must be specified.
 
--  It is now possible to obtain the GIDs inside a masked area with the
+-  It is now possible to obtain the node IDs inside a masked area with the
    function SelectNodesByMask.
 
 Changes from Topology 2.0 to 2.2
@@ -1834,8 +1834,8 @@ Module from NEST version 2.0 to 2.2.
 -  Nested layers are no longer supported.
 
 -  Subnets are no longer used inside composite layers. A call to
-   GetElement for a composite layer will now return a list of GIDs for
-   the nodes at the position rather than a single subnet GID.
+   GetElement for a composite layer will now return a list of node IDs for
+   the nodes at the position rather than a single subnet node ID.
 
 -  Positions in layers may now be 3-dimensional.
 
@@ -1858,8 +1858,8 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
 -  Several other functions changed names, and there are many new
    functions. Please see Ch. \ `4 <#sec:inspection>`__ for an overview.
 
--  All nest.topology functions now require lists of GIDs as input, not
-   "naked" GIDs
+-  All nest.topology functions now require lists of node IDs as input, not
+   "naked" node IDs
 
 -  There are a number of new functions in nest.topology, I tried to
    write good doc strings for them

@@ -25,7 +25,6 @@ set( topo_sources
     connection_creator.h
     connection_creator_impl.h
     connection_creator.cpp
-    generic_factory.h
     position.h
     layer.h
     layer_impl.h
@@ -40,10 +39,6 @@ set( topo_sources
     ntree_impl.h
     vose.h
     vose.cpp
-    topology_parameter.h
-    topology_parameter.cpp
-    selector.h
-    selector.cpp
     topology.h topology.cpp
     )
 
@@ -64,9 +59,6 @@ install( TARGETS topology
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
-install( FILES sli/topology-interface.sli
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
-
 file( GLOB topo_unittests "testsuite/unittests/*" )
 install( FILES ${topo_unittests}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests
@@ -80,19 +72,3 @@ install( FILES ${topo_mpitests}
 FILTER_HEADERS("${topo_sources}" install_headers )
 install( FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
-
-if ( HAVE_PYTHON )
-  install( CODE "execute_process(
-    COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
-                               install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
-    WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
-      )
-
-  file( GLOB topo_examples "examples/*" )
-  install( FILES ${topo_examples}
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/topology
-      )
-endif ()

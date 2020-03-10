@@ -48,8 +48,8 @@
 #include "model_manager_impl.h"
 
 // Includes from precise:
+#include "iaf_chxk_2008.h"
 #include "iaf_psc_alpha_canon.h"
-#include "iaf_psc_alpha_presc.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta_ps.h"
 #include "iaf_psc_exp_ps.h"
@@ -90,16 +90,18 @@ PreciseModule::commandstring( void ) const
 void
 PreciseModule::init( SLIInterpreter* )
 {
-  // register models
-  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >( "iaf_psc_alpha_canon" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_presc >( "iaf_psc_alpha_presc" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
+    "iaf_psc_alpha_canon", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_delta_ps >( "iaf_psc_delta_canon" );
   kernel().model_manager.register_node_model< iaf_psc_delta_ps >( "iaf_psc_delta_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
   kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
+
+#ifdef HAVE_GSL
+  kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
+#endif
 } // PreciseModule::init()
 
 

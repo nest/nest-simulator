@@ -43,7 +43,7 @@ class TestFixedTotalNumber(TestParams):
     N_t = 20
     N = 100
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 150}
+    stat_dict = {'alpha2': 0.05, 'n_runs': 200}
 
     # tested on each mpi process separately
     def testErrorMessages(self):

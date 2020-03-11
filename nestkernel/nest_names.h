@@ -146,7 +146,6 @@ extern const Name dimension;
 extern const Name distal_curr;
 extern const Name distal_exc;
 extern const Name distal_inh;
-extern const Name distribution;
 extern const Name drift_factor;
 extern const Name driver_readout_time;
 extern const Name dt;
@@ -377,7 +376,6 @@ extern const Name rule;
 
 extern const Name S;
 extern const Name S_act_NMDA;
-extern const Name scale;
 extern const Name sdev;
 extern const Name senders;
 extern const Name shift_now_spikes;

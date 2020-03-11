@@ -125,7 +125,6 @@ const Name dimension( "dimension" );
 const Name distal_curr( "distal_curr" );
 const Name distal_exc( "distal_exc" );
 const Name distal_inh( "distal_inh" );
-const Name distribution( "distribution" );
 const Name drift_factor( "drift_factor" );
 const Name driver_readout_time( "driver_readout_time" );
 const Name dt( "dt" );
@@ -356,7 +355,6 @@ const Name rule( "rule" );
 
 const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
-const Name scale( "scale" );
 const Name sdev( "sdev" );
 const Name senders( "senders" );
 const Name shift_now_spikes( "shift_now_spikes" );

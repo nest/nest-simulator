@@ -600,6 +600,12 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(ValueError):
             param.apply(source, [[1., 2.], [1., 2., 3.]])  # Not consistent dimensions
 
+    def test_Create_accepts_empty_params_dict(self):
+        """
+        Create with empty parameter dictionary
+        """
+        nest.Create('iaf_psc_delta', params={})
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeCollection, 'test')

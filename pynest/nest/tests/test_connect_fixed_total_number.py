@@ -88,9 +88,11 @@ class TestFixedTotalNumber(TestParams):
                     chi, p = hf.chi_squared_check(degrees, expected)
                     pvalues.append(p)
                 hf.mpi_barrier()
+            p = None
             if degrees is not None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
-                self.assertTrue(p > self.stat_dict['alpha2'])
+            p = hf.bcast_data(p)
+            self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()

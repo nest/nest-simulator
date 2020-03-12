@@ -18,7 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 if ( HAVE_BOOST )
-  include_directories( ${BOOST_INCLUDE_DIR} )
+    include_directories( ${BOOST_INCLUDE_DIR} )
 endif ()
 
 set( precise_sources

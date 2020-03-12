@@ -54,7 +54,7 @@ else ()
 endif ()
 
 if ( HAVE_BOOST )
-  include_directories( ${BOOST_INCLUDE_DIR} )
+    include_directories( ${BOOST_INCLUDE_DIR} )
 endif ()
 
 target_link_libraries( nest

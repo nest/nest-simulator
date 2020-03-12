@@ -93,8 +93,8 @@ Using Sphinx, you can build documentation locally and preview it offline:
 
 4. If you add further changes to your files, repeat steps 1-3.
 
-Optional: Previewing on Read the Docs
-+++++++++++++++++++++++++++++++++++++
+Previewing on Read the Docs (optional)
+++++++++++++++++++++++++++++++++++++++
 
 You can then preview your documentation on your Read the Docs account.
 

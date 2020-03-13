@@ -49,9 +49,9 @@ stim_dict = {
     # standard deviation will be taken from 'net_dict'
     'PSP_th': 0.15,
     # mean delay of the thalamic input (in ms)
-    'mean_delay_th': 1.5,
+    'delay_th_mean': 1.5,
     # relative standard deviation of the thalamic delay (in ms)
-    'rel_std_delay_th': 0.5,
+    'delay_th_rel_std': 0.5,
 
     # optional DC input
     # turn DC input on or off (True or False)

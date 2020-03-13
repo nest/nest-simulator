@@ -88,7 +88,7 @@ net_dict = {
     # as in 'populations')
     'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
     # mean amplitude of excitatory postsynaptic potential (in mV)
-    'PSP_e': 0.15,
+    'PSP_exc_mean': 0.15,
     # relative standard deviation of the weight
     'weight_rel_std': 0.1,
     # relative inhibitory weight
@@ -99,14 +99,14 @@ net_dict = {
     # if False: DC input is applied for compensation
     'poisson_input': True,
     # delay from the Poisson generator to the network (in ms)
-    'poisson_delay': 1.5,
+    'delay_poisson': 1.5,
     # mean delay of excitatory connections (in ms)
-    'mean_delay_exc': 1.5,
+    'delay_exc_mean': 1.5,
     # mean delay of inhibitory connections (in ms)
-    'mean_delay_inh': 0.75,
+    'delay_inh_mean': 0.75,
     # relative standard deviation of the delay of excitatory and
     # inhibitory connections
-    'rel_std_delay': 0.5,
+    'delay_rel_std': 0.5,
     # initial conditions for the membrane potential, options are:
     # 'original': uniform mean and standard deviation for all populations as
     #             used in earlier implementations of the model
@@ -142,20 +142,19 @@ net_dict = {
 # derive matrix of mean PSPs,
 # the mean PSP of the connection from L4E to L23E is doubled
 mean_PSP_matrix = get_exc_inh_matrix(
-    net_dict['PSP_e'],
-    net_dict['PSP_e'] * net_dict['g'],
+    net_dict['PSP_exc_mean'],
+    net_dict['PSP_exc_mean'] * net_dict['g'],
     len(net_dict['populations']))
-mean_PSP_matrix[0, 2] = 2. * net_dict['PSP_e']
+mean_PSP_matrix[0, 2] = 2. * net_dict['PSP_exc_mean']
 
 updated_dict = {
     # matrix of mean PSPs
-    'mean_PSP_matrix': mean_PSP_matrix,
+    'PSP_matrix_mean': mean_PSP_matrix,
 
     # matrix of mean delays
-    'mean_delay_matrix': get_exc_inh_matrix(
-        net_dict['mean_delay_exc'],
-        net_dict['mean_delay_inh'],
-        len(net_dict['populations'])),
-}
+    'delay_matrix_mean': get_exc_inh_matrix(
+        net_dict['delay_exc_mean'],
+        net_dict['delay_inh_mean'],
+        len(net_dict['populations']))}
 
 net_dict.update(updated_dict)

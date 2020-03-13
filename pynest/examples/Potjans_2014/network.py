@@ -189,8 +189,8 @@ class Network:
             self.net_dict['neuron_params']['C_m'],
             self.net_dict['neuron_params']['tau_m'],
             self.net_dict['neuron_params']['tau_syn'])
-        mean_PSC_matrix = self.net_dict['mean_PSP_matrix'] * PSC_over_PSP
-        PSC_ext = self.net_dict['PSP_e'] * PSC_over_PSP
+        PSC_matrix_mean = self.net_dict['PSP_matrix_mean'] * PSC_over_PSP
+        PSC_ext = self.net_dict['PSP_exc_mean'] * PSC_over_PSP
 
         # DC input compensates for potentially missing Poisson input
         if self.net_dict['poisson_input']:
@@ -205,11 +205,11 @@ class Network:
 
         # adjust weights and DC amplitude if the indegree is scaled
         if self.net_dict['K_scaling'] != 1:
-            mean_PSC_matrix, PSC_ext, DC_amp = \
+            PSC_matrix_mean, PSC_ext, DC_amp = \
                 helpers.adjust_weights_and_input_to_synapse_scaling(
                     self.net_dict['full_num_neurons'],
                     full_num_synapses, self.net_dict['K_scaling'],
-                    mean_PSC_matrix, PSC_ext,
+                    PSC_matrix_mean, PSC_ext,
                     self.net_dict['neuron_params']['tau_syn'],
                     self.net_dict['full_mean_rates'],
                     DC_amp,
@@ -217,7 +217,7 @@ class Network:
                     self.net_dict['bg_rate'], self.net_dict['K_ext'])
 
         # store final parameters as class attributes
-        self.mean_weight_matrix = mean_PSC_matrix
+        self.weight_matrix_mean = PSC_matrix_mean
         self.weight_ext = PSC_ext
         self.DC_amp = DC_amp
 
@@ -430,7 +430,7 @@ class Network:
                         'rule': 'fixed_total_number',
                         'N': self.num_synapses[i][j]}
 
-                    if self.mean_weight_matrix[i][j] < 0:
+                    if self.weight_matrix_mean[i][j] < 0:
                         w_min = np.NINF
                         w_max = 0.0
                     else:
@@ -441,16 +441,16 @@ class Network:
                         'synapse_model': 'static_synapse',
                         'weight': nest.math.redraw(
                             nest.random.normal(
-                                mean=self.mean_weight_matrix[i][j],
-                                std=abs(self.mean_weight_matrix[i][j] *
+                                mean=self.weight_matrix_mean[i][j],
+                                std=abs(self.weight_matrix_mean[i][j] *
                                         self.net_dict['weight_rel_std'])),
                             min=w_min,
                             max=w_max),
                         'delay': nest.math.redraw(
                             nest.random.normal(
-                                mean=self.net_dict['mean_delay_matrix'][i][j],
-                                std=(self.net_dict['mean_delay_matrix'][i][j] *
-                                     self.net_dict['rel_std_delay'])),
+                                mean=self.net_dict['delay_matrix_mean'][i][j],
+                                std=(self.net_dict['delay_matrix_mean'][i][j] *
+                                     self.net_dict['delay_rel_std'])),
                             min=self.sim_resolution,
                             max=np.Inf)}
 
@@ -481,7 +481,7 @@ class Network:
             syn_dict_poisson = {
                 'synapse_model': 'static_synapse',
                 'weight': self.weight_ext,
-                'delay': self.net_dict['poisson_delay']}
+                'delay': self.net_dict['delay_poisson']}
 
             nest.Connect(
                 self.poisson_bg_input[i], target_pop,
@@ -511,9 +511,9 @@ class Network:
                     max=np.Inf),
                 'delay': nest.math.redraw(
                     nest.random.normal(
-                        mean=self.stim_dict['mean_delay_th'],
-                        std=(self.stim_dict['mean_delay_th'] *
-                             self.stim_dict['rel_std_delay_th'])),
+                        mean=self.stim_dict['delay_th_mean'],
+                        std=(self.stim_dict['delay_th_mean'] *
+                             self.stim_dict['delay_th_rel_std'])),
                     min=self.sim_resolution,
                     max=np.Inf)}
 

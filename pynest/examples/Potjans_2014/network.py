@@ -185,16 +185,12 @@ class Network:
                                        self.net_dict['K_scaling'])).astype(int)
 
         # conversion from PSPs to PSCs
-        mean_PSC_matrix = helpers.weight_as_current_from_potential(
-            self.net_dict['mean_PSP_matrix'],
+        PSC_over_PSP = helpers.postsynaptic_potential_to_current(
             self.net_dict['neuron_params']['C_m'],
             self.net_dict['neuron_params']['tau_m'],
             self.net_dict['neuron_params']['tau_syn'])
-        PSC_ext = helpers.weight_as_current_from_potential(
-            self.net_dict['PSP_e'],
-            self.net_dict['neuron_params']['C_m'],
-            self.net_dict['neuron_params']['tau_m'],
-            self.net_dict['neuron_params']['tau_syn'])
+        mean_PSC_matrix = self.net_dict['mean_PSP_matrix'] * PSC_over_PSP
+        PSC_ext = self.net_dict['PSP_e'] * PSC_over_PSP
 
         # DC input compensates for potentially missing Poisson input
         if self.net_dict['poisson_input']:
@@ -232,11 +228,7 @@ class Network:
                 self.stim_dict['conn_probs_th'],
                 self.stim_dict['num_th_neurons'],
                 self.net_dict['full_num_neurons'])[0]
-            self.weight_th = helpers.weight_as_current_from_potential(
-                self.stim_dict['PSP_th'],
-                self.net_dict['neuron_params']['C_m'],
-                self.net_dict['neuron_params']['tau_m'],
-                self.net_dict['neuron_params']['tau_syn'])
+            self.weight_th = self.stim_dict['PSP_th'] * PSC_over_PSP
             if self.net_dict['K_scaling'] != 1:
                 num_th_synapses *= self.net_dict['K_scaling']
                 self.weight_th /= np.sqrt(self.net_dict['K_scaling'])

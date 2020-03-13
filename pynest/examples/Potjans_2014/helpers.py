@@ -62,8 +62,8 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
     return num_synapses
 
 
-def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
-    """ Computes weight as postsynaptic current from postsynaptic potential.
+def postsynaptic_potential_to_current(C_m, tau_m, tau_syn):
+    """ Computes a factor to convert postsynaptic potentials to currents.
 
     The time course of the postsynaptic potential ``v`` is computed as
     :math: `v(t)=(i*h)(t)`
@@ -71,19 +71,27 @@ def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
     :math:`i(t)=J\mathrm{e}^{-t/\tau_\mathrm{syn}}\Theta (t)`,
     the voltage impulse response
     :math:`h(t)=\frac{1}{\tau_\mathrm{m}}\mathrm{e}^{-t/\tau_\mathrm{m}}\Theta (t)`,
-    and with
+    and
     :math:`\Theta(t)=1` if :math:`t\leq 0` and zero otherwise.
 
-    The parameter ``PSP`` is considered as the maximum of ``v``, i.e., it is
+    The ``PSP`` is considered as the maximum of ``v``, i.e., it is
     computed by setting the derivative of ``v(t)`` to zero.
+    The expression for the time point at which ``v`` reaches its maximum
+    can be found in Eq. 5 of [1]_.
 
     The amplitude of the postsynaptic current ``J`` corresponds to the
-    synaptic weight ``PSC`` which is computed by this function.
+    synaptic weight ``PSC``.
+
+    References
+    ----------
+    .. [1] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010)
+           A general and efficient method for incorporating precise spike times
+           in globally time-driven simulations.
+           Front. Neuroinform. 4:113.
+           DOI: `10.3389/fninf.2010.00113 <https://doi.org/10.3389/fninf.2010.00113>`__.
 
     Parameters
     ----------
-    PSP
-        Mean amplitude of postsynaptic potential (in mV).
     C_m
         Membrane capacitance (in pF).
     tau_m
@@ -93,19 +101,17 @@ def weight_as_current_from_potential(PSP, C_m, tau_m, tau_syn):
 
     Returns
     -------
-    PSC
-        Amplitude of postynaptic current (in pA).
+    PSC_over_PSP
+        Conversion factor to be multiplied to a `PSP` (in mV) to obtain a `PSC`
+        (in pA).
 
     """
-
     sub = 1. / (tau_syn - tau_m)
     pre = tau_m * tau_syn / C_m * sub
     frac = (tau_m / tau_syn) ** sub
 
     PSC_over_PSP = 1. / (pre * (frac**tau_m - frac**tau_syn))
-
-    PSC = PSC_over_PSP * PSP
-    return PSC
+    return PSC_over_PSP
 
 
 def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):

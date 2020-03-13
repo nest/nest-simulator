@@ -244,7 +244,7 @@ class Network:
             if self.net_dict['K_scaling'] != 1:
                 num_th_synapses *= self.net_dict['K_scaling']
                 self.weight_th /= np.sqrt(self.net_dict['K_scaling'])
-            self.num_th_synapses = num_th_synapses.astype(int)
+            self.num_th_synapses = np.round(num_th_synapses).astype(int)
 
         if nest.Rank() == 0:
             message = ''

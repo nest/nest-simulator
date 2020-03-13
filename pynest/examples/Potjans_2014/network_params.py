@@ -84,22 +84,12 @@ net_dict = {
              [0.0548, 0.0269, 0.0257, 0.0022, 0.06, 0.3158, 0.0086, 0.],
              [0.0156, 0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396, 0.2252],
              [0.0364, 0.001, 0.0034, 0.0005, 0.0277, 0.008, 0.0658, 0.1443]]),
-    # indegree of external connections to the different populations (same order
-    # as in 'populations')
-    'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
     # mean amplitude of excitatory postsynaptic potential (in mV)
     'PSP_exc_mean': 0.15,
     # relative standard deviation of the weight
     'weight_rel_std': 0.1,
     # relative inhibitory weight
     'g': -4,
-    # rate of the Poissonian spike generator (in spikes/s)
-    'bg_rate': 8.,
-    # turn Poisson input on or off (True or False)
-    # if False: DC input is applied for compensation
-    'poisson_input': True,
-    # delay from the Poisson generator to the network (in ms)
-    'delay_poisson': 1.5,
     # mean delay of excitatory connections (in ms)
     'delay_exc_mean': 1.5,
     # mean delay of inhibitory connections (in ms)
@@ -107,6 +97,18 @@ net_dict = {
     # relative standard deviation of the delay of excitatory and
     # inhibitory connections
     'delay_rel_std': 0.5,
+ 
+    # turn Poisson input on or off (True or False)
+    # if False: DC input is applied for compensation
+    'poisson_input': True,
+    # indegree of external connections to the different populations (same order
+    # as in 'populations')
+    'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
+    # rate of the Poisson generator (in spikes/s)
+    'bg_rate': 8.,
+    # delay from the Poisson generator to the network (in ms)
+    'delay_poisson': 1.5,
+
     # initial conditions for the membrane potential, options are:
     # 'original': uniform mean and standard deviation for all populations as
     #             used in earlier implementations of the model

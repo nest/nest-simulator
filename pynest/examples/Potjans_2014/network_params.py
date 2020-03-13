@@ -89,9 +89,9 @@ net_dict = {
     'K_ext': np.array([1600, 1500, 2100, 1900, 2000, 1900, 2900, 2100]),
     # mean amplitude of excitatory postsynaptic potential (in mV)
     'PSP_e': 0.15,
-    # relative standard deviation of the postsynaptic potential
-    'PSP_std': 0.1,
-    # relative inhibitory synaptic strength
+    # relative standard deviation of the weight
+    'weight_rel_std': 0.1,
+    # relative inhibitory weight
     'g': -4,
     # rate of the Poissonian spike generator (in spikes/s)
     'bg_rate': 8.,
@@ -151,22 +151,11 @@ updated_dict = {
     # matrix of mean PSPs
     'mean_PSP_matrix': mean_PSP_matrix,
 
-    # matrix of standard deviations of PSPs
-    'std_PSP_matrix': get_exc_inh_matrix(
-        net_dict['PSP_std'],
-        net_dict['PSP_std'],
-        len(net_dict['populations'])),
-
     # matrix of mean delays
     'mean_delay_matrix': get_exc_inh_matrix(
         net_dict['mean_delay_exc'],
         net_dict['mean_delay_inh'],
         len(net_dict['populations'])),
-
-    # matrix of standard deviations of delays
-    'std_delay_matrix': get_exc_inh_matrix(
-        net_dict['mean_delay_exc'] * net_dict['rel_std_delay'],
-        net_dict['mean_delay_inh'] * net_dict['rel_std_delay'],
-        len(net_dict['populations']))}
+}
 
 net_dict.update(updated_dict)

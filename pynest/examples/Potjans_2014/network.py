@@ -218,7 +218,6 @@ class Network:
 
         # store final parameters as class attributes
         self.mean_weight_matrix = mean_PSC_matrix
-        self.std_weight_matrix = self.net_dict['std_PSP_matrix']
         self.weight_ext = PSC_ext
         self.DC_amp = DC_amp
 
@@ -444,13 +443,14 @@ class Network:
                             nest.random.normal(
                                 mean=self.mean_weight_matrix[i][j],
                                 std=abs(self.mean_weight_matrix[i][j] *
-                                        self.std_weight_matrix[i][j])),
+                                        self.net_dict['weight_rel_std'])),
                             min=w_min,
                             max=w_max),
                         'delay': nest.math.redraw(
                             nest.random.normal(
                                 mean=self.net_dict['mean_delay_matrix'][i][j],
-                                std=self.net_dict['std_delay_matrix'][i][j]),
+                                std=(self.net_dict['mean_delay_matrix'][i][j] *
+                                     self.net_dict['rel_std_delay'])),
                             min=self.sim_resolution,
                             max=np.Inf)}
 
@@ -506,15 +506,14 @@ class Network:
                 'weight': nest.math.redraw(
                     nest.random.normal(
                         mean=self.weight_th,
-                        std=self.weight_th *
-                        self.net_dict['PSP_std']),
+                        std=self.weight_th * self.net_dict['weight_rel_std']),
                     min=0.0,
                     max=np.Inf),
                 'delay': nest.math.redraw(
                     nest.random.normal(
                         mean=self.stim_dict['mean_delay_th'],
-                        std=self.stim_dict['mean_delay_th'] *
-                        self.stim_dict['rel_std_delay_th']),
+                        std=(self.stim_dict['mean_delay_th'] *
+                             self.stim_dict['rel_std_delay_th'])),
                     min=self.sim_resolution,
                     max=np.Inf)}
 

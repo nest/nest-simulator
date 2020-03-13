@@ -235,9 +235,15 @@ public:
    */
   virtual void reset_timers_counters();
 
+#ifdef TIMER
+  // public stop watches for benchmarking purposes (intended for internal core developers,
+  // not for use in the public API)
+public:
   Stopwatch sw_collocate_spike_data;
   Stopwatch sw_communicate_spike_data;
   Stopwatch sw_deliver_spike_data;
+  Stopwatch sw_communicate_target_data;
+#endif
 
 private:
   template < typename SpikeDataT >

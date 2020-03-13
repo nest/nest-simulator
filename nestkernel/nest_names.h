@@ -598,6 +598,16 @@ extern const Name y_1;
 extern const Name z;
 extern const Name z_connected;
 
+#ifdef TIMER
+extern const Name timer_simulate;
+extern const Name timer_gather_spike_data;
+extern const Name timer_update;
+extern const Name timer_gather_target_data;
+extern const Name timer_collocate_spike_data;
+extern const Name timer_communicate_spike_data;
+extern const Name timer_deliver_spike_data;
+extern const Name timer_communicate_target_data;
+#endif
 } // namespace names
 
 } // namespace nest

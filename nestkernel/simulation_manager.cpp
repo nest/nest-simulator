@@ -388,6 +388,17 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+#ifdef TIMER
+  def< double >( d, names::timer_simulate, kernel().simulation_manager.sw_simulate.elapsed() );
+  def< double >( d, names::timer_gather_spike_data, kernel().simulation_manager.sw_gather_spike_data.elapsed() );
+  def< double >( d, names::timer_update, kernel().simulation_manager.sw_update.elapsed() );
+  def< double >( d, names::timer_gather_target_data, kernel().simulation_manager.sw_gather_target_data.elapsed() );
+  def< double >( d, names::timer_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
+  def< double >( d, names::timer_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
+  def< double >( d, names::timer_deliver_spike_data, kernel().event_delivery_manager.sw_deliver_spike_data.elapsed() );
+  def< double >( d, names::timer_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
+#endif
 }
 
 void
@@ -523,12 +534,6 @@ nest::SimulationManager::run( Time const& t )
     LOG( M_ERROR, "SimulationManager::run", msg );
     throw KernelException();
   }
-#ifdef TIMER
-  if ( kernel().mpi_manager.get_rank() < 30 )
-  {
-    sw_simulate.start();
-  }
-#endif
 
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
@@ -540,6 +545,13 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
+#ifdef TIMER
+  sw_simulate.reset();
+  sw_gather_spike_data.reset();
+  sw_update.reset();
+
+  sw_simulate.start();
+#endif
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -576,11 +588,7 @@ nest::SimulationManager::run( Time const& t )
 
   kernel().io_manager.post_run_hook();
 #ifdef TIMER
-  if ( kernel().mpi_manager.get_rank() < 30 )
-  {
-    sw_simulate.stop();
-    sw_simulate.print( "0] Simulate time: " );
-  }
+  sw_simulate.stop();
 #endif
 }
 
@@ -705,11 +713,27 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
+#ifdef TIMER
+  if ( tid == 0 )
+  {
+    sw_gather_target_data.reset();
+    sw_gather_target_data.start();
+  }
+#endif
+
   // communicate connection information from postsynaptic to
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
 
-  if ( kernel().connection_manager.secondary_connections_exist() )
+#ifdef TIMER
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_gather_target_data.stop();
+  }
+#endif
+
+if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
@@ -740,13 +764,6 @@ nest::SimulationManager::update_()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-
-#ifdef TIMER
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_total.start();
-    }
-#endif
 
     do
     {
@@ -906,7 +923,7 @@ nest::SimulationManager::update_()
       // end of preliminary update
 
 #ifdef TIMER
-      if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+      if ( tid == 0 )
       {
         sw_update.start();
       }
@@ -935,9 +952,10 @@ nest::SimulationManager::update_()
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
 #ifdef TIMER
-      if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+      if ( tid == 0 )
       {
         sw_update.stop();
+        sw_gather_spike_data.start();
       }
 #endif
 
@@ -959,6 +977,12 @@ nest::SimulationManager::update_()
       }
 
 #pragma omp barrier
+#ifdef TIMER
+      if ( tid == 0 )
+      {
+        sw_gather_spike_data.stop();
+      }
+#endif
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
@@ -987,22 +1011,6 @@ nest::SimulationManager::update_()
       Node* node = i->get_node();
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
-
-#ifdef TIMER
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
-    {
-      sw_total.stop();
-      sw_update.print( "0] Update time: " );
-      kernel().event_delivery_manager.sw_collocate_spike_data.print(
-        "0] GatherSpikeData::collocate time: " );
-      kernel().event_delivery_manager.sw_communicate_spike_data.print(
-        "0] GatherSpikeData::communicate time: " );
-      kernel().event_delivery_manager.sw_deliver_spike_data.print(
-        "0] GatherSpikeData::deliver time: " );
-      sw_total.print( "0] Total time: " );
-    }
-#endif
-
   } // of omp parallel
 
   // check if any exceptions have been raised

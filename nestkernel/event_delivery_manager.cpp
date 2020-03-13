@@ -259,6 +259,13 @@ EventDeliveryManager::reset_timers_counters()
   {
     ( *it ) = 0;
   }
+
+#ifdef TIMER
+  sw_collocate_spike_data.reset();
+  sw_communicate_spike_data.reset();
+  sw_deliver_spike_data.reset();
+  sw_communicate_target_data.reset();
+#endif
 }
 
 void
@@ -327,7 +334,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       }
     } // of omp single; implicit barrier
 #ifdef TIMER
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+    if ( tid == 0 )
     {
       sw_collocate_spike_data.start();
     }
@@ -362,17 +369,24 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       // Needs to be called /after/ set_end_and_invalid_markers_.
       set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 #pragma omp barrier
+      //TODO: Discuss, if the barrier above should be better placed after if-clause
     }
+
+#ifdef TIMER
+#pragma omp barrier
+    if ( tid == 0 )
+    {
+      sw_collocate_spike_data.stop();
+
+      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
+                                          // across ranks
+      sw_communicate_spike_data.start();
+    }
+#endif
 
 // Communicate spikes using a single thread.
 #pragma omp single
     {
-#ifdef TIMER
-      sw_collocate_spike_data.stop();
-      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                          // across ranks
-      sw_communicate_spike_data.start();
-#endif
       if ( off_grid_spiking_ )
       {
         kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
@@ -381,11 +395,15 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       {
         kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
       }
+    } // of omp single; implicit barrier
+
 #ifdef TIMER
+    if ( tid == 0 )
+    {
       sw_communicate_spike_data.stop();
       sw_deliver_spike_data.start();
+    }
 #endif
-    } // of omp single; implicit barrier
 
     // Deliver spikes from receive buffer to ring buffers.
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
@@ -396,7 +414,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp barrier
 
 #ifdef TIMER
-    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+    if ( tid == 0 )
     {
       sw_deliver_spike_data.stop();
     }
@@ -644,10 +662,29 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.save_source_table_entry_point( tid );
 #pragma omp barrier
     kernel().connection_manager.clean_source_table( tid );
+
+#ifdef TIMER
+#pragma omp barrier
+    if ( tid == 0 )
+    {
+      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
+                                          // across ranks
+      sw_communicate_target_data.start();
+    }
+#endif
+
 #pragma omp single
     {
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
-    } // of omp single
+    } // of omp single (implicit barrier)
+
+#ifdef TIMER
+    // "#pragma omp barrier" not necessary because of preceding implicit barrier
+    if ( tid == 0 )
+    {
+      sw_communicate_target_data.stop();
+    }
+#endif
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );

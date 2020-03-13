@@ -190,10 +190,15 @@ private:
                                    //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
-
+#ifdef TIMER
+  // public stop watches for benchmarking purposes (intended for internal core developers,
+  // not for use in the public API)
+public:
   Stopwatch sw_simulate;
-  Stopwatch sw_total;
+  Stopwatch sw_gather_spike_data;
   Stopwatch sw_update;
+  Stopwatch sw_gather_target_data;
+#endif
 };
 
 inline Time const&

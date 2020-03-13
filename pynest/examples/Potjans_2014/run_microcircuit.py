@@ -43,7 +43,11 @@ time_start = time.time()
 # Initialize the network with simulation, network and stimulation parameters,
 # then create and connect all nodes, and finally simulate.
 # The times for a presimulation and the main simulation are taken
-# independently.
+# independently. A presimulation is useful because the spike activity typically
+# exhibits a startup transient. In benchmark simulations, this transient should
+# be excluded from a time measurement of the state propagation phase. Besides,
+# statistical measures of the spike activity should only be computed after the
+# transient has passed.
 
 net = network.Network(sim_dict, net_dict, stim_dict)
 time_network = time.time()
@@ -65,12 +69,12 @@ time_simulate = time.time()
 # rates for each population.
 # For visual purposes only, spikes 100 ms before and 100 ms after the thalamic
 # stimulus time are plotted here by default.
-# The computation of spike rates discards at least 500 ms of the simulation to
-# exclude initialization artifacts.
+# The computation of spike rates discards the presimulation time to exclude
+# initialization artifacts.
 
 raster_plot_interval = np.array([stim_dict['th_start'] - 100.0,
                                  stim_dict['th_start'] + 100.0])
-firing_rates_interval = np.array([np.max([sim_dict['t_presim'], 500.]),
+firing_rates_interval = np.array([sim_dict['t_presim'],
                                   sim_dict['t_presim'] + sim_dict['t_sim']])
 net.evaluate(raster_plot_interval, firing_rates_interval)
 time_evaluate = time.time()

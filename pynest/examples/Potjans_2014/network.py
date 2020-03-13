@@ -100,6 +100,16 @@ class Network:
         Recurrent connections among neurons of the neuronal populations are
         established, and recording and stimulating devices are connected.
 
+        The ``self.__connect_*()`` functions use ``nest.Connect()`` calls which
+        set up the postsynaptic connectivity.
+        Since the introduction of the 5g kernel in NEST 2.16.0 the full
+        connection infrastructure including presynaptic connectivity is set up
+        afterwards in the preparation phase of the simulation.
+        The preparation phase is usually induced by the first
+        ``nest.Simulate()`` call.
+        For including this phase in measurements of the connection time,
+        we induce it here explicitly by calling ``nest.Prepare()``.
+
         """
         self.__connect_neuronal_populations()
 
@@ -111,6 +121,9 @@ class Network:
             self.__connect_thalamic_stim_input()
         if self.stim_dict['dc_input']:
             self.__connect_dc_stim_input()
+
+        nest.Prepare()
+        nest.Cleanup()
 
     def simulate(self, t_sim):
         """ Simulates the microcircuit.

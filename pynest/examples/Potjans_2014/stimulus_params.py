@@ -57,9 +57,9 @@ stim_dict = {
     # turn DC input on or off (True or False)
     'dc_input': False,
     # start of the DC input (in ms)
-    'dc_start': 0.0,
+    'dc_start': 650.0,
     # duration of the DC input (in ms)
-    'dc_dur': 1000.0,
+    'dc_dur': 100.0,
     # amplitude of the DC input (in pA); final amplitude is population-specific
     # and will be obtained by multiplication with 'K_ext'
     'dc_amp': 0.3}

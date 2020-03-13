@@ -29,9 +29,10 @@ A dictionary with parameters defining the simulation.
 import os
 
 sim_dict = {
-    # presimulation time (in ms); can be used to run an initial simulation
-    # before the main simulation for separate time measurements
-    't_presim': 0.0,
+    # The full simulation time is the sum of a presimulation time and the main
+    # simulation time.
+    # presimulation time (in ms)
+    't_presim': 500.0,
     # simulation time (in ms)
     't_sim': 1000.0,
     # resolution of the simulation (in ms)

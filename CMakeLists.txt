@@ -158,6 +158,12 @@ nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 
+if ( ( DEFINED TIMER ) AND ( TIMER STREQUAL "ON" ) OR ( TIMER EQUAL 1 ) )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTIMER=${TIMER}" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTIMER=${TIMER}" )
+    unset( TIMER CACHE )
+endif()
+
 # requires HAVE_LIBNEUROSIM
 nest_default_modules()
 

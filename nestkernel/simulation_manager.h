@@ -31,6 +31,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -189,6 +190,10 @@ private:
                                    //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+
+  Stopwatch sw_simulate;
+  Stopwatch sw_total;
+  Stopwatch sw_update;
 };
 
 inline Time const&

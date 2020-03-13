@@ -326,6 +326,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         buffer_size_spike_data_has_changed_ = false;
       }
     } // of omp single; implicit barrier
+#ifdef TIMER
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+    {
+      sw_collocate_spike_data.start();
+    }
+#endif
 
     // Need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position(
@@ -361,6 +367,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // Communicate spikes using a single thread.
 #pragma omp single
     {
+#ifdef TIMER
+      sw_collocate_spike_data.stop();
+      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
+                                          // across ranks
+      sw_communicate_spike_data.start();
+#endif
       if ( off_grid_spiking_ )
       {
         kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer );
@@ -369,6 +381,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       {
         kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer );
       }
+#ifdef TIMER
+      sw_communicate_spike_data.stop();
+      sw_deliver_spike_data.start();
+#endif
     } // of omp single; implicit barrier
 
     // Deliver spikes from receive buffer to ring buffers.
@@ -378,6 +394,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // Exit gather loop if all local threads and remote processes are
 // done.
 #pragma omp barrier
+
+#ifdef TIMER
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+    {
+      sw_deliver_spike_data.stop();
+    }
+#endif
+
     // Resize mpi buffers, if necessary and allowed.
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_spike_buffers() )
     {

@@ -394,10 +394,13 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::timer_gather_spike_data, kernel().simulation_manager.sw_gather_spike_data.elapsed() );
   def< double >( d, names::timer_update, kernel().simulation_manager.sw_update.elapsed() );
   def< double >( d, names::timer_gather_target_data, kernel().simulation_manager.sw_gather_target_data.elapsed() );
-  def< double >( d, names::timer_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
-  def< double >( d, names::timer_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
+  def< double >(
+    d, names::timer_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
+  def< double >(
+    d, names::timer_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
   def< double >( d, names::timer_deliver_spike_data, kernel().event_delivery_manager.sw_deliver_spike_data.elapsed() );
-  def< double >( d, names::timer_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
+  def< double >(
+    d, names::timer_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
 #endif
 }
 
@@ -733,7 +736,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
 #endif
 
-if ( kernel().connection_manager.secondary_connections_exist() )
+  if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
@@ -920,9 +923,10 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-      // end of preliminary update
+        // end of preliminary update
 
 #ifdef TIMER
+#pragma omp barrier
       if ( tid == 0 )
       {
         sw_update.start();

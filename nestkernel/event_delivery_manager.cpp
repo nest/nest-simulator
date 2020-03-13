@@ -264,7 +264,9 @@ EventDeliveryManager::reset_timers_counters()
   sw_collocate_spike_data.reset();
   sw_communicate_spike_data.reset();
   sw_deliver_spike_data.reset();
-  sw_communicate_target_data.reset();
+// sw_communicate_target_data.reset(); // REMARK: We don't do this here because
+// we want to preserve the stored value over
+// several calls to run() in the SimulationManager
 #endif
 }
 
@@ -369,7 +371,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       // Needs to be called /after/ set_end_and_invalid_markers_.
       set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 #pragma omp barrier
-      //TODO: Discuss, if the barrier above should be better placed after if-clause
+      // TODO: Discuss, if the barrier above should be better placed after if-clause
     }
 
 #ifdef TIMER
@@ -378,8 +380,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     {
       sw_collocate_spike_data.stop();
 
-      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                          // across ranks
+      // TODO_SDR: Following function call commented out because it causes real runs to hang!
+      // kernel().mpi_manager.synchronize(); // to get an accurate time measurement
+      // across ranks
       sw_communicate_spike_data.start();
     }
 #endif
@@ -667,8 +670,9 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp barrier
     if ( tid == 0 )
     {
-      kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-                                          // across ranks
+      // TODO_SDR: Following function call commented out because it causes real runs to hang!
+      // kernel().mpi_manager.synchronize(); // to get an accurate time measurement
+      //                                    // across ranks
       sw_communicate_target_data.start();
     }
 #endif

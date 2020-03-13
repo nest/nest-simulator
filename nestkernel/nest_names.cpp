@@ -578,14 +578,14 @@ const Name z( "z" );
 const Name z_connected( "z_connected" );
 
 #ifdef TIMER
-const Name timer_simulate("timer_simulate");
-const Name timer_gather_spike_data("timer_gather_spike_data");
-const Name timer_update("timer_update");
-const Name timer_gather_target_data("timer_gather_target_data");
-const Name timer_collocate_spike_data("timer_collocate_spike_data");
-const Name timer_communicate_spike_data("timer_communicate_spike_data");
-const Name timer_deliver_spike_data("timer_deliver_spike_data");
-const Name timer_communicate_target_data("timer_communicate_target_data");
+const Name timer_simulate( "timer_simulate" );
+const Name timer_gather_spike_data( "timer_gather_spike_data" );
+const Name timer_update( "timer_update" );
+const Name timer_gather_target_data( "timer_gather_target_data" );
+const Name timer_collocate_spike_data( "timer_collocate_spike_data" );
+const Name timer_communicate_spike_data( "timer_communicate_spike_data" );
+const Name timer_deliver_spike_data( "timer_deliver_spike_data" );
+const Name timer_communicate_target_data( "timer_communicate_target_data" );
 #endif
 } // namespace names
 

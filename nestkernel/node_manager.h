@@ -117,9 +117,9 @@ public:
   index get_max_num_local_nodes() const;
 
   /**
-   * Returns the number of devices per virtual process.
+   * Returns the number of devices per thread.
    */
-  index get_num_local_devices() const;
+  index get_num_thread_local_devices( thread t ) const;
 
   /**
    * Print network information.
@@ -311,7 +311,7 @@ private:
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
-  index num_local_devices_; //!< stores number of local devices
+  std::vector< index > num_thread_local_devices_; //!< stores number of thread local devices
 
   bool have_nodes_changed_; //!< true if new nodes have been created
                             //!< since startup or last call to simulate

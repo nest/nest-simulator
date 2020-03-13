@@ -69,9 +69,11 @@ net_dict = {
         np.array([20683, 5834, 21915, 5479, 4850, 1065, 14395, 2948]),
     # mean rates of the different populations in the non-scaled version of the
     # microcircuit (in spikes/s; same order as in 'populations');
-    # necessary for the scaling of the network
+    # necessary for the scaling of the network.
+    # The values were optained by running this PyNEST microcircuit with 12 MPI
+    # processes and both 'N_scaling' and 'K_scaling' set to 1.
     'full_mean_rates':
-        np.array([0.971, 2.868, 4.746, 5.396, 8.142, 9.078, 0.991, 7.523]),
+        np.array([0.943, 3.026, 4.368, 5.882, 7.733, 8.664, 1.096, 7.851]),
     # connection probabilities (the first index corresponds to the targets
     # and the second to the sources)
     'conn_probs':
@@ -118,7 +120,7 @@ net_dict = {
     'V0_type': 'optimized',
     # parameters of the neuron model
     'neuron_params': {
-        # membrane qpotential average for the neurons (in mV)
+        # membrane potential average for the neurons (in mV)
         'V0_mean': {'original': -58.0,
                     'optimized': [-68.28, -63.16, -63.33, -63.45,
                                   -63.11, -61.66, -66.72, -61.43]},
@@ -143,15 +145,15 @@ net_dict = {
 
 # derive matrix of mean PSPs,
 # the mean PSP of the connection from L4E to L23E is doubled
-mean_PSP_matrix = get_exc_inh_matrix(
+PSP_matrix_mean = get_exc_inh_matrix(
     net_dict['PSP_exc_mean'],
     net_dict['PSP_exc_mean'] * net_dict['g'],
     len(net_dict['populations']))
-mean_PSP_matrix[0, 2] = 2. * net_dict['PSP_exc_mean']
+PSP_matrix_mean[0, 2] = 2. * net_dict['PSP_exc_mean']
 
 updated_dict = {
     # matrix of mean PSPs
-    'PSP_matrix_mean': mean_PSP_matrix,
+    'PSP_matrix_mean': PSP_matrix_mean,
 
     # matrix of mean delays
     'delay_matrix_mean': get_exc_inh_matrix(

@@ -47,6 +47,11 @@
 music_rate_in_proxy - A device which receives rate data from MUSIC
 ##################################################################
 
+Device name
++++++++++++
+
+music_rate_in_proxy
+
 Description:
 A music_rate_in_proxy can be used to receive rate data from
 remote MUSIC applications in NEST.

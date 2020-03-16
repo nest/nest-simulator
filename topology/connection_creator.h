@@ -170,8 +170,8 @@ private:
   std::shared_ptr< Parameter > weight_;
   std::shared_ptr< Parameter > delay_;
 
-  //! Empty dictionary to pass to connect functions
-  const static DictionaryDatum dummy_param_;
+  //! Empty dictionary to pass to connect functions, one per thread
+  std::vector< DictionaryDatum > dummy_param_dicts_;
 };
 
 } // namespace nest

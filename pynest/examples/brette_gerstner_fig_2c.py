@@ -39,7 +39,7 @@ References
 
 import nest
 import nest.voltage_trace
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -56,7 +56,7 @@ neuron = nest.Create("aeif_cond_alpha")
 # publication.
 
 
-neuron.set({"a": 4.0, "b": 80.5})
+neuron.set(a=4.0, b=80.5)
 
 ###############################################################################
 # Next we define the stimulus protocol. There are two DC generators,
@@ -64,8 +64,7 @@ neuron.set({"a": 4.0, "b": 80.5})
 
 dc = nest.Create("dc_generator", 2)
 
-dc.set({"amplitude": [500.0, 800.0], "start": [0.0,  500.0], "stop": [200.0, 1000.0]})
-
+dc.set(amplitude=[500.0, 800.0], start=[0.0,  500.0], stop=[200.0, 1000.0])
 ###############################################################################
 # We connect the DC generators.
 
@@ -85,4 +84,5 @@ nest.Connect(voltmeter, neuron)
 nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
-pylab.axis([0, 1000, -80, -20])
+plt.axis([0, 1000, -80, -20])
+nest.voltage_trace.show()

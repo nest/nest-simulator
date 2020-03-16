@@ -389,7 +389,8 @@ def FindNearestElement(layer, locations, find_all=False):
 
     * If `locations` is a single 2-element array giving a grid location, return a
       `NodeCollection` of `layer` elements at the given location.
-    * If `locations` is a list of coordinates, the function returns a `NodeCollection` of the nodes at all locations.
+    * If `locations` is a list of coordinates, the function returns a list of `NodeCollection` of the nodes at all
+      locations.
 
     Parameters
     ----------
@@ -407,9 +408,9 @@ def FindNearestElement(layer, locations, find_all=False):
     Returns
     -------
     NodeCollection:
-        `NodeCollection` of node IDs
+        `NodeCollection` of node IDs if locations is a 2-element list with coordinates of a single position
     list:
-        list of `NodeCollection` if find_all is True
+        list of `NodeCollection` if find_all is True or locations contains more than one position
 
     See also
     --------
@@ -449,19 +450,22 @@ def FindNearestElement(layer, locations, find_all=False):
 
         if not find_all:
             dx = np.argmin(d)  # finds location of one minimum
-            result.append(layer[dx].get('global_id'))
+            result.append(layer[dx])
         else:
-            minnode_ids = list(layer[:1])
+            minnode = list(layer[:1])
             minval = d[0]
             for idx in range(1, len(layer)):
                 if d[idx] < minval:
-                    minnode_ids = [layer[idx].get('global_id')]
+                    minnode = [layer[idx]]
                     minval = d[idx]
                 elif np.abs(d[idx] - minval) <= 1e-14 * minval:
-                    minnode_ids.append(layer[idx].get('global_id'))
-            result.append(NodeCollection(minnode_ids))
+                    minnode.append(layer[idx])
+            result.append(minnode)
 
-    return NodeCollection(result) if not find_all else result
+    if len(result) == 1:
+        result = result[0]
+
+    return result
 
 
 def _rank_specific_filename(basename):
@@ -958,7 +962,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter3D(*pos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        ax.scatter(*pos, s=nodesize, c=nodecolor)
         plt.draw_if_interactive()
 
     else:
@@ -998,8 +1002,8 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         Size of target markers (see scatter for details)
     mask_color : [None | any matplotlib color], optional, default: 'red'
         Color used for line marking mask
-    kernel_color : [None | any matplotlib color], optional, default: 'red'
-        Color used for lines marking kernel
+    probability_cmap : [None | any matplotlib cmap color], optional, default: 'Greens'
+        Color used for lines marking probability parameter.
 
     Returns
     -------
@@ -1260,7 +1264,7 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
             z[:, i] = np.array(values)
         img = ax.imshow(np.minimum(np.maximum(z, 0.0), 1.0), extent=edges,
                         origin='lower', cmap=prob_cmap, vmin=0., vmax=1.)
-        plt.colorbar(img, ax=ax)
+        plt.colorbar(img, ax=ax, fraction=0.046, pad=0.04)
 
     if mask is not None:
         periodic = source.spatial['edge_wrap']

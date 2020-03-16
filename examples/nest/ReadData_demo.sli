@@ -31,7 +31,7 @@
 */
 
 % file name for input data
-/dataname (SLIHOME) getenv ; (/examples/ReadData_demo.dat) join def
+/dataname (NEST_DOC_DIR) getenv ; (/examples/ReadData_demo.dat) join def
 
 % open file for reading
 /datastream dataname ifstream
@@ -61,6 +61,3 @@ Wmat N Partition /Wmat Set
    31 32 33
 */
 Wmat { == } forall
-
-
-

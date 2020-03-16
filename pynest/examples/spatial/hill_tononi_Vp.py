@@ -380,7 +380,7 @@ retina = nest.Create('RetinaNode', positions=layerGrid)
 
 retina_phase = 360.0 / Params['lambda_dg'] * (math.cos(Params['phi_dg']) * nest.spatial.pos.x +
                                               math.sin(Params['phi_dg']) * nest.spatial.pos.y)
-retina.set(phase=retina_phase)
+retina.phase = retina_phase
 
 
 ##############################################################################
@@ -850,14 +850,14 @@ nest.Connect(retina, TpInter, retThal_conn_spec, retThal_syn_spec)
 
 # Connections from Retina to TpRelay
 retina_ctr_node_id = nest.FindCenterElement(retina)
-retina_ctr_index = retina.index(retina_ctr_node_id.get('global_id'))
+retina_ctr_index = retina.index(retina_ctr_node_id.global_id)
 conns = nest.GetConnections(retina[retina_ctr_index], TpRelay)
 nest.PlotTargets(retina[retina_ctr_index], TpRelay, 'AMPA')
 plt.title('Connections Retina -> TpRelay')
 
 # Connections from TpRelay to L4pyr in Vp (horizontally tuned)
 TpRelay_ctr_node_id = nest.FindCenterElement(TpRelay)
-TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_node_id.get('global_id'))
+TpRelay_ctr_index = TpRelay.index(TpRelay_ctr_node_id.global_id)
 nest.PlotTargets(TpRelay[TpRelay_ctr_index], Vp_h_layers['L4pyr_0'], 'AMPA')
 plt.title('Connections TpRelay -> Vp(h) L4pyr')
 
@@ -909,10 +909,7 @@ nest.SetKernelStatus({'print_time': True})
 vmn = [-80, -80, -80, -80, -80, -80]
 vmx = [-50, -50, -50, -50, -50, -50]
 
-# Because we are running the simulation in steps, we use the
-# Prepare-Run-Cleanup procedure.
-nest.Prepare()
-nest.Run(Params['sim_interval'])
+nest.Simulate(Params['sim_interval'])
 
 # Set up the figure, assume six recorders.
 fig, axes = plt.subplots(2, 3)
@@ -929,7 +926,7 @@ for i, ax in enumerate(axes.flat):
 for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
     # do the simulation
-    nest.Run(Params['sim_interval'])
+    nest.Simulate(Params['sim_interval'])
 
     # now plot data from each recorder in turn
     for name, rec_item in recorders.items():
@@ -939,7 +936,7 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
         d = recorder.get('events', 'V_m')
         # clear data from multimeter
-        recorder.set(n_events=0)
+        recorder.n_events = 0
 
         # update image data and title
         im.set_data(np.reshape(d, (Params['N'], Params['N'])))
@@ -947,9 +944,6 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
     # We need to pause because drawing of the figure happens while the main code is sleeping
     plt.pause(0.0001)
-
-# Cleanup after the simulation is complete.
-nest.Cleanup()
 
 # just for some information at the end
 pprint(nest.GetKernelStatus())

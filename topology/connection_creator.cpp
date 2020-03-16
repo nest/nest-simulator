@@ -25,17 +25,17 @@
 namespace nest
 {
 
-const DictionaryDatum ConnectionCreator::dummy_param_ = new Dictionary;
-
 ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
+  , allow_oversized_( false )
   , number_of_connections_()
   , mask_()
   , kernel_()
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , weight_()
   , delay_()
+  , dummy_param_dicts_()
 {
   Name connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
@@ -149,8 +149,14 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   else
   {
-
     throw BadProperty( "Unknown connection type." );
+  }
+
+  // Create dummy dictionaries, one per thread
+  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+  {
+    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
   }
 }
 

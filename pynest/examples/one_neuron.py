@@ -45,6 +45,7 @@ See Also
 
 import nest
 import nest.voltage_trace
+
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
@@ -68,7 +69,7 @@ voltmeter = nest.Create("voltmeter")
 # In this example we use `SetStatus()` to configure the constant
 # current input to the neuron.
 
-nest.SetStatus(neuron, "I_e", 376.0)
+neuron.I_e = 376.0
 
 #######################################################################
 # Fourth, the neuron is connected to the voltmeter. The command
@@ -94,3 +95,4 @@ nest.Simulate(1000.0)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
+nest.voltage_trace.show()

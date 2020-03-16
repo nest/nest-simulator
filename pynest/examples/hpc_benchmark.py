@@ -76,6 +76,7 @@ import numpy as np
 import os
 import sys
 import time
+import scipy.special as sp
 
 import nest
 import nest.raster_plot
@@ -223,21 +224,10 @@ def build_network(logger):
         nest.message(M_INFO, 'build_network',
                      'Randomzing membrane potentials.')
 
-        seed = nest.GetKernelStatus(
-            'rng_seeds')[-1] + 1 + nest.GetStatus(E_neurons[0], 'vp')[0]
-        rng = np.random.RandomState(seed=seed)
-
-        for node in nest.GetLocalNodeCollection(E_neurons):
-            nest.SetStatus(node,
-                           {'V_m': rng.normal(
-                               brunel_params['mean_potential'],
-                               brunel_params['sigma_potential'])})
-
-        for node in nest.GetLocalNodeCollection(I_neurons):
-            nest.SetStatus(node,
-                           {'V_m': rng.normal(
-                               brunel_params['mean_potential'],
-                               brunel_params['sigma_potential'])})
+        random_vm = nest.random.normal(brunel_params['mean_potential'],
+                                       brunel_params['sigma_potential'])
+        nest.GetLocalNodeCollection(E_neurons).V_m = random_vm
+        nest.GetLocalNodeCollection(I_neurons).V_m = random_vm
 
     # number of incoming excitatory connections
     CE = int(1. * NE / params['scale'])
@@ -403,7 +393,7 @@ def compute_rate(sdet):
 
     """
 
-    n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
+    n_local_spikes = sdet.n_events
     n_local_neurons = brunel_params['Nrec']
     simtime = params['simtime']
     return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
@@ -417,8 +407,8 @@ def memory_thisjob():
 
 def lambertwm1(x):
     """Wrapper for LambertWm1 function"""
-    nest.ll_api.sr('{} LambertWm1'.format(x))
-    return nest.ll_api.spp()
+    # Using scipy to mimic the gsl_sf_lambert_Wm1 function.
+    return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
 class Logger(object):

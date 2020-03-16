@@ -156,10 +156,10 @@ nest.Connect(neurons, sd)
 
 nest.Simulate(1000.)
 
-data = nest.GetStatus(mm)[0]["events"]
-senders = data['senders']
+data = mm.events
+senders = data["senders"]
 
-spike_data = nest.GetStatus(sd)[0]["events"]
+spike_data = sd.events
 spike_senders = spike_data["senders"]
 spikes = spike_data["times"]
 
@@ -177,36 +177,37 @@ glif_models = ["lif", "lif_r", "lif_asc", "lif_r_asc", "lif_r_asc_a"]
 for i in range(len(glif_models)):
 
     glif_model = glif_models[i]
+    node_id = neurons[i].global_id
     plt.figure(glif_model)
     gs = gridspec.GridSpec(4, 1, height_ratios=[2, 1, 1, 1])
     t = data["times"][senders == 1]
 
     ax1 = plt.subplot(gs[0])
-    plt.plot(t, data["V_m"][senders == neurons[i]], "b")
-    plt.plot(t, data["threshold"][senders == neurons[i]], "g--")
-    plt.plot(spikes[spike_senders == neurons[i]],
-             [max(data["threshold"][senders == neurons[i]]) * 0.95] *
-             len(spikes[spike_senders == neurons[i]]), "r.")
+    plt.plot(t, data["V_m"][senders == node_id], "b")
+    plt.plot(t, data["threshold"][senders == node_id], "g--")
+    plt.plot(spikes[spike_senders == node_id],
+             [max(data["threshold"][senders == node_id]) * 0.95] *
+             len(spikes[spike_senders == node_id]), "r.")
     plt.legend(["V_m", "threshold", "spike"])
     plt.ylabel("V (mV)")
     plt.title("Simulation of glif_cond neuron of " + glif_model)
 
     ax2 = plt.subplot(gs[1])
-    plt.plot(t, data["threshold_spike"][senders == neurons[i]], "y")
-    plt.plot(t, data["threshold_voltage"][senders == neurons[i]], "k--")
+    plt.plot(t, data["threshold_spike"][senders == node_id], "y")
+    plt.plot(t, data["threshold_voltage"][senders == node_id], "k--")
     plt.legend(["threshold_spike", "threshold_voltage"])
     plt.ylabel("V (mV)")
 
     ax3 = plt.subplot(gs[2])
-    plt.plot(t, data["I"][senders == neurons[i]], "--")
-    plt.plot(t, data["ASCurrents_sum"][senders == neurons[i]], "c-.")
+    plt.plot(t, data["I"][senders == node_id], "--")
+    plt.plot(t, data["ASCurrents_sum"][senders == node_id], "c-.")
     plt.legend(["I_e", "ASCurrents_sum", "I_syn"])
     plt.ylabel("I (pA)")
     plt.xlabel("t (ms)")
 
     ax4 = plt.subplot(gs[3])
-    plt.plot(t, data["g_1"][senders == neurons[i]], "-")
-    plt.plot(t, data["g_2"][senders == neurons[i]], "--")
+    plt.plot(t, data["g_1"][senders == node_id], "-")
+    plt.plot(t, data["g_2"][senders == node_id], "--")
     plt.legend(["G_1", "G_2"])
     plt.ylabel("G (nS)")
     plt.xlabel("t (ms)")

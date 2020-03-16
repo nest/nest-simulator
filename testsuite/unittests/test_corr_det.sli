@@ -94,9 +94,8 @@ ResetKernel
 (Test 5) ==
 {
   ResetKernel
-  << /resolution 0.1 >> SetKernelStatus
-  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
   << /resolution 0.2 >> SetKernelStatus
+  /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
   /correlation_detector Create
   1 Simulate % must simulate to force creation of histogram
   [/histogram] get cva length

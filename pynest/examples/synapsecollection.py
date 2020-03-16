@@ -85,7 +85,7 @@ Add some weights to the connections, and plot the updated weight matrix.
 # We can set data of the connections with a simple set() call.
 w = [{'weight': x*1.0} for x in range(1, 11)]
 conns.set(w)
-weights = conns.get('weight')
+weights = conns.weight
 
 plotMatrix(srcs, tgts, weights, 'Set weight', 122)
 
@@ -103,9 +103,9 @@ nest.Connect(pre, post,
 
 # Get a SynapseCollection with all connections
 conns = nest.GetConnections()
-srcs = conns.get('source')
-tgts = conns.get('target')
-weights = conns.get('weight')
+srcs = conns.source
+tgts = conns.target
+weights = conns.weight
 
 plt.figure(figsize=(12, 10))
 plotMatrix(srcs, tgts, weights, 'All to all connection', 111)
@@ -139,7 +139,7 @@ nest.Connect(nrns, nrns[12:],
 conns = nest.GetConnections()
 srcs = conns.source
 tgts = conns.target
-weights = conns.get('weight')
+weights = conns.weight
 
 plt.figure(figsize=(14, 12))
 plotMatrix(list(srcs), list(tgts), weights, 'All connections', 221)

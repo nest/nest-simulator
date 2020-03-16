@@ -426,7 +426,6 @@ SPManager::create_synapses( std::vector< index >& pre_id,
 {
   std::vector< index > pre_id_rnd;
   std::vector< index > post_id_rnd;
-  std::vector< index >::iterator pre_it, post_it;
 
   // shuffle the vacant element
   serialize_id( pre_id, pre_n, pre_id_rnd );

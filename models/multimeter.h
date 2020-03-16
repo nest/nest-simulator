@@ -31,6 +31,7 @@
 #include "device_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_timeconverter.h"
 #include "recording_device.h"
 
 // Includes from sli:
@@ -159,6 +160,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 protected:
   void calibrate();
 
@@ -253,6 +256,13 @@ inline SignalType
 nest::multimeter::sends_signal() const
 {
   return ALL;
+}
+
+inline void
+nest::multimeter::calibrate_time( const TimeConverter& tc )
+{
+  P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
+  P_.offset_ = tc.from_old_tics( P_.offset_.get_tics() );
 }
 
 } // namespace nest

@@ -84,7 +84,6 @@ Examples
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
-Author: Philipp Weidel, Jakob Jordan
 FirstVersion: June 2019
 Availability: Only when compiled with MUSIC
 

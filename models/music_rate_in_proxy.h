@@ -44,7 +44,8 @@
 
 /* BeginUserDocs:
 
-Name: music_rate_in_proxy - A device which receives rate data from MUSIC.
+music_rate_in_proxy - A device which receives rate data from MUSIC
+##################################################################
 
 Description:
 A music_rate_in_proxy can be used to receive rate data from

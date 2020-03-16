@@ -64,11 +64,6 @@ extern "C" int hh_cond_beta_gap_traub_dynamics( double, const double*, double*, 
 hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron with added gap junction support and beta function synaptic conductance
 ##############################################################################################################################
 
-Device name
-+++++++++++
-
-hh_cond_beta_gap_traub
-
 Description
 +++++++++++
 

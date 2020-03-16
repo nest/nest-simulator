@@ -37,11 +37,6 @@
 glif_psc - Current-based generalized leaky integrate and fire (GLIF)
 model
 
-Device name
-+++++++++++
-
-glif_psc
-
 Description
 +++++++++++
 

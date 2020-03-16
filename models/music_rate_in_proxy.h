@@ -63,7 +63,9 @@ The music_rate_in_proxy represents a complete port to which MUSIC can
 connect and send data. The music_rate_in_proxy can be queried using
 GetStatus to retrieve the messages.
 
-Parameters:
+Parameters
+++++++++++
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:

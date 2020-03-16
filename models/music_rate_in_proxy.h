@@ -77,7 +77,9 @@ published      - A bool indicating if the port has been already published
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
+Examples
+++++++++
+
 /music_rate_in_proxy Create /mcip Set
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set

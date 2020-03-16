@@ -158,7 +158,7 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-FirstVersion: April 2013
+First version: April 2013
 
 EndUserDocs */
 

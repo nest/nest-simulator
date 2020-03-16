@@ -109,7 +109,7 @@ Receives
 
 SpikeEvent, DataLoggingRequest
 
-FirstVersion: May 2012
+First version: May 2012
 
 EndUserDocs */
 

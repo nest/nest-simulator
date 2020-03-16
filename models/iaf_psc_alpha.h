@@ -143,7 +143,7 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-FirstVersion: September 1999
+First version: September 1999
 
 See also
 ++++++++

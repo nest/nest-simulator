@@ -88,7 +88,11 @@ First Version: June 2019
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_rate_out_proxy, music_cont_in_proxy
+See also
+++++++++
+
+music_rate_out_proxy, music_cont_in_proxy
+
 */
 
 namespace nest

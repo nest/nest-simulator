@@ -84,7 +84,8 @@ Examples
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
-FirstVersion: June 2019
+First Version: June 2019
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_rate_out_proxy, music_cont_in_proxy

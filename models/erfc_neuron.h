@@ -121,7 +121,7 @@ Receives
 
 SpikeEvent, PotentialRequest
 
-FirstVersion: May 2016
+First version: May 2016
 
 See also
 ++++++++

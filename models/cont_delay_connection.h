@@ -66,7 +66,7 @@ Transmits
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
-FirstVersion: June 2007
+First version: June 2007
 
 See also
 ++++++++

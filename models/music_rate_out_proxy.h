@@ -41,7 +41,7 @@
 #include "nest_types.h"
 #include "node.h"
 
-/* BeginDocumentation
+/* BeginUserDocs
 
 Name: music_rate_out_proxy - Device to forward rates to remote applications
                               using MUSIC.

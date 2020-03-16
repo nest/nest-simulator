@@ -110,7 +110,7 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-FirstVersion: 2009
+First version: 2009
 
 See also
 ++++++++

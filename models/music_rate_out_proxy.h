@@ -51,7 +51,9 @@ Device name
 
 music_rate_out_proxy
 
-Description:
+Description
++++++++++++
+
 A music_rate_out_proxy is used to send rates to a remote application that
 also uses MUSIC.
 

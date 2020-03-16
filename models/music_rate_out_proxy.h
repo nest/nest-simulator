@@ -83,7 +83,8 @@ Examples
 /music_rate_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect
 
-FirstVersion: June 2019
+First version: June 2019
+
 Availability: Only when compiled with MUSIC
 
 SeeAlso: music_rate_in_proxy, music_cont_out_proxy

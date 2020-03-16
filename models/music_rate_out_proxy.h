@@ -76,7 +76,9 @@ published      - A bool indicating if the port has been already published
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
+Examples
+++++++++
+
 /iaf_psc_alpha Create /n Set
 /music_rate_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect

@@ -105,7 +105,7 @@ The following properties are available in the status dictionary:
 ============ ========  ========================================================
 
 
-FirstVersion: March 2016
+First version: March 2016
 
 Availability: Only when compiled with MPI and MUSIC
 

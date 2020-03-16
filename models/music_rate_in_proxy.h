@@ -84,7 +84,7 @@ Examples
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
-First Version: June 2019
+First version: June 2019
 
 Availability: Only when compiled with MUSIC
 

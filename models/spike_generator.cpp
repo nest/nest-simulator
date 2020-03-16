@@ -43,7 +43,7 @@
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::Parameters_::Parameters_()
+nest::spike_generator::SpikeParameters_::SpikeParameters_()
   : spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
@@ -54,7 +54,7 @@ nest::spike_generator::Parameters_::Parameters_()
 {
 }
 
-nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
+nest::spike_generator::SpikeParameters_::SpikeParameters_( const SpikeParameters_& op )
   : spike_stamps_( op.spike_stamps_ )
   , spike_offsets_( op.spike_offsets_ )
   , spike_weights_( op.spike_weights_ )
@@ -65,7 +65,7 @@ nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
 {
 }
 
-nest::spike_generator::State_::State_()
+nest::spike_generator::SpikeState_::SpikeState_()
   : position_( 0 )
 {
 }
@@ -76,7 +76,7 @@ nest::spike_generator::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::spike_generator::SpikeParameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
@@ -103,7 +103,9 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
+nest::spike_generator::SpikeParameters_::assert_valid_spike_time_and_insert_( double t,
+  const Time& origin,
+  const Time& now )
 {
   if ( t == 0.0 && not shift_now_spikes_ )
   {
@@ -168,15 +170,32 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 }
 
 void
-nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
-  State_& s,
+nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
+  SpikeState_& s,
   const Time& origin,
   const Time& now,
   Node* node )
 {
+
+
   bool flags_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node )
     or updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node )
     or updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
+
+
+  if ( d->known( names::shift_now_spikes ) )
+  {
+    shift_now_spikes_ = getValue< bool >( d->lookup( names::shift_now_spikes ) );
+  }
+  if ( d->known( names::precise_times ) )
+  {
+    precise_times_ = getValue< bool >( d->lookup( names::precise_times ) );
+  }
+  if ( d->known( names::shift_now_spikes ) )
+  {
+    shift_now_spikes_ = getValue< bool >( d->lookup( names::shift_now_spikes ) );
+  }
+
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
   {
     throw BadProperty(
@@ -338,7 +357,7 @@ nest::spike_generator::calibrate()
 void
 nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  SpikeParameters_ ptmp = P_; // temporary copy in case of errors
 
   const Time& origin = device_.get_origin();
   // For the input backend
@@ -455,7 +474,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
 void
 nest::spike_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  SpikeParameters_ ptmp = P_; // temporary copy in case of errors
 
   // To detect "now" spikes and shift them, we need the origin. In case
   // it is set in this call, we need to extract it explicitly here.

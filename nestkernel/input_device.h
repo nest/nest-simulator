@@ -79,8 +79,6 @@ protected:
   std::vector< double > read();
   void set_initialized_() override;
 
-
-private:
   struct Parameters_
   {
     std::string label_;  //!< A user-defined label for symbolic device names.
@@ -102,6 +100,7 @@ private:
     void set( const DictionaryDatum& );
   } S_;
 
+private:
   DictionaryDatum backend_params_;
 };
 

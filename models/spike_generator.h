@@ -217,25 +217,17 @@ public:
     return ALL;
   }
 
-private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
-
-  void update( Time const&, const long, const long );
-
   // ------------------------------------------------------------
 
-  struct State_
+  struct SpikeState_ : State_
   {
+    SpikeState_();
     size_t position_; //!< index of next spike to deliver
-
-    State_(); //!< Sets default state value
   };
 
   // ------------------------------------------------------------
 
-  struct Parameters_
+  struct SpikeParameters_ : Parameters_
   {
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
@@ -256,8 +248,11 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    //!< Array of input backends to use
+    // Name input_from_;
+
+    SpikeParameters_();                          //!< Sets default parameter values
+    SpikeParameters_( const SpikeParameters_& ); //!< Recalibrate all times
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
@@ -267,7 +262,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
+    void set( const DictionaryDatum&, SpikeState_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.
@@ -281,10 +276,17 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
 
-  Parameters_ P_;
-  State_ S_;
+private:
+  void init_state_( const Node& );
+  void init_buffers_();
+  void calibrate();
+
+  void update( Time const&, const long, const long );
+
+  StimulatingDevice< SpikeEvent > device_;
+  SpikeParameters_ P_;
+  SpikeState_ S_;
 };
 
 inline port

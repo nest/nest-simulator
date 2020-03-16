@@ -91,7 +91,7 @@ nest::InputDevice::Parameters_::set( const DictionaryDatum& d )
   bool time_in_steps = time_in_steps_;
   updateValue< bool >( d, names::time_in_steps, time_in_steps );
 
-  //  if ( time_in_steps != time_in_steps_ and n_events != 0 ) I don't understand n_events
+  // if ( time_in_steps != time_in_steps_ and S_.n_events != 0 ) //I don't understand n_events
   // probabily link with S_.n_events_
   if ( time_in_steps != time_in_steps_ )
   {

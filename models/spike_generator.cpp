@@ -183,9 +183,9 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
     or updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
 
 
-  if ( d->known( names::shift_now_spikes ) )
+  if ( d->known( names::allow_offgrid_times ) )
   {
-    shift_now_spikes_ = getValue< bool >( d->lookup( names::shift_now_spikes ) );
+    allow_offgrid_times_ = getValue< bool >( d->lookup( names::allow_offgrid_times ) );
   }
   if ( d->known( names::precise_times ) )
   {

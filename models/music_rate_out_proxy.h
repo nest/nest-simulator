@@ -43,8 +43,8 @@
 
 /* BeginUserDocs
 
-Name: music_rate_out_proxy - Device to forward rates to remote applications
-                              using MUSIC.
+music_rate_out_proxy - Device to forward rates to remote applications using MUSIC
+#################################################################################
 
 Description:
 A music_rate_out_proxy is used to send rates to a remote application that

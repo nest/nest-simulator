@@ -93,7 +93,7 @@ See also
 
 music_rate_out_proxy, music_cont_in_proxy
 
-*/
+EndUserDocs*/
 
 namespace nest
 {

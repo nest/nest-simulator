@@ -144,7 +144,7 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-FirstVersion: March 2006
+First version: March 2006
 
 EndUserDocs */
 

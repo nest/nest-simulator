@@ -46,6 +46,11 @@
 music_rate_out_proxy - Device to forward rates to remote applications using MUSIC
 #################################################################################
 
+Device name
++++++++++++
+
+music_rate_out_proxy
+
 Description:
 A music_rate_out_proxy is used to send rates to a remote application that
 also uses MUSIC.

@@ -63,7 +63,9 @@ events is determined during connection setup by using the parameter
 music_channel of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
-Parameters:
+Parameters
+++++++++++
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC output_port to forward events to

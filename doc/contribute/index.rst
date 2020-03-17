@@ -13,7 +13,6 @@ If you find an error in the code or documentaton or want to suggest a feature, s
 
 Make sure to check that your issue has not already been reported there before creating a new one.
 
-
 Change code or documentation
 ----------------------------
 
@@ -21,13 +20,12 @@ You can find all the details for our development workflow on the `NEST developer
 
 For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
 
+If you are a Vim user and require support for SLI files, please refer to our :doc:`templates_styleguides/vim_support_sli`.
+
 Contribute a Python example script
 ----------------------------------
 
-If you have a Python example network to contribute, please refer to our template to ensure you cover the required information:
-
-:doc:`templates_styleguides/example_template`
-
+If you have a Python example network to contribute, please refer to our :doc:`templates_styleguides/example_template` to ensure you cover the required information.
 
 Have a question?
 ----------------

@@ -73,7 +73,7 @@ MusicEventHandler::~MusicEventHandler()
 void
 MusicEventHandler::register_channel( size_t channel, nest::Node* mp )
 {
-  if ( channel >= channelmap_.size() )
+  if ( static_cast< size_t >( channel ) >= channelmap_.size() )
   {
     // all entries not explicitly set will be 0
     channelmap_.resize( channel + 1, 0 );

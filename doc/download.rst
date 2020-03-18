@@ -21,7 +21,7 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 Download NEST source code
 --------------------------
 
-* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
+* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.1.tar.gz>`_.
 
 
 * Follow the installation instructions for :doc:`Linux <installation/linux_install>` or :ref:`macOS <mac_manual>`.
@@ -40,15 +40,13 @@ Live media is available in the OVA format, and is suitable, for example, for imp
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
 After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
-* `NEST Live Media 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova>`_
+* `NEST Live Media 2.21.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.21.0.ova>`_
 
-  `Checksum 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova.sha512sum>`_
+  `Checksum 2.21.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.21.0.ova.sha512sum>`_
 
+* `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
 
-* `NEST live media 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova>`_
-
-  `Checksum 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova.sha512sum>`_
-
+  `Checksum 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova.sha512sum>`_
 
 Previous releases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,6 +55,14 @@ We continuously aim to improve NEST, implement features, and fix bugs with every
 thus, we encourage our users to use the **most recent version of NEST**.
 
 **Older Versions of Live Media**
+
+- `NEST Live Media 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova>`_
+
+  `Checksum 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova.sha512sum>`_
+
+- `NEST live media 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova>`_
+
+  `Checksum 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova.sha512sum>`_
 
 - `NEST Live Media 2.14.0 <https://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_ (OVA, 2.5G)
 

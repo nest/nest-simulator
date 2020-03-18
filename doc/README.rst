@@ -94,9 +94,9 @@ Create and activate the environment.
 
 ::
 
-   conda env create -f conda_environment.yml
+   conda env create -f nest_doc_conda_env.yml
    conda update -n base conda
-   conda activate doc
+   conda activate nest_doc
 
 Now generate the html files. They are then located in ./docs/_build/html.
 
@@ -109,4 +109,4 @@ If you want to deactivate and/or delete the build environment:
 ::
 
    conda deactivate
-   conda remove --name doc --all
+   conda remove --name nest_doc --all

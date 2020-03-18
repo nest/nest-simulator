@@ -54,7 +54,7 @@ If you are using Linux and want to install a full development environment:
 Generating with Sphinx
 ++++++++++++++++++++++
 
-Now that you activated your environment, you can generate HTML files using `Sphinx <https://www.sphinx-doc.org/en/master/>`_.
+Now that you activated your environment, you can generate HTML files using Sphinx.
 
 Sphinx uses reStructuredText. To learn more on how to use it, check out this `quick reference <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_.
 

@@ -51,8 +51,8 @@ If you are using Linux and want to install a full development environment:
    conda deactivate
    conda remove --name nest-doc --all
 
-Generating with Sphinx
-++++++++++++++++++++++
+Generating documentation with Sphinx
+++++++++++++++++++++++++++++++++++++
 
 Now that you activated your environment, you can generate HTML files using Sphinx.
 
@@ -65,7 +65,7 @@ Editing and creating pages
 
 2. If you create a new page, open ``index.rst`` in the ``doc`` directory and add the file name under ``.. toctree::``. This will ensure it appears on the NEST simulator documentation's table of contents.
 
-3. If you change a filename or location, make sure you update all the corresponding cross-references. 
+3. If you change a filename or location, make sure you update all the corresponding cross-references.
 
 4. Save your changes.
 

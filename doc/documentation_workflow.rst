@@ -34,7 +34,7 @@ If you are using Linux and want to install a full development environment:
 
 .. code-block:: bash
 
-    cd git/nest-simulator/doc
+    cd </path/to/nest_source>/doc
 
 3. Create and activate the environment:
 
@@ -96,7 +96,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 Previewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++
 
-You can then preview your documentation on your Read the Docs account.
+Proceed as follows to preview your version of the documentation on Read the Docs.
 
 1. Check that unwanted directories are listed in ``.gitignore``:
 

@@ -150,6 +150,17 @@
 """
 
 import pylab
+# ! Introduction
+# !=============
+# ! This tutorial gives a brief introduction to the ConnPlotter
+# ! toolbox.  It is by no means complete.
+# ! Load pynest
+import nest
+# ! Load NEST Topoplogy module (NEST 2.20.1)
+import nest.topology as topo
+# ! Import math, we need Pi
+import math
+
 SHOW_FIGURES = False
 
 if not SHOW_FIGURES:
@@ -162,23 +173,9 @@ if not SHOW_FIGURES:
 else:
     pylab.ion()
 
-# ! Introduction
-# !=============
-# ! This tutorial gives a brief introduction to the ConnPlotter
-# ! toolbox.  It is by no means complete.
-
-# ! Load pynest
-import nest
-
-# ! Load NEST Topoplogy module (NEST 2.20.1)
-import nest.topology as topo
-
 # ! Make sure we start with a clean slate, even if we re-run the script
 # ! in the same Python session.
 nest.ResetKernel()
-
-# ! Import math, we need Pi
-import math
 
 # ! Configurable Parameters
 # ! =======================

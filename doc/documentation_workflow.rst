@@ -17,7 +17,7 @@ Using `GitHub <https://github.com/>`_ allows the NEST simulator documentation to
 Changing the documentation
 ++++++++++++++++++++++++++
 
-If you notice something out of place, you can submit an `issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub repository.
+If you notice any errors or weaknesses in the documentation, please submit an `issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub repository.
 
 You can also make changes directly to your forked copy of the `NEST source code repository <https://github.com/nest/nest-simulator>`_ and create a `pull request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the workflow below!
 

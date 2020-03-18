@@ -49,7 +49,7 @@ models that incorporate spatial location and spatial connectivity
 profiles.
 
 .. note::
-   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/guide_spatially_structured_networks` [1]_.
+   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/spatial/guide_spatially_structured_networks` [1]_.
 
 Adding spatial information to populations
 -----------------------------------------

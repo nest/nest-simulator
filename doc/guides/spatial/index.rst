@@ -1,5 +1,5 @@
 Spatially-structured networks
-================================
+=============================
 
 Here you can find how to build complex, layered networks in NEST.
 

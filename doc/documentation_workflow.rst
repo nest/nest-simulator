@@ -40,7 +40,7 @@ If you are using Linux and want to install a full development environment:
 
 .. code-block:: bash
 
-   conda env create -f conda_environment.yml
+   conda env create -f nest_doc_conda_env.yml
    conda update -n base -c defaults conda
    conda activate doc
 

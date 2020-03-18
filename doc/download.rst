@@ -40,9 +40,9 @@ Live media is available in the OVA format, and is suitable, for example, for imp
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
 After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
-* `NEST Live Media 2.21.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.21.0.ova>`_
+* `NEST Live Media 2.20.1 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.1.ova>`_
 
-  `Checksum 2.21.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.21.0.ova.sha512sum>`_
+  `Checksum 2.20.1 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.1.ova.sha512sum>`_
 
 * `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
 

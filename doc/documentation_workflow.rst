@@ -49,7 +49,7 @@ If you are using Linux and want to install a full development environment:
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name doc --all
+   conda remove --name nest-doc --all
 
 Generating with Sphinx
 ++++++++++++++++++++++

@@ -50,7 +50,6 @@ See Also
 # We imported all necessary modules for simulation, analysis and plotting.
 
 import nest
-import numpy as np
 import matplotlib.pyplot as plt
 
 ###############################################################################
@@ -175,7 +174,7 @@ Vax.set_xlabel('Time [ms]')
 #   automatically shifted by the delay.
 
 conns = nest.GetConnections(dc, nrn)
-delay = conns.get('delay')
+delay = conns.delay
 dt = nest.GetKernelStatus('resolution')
 
 t_dc, I_dc = [0], [0]

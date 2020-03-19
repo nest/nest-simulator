@@ -100,6 +100,8 @@ def from_data(data, sel=None, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+    if len(data) == 0:
+        raise nest.kernel.NESTError("No data to plot.")
     ts = data[:, 1]
     d = extract_events(data, sel=sel)
     ts1 = d[:, 1]
@@ -207,7 +209,7 @@ def from_device(detec, **kwargs):
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.NESTError("No data to plot. Make sure that \
+        raise nest.kernel.NESTError("No data to plot. Make sure that \
             record_to is set to either 'ascii' or 'memory'.")
 
 

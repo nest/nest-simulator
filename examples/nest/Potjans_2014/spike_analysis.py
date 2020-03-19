@@ -25,38 +25,26 @@ import numpy as np
 import glob
 import matplotlib.pyplot as plt
 import os
+import re
 
-datapath = '../data'
+datapath = '.'
 
 # get simulation time and numbers of neurons recorded from sim_params.sli
+with open(os.path.join(datapath, 'sim_params.sli'), 'r') as f:
+    sim_params_contents = f.read()
+    T = float(re.search(r'/t_sim (.+) def', sim_params_contents).group(1))
+    record_frac = re.search(r'/record_fraction_neurons_spikes (.+) def', sim_params_contents).group(1) == 'true'
 
-f = open(os.path.join(datapath, 'sim_params.sli'), 'r')
-for line in f:
-    if 't_sim' in line:
-        T = float(line.split()[1])
-    if '/record_fraction_neurons_spikes' in line:
-        record_frac = line.split()[1]
-f.close()
-
-f = open(os.path.join(datapath, 'sim_params.sli'), 'r')
-for line in f:
-    if record_frac == 'true':
-        if 'frac_rec_spikes' in line:
-            frac_rec = float(line.split()[1])
+    if record_frac:
+        frac_rec = float(re.search(r'/frac_rec_spikes (.+) def', sim_params_contents).group(1))
     else:
-        if 'n_rec_spikes' in line:
-            n_rec = int(line.split()[1])
-f.close()
+        n_rec = int(re.search(r'/n_rec_spikes (.+) def', sim_params_contents).group(1))
 
 T_start = 200.  # starting point of analysis (to avoid transients)
 
 # load node IDs
 
-node_idfile = open(os.path.join(datapath, 'population_nodeids.dat'), 'r')
-node_ids = []
-for l in node_idfile:
-    a = l.split()
-    node_ids.append([int(a[0]), int(a[1])])
+node_ids = np.loadtxt(os.path.join(datapath, 'population_nodeIDs.dat'), dtype=int)
 print('Global IDs:')
 print(node_ids)
 print()
@@ -78,9 +66,8 @@ pop_sizes = [node_ids[i][1] - node_ids[i][0] + 1 for i in np.arange(len(node_ids
 
 # numbers of neurons for which spikes were recorded
 
-if record_frac == 'true':
-    rec_sizes = [int(pop_sizes[i] * frac_rec)
-                 for i in xrange(len(pop_sizes))]
+if record_frac:
+    rec_sizes = [int(pop_sizes[i] * frac_rec) for i in range(len(pop_sizes))]
 else:
     rec_sizes = [n_rec] * len(pop_sizes)
 
@@ -96,18 +83,14 @@ last_node_ids = [int(np.sum(pop_sizes[:i + 1]))
 
 # convert lists to a nicer format, i.e. [[2/3e, 2/3i], []....]
 
-Pop_sizes = [pop_sizes[i:i + 2]
-             for i in xrange(0, len(pop_sizes), 2)]
+Pop_sizes = [pop_sizes[i:i + 2] for i in range(0, len(pop_sizes), 2)]
 print('Population sizes:')
 print(Pop_sizes)
 print()
 
-Raw_first_node_ids = [raw_first_node_ids[i:i + 2] for i in
-                      xrange(0, len(raw_first_node_ids), 2)]
-
-First_node_ids = [first_node_ids[i:i + 2] for i in xrange(0, len(first_node_ids), 2)]
-
-Last_node_ids = [last_node_ids[i:i + 2] for i in xrange(0, len(last_node_ids), 2)]
+Raw_first_node_ids = [raw_first_node_ids[i:i + 2] for i in range(0, len(raw_first_node_ids), 2)]
+First_node_ids = [first_node_ids[i:i + 2] for i in range(0, len(first_node_ids), 2)]
+Last_node_ids = [last_node_ids[i:i + 2] for i in range(0, len(last_node_ids), 2)]
 
 # total number of neurons in the simulation
 
@@ -141,6 +124,9 @@ for layer in ['0', '1', '2', '3']:
             merged_file = open(output, 'w')
             for f in files:
                 data = open(f, 'r')
+                nest_version = next(data)
+                backend_version = next(data)
+                column_header = next(data)
                 for l in data:
                     a = l.split()
                     a[0] = int(a[0])

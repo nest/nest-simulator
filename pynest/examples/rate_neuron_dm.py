@@ -35,7 +35,7 @@ decision will be made.
 """
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 import numpy
 
 ##########################################################################
@@ -56,7 +56,7 @@ def build_network(sigma, dt):
         'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
 
     mm = nest.Create('multimeter')
-    mm.set({'interval': dt, 'record_from': ['rate']})
+    mm.set(interval=dt, record_from=['rate'])
     nest.Connect(mm, D1, syn_spec={'delay': dt})
     nest.Connect(mm, D2, syn_spec={'delay': dt})
 
@@ -90,7 +90,7 @@ face = 'white'
 edge = 'white'
 
 ax = [None] * fig_plots
-fig = pylab.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
+fig = plt.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
 
 dt = 1e-3
 sigma = [0.0, 0.1, 0.2]
@@ -106,8 +106,8 @@ for i in range(9):
 # the decision units and the multimeter are stored in `D1`, `D2` and `mm`
 
     nest.Simulate(100.0)
-    D1.set({'mu': 1. + dE[c]})
-    D2.set({'mu': 1. - dE[c]})
+    D1.mu = 1. + dE[c]
+    D2.mu = 1. - dE[c]
     nest.Simulate(100.0)
 
 ########################################################################
@@ -123,21 +123,21 @@ for i in range(9):
 # The activity values ('voltages') are read out by the multimeter
 
     ax[i] = fig.add_subplot(fig_rows, fig_cols, i + 1)
-    ax[i].plot(T, voltages[numpy.where(senders == D1.get('global_id'))],
+    ax[i].plot(T, voltages[numpy.where(senders == D1.global_id)],
                'b', linewidth=2, label="D1")
-    ax[i].plot(T, voltages[numpy.where(senders == D2.get('global_id'))],
+    ax[i].plot(T, voltages[numpy.where(senders == D2.global_id)],
                'r', linewidth=2, label="D2")
     ax[i].set_ylim([-.5, 12.])
     ax[i].get_xaxis().set_ticks([])
     ax[i].get_yaxis().set_ticks([])
     if c == 0:
-        ax[i].set_ylabel("activity ($\sigma=%.1f$) " % (sigma[r]))
+        ax[i].set_ylabel(r"activity ($\sigma=%.1f$) " % (sigma[r]))
         ax[i].get_yaxis().set_ticks([0, 3, 6, 9, 12])
 
     if r == 0:
-        ax[i].set_title("$\Delta E=%.3f$ " % (dE[c]))
+        ax[i].set_title(r"$\Delta E=%.3f$ " % (dE[c]))
         if c == 2:
-            pylab.legend(loc=0)
+            plt.legend(loc=0)
     if r == 2:
         ax[i].get_xaxis().set_ticks([0, 50, 100, 150, 200])
         ax[i].set_xlabel('time (ms)')
@@ -154,4 +154,4 @@ for i in range(9):
 # evidence for the two decisions, noise can lead to the 'wrong' decision.
 
 
-pylab.show()
+plt.show()

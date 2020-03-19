@@ -112,7 +112,7 @@ public:
 
   void post_step_hook() override;
 
-  void set_status( const DictionaryDatum& );
+  void set_status( const DictionaryDatum& ) override;
 
   void get_status( DictionaryDatum& ) const override;
 

@@ -79,10 +79,8 @@ from __future__ import print_function
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
-
+import scipy.special as sp
 import nest
-
-from numpy import exp
 
 ###############################################################################
 # Analysis
@@ -178,22 +176,20 @@ def simulate(parameters):
     # Code taken from brunel_alpha_nest.py
 
     def LambertWm1(x):
-        nest.ll_api.sli_push(x)
-        nest.ll_api.sli_run('LambertWm1')
-        y = nest.ll_api.sli_pop()
-        return y
+        # Using scipy to mimic the gsl_sf_lambert_Wm1 function.
+        return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
     def ComputePSPnorm(tauMem, CMem, tauSyn):
         a = (tauMem / tauSyn)
         b = (1.0 / tauSyn - 1.0 / tauMem)
 
         # time of maximum
-        t_max = 1.0 / b * (-LambertWm1(-exp(-1.0 / a) / a) - 1.0 / a)
+        t_max = 1.0 / b * (-LambertWm1(-np.exp(-1.0 / a) / a) - 1.0 / a)
 
         # maximum of PSP for current of unit amplitude
-        return (exp(1.0) / (tauSyn * CMem * b) *
-                ((exp(-t_max / tauMem) - exp(-t_max / tauSyn)) / b -
-                 t_max * exp(-t_max / tauSyn)))
+        return (np.exp(1.0) / (tauSyn * CMem * b) *
+                ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b -
+                 t_max * np.exp(-t_max / tauSyn)))
 
     # number of excitatory neurons
     NE = int(parameters['gamma'] * parameters['N'])
@@ -226,7 +222,7 @@ def simulate(parameters):
     # amplitude of inhibitory postsynaptic current
     J_in = -parameters['g'] * J_ex
 
-    nu_th = (theta * CMem) / (J_ex * CE * exp(1) * tauMem * tauSyn)
+    nu_th = (theta * CMem) / (J_ex * CE * np.exp(1) * tauMem * tauSyn)
     nu_ex = parameters['eta'] * nu_th
     p_rate = 1000.0 * nu_ex * CE
 
@@ -274,8 +270,8 @@ def simulate(parameters):
 
     nest.Simulate(parameters['sim_time'])
 
-    return (espikes.get('events'),
-            ispikes.get('events'))
+    return (espikes.events,
+            ispikes.events)
 
 
 ###############################################################################

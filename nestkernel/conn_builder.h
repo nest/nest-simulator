@@ -220,8 +220,9 @@ private:
   //! dictionaries to pass to connect function, one per thread
   std::vector< DictionaryDatum > param_dicts_;
 
-  //! empty dictionary to pass to connect function
-  const static DictionaryDatum dummy_param_;
+  //! empty dictionary to pass to connect function, one per thread so that the all threads do not
+  //! create and use the same dictionary as this leads to performance issues.
+  std::vector< DictionaryDatum > dummy_param_dicts_;
 
   /**
    * Collects all array paramters in a vector.

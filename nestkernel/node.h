@@ -52,6 +52,7 @@ namespace nest
 {
 class Model;
 class Archiving_Node;
+class TimeConverter;
 
 
 /**
@@ -151,8 +152,8 @@ public:
   virtual bool one_node_per_process() const;
 
   /**
-   * Returns true if the node if it sends/receives -grid events This is
-   * used to discriminate between different types of nodes, when adding
+   * Returns true if the node sends/receives off-grid events. This is
+   * used to discriminate between different types of nodes when adding
    * new nodes to the network.
    */
   virtual bool is_off_grid() const;
@@ -268,6 +269,15 @@ public:
    *
    */
   virtual void calibrate() = 0;
+
+  /**
+   * Re-calculate time-based properties of the node.
+   * This function is called after a change in resolution.
+   */
+  virtual void
+  calibrate_time( const TimeConverter& tc )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to

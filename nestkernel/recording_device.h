@@ -78,9 +78,11 @@ public:
   RecordingDevice();
   RecordingDevice( const RecordingDevice& );
 
+  using Device::calibrate;
+  using Node::calibrate;
   void calibrate( const std::vector< Name >&, const std::vector< Name >& );
 
-  bool is_active( Time const& T ) const;
+  bool is_active( Time const& T ) const override;
 
   enum Type
   {
@@ -94,8 +96,8 @@ public:
 
   const std::string& get_label() const;
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) const override;
 
 protected:
   void write( const Event&, const std::vector< double >&, const std::vector< long >& );

@@ -33,6 +33,7 @@
 #include "exceptions.h"
 #include "nest_types.h"
 #include "recording_device.h"
+#include "nest_timeconverter.h"
 
 namespace nest
 {
@@ -141,6 +142,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 private:
   void init_state_( Node const& );
   void init_buffers_();
@@ -175,6 +178,12 @@ inline SignalType
 spin_detector::receives_signal() const
 {
   return BINARY;
+}
+
+inline void
+nest::spin_detector::calibrate_time( const TimeConverter& tc )
+{
+  t_last_in_spike_ = tc.from_old_tics( t_last_in_spike_.get_tics() );
 }
 
 } // namespace

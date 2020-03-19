@@ -34,7 +34,7 @@ multimeter and writing data to file.
 
 import nest
 import numpy
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -117,27 +117,31 @@ nest.Connect(m, n)
 nest.Simulate(100.)
 
 ###############################################################################
-# After the simulation, the recordings are obtained from the multimeter via the
-# key `events` of the status dictionary accessed by ``GetStatus``. `times`
-# contains the recording times stored for each data point.
+# After the simulation, the recordings are obtained from the file the
+# multimeter wrote to, accessed with the `filenames` property of the
+# multimeter. After three header rows, the data is formatted in columns. The
+# first column is the ID of the sender node. The second column is the ID time
+# of the recording, in ms. Subsequent rows are values of properties specified
+# in the `record_from` property of the multimeter.
 
-events = nest.GetStatus(m)[0]["events"]
-t = events["times"]
+data = numpy.loadtxt(m.filenames[0], skiprows=3)
+sender, t, v_m, g_in, g_ex = data.T
 
 ###############################################################################
 # Finally, the time courses of the membrane voltage and the synaptic
 # conductance are displayed.
 
-pylab.clf()
+plt.clf()
 
-pylab.subplot(211)
-pylab.plot(t, events["V_m"])
-pylab.axis([0, 100, -75, -53])
-pylab.ylabel("membrane potential (mV)")
+plt.subplot(211)
+plt.plot(t, v_m)
+plt.axis([0, 100, -75, -53])
+plt.ylabel("membrane potential (mV)")
 
-pylab.subplot(212)
-pylab.plot(t, events["g_ex"], t, events["g_in"])
-pylab.axis([0, 100, 0, 45])
-pylab.xlabel("time (ms)")
-pylab.ylabel("synaptic conductance (nS)")
-pylab.legend(("g_exc", "g_inh"))
+plt.subplot(212)
+plt.plot(t, g_ex, t, g_in)
+plt.axis([0, 100, 0, 45])
+plt.xlabel("time (ms)")
+plt.ylabel("synaptic conductance (nS)")
+plt.legend(("g_exc", "g_inh"))
+plt.show()

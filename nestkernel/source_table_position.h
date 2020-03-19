@@ -41,14 +41,26 @@ struct SourceTablePosition
   long tid;    //!< thread index
   long syn_id; //!< synapse-type index
   long lcid;   //!< local connection index
+
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
 
-  template < typename T >
-  void wrap_position( const std::vector< std::vector< BlockVector< T > > >& sources );
+  /**
+   * Decreases indices until a valid entry is found.
+   */
+  void seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources );
 
-  bool is_at_end() const;
+  /**
+   * Decreases the inner most index (lcid).
+   */
+  void decrease();
+
+  /**
+   * Returns true if the indices point outside the SourceTable, e.g.,
+   * to signal that the end was reached.
+   */
+  bool is_invalid() const;
 };
 
 inline SourceTablePosition::SourceTablePosition()
@@ -72,13 +84,20 @@ inline SourceTablePosition::SourceTablePosition( const SourceTablePosition& rhs 
 {
 }
 
-template < typename T >
 inline void
-SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector< T > > >& sources )
+SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources )
 {
-  // check for validity of indices and update if necessary
+  if ( lcid >= 0 )
+  {
+    return; // nothing to do if we are at a valid index
+  }
+
+  // we stay in this loop either until we can return a valid position,
+  // i.e., lcid >= 0, or we have reached the end of the
+  // multidimensional vector
   while ( lcid < 0 )
   {
+    // first try finding a valid lcid by only decreasing synapse index
     --syn_id;
     if ( syn_id >= 0 )
     {
@@ -86,6 +105,8 @@ SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector<
       continue;
     }
 
+    // if we can not find a valid lcid by decreasing synapse indices,
+    // try decreasing thread index
     --tid;
     if ( tid >= 0 )
     {
@@ -97,24 +118,28 @@ SourceTablePosition::wrap_position( const std::vector< std::vector< BlockVector<
       continue;
     }
 
-    assert( tid < 0 );
-    assert( syn_id < 0 );
-    assert( lcid < 0 );
-    return;
+    // if we can not find a valid lcid by decreasing synapse or thread
+    // indices, we have read all entries
+    assert( tid == -1 );
+    assert( syn_id == -1 );
+    assert( lcid == -1 );
+    return; // reached the end without finding a valid entry
   }
+
+  return; // found a valid entry
 }
 
 inline bool
-SourceTablePosition::is_at_end() const
+SourceTablePosition::is_invalid() const
 {
-  if ( tid < 0 and syn_id < 0 and lcid < 0 )
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return ( tid == -1 and syn_id == -1 and lcid == -1 );
+}
+
+inline void
+SourceTablePosition::decrease()
+{
+  --lcid;
+  assert( lcid >= -1 );
 }
 
 inline bool operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )

@@ -37,7 +37,7 @@ four weight matrices are created and plotted.
 # the connectivity matrices
 
 import numpy as np
-import pylab
+import matplotlib.pyplot as plt
 import nest
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -65,22 +65,22 @@ def plot_weight_matrices(E_neurons, I_neurons):
     Using `get`, we can extract the value of the connection weight,
     for all the connections between these populations
     '''
-    c_EE = a_EE.get('weight')
+    c_EE = a_EE.weight
 
     '''
     Repeat the two previous steps for all other connection types
     '''
     a_EI = nest.GetConnections(I_neurons, E_neurons)
-    c_EI = a_EI.get('weight')
+    c_EI = a_EI.weight
     a_IE = nest.GetConnections(E_neurons, I_neurons)
-    c_IE = a_IE.get('weight')
+    c_IE = a_IE.weight
     a_II = nest.GetConnections(I_neurons, I_neurons)
-    c_II = a_II.get('weight')
+    c_II = a_II.weight
 
     '''
     We now iterate through the range of all connections of each type.
     To populate the corresponding weight matrix, we begin by identifying
-    the source-node_id (by using .get('source')) and the target-node_id.
+    the source-node_id (by using .source) and the target-node_id.
     For each node_id, we subtract the minimum node_id within the corresponding
     population, to assure the matrix indices range from 0 to the size of
     the population.
@@ -89,14 +89,14 @@ def plot_weight_matrices(E_neurons, I_neurons):
     object, the corresponding weight is added to the entry W[i,j].
     The procedure is then repeated for all the different connection types.
     '''
-    a_EE_src = a_EE.get('source')
-    a_EE_trg = a_EE.get('target')
-    a_EI_src = a_EI.get('source')
-    a_EI_trg = a_EI.get('target')
-    a_IE_src = a_IE.get('source')
-    a_IE_trg = a_IE.get('target')
-    a_II_src = a_II.get('source')
-    a_II_trg = a_II.get('target')
+    a_EE_src = a_EE.source
+    a_EE_trg = a_EE.target
+    a_EI_src = a_EI.source
+    a_EI_trg = a_EI.target
+    a_IE_src = a_IE.source
+    a_IE_trg = a_IE.target
+    a_II_src = a_II.source
+    a_II_trg = a_II.target
 
     for idx in range(len(a_EE)):
         W_EE[a_EE_src[idx] - min(E_neurons),
@@ -111,46 +111,46 @@ def plot_weight_matrices(E_neurons, I_neurons):
         W_II[a_II_src[idx] - min(I_neurons),
              a_II_trg[idx] - min(I_neurons)] += c_II[idx]
 
-    fig = pylab.figure()
+    fig = plt.figure()
     fig.subtitle('Weight matrices', fontsize=14)
     gs = gridspec.GridSpec(4, 4)
-    ax1 = pylab.subplot(gs[:-1, :-1])
-    ax2 = pylab.subplot(gs[:-1, -1])
-    ax3 = pylab.subplot(gs[-1, :-1])
-    ax4 = pylab.subplot(gs[-1, -1])
+    ax1 = plt.subplot(gs[:-1, :-1])
+    ax2 = plt.subplot(gs[:-1, -1])
+    ax3 = plt.subplot(gs[-1, :-1])
+    ax4 = plt.subplot(gs[-1, -1])
 
     plt1 = ax1.imshow(W_EE, cmap='jet')
 
     divider = make_axes_locatable(ax1)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt1, cax=cax)
+    plt.colorbar(plt1, cax=cax)
 
     ax1.set_title('W_{EE}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt2 = ax2.imshow(W_IE)
     plt2.set_cmap('jet')
     divider = make_axes_locatable(ax2)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt2, cax=cax)
+    plt.colorbar(plt2, cax=cax)
     ax2.set_title('W_{EI}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt3 = ax3.imshow(W_EI)
     plt3.set_cmap('jet')
     divider = make_axes_locatable(ax3)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt3, cax=cax)
+    plt.colorbar(plt3, cax=cax)
     ax3.set_title('W_{IE}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt4 = ax4.imshow(W_II)
     plt4.set_cmap('jet')
     divider = make_axes_locatable(ax4)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt4, cax=cax)
+    plt.colorbar(plt4, cax=cax)
     ax4.set_title('W_{II}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
 #################################################################################
 # The script iterates through the list of all connections of each type.

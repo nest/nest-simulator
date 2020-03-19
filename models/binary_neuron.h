@@ -41,6 +41,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -95,6 +96,8 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void calibrate_time( const TimeConverter& tc );
 
 
 private:
@@ -576,6 +579,14 @@ void
 binary_neuron< TGainfunction >::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+template < class TGainfunction >
+void
+binary_neuron< TGainfunction >::calibrate_time( const TimeConverter& tc )
+{
+  S_.t_next_ = tc.from_old_tics( S_.t_next_.get_tics() );
+  S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );
 }
 
 

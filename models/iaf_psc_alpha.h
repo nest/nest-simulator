@@ -35,17 +35,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 iaf_psc_alpha - Leaky integrate-and-fire neuron model
-#######################################################
+#####################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
@@ -90,9 +86,8 @@ optimization levels. A future version of iaf_psc_alpha will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -119,8 +114,9 @@ tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
@@ -137,27 +133,25 @@ References:
        DOI: https://doi.org/10.1162/neco.2007.19.1.47
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: September 1999
 
-Author:  Diesmann, Gewaltig
-++++++++
-
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs */
+
 class iaf_psc_alpha : public Archiving_Node
 {
 

@@ -31,16 +31,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stp
-
+/* BeginUserDocs: synapse, short-term plasticity
 
 tsodyks_synapse_hom - Synapse type with short term plasticity using homogenous parameters
 #########################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to [1]_. In particular it solves Eqs (3) and (4) from
@@ -85,8 +82,8 @@ might choose to have a synaptic current that is not necessarily identical to
 the concentration of transmitter y(t) in the synaptic cleft. It may realize
 an arbitrary postsynaptic effect depending on y(t).
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ========  ======  ======================================================
@@ -107,8 +104,8 @@ The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
 all synapses of the model and must be set using SetDefaults on the synapse
 model.
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -116,30 +113,25 @@ References:
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
 
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Susanne Kunkel, Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
 
-EndUserDocs iaf_psc_exp, iaf_tum_2000
-*/
+EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
  * TsodyksConnectionHom.
  */
+
 class TsodyksHomCommonProperties : public CommonPropertiesHomW
 {
 

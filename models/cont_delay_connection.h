@@ -33,16 +33,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-cont_delay
-
+/* BeginUserDocs: synapse, continuous delay
 
 cont_delay_synapse - Synapse type for continuous delays
-########################################################
+#######################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 cont_delay_synapse relaxes the condition that NEST only implements delays
 which are an integer multiple of the time step h. A continuous delay is
@@ -64,24 +61,20 @@ Alternative 2) is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
 FirstVersion: June 2007
 
-Author:
-++++++++
-
-Abigail Morrison
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
 {

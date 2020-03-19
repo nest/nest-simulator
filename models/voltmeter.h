@@ -43,11 +43,15 @@
 
 namespace nest
 {
-/* @BeginDocumentation
-Name: voltmeter - Device to record membrane potential from neurons.
-Synopsis: voltmeter Create
 
-Description:
+/* BeginUserDocs: voltmeter
+
+voltmeter - Device to record membrane potential from neurons
+############################################################
+
+Description
++++++++++++
+
 A voltmeter records the membrane potential (V_m) of connected nodes
 to memory, file or stdout.
 
@@ -73,6 +77,7 @@ mode before simulating. Accumulator data is never written to file. You must
 extract it from the device using GetStatus.
 
 Remarks:
+
 - The voltmeter model is implemented as a multimeter preconfigured to
     record /V_m.
 - The set of variables to record and the recording interval must be set
@@ -84,7 +89,9 @@ Remarks:
     from the unfrozen nodes. Most likely, this will lead to confusing results,
     so you should not use voltmeter with frozen nodes.
 
-Parameters:
+Parameters
+++++++++++
+
     The following parameter can be set in the status dictionary:
     interval     double - Recording interval in ms
 
@@ -105,10 +112,18 @@ V_m                      doublevectortype    <doublevectortype>
 Total number of entries: 3
 
 
-Sends: DataLoggingRequest
+Sends
++++++
 
-SeeAlso: Device, RecordingDevice, multimeter
-*/
+DataLoggingRequest
+
+See also
+++++++++
+
+device, RecordingDevice, multimeter
+
+EndUserDocs */
+
 class voltmeter : public multimeter
 {
 

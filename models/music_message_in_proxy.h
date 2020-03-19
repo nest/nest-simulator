@@ -51,16 +51,18 @@
 
 namespace nest
 {
-/* BeginUserDocs:
-Devices
-music
-
+/* BeginUserDocs: device, MUSIC
 
 music_message_in_proxy - A device which receives message strings from MUSIC
-############################################################################
+###########################################################################
 
-Description:
-+++++++++++++
+Device name
++++++++++++
+
+music_message_in_proxy
+
+Description
++++++++++++
 
 A music_message_in_proxy can be used to receive message strings from
 remote MUSIC applications in NEST.
@@ -70,8 +72,8 @@ applications. The music_message_in_proxy represents an input port to
 which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 
@@ -93,21 +95,17 @@ The following properties are available in the status dictionary:
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
 
-Author:
-++++++++
-
-Jochen Martin Eppler
-
 FirstVersion: July 2010
 
 Availability: Only when compiled with MUSIC
 
-SeeAlso:
+See also
 ++++++++
 
 music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
 
 EndUserDocs */
+
 class MsgHandler : public MUSIC::MessageHandler
 {
   ArrayDatum messages;                 //!< The buffer for incoming message

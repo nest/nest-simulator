@@ -35,18 +35,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs
-############################################################################
+#########################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 iaf_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
@@ -87,8 +82,8 @@ optimization levels. A future version of iaf_psc_exp will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -108,7 +103,6 @@ The following parameters can be set in the status dictionary.
 ===========  =======  ========================================================
 
 
-
 Remarks:
 
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
@@ -125,8 +119,9 @@ receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [6].
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -144,15 +139,13 @@ References:
        metastable state driven by colored noise. Physical Review E 92:052119
        DOI: https://doi.org/10.1103/PhysRevE.92.052119
 
-=======
 
-
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
@@ -160,17 +153,13 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_exp_ps
 
 EndUserDocs */
+
 class iaf_psc_exp : public Archiving_Node
 {
 

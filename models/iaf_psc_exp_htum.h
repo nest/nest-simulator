@@ -35,17 +35,15 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-iaf
+/* BeginUserDocs: neuron, integrate-and-fire
 
-iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs
-###########################################################################
+iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential PSCs
+##############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
-iaf_tum_2000 is an implementation of a leaky integrate-and-fire model
+iaf_psc_exp_htum is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
@@ -86,9 +84,8 @@ optimization levels. A future version of iaf_psc_exp_htum will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -116,8 +113,9 @@ tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
 
-References:
-+++++++++++
+
+References
+++++++++++
 
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
@@ -136,24 +134,21 @@ References:
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias
 EndUserDocs */
-class iaf_tum_2000 : public Archiving_Node
+
+class iaf_psc_exp_htum : public Archiving_Node
 {
 
 public:

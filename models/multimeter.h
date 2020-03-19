@@ -40,8 +40,16 @@
 
 /* BeginUserDocs: device, recorder
 
-Sampling continuous quantities from neurons
-###########################################
+multimeter - Sampling continuous quantities from neurons
+########################################################
+
+Device name
++++++++++++
+
+multimeter
+
+Description
++++++++++++
 
 Most sampling use cases are covered by the ``multimeter``, which
 allows to record analog values from neurons. Models which have such

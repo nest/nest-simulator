@@ -38,17 +38,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-pp
-psc
-
+/* BeginUserDocs: neuron, point process, current-based
 
 pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs
-################################################################################
+###############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 pp_psc_delta is an implementation of a leaky integrator, where the potential
 jumps on each spike arrival. It produces spike stochastically, and supports
@@ -122,9 +118,8 @@ set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and conciously.
 
-
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -151,8 +146,8 @@ The following parameters can be set in the status dictionary.
 =================  ======= ===================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
@@ -180,24 +175,23 @@ References:
        Cambridge University Press
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
-Receives:
+
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
-++++++++
-
-SeeAlso:
+See also
 ++++++++
 
 pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
+
 class pp_psc_delta : public Archiving_Node
 {
 

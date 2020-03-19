@@ -38,18 +38,13 @@ namespace nest
 
 class Network;
 
-/* BeginUserDocs:
-Neurons
-iaf
-psc
-
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 gif_pop_psc_exp - Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and adaptation
 ############################################################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
@@ -91,8 +86,8 @@ neuron in each population. An approximation of random connectivity can be
 implemented by connecting populations through a spike_dilutor.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -129,8 +124,8 @@ N                ---          use N gif_psc_exp
 =============== ============  =============================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
@@ -139,27 +134,23 @@ References:
        https://doi.org/10.1371/journal.pcbi.1005507
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Authors:
-++++++++
-
-Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
-
-SeeAlso:
+See also
 ++++++++
 
 gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 
 EndUserDocs */
+
 class gif_pop_psc_exp : public Node
 {
 

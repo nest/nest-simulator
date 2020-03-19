@@ -56,18 +56,13 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-aeif
-cond
-
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
 aeif_cond_beta_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
-#####################################################################################################
+####################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
 integrate-and-fire neuron model, according to Brette and Gerstner (2005) with
@@ -110,8 +105,9 @@ and the differential equation for the spike-adaptation current w is:
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
+
 The following parameters can be set in the status dictionary.
 
 
@@ -195,27 +191,24 @@ Examples:
     pylab.plot(ts, Vms)
     pylab.show()
 
-Sends:
-++++++++
+
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Bruno Golosio 07/10/2016
-
-SeeAlso:
+See also
 ++++++++
 
 aeif_cond_alpha_multisynapse
 
 EndUserDocs */
+
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

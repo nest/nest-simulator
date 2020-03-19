@@ -32,17 +32,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 stdp_synapse_hom - Synapse type for spike-timing dependent plasticity using homogeneous parameters
-###################################################################################################
+##################################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_synapse_hom is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
@@ -58,8 +54,8 @@ Examples:
     Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
     van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ========= =======  ======================================================
@@ -79,13 +75,13 @@ Remarks:
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
@@ -106,21 +102,18 @@ References:
 
 FirstVersion: March 2006
 
-Author:
-++++++++
-
-Moritz Helias, Abigail Morrison
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
  */
+
 class STDPHomCommonProperties : public CommonSynapseProperties
 {
 

@@ -26,7 +26,7 @@
 #include "recording_backend.h"
 #include <set>
 
-/* BeginUserDocs: device, backend
+/* BeginUserDocs: recording backend
 
 Write data to the terminal
 ##########################

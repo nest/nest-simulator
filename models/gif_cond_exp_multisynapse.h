@@ -46,17 +46,13 @@ namespace nest
 
 extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-cond
-
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 gif_cond_exp_multisynapse - Conductance-based generalized integrate-and-fire neuron model with multiple synaptic time constants
-################################################################################################################################
+###############################################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) and Pozzorini et al. (2015), with
@@ -132,8 +128,8 @@ port number has to match the respective "receptor_type" in the connectors.
 
 The shape of synaptic conductance is exponential.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -181,8 +177,6 @@ The following parameters can be set in the status dictionary.
 ==============  ======  ======================================================
 
 
-
-
 Example:
 
     neuron = nest.Create('gif_cond_exp_multisynapse',
@@ -202,8 +196,8 @@ Example:
     nest.Simulate(100.)
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 
@@ -218,27 +212,23 @@ References:
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-March 2016, Setareh
-
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse
 
 EndUserDocs */
+
 class gif_cond_exp_multisynapse : public Archiving_Node
 {
 

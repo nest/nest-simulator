@@ -33,16 +33,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-
+/* BeginUserDocs: synapse, spike-timing-dependent-plasticity
 
 stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent plasticity using homogenous parameters
 ##########################################################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 stdp_facetshw_synapse is a connector to create synapses with spike-timing
 dependent plasticity (as defined in [1]_).
@@ -55,8 +52,8 @@ The modified spike pairing scheme requires the calculation of tau_minus_
 within this synapse and not at the neuron site via Kplus_ like in
 stdp_connection_hom.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 ======================= =========== ===========================================
@@ -124,13 +121,13 @@ first presynaptic activity at a synapse.
 
 Common properties can only be set on the synapse model using SetDefaults.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
@@ -150,19 +147,16 @@ References:
 
 FirstVersion: July 2011
 
-Author:
-++++++++
-
-Thomas Pfeil (TP), Moritz Helias, Abigail Morrison
-
-SeeAlso:
+See also
 ++++++++
 
 stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 
 EndUserDocs */
+
 // template class forward declaration required by common properties friend
 // definition
+
 template < typename targetidentifierT >
 class STDPFACETSHWConnectionHom;
 

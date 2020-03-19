@@ -28,16 +28,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-gap
-
+/* BeginUserDocs: synapse, gap
 
 gap_junction - Synapse type for gap-junction connections
-#########################################################
+########################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gap_junction is a connector to create gap junctions between pairs
 of neurons. Gap junctions are bidirectional connections.
@@ -52,13 +49,13 @@ the make_symmetric flag.
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
-Transmits:
-+++++++++
+Sends
++++++
 
 GapJunctionEvent
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
@@ -72,17 +69,13 @@ References:
        DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
 
 
-Author:
-++++++++
-
-Jan Hahne, Moritz Helias, Susanne Kunkel
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, hh_psc_alpha_gap
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {

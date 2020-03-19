@@ -48,17 +48,13 @@ namespace nest
 
 extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-cond
-
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
 gif_cond_exp - Conductance-based generalized integrate-and-fire neuron model
 ############################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 gif_psc_exp is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) and Pozzorini et al. (2015), with post-synaptic
@@ -136,8 +132,8 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 The shape of synaptic conductance is exponential.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -186,8 +182,8 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
@@ -201,27 +197,23 @@ References:
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
 
 
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-March 2016, Setareh
-
-SeeAlso:
+See also
 ++++++++
 
 pp_psc_delta, gif_cond_exp_multisynapse, gif_psc_exp, gif_psc_exp_multisynapse
 
 EndUserDocs  */
+
 class gif_cond_exp : public Archiving_Node
 {
 

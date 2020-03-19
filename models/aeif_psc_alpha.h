@@ -57,17 +57,13 @@ namespace nest
  */
 extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs:
-Neurons
-iaf
-aeif
-psc
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
 
 aeif_psc_alpha - Current-based exponential integrate-and-fire neuron model
-###########################################################################
+##########################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 aeif_psc_alpha is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
@@ -89,8 +85,8 @@ and
 
  \tau_w * dw/dt= a(V-E_L) -W
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -149,23 +145,18 @@ gsl_error_tol real    This parameter controls the admissible error of the
 ============= ======= =========================================================
 
 
-Author:
-++++++++
-
-Tanguy Fardet
-
-Sends:
-++++++++
+Sends
++++++
 
 SpikeEvent
 
-Receives:
+Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
@@ -174,12 +165,13 @@ References:
        DOI: https://doi.org/10.1152/jn.00686.2005
 
 
-SeeAlso:
+See also
 ++++++++
 
 iaf_psc_alpha, aeif_cond_exp
 
 EndUserDocs */
+
 class aeif_psc_alpha : public Archiving_Node
 {
 

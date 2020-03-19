@@ -40,17 +40,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-stdp
-clopath_s
-
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
 
 clopath_synapse - Synapse type for voltage-based STDP after Clopath
-####################################################################
+###################################################################
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 clopath_synapse is a connector to create Clopath synapses as defined
 in [1]__. In contrast to usual STDP, the change of the synaptic weight does
@@ -62,8 +58,8 @@ synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are aeif_psc_delta_clopath and
 hh_psc_alpha_clopath.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 
 =======  ======  ==========================================================
@@ -77,8 +73,8 @@ Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
 Clopath synapse.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent
 
@@ -95,17 +91,14 @@ References:
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
 
-Authors:
-++++++++
 
-Jonas Stapmanns, David Dahmen, Jan Hahne
-
-SeeAlso:
+See also
 ++++++++
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
 EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >

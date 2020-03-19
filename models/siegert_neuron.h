@@ -45,16 +45,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Neurons
-rate
+/* BeginUserDocs: neuron, rate
 
+siegert_neuron - model for mean-field analysis of spiking networks
+##################################################################
 
-siegert_neuron
-###############
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 siegert_neuron is an implementation of a rate model with the
 non-linearity given by the gain function of the
@@ -66,8 +63,8 @@ The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
@@ -92,8 +89,8 @@ iaf_psc_exp/delta.
 =========  ======  =====================================================
 
 
-References:
-+++++++++++
+References
+++++++++++
 
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
@@ -113,27 +110,23 @@ References:
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
-Sends:
-++++++++
+Sends
++++++
 
 DiffusionConnectionEvent
 
-Receives:
+Receives
 ++++++++
 
 DiffusionConnectionEvent, DataLoggingRequest
 
-Author:
-++++++++
-
-Jannis Schuecker, David Dahmen, Jan Hahne
-
-SeeAlso:
+See also
 ++++++++
 
 diffusion_connection
 
 EndUserDocs */
+
 class siegert_neuron : public Archiving_Node
 {
 

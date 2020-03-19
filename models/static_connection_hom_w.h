@@ -30,17 +30,13 @@
 namespace nest
 {
 
-/* BeginUserDocs:
-Synapses
-static
-
+/* BeginUserDocs: synapse, static
 
 static_synapse_hom_w - Synapse type for static connections with homogeneous weight
 ##################################################################################
 
-
-Description:
-+++++++++++++
+Description
++++++++++++
 
 static_synapse_hom_w does not support any kind of plasticity. It simply
 stores the parameters delay, target, and receiver port for each connection
@@ -52,26 +48,21 @@ The common weight for all connections of this model must be set by
 SetDefaults on the model. If you create copies of this model using
 CopyModel, each derived model can have a different weight.
 
-Transmits:
-++++++++++
+Transmits
++++++++++
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DataLoggingRequest, DoubleDataEvent
 
-
 FirstVersion: April 2008
 
-Author:
-++++++++
-
-Susanne Kunkel, Moritz Helias
-
-SeeAlso:
+See also
 ++++++++
 
 synapsedict, static_synapse
 
 EndUserDocs */
+
 template < typename targetidentifierT >
 class StaticConnectionHomW : public Connection< targetidentifierT >
 {

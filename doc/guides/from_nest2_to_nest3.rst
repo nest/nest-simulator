@@ -1,5 +1,5 @@
-From NEST 2.x to NEST 3.0
-=========================
+NEST 3.0: What's new?
+=====================
 
 .. contents:: On this page, you'll find
    :local:

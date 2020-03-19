@@ -18,6 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( nestutil_sources
+    beta_normalization_factor.h
     block_vector.h
     compose.hpp
     enum_bitfield.h

@@ -12,7 +12,7 @@ Here you can find how to build complex, layered networks in NEST.
   See the :doc:`guide to NEST 3.0 <../from_nest2_to_nest3>` for more information.
 
 * If you've never used spatially-structured networks before,  we recommend you
-  check out our :doc:`PyNEST tutorial on the topic <../../tutorials/pynest_tutorial/part_4_topologically_structured_networks>`
+  check out our :doc:`PyNEST tutorial on the topic <../../tutorials/pynest_tutorial/part_4_spatially_structured_networks>`
 
 * We also have a :doc:`comprehensive guide into spatially-structured networks <../spatial/guide_spatially_structured_networks>`
 

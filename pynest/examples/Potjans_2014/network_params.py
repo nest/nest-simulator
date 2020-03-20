@@ -99,7 +99,7 @@ net_dict = {
     # relative standard deviation of the delay of excitatory and
     # inhibitory connections
     'delay_rel_std': 0.5,
- 
+
     # turn Poisson input on or off (True or False)
     # if False: DC input is applied for compensation
     'poisson_input': True,

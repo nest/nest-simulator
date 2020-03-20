@@ -42,8 +42,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
 
-clopath_synapse - Synapse type for voltage-based STDP after Clopath
-###################################################################
+Short description
++++++++++++++++++
+
+Synapse type for voltage-based STDP after Clopath
 
 Description
 +++++++++++
@@ -61,13 +63,11 @@ hh_psc_alpha_clopath.
 Parameters
 ++++++++++
 
-
 =======  ======  ==========================================================
 tau_x    ms      Time constant of the trace of the presynaptic spike train
 Wmax     real    Maximum allowed weight
 Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
-
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
@@ -78,9 +78,8 @@ Transmits
 
 SpikeEvent
 
-References:
-+++++++++++
-
+References
+++++++++++
 
 .. [1] Clopath et al. (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
@@ -90,7 +89,6 @@ References:
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
-
 
 See also
 ++++++++

@@ -40,8 +40,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire
 
-iaf_chs_2007 - Spike-response model used in Carandini et al. 2007
-#################################################################
+Short description
++++++++++++++++++
+
+Spike-response model used in Carandini et al. 2007
 
 Description
 +++++++++++
@@ -75,7 +77,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 ========== ============== ==================================================
  tau_epsp  ms             Membrane time constant
  tau_reset ms             Refractory time constant
@@ -85,10 +86,8 @@ The following parameters can be set in the status dictionary.
  noise     list of real   Noise signal
 ========== ============== ==================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
        spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
@@ -97,7 +96,6 @@ References
        systems with applications to neuronal modeling. Biologial Cybernetics
        81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
-
 
 Sends
 +++++
@@ -108,8 +106,6 @@ Receives
 ++++++++
 
 SpikeEvent, DataLoggingRequest
-
-FirstVersion: May 2012
 
 EndUserDocs */
 

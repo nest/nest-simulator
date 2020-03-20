@@ -37,8 +37,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-iaf_psc_alpha - Leaky integrate-and-fire neuron model
-#####################################################
+Short description
++++++++++++++++++
+
+Leaky integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -91,7 +93,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 =========== ======  ==========================================================
  V_m        mV      Membrane potential
  E_L        mV      Resting membrane potenial
@@ -114,10 +115,8 @@ tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see IAF_neurons_singularity.ipynb in
 the NEST source code (docs/model_details).
 
-
 References
 ++++++++++
-
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
@@ -132,7 +131,6 @@ References
        neural network simulations. Neural Computation, in press
        DOI: https://doi.org/10.1162/neco.2007.19.1.47
 
-
 Sends
 +++++
 
@@ -142,8 +140,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-FirstVersion: September 1999
 
 See also
 ++++++++

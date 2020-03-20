@@ -70,8 +70,10 @@ extern "C" int aeif_cond_exp_dynamics_DT0( double, const double*, double*, void*
 
 /* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
-aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model
-#############################################################################
+Short description
++++++++++++++++++
+
+Conductance based exponential integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -103,8 +105,6 @@ setting V_peak too high.
 Parameters:
 +++++++++++++
 The following parameters can be set in the status dictionary.
-
-
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -156,7 +156,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       numerical instabilities.
 ============= ======= =========================================================
 
-
 Sends
 +++++
 
@@ -167,6 +166,8 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+References
+++++++++++
 
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal

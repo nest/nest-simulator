@@ -33,8 +33,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, static
 
-bernoulli_synapse - Static synapse with stochastic transmission
-###############################################################
+Short description
++++++++++++++++++
+
+Static synapse with stochastic transmission
 
 Description
 +++++++++++
@@ -55,9 +57,6 @@ Parameters
  p_transmit real   Transmission probability, must be between 0 and 1
 =========== ====== ===================================================
 
-
-FirstVersion: June 2017
-
 Transmits
 +++++++++
 
@@ -66,7 +65,6 @@ DoubleDataEvent, DataLoggingRequest
 
 References
 ++++++++++
-
 
 .. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
        neuronal network of the C2 barrel column in mouse primary
@@ -85,7 +83,7 @@ References
 See also
 ++++++++
 
-synapsedict, static_synapse, static_synapse_hom_w
+static_synapse, static_synapse_hom_w
 
 EndUserDocs */
 

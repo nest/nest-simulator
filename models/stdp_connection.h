@@ -41,8 +41,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_synapse - Synapse type for spike-timing dependent plastiicty
-#################################################################
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plastiicty
 
 Description
 +++++++++++
@@ -64,7 +66,6 @@ Parameters
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-
 
 Transmits
 +++++++++
@@ -89,9 +90,6 @@ References
        from spike timing-dependent plasticity. Journal of Neuroscience,
        20(23):8812-8821.
        DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
-
-
-FirstVersion: March 2006
 
 See also
 ++++++++

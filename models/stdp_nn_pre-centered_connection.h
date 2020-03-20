@@ -41,8 +41,11 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent plasticity with presynaptic-centered nearest-neighbour spike pairing scheme
-##################################################################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plasticity with
+presynaptic-centered nearest-neighbour spike pairing scheme
 
 Description
 +++++++++++
@@ -87,7 +90,6 @@ Parameters
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
 
-
 Transmits
 +++++++++
 
@@ -96,16 +98,12 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
        Neural Comput. 15, 1511--1523
 
 .. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-
-
-FirstVersion: March 2006
 
 See also
 ++++++++

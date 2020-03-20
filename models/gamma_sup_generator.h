@@ -42,8 +42,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-gamma_sup_generator - simulate the superimposed spike train of a population of gamma process
-############################################################################################
+Short description
++++++++++++++++++
+
+simulate the superimposed spike train of a population of gamma process
 
 Device name
 +++++++++++
@@ -69,15 +71,12 @@ The following parameters appear in the element's status dictionary:
                        default: 1
 ============  ======== =========================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of
        superimposed stationary spike trains. Journal of Computational
        Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
-
 
 See also
 ++++++++

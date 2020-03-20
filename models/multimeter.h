@@ -255,6 +255,18 @@ nest::multimeter::sends_signal() const
   return ALL;
 }
 
+
+//
+// Declaration of voltmeter subclass
+//
+
+class voltmeter : public multimeter
+{
+public:
+  voltmeter();
+  voltmeter( const voltmeter& );
+};
+
 } // namespace nest
 
 #endif

@@ -38,8 +38,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_dopamine_synapse - Synapse type for dopamine-modulated spike-timing dependent plasticity
-#############################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for dopamine-modulated spike-timing dependent plasticity
 
 Description
 +++++++++++
@@ -80,14 +82,13 @@ Parameters
  n  real    Neuromodulator concentration
 === ======  =====================================
 
-
 Remarks:
+
 The common properties can only be set by SetDefaults and apply to all
 synapses of the model.
 
 References
 ++++++++++
-
 
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
        circuit simulations with distributed computing of neuromodulated
@@ -96,7 +97,6 @@ References
 .. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
        of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
        DOI: https://doi.org/10.1093/cercor/bhl152
-
 
 Transmits
 +++++++++
@@ -114,7 +114,6 @@ EndUserDocs */
  * Class containing the common properties for all synapses of type dopamine
  * connection.
  */
-
 class STDPDopaCommonProperties : public CommonSynapseProperties
 {
 public:

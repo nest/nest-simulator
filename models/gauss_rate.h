@@ -41,8 +41,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-gauss_rate - rate model with Gaussian gain function
-###################################################
+Short description
++++++++++++++++++
+
+Rate neuron model with Gaussian gain function
 
 Description
 +++++++++++
@@ -66,7 +68,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 =================  ======= ==============================================
  rate              real    Rate (unitless)
  tau               ms      Time constant of rate dynamics
@@ -78,7 +79,6 @@ The following parameters can be set in the status dictionary.
  linear_summation  boolean Specifies type of non-linearity (see above)
  rectify_output    boolean Switch to restrict rate to values >= 0
 =================  ======= ==============================================
-
 
 Note:
 
@@ -100,7 +100,6 @@ References
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
 
 Sends
 +++++

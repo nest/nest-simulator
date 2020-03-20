@@ -45,6 +45,7 @@
 
 namespace nest
 {
+
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -108,7 +109,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
  I_e         pA      Constant external input current
  tau_plus    ms      Time constant of u_bar_plus
  tau_minus   ms      Time constant of u_bar_minus
- tau_bar_bar ms      Time constant of u_bar_bar
+ tau_bar_ar ms      Time constant of u_bar_bar
 ============ ======  =================================================
 
 
@@ -133,8 +134,8 @@ theta_plus    mV      Threshold for u
 theta_minus   mV      Threshold for u_bar_[plus/minus]
 A_LTD_const   boolean Flag that indicates whether `A_LTD_` should
                       be constant (true, default) or multiplied by
-                      u_bar_bar^2 / u_ref_squared (false).
-delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
+                      u_bar_bar^2 / _ref_squared (false).
+elay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
                       to compute the synaptic weights.
 U_ref_squared real    Reference value for u_bar_bar_^2.
 ============= ======= =======================================================
@@ -145,7 +146,7 @@ U_ref_squared real    Reference value for u_bar_bar_^2.
 -----------------------------------------------------------------------------
 t_clamp  ms     Duration of clamping of Membrane potential after a spike
 V_clamp  mV     Value to which the Membrane potential is clamped
-=======  ====== =============================================================
+=======  ====== ============================================================
 
 
 ============= ======= =========================================================

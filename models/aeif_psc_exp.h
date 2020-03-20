@@ -59,8 +59,10 @@ extern "C" int aeif_psc_exp_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, current-based
 
-aeif_psc_exp - Current-based exponential integrate-and-fire neuron model
-########################################################################
+Short description
++++++++++++++++++
+
+Current-based exponential integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -95,7 +97,6 @@ Parameters:
 
 The following parameters can be set in the status dictionary.
 
-
 ======== ======= =======================================
 **Dynamic state variables:**
 --------------------------------------------------------
@@ -104,7 +105,6 @@ The following parameters can be set in the status dictionary.
  I_in    pA      Inhibitory synaptic current
  w       pA      Spike-adaptation current
 ======== ======= =======================================
-
 
 ======== ======= =======================================
 **Membrane Parameters**
@@ -116,7 +116,6 @@ The following parameters can be set in the status dictionary.
  g_L     nS      Leak conductance
  I_e     pA      Constant external input current
 ======== ======= =======================================
-
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -146,7 +145,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       numerical instabilities
 ============= ======= =========================================================
 
-
 Sends
 +++++
 
@@ -160,12 +158,10 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-
 
 See also
 ++++++++

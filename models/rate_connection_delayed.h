@@ -29,10 +29,12 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, connection with delay
+/* BeginUserDocs: synapse, connection with delay, rate
 
-rate_connection_delayed - Synapse type for rate connections with delay
-######################################################################
+Short description
++++++++++++++++++
+
+Synapse type for rate connections with delay
 
 Description
 +++++++++++
@@ -51,12 +53,10 @@ DelayedRateConnectionEvent
 References
 ++++++++++
 
-
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
-
 
 See also
 ++++++++

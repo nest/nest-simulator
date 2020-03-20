@@ -40,15 +40,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-spike_generator - A device which generates spikes from an array with spike-times
-################################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-spike_generator
-
-Synopsis: spike_generator Create -> node_id
+A device which generates spikes from an array with spike-times
 
 Description
 +++++++++++
@@ -156,7 +151,6 @@ Parameters
 
 The following properties can be set in the status dictionary.
 
-
 ===================== ============= ==========================================
  origin               ms            Time origin for device timer
  start                ms            Earliest possible time stamp of a spike to
@@ -173,16 +167,10 @@ The following properties can be set in the status dictionary.
  shift_now_spikes     boolean       see above
 ===================== ============= ==========================================
 
-
 Sends
 +++++
 
 SpikeEvent
-
-See also
-++++++++
-
-Device, StimulatingDevice, testsuite::test_spike_generator
 
 EndUserDocs */
 

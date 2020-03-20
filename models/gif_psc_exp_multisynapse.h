@@ -37,8 +37,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-gif_psc_exp_multisynapse - Current-based generalized integrate-and-fire neuron model with multiple synaptic time constants
-##########################################################################################################################
+Short description
++++++++++++++++++
+
+Current-based generalized integrate-and-fire neuron model with multiple synaptic time constants
 
 Description
 +++++++++++
@@ -129,8 +131,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
-
 ========   ======  =======================================================
 **Membrane Parameters**
 --------------------------------------------------------------------------
@@ -165,10 +165,8 @@ V_T_star   mV               Base threshold
 tau_syn  list of ms        Time constants of the synaptic currents
 =======  ================  ==================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
        Parameter extraction and classification of three cortical neuron types
@@ -179,7 +177,6 @@ References
        Automated high-throughput characterization of single neurons by means of
        simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
-
 
 Sends
 +++++

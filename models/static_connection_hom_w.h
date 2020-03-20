@@ -32,8 +32,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, static
 
-static_synapse_hom_w - Synapse type for static connections with homogeneous weight
-##################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for static connections with homogeneous weight
 
 Description
 +++++++++++
@@ -54,12 +56,10 @@ Transmits
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DataLoggingRequest, DoubleDataEvent
 
-FirstVersion: April 2008
-
 See also
 ++++++++
 
-synapsedict, static_synapse
+static_synapse
 
 EndUserDocs */
 

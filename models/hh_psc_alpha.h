@@ -59,8 +59,10 @@ extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based
 
-hh_psc_alpha - Hodgkin-Huxley neuron model
-##########################################
+Short description
++++++++++++++++++
+
+Hodgkin-Huxley neuron model
 
 Description
 +++++++++++
@@ -101,7 +103,6 @@ Act_n     real    Activation variable n
 I_e       pA      External input current
 ========  ======  ============================================================
 
-
 Problems/Todo:
 
 better spike detection
@@ -120,7 +121,6 @@ References
        membrane current and its application to conduction and excitation in
        nerve. The Journal of Physiology 117.
        DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
-
 
 Sends
 +++++

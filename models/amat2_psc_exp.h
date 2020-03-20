@@ -35,10 +35,13 @@
 
 namespace nest
 {
+
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
-################################################################################################################
+Short description
++++++++++++++++++
+
+Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
 
 Description
 +++++++++++
@@ -81,12 +84,14 @@ Remarks:
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
   different are very close.
+- :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
+  implementation to avoid a degenerate case of the ODE describing the
+  model [1]_.  For very similar values, numerics will be unstable.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary:
-
 
 =========== ======= ===========================================================
  C_m        pF      Capacity of the membrane
@@ -110,7 +115,6 @@ The following parameters can be set in the status dictionary:
                     relative to E_L as in [3]_)
 =========== ======= ===========================================================
 
-
 =========== ==== =======================================================
 **State variables that can be read out with the multimeter device**
 ------------------------------------------------------------------------
@@ -118,17 +122,8 @@ The following parameters can be set in the status dictionary:
  V_th       mV   Two-timescale adaptive threshold
 =========== ==== =======================================================
 
-
-Remarks:
-
-:math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current implementation
-to
-avoid a degenerate case of the ODE describing the model [1]_.
-For very similar values, numerics will be unstable.
-
 References
 ++++++++++
-
 
 .. [1] Rotter S, Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
@@ -147,7 +142,6 @@ References
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
 
-
 Sends
 +++++
 
@@ -157,8 +151,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-FirstVersion: April 2013
 
 EndUserDocs */
 

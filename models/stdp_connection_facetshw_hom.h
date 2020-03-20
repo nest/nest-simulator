@@ -35,8 +35,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent-plasticity
 
-stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent plasticity using homogenous parameters
-##########################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plasticity using homogenous parameters
 
 Description
 +++++++++++
@@ -54,7 +56,6 @@ stdp_connection_hom.
 
 Parameters
 ++++++++++
-
 
 ======================= =========== ===========================================
 **Common properties**
@@ -95,7 +96,6 @@ Parameters
                                     always reset) is allowed.
 ======================= =========== ===========================================
 
-
 ============  ======= =====================================================
 **Individual properties**
 ---------------------------------------------------------------------------
@@ -108,7 +108,6 @@ Parameters
  synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
-
 
 Remarks:
 
@@ -129,7 +128,6 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
        synaptic plasticity based on spike-timing. Biological Cybernetics,
        98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
@@ -143,9 +141,6 @@ References
        neuromorphic hardware. Frontiers in Neuroscience 6(90).
        DOI: https://doi.org/10.3389/fnins.2012.00090
 .. [4] Friedmann, S. in preparation
-
-
-FirstVersion: July 2011
 
 See also
 ++++++++

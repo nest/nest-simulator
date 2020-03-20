@@ -28,11 +28,13 @@
 
 namespace nest
 {
+
 /* BeginUserDocs: neuron, binary
 
+Short description
++++++++++++++++++
 
-erfc_neuron - Binary stochastic neuron with complementary error function as activation function
-###############################################################################################
+Binary stochastic neuron with complementary error function as activation function
 
 Description
 +++++++++++
@@ -83,10 +85,8 @@ advisable to set the property 'allow_multapses' to false.
 The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
-
 Parameters
 ++++++++++
-
 
 ======  ======  =========================================================
  tau_m  ms      Membrane time constant (mean inter-update-interval)
@@ -94,10 +94,8 @@ Parameters
  sigma  mV      1/sqrt(2pi) x inverse of maximal slope
 ======  ======  =========================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
@@ -110,7 +108,6 @@ References
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
-
 Sends
 +++++
 
@@ -120,8 +117,6 @@ Receives
 ++++++++
 
 SpikeEvent, PotentialRequest
-
-FirstVersion: May 2016
 
 See also
 ++++++++

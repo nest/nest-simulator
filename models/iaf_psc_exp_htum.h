@@ -37,8 +37,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire
 
-iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential PSCs
-##############################################################################
+Short description
++++++++++++++++++
+
+Leaky integrate-and-fire neuron model with exponential PSCs
 
 Description
 +++++++++++
@@ -84,6 +86,12 @@ optimization levels. A future version of iaf_psc_exp_htum will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_neurons_singularity.ipynb in
+the NEST source code (docs/model_details).
+
 Parameters
 ++++++++++
 
@@ -104,19 +112,8 @@ The following parameters can be set in the status dictionary.
  t_spike      ms     Point in time of last spike
 ===========  ====== ========================================================
 
-
-Remarks:
-
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in
-the NEST source code (docs/model_details).
-
-
 References
 ++++++++++
-
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
@@ -133,7 +130,6 @@ References
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
-
 Sends
 +++++
 
@@ -143,8 +139,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-FirstVersion: March 2006
 
 EndUserDocs */
 

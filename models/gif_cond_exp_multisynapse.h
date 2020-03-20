@@ -48,8 +48,10 @@ extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-gif_cond_exp_multisynapse - Conductance-based generalized integrate-and-fire neuron model with multiple synaptic time constants
-###############################################################################################################################
+Short description
++++++++++++++++++
+
+Conductance-based generalized integrate-and-fire neuron with multiple synaptic time constants
 
 Description
 +++++++++++
@@ -133,7 +135,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 =========   ======   ======================================================
 **Membrane Parameters**
 ---------------------------------------------------------------------------
@@ -176,30 +177,8 @@ The following parameters can be set in the status dictionary.
                         numerical instabilities
 ==============  ======  ======================================================
 
-
-Example:
-
-    neuron = nest.Create('gif_cond_exp_multisynapse',
-                         params={'E_rev': [0.0, -85.0],
-                                 'tau_syn': [4.0, 8.0]})
-
-    spike = nest.Create('spike_generator', params={'spike_times':
-                                                   np.array([10.0])})
-
-    delays = [1., 30.]
-    w = [1., 5.]
-    for syn in range(2):
-        nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                              'receptor_type': 1 + syn,
-                                              'weight': w[syn],
-                                              'delay': delays[syn]})
-    nest.Simulate(100.)
-
-
 References
 ++++++++++
-
-
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
        Parameter extraction and classification of three cortical neuron types
@@ -210,7 +189,6 @@ References
        Automated high-throughput characterization of single neurons by means of
        simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
-
 
 Sends
 +++++

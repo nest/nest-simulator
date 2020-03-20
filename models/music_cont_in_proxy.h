@@ -49,13 +49,10 @@ namespace nest
 
 /* BeginUserDocs: device, MUSIC
 
-music_cont_in_proxy - A device which receives continuous data from MUSIC
-########################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-music_cont_in_proxy
+A device which receives continuous data from MUSIC
 
 Description
 +++++++++++
@@ -83,10 +80,6 @@ The following properties are available in the status dictionary:
 =========== ======= ========================================================
 
 The parameter port_name can be set using SetStatus.
-
-FirstVersion: July 2010
-
-Availability: Only when compiled with MUSIC
 
 See also
 ++++++++

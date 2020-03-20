@@ -39,8 +39,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, point process, current-based
 
-pp_pop_psc_delta - Population of point process neurons with leaky integration of delta-shaped PSCs
-##################################################################################################
+Short description
++++++++++++++++++
+
+Population of point process neurons with leaky integration of delta-shaped PSCs
 
 Description
 +++++++++++
@@ -98,7 +100,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 =========== =============== ===========================================
  N          integer         Number of represented neurons
  tau_m      ms              Membrane time constant
@@ -112,7 +113,6 @@ The following parameters can be set in the status dictionary.
  len_kernel real            Post-spike kernel eta is truncated after
                             max(tau_eta) * len_kernel
 =========== =============== ===========================================
-
 
 The parameters correspond to the ones of pp_psc_delta as follows.
 
@@ -129,10 +129,8 @@ The parameters correspond to the ones of pp_psc_delta as follows.
  t_ref_remaining    0.0
 ==================  ============================
 
-
 References
 ++++++++++
-
 
 .. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
        a population approach to the peri-stimulus time histogram.
@@ -146,7 +144,6 @@ References
        information filtering in coupled populations of spiking neurons with
        adaptation. Physical Review E 90:6, 062704.
        DOI: https://doi.org/10.1103/PhysRevE.90.062704
-
 
 Sends
 +++++

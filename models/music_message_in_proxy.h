@@ -53,13 +53,10 @@ namespace nest
 {
 /* BeginUserDocs: device, MUSIC
 
-music_message_in_proxy - A device which receives message strings from MUSIC
-###########################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-music_message_in_proxy
+A device which receives message strings from MUSIC
 
 Description
 +++++++++++
@@ -72,11 +69,12 @@ applications. The music_message_in_proxy represents an input port to
 which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
+Availability: Only when compiled with MUSIC
+
 Parameters
 ++++++++++
 
 The following properties are available in the status dictionary:
-
 
 ============ ======= =========================================================
  port_name   string  The name of the MUSIC input port to listen to (default:
@@ -91,13 +89,8 @@ The following properties are available in the status dictionary:
                      with MUSIC
 ============ ======= =========================================================
 
-
 The parameter port_name can be set using SetStatus. The field n_messages
 can be set to 0 to clear the data arrays.
-
-FirstVersion: July 2010
-
-Availability: Only when compiled with MUSIC
 
 See also
 ++++++++

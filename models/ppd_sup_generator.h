@@ -42,8 +42,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes with dead time
-#############################################################################################################
+Short description
++++++++++++++++++
+
+simulate the superimposed spike train of a population of Poisson processes with dead time
 
 Device name
 +++++++++++
@@ -75,17 +77,12 @@ The following parameters appear in the element's status dictionary:
  relative_amplitude  real     Relative rate modulation amplitude, default: 0
 ===================  ======== =================================================
 
-
-Remarks:
-
 References
 ++++++++++
-
 
 .. [1]  Deger M, Helias M, Boucsein C, Rotter S (2011). Statistical properties
         of superimposed stationary spike trains. Journal of Computational
         Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
-
 
 See also
 ++++++++

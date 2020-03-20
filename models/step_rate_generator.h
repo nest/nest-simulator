@@ -39,15 +39,12 @@
 namespace nest
 {
 
-/* BeginUserDocs: device, generator
+/* BeginUserDocs: device, generator, rate
 
-step_rate_generator - provides a piecewise constant input rate
-##############################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-step_rate_generator
+Provide a piecewise constant input rate
 
 Description
 +++++++++++
@@ -58,24 +55,11 @@ way as input from any other rate unit, i.e. it is processed by the input
 function of the receiving rate unit. The amplitude of the rate is changed
 at the specified times. The unit of the rate is Hz.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary:
-
-
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
-
-
-If false, times will be rounded to the nearest step if they are
-less than tic/2 from the step, otherwise NEST reports an error.
-If true,  times are rounded to the nearest step if within tic/2
-from the step, otherwise they are rounded up to the *end* of the
-step.
+If allow_offgrid_times is false, times will be rounded to the nearest
+grid point if they are less than tic/2 from the grid point, otherwise
+NEST reports an error. If true, times are rounded to the nearest grid
+point if within tic/2 from the grid point, otherwise they are rounded
+up to the *end* of the grid point.
 
 Note:
 
@@ -83,6 +67,17 @@ Times of amplitude changes must be strictly increasing after conversion
 to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary:
+
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
 
 Sends
 +++++
@@ -92,7 +87,7 @@ DelayedRateConnectionEvent
 See also
 ++++++++
 
-step_current_generator, Device, StimulatingDevice
+step_current_generator
 
 EndUserDocs */
 

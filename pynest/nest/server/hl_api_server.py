@@ -62,22 +62,23 @@ def route_exec():
     with Capturing() as stdout:
         try:
             source = kwargs.get('source', '')
-            globals = {'__builtins__': None}
-            locals = {
-              'list': list,
-              'nest': nest,
-              'np': np,
-              'print': print,
-              'set': set,
+            globals_ = {'__builtins__': None}
+            locals_ = {
+                'list': list,
+                'nest': nest,
+                'np': np,
+                'print': print,
+                'set': set,
+                'int': int,
             }
-            exec(source, globals, locals)
+            exec(source, globals_, locals_)
             if 'return' in kwargs:
                 if isinstance(kwargs['return'], list):
                     return_data = {}
                     for variable in kwargs['return']:
-                        return_data[variable] = locals.get(variable, None)
+                        return_data[variable] = locals_.get(variable, None)
                 else:
-                    return_data = locals.get(kwargs['return'], None)
+                    return_data = locals_.get(kwargs['return'], None)
                 data['response']['data'] = nest.hl_api.serializable(return_data)
             data['response']['status'] = 'ok'
         except Exception as e:

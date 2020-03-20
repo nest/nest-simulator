@@ -1,5 +1,5 @@
 Guides
-==============
+======
 
 Here you can find details on a variety of topics in NEST.
 

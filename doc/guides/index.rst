@@ -5,7 +5,7 @@ Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
-    :caption: Guide to NEST 3.0
+    :caption: Transition guides to NEST 3.0
 
     nest2_to_nest3/nest2_to_nest3_overview
     nest2_to_nest3/nest2_to_nest3_detailed_transition_guide

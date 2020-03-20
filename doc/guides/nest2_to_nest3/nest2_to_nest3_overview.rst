@@ -19,7 +19,7 @@ perform operations that were not possible in previous versions.
   (and sometimes pyplot from matplotlib) imported.
 
 What's new?
-------------
+-----------
 
 .. _nodeid:
 

@@ -15,7 +15,7 @@ perform operations that were not possible in previous versions.
 
 .. note::
 
-  Running the code snippets throughout this guide requires a freshly started instance of Python with nest
+  Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
   (and sometimes pyplot from matplotlib) imported.
 
 What's new?

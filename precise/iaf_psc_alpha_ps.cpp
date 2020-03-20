@@ -345,6 +345,8 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
     V_.y_input_before_ = S_.y_input_;
     V_.I_ex_before_ = S_.I_ex_;
     V_.I_in_before_ = S_.I_in_;
+    V_.dI_ex_before_ = S_.dI_ex_;
+    V_.dI_in_before_ = S_.dI_in_;
     V_.V_m_before_ = S_.V_m_;
 
     // get first event
@@ -430,6 +432,8 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
         // store state
         V_.I_ex_before_ = S_.I_ex_;
         V_.I_in_before_ = S_.I_in_;
+        V_.dI_ex_before_ = S_.dI_ex_;
+        V_.dI_in_before_ = S_.dI_in_;
         V_.V_m_before_ = S_.V_m_;
         last_offset = ev_offset;
 
@@ -540,7 +544,9 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_method_( dt ) );
+
+  assert( S_.last_spike_offset_ >= 0.0 );
 
   // reset neuron and make it refractory
   S_.V_m_ = P_.U_reset_;
@@ -578,36 +584,85 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 }
 
 double
-nest::iaf_psc_alpha_ps::bisectioning_( const double dt ) const
+nest::iaf_psc_alpha_ps::V_m_root_function_( double t_step ) const
 {
-  double root = 0.0;
+  const double ps_e_TauSyn_ex = numerics::expm1( -t_step / P_.tau_syn_ex_ );
+  const double ps_e_TauSyn_in = numerics::expm1( -t_step / P_.tau_syn_in_ );
 
-  double V_m_root = V_.V_m_before_;
+  const double ps_e_Tau = numerics::expm1( -t_step / P_.tau_m_ );
+  const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
 
-  double div = 2.0;
+  const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau - V_.gamma_sq_ex_ * ps_e_TauSyn_ex
+    - t_step * V_.gamma_ex_ * ps_e_TauSyn_ex - t_step * V_.gamma_ex_;
+  const double ps_P32_ex = V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
 
-  while ( fabs( P_.U_th_ - V_m_root ) > 1e-14 )
+  const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau - V_.gamma_sq_in_ * ps_e_TauSyn_in
+    - t_step * V_.gamma_in_ * ps_e_TauSyn_in - t_step * V_.gamma_in_;
+  const double ps_P32_in = V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
+
+  double V_m_root = ps_P30 * ( P_.I_e_ + V_.y_input_before_ ) + ps_P31_ex * V_.dI_ex_before_ + ps_P32_ex * V_.I_ex_before_ + ps_P31_in * V_.dI_in_before_
+    + ps_P32_in * V_.I_in_before_ + ps_e_Tau * V_.V_m_before_ + V_.V_m_before_;
+
+  return V_m_root - P_.U_th_;
+}
+
+double
+nest::iaf_psc_alpha_ps::regula_falsi_method_( const double dt ) const
+{
+  double root;
+  double V_m_root;
+
+  int side = 0;
+
+  double a_k = 0.0;
+  double b_k = dt;
+
+  double V_m_func_a_k = V_m_root_function_( a_k );
+  double V_m_func_b_k = V_m_root_function_( b_k );
+
+  assert( V_m_func_a_k * V_m_func_b_k <= 0 );
+
+  int max_iter = 500;
+
+  for ( int iter = 0; iter < max_iter; ++iter )
   {
-    if ( V_m_root > P_.U_th_ )
+    root = ( a_k * V_m_func_b_k - b_k * V_m_func_a_k ) / ( V_m_func_b_k - V_m_func_a_k );
+    V_m_root = V_m_root_function_( root );
+
+    if ( std::abs( V_m_root ) <= 1e-14 )
     {
-      root -= dt / div;
+      break;
+    }
+
+    if ( V_m_func_a_k * V_m_root > 0.0 )
+    {
+      // V_m_func_a_k and V_m_root have the same sign
+      a_k = root;
+      V_m_func_a_k = V_m_root;
+
+      if ( side == 1 )
+      {
+        V_m_func_b_k /= 2;
+      }
+      side = 1;
+    }
+    else if ( V_m_func_b_k * V_m_root > 0.0 )
+    {
+      // V_m_func_b_k and V_m root have the same sign
+      b_k = root;
+      V_m_func_b_k = V_m_root;
+
+      if ( side == -1 )
+      {
+        V_m_func_a_k /= 2;
+      }
+      side = -1;
     }
     else
     {
-      root += dt / div;
+      break;
     }
-
-    div *= 2.0;
-
-    const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
-
-    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-
-    const double P21_ex = propagator_32( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, root );
-    const double P21_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, root );
-
-    V_m_root = P20 * ( P_.I_e_ + V_.y_input_before_ ) + P21_ex * V_.I_ex_before_ + P21_in * V_.I_in_before_
-      + expm1_tau_m * V_.V_m_before_ + V_.V_m_before_;
   }
   return root;
 }
+

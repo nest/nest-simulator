@@ -19,9 +19,10 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
    
 Left: network sketch from [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
 
-.. admonition:: Citing this code
-   If you use this code, we ask you to cite the paper by Potjans and Diesmann [1]_ and the NEST release on Zenodo.
+Citing this code
+################
 
+If you use this code, we ask you to cite the paper by Potjans and Diesmann [1]_ and the NEST release on Zenodo.
 
 File structure
 ##############
@@ -73,15 +74,19 @@ Recommendations for benchmarking
 ################################
 
 For benchmark simulations assessing network-construction and state-propagation times, the recommended changes to the default parameters are the following:
-* ``sim_params.py``:
-   * ``'t_sim': 10000.0``: The biological simulation time should be at least `10` s for measuring the state propagation time.
-   * ``'rec_dev': []``: No recording devices.
-   * ``'local_num_threads': t``: Adjust the number of threads ``t`` per MPI process as needed for the benchmarks.
-   * ``'print_time': False'``: No printing of time progress.
-* ``network_params.py``:
-   * ``'N_scaling': 1.``: Full number of neurons.
-   * ``'K_scaling': 1.``: Full indegrees.
-   * ``'poisson_input': False``: DC background input.
+
+``sim_params.py``:
+
+* ``'t_sim': 10000.0``: The biological simulation time should be at least `10` s for measuring the state propagation time.
+* ``'rec_dev': []``: No recording devices.
+* ``'local_num_threads': t``: Adjust the number of threads ``t`` per MPI process as needed for the benchmarks.
+* ``'print_time': False'``: No printing of time progress.
+
+``network_params.py``:
+
+* ``'N_scaling': 1.``: Full number of neurons.
+* ``'K_scaling': 1.``: Full indegrees.
+* ``'poisson_input': False``: DC background input.
 
 Contributions to this PyNEST microcircuit model implementation
 ##############################################################

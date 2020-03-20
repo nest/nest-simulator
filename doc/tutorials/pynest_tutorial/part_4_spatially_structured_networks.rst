@@ -366,7 +366,7 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See Section 4.2 *Visualization functions* of the :doc:`../../guides/spatial/guide_spatially_structured_networks`
+   See the *Visualization functions* section in our :doc:`../../guides/spatial/guide_spatially_structured_networks`
    for more details.
 
 It may also be useful to look at the ``.spatial`` property of the

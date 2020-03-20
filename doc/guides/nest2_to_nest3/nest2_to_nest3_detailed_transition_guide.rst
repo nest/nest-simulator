@@ -20,7 +20,7 @@ NEST 3.0: Detailed transition guide
 
 .. seealso::
 
-  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
+  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
 
 .. _setverbosity:
 

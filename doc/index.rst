@@ -1,6 +1,6 @@
-***********************************************
+********************************************
 Welcome to the NEST simulator documentation!
-***********************************************
+********************************************
 
 :orange:`Introducing NEST 3.0!`
 -------------------------------
@@ -78,7 +78,7 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     See our :doc:`Getting Help <getting_help>` page.
 
 How the documentation is organized
-####################################
+##################################
 
 * :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
 
@@ -89,7 +89,7 @@ How the documentation is organized
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
 Contribute
-###########
+##########
 
 * Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
   Find out how to :doc:`cite NEST <citing-nest>` in your work.
@@ -101,7 +101,7 @@ Contribute
 * For more info about our larger community and the history of NEST check out the `NEST Initiative <https://www.nest-initiative.org>`_ website
 
 Links to other projects:
--------------------------------------
+------------------------
 
 The  `NeuralEnsemble <http://neuralensemble.org/>`_ is a community-based initiative to promote and co-ordinate open-source software development in neuroscience.
 They host numerous software including `PyNN <http://neuralensemble.org/PyNN/>`_, a simulator-independent language for building neuronal network models and `Elephant (Electrophysiology Analysis Toolkit) <http://neuralensemble.org/elephant/>`_, a package for the analysis of neurophysiology data, using Neo data structures.

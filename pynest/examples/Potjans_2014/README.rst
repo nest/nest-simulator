@@ -69,6 +69,20 @@ In addition to this ongoing external drive, a thalamic stimulation or a stimulat
 The default random initialization of membrane voltages in this simulation uses population-specific means and standard deviations to reduce an initial activity burst in the network: ``'V_type': 'optimized'`` in ``network_params.py``.
 Previous implementations used the same mean and standard deviation for all populations, which is here achieved by setting ``'V_type': 'original'``.
 
+Recommendations for benchmarking
+################################
+
+For benchmark simulations assessing network-construction and state-propagation times, the recommended changes to the default parameters are the following:
+* ``sim_params.py``:
+   * ``'t_sim': 10000.0``: The biological simulation time should be at least `10` s for measuring the state propagation time.
+   * ``'rec_dev': []``: No recording devices.
+   * ``'local_num_threads': t``: Adjust the number of threads ``t`` per MPI process as needed for the benchmarks.
+   * ``'print_time': False'``: No printing of time progress.
+* ``network_params.py``:
+   * ``'N_scaling': 1.``: Full number of neurons.
+   * ``'K_scaling': 1.``: Full indegrees.
+   * ``'poisson_input': False``: DC background input.
+
 Contributions to this PyNEST microcircuit
 #########################################
 

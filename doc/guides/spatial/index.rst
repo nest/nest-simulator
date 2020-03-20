@@ -23,7 +23,7 @@ Here you can find how to build complex, layered networks in NEST.
    :hidden:
    :maxdepth: 1
 
-   ../../tutorials/pynest_tutorial/part_4_topologically_structured_networks
+   ../../tutorials/pynest_tutorial/part_4_spatially_structured_networks
    ../../examples/index
 
 

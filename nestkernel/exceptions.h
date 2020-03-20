@@ -507,12 +507,22 @@ public:
   {
   }
 
+  UnexpectedEvent( std::string msg )
+    : KernelException( "UnexpectedEvent" )
+    , msg_( msg )
+  {
+  }
+
   ~UnexpectedEvent() throw()
   {
   }
 
   std::string message() const;
+
+private:
+  std::string msg_;
 };
+
 
 /**
  * Exception to be thrown by a Connection object if

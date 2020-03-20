@@ -196,6 +196,8 @@ protected:
 class ConstantParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   ConstantParameter( double value )
     : Parameter()
     , value_( value )
@@ -240,6 +242,8 @@ private:
 class UniformParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Parameters:
    * min - minimum value
@@ -285,6 +289,8 @@ private:
 class NormalParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Parameters:
    * mean  - mean value
@@ -330,6 +336,8 @@ private:
 class LognormalParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Parameters:
    * mu    - mean value of logarithm
@@ -375,6 +383,8 @@ private:
 class ExponentialParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Parameters:
    * scale - the scale parameter
@@ -1565,6 +1575,8 @@ protected:
 class DimensionParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Construct the Parameter with one given Parameter per dimension. A
    * copy is made of the supplied Parameter objects.

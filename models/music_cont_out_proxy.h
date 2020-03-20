@@ -41,6 +41,7 @@
 // Includes from nestkernel:
 #include "device_node.h"
 #include "node_collection.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "device_node.h"
 
@@ -148,6 +149,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void calibrate_time( const TimeConverter& tc );
+
 protected:
   void init_state_( Node const& );
   void init_buffers_();
@@ -216,6 +219,12 @@ inline SignalType
 nest::music_cont_out_proxy::sends_signal() const
 {
   return ALL;
+}
+
+inline void
+nest::music_cont_out_proxy::calibrate_time( const TimeConverter& tc )
+{
+  P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
 }
 
 } // namespace

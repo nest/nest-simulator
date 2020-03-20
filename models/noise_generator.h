@@ -33,6 +33,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
@@ -171,6 +172,8 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void calibrate_time( const TimeConverter& tc );
 
 private:
   void init_state_( const Node& );
@@ -323,6 +326,12 @@ inline SignalType
 noise_generator::sends_signal() const
 {
   return ALL;
+}
+
+inline void
+noise_generator::calibrate_time( const TimeConverter& tc )
+{
+  P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
 }
 
 } // namespace

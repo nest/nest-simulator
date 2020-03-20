@@ -33,12 +33,12 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "completed_checker.h"
 #include "event.h"
 #include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+#include "per_thread_bool_indicator.h"
 #include "target_table.h"
 #include "spike_data.h"
 #include "vp_manager.h"
@@ -433,7 +433,7 @@ private:
   //!< whether size of MPI buffer for communication of spikes was changed
   bool buffer_size_spike_data_has_changed_;
 
-  CompletedChecker gather_completed_checker_;
+  PerThreadBoolIndicator gather_completed_checker_;
 };
 
 inline void

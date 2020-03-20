@@ -39,6 +39,7 @@
 
 namespace nest
 {
+class TimeConverter;
 
 /**
  * Base class for all Models.
@@ -134,6 +135,7 @@ public:
   virtual bool has_proxies() = 0;
   virtual bool one_node_per_process() = 0;
   virtual bool is_off_grid() = 0;
+  virtual void calibrate_time( const TimeConverter& tc ) = 0;
 
   /**
    * Change properties of the prototype node according to the

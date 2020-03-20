@@ -110,7 +110,7 @@ public:
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  thread suggest_vp_for_node_id( const index node_id ) const;
+  thread node_id_to_vp( const index node_id ) const;
 
   /**
    * Convert a given VP ID to the corresponding thread ID

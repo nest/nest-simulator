@@ -27,7 +27,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import pylab
+import matplotlib.pyplot as plt
+import numpy as np
 import nest
 
 nest.ResetKernel()
@@ -57,20 +58,20 @@ nest.Connect(a, b, cdict)
 for src_index, color, cmap in [(30 * 15 + 15, 'blue', 'Blues'), (0, 'green', 'Greens')]:
     # obtain node id for center
     src = a[src_index:src_index + 1]
-    fig = pylab.figure()
+    fig = plt.figure()
     nest.PlotTargets(src, b, mask=cdict['mask'], probability_parameter=cdict['p'],
                      src_color=color, tgt_color=color, mask_color=color,
                      probability_cmap=cmap, src_size=100,
                      fig=fig)
 
     # beautify
-    pylab.axes().set_xticks(pylab.arange(-1.5, 1.55, 0.5))
-    pylab.axes().set_yticks(pylab.arange(-1.5, 1.55, 0.5))
-    pylab.grid(True)
-    pylab.axis([-2.0, 2.0, -2.0, 2.0])
-    pylab.axes().set_aspect('equal', 'box')
-    pylab.title('Connection targets, Gaussian kernel')
+    plt.axes().set_xticks(np.arange(-1.5, 1.55, 0.5))
+    plt.axes().set_yticks(np.arange(-1.5, 1.55, 0.5))
+    plt.grid(True)
+    plt.axis([-2.0, 2.0, -2.0, 2.0])
+    plt.axes().set_aspect('equal', 'box')
+    plt.title('Connection targets, Gaussian kernel')
 
-pylab.show()
+plt.show()
 
-# pylab.savefig('gaussex.pdf')
+# plt.savefig('gaussex.pdf')

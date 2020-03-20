@@ -34,12 +34,12 @@ struct SynIdDelay
 {
   unsigned int delay : NUM_BITS_DELAY;
   unsigned int syn_id : NUM_BITS_SYN_ID;
-  bool subsequent_targets : 1;
+  bool more_targets : 1;
   bool disabled : 1;
 
   explicit SynIdDelay( double d )
     : syn_id( invalid_synindex )
-    , subsequent_targets( false )
+    , more_targets( false )
     , disabled( false )
   {
     set_delay_ms( d );
@@ -48,7 +48,7 @@ struct SynIdDelay
   SynIdDelay( const SynIdDelay& s )
     : delay( s.delay )
     , syn_id( s.syn_id )
-    , subsequent_targets( s.subsequent_targets )
+    , more_targets( s.more_targets )
     , disabled( s.disabled )
   {
   }
@@ -72,15 +72,15 @@ struct SynIdDelay
   }
 
   void
-  set_has_source_subsequent_targets( const bool subsequent_targets )
+  set_source_has_more_targets( const bool more_targets )
   {
-    this->subsequent_targets = subsequent_targets;
+    this->more_targets = more_targets;
   }
 
   bool
-  has_source_subsequent_targets() const
+  source_has_more_targets() const
   {
-    return this->subsequent_targets;
+    return more_targets;
   }
 
   /**

@@ -65,9 +65,28 @@ Parameters
                    transmitting the spikes to the synapse. A value of
                    -1 indicates that no volume transmitter has been
                    assigned.
- A_plus    real    Amplitude of weight change for facilitation
- A_minus   real    Amplitude of weight change for depression
- tau_plus  ms      STDP time constant for facilitation
+ A_plus    real    Multiplier applied to weight changes caused by
+                   pre-before-post spike pairings. If b (dopamine
+                   baseline concentration) is zero, then A_plus
+                   is simply the multiplier for facilitation (as in the
+                   stdp_synapse model). If b is not zero, then A_plus
+                   will be the multiplier for facilitation only if n - b
+                   is positive, where n is the instantenous dopamine
+                   concentration in the volume transmitter. If n - b is
+                   negative, A_plus will be the multiplier for
+                   depression.
+ A_minus   real    Multiplier applied to weight changes caused by
+                   post-before-pre spike pairings. If b (dopamine
+                   baseline concentration) is zero, then A_minus
+                   is simply the multiplier for depression (as in the
+                   stdp_synapse model). If b is not zero, then A_minus
+                   will be the multiplier for depression only if n - b
+                   is positive, where n is the instantenous dopamine
+                   concentration in the volume transmitter. If n - b is
+                   negative, A_minus will be the multiplier for
+                   facilitation.
+ tau_plus  ms      STDP time constant for weight changes caused by
+                   pre-before-post spike pairings.
  tau_c     ms      Time constant of eligibility trace
  tau_n     ms      Time constant of dopaminergic trace
  b         real    Dopaminergic baseline concentration

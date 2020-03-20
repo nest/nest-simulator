@@ -99,7 +99,7 @@ def Create(model, n=1, params=None, positions=None):
         return layer
 
     params_contains_list = True
-    if isinstance(params, dict):
+    if isinstance(params, dict) and params:
         params_contains_list = [is_iterable(v) or isinstance(v, Parameter)
                                 for k, v in params.items()]
         params_contains_list = max(params_contains_list)

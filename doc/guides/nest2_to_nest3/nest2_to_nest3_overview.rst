@@ -11,7 +11,7 @@ perform operations that were not possible in previous versions.
 
 .. seealso::
 
-  See the :doc:`../ref_material/nest2_vs_3` to see a full list of functions that have changed
+  See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 .. note::
 

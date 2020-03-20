@@ -83,12 +83,12 @@ For benchmark simulations assessing network-construction and state-propagation t
    * ``'K_scaling': 1.``: Full indegrees.
    * ``'poisson_input': False``: DC background input.
 
-Contributions to this PyNEST microcircuit
-#########################################
+Contributions to this PyNEST microcircuit model implementation
+##############################################################
 
 Current communicating author: Johanna Senk
 
-2020: revision of code and documentation, and adaptation to NEST 3.0 by Johanna Senk
+2020: revision of code and documentation, and adaptation to NEST 3.0 by Johanna Senk (in collaboration with Sara Konradi, Stine Brekke Vennemo, Håkon Bakke Mørk, Alexander van Meegen, Sacha van Albada and Markus Diesmann)
 
 2019: optimized initialization of membrane voltages added by Han-Jia Jiang
 

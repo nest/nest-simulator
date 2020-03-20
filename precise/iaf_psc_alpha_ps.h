@@ -253,13 +253,20 @@ private:
     END_INTERP_ORDER
   };
 
+
   /**
-   * Localize threshold crossing by bisectioning.
+   * Difference between threshold and membrane potential for given time step.
+   * @param   double time step
+   * @returns difference between updated membrane potential and threshold
+   */
+  double V_m_root_function_ ( double t_step ) const;
+
+  /**
+   * Localize threshold crossing by using Illinois algorithm of regula falsi method.
    * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
-  double bisectioning_( const double dt ) const;
-  //@}
+  double regula_falsi_method_( const double dt ) const;
 
 
   // The next two classes need to be friends to access the State_ class/member
@@ -393,6 +400,8 @@ private:
     double y_input_before_;   //!< at beginning of mini-step, for interpolation
     double I_ex_before_;      //!< at beginning of mini-step, for interpolation
     double I_in_before_;      //!< at beginning of mini-step, for interpolation
+    double dI_ex_before_;      //!< at beginning of mini-step, for interpolation
+    double dI_in_before_;      //!< at beginning of mini-step, for interpolation
     double V_m_before_;       //!< at beginning of mini-step, for interpolation
   };
 

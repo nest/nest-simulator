@@ -25,7 +25,7 @@ NEST 3.0: Detailed transition guide
 .. _setverbosity:
 
 Suppress output on startup
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+----------------------------------+
 | NEST 2.x                              | NEST 3.0                         |

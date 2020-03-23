@@ -11,7 +11,7 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 - Visit our :doc:`What's new? <guides/nest2_to_nest3/nest2_to_nest3_overview>` guide to get an overview of NEST 3.0 and the new functionality.
 
 
-- Check out our :doc:`Detailed transition guide <guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide>` for an in-depth comparison between old and new syntax.
+- Read the :doc:`Detailed transition guide <guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide>` for an in-depth comparison between old and new syntax.
 
 ----
 

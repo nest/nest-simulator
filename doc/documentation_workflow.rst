@@ -6,9 +6,9 @@ What you need to know
 
 We use `Sphinx <https://www.sphinx-doc.org/en/master/>`_ to generate documentation and `Read the Docs <https://readthedocs.org/>`_ to publish it.
 
-The documentation for NEST is contained in the ``docs`` directory within the `NEST source code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
+The NEST simulator documentation lives alongside its code. It is contained in the ``doc`` directory within the `NEST source code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
-Using `GitHub <https://github.com/>`_ allows the NEST simulator documentation to live alongside its code. Our developers benefit from smooth version control, with each release of NEST having its own documentation.
+We work with `GitHub <https://www.github.com>`_ as the web-based hosting service for Git. Git allows us to keep our versions under control, with each release of NEST having its own documentation.
 
 .. image:: _static/img/documentation_workflow.png
   :width: 300

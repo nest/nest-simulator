@@ -5,7 +5,7 @@ Welcome to the NEST simulator documentation!
 :orange:`Introducing NEST 3.0!`
 -------------------------------
 
-Our aim with NEST 3.0 is to provide a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
+NEST 3.0 provides a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
 
 
 - We have provided an :doc:`overview of NEST 3.0 <guides/nest2_to_nest3/nest2_to_nest3_overview>`, including examples of the new functionality.

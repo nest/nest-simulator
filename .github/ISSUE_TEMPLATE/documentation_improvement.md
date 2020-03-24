@@ -11,7 +11,7 @@ assignees: ''
 A clear description of what the error or weakness in the documentation is.
 
 **Suggest an improvement**
-A clear description of what you want to change or add.
+A clear description of what you want to change or add to the documentation.
 
 **Supporting materials**
 If applicable, add links or screenshots to help explain the flaw.

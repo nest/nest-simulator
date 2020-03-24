@@ -16,4 +16,5 @@ A clear description of what you want to change or add.
 **Supporting materials**
 If applicable, add links or screenshots to help explain the flaw.
 
-
+**Additional context**
+Add any other context about the documentation flaw here.

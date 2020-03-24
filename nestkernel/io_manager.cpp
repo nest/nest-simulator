@@ -160,11 +160,20 @@ IOManager::finalize()
   {
     it.second->finalize();
   }
+  for ( const auto& it : input_backends_ )
+  {
+    it.second->finalize();
+  }
 }
 
 void IOManager::change_num_threads( thread )
 {
   for ( const auto& it : recording_backends_ )
+  {
+    it.second->finalize();
+    it.second->initialize();
+  }
+  for ( const auto& it : input_backends_ )
   {
     it.second->finalize();
     it.second->initialize();

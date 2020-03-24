@@ -272,12 +272,6 @@ nest::DistributionError::message() const
 }
 
 std::string
-nest::SubnetExpected::message() const
-{
-  return std::string();
-}
-
-std::string
 nest::SimulationError::message() const
 {
   return std::string(

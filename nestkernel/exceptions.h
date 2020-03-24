@@ -673,25 +673,6 @@ public:
  * is given to a function
  * @ingroup KernelExceptions
  */
-class SubnetExpected : public KernelException
-{
-public:
-  SubnetExpected()
-    : KernelException( "SubnetExpected" )
-  {
-  }
-  ~SubnetExpected() throw()
-  {
-  }
-
-  std::string message() const;
-};
-
-/**
- * Exception to be thrown if the wrong argument type
- * is given to a function
- * @ingroup KernelExceptions
- */
 class SimulationError : public KernelException
 {
 public:

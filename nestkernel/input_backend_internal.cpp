@@ -72,13 +72,14 @@ nest::InputBackendInternal::prepare()
 void
 nest::InputBackendInternal::cleanup()
 {
+  // nothing to do
 }
 
 
 void
 nest::InputBackendInternal::finalize()
 {
-  printf( "Closing\n\n" );
+  // nothing to do
 }
 
 void

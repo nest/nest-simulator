@@ -10,5 +10,5 @@ assignees: ''
 **Describe the flaw**
 A clear description of what the error or weakness in the documentation is.
 
-**Describe the improvement you'd like**
+**Suggest an improvement**
 A clear description of what you want to change or add.

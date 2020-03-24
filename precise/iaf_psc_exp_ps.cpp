@@ -501,7 +501,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin, const long lag, const dou
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_method_( dt ) );
 
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
@@ -537,36 +537,76 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin, const long lag, c
 }
 
 double
-nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
+nest::iaf_psc_exp_ps::V_m_root_function_( double t_step ) const
 {
-  double root = 0.0;
+  const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
-  double y2_root = V_.y2_before_;
+  const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, t_step );
+  const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, t_step );
 
-  double div = 2.0;
+  double y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_ + P21_in * V_.y1_in_before_
+    + V_.y2_before_ * std::exp( -t_step / P_.tau_m_ );
 
-  while ( fabs( P_.U_th_ - y2_root ) > 1e-14 )
+  return y2_root - P_.U_th_;
+}
+
+double
+nest::iaf_psc_exp_ps::regula_falsi_method_( const double dt ) const
+{
+  double root;
+  double V_m_root;
+
+  int side = 0;
+
+  double a_k = 0.0;
+  double b_k = dt;
+
+  double V_m_func_a_k = V_m_root_function_( a_k );
+  double V_m_func_b_k = V_m_root_function_( b_k );
+
+  assert( V_m_func_a_k * V_m_func_b_k <= 0 );
+
+  int max_iter = 500;
+
+  for ( int iter = 0; iter < max_iter; ++iter )
   {
-    if ( y2_root > P_.U_th_ )
+    root = ( a_k * V_m_func_b_k - b_k * V_m_func_a_k ) / ( V_m_func_b_k - V_m_func_a_k );
+    V_m_root = V_m_root_function_( root );
+
+    if ( std::abs( V_m_root ) <= 1e-14 )
     {
-      root -= dt / div;
+      break;
+    }
+
+    if ( V_m_func_a_k * V_m_root > 0.0 )
+    {
+      // V_m_func_a_k and V_m_root have the same sign
+      a_k = root;
+      V_m_func_a_k = V_m_root;
+
+      if ( side == 1 )
+      {
+        V_m_func_b_k /= 2;
+      }
+      side = 1;
+    }
+    else if ( V_m_func_b_k * V_m_root > 0.0 )
+    {
+      // V_m_func_b_k and V_m root have the same sign
+      b_k = root;
+      V_m_func_b_k = V_m_root;
+
+      if ( side == -1 )
+      {
+        V_m_func_a_k /= 2;
+      }
+      side = -1;
     }
     else
     {
-      root += dt / div;
+      throw NumericalInstability( "iaf_psc_exp_ps: Regula falsi method did not converge" );
     }
-
-    div *= 2.0;
-
-    const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
-
-    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-
-    const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, root );
-    const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, root );
-
-    y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_ + P21_in * V_.y1_in_before_
-      + expm1_tau_m * V_.y2_before_ + V_.y2_before_;
   }
   return root;
 }
+

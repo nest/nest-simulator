@@ -200,9 +200,9 @@ class StructralPlasticityExample:
         })
 
     def create_nodes(self):
-
-####################################################################################
-# Now we assign the growth curves to the corresponding synaptic elements
+        """
+        Assign growth curves to synaptic elements
+        """
 
         synaptic_elements = {
             'Den_ex': self.growth_curve_e_e,

@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2605422.svg)](https://doi.org/10.5281/zenodo.2605422)
-[![Latest Version](https://img.shields.io/badge/latest%20version-2.18.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.18.0)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605514.svg)](https://doi.org/10.5281/zenodo.3605514)
+[![Latest Version](https://img.shields.io/badge/latest%20version-2.20.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.20.0)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 
 NEST is a simulator for spiking neural network models that focuses on the
@@ -113,6 +113,10 @@ you received in the NEST sources.
 
 Please cite NEST if you use it in your work.
 
+If you use NEST 2.20.0, please cite it as **Fardet, Tanguy et al. (2020)
+NEST 2.20.0. Zenodo. 10.5281/zenodo.3605514**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.3605514).
+
 If you use NEST 2.18.0, please cite it as **Jordan, Jakob et al. (2019)
 NEST 2.18.0. Zenodo. 10.5281/zenodo.2605422**. The full citation is available
 in different formats on [Zenodo](https://doi.org/10.5281/zenodo.2605422).
@@ -159,17 +163,3 @@ Here is a suitable BibTeX entry:
 Please get in touch with us about your publications that used NEST, we will add
 them to our [publication list](https://www.nest-simulator.org/publications), thus
 making them visible to potential readers.
-
-## Editor support
-
-A simple syntax file for VIM users has been provided. Copy it to your vim
-configuration folder to make it available to VIM:
-```
-    $ cp ${prefix}/share/nest/extras/EditorSupport/vim/syntax/sli.vim ~/.vim/syntax/sli.vim
-```
-Then add the following lines to your `~/.vimrc` file to use it:
-```
-    " sli
-    au BufRead,BufNewFile *.sli set filetype=sli
-    au FileType sli setl foldenable foldmethod=syntax
-```

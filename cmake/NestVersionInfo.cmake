@@ -27,7 +27,7 @@
 #  NEST_VERSION_STRING, the full NEST version string
 #
 # In release branches, the string "UNKNOWN" below has to be replaced
-# with the proper version (e.g. "nest-2.18") in order to get the
+# with the proper version (e.g. "nest-2.20") in order to get the
 # correct version number if building from tarballs.
 
 

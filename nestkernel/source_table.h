@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "mpi_manager.h"
 #include "nest_types.h"
+#include "per_thread_bool_indicator.h"
 #include "source.h"
 #include "source_table_position.h"
 
@@ -70,7 +71,7 @@ private:
   /**
    * Whether the 3D structure has been deleted.
    */
-  std::vector< bool > is_cleared_;
+  PerThreadBoolIndicator is_cleared_;
 
   //! Needed during readout of sources_.
   std::vector< SourceTablePosition > current_positions_;
@@ -83,7 +84,7 @@ private:
    * the next communication round, while filling up (possible)
    * remaining parts of the MPI buffer.
    */
-  std::vector< bool > saved_entry_point_;
+  PerThreadBoolIndicator saved_entry_point_;
 
   /**
    * Minimal number of sources that need to be deleted per synapse
@@ -93,6 +94,34 @@ private:
    * @see SourceTable::clean()
    */
   static const size_t min_deleted_elements_ = 1000000;
+
+
+  /**
+   * Returns whether this Source object should be considered when
+   * constructing MPI buffers for communicating connections. Returns
+   * false if i) this entry was already processed, or ii) this entry
+   * is disabled (e.g., by structural plastcity) or iii) the reading
+   * thread is not responsible for the particular part of the MPI
+   * buffer where this entry would be written.
+   */
+  bool source_should_be_processed_( const thread rank_start, const thread rank_end, const Source& source ) const;
+
+  /**
+   * Returns true if the following entry in the SourceTable has the
+   * same source gid.
+   */
+  bool next_entry_has_same_source_( const SourceTablePosition& current_position, const Source& current_source ) const;
+
+  /**
+   * Returns true if the previous entry in the SourceTable has the
+   * same source gid.
+   */
+  bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
+    const Source& current_source ) const;
+
+  void populate_target_data_fields_( const SourceTablePosition& current_position,
+    const Source& current_source,
+    TargetData& next_target_data ) const;
 
 public:
   SourceTable();
@@ -262,7 +291,7 @@ SourceTable::clear( const thread tid )
     it->clear();
   }
   sources_[ tid ].clear();
-  is_cleared_[ tid ] = true;
+  is_cleared_[ tid ].set_true();
 }
 
 inline void
@@ -282,7 +311,7 @@ SourceTable::reject_last_target_data( const thread tid )
 inline void
 SourceTable::save_entry_point( const thread tid )
 {
-  if ( not saved_entry_point_[ tid ] )
+  if ( saved_entry_point_[ tid ].is_false() )
   {
     saved_positions_[ tid ].tid = current_positions_[ tid ].tid;
     saved_positions_[ tid ].syn_id = current_positions_[ tid ].syn_id;
@@ -302,7 +331,7 @@ SourceTable::save_entry_point( const thread tid )
       assert( current_positions_[ tid ].lcid == -1 );
       saved_positions_[ tid ].lcid = -1;
     }
-    saved_entry_point_[ tid ] = true;
+    saved_entry_point_[ tid ].set_true();
   }
 }
 
@@ -310,7 +339,7 @@ inline void
 SourceTable::restore_entry_point( const thread tid )
 {
   current_positions_[ tid ] = saved_positions_[ tid ];
-  saved_entry_point_[ tid ] = false;
+  saved_entry_point_[ tid ].set_false();
 }
 
 inline void

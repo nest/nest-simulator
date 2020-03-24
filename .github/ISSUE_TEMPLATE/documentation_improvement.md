@@ -1,6 +1,6 @@
 ---
 name: Documentation improvement
-about: Help us improve the documentation
+about: Request a documentation update
 title: ''
 labels: ''
 assignees: ''

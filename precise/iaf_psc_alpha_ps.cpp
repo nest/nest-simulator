@@ -360,7 +360,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
       {
         // If we do not use V_.expm1_tau_m_*S_.V_m_ + S_.V_m_ here, the accuracy is a bit worse.
         S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
-                  + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_  + S_.V_m_;
+          + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;
 
         // lower bound of membrane potential
         S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
@@ -585,8 +585,9 @@ nest::iaf_psc_alpha_ps::V_m_root_function_( double t_step ) const
   const double ps_P31_in = propagator_31( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, t_step );
   const double ps_P32_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, t_step );
 
-  double V_m_root = ps_P30 * ( P_.I_e_ + V_.y_input_before_ ) + ps_P31_ex * V_.dI_ex_before_ + ps_P32_ex * V_.I_ex_before_ + ps_P31_in * V_.dI_in_before_
-    + ps_P32_in * V_.I_in_before_ + V_.V_m_before_ * std::exp( -t_step / P_.tau_m_ );
+  double V_m_root = ps_P30 * ( P_.I_e_ + V_.y_input_before_ ) + ps_P31_ex * V_.dI_ex_before_
+    + ps_P32_ex * V_.I_ex_before_ + ps_P31_in * V_.dI_in_before_ + ps_P32_in * V_.I_in_before_
+    + V_.V_m_before_ * std::exp( -t_step / P_.tau_m_ );
 
   return V_m_root - P_.U_th_;
 }
@@ -645,9 +646,8 @@ nest::iaf_psc_alpha_ps::regula_falsi_method_( const double dt ) const
     }
     else
     {
-      break;
+      throw NumericalInstability( "iaf_psc_alpha_ps: Regula falsi method did not converge" );
     }
   }
   return root;
 }
-

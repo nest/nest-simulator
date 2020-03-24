@@ -259,7 +259,7 @@ private:
    * @param   double time step
    * @returns difference between updated membrane potential and threshold
    */
-  double V_m_root_function_ ( double t_step ) const;
+  double V_m_root_function_( double t_step ) const;
 
   /**
    * Localize threshold crossing by using Illinois algorithm of regula falsi method.
@@ -381,24 +381,24 @@ private:
    */
   struct Variables_
   {
-    double h_ms_;             //!< time resolution in ms
-    double psc_norm_ex_;      //!< e / tau_syn_ex
-    double psc_norm_in_;      //!< e / tau_syn_in
-    long refractory_steps_;   //!< refractory time in steps
-    double expm1_tau_m_;      //!< exp(-h/tau_m) - 1
-    double exp_tau_syn_ex_;   //!< exp(-h/tau_syn_ex)
-    double exp_tau_syn_in_;   //!< exp(-h/tau_syn_in)
-    double P30_;              //!< progagator matrix elem, 3rd row
-    double P31_ex_;           //!< progagator matrix elem, 3rd row (ex)
-    double P32_ex_;           //!< progagator matrix elem, 3rd row (ex)
-    double P31_in_;           //!< progagator matrix elem, 3rd row (in)
-    double P32_in_;           //!< progagator matrix elem, 3rd row (in)
-    double y_input_before_;   //!< at beginning of mini-step, for interpolation
-    double I_ex_before_;      //!< at beginning of mini-step, for interpolation
-    double I_in_before_;      //!< at beginning of mini-step, for interpolation
-    double dI_ex_before_;      //!< at beginning of mini-step, for interpolation
-    double dI_in_before_;      //!< at beginning of mini-step, for interpolation
-    double V_m_before_;       //!< at beginning of mini-step, for interpolation
+    double h_ms_;           //!< time resolution in ms
+    double psc_norm_ex_;    //!< e / tau_syn_ex
+    double psc_norm_in_;    //!< e / tau_syn_in
+    long refractory_steps_; //!< refractory time in steps
+    double expm1_tau_m_;    //!< exp(-h/tau_m) - 1
+    double exp_tau_syn_ex_; //!< exp(-h/tau_syn_ex)
+    double exp_tau_syn_in_; //!< exp(-h/tau_syn_in)
+    double P30_;            //!< progagator matrix elem, 3rd row
+    double P31_ex_;         //!< progagator matrix elem, 3rd row (ex)
+    double P32_ex_;         //!< progagator matrix elem, 3rd row (ex)
+    double P31_in_;         //!< progagator matrix elem, 3rd row (in)
+    double P32_in_;         //!< progagator matrix elem, 3rd row (in)
+    double y_input_before_; //!< at beginning of mini-step, for interpolation
+    double I_ex_before_;    //!< at beginning of mini-step, for interpolation
+    double I_in_before_;    //!< at beginning of mini-step, for interpolation
+    double dI_ex_before_;   //!< at beginning of mini-step, for interpolation
+    double dI_in_before_;   //!< at beginning of mini-step, for interpolation
+    double V_m_before_;     //!< at beginning of mini-step, for interpolation
   };
 
   // Access functions for UniversalDataLogger -------------------------------

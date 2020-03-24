@@ -280,8 +280,9 @@ nest::iaf_psc_alpha_ps::calibrate()
 
   // pre-compute matrix for full time step
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
-  V_.expm1_tau_syn_ex_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_ex_ );
-  V_.expm1_tau_syn_in_ = numerics::expm1( -V_.h_ms_ / P_.tau_syn_in_ );
+  V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );
+  V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ / P_.tau_syn_in_ );
+
   V_.P30_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   // these are determined according to a numeric stability criterion
   V_.P31_ex_ = propagator_31( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
@@ -363,19 +364,20 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
+        // If we do not use V_.expm1_tau_m_*S_.V_m_ + S_.V_m_ here, the accuracy is a bit worse.
         S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
-          + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;
+                  + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_  + S_.V_m_;
 
         // lower bound of membrane potential
         S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
       }
 
       // update synaptic currents
-      S_.I_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * V_.h_ms_ * S_.dI_ex_ + ( V_.expm1_tau_syn_ex_ + 1. ) * S_.I_ex_;
-      S_.dI_ex_ = ( V_.expm1_tau_syn_ex_ + 1. ) * S_.dI_ex_;
+      S_.I_ex_ = V_.exp_tau_syn_ex_ * V_.h_ms_ * S_.dI_ex_ + V_.exp_tau_syn_ex_ * S_.I_ex_;
+      S_.dI_ex_ = V_.exp_tau_syn_ex_ * S_.dI_ex_;
 
-      S_.I_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * V_.h_ms_ * S_.dI_in_ + ( V_.expm1_tau_syn_in_ + 1. ) * S_.I_in_;
-      S_.dI_in_ = ( V_.expm1_tau_syn_in_ + 1. ) * S_.dI_in_;
+      S_.I_in_ = V_.exp_tau_syn_in_ * V_.h_ms_ * S_.dI_in_ + V_.exp_tau_syn_in_ * S_.I_in_;
+      S_.dI_in_ = V_.exp_tau_syn_in_ * S_.dI_in_;
 
       /* The following must not be moved before the y1_, dI_ex_ update,
          since the spike-time interpolation within emit_spike_ depends
@@ -505,36 +507,32 @@ void
 nest::iaf_psc_alpha_ps::propagate_( const double dt )
 {
   // needed in any case
-  const double ps_e_TauSyn_ex = numerics::expm1( -dt / P_.tau_syn_ex_ );
-  const double ps_e_TauSyn_in = numerics::expm1( -dt / P_.tau_syn_in_ );
+  const double ps_e_TauSyn_ex = std::exp( -dt / P_.tau_syn_ex_ );
+  const double ps_e_TauSyn_in = std::exp( -dt / P_.tau_syn_in_ );
 
   // V_m_ remains unchanged at 0.0 while neuron is refractory
   if ( not S_.is_refractory_ )
   {
-    const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
-    const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
+    const double ps_P30 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
 
-    const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau - V_.gamma_sq_ex_ * ps_e_TauSyn_ex
-      - dt * V_.gamma_ex_ * ps_e_TauSyn_ex - dt * V_.gamma_ex_;
-    const double ps_P32_ex = V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
-
-    const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau - V_.gamma_sq_in_ * ps_e_TauSyn_in
-      - dt * V_.gamma_in_ * ps_e_TauSyn_in - dt * V_.gamma_in_;
-    const double ps_P32_in = V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
+    const double ps_P31_ex = propagator_31( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, dt );
+    const double ps_P32_ex = propagator_32( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, dt );
+    const double ps_P31_in = propagator_31( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, dt );
+    const double ps_P32_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, dt );
 
     S_.V_m_ = ps_P30 * ( P_.I_e_ + S_.y_input_ ) + ps_P31_ex * S_.dI_ex_ + ps_P32_ex * S_.I_ex_ + ps_P31_in * S_.dI_in_
-      + ps_P32_in * S_.I_in_ + ps_e_Tau * S_.V_m_ + S_.V_m_;
+      + ps_P32_in * S_.I_in_ + S_.V_m_ * std::exp( -dt / P_.tau_m_ );
 
     // lower bound of membrane potential
     S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
   }
 
   // now the synaptic components
-  S_.I_ex_ = ( ps_e_TauSyn_ex + 1. ) * dt * S_.dI_ex_ + ( ps_e_TauSyn_ex + 1. ) * S_.I_ex_;
-  S_.dI_ex_ = ( ps_e_TauSyn_ex + 1. ) * S_.dI_ex_;
+  S_.I_ex_ = ps_e_TauSyn_ex * dt * S_.dI_ex_ + ps_e_TauSyn_ex * S_.I_ex_;
+  S_.dI_ex_ = ps_e_TauSyn_ex * S_.dI_ex_;
 
-  S_.I_in_ = ( ps_e_TauSyn_in + 1. ) * dt * S_.dI_in_ + ( ps_e_TauSyn_in + 1. ) * S_.I_in_;
-  S_.dI_in_ = ( ps_e_TauSyn_in + 1. ) * S_.dI_in_;
+  S_.I_in_ = ps_e_TauSyn_in * dt * S_.dI_in_ + ps_e_TauSyn_in * S_.I_in_;
+  S_.dI_in_ = ps_e_TauSyn_in * S_.dI_in_;
 }
 
 void
@@ -586,22 +584,15 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 double
 nest::iaf_psc_alpha_ps::V_m_root_function_( double t_step ) const
 {
-  const double ps_e_TauSyn_ex = numerics::expm1( -t_step / P_.tau_syn_ex_ );
-  const double ps_e_TauSyn_in = numerics::expm1( -t_step / P_.tau_syn_in_ );
+  const double ps_P30 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
-  const double ps_e_Tau = numerics::expm1( -t_step / P_.tau_m_ );
-  const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
-
-  const double ps_P31_ex = V_.gamma_sq_ex_ * ps_e_Tau - V_.gamma_sq_ex_ * ps_e_TauSyn_ex
-    - t_step * V_.gamma_ex_ * ps_e_TauSyn_ex - t_step * V_.gamma_ex_;
-  const double ps_P32_ex = V_.gamma_ex_ * ps_e_Tau - V_.gamma_ex_ * ps_e_TauSyn_ex;
-
-  const double ps_P31_in = V_.gamma_sq_in_ * ps_e_Tau - V_.gamma_sq_in_ * ps_e_TauSyn_in
-    - t_step * V_.gamma_in_ * ps_e_TauSyn_in - t_step * V_.gamma_in_;
-  const double ps_P32_in = V_.gamma_in_ * ps_e_Tau - V_.gamma_in_ * ps_e_TauSyn_in;
+  const double ps_P31_ex = propagator_31( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, t_step );
+  const double ps_P32_ex = propagator_32( P_.tau_syn_ex_, P_.tau_m_, P_.c_m_, t_step );
+  const double ps_P31_in = propagator_31( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, t_step );
+  const double ps_P32_in = propagator_32( P_.tau_syn_in_, P_.tau_m_, P_.c_m_, t_step );
 
   double V_m_root = ps_P30 * ( P_.I_e_ + V_.y_input_before_ ) + ps_P31_ex * V_.dI_ex_before_ + ps_P32_ex * V_.I_ex_before_ + ps_P31_in * V_.dI_in_before_
-    + ps_P32_in * V_.I_in_before_ + ps_e_Tau * V_.V_m_before_ + V_.V_m_before_;
+    + ps_P32_in * V_.I_in_before_ + V_.V_m_before_ * std::exp( -t_step / P_.tau_m_ );
 
   return V_m_root - P_.U_th_;
 }

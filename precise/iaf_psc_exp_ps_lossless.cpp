@@ -532,7 +532,8 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
     const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, dt );
     const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, dt );
 
-    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
+    S_.y2_ =
+      P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
   }
 
   S_.I_syn_ex_ = S_.I_syn_ex_ * exp_tau_ex;

@@ -22,7 +22,7 @@ If applicable, please complete the following information:
  - Browser: [e.g. Chrome, Firefox]
  - Shell: [e.g. bash, zsh]
  - NEST version: [e.g. NEST 2.20]
- - Installation: [e.g. Conda package, apt, with/out MPI, ...]
+ - Installation: [e.g. Conda package, apt, with/without MPI]
 
 **Additional context**
 Add any other context about the documentation flaw here.

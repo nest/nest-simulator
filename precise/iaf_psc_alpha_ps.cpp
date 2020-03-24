@@ -272,12 +272,6 @@ nest::iaf_psc_alpha_ps::calibrate()
   V_.psc_norm_ex_ = 1.0 * numerics::e / P_.tau_syn_ex_;
   V_.psc_norm_in_ = 1.0 * numerics::e / P_.tau_syn_in_;
 
-  V_.gamma_ex_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_ex_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_ex_ - 1 / P_.tau_m_ ) );
-
-  V_.gamma_in_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_in_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_in_ - 1 / P_.tau_m_ ) );
-
   // pre-compute matrix for full time step
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );

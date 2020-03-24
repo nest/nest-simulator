@@ -471,9 +471,6 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
   // propagate_() shall not be called then; see #368.
   assert( dt > 0 );
 
-  const double exp_tau_ex = std::exp( -dt / P_.tau_ex_ );
-  const double exp_tau_in = std::exp( -dt / P_.tau_in_ );
-
   if ( not S_.is_refractory_ )
   {
     const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
@@ -484,6 +481,10 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
     S_.y2_ =
       P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_ + P21_in * S_.y1_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
   }
+
+  const double exp_tau_ex = std::exp( -dt / P_.tau_ex_ );
+  const double exp_tau_in = std::exp( -dt / P_.tau_in_ );
+
   S_.y1_ex_ = S_.y1_ex_ * exp_tau_ex;
   S_.y1_in_ = S_.y1_in_ * exp_tau_in;
 }

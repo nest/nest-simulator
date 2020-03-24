@@ -500,10 +500,6 @@ nest::iaf_psc_alpha_ps::handle( DataLoggingRequest& e )
 void
 nest::iaf_psc_alpha_ps::propagate_( const double dt )
 {
-  // needed in any case
-  const double ps_e_TauSyn_ex = std::exp( -dt / P_.tau_syn_ex_ );
-  const double ps_e_TauSyn_in = std::exp( -dt / P_.tau_syn_in_ );
-
   // V_m_ remains unchanged at 0.0 while neuron is refractory
   if ( not S_.is_refractory_ )
   {
@@ -520,6 +516,9 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
     // lower bound of membrane potential
     S_.V_m_ = ( S_.V_m_ < P_.U_min_ ? P_.U_min_ : S_.V_m_ );
   }
+
+  const double ps_e_TauSyn_ex = std::exp( -dt / P_.tau_syn_ex_ );
+  const double ps_e_TauSyn_in = std::exp( -dt / P_.tau_syn_in_ );
 
   // now the synaptic components
   S_.I_ex_ = ps_e_TauSyn_ex * dt * S_.dI_ex_ + ps_e_TauSyn_ex * S_.I_ex_;

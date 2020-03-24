@@ -7,5 +7,5 @@ assignees: ''
 
 ---
 
-**Describe the flaw **
+**Describe the flaw**
 A clear description of what the error or weakness in the documentation is.

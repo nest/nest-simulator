@@ -229,18 +229,26 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
                              "be specified and contain at least the synapse model.")
         weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
-        receptor_type = (numpy.array(processed_syn_spec['receptor_type'])
-                         if 'receptor_type' in processed_syn_spec else None)
         try:
             synapse_model = processed_syn_spec['synapse_model']
         except KeyError:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "contain a synapse model.")
-        # Check that syn_spec only contains allowed keys
-        if len(set(processed_syn_spec.keys()) - set(['weight', 'delay', 'synapse_model', 'receptor_type'])) != 0:
-            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary can "
-                             "only contain weights, delays, synapse model, and r_port.")
-        connect_arrays(pre, post, weights, delays, receptor_type, synapse_model)
+        # Split remaining syn_spec entries to key and value arrays
+        reduced_processed_syn_spec = {k: processed_syn_spec[k]
+                                      for k in set(processed_syn_spec.keys()).difference(
+                                          set(('weight', 'delay', 'synapse_model')))}
+        if len(reduced_processed_syn_spec) > 0:
+            syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
+            syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
+            for i, item in enumerate(reduced_processed_syn_spec.items()):
+                key, value = item
+                syn_param_values[i] = value
+        else:
+            syn_param_keys = None
+            syn_param_values = None
+
+        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
         return
 
     sps(pre)

@@ -385,10 +385,6 @@ private:
     double psc_norm_ex_;      //!< e / tau_syn_ex
     double psc_norm_in_;      //!< e / tau_syn_in
     long refractory_steps_;   //!< refractory time in steps
-    double gamma_ex_;         //!< 1/c_m * 1/(1/tau_syn_ex - 1/tau_m)
-    double gamma_sq_ex_;      //!< 1/c_m * 1/(1/tau_syn_ex - 1/tau_m)^2
-    double gamma_in_;         //!< 1/c_m * 1/(1/tau_syn_in - 1/tau_m)
-    double gamma_sq_in_;      //!< 1/c_m * 1/(1/tau_syn_in - 1/tau_m)^2
     double expm1_tau_m_;      //!< exp(-h/tau_m) - 1
     double exp_tau_syn_ex_;   //!< exp(-h/tau_syn_ex)
     double exp_tau_syn_in_;   //!< exp(-h/tau_syn_in)

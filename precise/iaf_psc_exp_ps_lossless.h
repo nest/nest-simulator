@@ -343,9 +343,9 @@ private:
   {
     double h_ms_;            //!< Time resolution [ms]
     long refractory_steps_;  //!< Refractory time in steps
-    double expm1_tau_m_;     //!< exp(-h/tau_m) - 1
-    double expm1_tau_ex_;    //!< exp(-h/tau_ex) - 1
-    double expm1_tau_in_;    //!< exp(-h/tau_in) - 1
+    double exp_tau_m_;       //!< exp(-h/tau_m)
+    double exp_tau_ex_;      //!< exp(-h/tau_ex)
+    double exp_tau_in_;      //!< exp(-h/tau_in)
     double P20_;             //!< Progagator matrix element, 2nd row
     double P21_in_;          //!< Progagator matrix element, 2nd row
     double P21_ex_;          //!< Progagator matrix element, 2nd row
@@ -353,8 +353,6 @@ private:
     double I_syn_ex_before_; //!< I_syn_ex_ at beginning of ministep
     double I_syn_in_before_; //!< I_syn_in_ at beginning of ministep
     double y2_before_;       //!< y2_ at beginning of ministep
-    double bisection_step_;  //!< if missed spike is detected,
-                             //!< calculate time to emit spike
 
     /**
      * Pre-computed constants for inequality V < g(h, I_e)

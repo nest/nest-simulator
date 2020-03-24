@@ -284,12 +284,14 @@ nest::iaf_psc_exp_ps_lossless::calibrate()
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
-  V_.expm1_tau_ex_ = numerics::expm1( -V_.h_ms_ / P_.tau_ex_ );
-  V_.expm1_tau_in_ = numerics::expm1( -V_.h_ms_ / P_.tau_in_ );
-  V_.P20_ = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
-  V_.P21_ex_ = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_ * ( V_.expm1_tau_ex_ - V_.expm1_tau_m_ );
-  V_.P21_in_ = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_ * ( V_.expm1_tau_in_ - V_.expm1_tau_m_ );
+  V_.exp_tau_m_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
+  V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
+  V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
+
+  V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.P21_ex_ = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+  V_.P21_in_ = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_steps_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
@@ -370,15 +372,15 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       if ( not S_.is_refractory_ )
       {
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.I_syn_ex_ + V_.P21_in_ * S_.I_syn_in_
-          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
+          + S_.y2_ * V_.exp_tau_m_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );
       }
 
       // update synaptic currents
-      S_.I_syn_ex_ = S_.I_syn_ex_ * V_.expm1_tau_ex_ + S_.I_syn_ex_;
-      S_.I_syn_in_ = S_.I_syn_in_ * V_.expm1_tau_in_ + S_.I_syn_in_;
+      S_.I_syn_ex_ = S_.I_syn_ex_ * V_.exp_tau_ex_;
+      S_.I_syn_in_ = S_.I_syn_in_ * V_.exp_tau_in_;
 
       /* The following must not be moved before the y1_, y2_ update,
          since the spike-time interpolation within emit_spike_ depends
@@ -517,24 +519,21 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
   // propagate_() shall not be called then; see #368.
   assert( dt > 0 );
 
-  const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
-  const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
+  const double exp_tau_ex = std::exp( -dt / P_.tau_ex_ );
+  const double exp_tau_in = std::exp( -dt / P_.tau_in_ );
 
   if ( not S_.is_refractory_ )
   {
-    const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
+    const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
 
-    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double P21_ex =
-      -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double P21_in =
-      -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
+    const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, dt );
+    const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, dt );
 
-    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + expm1_tau_m * S_.y2_ + S_.y2_;
+    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
   }
 
-  S_.I_syn_ex_ = S_.I_syn_ex_ * expm1_tau_ex + S_.I_syn_ex_;
-  S_.I_syn_in_ = S_.I_syn_in_ * expm1_tau_in + S_.I_syn_in_;
+  S_.I_syn_ex_ = S_.I_syn_ex_ * exp_tau_ex;
+  S_.I_syn_in_ = S_.I_syn_in_ * exp_tau_in;
 }
 
 void

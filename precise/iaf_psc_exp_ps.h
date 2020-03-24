@@ -351,9 +351,9 @@ private:
   {
     double h_ms_;           //!< Time resolution [ms]
     long refractory_steps_; //!< Refractory time in steps
-    double expm1_tau_m_;    //!< exp(-h/tau_m) - 1
-    double expm1_tau_ex_;   //!< exp(-h/tau_ex) - 1
-    double expm1_tau_in_;   //!< exp(-h/tau_in) - 1
+    double exp_tau_m_;      //!< exp(-h/tau_m)
+    double exp_tau_ex_;     //!< exp(-h/tau_ex)
+    double exp_tau_in_;     //!< exp(-h/tau_in)
     double P20_;            //!< Progagator matrix element, 2nd row
     double P21_in_;         //!< Progagator matrix element, 2nd row
     double P21_ex_;         //!< Progagator matrix element, 2nd row

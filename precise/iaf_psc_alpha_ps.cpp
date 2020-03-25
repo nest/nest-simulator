@@ -535,7 +535,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_method_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_( dt ) );
 
   assert( S_.last_spike_offset_ >= 0.0 );
 
@@ -575,7 +575,7 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 }
 
 double
-nest::iaf_psc_alpha_ps::V_m_root_function_( double t_step ) const
+nest::iaf_psc_alpha_ps::threshold_distance_( double t_step ) const
 {
   const double ps_P30 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
@@ -592,56 +592,65 @@ nest::iaf_psc_alpha_ps::V_m_root_function_( double t_step ) const
 }
 
 double
-nest::iaf_psc_alpha_ps::regula_falsi_method_( const double dt ) const
+nest::iaf_psc_alpha_ps::regula_falsi_( const double dt ) const
 {
   double root;
-  double V_m_root;
+  double threshold_dist_root;
 
-  int side = 0;
+  int last_threshold_sign = 0;
 
   double a_k = 0.0;
   double b_k = dt;
 
-  double V_m_func_a_k = V_m_root_function_( a_k );
-  double V_m_func_b_k = V_m_root_function_( b_k );
+  double threshold_dist_a_k = threshold_distance_( a_k );
+  double threshold_dist_b_k = threshold_distance_( b_k );
 
-  assert( V_m_func_a_k * V_m_func_b_k <= 0 );
-
-  int max_iter = 500;
-
-  for ( int iter = 0; iter < max_iter; ++iter )
+  if( threshold_dist_a_k * threshold_dist_b_k > 0 )
   {
-    root = ( a_k * V_m_func_b_k - b_k * V_m_func_a_k ) / ( V_m_func_b_k - V_m_func_a_k );
-    V_m_root = V_m_root_function_( root );
+    throw NumericalInstability( "iaf_psc_alpha_ps: time step too short to reach threshold." );
+  }
 
-    if ( std::abs( V_m_root ) <= 1e-14 )
+  const int MAX_ITER = 500;
+  const double TERMINATION_CRITERION = 1e-14;
+
+  for ( int iter = 0; iter < MAX_ITER; ++iter )
+  {
+    assert( threshold_dist_b_k != threshold_dist_a_k );
+
+    root = ( a_k * threshold_dist_b_k - b_k * threshold_dist_a_k ) / ( threshold_dist_b_k - threshold_dist_a_k );
+    threshold_dist_root = threshold_distance_( root );
+
+    if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
     {
       break;
     }
 
-    if ( V_m_func_a_k * V_m_root > 0.0 )
+    if ( threshold_dist_a_k * threshold_dist_root > 0.0 )
     {
-      // V_m_func_a_k and V_m_root have the same sign
+      // threshold_dist_a_k and threshold_dist_root have the same sign
       a_k = root;
-      V_m_func_a_k = V_m_root;
+      threshold_dist_a_k = threshold_dist_root;
 
-      if ( side == 1 )
+      if ( last_threshold_sign == 1 )
       {
-        V_m_func_b_k /= 2;
+        // If threshold_dist_a_k and threshold_dist_root had the same sign in the last time step, we half the value of
+        // threshold_distance_(b_k) to force the root in the next time step to occur on b_k's side. This is done to
+        // improve the convergence rate.
+        threshold_dist_b_k /= 2;
       }
-      side = 1;
+      last_threshold_sign = 1;
     }
-    else if ( V_m_func_b_k * V_m_root > 0.0 )
+    else if ( threshold_dist_b_k * threshold_dist_root > 0.0 )
     {
-      // V_m_func_b_k and V_m root have the same sign
+      // threshold_dist_b_k and threshold_dist_root have the same sign
       b_k = root;
-      V_m_func_b_k = V_m_root;
+      threshold_dist_b_k = threshold_dist_root;
 
-      if ( side == -1 )
+      if ( last_threshold_sign == -1 )
       {
-        V_m_func_a_k /= 2;
+        threshold_dist_a_k /= 2;
       }
-      side = -1;
+      last_threshold_sign = -1;
     }
     else
     {

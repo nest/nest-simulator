@@ -259,14 +259,17 @@ private:
    * @param   double time step
    * @returns difference between updated membrane potential and threshold
    */
-  double V_m_root_function_( double t_step ) const;
+  double threshold_distance_( double t_step ) const;
 
   /**
    * Localize threshold crossing by using Illinois algorithm of regula falsi method.
+   *
+   * See https://en.wikipedia.org/wiki/Regula_falsi#The_Illinois_algorithm for details on the algorithm.
+   *
    * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
-  double regula_falsi_method_( const double dt ) const;
+  double regula_falsi_( const double dt ) const;
 
 
   // The next two classes need to be friends to access the State_ class/member

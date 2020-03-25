@@ -151,4 +151,4 @@ index via the command line
  Please note that the command helpdesk does not work if you have compiled
  NEST with MPI support, but you have to enter the address of the helpdesk
  (``file:///</path/to/nest_install_dir>/share/doc/nest/index.html``) manually into the browser.
- Please replace ``/install/path`` with the path under which NEST is installed.
+ Replace ``/install/path`` with the path under which NEST is installed.

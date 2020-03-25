@@ -647,7 +647,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: Create - create a number of equal nodes in the current subnet
+   Name: Create - create nodes
 
    Synopsis:
    /model          Create -> node_ids

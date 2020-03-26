@@ -63,7 +63,7 @@ Editing and creating pages
 
 1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
 
-2. If you create a new page, open ``index.rst`` in the ``doc`` directory and add the file name under ``.. toctree::``. This will ensure it appears on the NEST simulator documentation's table of contents.
+2. If you create a new page, open ``contents.rst`` in the ``doc`` directory and add the file name under ``.. toctree::``. This will ensure it appears on the NEST simulator documentation's table of contents.
 
 3. If you rename or move a file, please make sure you update all the corresponding cross-references.
 

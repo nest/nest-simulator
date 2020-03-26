@@ -21,7 +21,7 @@
 
 """
 Current-based generalized leaky integrate and fire (GLIF) neuron example
---------------------------------
+------------------------------------------------------------------------
 
 Simple example of how to use the ``glif_psc`` neuron model for
 five different levels of GLIF neurons.

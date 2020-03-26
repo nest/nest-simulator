@@ -280,7 +280,8 @@ cdef class NESTEngine(object):
             else:
                 raise TypeError('array must be a NumPyArray of ints or bools, got {}'.format(array.dtype))
         except RuntimeError as e:
-            raise NESTErrors.PyNESTERROR(str(e))
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls('take_array_index', '') from None
 
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:

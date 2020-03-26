@@ -229,6 +229,8 @@ class NodeCollection(object):
             # Checking that elements are not instances of bool too, because bool inherits from int
             elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
+                if len(numpy.unique(np_key)) != len(np_key):
+                    raise ValueError('All node IDs in a NodeCollection have to be unique')
             else:
                 raise TypeError('Indices must be integers or bools')
             return take_array_index(self._datum, np_key)
@@ -242,6 +244,8 @@ class NodeCollection(object):
                 raise TypeError('NumPy indices must be an array of integers or bools')
             if is_booltype and len(key) != len(self):
                 raise IndexError('Bool index array must be the same length as NodeCollection')
+            if not is_booltype and len(numpy.unique(key)) != len(key):
+                raise ValueError('All node IDs in a NodeCollection have to be unique')
             return take_array_index(self._datum, key)
         else:
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')

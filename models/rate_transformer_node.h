@@ -55,8 +55,8 @@ Description:
 
 Base class for rate transformer model of the form
 @f[
-  X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) 
-               
+  X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+
 @f]
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean

@@ -46,7 +46,6 @@ PyNEST Examples
    :maxdepth: 1
    :caption: Random balanced network examples
 
-   ../auto_examples/brunel_alpha_numpy
    ../auto_examples/brunel_alpha_nest
    ../auto_examples/brunel_delta_nest
    ../auto_examples/brunel_siegert_nest
@@ -76,7 +75,6 @@ PyNEST Examples
    :caption: Connection set algebra examples
 
    ../auto_examples/csa_example
-   ../auto_examples/csa_topology_example
 
 .. toctree::
    :maxdepth: 1

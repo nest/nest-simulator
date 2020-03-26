@@ -333,6 +333,17 @@ class TestNodeCollection(unittest.TestCase):
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
 
+    def test_raises_with_nonunique_nodes(self):
+        """Non-unique nodes in NodeCollection raises error"""
+        n = nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            n[1:3] + n[2:5]
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2, 2])
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
+
     def test_composite_NodeCollection(self):
         """Tests composite NodeCollection with patched node IDs"""
 
@@ -618,6 +629,7 @@ class TestNodeCollection(unittest.TestCase):
         fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection
                       ([2, 5.5], TypeError),  # Not all indices are ints
                       ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
+                      ([2, 2], ValueError),  # Non-unique elements
                       ]
         if HAVE_NUMPY:
             cases += [np.array(c) for c in cases]
@@ -642,13 +654,15 @@ class TestNodeCollection(unittest.TestCase):
                  ]
         fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
                       ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
+                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
                       ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
                       ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
-                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
                       ]
         if HAVE_NUMPY:
             cases += [np.array(c) for c in cases]
-            fail_cases += [(np.array(c), e) for c, e in fail_cases]
+            # Cutting off fail_cases before cases that mix bools and ints,
+            # because converting them to NumPy arrays converts bools to ints.
+            fail_cases += [(np.array(c), e) for c, e in fail_cases[:-2]]
         for case in cases:
             print(type(case), case)
             ref = [i for i, b in zip(range(1, 11), case) if b]

@@ -461,7 +461,7 @@ plt.title('Layer Rp')
 
 ##############################################################################
 # Synapse models
-# =-------------
+# --------------
 #
 # Actual synapse dynamics, e.g., properties such as the synaptic time
 # course, time constants, reversal potentials, are properties of

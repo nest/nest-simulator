@@ -16,7 +16,6 @@ Table of Contents
    tutorials/index
    models/index
    examples/index
-   topology/index
    guides/index
    getting_help
    ref_material/nest2_vs_3

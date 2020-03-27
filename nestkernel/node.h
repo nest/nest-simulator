@@ -860,7 +860,14 @@ public:
     assert( false );
     return 0;
   }
-
+  
+  /**
+   * Difference between threshold and membrane potential for given time step.
+   * @param   double time step
+   * @returns difference between updated membrane potential and threshold
+   */
+  virtual double threshold_distance( double t_step ) const;
+  
 private:
   void set_lid_( index );          //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* );     //!< Set pointer to parent subnet.

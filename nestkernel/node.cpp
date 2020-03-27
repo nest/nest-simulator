@@ -476,4 +476,10 @@ Node::is_subnet() const
   return false;
 }
 
+double
+Node::threshold_distance( double t_step ) const
+{
+  throw InternalError();
+}
+
 } // namespace

@@ -7,6 +7,9 @@ What you need to know
 For **developer documentation**, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
+Instructions
+++++++++++++
+
 After installing NEST, you can extract comments from the source code with
 ``make doc`` and a doxygen folder with html files will be generated in the doc
 folder in your source directory.

@@ -27,11 +27,18 @@ Make sure you have already created your ``build`` and ``install`` directories. Y
 
    cd </path/to/nest-build>
 
-3. Generate HTML.
+3. Generate HTML:
 
 .. code-block::
 
    make html
+
+4. Preview documentation:
+
+.. code-block::
+
+   cd doc/doxygen/html
+   browser filename.html
 
 Helpdesk
 ++++++++

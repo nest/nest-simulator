@@ -8,10 +8,10 @@ For developer documentation, we use `Doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
 After installing NEST, you can extract comments from the source code with
-``make doc``, and a ``doxygen`` folder with HTML files will be generated in the ``doc`` folder in your source directory.
+``make doc``. A ``doxygen`` folder with HTML files will be generated in the ``doc`` folder in your source directory.
 
 .. note::
-   This workflow shows you how to create developer documentation for NEST. For user documentation, please refer to our :doc:`User documentation workflow <developer_documentation_workflow>`.
+   This workflow shows you how to create developer documentation for NEST. For user documentation, please refer to our :doc:`User documentation workflow <user_documentation_workflow>`.
 
 
 Instructions

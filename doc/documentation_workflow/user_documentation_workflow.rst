@@ -128,4 +128,4 @@ When you feel your documentation work is finished, you can create a pull request
 Developer documentation
 +++++++++++++++++++++++
 
-.
+This guide workflow shows you how to create user documentation for NEST. For developer documentation, please check out the workflow here.

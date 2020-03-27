@@ -255,10 +255,10 @@ these instructions.**
 
    linux_install
    mac_install
-   conda_install
    hpc_install
    livemedia
    install_options
+   oldvers_install
 
 
 .. note::

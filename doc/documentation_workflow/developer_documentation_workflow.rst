@@ -4,7 +4,7 @@ Developer documentation workflow
 What you need to know
 +++++++++++++++++++++
 
-For **developer documentation**, we use `doxygen <http://doxygen.org/>`__
+For developer documentation, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
 Instructions

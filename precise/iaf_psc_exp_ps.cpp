@@ -502,7 +502,7 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin, const long lag, const dou
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( this, &nest::Node::threshold_distance, dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( this, dt ) );
 
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;

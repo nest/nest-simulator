@@ -30,16 +30,16 @@ namespace nest
 /**
  * Localize threshold crossing by using Illinois algorithm of regula falsi method.
  *
- * See https://en.wikipedia.org/wiki/Regula_falsi#The_Illinois_algorithm for details on the algorithm.
+ * See https://en.wikipedia.org/wiki/Regula_falsi#The_Illinois_algorithm for
+ * details on the algorithm.
  *
  * @param   Node   model object that call function
- * @param   function threshold_distance function
  * @param   double length of interval since previous event
  * @returns time from previous event to threshold crossing
  */
 template < typename CN >
 double
-regula_falsi( CN* node, double ( Node::*threshold_distance )( double ) const, const double dt )
+regula_falsi( CN* node, const double dt )
 {
   double root;
   double threshold_dist_root;
@@ -49,8 +49,8 @@ regula_falsi( CN* node, double ( Node::*threshold_distance )( double ) const, co
   double a_k = 0.0;
   double b_k = dt;
 
-  double threshold_dist_a_k = ( node->*threshold_distance )( a_k );
-  double threshold_dist_b_k = ( node->*threshold_distance )( b_k );
+  double threshold_dist_a_k = node->threshold_distance( a_k );
+  double threshold_dist_b_k = node->threshold_distance( b_k );
 
   if ( threshold_dist_a_k * threshold_dist_b_k > 0 )
   {
@@ -65,7 +65,7 @@ regula_falsi( CN* node, double ( Node::*threshold_distance )( double ) const, co
     assert( threshold_dist_b_k != threshold_dist_a_k );
 
     root = ( a_k * threshold_dist_b_k - b_k * threshold_dist_a_k ) / ( threshold_dist_b_k - threshold_dist_a_k );
-    threshold_dist_root = ( node->*threshold_distance )( root );
+    threshold_dist_root = node->threshold_distance( root );
 
     if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
     {
@@ -80,9 +80,10 @@ regula_falsi( CN* node, double ( Node::*threshold_distance )( double ) const, co
 
       if ( last_threshold_sign == 1 )
       {
-        // If threshold_dist_a_k and threshold_dist_root had the same sign in the last time step, we half the value of
-        // threshold_distance_(b_k) to force the root in the next time step to occur on b_k's side. This is done to
-        // improve the convergence rate.
+        // If threshold_dist_a_k and threshold_dist_root had the same sign in
+        // the last time step, we half the value of threshold_distance_(b_k) to
+        // force the root in the next time step to occur on b_k's side. This is
+        // done to improve the convergence rate.
         threshold_dist_b_k /= 2;
       }
       last_threshold_sign = 1;

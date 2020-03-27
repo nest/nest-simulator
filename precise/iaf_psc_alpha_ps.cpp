@@ -28,6 +28,7 @@
 // Includes from libnestutil:
 #include "numerics.h"
 #include "propagator_stability.h"
+#include "regula_falsi.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -535,7 +536,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( this, &nest::Node::threshold_distance, dt ) );
 
   assert( S_.last_spike_offset_ >= 0.0 );
 
@@ -575,7 +576,7 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 }
 
 double
-nest::iaf_psc_alpha_ps::threshold_distance_( double t_step ) const
+nest::iaf_psc_alpha_ps::threshold_distance( double t_step ) const
 {
   const double ps_P30 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
@@ -589,73 +590,4 @@ nest::iaf_psc_alpha_ps::threshold_distance_( double t_step ) const
     + V_.V_m_before_ * std::exp( -t_step / P_.tau_m_ );
 
   return V_m_root - P_.U_th_;
-}
-
-double
-nest::iaf_psc_alpha_ps::regula_falsi_( const double dt ) const
-{
-  double root;
-  double threshold_dist_root;
-
-  int last_threshold_sign = 0;
-
-  double a_k = 0.0;
-  double b_k = dt;
-
-  double threshold_dist_a_k = threshold_distance_( a_k );
-  double threshold_dist_b_k = threshold_distance_( b_k );
-
-  if( threshold_dist_a_k * threshold_dist_b_k > 0 )
-  {
-    throw NumericalInstability( "iaf_psc_alpha_ps: time step too short to reach threshold." );
-  }
-
-  const int MAX_ITER = 500;
-  const double TERMINATION_CRITERION = 1e-14;
-
-  for ( int iter = 0; iter < MAX_ITER; ++iter )
-  {
-    assert( threshold_dist_b_k != threshold_dist_a_k );
-
-    root = ( a_k * threshold_dist_b_k - b_k * threshold_dist_a_k ) / ( threshold_dist_b_k - threshold_dist_a_k );
-    threshold_dist_root = threshold_distance_( root );
-
-    if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
-    {
-      break;
-    }
-
-    if ( threshold_dist_a_k * threshold_dist_root > 0.0 )
-    {
-      // threshold_dist_a_k and threshold_dist_root have the same sign
-      a_k = root;
-      threshold_dist_a_k = threshold_dist_root;
-
-      if ( last_threshold_sign == 1 )
-      {
-        // If threshold_dist_a_k and threshold_dist_root had the same sign in the last time step, we half the value of
-        // threshold_distance_(b_k) to force the root in the next time step to occur on b_k's side. This is done to
-        // improve the convergence rate.
-        threshold_dist_b_k /= 2;
-      }
-      last_threshold_sign = 1;
-    }
-    else if ( threshold_dist_b_k * threshold_dist_root > 0.0 )
-    {
-      // threshold_dist_b_k and threshold_dist_root have the same sign
-      b_k = root;
-      threshold_dist_b_k = threshold_dist_root;
-
-      if ( last_threshold_sign == -1 )
-      {
-        threshold_dist_a_k /= 2;
-      }
-      last_threshold_sign = -1;
-    }
-    else
-    {
-      throw NumericalInstability( "iaf_psc_alpha_ps: Regula falsi method did not converge" );
-    }
-  }
-  return root;
 }

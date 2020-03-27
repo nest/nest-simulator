@@ -464,4 +464,10 @@ Node::event_hook( DSCurrentEvent& e )
   e.get_receiver().handle( e );
 }
 
+double
+Node::threshold_distance( double t_step ) const
+{
+  throw InternalError();
+}
+
 } // namespace

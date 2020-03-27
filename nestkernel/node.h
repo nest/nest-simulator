@@ -831,6 +831,13 @@ public:
   virtual index get_local_device_id() const;
 
   /**
+   * Difference between threshold and membrane potential for given time step.
+   * @param   double time step
+   * @returns difference between updated membrane potential and threshold
+   */
+  virtual double threshold_distance( double t_step ) const;
+
+  /**
    * Member of DeprecationWarning class to be used by models if parameters are
    * deprecated.
    */

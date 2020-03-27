@@ -1,5 +1,5 @@
 Developer documentation workflow
-+++++++++++++++++++++++
+################################
 
 For **developer documentation**, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.

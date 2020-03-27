@@ -4,7 +4,7 @@ Developer documentation workflow
 What you need to know
 +++++++++++++++++++++
 
-For developer documentation, we use `doxygen <http://doxygen.org/>`__
+For developer documentation, we use `Doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
 After installing NEST, you can extract comments from the source code with
@@ -15,7 +15,7 @@ Instructions
 
 Make sure you have already :doc:`installed NEST <../installation/index>` and created your ``build`` and ``install`` directories. Your ``CMake`` version needs to be up-to-date.
 
-1. Install doxygen:
+1. Install Doxygen:
 
 .. code-block::
 

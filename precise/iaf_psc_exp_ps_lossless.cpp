@@ -32,6 +32,7 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "propagator_stability.h"
+#include "regula_falsi.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -551,7 +552,7 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, 
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi_method_( dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( this, &nest::Node::threshold_distance, dt ) );
 
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
@@ -587,7 +588,7 @@ nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const lo
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::V_m_root_function_( double t_step ) const
+nest::iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
 {
   const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
@@ -598,66 +599,6 @@ nest::iaf_psc_exp_ps_lossless::V_m_root_function_( double t_step ) const
     + V_.y2_before_ * std::exp( -t_step / P_.tau_m_ );
 
   return y2_root - P_.U_th_;
-}
-
-double
-nest::iaf_psc_exp_ps_lossless::regula_falsi_method_( const double dt ) const
-{
-  double root;
-  double V_m_root;
-
-  int side = 0;
-
-  double a_k = 0.0;
-  double b_k = dt;
-
-  double V_m_func_a_k = V_m_root_function_( a_k );
-  double V_m_func_b_k = V_m_root_function_( b_k );
-
-  assert( V_m_func_a_k * V_m_func_b_k <= 0 );
-
-  int max_iter = 500;
-
-  for ( int iter = 0; iter < max_iter; ++iter )
-  {
-    root = ( a_k * V_m_func_b_k - b_k * V_m_func_a_k ) / ( V_m_func_b_k - V_m_func_a_k );
-    V_m_root = V_m_root_function_( root );
-
-    if ( std::abs( V_m_root ) <= 1e-14 )
-    {
-      break;
-    }
-
-    if ( V_m_func_a_k * V_m_root > 0.0 )
-    {
-      // V_m_func_a_k and V_m_root have the same sign
-      a_k = root;
-      V_m_func_a_k = V_m_root;
-
-      if ( side == 1 )
-      {
-        V_m_func_b_k /= 2;
-      }
-      side = 1;
-    }
-    else if ( V_m_func_b_k * V_m_root > 0.0 )
-    {
-      // V_m_func_b_k and V_m root have the same sign
-      b_k = root;
-      V_m_func_b_k = V_m_root;
-
-      if ( side == -1 )
-      {
-        V_m_func_a_k /= 2;
-      }
-      side = -1;
-    }
-    else
-    {
-      throw NumericalInstability( "iaf_psc_exp_ps_lossless: Regula falsi method did not converge" );
-    }
-  }
-  return root;
 }
 
 double

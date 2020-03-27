@@ -37,9 +37,6 @@ import pip
 
 import subprocess
 
-# import shlex
-# import recommonmark
-
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 from mock import Mock as MagicMock

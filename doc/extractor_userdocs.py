@@ -311,13 +311,13 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
     Writes extracted information to JSON files in outdir. In particular the
     list of seen tags mapped to files they appear in, and the indices generated
     from all combinations of tags.
-    
+
     Parameters are the same as for `UserDocExtractor` and are handed to it
     unmodified.
 
     Returns
     -------
-    
+
     None
     """
     data = JsonWriter(outdir)

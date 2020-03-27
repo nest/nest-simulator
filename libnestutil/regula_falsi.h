@@ -23,9 +23,6 @@
 #ifndef REGULA_FALSI_H
 #define REGULA_FALSI_H
 
-// Includes from nestkernel:
-#include "archiving_node.h"
-
 
 namespace nest
 {
@@ -40,8 +37,9 @@ namespace nest
  * @param   double length of interval since previous event
  * @returns time from previous event to threshold crossing
  */
+template < typename CN >
 double
-regula_falsi( Node* node, double( Node::*threshold_distance )( double ) const, const double dt )
+regula_falsi( CN* node, double ( Node::*threshold_distance )( double ) const, const double dt )
 {
   double root;
   double threshold_dist_root;
@@ -51,12 +49,12 @@ regula_falsi( Node* node, double( Node::*threshold_distance )( double ) const, c
   double a_k = 0.0;
   double b_k = dt;
 
-  double threshold_dist_a_k = (node->*threshold_distance)( a_k );
-  double threshold_dist_b_k = (node->*threshold_distance)( b_k );
+  double threshold_dist_a_k = ( node->*threshold_distance )( a_k );
+  double threshold_dist_b_k = ( node->*threshold_distance )( b_k );
 
-  if( threshold_dist_a_k * threshold_dist_b_k > 0 )
+  if ( threshold_dist_a_k * threshold_dist_b_k > 0 )
   {
-    throw NumericalInstability( "iaf_psc_alpha_ps: time step too short to reach threshold." );
+    throw NumericalInstability( "regula_falsi: time step too short to reach threshold." );
   }
 
   const int MAX_ITER = 500;
@@ -67,7 +65,7 @@ regula_falsi( Node* node, double( Node::*threshold_distance )( double ) const, c
     assert( threshold_dist_b_k != threshold_dist_a_k );
 
     root = ( a_k * threshold_dist_b_k - b_k * threshold_dist_a_k ) / ( threshold_dist_b_k - threshold_dist_a_k );
-    threshold_dist_root = (node->*threshold_distance)( root );
+    threshold_dist_root = ( node->*threshold_distance )( root );
 
     if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
     {
@@ -103,7 +101,7 @@ regula_falsi( Node* node, double( Node::*threshold_distance )( double ) const, c
     }
     else
     {
-      throw NumericalInstability( "iaf_psc_alpha_ps: Regula falsi method did not converge" );
+      throw NumericalInstability( "regula_falsi: Regula falsi method did not converge" );
     }
   }
   return root;
@@ -111,4 +109,4 @@ regula_falsi( Node* node, double( Node::*threshold_distance )( double ) const, c
 
 } // namespace nest
 
-#endif
+#endif // REGULA_FALSI_H

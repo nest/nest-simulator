@@ -165,6 +165,13 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  /**
+   * Difference between threshold and membrane potential for given time step.
+   * @param   double time step
+   * @returns difference between updated membrane potential and threshold
+   */
+  double threshold_distance( double t_step ) const;
+
 private:
   /** @name Interface functions
    * @note These functions are private, so that they can be accessed
@@ -228,20 +235,6 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
-
-  /**
-   * Difference between threshold and membrane potential for given time step.
-   * @param   double time step
-   * @returns difference between updated membrane potential and threshold
-   */
-  double V_m_root_function_( double t_step ) const;
-
-  /**
-   * Localize threshold crossing by using Illinois algorithm of regula falsi method.
-   * @param   double length of interval since previous event
-   * @returns time from previous event to threshold crossing
-   */
-  double regula_falsi_method_( const double dt ) const;
 
   // ----------------------------------------------------------------
 

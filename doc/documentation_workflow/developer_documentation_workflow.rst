@@ -19,10 +19,13 @@ index via the command line
 
 .. note::
 
- The command ``helpdesk()`` needs to know which browser to launch in order to display
- the help pages. The browser is set as an option of helpdesk. Please see the file
- ``~/.nestrc`` for an example, which sets Firefox as browser.
- Please note that the command helpdesk does not work if you have compiled
- NEST with MPI support, but you have to enter the address of the helpdesk
- (``file:///</path/to/nest_install_dir>/share/doc/nest/index.html``) manually into the browser.
- Replace ``/install/path`` with the path under which NEST is installed.
+    The command ``helpdesk()`` needs to know which browser to launch in order to display
+    the help pages. The browser is set as an option of helpdesk. Please see the file
+    ``~/.nestrc`` for an example, which sets Firefox as browser.
+
+.. note::
+
+    Please note that the command helpdesk does not work if you have compiled
+    NEST with MPI support, but you have to enter the address of the helpdesk
+    (``file:///</path/to/nest_install_dir>/share/doc/nest/index.html``) manually into the browser.
+    Replace ``/install/path`` with the path under which NEST is installed.

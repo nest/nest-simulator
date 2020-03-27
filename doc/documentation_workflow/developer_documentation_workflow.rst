@@ -7,11 +7,11 @@ What you need to know
 For developer documentation, we use `doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
 
-Instructions
-++++++++++++
-
 After :doc:`installing NEST <../installation/index>`, you can extract comments from the source code with
 ``make doc`` and a doxygen folder with html files will be generated in the ``doc`` folder in your source directory.
+
+Instructions
+++++++++++++
 
 Make sure you have already created your ``build`` and ``install`` directories. Your ``CMake`` version needs to be up-to-date.
 

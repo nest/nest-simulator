@@ -16,7 +16,7 @@ We work with `GitHub <https://www.github.com>`_ as the web-based hosting service
 
 
 .. note::
-   This guide workflow shows you how to create user documentation for NEST. For developer documentation, please check out the workflow here.
+   This workflow shows you how to create user documentation for NEST. For developer documentation, please check out the workflow here.
 
 Changing the documentation
 ++++++++++++++++++++++++++

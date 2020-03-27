@@ -33,6 +33,9 @@ Make sure you have already created your ``build`` and ``install`` directories. Y
 
    make html
 
+Helpdesk
+++++++++
+
 For a list of commands for SLI and C++, you can access the the online command
 index via the command line
 

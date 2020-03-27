@@ -25,11 +25,10 @@ Here you can find details on a variety of topics in NEST.
     using_nest_with_music
 
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Model Details
+Model Details
+-------------
 
-   aeif_models_implementation
-   HillTononiModels
-   IAF_neurons_singularity
-   noise_generator
+* :download:`aeif_models_implementation.ipynb <aeif_models_implementation.ipynb>`
+* :download:`HillTononiModels.ipynb <HillTononiModels.ipynb>`
+* :download:`IAF_neurons_singularity.ipynb <IAF_neurons_singularity.ipynb>`
+* :download:`noise_generator.ipynb <noise_generator.ipynb>`

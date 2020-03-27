@@ -73,16 +73,16 @@ def UserDocExtractor(
     Parameters
     ----------
 
-    filenames
+    filenames : iterable
        Any iterable with input file names (relative to `basedir`).
 
-    basedir
+    basedir : str, path
        Directory to which input `filenames` are relative.
 
-    replace_ext
+    replace_ext : str
        Replacement for the extension of the original filename when writing to `outdir`.
 
-    outdir
+    outdir : str, path
        Directory where output files are created.
 
     Returns
@@ -138,10 +138,10 @@ def make_hierarchy(tags, *basetags):
 
     Parameters
     ----------
-    tags
+    tags : dict
        flat dictionary of tag to entry
 
-    basetags
+    basetags : iterable
        iterable of a subset of tags.keys(), if no basetags are given the
        original tags list is returned unmodified.
 
@@ -179,10 +179,10 @@ def rst_index(hierarchy, underlines='=-~'):
 
     Parameters
     ----------
-    hierarchy
-       any dict or dict-of-dict returned from `make_hierarchy()`
+    hierarchy : dict
+       dictionary or dict-of-dict returned from `make_hierarchy()`
 
-    underlines
+    underlines : iterable
        list of characters to use for underlining deeper levels of the generated
        index.
 
@@ -229,8 +229,8 @@ def reverse_dict(tags):
     Parameters
     ----------
 
-    tags
-       dictionary. Values must be hashable to be used as keys for the result.
+    tags : dict
+       Values must be hashable to be used as keys for the result.
 
     Returns
     -------
@@ -253,10 +253,10 @@ def CreateTagIndices(tags, outdir="from_cpp/"):
     Parameters
     ----------
 
-    tags
+    tags : dict
        dictionary of tags
 
-    outdir
+    outdir : str, path
        path to the intended output directory (handed to `rst_index`.
 
     Returns
@@ -311,9 +311,13 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
     Writes extracted information to JSON files in outdir. In particular the
     list of seen tags mapped to files they appear in, and the indices generated
     from all combinations of tags.
+    
+    Parameters are the same as for `UserDocExtractor` and are handed to it
+    unmodified.
 
     Returns
     -------
+    
     None
     """
     data = JsonWriter(outdir)

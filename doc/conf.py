@@ -45,7 +45,6 @@ from recommonmark.transform import AutoStructify
 from mock import Mock as MagicMock
 
 from subprocess import check_output, CalledProcessError
-from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 

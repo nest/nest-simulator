@@ -31,7 +31,7 @@ Make sure you have already created your ``build`` and ``install`` directories. Y
 
 .. code-block::
 
-   make html
+   make doc
 
 4. Preview documentation:
 

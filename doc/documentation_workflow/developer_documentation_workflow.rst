@@ -10,9 +10,29 @@ comments extensively throughout NEST.
 Instructions
 ++++++++++++
 
-After installing NEST, you can extract comments from the source code with
+After :doc:`installing NEST <../installation/index.rst>`, you can extract comments from the source code with
 ``make doc`` and a doxygen folder with html files will be generated in the doc
 folder in your source directory.
+
+Make sure you have already created your ``build`` and ``install`` directories. Your ``CMake`` version needs to be up-to-date.
+
+1. Install doxygen:
+
+.. code-block::
+
+   sudo apt install doxygen
+
+2. Go to your build directory:
+
+.. code-block::
+
+   cd </path/to/nest-build>
+
+3. Generate HTML.
+
+.. code-block::
+
+   make html
 
 For a list of commands for SLI and C++, you can access the the online command
 index via the command line

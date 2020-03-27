@@ -28,7 +28,7 @@ Table of Contents
 
    community
    contribute/index
-   documentation_workflow
+   documentation_workflow/user_documentation_workflow
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
    NEST-Initiative <https://www.nest-initiative.org/>

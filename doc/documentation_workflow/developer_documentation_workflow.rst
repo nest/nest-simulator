@@ -10,7 +10,7 @@ comments extensively throughout NEST.
 Instructions
 ++++++++++++
 
-After :doc:`installing NEST <../installation/index.rst>`, you can extract comments from the source code with
+After :doc:`installing NEST <../installation/index>`, you can extract comments from the source code with
 ``make doc`` and a doxygen folder with html files will be generated in the ``doc`` folder in your source directory.
 
 Make sure you have already created your ``build`` and ``install`` directories. Your ``CMake`` version needs to be up-to-date.

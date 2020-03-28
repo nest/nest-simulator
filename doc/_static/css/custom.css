@@ -14,10 +14,6 @@ p {
     max-width: 950px;
 }
 
-.wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
-    content: url(../../_static/img/nest_logo.png);
-}
-
 .wy-side-nav-search {
     background: linear-gradient(45deg, #fff, #eee);
     color: #888;
@@ -304,3 +300,4 @@ html body div.wy-table-responsive .footnote td {
       padding: .4045em 5.663em !important;
   }
 } */
+

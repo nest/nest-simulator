@@ -19,11 +19,20 @@ Instructions
 
 Make sure you have already :doc:`installed NEST <../installation/index>` and created your ``build`` and ``install`` directories. Your ``CMake`` version needs to be up-to-date.
 
-1. Install Doxygen:
+1. Install Doxygen.
+
+If you are a Linux user, type:
+
+.. code-block::
+   :name: Linux
+
+   sudo apt install doxygen
+
+For macOS, please use `Homebrew <https://brew.sh/>`_:
 
 .. code-block::
 
-   sudo apt install doxygen
+   brew install doxygen
 
 2. Go to your build directory:
 

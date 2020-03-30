@@ -1,5 +1,5 @@
-Documentation workflow
-######################
+User documentation workflow
+###########################
 
 What you need to know
 +++++++++++++++++++++

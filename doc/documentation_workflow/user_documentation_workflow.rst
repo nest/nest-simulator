@@ -44,8 +44,8 @@ If you are using Linux and want to install a full development environment:
 
 .. code-block:: bash
 
-   conda env create -f nest_doc_conda_env.yml
    conda update -n base -c defaults conda
+   conda env create -f nest_doc_conda_env.yml
    conda activate nest-doc
 
 4. If you want to deactivate or delete the build environment:

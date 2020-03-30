@@ -46,9 +46,10 @@ In the previous sections, we saw that we can create deterministic or
 randomly selected connections between networks using ``Connect()``. Likewise, it is
 also possible to use ``Create()`` and ``Connect()`` to create network
 models that incorporate spatial location and spatial connectivity
-profiles. **NOTE:** Full documentation for usage of the spatial functions
-is present in our :doc:`../../guides/guide_structurally_spatial_networks` [1]_,
-which in the following is referenced as full-source.
+profiles.
+
+.. note::
+   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/spatial/guide_spatially_structured_networks` [1]_.
 
 Adding spatial information to populations
 -----------------------------------------
@@ -365,7 +366,7 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See Section 4.2 *Visualization functions* of :doc:`<../../guides/guide_structurally_spatial_networks>`
+   See the *Visualization functions* section in our :doc:`../../guides/spatial/guide_spatially_structured_networks`
    for more details.
 
 It may also be useful to look at the ``.spatial`` property of the

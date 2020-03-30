@@ -51,7 +51,7 @@ NodeManager::NodeManager()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
   , num_active_nodes_( 0 )
-  , num_local_devices_( 0 )
+  , num_thread_local_devices_()
   , have_nodes_changed_( true )
   , exceptions_raised_() // cannot call kernel(), not complete yet
 {
@@ -69,9 +69,8 @@ NodeManager::initialize()
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
-
-  num_local_devices_ = 0;
 }
 
 void
@@ -238,8 +237,8 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
       for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
       {
-        // keep track of number of local devices
-        ++num_local_devices_;
+        // keep track of number of thread local devices
+        ++num_thread_local_devices_[ t ];
 
         Node* node = model.allocate( t );
         node->set_node_id_( node_id );
@@ -247,7 +246,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
-        node->set_local_device_id( num_local_devices_ - 1 );
+        node->set_local_device_id( num_thread_local_devices_[ t ] - 1 );
         node->set_initialized();
 
         local_nodes_[ t ].add_local_node( *node );
@@ -275,8 +274,8 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
       {
         for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
         {
-          // keep track of number of local devices
-          ++num_local_devices_;
+          // keep track of number of thread local devices
+          ++num_thread_local_devices_[ t ];
 
           Node* node = model.allocate( 0 );
           node->set_node_id_( node_id );
@@ -284,7 +283,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-          node->set_local_device_id( num_local_devices_ - 1 );
+          node->set_local_device_id( num_thread_local_devices_[ t ] - 1 );
           node->set_initialized();
 
           local_nodes_[ 0 ].add_local_node( *node );
@@ -416,9 +415,9 @@ NodeManager::get_max_num_local_nodes() const
 }
 
 index
-NodeManager::get_num_local_devices() const
+NodeManager::get_num_thread_local_devices( thread t ) const
 {
-  return num_local_devices_;
+  return num_thread_local_devices_[ t ];
 }
 
 Node*

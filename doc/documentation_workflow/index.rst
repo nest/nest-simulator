@@ -1,7 +1,7 @@
 Workflows
 =========
 
-Here you can choose which workflow you would like to view.
+Here you can choose which documentation workflow you would like to view.
 
 .. toctree::
     :maxdepth: 1

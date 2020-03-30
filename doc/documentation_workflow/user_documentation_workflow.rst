@@ -4,7 +4,7 @@ User documentation workflow
 What you need to know
 +++++++++++++++++++++
 
-We use `Sphinx <https://www.sphinx-doc.org/en/master/>`_ to generate documentation and `Read the Docs <https://readthedocs.org/>`_ to publish it.
+We use `Sphinx <https://www.sphinx-doc.org/en/master/>`_ to generate documentation and `Read the Docs <https://readthedocs.org/>`_ to publish it. Sphinx uses reStructuredText. To learn more about the syntax, check out this `quick reference <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
 The NEST simulator documentation lives alongside its code. It is contained in the ``doc`` directory within the `NEST source code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
@@ -59,8 +59,6 @@ Generating documentation with Sphinx
 ++++++++++++++++++++++++++++++++++++
 
 Now that you activated your environment, you can generate HTML files using Sphinx.
-
-Sphinx uses reStructuredText. To learn more on how to use it, check out this `quick reference <https://docutils.sourceforge.io/docs/user/rst/quickref.html>`_.
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1015,7 +1015,8 @@ nest::SimulationManager::print_progress_()
     // ms
     double t_real_acc = ( t_real_ ) / 1000.;
     double t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
-    rt_factor = t_sim_acc / t_real_acc;
+    // realtime factor = wallclock time / biological time simulated
+    rt_factor = t_real_acc / t_sim_acc;
   }
 
   int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );

@@ -30,6 +30,7 @@ from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
 
 import numpy
+import json
 
 try:
     import pandas
@@ -38,11 +39,13 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    'SynapseCollection',
     'CreateParameter',
-    'NodeCollection',
     'Mask',
+    'NodeCollection',
     'Parameter',
+    'serializable',
+    'SynapseCollection',
+    'to_json',
 ]
 
 
@@ -880,3 +883,52 @@ class Parameter(object):
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+
+
+def serializable(data):
+    """Make data serializable for JSON.
+
+    Parameters
+    ----------
+    data : any
+
+    Returns
+    -------
+    data_serialized : str, int, float, list, dict
+        Data can be encoded to JSON
+    """
+
+    if isinstance(data, (numpy.ndarray, NodeCollection)):
+        # Convert Numpy array or NodeCollection to list
+        data_serialized = data.tolist()
+    elif isinstance(data, SynapseCollection):
+        # Get dictionary from SynapseCollection
+        data_serialized = serializable(data.get())
+    elif isinstance(data, kernel.SLILiteral):
+        # Convert any SLILiteral to string.
+        data_serialized = data.name
+    elif isinstance(data, (list, tuple)):
+        data_serialized = [serializable(d) for d in data]
+    elif isinstance(data, dict):
+        data_serialized = dict([(key, serializable(value)) for key, value in data.items()])
+    else:
+        data_serialized = data
+    return data_serialized
+
+
+def to_json(data):
+    """Serialize data to JSON.
+
+    Parameters
+    ----------
+    data : any
+
+    Returns
+    -------
+    data_json : str
+        JSON format of the data
+    """
+
+    data_serialized = serializable(data)
+    data_json = json.dumps(data_serialized)
+    return data_json

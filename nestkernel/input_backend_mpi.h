@@ -33,6 +33,27 @@
 #include <unistd.h>
 #include <mpi.h>
 
+/* BeginDocumentation
+
+Read data from MPI
+##################
+
+When a input device is update at the beginning of each run, the 'mpi' backend
+communicate to get the update.
+
+Communication Protocol:
++++++++++++++++++++++++
+
+To get the information for update the device, the MPI send the ID and the id
+of the thread (2,MPI.INT). Next, the process will wait the size of the array
+(1,MPI.INT). The massage will arrive with all the information for update the
+device (size,MPI.DOUBLE). The device will be update this internal parameter
+with this information.
+
+@author Lionel Kusch and Sandra Diaz
+@ingroup NESTio
+
+EndDocumentation */
 
 namespace nest
 {
@@ -45,13 +66,13 @@ class InputBackendMPI : public InputBackend
 public:
   /**
    * InputBackend constructor
-   * The actual initialization is happening in RecordingBackend::initialize()
+   * The actual initialization is happening in InputBackend::initialize()
    */
   InputBackendMPI() = default;
 
   /**
    * InputBackend destructor
-   * The actual finalization is happening in RecordingBackend::finalize()
+   * The actual finalization is happening in InputBackend::finalize()
    */
   ~InputBackendMPI() noexcept = default;
 

@@ -31,6 +31,25 @@
 #include <unistd.h>
 #include <mpi.h>
 
+/* BeginDocumentation
+
+Send data with MPI
+##################
+
+When a recording device sends data to the ``mpi`` backend, it send the
+event through mpi. The event are send with the id and the time step.
+
+Communication Protocol:
++++++++++++++++++++++++
+Each time the backend receive and `event`, it send send it(2,MPI.INT).
+The `event` is compose of time and the id of the neurons.
+
+@author Lionel Kusch and Sandra Diaz
+@ingroup NESTio
+
+EndDocumentation */
+
+
 namespace nest
 {
 

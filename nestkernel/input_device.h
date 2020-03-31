@@ -44,7 +44,22 @@
 
 namespace nest
 {
-
+/**
+ * Base class for all input devices with backend.
+ *
+ * Input devices stimulate neurons. The stimulation can be defined
+ * by a external backend at the begging of the run step. There can be only one
+ * input backend selected by setting the device property
+ * `imput_from` to the name of the backend (internal or mpi).
+ *
+ * Class InputDevice is merely a shallow interface class from
+ * which concrete input devices can inherit in order to use the
+ * input backend infrastructure.
+ *
+ * @ingroup Devices
+ *
+ * @author Lionel Kusch and Sandra Diaz
+ */
 class InputDevice : public DeviceNode, public Device
 {
 public:

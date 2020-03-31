@@ -25,6 +25,15 @@
 
 #include "input_backend.h"
 
+/* BeginDocumentation
+
+Internal input backend
+######################
+Internal backend is the default backend. This backend do nothing.
+
+@author Lionel Kusch
+
+EndDocumentation */
 
 namespace nest
 {
@@ -37,13 +46,13 @@ class InputBackendInternal : public InputBackend
 public:
   /**
    * InputBackend constructor
-   * The actual initialization is happening in RecordingBackend::initialize()
+   * The actual initialization is happening in InputBackend::initialize()
    */
   InputBackendInternal() = default;
 
   /**
    * InputBackend destructor
-   * The actual finalization is happening in RecordingBackend::finalize()
+   * The actual finalization is happening in InputBackend::finalize()
    */
   ~InputBackendInternal() noexcept = default;
 

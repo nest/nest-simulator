@@ -77,10 +77,11 @@ public:
   * device-specific backend properties and an output facility of some
   * kind.
   *
-  * @param device the RecordingDevice to be enrolled
+  * @param device the InputDevice to be enrolled
   * @param params device-specific backend parameters
   *
   * @see set_value_names(), disenroll(), write(),
+  * @author Sandra Diaz
   *
   * @ingroup NESTio
   */

@@ -44,6 +44,7 @@ try:
 except ImportError:
     pass
 
+
 def test():
     """Runs all PyNEST unit tests."""
     from . import tests

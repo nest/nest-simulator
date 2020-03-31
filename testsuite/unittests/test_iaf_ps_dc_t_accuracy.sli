@@ -71,18 +71,24 @@ SeeAlso: iaf_psc_alpha_ps, iaf_psc_delta_ps, testsuite::test_iaf_ps_dc_accuracy
 
 M_ERROR setverbosity
 
--14 /min_exponent Set
-
-[0 min_exponent -1] Range   /hlist Set
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Parameters of simulation schedule.
+% Test parameters
 %
-5.0                         /T     Set
 
+-14 /min_exponent Set
+[0 min_exponent -1] Range /hlist Set
+5.0 /T Set
 1e-13 /tolerance Set  % tolerated error [mv]
+
+% models to be tested
+[
+  /iaf_psc_alpha_ps 
+  /iaf_psc_delta_ps
+  % other precise models should be tested as well
+ ] 
+ /models Set
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -93,7 +99,6 @@ M_ERROR setverbosity
  /resolution 0 dexp                   % 1 ms default 
 >> SetKernelStatus
 
-
 GetKernelStatus /ms_per_tic get frexp
 
 exch
@@ -101,12 +106,10 @@ exch
 {1 sub min_exponent leq} assert_or_die  % sufficient resolution?
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Parameters of neuron model.
 %
-
 
 <<
   /E_L       0.0      % resting potential in mV 
@@ -128,120 +131,78 @@ params begin userdict begin
 %
 /SimAtResolution
 {
- dup /i Set
- dexp /h Set
+  dup /i Set
+  dexp /h Set
 
- ResetKernel
- << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
+  ResetKernel
+  << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
- [
-  /iaf_psc_alpha_ps 
-  /iaf_psc_delta_ps  % this list can be extended
- ] /neuronlist Set
- neuronlist {Create dup params SetStatus} Map /neurons Set
+  models {Create dup params SetStatus} Map /neurons Set
 
- T Simulate
+  T Simulate
 
- neurons
- {[exch /t_spike get dup t sub abs]}  Map Flatten
-
- i prepend
-
+  neurons
+  { [ exch /t_spike get dup t sub abs ] } Map Flatten
+  i prepend
 } def
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Calculate reference and compare
-%
-{
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Reference value
- %
- % V is the exact value of the membrane potential at the end 
- % of the simulation.       
- %
-
- % tau_m neg 1 c_m V_th mul tau_m I_e mul div sub ln mul
-
- (-tau_m*ln( 1.0 - (C_m*V_th)/(tau_m*I_e) )) ExecMath /t Set
-
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Perform simulations at all resolutions and collect results
- %
- hlist {SimAtResolution} Map 
-
-
- dup print_details                     % uncomment for debugging
-
- {Rest 2 Partition [/All 2] Part} Map  % select columns containing
-                                       % the timing errors
- [-1] Part                             % select only highest resolution
-  Flatten {tolerance lt} Map
-
- Flatten true exch {and} Fold
-}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% helper function for debugging, 
 % prints detailed table of results
 %
 /print_details
 {
-cout default 15 setprecision 
+  cout default 15 setprecision 
 
-endl
-endl
-(exact value of membrane potential after ) <-
-T <- ( ms is ) <-
-t <- ( ms.) <- endl 
+  endl endl
+  (The precise spike time is ) <- t <- ( ms.) <- endl endl
 
-endl
+  (                  h [ms]) <-
+  models
+  {
+    exch (      ) <- exch <- ( [ms]) <-
+    (               error [ms]) <-
+  } forall
+  endl
 
-(               h in ms    ) <-
+  models length 2 mul 1 add
+  {
+    (--------------------------) <-
+  } repeat
+  endl
 
-neuronlist
-{
-  /name Set
-  (    ) <- name <- ( [ms] ) <-
-  (      error           [ms]) <-
-} forall
-
-endl
-(--------------------------) <-
-
-neuronlist
-{
+  exch
+  {
+    { exch 24 setw exch <- (  ) <- } forall endl
+  }
+  forall 
   ;
-  (--------------------------) <-
-  (--------------------------) <-
-} forall
-
-endl
-
-exch
-{
- {
-  exch 24 setw exch <- (  ) <-
- }
- forall
- endl
-}
-forall 
-;
 }
 def
 
-exec
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Perform test
+%
+{
+  % Reference value
+  (-tau_m*ln( 1.0 - (C_m*V_th)/(tau_m*I_e) )) ExecMath /t Set
 
-% executes the overall test
+  % Perform simulations across resolutions
+  hlist { SimAtResolution } Map 
+
+  dup print_details
+
+  % select columns with timing errors, highest resolution only
+  { Rest 2 Partition [/All 2] Part } Map [-1] Part
+  
+  % test against tolerance limit                             
+  Flatten { tolerance lt } Map
+
+  % combine results
+  Flatten true exch {and} Fold
+}
 assert_or_die

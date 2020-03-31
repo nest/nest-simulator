@@ -50,14 +50,14 @@ rate_transformer_node).
 
 Linear rate neurons support multiplicative coupling which can be
 switched on and off via the boolean parameter mult_coupling
-(default=false). In case multiplicative coupling is actived the
+(default=false). In case multiplicative coupling is active, the
 excitatory input of the model is multiplied with the function \f$
 mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate ) \f$ and the
 inhibitory input is multiplied with the function \f$
 mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate ) \f$.
 
 The model supports connections to other rate models with either zero
-or non-zero delay, and uses the secondary_event concept introduced
+or non-zero delay, and it uses the secondary_event concept introduced
 with the gap-junction framework.
 
 Linear rate neurons can be created by typing

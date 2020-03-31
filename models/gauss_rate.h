@@ -49,7 +49,7 @@ Description:
 
 gauss_rate is an implementation of a nonlinear rate model with input
 function
-@f[ input(h) = g * \exp( -( x - \mu )^2 / ( 2 * \sigma^2 ) ) @f].
+@f[ input(h) = g * \exp( -( h - \mu )^2 / ( 2 * \sigma^2 ) ) @f].
 It either models a rate neuron with input noise (see rate_neuron_ipn)
 or a rate transformer (see rate_transformer_node).
 Input transformation can either be applied to individual inputs

@@ -62,7 +62,7 @@ created by typing nest.Create('rate_transformer_sigmoid').
 
 Parameters:
 
-The following parameters can be set in the status dictionary.Note
+The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 \verbatim embed:rst

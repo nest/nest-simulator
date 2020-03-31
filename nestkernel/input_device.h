@@ -66,6 +66,7 @@ public:
   InputDevice();
   InputDevice( const InputDevice& );
 
+  using Device::calibrate;
   void calibrate( const std::vector< Name >&, const std::vector< Name >& );
 
   bool is_active( Time const& T ) const;
@@ -92,13 +93,13 @@ public:
 
 protected:
   std::vector< double > read();
-  void set_initialized_() override;
+  void set_initialized_();
 
   struct Parameters_
   {
     std::string label_;  //!< A user-defined label for symbolic device names.
-    bool time_in_steps_; //!< Flag indicating if time is recorded in steps or ms
-    Name input_from_;    //!< Array of input backends to use
+    bool time_in_steps_; //!< Flag indicating if time is recorded in steps or ms.
+    Name input_from_;    //!< Array of input backends to use.
 
     Parameters_();
     Parameters_( const Parameters_& );
@@ -134,4 +135,4 @@ InputDevice::read()
 
 } // namespace
 
-#endif // RECORDING_DEVICE_H
+#endif // INPUT_DEVICE_H

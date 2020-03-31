@@ -22,12 +22,12 @@
 
 // C++ includes:
 #include <iostream>
+#include <fstream>
 
 
 // Includes from nestkernel:
 #include "input_backend_mpi.h"
 #include "input_device.h"
-#include <fstream>
 
 
 void
@@ -142,7 +142,9 @@ nest::InputBackendMPI::prepare()
       0,
       MPI_COMM_WORLD,
       it_comm->second.first ); // should use the status for handle error
-    printf( "Connect to %s\n", it_comm->first.data() );
+       char msg[MPI_MAX_PORT_NAME+50];
+       sprintf(msg,"Connect to %s\n",it_comm->first.data());
+      LOG( M_INFO,"MPI Input connect",msg);
     fflush( stdout );
   }
 }
@@ -248,8 +250,9 @@ nest::InputBackendMPI::get_port( InputDevice* device, std::string* port_name )
 void
 nest::InputBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
 {
-  std::ostringstream
-    basename; // path of the file : path+label+id+.txt (file contains only one line with name of the port
+  // path of the file : path+label+id+.tx
+  // (file contains only one line with name of the port)
+  std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
   if ( not path.empty() )
   {

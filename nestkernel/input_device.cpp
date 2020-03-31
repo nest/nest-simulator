@@ -91,8 +91,6 @@ nest::InputDevice::Parameters_::set( const DictionaryDatum& d )
   bool time_in_steps = time_in_steps_;
   updateValue< bool >( d, names::time_in_steps, time_in_steps );
 
-  // if ( time_in_steps != time_in_steps_ and S_.n_events != 0 ) //I don't understand n_events
-  // probabily link with S_.n_events_
   if ( time_in_steps != time_in_steps_ )
   {
     throw BadProperty(
@@ -236,5 +234,5 @@ nest::InputDevice::is_active( Time const& T ) const
 {
   const long stamp = T.get_steps();
 
-  return get_t_min_() < stamp && stamp <= get_t_max_();
+  return get_t_min_() < stamp and stamp <= get_t_max_();
 }

@@ -176,12 +176,9 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
   const Time& now,
   Node* node )
 {
-
-
   bool flags_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node )
     or updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node )
     or updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
-
 
   if ( d->known( names::allow_offgrid_times ) )
   {
@@ -380,7 +377,7 @@ nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
       times_ms.push_back( input_spike );
       if ( ptmp.precise_times_ )
       {
-        printf( "precise not supported\n" );
+        throw BadProperty("Option precise_times is not supported in this context\n" );
       }
     }
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );

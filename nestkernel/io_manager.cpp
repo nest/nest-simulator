@@ -316,8 +316,7 @@ IOManager::is_valid_recording_backend( Name backend_name ) const
 bool
 IOManager::is_valid_input_backend( Name backend_name ) const
 {
-  std::map< Name, InputBackend* >::const_iterator backend;
-  backend = input_backends_.find( backend_name );
+  auto backend = input_backends_.find( backend_name );
   return backend != input_backends_.end();
 }
 

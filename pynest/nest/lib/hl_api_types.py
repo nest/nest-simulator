@@ -899,13 +899,12 @@ def serializable(data):
     """
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
-        # Convert Numpy array or NodeCollection to list
         data_serialized = data.tolist()
     elif isinstance(data, SynapseCollection):
-        # Get dictionary from SynapseCollection
+        # Get full information from SynapseCollection
         data_serialized = serializable(data.get())
     elif isinstance(data, kernel.SLILiteral):
-        # Convert any SLILiteral to string.
+        # Get name of SLILiteral.
         data_serialized = data.name
     elif isinstance(data, (list, tuple)):
         data_serialized = [serializable(d) for d in data]

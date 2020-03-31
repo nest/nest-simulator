@@ -141,7 +141,9 @@ params begin userdict begin
   /iaf_psc_alpha_ps
   /iaf_psc_delta_ps  % this list can be extended
  ]
- {Create dup params SetStatus} Map /neurons Set
+ /neuronlist Set
+ 
+ neuronlist {Create dup params SetStatus} Map /neurons Set
 
  T Simulate
 
@@ -340,16 +342,24 @@ V <- ( mV.) <- endl
 endl
 
 (               h in ms    ) <-
-(          alpha_presc [mV]) <-
-(      error           [mV]) <- 
-(          delta_canon [mV]) <-
-(        error         [mV]) <-
+
+neuronlist
+{
+  /name Set
+  (    ) <- name <- ( [ms] ) <-
+  (      error           [ms]) <-
+} forall
+
 endl
 (--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(------------------------) <-
+
+neuronlist
+{
+  ;
+  (--------------------------) <-
+  (--------------------------) <-
+} forall
+
 endl
 
 exch

@@ -30,7 +30,7 @@ Description:
 
  A DC current is injected for a finite duration. The time of the first
  spike is compared to the theoretical value for different computation
- step sizes and interpolation orders.
+ step sizes.
 
  Computation step sizes are specified as base 2 values.
 
@@ -81,13 +81,8 @@ M_ERROR setverbosity
 % Parameters of simulation schedule.
 %
 5.0                         /T     Set
-[  % interpolation order   tolerated error [mv]
- [ 0   1e-4  ]  
- [ 1   1e-10 ]  
- [ 2   1e-13 ]
- [ 3   1e-13 ]
-] /Olist Set
 
+1e-13 /tolerance Set  % tolerated error [mv]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -136,18 +131,14 @@ params begin userdict begin
  dup /i Set
  dexp /h Set
 
-
  ResetKernel
  << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
  [
   /iaf_psc_alpha_ps 
   /iaf_psc_delta_ps  % this list can be extended
- ]
- {Create dup params SetStatus} Map /neurons Set
-
- neurons {0 get /Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
-
+ ] /neuronlist Set
+ neuronlist {Create dup params SetStatus} Map /neurons Set
 
  T Simulate
 
@@ -161,13 +152,9 @@ params begin userdict begin
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% do for all interpolation orders
+% Calculate reference and compare
 %
 {
- Olist  
- {
-  [/O /tolerance] Set
-
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %
@@ -189,13 +176,12 @@ params begin userdict begin
  hlist {SimAtResolution} Map 
 
 
- dup print_details                    % uncomment for debugging
+ dup print_details                     % uncomment for debugging
 
  {Rest 2 Partition [/All 2] Part} Map  % select columns containing
                                        % the timing errors
  [-1] Part                             % select only highest resolution
   Flatten {tolerance lt} Map
- } Map
 
  Flatten true exch {and} Fold
 }
@@ -214,23 +200,31 @@ cout default 15 setprecision
 
 endl
 endl
-(order: ) <- O <- (, exact value of membrane potential after ) <-
+(exact value of membrane potential after ) <-
 T <- ( ms is ) <-
 t <- ( ms.) <- endl 
 
 endl
 
 (               h in ms    ) <-
-(          alpha_presc [ms]) <-
-(      error           [ms]) <- 
-(          delta_canon [ms]) <-
-(        error         [ms]) <-
+
+neuronlist
+{
+  /name Set
+  (    ) <- name <- ( [ms] ) <-
+  (      error           [ms]) <-
+} forall
+
 endl
 (--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(------------------------) <-
+
+neuronlist
+{
+  ;
+  (--------------------------) <-
+  (--------------------------) <-
+} forall
+
 endl
 
 exch

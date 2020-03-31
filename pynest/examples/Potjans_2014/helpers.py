@@ -120,7 +120,7 @@ def dc_input_compensating_poisson(bg_rate, K_ext, tau_syn, PSC_ext):
     Parameters
     ----------
     bg_rate
-        Rate of external Poisson generators (in Hz).
+        Rate of external Poisson generators (in spikes/s).
     K_ext
         External indegrees.
     tau_syn
@@ -170,13 +170,13 @@ def adjust_weights_and_input_to_synapse_scaling(
     tau_syn
         Synaptic time constant (in ms).
     full_mean_rates
-        Firing rates of the full network (in Hz).
+        Firing rates of the full network (in spikes/s).
     DC_amp
         DC input current (in pA).
     poisson_input
         True if Poisson input is used.
     bg_rate
-        Firing rate of Poisson generators (in Hz).
+        Firing rate of Poisson generators (in spikes/s).
     K_ext
         External indegrees.
 

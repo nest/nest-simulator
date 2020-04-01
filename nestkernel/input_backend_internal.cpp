@@ -48,7 +48,7 @@ nest::InputBackendInternal::disenroll( InputDevice& device )
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+  auto device_it = devices_[ tid ].find( node_id );
   if ( device_it != devices_[ tid ].end() )
   {
     devices_[ tid ].erase( device_it );

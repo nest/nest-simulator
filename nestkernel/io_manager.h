@@ -102,7 +102,8 @@ public:
   bool is_valid_recording_backend( const Name& ) const;
   bool is_valid_input_backend( const Name& ) const;
 
-  void write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
+  void
+  write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
   void enroll_input( const Name&, InputDevice&, const DictionaryDatum& );

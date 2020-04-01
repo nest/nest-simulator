@@ -36,13 +36,17 @@
 Send data with MPI
 ##################
 
-When a recording device sends data to the ``mpi`` backend, it send the
-event through mpi. The event are send with the id and the time step.
+When a recording device sends data to the ``mpi`` backend, it sends the
+event using MPI. Events are sent with the GID and the time stamp.
 
 Communication Protocol:
 +++++++++++++++++++++++
-Each time the backend receive and `event`, it send send it(2,MPI.INT).
-The `event` is compose of time and the id of the neurons.
+1. The mpi recording backend gets and sets information about the ports
+to be used for data communication.
+2. It creates a map of devices and MPI communicators
+3. Each time the backend receives and `event`, it sends it as ( 2, MPI.INT).
+The `event` is composed of time and the GID of the neurons.
+4. When the backend stops it sends a finish signal to the counterpart
 
 @author Lionel Kusch and Sandra Diaz
 @ingroup NESTio

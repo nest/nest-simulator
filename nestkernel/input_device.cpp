@@ -170,7 +170,7 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
     DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
 
     // copy all properties not previously accessed from d to backend_params
-    for (auto & kv_pair : *d)
+    for ( auto& kv_pair : *d )
     {
       if ( not kv_pair.second.accessed() )
       {
@@ -182,7 +182,7 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
-    for (auto & kv_pair : *backend_params)
+    for ( auto& kv_pair : *backend_params )
     {
       if ( kv_pair.second.accessed() )
       {
@@ -218,7 +218,7 @@ nest::InputDevice::get_status( DictionaryDatum& d ) const
     kernel().io_manager.get_input_backend_device_defaults( P_.input_from_, d );
 
     // then overwrite with cached parameters
-    for (auto & kv_pair : *backend_params_)
+    for ( auto& kv_pair : *backend_params_ )
     {
       ( *d )[ kv_pair.first ] = kv_pair.second;
     }

@@ -394,7 +394,9 @@ IOManager::get_recording_backend_device_defaults( const Name& backend_name, Dict
 }
 
 void
-IOManager::get_recording_backend_device_status( const Name& backend_name, const RecordingDevice& device, DictionaryDatum& d )
+IOManager::get_recording_backend_device_status( const Name& backend_name,
+  const RecordingDevice& device,
+  DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }

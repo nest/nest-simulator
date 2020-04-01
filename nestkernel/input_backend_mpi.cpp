@@ -24,7 +24,6 @@
 #include <iostream>
 
 
-
 // Includes from nestkernel:
 #include "input_backend_mpi.h"
 #include "input_device.h"
@@ -44,11 +43,11 @@ void
 nest::InputBackendMPI::finalize()
 {
   // clear vector of map
-  for ( auto& it_device : devices_)
+  for ( auto& it_device : devices_ )
   {
     it_device.clear();
   }
-  for ( auto& it_comm : commMap_)
+  for ( auto& it_comm : commMap_ )
   {
     it_comm.clear();
   }
@@ -103,14 +102,15 @@ nest::InputBackendMPI::set_value_names( const InputDevice& device,
 void
 nest::InputBackendMPI::prepare()
 {
-  // Create the connection with MPI by thread ( I am not sure is the best)
-  // 1) take all the port of the connections
+  // Create the connection with MPI per thread
+  // TODO Validate approach
+  // 1) take all the ports of the connections
   thread thread_id = kernel().vp_manager.get_thread_id();
 
   // get port and update the list of device
-  for ( auto& it_device : devices_[ thread_id ])
+  for ( auto& it_device : devices_[ thread_id ] )
   {
-    // add the link between MPI communicator and the device (device can share the same MPI communicator
+    // add the link between MPI communicator and the device (devices can share the same MPI communicator)
     std::string port_name;
     get_port( it_device.second.second, &port_name );
     auto comm_it = commMap_[ thread_id ].find( port_name );
@@ -129,8 +129,8 @@ nest::InputBackendMPI::prepare()
     it_device.second.first = comm;
   }
 
-  // 2) connect the thread with MPI process it need to be connected
-  // WARNING can be a bug if it's need all the thread to be connected in MPI
+  // 2) connect the thread to the MPI process it needs to be connected to
+  // WARNING can be a bug if it's needed that all threads are to be connected via MPI
   for ( auto& it_comm : commMap_[ thread_id ] )
   {
     MPI_Comm_connect( it_comm.first.data(),
@@ -138,9 +138,9 @@ nest::InputBackendMPI::prepare()
       0,
       MPI_COMM_WORLD,
       it_comm.second.first ); // should use the status for handle error
-       char msg[MPI_MAX_PORT_NAME+50];
-       sprintf(msg,"Connect to %s\n",it_comm.first.data());
-      LOG( M_INFO,"MPI Input connect",msg);
+    char msg[ MPI_MAX_PORT_NAME + 50 ];
+    sprintf( msg, "Connect to %s\n", it_comm.first.data() );
+    LOG( M_INFO, "MPI Input connect", msg );
     fflush( stdout );
   }
 }
@@ -148,9 +148,10 @@ nest::InputBackendMPI::prepare()
 void
 nest::InputBackendMPI::pre_run_hook()
 {
-  // connect take information of MPI process (for the moment only spike train)
+  // Receive information of MPI process
+  // TODO extend, for the moment it only deals with spike trains
   const thread thread_id = kernel().vp_manager.get_thread_id();
-  for ( auto& it_device : devices_[ thread_id ])
+  for ( auto& it_device : devices_[ thread_id ] )
   {
     receive_spike_train( *( it_device.second.first ), *( it_device.second.second ) );
   }
@@ -166,9 +167,9 @@ void
 nest::InputBackendMPI::post_run_hook()
 {
   // Send information about the end of the running part
-  // Question : 1 thread or multiple threads send this information ?
+  // TODO Solve question : 1 thread or multiple threads send this information ?
   thread thread_id = kernel().vp_manager.get_thread_id();
-  // WARNING can be a bug if all the thread to send ending connection of MPI
+  // WARNING can be a bug if all threads are to send ending MPI connection message
   for ( auto& it_comm : commMap_[ thread_id ] )
   {
     int value[ 1 ];
@@ -181,10 +182,10 @@ void
 nest::InputBackendMPI::cleanup()
 {
   // Disconnect all the MPI connection and send information about this disconnection
-  // Clean all the list of map
+  // Clean all the elements in the map
   thread thread_id = kernel().vp_manager.get_thread_id();
-  // WARNING can be a bug if all the thread to send ending connection of MPI
-  // disconnect MPI
+  // WARNING can be a bug if all threads send ending MPI connection and
+  // disconnect MPI message
   for ( auto& it_comm : commMap_[ thread_id ] )
   {
     int value[ 1 ];
@@ -193,7 +194,7 @@ nest::InputBackendMPI::cleanup()
     MPI_Comm_disconnect( it_comm.second.first );
     delete ( it_comm.second.first );
   }
-  // clear map of device
+  // clear map of devices
   commMap_[ thread_id ].clear();
   for ( auto& it_device : devices_[ thread_id ] )
   {

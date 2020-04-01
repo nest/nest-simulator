@@ -29,7 +29,7 @@
 
 Internal input backend
 ######################
-Internal backend is the default backend. This backend do nothing.
+Internal backend is the default backend. This backend does nothing.
 
 @author Lionel Kusch
 

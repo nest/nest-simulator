@@ -377,7 +377,7 @@ nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
       times_ms.push_back( input_spike );
       if ( ptmp.precise_times_ )
       {
-        throw BadProperty("Option precise_times is not supported in this context\n" );
+        throw BadProperty( "Option precise_times is not supported in this context\n" );
       }
     }
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );

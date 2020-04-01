@@ -38,16 +38,16 @@
 Read data from MPI
 ##################
 
-When a input device is update at the beginning of each run, the 'mpi' backend
-communicate to get the update.
+When an input device is to be updated at the beginning of each step run, the 'mpi' backend
+communicates with an external source via MPI to get the update.
 
 Communication Protocol:
 +++++++++++++++++++++++
 
-To get the information for update the device, the MPI send the ID and the id
+To get the information to update the device, MPI backend sends the GID and the id
 of the thread (2,MPI.INT). Next, the process will wait the size of the array
-(1,MPI.INT). The massage will arrive with all the information for update the
-device (size,MPI.DOUBLE). The device will be update this internal parameter
+(1,MPI.INT). The massage will arrive with all the information for updating the
+device (size,MPI.DOUBLE). The internal data structures of the device will be updated
 with this information.
 
 @author Lionel Kusch and Sandra Diaz

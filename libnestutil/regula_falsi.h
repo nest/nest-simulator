@@ -39,7 +39,7 @@ namespace nest
  */
 template < typename CN >
 double
-regula_falsi( CN& node, const double dt )
+regula_falsi( const CN& node, const double dt )
 {
   double root;
   double threshold_dist_root;

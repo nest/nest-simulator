@@ -31,25 +31,22 @@ import nest
 import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from werkzeug import abort, Response
 
 
 __all__ = [
     'app'
 ]
 
-
 app = Flask(__name__)
 CORS(app)
 
-
-@app.route('/', methods=['GET'])
+@app.route('/version', methods=['GET'])
 @cross_origin()
 def nest_index():
-    """ Route to fetch metadata of NEST Server.
+    """ Route to fetch version of NEST Simulator.
     """
-    data = init_data(request)
-    data['response']['version'] = nest.version()
-    return jsonify(data)
+    return jsonify(nest.version())
 
 
 @app.route('/exec', methods=['GET', 'POST'])
@@ -57,8 +54,7 @@ def nest_index():
 def route_exec():
     """ Route to execute script in Python.
     """
-    data = init_data(request)
-    args, kwargs = get_arguments(request, data)
+    args, kwargs = get_arguments(request)
     with Capturing() as stdout:
         try:
             source = kwargs.get('source', '')
@@ -71,6 +67,7 @@ def route_exec():
               'set': set,
             }
             exec(source, globals, locals)
+            response = {}
             if 'return' in kwargs:
                 if isinstance(kwargs['return'], list):
                     return_data = {}
@@ -78,14 +75,13 @@ def route_exec():
                         return_data[variable] = locals.get(variable, None)
                 else:
                     return_data = locals.get(kwargs['return'], None)
-                data['response']['data'] = nest.hl_api.serializable(return_data)
-            data['response']['status'] = 'ok'
+                response['data'] = nest.hl_api.serializable(return_data)
+            response['stdout'] = '\n'.join(stdout)
+            return jsonify(data)
+        except nest.kernel.NESTError as e:
+            abort(Response(getattr(e, 'errormessage'), 400))
         except Exception as e:
-            print(e)
-            data['response']['data'] = None
-            data['response']['status'] = 'error'
-    data['response']['stdout'] = '\n'.join(stdout)
-    return jsonify(data)
+            abort(Response(str(e), 400))
 
 
 # --------------------------
@@ -102,9 +98,7 @@ nest_calls.sort()
 def nest_api():
     """ Route to list call functions in NEST.
     """
-    data = init_data(request)
-    response = api_client(request, nest_calls, data)
-    return jsonify(response)
+    return jsonify(nest_calls)
 
 
 @app.route('/api/<call>', methods=['GET', 'POST'])
@@ -112,21 +106,19 @@ def nest_api():
 def nest_api_call(call):
     """ Route to call function in NEST.
     """
-    data = init_data(request, call)
-    args, kwargs = get_arguments(request, data)
+    args, kwargs = get_arguments(request)
     if call in nest_calls:
         call = getattr(nest, call)
-        response = api_client(request, call, data, *args, **kwargs)
+        data = api_client(call, *args, **kwargs)
+        return jsonify(data)
     else:
-        data['response']['msg'] = 'The request cannot be called in NEST.'
-        data['response']['status'] = 'error'
-        response = data
-    return jsonify(response)
+        abort(Response('The request cannot be called in NEST.\n', 404))
 
 
 # ----------------------
 # Helpers for the server
 # ----------------------
+
 
 class Capturing(list):
     """ Monitor stdout contents i.e. print.
@@ -142,27 +134,12 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
-def init_data(request, call=None):
-    """ Create data variable in dictionary for JSON response.
-    """
-    url = request.url_rule.rule.split('/')[1]
-    data = {
-        'request': {
-            'url': url,
-        },
-        'response': {}
-    }
-    if call:
-        data['request']['call'] = call
-    return data
-
-
-def get_arguments(request, data):
+def get_arguments(request):
     """ Get arguments from the request.
     """
     args, kwargs = [], {}
     if request.is_json:
-        json = data['request']['json'] = request.get_json()
+        json = request.get_json()
         if isinstance(json, list):
             args = json
         elif isinstance(json, dict):
@@ -170,70 +147,67 @@ def get_arguments(request, data):
             kwargs = json.get('kwargs', json)
     elif len(request.form) > 0:
         if 'args' in request.form:
-            args = data['request']['form'] = request.form.getlist('args')
+            args = request.form.getlist('args')
         else:
-            kwargs = data['request']['form'] = request.form.to_dict()
+            kwargs = request.form.to_dict()
     elif (len(request.args) > 0):
         if 'args' in request.args:
-            args = data['request']['args'] = request.args.getlist('args')
+            args = request.args.getlist('args')
         else:
-            kwargs = data['request']['args'] = request.args.to_dict()
+            kwargs = request.args.to_dict()
     return args, kwargs
 
 
 def get_or_error(func):
-    """ Wrapper to get data or error content.
+    """ Wrapper to get data and status.
     """
-    def func_wrapper(request, call, data, *args, **kwargs):
+    def func_wrapper(call, *args, **kwargs):
         try:
-            data = func(request, call, data, *args, **kwargs)
-            if 'data' not in data['response']:
-                return data
-            response = data['response']['data']
-            data['response']['status'] = 'ok'
+            data = func(call,  *args, **kwargs)
+            return data
+        except nest.kernel.NESTError as e:
+            abort(Response(getattr(e, 'errormessage'), 409))
         except Exception as e:
-            data['response']['msg'] = str(e)
-            data['response']['status'] = 'error'
-        return data
+            abort(Response(str(e), 400))
+        return data, status
     return func_wrapper
 
 
-def NodeCollection(kwargs):
+def NodeCollection(params):
     """ Get Node Collection as arguments for NEST functions.
     """
     keys = ['nodes', 'source', 'target', 'pre', 'post']
     for key in keys:
-        if key in kwargs:
-            kwargs[key] = nest.NodeCollection(kwargs[key])
-    return kwargs
+        if key in params:
+            params[key] = nest.NodeCollection(params[key])
+    return params
 
 
-def serialize(call, kwargs):
+def serialize(call, params):
     """ Serialize arguments with keywords for call functions in NEST.
     """
-    kwargs = NodeCollection(kwargs)
+    nodeCollection = NodeCollection(params)
     if call.startswith('Set'):
         status = {}
         if call == 'SetDefaults':
-            status = nest.GetDefaults(kwargs['model'])
+            status = nest.GetDefaults(nodeCollection['model'])
         elif call == 'SetKernelStatus':
             status = nest.GetKernelStatus()
         elif call == 'SetStructuralPlasticityStatus':
-            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
+            status = nest.GetStructuralPlasticityStatus(nodeCollection['params'])
         elif call == 'SetStatus':
-            status = nest.GetStatus(kwargs['nodes'])
+            status = nest.GetStatus(nodeCollection['nodes'])
         for key, val in kwargs['params'].items():
             if key in status:
-                kwargs['params'][key] = type(status[key])(val)
-    return kwargs
+                nodeCollection['params'][key] = type(status[key])(val)
+    return nodeCollection
 
 
 @get_or_error
-def api_client(request, call, data, *args, **kwargs):
+def api_client(call, *args, **kwargs):
     """ API Client to call function in NEST.
     """
     if callable(call):
-        data['request']['call'] = call.__name__
         if str(kwargs.get('return_doc', 'false')) == 'true':
             response = call.__doc__
         elif str(kwargs.get('return_source', 'false')) == 'true':
@@ -241,7 +215,5 @@ def api_client(request, call, data, *args, **kwargs):
         else:
             response = call(*args, **serialize(call.__name__, kwargs))
     else:
-        data['request']['call'] = call
         response = call
-    data['response']['data'] = nest.hl_api.serializable(response)
-    return data
+    return nest.hl_api.serializable(response)

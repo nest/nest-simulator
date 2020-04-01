@@ -647,13 +647,13 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: Create - create a number of equal nodes in the current subnet
+   Name: Create - create nodes
 
    Synopsis:
-   /model          Create -> node_ids
-   /model n        Create -> node_ids
-   /model   params Create -> node_ids
-   /model n params Create -> node_ids
+   /model          Create -> NodeCollection
+   /model n        Create -> NodeCollection
+   /model   params Create -> NodeCollection
+   /model n params Create -> NodeCollection
 
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
@@ -665,9 +665,8 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 
    Description:
    Create generates n new network objects of the supplied model
-   type. If n is not given, a single node is created. The objects
-   are added as children of the current working node. params is a
-   dictsionary with parameters for the new nodes.
+   type. If n is not given, a single node is created. params is a
+   dictionary with parameters for the new nodes.
 
    SeeAlso: modeldict
 */

@@ -20,3 +20,4 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from .hl_api_server import *
+from .hl_api_client import *

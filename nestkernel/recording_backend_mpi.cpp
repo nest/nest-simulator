@@ -133,7 +133,7 @@ nest::RecordingBackendMPI::prepare()
   {
     char msg[ MPI_MAX_PORT_NAME + 50 ];
     sprintf( msg, "Connect to %s\n", it_comm.first.data() );
-    LOG( M_INFO, "MPI Record connect" ,msg );
+    LOG( M_INFO, "MPI Record connect", msg );
     MPI_Comm_connect( it_comm.first.data(),
       MPI_INFO_NULL,
       0,

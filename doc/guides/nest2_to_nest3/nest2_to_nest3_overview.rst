@@ -1,5 +1,5 @@
-From NEST 2.x to NEST 3.0
-=========================
+NEST 3.0: What's new?
+=====================
 
 .. contents:: On this page, you'll find
    :local:
@@ -11,15 +11,15 @@ perform operations that were not possible in previous versions.
 
 .. seealso::
 
-  See the :doc:`../ref_material/nest2_vs_3` to see a full list of functions that have changed
+  See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 .. note::
 
-  Running the code snippets throughout this guide requires a freshly started instance of Python with nest
+  Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
   (and sometimes pyplot from matplotlib) imported.
 
 What's new?
-------------
+-----------
 
 .. _nodeid:
 

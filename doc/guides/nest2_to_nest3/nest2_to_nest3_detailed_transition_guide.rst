@@ -1,5 +1,5 @@
-NEST 2.X vs. NEST 3.0 conversion reference guide
-==================================================
+NEST 3.0: Detailed transition guide
+===================================
 
 * This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
@@ -20,11 +20,11 @@ NEST 2.X vs. NEST 3.0 conversion reference guide
 
 .. seealso::
 
-  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
+  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
 
 .. _setverbosity:
 
-Supress output on startup
+Suppress output on startup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+----------------------------------+

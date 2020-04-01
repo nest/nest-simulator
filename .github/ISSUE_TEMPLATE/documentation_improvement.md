@@ -1,6 +1,6 @@
 ---
 name: Documentation improvement
-about: Request a documentation update
+about: Request a documentation improvement
 title: ''
 labels: 'C: Documentation'
 assignees: ''

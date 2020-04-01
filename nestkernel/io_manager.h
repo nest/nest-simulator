@@ -92,8 +92,8 @@ public:
    * SimulationManager::simulate() or SimulationManager::cleanup() by
    * calling the backends' finalize() functions
    */
-  void cleanup();
-  void prepare();
+  void cleanup() override;
+  void prepare() override;
 
   template < class RBT >
   void register_recording_backend( Name );

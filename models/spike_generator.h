@@ -184,23 +184,23 @@ public:
   spike_generator( const spike_generator& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
 
-  port send_test_event( Node&, rport, synindex, bool );
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
-  void update_from_backend( std::vector< double > input_spikes );
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+  void update_from_backend( std::vector< double > input_spikes ) override;
 
-  Type get_type() const;
+  Type get_type() const override;
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -209,10 +209,10 @@ public:
   using Node::event_hook;
   using Node::sends_signal;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   SignalType
-  sends_signal() const
+  sends_signal() const override
   {
     return ALL;
   }
@@ -275,11 +275,11 @@ public:
 
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, long, long ) override;
 
   StimulatingDevice< SpikeEvent > device_;
   SpikeParameters_ P_;

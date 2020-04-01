@@ -35,8 +35,6 @@
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -83,8 +81,7 @@ nest::spike_generator::SpikeParameters_::get( DictionaryDatum& d ) const
 
   assert( ( precise_times_ && n_offsets == n_spikes ) || ( not precise_times_ && n_offsets == 0 ) );
 
-
-  std::vector< double >* times_ms = new std::vector< double >();
+  auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
   for ( size_t n = 0; n < n_spikes; ++n )
   {
@@ -224,11 +221,11 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
     if ( not d_times.empty() )
     {
       // handle first spike time, no predecessor to compare with
-      std::vector< double >::const_iterator prev = d_times.begin();
+      auto prev = d_times.begin();
       assert_valid_spike_time_and_insert_( *prev, origin, now );
 
       // handle all remaining spike times, compare to predecessor
-      for ( std::vector< double >::const_iterator next = prev + 1; next != d_times.end(); ++next, ++prev )
+      for ( auto next = prev + 1; next != d_times.end(); ++next, ++prev )
       {
         if ( *prev > *next )
         {

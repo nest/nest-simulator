@@ -74,7 +74,7 @@ public:
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~InputBackendMPI() noexcept = default;
+  ~InputBackendMPI() noexcept override = default;
 
   void initialize() override;
 
@@ -124,7 +124,7 @@ private:
   comm_map commMap_;
 
   static void get_port( InputDevice* device, std::string* port_name );
-  static void get_port( const index index_node, const std::string& label, std::string* port_name );
+  static void get_port( index index_node, const std::string& label, std::string* port_name );
   static void receive_spike_train( const MPI_Comm& comm, InputDevice& device );
 };
 

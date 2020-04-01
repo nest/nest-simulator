@@ -67,11 +67,10 @@ public:
   InputDevice( const InputDevice& );
 
   using Device::calibrate;
+  using Node::calibrate;
   void calibrate( const std::vector< Name >&, const std::vector< Name >& );
 
-  bool is_active( Time const& T ) const;
-
-  bool get_time_in_steps() const;
+  bool is_active( Time const& T ) const override;
 
   /**
    * Device type.
@@ -86,14 +85,13 @@ public:
 
   const std::string& get_label() const;
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
-  virtual void update_from_backend( const std::vector< double > input_spikes ) = 0;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) const override;
+  virtual void update_from_backend( std::vector< double > input_spikes ) = 0;
 
 
 protected:
-  std::vector< double > read();
-  void set_initialized_();
+  void set_initialized_() override;
 
   struct Parameters_
   {
@@ -119,19 +117,6 @@ protected:
 private:
   DictionaryDatum backend_params_;
 };
-
-inline bool
-nest::InputDevice::get_time_in_steps() const
-{
-  return P_.time_in_steps_;
-}
-
-inline std::vector< double >
-InputDevice::read()
-{
-  ++S_.n_events_;
-  return kernel().io_manager.read( *this );
-}
 
 } // namespace
 

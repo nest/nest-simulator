@@ -42,15 +42,13 @@ void
 nest::RecordingBackendMPI::finalize()
 {
   // clear vector of map
-  device_map::iterator it_device;
-  for ( it_device = devices_.begin(); it_device != devices_.end(); it_device++ )
+  for ( auto& it_device : devices_)
   {
-    it_device->clear();
+    it_device.clear();
   }
-  comm_map::iterator it_comm;
-  for ( it_comm = commMap_.begin(); it_comm != commMap_.end(); it_comm++ )
+  for ( auto& it_comm : commMap_)
   {
-    it_comm->clear();
+    it_comm.clear();
   }
   devices_.clear();
   commMap_.clear();
@@ -64,7 +62,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
 
-    device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+    auto device_it = devices_[ tid ].find( node_id );
     if ( device_it != devices_[ tid ].end() )
     {
       devices_[ tid ].erase( device_it );
@@ -107,13 +105,12 @@ nest::RecordingBackendMPI::prepare()
   // 1) take all the port of the connections
   thread thread_id = kernel().vp_manager.get_thread_id();
   // get port and update the list of device
-  device_map::value_type::iterator it_device;
-  for ( it_device = devices_[ thread_id ].begin(); it_device != devices_[ thread_id ].end(); it_device++ )
+  for ( auto& it_device : devices_[ thread_id ] )
   {
     // add the link between MPI communicator and the device (device can share the same MPI communicator
     std::string port_name;
-    get_port( it_device->second.second, &port_name );
-    comm_map::value_type::iterator comm_it = commMap_[ thread_id ].find( port_name );
+    get_port( it_device.second.second, &port_name );
+    auto comm_it = commMap_[ thread_id ].find( port_name );
     MPI_Comm* comm;
     if ( comm_it != commMap_[ thread_id ].end() )
     {
@@ -126,21 +123,20 @@ nest::RecordingBackendMPI::prepare()
       std::pair< MPI_Comm*, int > comm_count = std::make_pair( comm, 1 );
       commMap_[ thread_id ].insert( std::make_pair( port_name, comm_count ) );
     }
-    it_device->second.first = comm;
+    it_device.second.first = comm;
   }
 
   // 2) connect the thread with MPI process it need to be connected
   // WARNING can be a bug if it's need all the thread to be connected in MPI
-  comm_map::value_type::iterator it_comm;
-  for ( it_comm = commMap_[ thread_id ].begin(); it_comm != commMap_[ thread_id ].end(); it_comm++ )
+  for ( auto& it_comm : commMap_[ thread_id ] )
   {
-    printf( "Connect to %s\n", it_comm->first.data() );
+    printf( "Connect to %s\n", it_comm.first.data() );
     fflush( stdout );
-    MPI_Comm_connect( it_comm->first.data(),
+    MPI_Comm_connect( it_comm.first.data(),
       MPI_INFO_NULL,
       0,
       MPI_COMM_WORLD,
-      it_comm->second.first ); // should use the status for handle error
+      it_comm.second.first ); // should use the status for handle error
   }
 }
 
@@ -149,12 +145,11 @@ nest::RecordingBackendMPI::pre_run_hook()
 {
   // Waiting until all the receptor are ready to receive information
   const thread thread_id = kernel().vp_manager.get_thread_id();
-  device_map::value_type::iterator it_device;
-  for ( it_device = devices_[ thread_id ].begin(); it_device != devices_[ thread_id ].end(); it_device++ )
+  for ( auto& it_device : devices_[ thread_id ] )
   {
     bool accept_starting[ 1 ];
     MPI_Status status_mpi;
-    MPI_Recv( accept_starting, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *it_device->second.first, &status_mpi );
+    MPI_Recv( accept_starting, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, *it_device.second.first, &status_mpi );
   }
   // future improvement is to save the source of the signal (meaning the MPI source can an option of the backend)
 }
@@ -172,12 +167,11 @@ nest::RecordingBackendMPI::post_run_hook()
   // Send information about the end of the running part
   thread thread_id = kernel().vp_manager.get_thread_id();
   // WARNING can be a bug if all the thread to send ending connection of MPI
-  comm_map::value_type::iterator it_comm;
-  for ( it_comm = commMap_[ thread_id ].begin(); it_comm != commMap_[ thread_id ].end(); it_comm++ )
+  for ( auto& it_comm : commMap_[ thread_id ] )
   {
     int value[ 1 ];
     value[ 0 ] = thread_id;
-    MPI_Send( value, 1, MPI_INT, 0, 1, *it_comm->second.first );
+    MPI_Send( value, 1, MPI_INT, 0, 1, *it_comm.second.first );
   }
 }
 
@@ -189,21 +183,19 @@ nest::RecordingBackendMPI::cleanup()
   thread thread_id = kernel().vp_manager.get_thread_id();
   // WARNING can be a bug if all the thread to send ending connection of MPI
   // disconnect MPI
-  comm_map::value_type::iterator it_comm;
-  for ( it_comm = commMap_[ thread_id ].begin(); it_comm != commMap_[ thread_id ].end(); it_comm++ )
+  for ( auto& it_comm : commMap_[ thread_id ] )
   {
     int value[ 1 ];
     value[ 0 ] = thread_id;
-    MPI_Send( value, 1, MPI_INT, 0, 2, *it_comm->second.first );
-    MPI_Comm_disconnect( it_comm->second.first );
-    delete ( it_comm->second.first );
+    MPI_Send( value, 1, MPI_INT, 0, 2, *it_comm.second.first );
+    MPI_Comm_disconnect( it_comm.second.first );
+    delete ( it_comm.second.first );
   }
   // clear map of device
   commMap_[ thread_id ].clear();
-  device_map::value_type::iterator it_device;
-  for ( it_device = devices_[ thread_id ].begin(); it_device != devices_[ thread_id ].end(); it_device++ )
+  for ( auto& it_device : devices_[ thread_id ] )
   {
-    it_device->second.first = nullptr;
+    it_device.second.first = nullptr;
   }
 }
 
@@ -239,7 +231,7 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
   const Time stamp = event.get_stamp();
 
   MPI_Comm* comm;
-  device_map::value_type::iterator it_devices = devices_[ thread_id ].find( device.get_node_id() );
+  auto it_devices = devices_[ thread_id ].find( device.get_node_id() );
   if ( it_devices != devices_[ thread_id ].end() )
   {
     comm = it_devices->second.first;

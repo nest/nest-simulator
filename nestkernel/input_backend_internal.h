@@ -54,7 +54,7 @@ public:
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~InputBackendInternal() noexcept = default;
+  ~InputBackendInternal() noexcept override = default;
 
 
   void initialize() override;
@@ -90,7 +90,7 @@ private:
   /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the gid of a device on a given thread
-   * with its recordings.
+   * with its input devices.
   */
   typedef std::vector< std::map< int, const InputDevice* > > device_map;
   device_map devices_;

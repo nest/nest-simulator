@@ -170,11 +170,11 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
     DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
 
     // copy all properties not previously accessed from d to backend_params
-    for ( auto kv_pair = d->begin(); kv_pair != d->end(); ++kv_pair )
+    for (auto & kv_pair : *d)
     {
-      if ( not kv_pair->second.accessed() )
+      if ( not kv_pair.second.accessed() )
       {
-        ( *backend_params )[ kv_pair->first ] = kv_pair->second;
+        ( *backend_params )[ kv_pair.first ] = kv_pair.second;
       }
     }
 
@@ -182,12 +182,12 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
-    for ( auto kv_pair = backend_params->begin(); kv_pair != backend_params->end(); ++kv_pair )
+    for (auto & kv_pair : *backend_params)
     {
-      if ( kv_pair->second.accessed() )
+      if ( kv_pair.second.accessed() )
       {
-        ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
-        d->lookup( kv_pair->first ).set_access_flag();
+        ( *backend_params_ )[ kv_pair.first ] = kv_pair.second;
+        d->lookup( kv_pair.first ).set_access_flag();
       }
     }
   }
@@ -218,9 +218,9 @@ nest::InputDevice::get_status( DictionaryDatum& d ) const
     kernel().io_manager.get_input_backend_device_defaults( P_.input_from_, d );
 
     // then overwrite with cached parameters
-    for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
+    for (auto & kv_pair : *backend_params_)
     {
-      ( *d )[ kv_pair->first ] = kv_pair->second;
+      ( *d )[ kv_pair.first ] = kv_pair.second;
     }
   }
   else

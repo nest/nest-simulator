@@ -306,7 +306,7 @@ IOManager::cleanup()
 }
 
 bool
-IOManager::is_valid_recording_backend( Name backend_name ) const
+IOManager::is_valid_recording_backend( const Name& backend_name ) const
 {
   std::map< Name, RecordingBackend* >::const_iterator backend;
   backend = recording_backends_.find( backend_name );
@@ -314,33 +314,14 @@ IOManager::is_valid_recording_backend( Name backend_name ) const
 }
 
 bool
-IOManager::is_valid_input_backend( Name backend_name ) const
+IOManager::is_valid_input_backend( const Name& backend_name ) const
 {
   auto backend = input_backends_.find( backend_name );
   return backend != input_backends_.end();
 }
 
-nest::InputBackend*
-nest::IOManager::get_input_backend_( Name backend_name )
-{
-  nest::InputBackend* back;
-  std::map< Name, InputBackend* >::const_iterator backend;
-  printf( "This is the backend name: %s\n", backend_name.toString().c_str() );
-  backend = input_backends_.find( backend_name );
-  if ( backend != input_backends_.end() )
-  {
-    back = ( backend->second );
-  }
-  else
-  {
-    back = 0;
-  }
-  return back;
-}
-
-
 void
-IOManager::write( Name backend_name,
+IOManager::write( const Name& backend_name,
   const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
@@ -350,7 +331,7 @@ IOManager::write( Name backend_name,
 }
 
 void
-IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device, const DictionaryDatum& params )
+IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const DictionaryDatum& params )
 {
   for ( auto& it : recording_backends_ )
   {
@@ -366,7 +347,7 @@ IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device, co
 }
 
 void
-nest::IOManager::enroll_input( Name backend_name, InputDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_input( const Name& backend_name, InputDevice& device, const DictionaryDatum& params )
 {
   for ( auto& it : input_backends_ )
   {
@@ -383,7 +364,7 @@ nest::IOManager::enroll_input( Name backend_name, InputDevice& device, const Dic
 
 
 void
-IOManager::set_recording_value_names( Name backend_name,
+IOManager::set_recording_value_names( const Name& backend_name,
   const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
@@ -392,7 +373,7 @@ IOManager::set_recording_value_names( Name backend_name,
 }
 
 void
-IOManager::set_input_value_names( Name backend_name,
+IOManager::set_input_value_names( const Name& backend_name,
   const InputDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
@@ -401,37 +382,37 @@ IOManager::set_input_value_names( Name backend_name,
 }
 
 void
-IOManager::check_recording_backend_device_status( Name backend_name, const DictionaryDatum& params )
+IOManager::check_recording_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
 {
   recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-IOManager::get_recording_backend_device_defaults( Name backend_name, DictionaryDatum& params )
+IOManager::get_recording_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
 {
   recording_backends_[ backend_name ]->get_device_defaults( params );
 }
 
 void
-IOManager::get_recording_backend_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
+IOManager::get_recording_backend_device_status( const Name& backend_name, const RecordingDevice& device, DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }
 
 void
-IOManager::check_input_backend_device_status( Name backend_name, const DictionaryDatum& params )
+IOManager::check_input_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
 {
   input_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-IOManager::get_input_backend_device_defaults( Name backend_name, DictionaryDatum& params )
+IOManager::get_input_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
 {
   input_backends_[ backend_name ]->get_device_defaults( params );
 }
 
 void
-IOManager::get_input_backend_device_status( Name backend_name, const InputDevice& device, DictionaryDatum& d )
+IOManager::get_input_backend_device_status( const Name& backend_name, const InputDevice& device, DictionaryDatum& d )
 {
   input_backends_[ backend_name ]->get_device_status( device, d );
 }

@@ -44,8 +44,8 @@ class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
         ############################################
         nest.ResetKernel()
 
-        net1 = nest.Create('iaf_psc_alpha', N)  # creates source nodes
-        net2 = nest.Create('iaf_psc_alpha', N)  # creates target nodes
+        net1 = nest.Create('iaf_psc_alpha', N)  # creates source population
+        net2 = nest.Create('iaf_psc_alpha', N)  # creates target population
 
         Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array

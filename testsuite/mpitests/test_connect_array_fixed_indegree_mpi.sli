@@ -56,8 +56,8 @@ ResetKernel
 
 /node_id1 N 1 add def            % node_id1 = N + 1
 
-/net1 /iaf_psc_alpha N Create def   % creates source nodes
-/net2 /iaf_psc_alpha N Create def   % creates target nodes
+/net1 /iaf_psc_alpha N Create def   % creates source population
+/net2 /iaf_psc_alpha N Create def   % creates target population
 
 /NC N K mul def     % number of connections
 /Dmax NC 1 add def  % maximum delay

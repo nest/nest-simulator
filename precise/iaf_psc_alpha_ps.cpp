@@ -536,7 +536,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 
   // compute spike time relative to beginning of step
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
-  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( this, dt ) );
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + regula_falsi( *this, dt ) );
 
   assert( S_.last_spike_offset_ >= 0.0 );
 

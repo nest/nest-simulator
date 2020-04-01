@@ -39,7 +39,7 @@ namespace nest
  */
 template < typename CN >
 double
-regula_falsi( CN* node, const double dt )
+regula_falsi( CN& node, const double dt )
 {
   double root;
   double threshold_dist_root;
@@ -49,8 +49,8 @@ regula_falsi( CN* node, const double dt )
   double a_k = 0.0;
   double b_k = dt;
 
-  double threshold_dist_a_k = node->threshold_distance( a_k );
-  double threshold_dist_b_k = node->threshold_distance( b_k );
+  double threshold_dist_a_k = node.threshold_distance( a_k );
+  double threshold_dist_b_k = node.threshold_distance( b_k );
 
   if ( threshold_dist_a_k * threshold_dist_b_k > 0 )
   {
@@ -65,7 +65,7 @@ regula_falsi( CN* node, const double dt )
     assert( threshold_dist_b_k != threshold_dist_a_k );
 
     root = ( a_k * threshold_dist_b_k - b_k * threshold_dist_a_k ) / ( threshold_dist_b_k - threshold_dist_a_k );
-    threshold_dist_root = node->threshold_distance( root );
+    threshold_dist_root = node.threshold_distance( root );
 
     if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
     {

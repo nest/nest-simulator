@@ -1394,8 +1394,6 @@ be used instead.
 Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
 the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
 
-.. function_rm::
-
 Functions
 ~~~~~~~~~
 

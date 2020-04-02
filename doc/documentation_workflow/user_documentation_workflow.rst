@@ -60,17 +60,6 @@ Generating documentation with Sphinx
 
 Now that you activated your environment, you can generate HTML files using Sphinx.
 
-Editing and creating pages
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
-
-2. If you create a new page, open ``contents.rst`` in the ``doc`` directory and add the file name under ``.. toctree::``. This will ensure it appears on the NEST simulator documentation's table of contents.
-
-3. If you rename or move a file, please make sure you update all the corresponding cross-references.
-
-4. Save your changes.
-
 Rendering HTML
 ~~~~~~~~~~~~~~
 
@@ -96,6 +85,17 @@ Using Sphinx, you can build documentation locally and preview it offline:
    browser filename.html
 
 4. If you add further changes to your files, repeat steps 1-3.
+
+Editing and creating pages
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
+
+2. If you create a new page, open ``contents.rst`` in the ``doc`` directory and add the file name under ``.. toctree::``. This will ensure it appears on the NEST simulator documentation's table of contents.
+
+3. If you rename or move a file, please make sure you update all the corresponding cross-references.
+
+4. Save your changes.
 
 Previewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++

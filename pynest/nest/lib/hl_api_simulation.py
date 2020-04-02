@@ -188,6 +188,102 @@ def SetKernelStatus(params):
     params : dict
         Dictionary of parameters to set.
 
+    Other parameters
+    ----------------
+    The following parameters can be written to the kernel status dictionary.
+
+    resolution : double
+        The resolution of the simulation (in ms)
+    time : double
+        The current simulation time
+    max_delay : double
+        The maximum delay in the network
+    min_delay : double
+        The minimum delay in the network
+    ms_per_tic : double
+        The number of milliseconds per tic
+    tics_per_ms : double
+        The number of tics per millisecond
+    tics_per_step : int
+        The number of tics per simulation time step
+    total_num_virtual_procs : int
+        The total number of virtual processes
+    local_num_threads : int
+        The local number of threads
+    grng_seed : int
+        Seed for global random number generator used synchronously by all
+        virtual processes to create, e.g., fixed fan-out connections.
+    rng_seeds : array
+        Seeds for the per-virtual-process random number generators used for
+        most purposes. Array with one integer per virtual process, all must
+        be unique and differ from grng_seed.
+    data_path : str
+        A path, where all data is written to (default is the current
+        directory)
+    data_prefix : str
+        A common prefix for all data files
+    overwrite_files : bool
+        Whether to overwrite existing data files
+    print_time : bool
+        Whether to print progress information during the simulation
+    use_wfr : bool
+        Whether to use waveform relaxation method
+    wfr_comm_interval : double
+        Desired waveform relaxation communication interval
+    wfr_tol : double
+        Convergence tolerance of waveform relaxation method
+    wfr_max_iterations : int
+        Maximal number of iterations used for waveform relaxation
+    wfr_interpolation_order : int
+        Interpolation order of polynomial used in wfr iterations
+    dict_miss_is_error : bool
+        Whether missed dictionary entries are treated as errors
+    adaptive_spike_buffers  : bool
+        Whether MPI buffers for communication of spikes resize on the fly
+        (read/write)
+    adaptive_target_buffers : bool
+        Whether MPI buffers for communication of connections resize on the fly
+        (read/write)
+    buffer_size_spike_data : int
+        Total size of MPI buffer for communication of spikes (read/write)
+    buffer_size_target_data : int
+        Total size of MPI buffer for communication of connections (read/write)
+    growth_factor_buffer_spike_data : float
+         If MPI buffers for communication of spikes resize on the fly, grow
+         them by this factor each round (read/write)
+    growth_factor_buffer_target_data : float
+        if MPI buffers for communication of connections resize on the fly, grow
+        them by this factor each round (read/write)
+    keep_source_table : bool
+        Whether to keep source table after connection setup is complete
+        (read/write)
+    max_buffer_size_spike_data : int
+        Maximal size of MPI buffers for communication of spikes (read/write)
+    max_buffer_size_target_data : int
+        Maximal size of MPI buffers for communication of connections
+        (read/write)
+    max_num_syn_models : int
+        Maximal number of synapse models supported (read only)
+    sort_connections_by_source : bool
+        whether to sort connections by their source; increases construction
+        time of presynaptic data structures, decreases simulation time if the
+        average number of outgoing connections per neuron is smaller than the
+        total number of threads (read/write)
+    structural_plasticity_synapses : dict
+        Defines all synapses which are plastic for the structural plasticity
+        algorithm. Each entry in the dictionary is composed of a synapse model,
+        the pre synaptic element and the post synaptic element. (read/write)
+    structural_plasticity_update_interval : int
+        defines all synapses which are plastic for the structural plasticity
+        algorithm. Each entry in the dictionary is composed of a synapse model,
+        the pre synaptic element and the post synaptic element. (read/write)
+
+    Notes
+    -----
+    Some of the keywords in the kernel status dictionary are internally
+    calculated. See the documentation for GetKernelStatus for a complete list
+    of the kernel status dictionary parameters.
+
     See Also
     --------
     GetKernelStatus
@@ -220,6 +316,125 @@ def GetKernelStatus(keys=None):
     ------
     TypeError
         If `keys` are of the wrong type.
+
+    Other parameters
+    ----------------
+    The following parameters are available from the kernel status dictionary.
+
+    resolution : double
+        The resolution of the simulation (in ms)
+    time : double
+        The current simulation time
+    to_do : int
+        The number of steps yet to be simulated (read only)
+    max_delay : double
+        The maximum delay in the network
+    min_delay : double
+        The minimum delay in the network
+    ms_per_tic : double
+        The number of milliseconds per tic
+    tics_per_ms : double
+        The number of tics per millisecond
+    tics_per_step : int
+        The number of tics per simulation time step
+    T_max : double
+        The largest representable time value (read only)
+    T_min : double
+        The smallest representable time value (read only)
+    total_num_virtual_procs : int
+        The total number of virtual processes
+    local_num_threads : int
+        The local number of threads
+    num_processes : int
+        The number of MPI processes (read only)
+    off_grid_spiking : bool
+        Whether to transmit precise spike times in MPI communication
+        (read only)
+    grng_seed : int
+        Seed for global random number generator used synchronously by all
+        virtual processes to create, e.g., fixed fan-out connections.
+    rng_seeds : array
+        Seeds for the per-virtual-process random number generators used for
+        most purposes. Array with one integer per virtual process, all must
+        be unique and differ from grng_seed.
+    data_path : str
+        A path, where all data is written to (default is the current
+        directory)
+    data_prefix : str
+        A common prefix for all data files
+    overwrite_files : bool
+        Whether to overwrite existing data files
+    print_time : bool
+        Whether to print progress information during the simulation
+    network_size : int
+        The number of nodes in the network (read only)
+    num_connections : int
+        The number of connections in the network (read only, local only)
+    use_wfr : bool
+        Whether to use waveform relaxation method
+    wfr_comm_interval : double
+        Desired waveform relaxation communication interval
+    wfr_tol : double
+        Convergence tolerance of waveform relaxation method
+    wfr_max_iterations : int
+        Maximal number of iterations used for waveform relaxation
+    wfr_interpolation_order : int
+        Interpolation order of polynomial used in wfr iterations
+    dict_miss_is_error : bool
+        Whether missed dictionary entries are treated as errors
+    adaptive_spike_buffers  : bool
+        Whether MPI buffers for communication of spikes resize on the fly
+        (read/write)
+    adaptive_target_buffers : bool
+        Whether MPI buffers for communication of connections resize on the fly
+        (read/write)
+    buffer_size_secondary_events : int
+         Size of MPI buffers for communicating secondary events (in bytes, per
+         MPI rank, for developers) (read only)
+    buffer_size_spike_data : int
+        Total size of MPI buffer for communication of spikes (read/write)
+    buffer_size_target_data : int
+        Total size of MPI buffer for communication of connections (read/write)
+    growth_factor_buffer_spike_data : float
+        If MPI buffers for communication of spikes resize on the fly, grow
+        them by this factor each round (read/write)
+    growth_factor_buffer_target_data : float
+        if MPI buffers for communication of connections resize on the fly, grow
+        them by this factor each round (read/write)
+    keep_source_table : bool
+        Whether to keep source table after connection setup is complete
+        (read/write)
+    local_spike_counter : int
+        Number of spikes fired by neurons on a given MPI rank since NEST was
+        started or the last ResetKernel. Only spikes from "normal" neurons
+        (neuron models with proxies) are counted, not spikes generated by
+        devices such as poisson_generator. (read only)
+    max_buffer_size_spike_data : int
+        Maximal size of MPI buffers for communication of spikes. (read/write)
+    max_buffer_size_target_data : int
+        Maximal size of MPI buffers for communication of connections
+        (read/write)
+    max_num_syn_models : int
+        Maximal number of synapse models supported (read only)
+    sort_connections_by_source : bool
+        Whether to sort connections by their source; increases construction
+        time of presynaptic data structures, decreases simulation time if the
+        average number of outgoing connections per neuron is smaller than the
+        total number of threads (read/write)
+    structural_plasticity_synapses : dict
+        Defines all synapses which are plastic for the structural plasticity
+        algorithm. Each entry in the dictionary is composed of a synapse model,
+        the pre synaptic element and the post synaptic element. (read/write)
+    structural_plasticity_update_interval : int
+        defines all synapses which are plastic for the structural plasticity
+        algorithm. Each entry in the dictionary is composed of a synapse model,
+        the pre synaptic element and the post synaptic element. (read/write)
+
+    Notes
+    -----
+    Some of the keywords returned in the kernel status dictionary are read
+    only. See the documentation for SetKernelStatus for a similar list of the
+    writeable parameters.
 
     See Also
     --------

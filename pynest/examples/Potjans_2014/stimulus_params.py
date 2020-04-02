@@ -19,49 +19,47 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Microcircuit stimulus parameters
---------------------------------
+""" PyNEST Microcircuit: Stimulus Parameters
+-----------------------------------------------
 
-Stimulus parameters for the microcircuit.
+A dictionary with parameters for an optional external transient stimulation.
+Thalamic input and DC input can be switched on individually.
 
-Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 """
 
 import numpy as np
-from network_params import net_dict
 
 stim_dict = {
-    # Turn thalamic input on or off (True or False).
+    # optional thalamic input
+    # turn thalamic input on or off (True or False)
     'thalamic_input': False,
-    # Turn DC input on or off (True or False).
-    'dc_input': False,
-    # Number of thalamic neurons.
-    'n_thal': 902,
-    # Mean amplitude of the thalamic postsynaptic potential (in mV).
-    'PSP_th': 0.15,
-    # Standard deviation of the postsynaptic potential (in relative units).
-    'PSP_sd': 0.1,
-    # Start of the thalamic input (in ms).
+    # start of the thalamic input (in ms)
     'th_start': 700.0,
-    # Duration of the thalamic input (in ms).
+    # duration of the thalamic input (in ms)
     'th_duration': 10.0,
-    # Rate of the thalamic input (in Hz).
+    # rate of the thalamic input (in spikes/s)
     'th_rate': 120.0,
-    # Start of the DC generator (in ms).
-    'dc_start': 0.0,
-    # Duration of the DC generator (in ms).
-    'dc_dur': 1000.0,
-    # Connection probabilities of the thalamus to the different populations.
-    # Order as in 'populations' in 'network_params.py'
+    # number of thalamic neurons
+    'num_th_neurons': 902,
+    # connection probabilities of the thalamus to the different populations
+    # (same order as in 'populations' in 'net_dict')
     'conn_probs_th':
         np.array([0.0, 0.0, 0.0983, 0.0619, 0.0, 0.0, 0.0512, 0.0196]),
-    # Mean delay of the thalamic input (in ms).
-    'delay_th':
-        np.asarray([1.5 for i in list(range(len(net_dict['populations'])))]),
-    # Standard deviation of the thalamic delay (in ms).
-    'delay_th_sd':
-        np.asarray([0.75 for i in list(range(len(net_dict['populations'])))]),
-    # Amplitude of the DC generator (in pA).
-    'dc_amp': np.ones(len(net_dict['populations'])) * 0.3,
-    }
+    # mean amplitude of the thalamic postsynaptic potential (in mV),
+    # standard deviation will be taken from 'net_dict'
+    'PSP_th': 0.15,
+    # mean delay of the thalamic input (in ms)
+    'delay_th_mean': 1.5,
+    # relative standard deviation of the thalamic delay (in ms)
+    'delay_th_rel_std': 0.5,
+
+    # optional DC input
+    # turn DC input on or off (True or False)
+    'dc_input': False,
+    # start of the DC input (in ms)
+    'dc_start': 650.0,
+    # duration of the DC input (in ms)
+    'dc_dur': 100.0,
+    # amplitude of the DC input (in pA); final amplitude is population-specific
+    # and will be obtained by multiplication with 'K_ext'
+    'dc_amp': 0.3}

@@ -374,7 +374,8 @@ nest::MUSICChannelAlreadyMapped::message() const
 
 #ifdef HAVE_MPI
 std::string
-nest::MPIFilePortsUnknown::message() const {
+nest::MPIFilePortsUnknown::message() const
+{
     std::ostringstream msg;
     msg << "For the node " << index_node_ << ", the label "
         << "needs to be defined. The label precises "

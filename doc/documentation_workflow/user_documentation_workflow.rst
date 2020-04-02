@@ -127,4 +127,4 @@ This allows you to preview your work on your Read the Docs account. In order to 
 Creating pull request
 +++++++++++++++++++++
 
-When you feel your documentation work is finished, you can create a pull request to the ``master`` branch of the NEST Source Code Repository. Your pull request will be reviewed by our NEST Documentation Team!
+When you feel your documentation work is finished, you can create a `pull request<https://nest.github.io/nest-simulator/development_workflow#create-a-pull-request>`_ to the ``master`` branch of the NEST Source Code Repository. Your pull request will be reviewed by our NEST Documentation Team!

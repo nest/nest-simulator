@@ -95,6 +95,8 @@ Editing and creating pages
 
 4. Save your changes.
 
+5. Re-render documentation as described above.
+
 Previewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++
 

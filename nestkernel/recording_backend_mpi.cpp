@@ -285,7 +285,7 @@ nest::RecordingBackendMPI::get_port( const index index_node, const std::string& 
   }
   else
   {
-    throw MPIFilePortsUnknown(index_node);
+    throw MPIFilePortsUnknown( index_node );
   }
   char add_path[ 150 ];
   sprintf( add_path, "/%zu.txt", index_node );

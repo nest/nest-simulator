@@ -372,6 +372,17 @@ nest::MUSICChannelAlreadyMapped::message() const
 }
 #endif
 
+#ifdef HAVE_MPI
+std::string
+nest::MPIFilePortsUnknown::message() const {
+    std::ostringstream msg;
+    msg << "For the node " << index_node_ << ", the label "
+        << "needs to be defined. The label precises "
+        << "the folder of files for the MPI port";
+    return msg.str();
+}
+#endif
+
 std::string
 nest::GSLSolverFailure::message() const
 {

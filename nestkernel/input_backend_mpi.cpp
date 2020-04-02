@@ -138,9 +138,9 @@ nest::InputBackendMPI::prepare()
       0,
       MPI_COMM_WORLD,
       it_comm.second.first ); // should use the status for handle error
-    char msg[ MPI_MAX_PORT_NAME + 50 ];
-    sprintf( msg, "Connect to %s\n", it_comm.first.data() );
-    LOG( M_INFO, "MPI Input connect", msg );
+    std::ostringstream msg;
+    msg << "Connect to " << it_comm.first.data() << "\n";
+    LOG( M_INFO, "MPI Input connect", msg.str() );
     fflush( stdout );
   }
 }
@@ -259,7 +259,7 @@ nest::InputBackendMPI::get_port( const index index_node, const std::string& labe
   }
   else
   {
-    // TODO take in count this case
+    throw MPIFilePortsUnknown(index_node);
   }
   char add_path[ 150 ];
   sprintf( add_path, "/%zu.txt", index_node );

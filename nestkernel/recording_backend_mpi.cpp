@@ -131,9 +131,9 @@ nest::RecordingBackendMPI::prepare()
   // WARNING can be a bug if it's needed that all threads are to be connected with MPI
   for ( auto& it_comm : commMap_[ thread_id ] )
   {
-    char msg[ MPI_MAX_PORT_NAME + 50 ];
-    sprintf( msg, "Connect to %s\n", it_comm.first.data() );
-    LOG( M_INFO, "MPI Record connect", msg );
+    std::ostringstream msg;
+    msg << "Connect to " << it_comm.first.data() << "\n";
+    LOG( M_INFO, "MPI Record connect", msg.str() );
     MPI_Comm_connect( it_comm.first.data(),
       MPI_INFO_NULL,
       0,
@@ -285,7 +285,7 @@ nest::RecordingBackendMPI::get_port( const index index_node, const std::string& 
   }
   else
   {
-    // TODO take into acount this case in the future
+    throw MPIFilePortsUnknown(index_node);
   }
   char add_path[ 150 ];
   sprintf( add_path, "/%zu.txt", index_node );

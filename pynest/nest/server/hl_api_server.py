@@ -80,7 +80,7 @@ def route_exec():
             response['stdout'] = '\n'.join(stdout)
             return jsonify(data)
         except nest.kernel.NESTError as e:
-            abort(Response(getattr(e, 'errormessage'), 400))
+            abort(Response(getattr(e, 'errormessage'), 409))
         except Exception as e:
             abort(Response(str(e), 400))
 

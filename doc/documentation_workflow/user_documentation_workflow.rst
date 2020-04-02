@@ -10,7 +10,7 @@ The NEST simulator documentation lives alongside its code. It is contained in th
 
 We work with `GitHub <https://www.github.com>`_ as the web-based hosting service for Git. Git allows us to keep our versions under control, with each release of NEST having its own documentation.
 
-.. image:: ../_static/img/documentation_workflow.png
+.. image:: ../_static/img/documentation_workflow_new.png
   :width: 300
   :alt: Alternative text
 

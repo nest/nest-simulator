@@ -51,7 +51,7 @@ For macOS, please use `Homebrew <https://brew.sh/>`_:
 .. code-block::
 
    cd doc/doxygen/html
-   browser filename.html
+   browser index.html
 
 Helpdesk
 ++++++++

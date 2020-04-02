@@ -1339,8 +1339,6 @@ All details about the new infrastructure can be found in the guide on
 What's removed?
 ---------------
 
-.. subnet_rm::
-
 Subnets
 ~~~~~~~
 

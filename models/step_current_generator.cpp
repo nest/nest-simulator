@@ -333,31 +333,33 @@ nest::step_current_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_current_generator::update_from_backend(std::vector<double> time_amplitude) {
+nest::step_current_generator::update_from_backend( std::vector< double > time_amplitude )
+{
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
   assert( time_amplitude.size() % 2 == 0 );
 
   // For the input backend
-  if ( !time_amplitude.empty() ){
+  if ( !time_amplitude.empty() )
+  {
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > amplitudes_pA;
     const size_t n_step = P_.amp_time_stamps_.size();
-    for ( size_t n = 0 ; n < n_step; ++n ) {
-      times_ms.push_back( P_.amp_time_stamps_[n].get_ms() );
-      amplitudes_pA.push_back( P_.amp_values_[n] );
-    }
-    for (size_t n = 0; n < time_amplitude.size() / 2; n++)
+    for ( size_t n = 0; n < n_step; ++n )
     {
-      times_ms.push_back( time_amplitude [ n*2 ] );
-      amplitudes_pA.push_back( time_amplitude [ n*2+1 ] );
+      times_ms.push_back( P_.amp_time_stamps_[ n ].get_ms() );
+      amplitudes_pA.push_back( P_.amp_values_[ n ] );
+    }
+    for ( size_t n = 0; n < time_amplitude.size() / 2; n++ )
+    {
+      times_ms.push_back( time_amplitude[ n * 2 ] );
+      amplitudes_pA.push_back( time_amplitude[ n * 2 + 1 ] );
     }
     ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
     ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_pA );
 
-    ptmp.set( d, B_,this );
-
+    ptmp.set( d, B_, this );
   }
 
   // if we get here, temporary contains consistent set of properties

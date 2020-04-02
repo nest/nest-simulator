@@ -126,7 +126,7 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void update_from_backend( std::vector<double> input_spikes ) override;
+  void update_from_backend( std::vector< double > input_spikes ) override;
   Type get_type() const override;
 
 private:
@@ -240,7 +240,7 @@ step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport recep
 inline void
 step_current_generator::get_status( DictionaryDatum& d ) const
 {
-  InputDevice::get_status(d );
+  InputDevice::get_status( d );
   P_.get( d );
   device_.get_status( d );
 

@@ -127,7 +127,7 @@ provide containerized versions of NEST in several formats:
           generated, as shown below. You can then copy and paste the
           link into your browser.
 
-           .. image:: ../../_static/img/docker_link.png
+           .. image:: ../_static/img/docker_link.png
               :align: center
               :width: 1000px
 

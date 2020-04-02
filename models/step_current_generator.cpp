@@ -224,7 +224,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : DeviceNode()
+  : InputDevice()
   , device_()
   , P_()
   , S_()
@@ -234,7 +234,7 @@ nest::step_current_generator::step_current_generator()
 }
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
-  : DeviceNode( n )
+  : InputDevice( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -269,7 +269,7 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-
+  InputDevice::calibrate( InputBackend::NO_DOUBLE_VALUE_NAMES, InputBackend::NO_LONG_VALUE_NAMES );
   device_.calibrate();
 }
 
@@ -327,4 +327,45 @@ void
 nest::step_current_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+nest::step_current_generator::update_from_backend(std::vector<double> time_amplitude) {
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  assert( time_amplitude.size() % 2 == 0 );
+
+  // For the input backend
+  if ( !time_amplitude.empty() ){
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    std::vector< double > amplitudes_pA;
+    const size_t n_step = P_.amp_time_stamps_.size();
+    for ( size_t n = 0 ; n < n_step; ++n ) {
+      times_ms.push_back( P_.amp_time_stamps_[n].get_ms() );
+      amplitudes_pA.push_back( P_.amp_values_[n] );
+    }
+    for (size_t n = 0; n < time_amplitude.size() / 2; n++)
+    {
+      times_ms.push_back( time_amplitude [ n*2 ] );
+      amplitudes_pA.push_back( time_amplitude [ n*2+1 ] );
+    }
+    ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
+    ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_pA );
+
+    ptmp.set( d, B_,this );
+
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}
+
+nest::InputDevice::Type
+nest::step_current_generator::get_type() const
+{
+  return InputDevice::STEP_CURRENT_GENERATOR;
 }

@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "input_device.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
@@ -87,7 +88,7 @@ ac_generator, dc_generator, step_current_generator
 
 EndUserDocs */
 
-class step_current_generator : public DeviceNode
+class step_current_generator : public InputDevice
 {
 
 public:
@@ -95,42 +96,45 @@ public:
   step_current_generator( const step_current_generator& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
 
   //! Allow multimeter to connect to local instances
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  void update_from_backend( std::vector<double> input_spikes ) override;
+  Type get_type() const override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, long, long ) override;
 
   struct Buffers_;
 
@@ -190,7 +194,7 @@ private:
     size_t idx_; //!< index of current amplitude
     double amp_; //!< current amplitude
 
-    Buffers_( step_current_generator& );
+    explicit Buffers_( step_current_generator& );
     Buffers_( const Buffers_&, step_current_generator& );
     UniversalDataLogger< step_current_generator > logger_;
   };
@@ -236,6 +240,7 @@ step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport recep
 inline void
 step_current_generator::get_status( DictionaryDatum& d ) const
 {
+  InputDevice::get_status(d );
   P_.get( d );
   device_.get_status( d );
 
@@ -247,6 +252,8 @@ step_current_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, B_, this ); // throws if BadProperty
+
+  InputDevice::set_status( d );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

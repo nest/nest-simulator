@@ -173,9 +173,10 @@ Sends
 
 SpikeEvent
 
-EndUserDocs */
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
+EndUserDocs 
 */
+
 class spike_generator : public InputDevice
 {
 

@@ -24,5 +24,3 @@
 
 const std::vector< Name > nest::InputBackend::NO_DOUBLE_VALUE_NAMES;
 const std::vector< Name > nest::InputBackend::NO_LONG_VALUE_NAMES;
-const std::vector< double > nest::InputBackend::NO_DOUBLE_VALUES;
-const std::vector< long > nest::InputBackend::NO_LONG_VALUES;

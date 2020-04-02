@@ -272,8 +272,6 @@ public:
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
-  static const std::vector< double > NO_DOUBLE_VALUES;
-  static const std::vector< long > NO_LONG_VALUES;
 };
 
 } // namespace

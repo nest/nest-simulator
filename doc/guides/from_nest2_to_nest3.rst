@@ -1371,8 +1371,6 @@ prints ID ranges and model names of the nodes in the network.
   |                                              |                                       |
   +----------------------------------------------+---------------------------------------+
 
-.. model_rm::
-
 Models
 ~~~~~~
 

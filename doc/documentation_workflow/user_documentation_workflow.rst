@@ -87,7 +87,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To edit existing or create new `reStructuredText files<https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_, follow the steps below:
+To edit existing `reStructuredText files <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_ or to create new ones, follow the steps below:
 
 1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
 
@@ -127,4 +127,4 @@ This allows you to preview your work on your Read the Docs account. In order to 
 Creating pull request
 +++++++++++++++++++++
 
-When you feel your documentation work is finished, you can create a `pull request<https://nest.github.io/nest-simulator/development_workflow#create-a-pull-request>`_ to the ``master`` branch of the NEST Source Code Repository. Your pull request will be reviewed by our NEST Documentation Team!
+When you feel your documentation work is finished, you can create a `pull request <https://nest.github.io/nest-simulator/development_workflow#create-a-pull-request>`_ to the ``master`` branch of the NEST Source Code Repository. Your pull request will be reviewed by our NEST Documentation Team!

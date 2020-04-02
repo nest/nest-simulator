@@ -340,7 +340,7 @@ nest::step_current_generator::update_from_backend( std::vector< double > time_am
   assert( time_amplitude.size() % 2 == 0 );
 
   // For the input backend
-  if ( !time_amplitude.empty() )
+  if ( not time_amplitude.empty() )
   {
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;

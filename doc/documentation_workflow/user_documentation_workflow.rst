@@ -87,7 +87,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To edit existing `reStructuredText files <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_ or to create new ones, follow the steps below:
+To edit existing `reStructuredText <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your editor of choice.
 

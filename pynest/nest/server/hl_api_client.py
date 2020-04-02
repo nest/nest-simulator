@@ -33,14 +33,14 @@ class NESTServerClient(object):
     def _nest_server_api(self, call, params={}):
         response = requests.post(self.url_api + call, json=params, headers=self.headers)
         if response.ok:
-          return response.json()
+            return response.json()
         else:
-          if response.status_code == 400:
-              raise BadRequest(response.text)
-          elif response.status_code == 404:
-              raise NotFound(response.text)
-          elif response.status_code == 409:
-              raise nest.kernel.NESTError(response.text)
+            if response.status_code == 400:
+                raise BadRequest(response.text)
+            elif response.status_code == 404:
+                raise NotFound(response.text)
+            elif response.status_code == 409:
+                raise nest.kernel.NESTError(response.text)
 
     def __getattr__(self, name):
         def method(**kwargs):

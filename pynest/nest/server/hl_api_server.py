@@ -41,6 +41,7 @@ __all__ = [
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/version', methods=['GET'])
 @cross_origin()
 def nest_index():

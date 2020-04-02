@@ -430,7 +430,7 @@ The logic module contains logical expressions between nest.Parameter's.
 .. _distr_param:
 
 :green:`spatial_distributions`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The spatial_distributions module contains random distributions that take a spatial
 parameter as input and applies the distribution on the parameter. They are used
 for spatially distributed nodes.

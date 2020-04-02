@@ -84,8 +84,6 @@ Using Sphinx, you can build documentation locally and preview it offline:
    cd </path/to/nest_source>/doc/_build/html
    browser filename.html
 
-4. If you add further changes to your files, repeat steps 1-3.
-
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 

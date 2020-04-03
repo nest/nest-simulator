@@ -45,7 +45,7 @@ namespace nest
 
 /** @BeginDocumentation
 Name: iaf_psc_alpha_ps - Leaky integrate-and-fire neuron
-with alpha-shape postsynaptic currents and bisectioning method for
+with alpha-shape postsynaptic currents and regula falsi method for
 approximation of threshold crossing.
 
 .. versionadded:: 2.18
@@ -63,8 +63,8 @@ The precise implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
 delay in the network, see [1]. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
-spikes is determined by a bisectioning method to approximate the timing
-of a threshold crossing [1,3]. Return from refractoriness occurs precisly
+spikes is determined by a Regula Falsi method to approximate the timing
+of a threshold crossing [1,3]. Return from refractoriness occurs precisely
 at spike time plus refractory period.
 
 This implementation is more complex than the plain iaf_psc_alpha
@@ -220,7 +220,7 @@ private:
   void propagate_( const double dt );
 
   /**
-   * Trigger interpolation method to find the precise spike time
+   * Trigger regula falsi method to find the precise spike time
    * within the mini-timestep (t0,t0+dt] assuming that the membrane
    * potential was below threshold at t0 and above at t0+dt. Emit
    * the spike and reset the neuron.
@@ -241,24 +241,6 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( Time const& origin, const long lag, const double spike_offset );
-
-  /** @name Threshold-crossing interpolation
-   * These functions determine the time of threshold crossing using
-   * interpolation, one function per interpolation
-   * order. thresh_find() is the driver function and the only one to
-   * be called directly.
-   */
-  //@{
-
-  /** Interpolation orders. */
-  enum interpOrder
-  {
-    NO_INTERPOL,
-    LINEAR,
-    QUADRATIC,
-    CUBIC,
-    END_INTERP_ORDER
-  };
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha_ps >;
@@ -384,12 +366,12 @@ private:
     double P32_ex_;         //!< progagator matrix elem, 3rd row (ex)
     double P31_in_;         //!< progagator matrix elem, 3rd row (in)
     double P32_in_;         //!< progagator matrix elem, 3rd row (in)
-    double y_input_before_; //!< at beginning of mini-step, for interpolation
-    double I_ex_before_;    //!< at beginning of mini-step, for interpolation
-    double I_in_before_;    //!< at beginning of mini-step, for interpolation
-    double dI_ex_before_;   //!< at beginning of mini-step, for interpolation
-    double dI_in_before_;   //!< at beginning of mini-step, for interpolation
-    double V_m_before_;     //!< at beginning of mini-step, for interpolation
+    double y_input_before_; //!< at beginning of mini-step
+    double I_ex_before_;    //!< at beginning of mini-step
+    double I_in_before_;    //!< at beginning of mini-step
+    double dI_ex_before_;   //!< at beginning of mini-step
+    double dI_in_before_;   //!< at beginning of mini-step
+    double V_m_before_;     //!< at beginning of mini-step
   };
 
   // Access functions for UniversalDataLogger -------------------------------

@@ -81,7 +81,7 @@ regula_falsi( const CN& node, const double dt )
       if ( last_threshold_sign == 1 )
       {
         // If threshold_dist_a_k and threshold_dist_root had the same sign in
-        // the last time step, we half the value of threshold_distance_(b_k) to
+        // the last time step, we halve the value of threshold_distance_(b_k) to
         // force the root in the next time step to occur on b_k's side. This is
         // done to improve the convergence rate.
         threshold_dist_b_k /= 2;

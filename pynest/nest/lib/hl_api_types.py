@@ -194,16 +194,25 @@ class NodeCollection(object):
             nc = sli_func('cvnodecollection', data)
             self._datum = nc._datum
 
+        # numpy compatibility attribute
+        self._numpy_conversion = False
+
     def __iter__(self):
+        if self._numpy_conversion:
+            self._numpy_conversion = False
+            tpl = self.get('global_id') if len(self) != 1 \
+                                        else (self.get('global_id'),)
+            return iter(tpl)
+
         return NodeCollectionIterator(self)
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
-
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
@@ -239,6 +248,10 @@ class NodeCollection(object):
 
     def __len__(self):
         return sli_func('size', self._datum)
+
+    def __int__(self):
+        # this will automatically raise an error if len is not 1
+        return int(self.get('global_id'))
 
     def __str__(self):
         return sli_func('pcvs', self._datum)
@@ -387,7 +400,9 @@ class NodeCollection(object):
         """
         if self.__len__() == 0:
             return []
-        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
+
+        return list(self.get('global_id')) if len(self) > 1 \
+                                           else [self.get('global_id')]
 
     def index(self, node_id):
         """
@@ -414,12 +429,20 @@ class NodeCollection(object):
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
+
+        # numpy compatibility check
+        if attr.startswith('__array_'):
+            self._numpy_conversion = True
+            raise AttributeError
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
         # `_datum` is the only property of NodeCollection that should not be
         # interpreted as a property of the model
         if attr == '_datum':
+            super().__setattr__(attr, value)
+        elif attr == '_numpy_conversion':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})

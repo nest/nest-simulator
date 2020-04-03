@@ -167,11 +167,11 @@ params begin userdict begin
   (Exact value of membrane potential after ) <-
   T <- ( ms is ) <- V <- ( mV.) <- endl endl
 
-  (                  h [ms]) <-
+  (                 log_2 h) <-
   models
   {
-    exch (      ) <- exch <- ( [ms]) <-
-    (               error [ms]) <-
+    exch (      ) <- exch <- ( [mV]) <-
+    (               error [mV]) <-
   } forall
   endl
 

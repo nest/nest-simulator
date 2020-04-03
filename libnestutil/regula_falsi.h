@@ -69,7 +69,7 @@ regula_falsi( const CN& node, const double dt )
 
     if ( std::abs( threshold_dist_root ) < TERMINATION_CRITERION )
     {
-      break;
+      return root;
     }
 
     if ( threshold_dist_a_k * threshold_dist_root > 0.0 )
@@ -104,14 +104,8 @@ regula_falsi( const CN& node, const double dt )
     {
       throw NumericalInstability( "regula_falsi: Regula falsi method did not converge" );
     }
-
-    if ( iter == MAX_ITER - 1 )
-    {
-      throw NumericalInstability(
-        "regula_falsi: Regula falsi method did not converge during set number of iterations" );
-    }
   }
-  return root;
+  throw NumericalInstability( "regula_falsi: Regula falsi method did not converge during set number of iterations" );
 }
 
 } // namespace nest

@@ -166,9 +166,11 @@ public:
   void set_status( const DictionaryDatum& );
 
   /**
-   * Based on the current state, compute the value of the membrane potential after taking a timestep of length
-   * ``t_step``, and use it to compute the signed distance to spike threshold at that time. The internal state is not
+   * Based on the current state, compute the value of the membrane potential
+   * after taking a timestep of length ``t_step``, and use it to compute the
+   * signed distance to spike threshold at that time. The internal state is not
    * actually updated (method is defined const).
+   *
    * @param   double time step
    * @returns difference between updated membrane potential and threshold
    */

@@ -30,13 +30,11 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
 import re
-
 import pip
-
 import subprocess
 
+from shutil import copytree, ignore_patterns, rmtree
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -294,3 +292,13 @@ for model in models_with_documentation:
             print("Wrote model documentation for model " + model)
         else:
             print("No documentation found for model " + model)
+
+# -- Copy documentation for Microcircuit Model ----------------------------
+
+source = r'../pynest/examples/Potjans_2014'
+destination = r'microcircuit'
+
+if os.path.exists(destination) and os.path.isdir(destination):
+    rmtree(destination)
+copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py'))
+os.rename("./microcircuit/README.rst", "./microcircuit/index.rst")

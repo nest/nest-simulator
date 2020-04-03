@@ -104,6 +104,12 @@ regula_falsi( const CN& node, const double dt )
     {
       throw NumericalInstability( "regula_falsi: Regula falsi method did not converge" );
     }
+
+    if ( iter == MAX_ITER - 1 )
+    {
+      throw NumericalInstability(
+        "regula_falsi: Regula falsi method did not converge during set number of iterations" );
+    }
   }
   return root;
 }

@@ -89,13 +89,6 @@ PyNEST Examples
    :caption: Microcircuit example
 
    ../microcircuit/index
-   ../auto_examples/Potjans_2014/example
-   ../auto_examples/Potjans_2014/network
-   ../auto_examples/Potjans_2014/helpers
-   ../auto_examples/Potjans_2014/network_params
-   ../auto_examples/Potjans_2014/stimulus_params
-   ../auto_examples/Potjans_2014/sim_params
-
 
 .. toctree::
    :maxdepth: 1

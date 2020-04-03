@@ -64,7 +64,7 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
   </a>
   <a href="microcircuit/index.html">
-    <img src="_static/img/microcircuit.png" alt="Microcircuit" style="width:150px;height:150px;border:0;">
+    <img src="_images/microcircuit.png" alt="Microcircuit" style="width:150px;height:150px;border:0;">
   </a>
 
 

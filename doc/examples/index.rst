@@ -88,6 +88,7 @@ PyNEST Examples
    :maxdepth: 1
    :caption: Microcircuit example
 
+   ../microcircuit/index
    ../auto_examples/Potjans_2014/example
    ../auto_examples/Potjans_2014/network
    ../auto_examples/Potjans_2014/helpers

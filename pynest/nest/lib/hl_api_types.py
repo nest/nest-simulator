@@ -200,8 +200,8 @@ class NodeCollection(object):
     def __iter__(self):
         if self._numpy_conversion:
             self._numpy_conversion = False
-            tpl = self.get('global_id') if len(self) != 1 \
-                                        else (self.get('global_id'),)
+            tpl = (self.get('global_id') if len(self) != 1
+                   else (self.get('global_id'),))
             return iter(tpl)
 
         return NodeCollectionIterator(self)
@@ -401,8 +401,8 @@ class NodeCollection(object):
         if self.__len__() == 0:
             return []
 
-        return list(self.get('global_id')) if len(self) > 1 \
-                                           else [self.get('global_id')]
+        return (list(self.get('global_id')) if len(self) > 1
+                else [self.get('global_id')])
 
     def index(self, node_id):
         """

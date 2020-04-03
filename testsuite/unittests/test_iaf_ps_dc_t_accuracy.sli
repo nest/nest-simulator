@@ -159,7 +159,7 @@ params begin userdict begin
   endl endl
   (The precise spike time is ) <- t <- ( ms.) <- endl endl
 
-  (                  h [ms]) <-
+  (                 log_2 h) <-
   models
   {
     exch (      ) <- exch <- ( [ms]) <-

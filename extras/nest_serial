@@ -8,7 +8,7 @@ fi
 abspath="$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")"
 path="$(dirname "${abspath}")"
 
-binary="$("${path}/sli" -c "(\"$1\") nest_serial =")"
+binary="$("${path}/sli" -c "($1) nest_serial =")"
 exitcode=$?
 
 if [ $exitcode -ne 0 ]; then

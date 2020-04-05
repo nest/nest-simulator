@@ -1273,7 +1273,7 @@ SeeAlso: nest_indirect
  }
  {
   (') statusdict /prefix get (/bin/nest' ) join join
-  exch join
+  exch (') exch (') join join join
  } ifelse 
 } def
 
@@ -1325,7 +1325,7 @@ SeeAlso: nest_serial
  {
   pop
   (') statusdict /prefix get (/bin/sli' ) join join
-  exch join
+  exch (') exch (') join join join
  } 
  {
   M_FATAL (nest_indirect) (NEST was compiled with MPI but ~/.nestrc does not specify) message

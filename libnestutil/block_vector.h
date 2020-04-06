@@ -75,7 +75,7 @@ public:
   using value_type = value_type_;
   using pointer = ptr_;
   using reference = ref_;
-  using difference_type = long int;
+  using difference_type = typename BlockVector< value_type >::difference_type;
 
   bv_iterator() = default;
 
@@ -530,6 +530,10 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator+=( difference_type val )
 {
+  if ( val < 0 )
+  {
+    return operator-=( -val );
+  }
   for ( difference_type i = 0; i < val; ++i )
   {
     operator++();
@@ -540,6 +544,10 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator-=( difference_type val )
 {
+  if ( val < 0 )
+  {
+    return operator+=( -val );
+  }
   for ( difference_type i = 0; i < val; ++i )
   {
     operator--();

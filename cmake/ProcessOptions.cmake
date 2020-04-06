@@ -456,6 +456,13 @@ function( NEST_PROCESS_WITH_OPENMP )
       message( FATAL_ERROR "CMake can not find OpenMP." )
     endif ()
   endif ()
+
+  # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
+  # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
+  if ( NOT TARGET OpenMP::OpenMP_CXX )
+    add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
+  endif()
+
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )
@@ -556,8 +563,10 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_ROOT "${with-boost}" )
     endif ()
 
+    set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
+    set(Boost_USE_RELEASE_LIBS ON) # only find release libs
     # Needs Boost version >=1.58.0 to use Boost sorting
-    find_package( Boost 1.58.0 COMPONENTS unit_test_framework )
+    find_package( Boost 1.58.0 )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
@@ -566,6 +575,7 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
       set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
+      include_directories( ${Boost_INCLUDE_DIRS} )
     endif ()
   endif ()
 endfunction()

@@ -24,7 +24,7 @@
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
+#       'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -100,11 +100,14 @@ fi
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
-    CONFIGURE_BOOST="-Dwith-boost=OFF"
-else
-    CONFIGURE_BOOST="-Dwith-boost=ON"
-fi
- 
+
+# Download Boost
+wget --no-verbose https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+tar -xzf boost_1_72_0.tar.gz
+rm -fr boost_1_72_0.tar.gz
+mv boost_1_72_0 $HOME/.cache
+CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
+
 NEST_VPATH=build
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
@@ -161,9 +164,9 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-    # Note: BUG: Extracting the filenames may not work in all cases.
-    #            The commit range might not properly reflect the history.
-    #            see https://github.com/travis-ci/travis-ci/issues/2668
+      # Note: BUG: Extracting the filenames may not work in all cases.
+      #            The commit range might not properly reflect the history.
+      #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
        file_names=`curl --retry 5 "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`

@@ -1,16 +1,16 @@
 Download NEST
 ===================
 
-.. pull-quote::
+.. admonition:: Standard situations
 
-      For standard situations where you just want to use but not modify
-      NEST, you don't have to download the source code.
+ For standard situations where you just want to use but not modify
+ NEST, you don't have to download the source code.
 
-      Distribution packages ease the installation on Debian/Ubuntu,
-      Fedora, macOS and Conda.
+ Distribution packages ease the installation on Debian/Ubuntu,
+ Fedora, macOS and Conda.
 
-      See our :doc:`installation instructions <installation/index>` to
-      find the right option for you.
+ See our :doc:`installation instructions <installation/index>` to
+ find the right option for you.
 
 Here you'll find the lastest versions of the source code and virtual machine (VM) images for download.
 If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!

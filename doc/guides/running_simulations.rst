@@ -199,3 +199,44 @@ a Poisson spike train using different seeds and output files for each run:
         nest.Connect(nrn, sd)
     
         nest.Simulate(100)
+
+Monitoring elapsed time
+-----------------------
+
+The progress of the simulation can be monitored by setting:
+
+::
+
+    SetKernelStatus({"print_time": True})
+
+If enabled, a line is printed to screen at every time step of the simulation to
+track the percentage and the absolute elapsed biological simulation time as
+well as the real-time factor, for example:
+
+::
+
+    [ 25% ] Biological simulation time: 250.0 ms, Real-time factor: 2.6711
+
+The *real-time factor* is defined as the quotient of *real time* (which is also
+known as wall-clock time) and the *biological simulation time* (which is the
+argument to the ``Simulate()`` call):
+
+.. math::
+
+    q_\text{real} = \frac{T_\text{real}}{T_\text{sim}}
+
+If the real-time factor is larger than `1` as in the example above, the
+simulation runs more slowly than real time passes.
+
+In the case that a simulation script contains multiple ``Simulate()`` calls,
+the percentage simulation time is reset to `0%` at the beginning of each call,
+but the abolute simulation time and the real-time factor account for the total
+elapsed times.
+
+.. note::
+
+    For large, distributed simulations, it is recommended to set
+    ``{"print_time": False}`` to avoid the overhead of the print calls.
+    In these cases, the real-time factor can be computed by measuring the real
+    time manually and dividing by the set biological simulation time.
+

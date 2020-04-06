@@ -1015,7 +1015,7 @@ nest::SimulationManager::print_progress_()
     // ms
     double t_real_acc = ( t_real_ ) / 1000.;
     double t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
-    // real-time factor = real time / biological simulation time
+    // real-time factor = wall-clock time / biological simulation time
     rt_factor = t_real_acc / t_sim_acc;
   }
 

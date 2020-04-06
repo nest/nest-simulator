@@ -217,16 +217,16 @@ well as the real-time factor, for example:
 
     [ 25% ] Biological simulation time: 250.0 ms, Real-time factor: 2.6711
 
-The *real-time factor* is defined as the quotient of *real time* (which is also
-known as wall-clock time) and the *biological simulation time* (which is the
+The *real-time factor* is defined as the quotient of *wall-clock time* (which
+is also known as real time) and the *biological simulation time* (which is the
 argument to the ``Simulate()`` call):
 
 .. math::
 
-    q_\text{real} = \frac{T_\text{real}}{T_\text{sim}}
+    q_\text{real} = \frac{T_\text{wall}}{T_\text{sim}}
 
 If the real-time factor is larger than `1` as in the example above, the
-simulation runs more slowly than real time passes.
+simulation runs more slowly than the wall-clock time passes.
 
 In the case that a simulation script contains multiple ``Simulate()`` calls,
 the percentage simulation time is reset to `0%` at the beginning of each call,
@@ -237,6 +237,7 @@ elapsed times.
 
     For large, distributed simulations, it is recommended to set
     ``{"print_time": False}`` to avoid the overhead of the print calls.
-    In these cases, the real-time factor can be computed by measuring the real
-    time manually and dividing by the set biological simulation time.
+    In these cases, the real-time factor can be computed by measuring the
+    wall-clock time manually and dividing by the set biological simulation
+    time.
 

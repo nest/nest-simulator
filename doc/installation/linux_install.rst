@@ -96,7 +96,7 @@ The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by se
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python <http://www.python.org>`_
+- `Python 3.X <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
 - `matplotlib <http://matplotlib.org>`_

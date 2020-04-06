@@ -13,11 +13,6 @@ NEST 3.0: Detailed transition guide
    :depth: 2
 
 
-**Dependencies:**
-
- * Python 3.X
- * Matplotlib 3.X.X
-
 .. seealso::
 
   To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.

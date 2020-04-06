@@ -47,27 +47,27 @@ namespace nest
 /** @BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; canoncial implementation;
-bisectioning method for approximation of threshold crossing.
+regula falsi method for approximation of threshold crossing.
 
 Description:
 
 iaf_psc_exp_ps is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
-that uses the bisectioning method to approximate the timing of a threshold
-crossing [1,2]. This is the most exact implementation available.
+that uses the regula falsi method to approximate the timing of a threshold
+crossing. This is the most exact implementation available.
 
 The canonical implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
 delay in the network, see [1,2]. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
-spikes is determined by bisectioning once a threshold crossing has
+spikes is determined by regula falsi once a threshold crossing has
 been detected. Return from refractoriness occurs precisely at spike
 time plus refractory period.
 
 This implementation is more complex than the plain iaf_psc_exp
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
-application, the canonical application with bisectioning may provide
+application, the canonical application with regula falsi may provide
 superior overall performance given an accuracy goal; see [1,2] for
 details. Subthreshold dynamics are integrated using exact integration
 between events [3].

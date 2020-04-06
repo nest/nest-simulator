@@ -1,9 +1,12 @@
 Download NEST
 ===================
 
-.. admonition:: Standard situations
+Here you'll find the lastest versions of the source code and virtual machine (VM) images for download.
+If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
- For standard situations where you just want to use but not modify
+.. Note::
+
+ In standard situations where you just want to use but not modify
  NEST, you don't have to download the source code.
 
  Distribution packages ease the installation on Debian/Ubuntu,
@@ -11,10 +14,6 @@ Download NEST
 
  See our :doc:`installation instructions <installation/index>` to
  find the right option for you.
-
-Here you'll find the lastest versions of the source code and virtual machine (VM) images for download.
-If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
-
 
 Download the source code
 -------------------------

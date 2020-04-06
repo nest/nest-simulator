@@ -180,9 +180,6 @@ html_theme_options = {'logo_only': True,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-rst_prolog = ".. warning:: \n  This is A PREVIEW for NEST 3.0 and NOT an OFFICIAL RELEASE! \
-             Some functionality may not be available and information may be incomplete!"
-rst_epilog = "\n.. include:: .colorize.rst\n"
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.

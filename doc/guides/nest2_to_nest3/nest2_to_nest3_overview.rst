@@ -598,7 +598,7 @@ distribution.
     ax[0].set_ylabel('V_m');
 
 
-.. image:: ../_static/img/NEST3_13_0.png
+.. image:: ../../_static/img/NEST3_13_0.png
 
 
 .. _spatial_ex:
@@ -632,7 +632,7 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
     grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
     nest.PlotLayer(grid_nodes);
 
-  .. image:: ../_static/img/NEST3_23_0.png
+  .. image:: ../../_static/img/NEST3_23_0.png
 
 
 .. code-block:: ipython
@@ -642,7 +642,7 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
                                                          num_dimensions=2))
     nest.PlotLayer(free_nodes);
 
-.. image:: ../_static/img/NEST3_24_0.png
+.. image:: ../../_static/img/NEST3_24_0.png
 
 
 After you have created your spatially distributed nodes, you can use `spatial` property to set
@@ -702,7 +702,7 @@ node or connection parameters.
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
 
-  .. image:: ../_static/img/NEST3_25_0.png
+  .. image:: ../../_static/img/NEST3_25_0.png
 
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
@@ -784,7 +784,7 @@ parameter:
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
 
-.. image:: ../_static/img/NEST3_34_0.png
+.. image:: ../../_static/img/NEST3_34_0.png
 
 
 
@@ -836,7 +836,7 @@ given as argument.
 
 
 
-.. image:: ../_static/img/NEST3_27_0.png
+.. image:: ../../_static/img/NEST3_27_0.png
 
 .. _logic:
 
@@ -928,7 +928,7 @@ statement. Three arguments are required:
 
 
 
-.. image:: ../_static/img/NEST3_26_0.png
+.. image:: ../../_static/img/NEST3_26_0.png
 
 
 .. _combine_ex:

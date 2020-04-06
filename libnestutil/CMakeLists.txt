@@ -40,6 +40,7 @@ target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 
 target_include_directories( nestutil PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${Boost_INCLUDE_DIRS}
     )
 
 install( TARGETS nestutil

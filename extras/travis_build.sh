@@ -24,7 +24,7 @@
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
+#       'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -106,11 +106,14 @@ fi
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
-    CONFIGURE_BOOST="-Dwith-boost=OFF"
-else
-    CONFIGURE_BOOST="-Dwith-boost=ON"
-fi
- 
+
+# Download Boost
+wget --no-verbose https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+tar -xzf boost_1_72_0.tar.gz
+rm -fr boost_1_72_0.tar.gz
+mv boost_1_72_0 $HOME/.cache
+CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
+
 NEST_VPATH=build
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
@@ -150,14 +153,14 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd ..
         echo "MSGBLD0040: CPPCHECK installation completed."
-    
+
         echo "MSGBLD0050: Installing CLANG-FORMAT."
         wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         # Copy and not move because '.cache' may aleady contain other subdirectories and files.
         cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
         echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
+
         # Remove these directories, otherwise the copyright-header check will complain.
         rm -rf ./cppcheck
         rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
@@ -167,7 +170,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
+      # Note: BUG: Extracting the filenames may not work in all cases.
       #            The commit range might not properly reflect the history.
       #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
@@ -193,7 +196,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8

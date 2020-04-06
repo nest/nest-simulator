@@ -99,7 +99,7 @@ If you want to use PyNEST, we recommend to install the following along with thei
 - `Python 3.X <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
-- `matplotlib <http://matplotlib.org>`_
+- `Matplotlib 3.X <http://matplotlib.org>`_
 - `IPython <http://ipython.org>`_
 
 

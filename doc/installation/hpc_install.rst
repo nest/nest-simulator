@@ -59,23 +59,14 @@ Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
     cythonize pynestkernel.pyx
 
 Copy the generated file ``pynestkernel.cpp`` into ``</path/to/NEST/src>/pynest`` on
-BlueGene/Q and point ``-Dwith-python=<...>`` to a valid python version for cross
-compilation, either Python 2::
-
-    -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython
-
-or (much better) Python 3::
+BlueGene/Q and point ``-Dwith-python=<...>`` to a valid Python version for cross
+compilation::
 
     -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3
 
 CMake <3.4 is buggy when it comes to finding the matching libraries (for many years).
 Thus, you also have to specify ``PYTHON_LIBRARY`` and ``PYTHON_INCLUDE_DIR``
 if they are not found OR the incorrect libraries are found, e.g.::
-
- -DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0
- -DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7
-
-or (much better)::
 
  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m

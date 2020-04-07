@@ -915,12 +915,14 @@ def serializable(data):
     return data_serialized
 
 
-def to_json(data):
+def to_json(data, **kwargs):
     """Serialize data to JSON.
 
     Parameters
     ----------
     data : any
+    kwargs : keyword argument pairs
+        Named arguments of parameters for `json.dumps` function.
 
     Returns
     -------
@@ -929,5 +931,5 @@ def to_json(data):
     """
 
     data_serialized = serializable(data)
-    data_json = json.dumps(data_serialized)
+    data_json = json.dumps(data_serialized, **kwargs)
     return data_json

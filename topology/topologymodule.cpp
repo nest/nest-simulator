@@ -274,7 +274,7 @@ TopologyModule::init( SLIInterpreter* i )
   dict - dictionary with layer specification
 
   Description: The Topology module organizes neuronal networks in
-  layers. A layer is a special type of subnet which contains information
+  layers. A layer is a special type of NodeCollection which contains information
   about the spatial position of its nodes. There are three classes of
   layers: grid-based layers, in which each element is placed at a
   location in a regular grid; free layers, in which elements can be

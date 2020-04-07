@@ -82,8 +82,8 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
   {
     const thread tid = kernel().vp_manager.get_thread_id();
     target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
-    target_from_devices_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
-    sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_local_devices() + 1 );
+    target_from_devices_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
+    sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
   } // end omp parallel
 }
 
@@ -139,7 +139,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const index lid,
   if ( target_to_devices_[ tid ][ lid ].size() > 0 )
   {
     const index source_node_id = kernel().vp_manager.lid_to_node_id( lid );
-    // not the root subnet and valid connector
+    // not the valid connector
     if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] != NULL )
     {
       target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(
@@ -168,7 +168,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const index requested_s
 
       if ( target_from_devices_[ tid ][ ldid ].size() > 0 )
       {
-        // not the root subnet and valid connector
+        // not the valid connector
         if ( target_from_devices_[ tid ][ ldid ][ syn_id ] != NULL )
         {
           target_from_devices_[ tid ][ ldid ][ syn_id ]->get_all_connections(

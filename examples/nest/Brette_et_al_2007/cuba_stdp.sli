@@ -232,10 +232,6 @@ def
   /I_detector detector Create def
   I_detector detector_params SetStatus
 
-  % some connecting functions need lists (arrays) over all
-  % neurons they should work on, so we need to extract these
-  % lists from the subnetworks
-
   % all neurons
   /allNeurons E_neurons I_neurons join def
 

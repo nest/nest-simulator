@@ -899,20 +899,18 @@ def serializable(data):
     """
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
-        data_serialized = data.tolist()
-    elif isinstance(data, SynapseCollection):
+        return data.tolist()
+    if isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        data_serialized = serializable(data.get())
-    elif isinstance(data, kernel.SLILiteral):
+        return serializable(data.get())
+    if isinstance(data, kernel.SLILiteral):
         # Get name of SLILiteral.
-        data_serialized = data.name
-    elif isinstance(data, (list, tuple)):
-        data_serialized = [serializable(d) for d in data]
-    elif isinstance(data, dict):
-        data_serialized = dict([(key, serializable(value)) for key, value in data.items()])
-    else:
-        data_serialized = data
-    return data_serialized
+        return data.name
+    if isinstance(data, (list, tuple)):
+        return [serializable(d) for d in data]
+    if isinstance(data, dict):
+        return dict([(key, serializable(value)) for key, value in data.items()])
+    return data
 
 
 def to_json(data, **kwargs):

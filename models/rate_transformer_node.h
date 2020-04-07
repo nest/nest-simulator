@@ -53,11 +53,17 @@ Name: rate_transformer_node - Rate neuron that sums up incoming rates
 
 Description:
 
+Base class for rate transformer model of the form
+@f[
+  X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+
+@f]
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
-the summed up incoming connections (True, default value) or to each input
-individually (False).
+the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
@@ -108,6 +114,7 @@ public:
 
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );

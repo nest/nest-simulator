@@ -40,7 +40,7 @@ VPManager::get_vp() const
 }
 
 inline thread
-VPManager::suggest_vp_for_node_id( const index node_id ) const
+VPManager::node_id_to_vp( const index node_id ) const
 {
   return node_id % get_num_virtual_processes();
 }

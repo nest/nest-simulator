@@ -45,7 +45,7 @@ skip_if_not_threaded
 [2 3] % check for 2, 3 processes
 {
 
-/N 20 def          % number of neurons in each subnet
+/N 20 def          % number of neurons in each population
 /K 5 def           % number of connections per neuron
 
 ResetKernel
@@ -55,11 +55,9 @@ ResetKernel
 >> SetKernelStatus
 
 /node_id1 N 1 add def            % node_id1 = N + 1
-/node_id2 N 2 mul def            % node_id2 = N * 2
-/net1 [1 N] Range def        % node IDs of source subnet
-/net2 [node_id1 node_id2] Range def  % node IDs of target subnet
 
-/iaf_psc_alpha N 2 mul Create ;  % creates source and target subnets
+/net1 /iaf_psc_alpha N Create def   % creates source population
+/net2 /iaf_psc_alpha N Create def   % creates target population
 
 /NC N K mul def     % number of connections
 /Dmax NC 1 add def  % maximum delay
@@ -72,11 +70,11 @@ ResetKernel
 /syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /fixed_indegree /indegree K >> def
 
-net1 net2 conn_dict syn_dict Connect % connects source to target subnet
+net1 net2 conn_dict syn_dict Connect % connects source to target
 
 /pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process
-net2 % loop on all neurons of target subnet
+net2 % loop through all target neurons
 {
         /neuron2 exch def
 

@@ -119,7 +119,7 @@ public:
    * -# All interface functions expect and return nodes as vectors
    *    of node IDs (Vi).
    * -# Functions must document how they loop over node ID vectors and
-   *    how the function is applied to subnets provided as
+   *    how the function is applied to NodeCollections provided as
    *    arguments.
    * -# Functions that do not require overloading on the SLI level,
    *    need not carry their argument list in the SLI function

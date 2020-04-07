@@ -41,7 +41,8 @@ Description:
  and an appropriate arrangement of the terms [2]. For small computation step sizes the 
  accuracy at large simulation time decreases because of the accumulation of errors.
 
- The expected output is documented at the end of the script.
+ Reference output is documented at the end of the script.
+ 
  Individual simulation results can be inspected by uncommented the call 
  to function print_details.
 
@@ -83,10 +84,17 @@ M_ERROR setverbosity
 [0 min_exponent -1] Range   /hlist Set
 
 [ % time [ms]   tolerated error [mV]
- [    5.0           1e-13 ]       
- [  500.0           1e-9  ]  % error larger because of accumulation
+  [    5.0           1e-13 ]       
+  [  500.0           1e-9  ]  % error larger because of accumulation
 ] /Tlist Set                 % at very small computation step sizes
 
+% Models to be tested by this test
+[
+  /iaf_psc_alpha_ps 
+  /iaf_psc_delta_ps
+  % other precise models should be added to this list
+]
+ /models Set
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,8 +102,8 @@ M_ERROR setverbosity
 % Check if kernel accepts high precision
 %
 << 
- /tics_per_ms min_exponent neg dexp 
- /resolution 0 dexp                   % 1 ms default 
+  /tics_per_ms min_exponent neg dexp 
+  /resolution 0 dexp                   % 1 ms default 
 >> SetKernelStatus
 
 
@@ -119,8 +127,8 @@ exch
   /C_m     250.0      % membrane capacity in pF
 >> /params Set
 
-params begin userdict begin
 
+params begin userdict begin
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -130,68 +138,88 @@ params begin userdict begin
 %
 /SimAtResolution
 {
- dup /i Set
- dexp /h Set
+  dup /i Set
+  dexp /h Set
 
- ResetKernel          % resets tic base and computation time step
- << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
+  ResetKernel          % resets tic base and computation time step
+  << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
+  models {Create dup params SetStatus} Map /neurons Set
 
- [
-  /iaf_psc_alpha_ps
-  /iaf_psc_delta_ps  % this list can be extended
- ]
- {Create dup params SetStatus} Map /neurons Set
+  T Simulate
 
- T Simulate
-
- neurons 
- {[exch /V_m get dup V sub abs]} Map Flatten
-
- i prepend
-
+  neurons 
+  { [ exch /V_m get dup V sub abs] } Map Flatten
+  i prepend
 } def
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% helper function for debugging, 
+% prints detailed table of results
+%
+/print_details
+{
+  cout default 15 setprecision 
+
+  endl endl
+  (Exact value of membrane potential after ) <-
+  T <- ( ms is ) <- V <- ( mV.) <- endl endl
+
+  (                 log_2 h) <-
+  models
+  {
+    exch (      ) <- exch <- ( [mV]) <-
+    (               error [mV]) <-
+  } forall
+  endl
+
+  models length 2 mul 1 add
+  {
+    (--------------------------) <-
+  } repeat
+  endl
+
+  exch
+  {
+    { exch 24 setw exch <- (  ) <- } forall endl
+  }
+  forall 
+  ;
+}
+def
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% do all simulation times
+% Perform test for different simulation durations
 %
 {
- Tlist        
- {
-  [/T /tolerance] Set
+  Tlist        
+  {
+    [/T /tolerance] Set
 
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Reference value
- %
- % V is the exact value of the membrane potential at the end 
- % of the simulation.       
- %
+    % Reference value
+    (I_e * tau_m/C_m * (1. - exp(-T/tau_m)) ) ExecMath /V Set
 
- (I_e * tau_m/C_m * (1. - exp(-T/tau_m)) ) ExecMath /V Set
+    % Simulate at different resolutions
+    hlist {SimAtResolution} Map 
+  
+    dup print_details 
 
+    % select columns with voltage errors
+    { Rest 2 Partition [/All 2] Part } Map
+    
+    % check against tolerance
+    Flatten {tolerance lt} Map
+  } 
+  Map
 
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Perform simulations at all resolutions and collect results
- %
- hlist {SimAtResolution} Map 
-
-
- %dup print_details                    % uncomment for debugging
-
- {Rest 2 Partition [/All 2] Part} Map  % select columns containing
-                                       % the voltage errors
-  Flatten {tolerance lt} Map
- } Map
-
- Flatten true exch {and} Fold
+  % combine results
+  Flatten true exch {and} Fold
 }
-
+assert_or_die
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,65 +344,3 @@ params begin userdict begin
 % -12          39.9999999998544      1.45590206557245e-10          39.9999999998544      1.45590206557245e-10
 % -13          39.9999999997088      2.91180413114489e-10          39.9999999997088      2.91180413114489e-10
 % -14          39.9999999994176      5.82360826228978e-10          39.9999999994176      5.82360826228978e-10
-%
-%
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% helper function for debugging, 
-% prints detailed table of results
-%
-/print_details
-{
-cout default 15 setprecision 
-
-endl
-endl
-(Exact value of membrane potential after ) <-
-T <- ( ms is ) <-
-V <- ( mV.) <- endl 
-
-endl
-
-(               h in ms    ) <-
-(        alpha_canon [mV]) <-
-(        error         [mV]) <-
-(          alpha_presc [mV]) <-
-(      error           [mV]) <- 
-(          delta_canon [mV]) <-
-(        error         [mV]) <-
-endl
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(------------------------) <-
-endl
-
-exch
-{
- {
-  exch 24 setw exch <- (  ) <-
- }
- forall
- endl
-}
-forall 
-;
-}
-def
-
-
-
-% executes the overall test
-assert_or_die
-
-
-
-
-

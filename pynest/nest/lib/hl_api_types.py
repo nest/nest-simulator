@@ -23,7 +23,6 @@
 Classes defining the different PyNEST types
 """
 
-
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
@@ -197,16 +196,7 @@ class NodeCollection(object):
             nc = sli_func('cvnodecollection', data)
             self._datum = nc._datum
 
-        # numpy compatibility attribute
-        self._numpy_conversion = False
-
     def __iter__(self):
-        if self._numpy_conversion:
-            self._numpy_conversion = False
-            tpl = (self.get('global_id') if len(self) != 1
-                   else (self.get('global_id'),))
-            return iter(tpl)
-
         return NodeCollectionIterator(self)
 
     def __add__(self, other):
@@ -230,8 +220,8 @@ class NodeCollection(object):
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
             return sli_func('Take', self._datum, [key + (key >= 0)])
-        else:
-            raise IndexError('only integers and slices are valid indices')
+
+        raise IndexError('only integers and slices are valid indices')
 
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
@@ -242,11 +232,13 @@ class NodeCollection(object):
 
         if self.__len__() != other.__len__():
             return False
+
         return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return not self == other
 
     def __len__(self):
@@ -316,6 +308,7 @@ class NodeCollection(object):
                 raise ImportError('Pandas could not be imported')
         else:
             raise TypeError('Got unexpected keyword argument')
+
         pandas_output = output == 'pandas'
 
         if len(params) == 0:
@@ -422,9 +415,15 @@ class NodeCollection(object):
             If the node ID is not in the `NodeCollection`.
         """
         index = sli_func('Find', self._datum, node_id)
+
         if index == -1:
             raise ValueError('{} is not in NodeCollection'.format(node_id))
+
         return index
+
+    def __array__(self, dtype=None):
+        ''' Numpy compatibility function '''
+        return numpy.array(self.tolist(), dtype=dtype)
 
     def __getattr__(self, attr):
         if attr == 'spatial':
@@ -435,7 +434,6 @@ class NodeCollection(object):
 
         # numpy compatibility check
         if attr.startswith('__array_'):
-            self._numpy_conversion = True
             raise AttributeError
 
         return self.get(attr)

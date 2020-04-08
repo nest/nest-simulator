@@ -31,9 +31,9 @@ import textwrap
 import subprocess
 import os
 import re
+import shlex
 import sys
 import numpy
-import json
 
 from string import Template
 
@@ -499,7 +499,8 @@ def show_help_with_pager(hlpobj, pager=None):
         return
 
     try:
-        pagerl = pager.split(" ")
+        # pagerl = pager.split(" ")
+        pagerl = shlex.split(pager)
         subprocess.check_call(pagerl + [objf])
     except (OSError, IOError, subprocess.CalledProcessError):
         print('Displaying help with pager "{}" failed. '

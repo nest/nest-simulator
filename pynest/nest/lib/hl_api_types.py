@@ -443,8 +443,6 @@ class NodeCollection(object):
         # interpreted as a property of the model
         if attr == '_datum':
             super().__setattr__(attr, value)
-        elif attr == '_numpy_conversion':
-            super().__setattr__(attr, value)
         else:
             self.set({attr: value})
 

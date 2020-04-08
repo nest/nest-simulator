@@ -208,8 +208,6 @@ If your Python version is correct and you still have the same error, then try on
 Can't find an answer to your question?
 --------------------------------------
 
-We may have answered your question on GitHub or in our Mailing List!
-
-Please check out our `GitHub issues page <https://github.com/nest/nest-simulator/issues?utf8=%E2%9C%93&q=is%3Aissue+?>`_ or search the
-`mailing list <https://www.nest-simulator.org/mailinglist/>`_ for your question.
+Please check out our `GitHub issues page <https://github.com/nest/nest-simulator/issues>`_ or search the
+`Mailing list <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_ for your question. We may have already answered it!
 

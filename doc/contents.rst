@@ -9,6 +9,7 @@ Table of Contents
    :maxdepth: 1
    :caption: User Documentation
 
+   guides/nest2_to_nest3/nest2_to_nest3_overview
    download
    installation/index
    getting_started
@@ -19,7 +20,6 @@ Table of Contents
    topology/index
    guides/index
    getting_help
-   ref_material/nest2_vs_3
    ref_material/pynest_apis
 
 .. toctree::
@@ -28,6 +28,7 @@ Table of Contents
 
    community
    contribute/index
+   documentation_workflow/index
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>
    NEST-Initiative <https://www.nest-initiative.org/>

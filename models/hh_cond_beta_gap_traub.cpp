@@ -38,6 +38,7 @@
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from libnestutil:
+#include "beta_normalization_factor.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -452,33 +453,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
 double
 nest::hh_cond_beta_gap_traub::get_normalisation_factor( double tau_rise, double tau_decay )
 {
-  // Factor used to normalise the synaptic conductance such that
-  // incoming spike causes a peak conductance of 1 nS.
-  // The denominator (denom1) that appears in the expression of the peak time
-  // is computed here to check that it is != 0
-  // another denominator denom2 appears in the expression of the
-  // normalization factor g0
-  // Both denom1 and denom2 are null if tau_decay = tau_rise, but they
-  // can also be null if tau_decay and tau_rise are not equal but very
-  // close to each other, due to the numerical precision limits.
-  // In such case the beta function reduces to the alpha function,
-  // and the normalization factor for the alpha function should be used.
-  double denom1 = tau_decay - tau_rise;
-  double normalisation_factor = 0;
-  if ( std::abs( denom1 ) > std::numeric_limits< double >::epsilon() )
-  // if rise time != decay time use beta function
-  {
-    // peak time
-    const double t_p = tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
-    // another denominator is computed here to check that it is != 0
-    double denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
-    normalisation_factor = ( 1. / tau_rise - 1. / tau_decay ) / denom2;
-  }
-  else // if rise time == decay time use alpha function
-  {
-    normalisation_factor = 1. * numerics::e / tau_decay;
-  }
-  return normalisation_factor;
+  return nest::beta_normalization_factor( tau_rise, tau_decay );
 }
 
 void

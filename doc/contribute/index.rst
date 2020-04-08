@@ -18,6 +18,8 @@ Change code or documentation
 
 You can find all the details for our development workflow on the `NEST developer space <http://nest.github.io/nest-simulator>`_.
 
+Interested in creating or editing documentation? Check out our :doc:`../documentation_workflow/index`.
+
 For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
 
 If you are a Vim user and require support for SLI files, please refer to our :doc:`templates_styleguides/vim_support_sli`.

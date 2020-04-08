@@ -10,8 +10,8 @@ Table of Contents
    :caption: User Documentation
 
    guides/nest2_to_nest3/nest2_to_nest3_overview
-   download
-   installation/index
+   Download <download>
+   Install <installation/index>
    getting_started
    tutorials/index
    guides/index
@@ -26,8 +26,8 @@ Table of Contents
    :maxdepth: 2
    :caption: Getting Involved
 
-   community
-   contribute/index
+   Community <community>
+   Contribute <contribute/index>
    documentation_workflow/index
    Publications <https://www.nest-simulator.org/publications/>
    Developer Space <https://nest.github.io/nest-simulator/>

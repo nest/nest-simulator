@@ -96,7 +96,9 @@ Interested in contributing?
 
 * If you have any comments or suggestions, please share them on our :doc:`Mailing List <community>`.
 
-* Want to contribute code? Check out our `Developer Space <https://nest.github.io/nest-simulator/>`_ to get started!
+* Want to contribute code? Visit out our `Developer Space <https://nest.github.io/nest-simulator/>`_ to get started!
+
+* Interested in creating or editing documentation? Check out our :doc:`Documentation workflows <documentation_workflow/index>`.
 
 * For more info about our larger community and the history of NEST check out the `NEST Initiative <https://www.nest-initiative.org>`_ website
 

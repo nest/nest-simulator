@@ -1,10 +1,10 @@
 .. _nest_community:
 
 NEST Community
-===============
+==============
 
 Mailing list
--------------
+------------
 
 The NEST users mailing list is intended to be a forum for questions on the usage
 of NEST, the exchange of code and general discussions about NEST.  The philosophy
@@ -26,7 +26,7 @@ This is an opportunity to have discussions in real time with developers.
 Information for dates and how to join can be found on `our GitHub wiki <https://github.com/nest/nest-simulator/wiki/Open-NEST-Developer-Video-Conference>`_
 
 Publications using NEST
--------------------------
+-----------------------
 
 We have compiled  a `list of NEST-related peer-reviewed publications <https://www.nest-simulator.org/publications/>`_ that
 we update regularly.

@@ -43,15 +43,15 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
-  virtual void initialize(); // called from meta-manager to construct
-  virtual void finalize();   // called from meta-manger to reinit
-  virtual void change_num_threads( thread );
+  void initialize() override; // called from meta-manager to construct
+  void finalize() override;   // called from meta-manger to reinit
+  void change_num_threads( thread ) override;
 
-  virtual void set_status( const DictionaryDatum& ); // set parameters
-  virtual void get_status( DictionaryDatum& );       // get parameters
+  void set_status( const DictionaryDatum& ) override; // set parameters
+  void get_status( DictionaryDatum& ) override;       // get parameters
 
   IOManager(); // Construct only by meta-manager
-  ~IOManager();
+  ~IOManager() override;
 
   /**
    * The prefix for files written by devices.

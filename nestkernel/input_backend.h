@@ -276,4 +276,4 @@ public:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_H
+#endif // INPUT_BACKEND_H

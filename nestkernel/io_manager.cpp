@@ -202,13 +202,12 @@ IOManager::set_status( const DictionaryDatum& d )
   DictionaryDatum input_backends;
   if ( updateValue< DictionaryDatum >( d, names::input_backends, input_backends ) )
   {
-    std::map< Name, InputBackend* >::const_iterator iti;
-    for ( iti = input_backends_.begin(); iti != input_backends_.end(); ++iti )
+    for ( auto& iti : input_backends_ )
     {
       DictionaryDatum input_backend_status;
-      if ( updateValue< DictionaryDatum >( input_backends, iti->first, input_backend_status ) )
+      if ( updateValue< DictionaryDatum >( input_backends, iti.first, input_backend_status ) )
       {
-        iti->second->set_status( input_backend_status );
+        iti.second->set_status( input_backend_status );
       }
     }
   }

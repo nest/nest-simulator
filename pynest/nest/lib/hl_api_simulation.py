@@ -274,9 +274,9 @@ def SetKernelStatus(params):
         algorithm. Each entry in the dictionary is composed of a synapse model,
         the pre synaptic element and the post synaptic element. (read/write)
     structural_plasticity_update_interval : int
-        defines all synapses which are plastic for the structural plasticity
-        algorithm. Each entry in the dictionary is composed of a synapse model,
-        the pre synaptic element and the post synaptic element. (read/write)
+        Defines the time interval in ms at which the structural plasticity
+        manager will make changes in the structure of the network (creation
+        and deletion of plastic synapses).
 
     Notes
     -----

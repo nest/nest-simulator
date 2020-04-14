@@ -29,6 +29,8 @@
 #include <iterator>
 #include <cassert>
 
+#include "sliexceptions.h"
+
 template < typename value_type_ >
 class BlockVector;
 template < typename value_type_, typename ref_, typename ptr_ >
@@ -260,8 +262,38 @@ public:
    */
   int get_max_block_size() const;
 
-  // TODO: To make BlockVector a complete random access container, it should also implement
-  // max_size(), rbegin(), and rend().
+  /**
+   * @brief Returns the size() of the largest possible BlockVector.
+   */
+  size_type max_size() const;
+
+  /**
+   * @brief Returns a read/write reverse iterator that points to the last
+   * element in the BlockVector. Iteration is done in reverse element
+   * order.
+   */
+  reverse_iterator rbegin();
+
+  /**
+   * @brief Returns a read-only (constant) reverse iterator that points to
+   * the last element in the BlockVector. Iteration is done in reverse
+   * element order.
+   */
+  reverse_iterator rbegin() const;
+
+  /**
+   * @brief Returns a read/write reverse iterator that points to one
+   * before the first element in the BlockVector. Iteration is done in
+   * reverse element order.
+   */
+  reverse_iterator rend();
+
+  /**
+   * @brief Returns a read-only (constant) reverse iterator that points to
+   * one before the first element in the BlockVector. Iteration is done in
+   * reverse element order.
+   */
+  reverse_iterator rend() const;
 
 private:
   //! Vector holding blocks containing data.
@@ -477,6 +509,41 @@ inline int
 BlockVector< value_type_ >::get_max_block_size() const
 {
   return max_block_size;
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::size_type
+BlockVector< value_type_ >::max_size() const
+{
+  throw NotImplemented( "BlockVector max_size() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rbegin()
+{
+  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rbegin() const
+{
+  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rend()
+{
+  throw NotImplemented( "BlockVector rend() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rend() const
+{
+  throw NotImplemented( "BlockVector rend() is not implemented." );
 }
 
 /////////////////////////////////////////////////////////////

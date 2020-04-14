@@ -1,4 +1,4 @@
-Model Directory
+Model directory
 ===============
 
 Here you can find the list of all the models implemented in NEST for neurons,

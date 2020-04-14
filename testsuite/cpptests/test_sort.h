@@ -33,8 +33,6 @@
 // Includes from libnestutil:
 #include "sort.h"
 
-namespace nest
-{
 /**
  * Wrapper for quicksort3way.
  *
@@ -189,7 +187,7 @@ BOOST_FIXTURE_TEST_CASE( test_boost_random, fill_bv_vec_random )
   // Making sure we are sorting with boost
   static_assert( HAVE_BOOST, "Compiling Boost tests, but HAVE_BOOST!=1." );
 
-  sort( bv_sort, bv_perm );
+  nest::sort( bv_sort, bv_perm );
 
   BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
   BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
@@ -198,7 +196,7 @@ BOOST_FIXTURE_TEST_CASE( test_boost_random, fill_bv_vec_random )
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
 
   // Using smaller data sets to sort with the fallback algorithm.
-  sort( bv_sort_small, bv_perm_small );
+  nest::sort( bv_sort_small, bv_perm_small );
 
   BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
   BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
@@ -216,7 +214,7 @@ BOOST_FIXTURE_TEST_CASE( test_boost_linear, fill_bv_vec_linear )
   // Making sure we are sorting with boost
   static_assert( HAVE_BOOST, "Compiling Boost tests, but HAVE_BOOST!=1." );
 
-  sort( bv_sort, bv_perm );
+  nest::sort( bv_sort, bv_perm );
 
   BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
   BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
@@ -225,7 +223,7 @@ BOOST_FIXTURE_TEST_CASE( test_boost_linear, fill_bv_vec_linear )
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
 
   // Using smaller data sets to sort with the fallback algorithm.
-  sort( bv_sort_small, bv_perm_small );
+  nest::sort( bv_sort_small, bv_perm_small );
 
   BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
   BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
@@ -235,7 +233,5 @@ BOOST_FIXTURE_TEST_CASE( test_boost_linear, fill_bv_vec_linear )
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} // of namespace nest
 
 #endif /* TEST_SORT_H */

@@ -214,13 +214,11 @@ execute_process(
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
-# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*, if not set explicitly.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
-  set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}/nest" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
-  set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
-  set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
-endif ()
+# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*
+set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
+set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
 
 include( GNUInstallDirs )
 
@@ -285,7 +283,7 @@ if ( BUILD_SHARED_LIBS )
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
       )
 endif ()
 
@@ -303,7 +301,7 @@ set_target_properties( ${MODULE_NAME}_lib
     OUTPUT_NAME ${MODULE_NAME} )
 
 # Install library, header and sli init files.
-install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
@@ -364,7 +362,7 @@ message( "  make" )
 message( "  make install" )
 message( "" )
 message( "The library file lib${MODULE_NAME}.so will be installed to" )
-message( "  ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "  ${CMAKE_INSTALL_FULL_LIBDIR}/nest/" )
 message( "Help files will be installed to" )
 message( "  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}" )
 message( "" )
@@ -373,10 +371,10 @@ message( "  (${MODULE_NAME}) Install        (in SLI)" )
 message( "  nest.Install('${MODULE_NAME}')  (in PyNEST)" )
 message( "" )
 
-if( NOT "${CMAKE_INSTALL_PREFIX}" EQUAL "${NEST_INSTALL_PREFIX}" )
+if( NOT "${CMAKE_INSTALL_PREFIX}" STREQUAL "${NEST_INSTALL_PREFIX}" )
   message( "The module will be installed into a non-default location!" )
   message( "Make sure to set the environment variables:" )
-  message( "  export NEST_MODULE_PATH=${CMAKE_INSTALL_FULL_LIBDIR}:$NEST_MODULE_PATH" )
+  message( "  export NEST_MODULE_PATH=${CMAKE_INSTALL_FULL_LIBDIR}/nest:$NEST_MODULE_PATH" )
   message( "  export SLI_PATH=${CMAKE_INSTALL_FULL_DATADIR}/sli:$SLI_PATH" )
   message( "" )
 endif ()

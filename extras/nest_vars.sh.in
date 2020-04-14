@@ -9,6 +9,9 @@ export NEST_DATA_DIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DATADIR@
 # NEST finds help files $NEST_DOC_DIR/help
 export NEST_DOC_DIR=$NEST_INSTALL_DIR/@CMAKE_INSTALL_DOCDIR@
 
+# The path where NEST shared libraries are generated
+export LD_LIBRARY_PATH=$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
 # The path where NEST looks for user modules.
 export NEST_MODULE_PATH=$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest
 

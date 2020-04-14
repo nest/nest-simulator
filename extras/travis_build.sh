@@ -106,7 +106,8 @@ fi
 wget --no-verbose https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
 tar -xzf boost_1_72_0.tar.gz
 rm -fr boost_1_72_0.tar.gz
-mv boost_1_72_0 $HOME/.cache
+cp -fr boost_1_72_0 $HOME/.cache
+rm -fr boost_1_72_0
 CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
 
 NEST_VPATH=build

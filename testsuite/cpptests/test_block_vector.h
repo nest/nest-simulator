@@ -46,6 +46,7 @@ struct bv_vec_reference_fixture
       reference.push_back( i );
     }
   }
+
   ~bv_vec_reference_fixture()
   {
   }
@@ -267,14 +268,30 @@ BOOST_AUTO_TEST_CASE( test_iterator_compare )
   }
   BOOST_REQUIRE( block_vector.begin() < block_vector.end() );
 
-  auto it_a = block_vector.begin();
-  auto it_b = block_vector.begin();
-  BOOST_REQUIRE( it_a == it_b );
+  // Test comparison with iterator shifted one step, shifted to the end of
+  // the block, and shifted to the next block.
+  std::vector< int > it_shifts = { 1, block_vector.get_max_block_size() - 1, N - 1 };
+  for ( auto& shift : it_shifts )
+  {
+    auto it_a = block_vector.begin();
+    auto it_b = block_vector.begin();
+    BOOST_REQUIRE( it_a == it_b );
+    BOOST_REQUIRE( not( it_a != it_b ) );
 
-  ++it_b;
-  BOOST_REQUIRE( it_a != it_b );
-  BOOST_REQUIRE( it_a < it_b );
-  BOOST_REQUIRE( not( it_b < it_a ) );
+    it_b += shift;
+
+    BOOST_REQUIRE( it_a != it_b );
+    BOOST_REQUIRE( it_a < it_b );
+    BOOST_REQUIRE( it_a <= it_b );
+    BOOST_REQUIRE( it_b > it_a );
+    BOOST_REQUIRE( it_b >= it_a );
+
+    BOOST_REQUIRE( not( it_a == it_b ) );
+    BOOST_REQUIRE( not( it_b < it_a ) );
+    BOOST_REQUIRE( not( it_b <= it_a ) );
+    BOOST_REQUIRE( not( it_a > it_b ) );
+    BOOST_REQUIRE( not( it_a >= it_b ) );
+  }
 }
 
 BOOST_FIXTURE_TEST_CASE( test_operator_pp, bv_vec_reference_fixture )

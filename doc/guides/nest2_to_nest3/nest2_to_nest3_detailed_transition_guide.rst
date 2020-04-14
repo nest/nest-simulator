@@ -1,7 +1,7 @@
 NEST 3.0: Detailed transition guide
 ===================================
 
-* This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 

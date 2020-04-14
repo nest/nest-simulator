@@ -287,9 +287,11 @@ nest::InputBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDevice& d
   int shape[ 1 ];
   MPI_Recv( &shape, 1, MPI_INT, MPI_ANY_SOURCE, message[ 1 ], comm, &status_mpi );
   // Receive the data ( for the moment only spike time )
-  double spikes[ shape[ 0 ] ];
+  double *spikes{ new double (shape[ 0 ]) };
   MPI_Recv( &spikes, shape[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, message[ 1 ], comm, &status_mpi );
   std::vector< double > spikes_list( spikes, spikes + sizeof( spikes ) / sizeof( spikes[ 0 ] ) );
   // Update the device with the data
   device.update_from_backend( spikes_list );
+  delete spikes;
+  spikes = nullptr;
 }

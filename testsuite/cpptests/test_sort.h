@@ -58,9 +58,13 @@ struct fill_bv_vec_linear
 {
   fill_bv_vec_linear()
     : N( 20000 )
+    , N_small( boost::sort::spreadsort::detail::min_sort_size - 10 )
     , bv_sort( N )
     , bv_perm( N )
     , vec_sort( N )
+    , bv_sort_small( N_small )
+    , bv_perm_small( N_small )
+    , vec_sort_small( N_small )
   {
     for ( int i = 0; i < N; ++i )
     {
@@ -68,14 +72,28 @@ struct fill_bv_vec_linear
       bv_sort[ i ] = element;
       bv_perm[ i ] = element;
       vec_sort[ i ] = element;
+
+      if ( i < N_small )
+      {
+        bv_sort_small[ i ] = element;
+        bv_perm_small[ i ] = element;
+        vec_sort_small[ i ] = element;
+      }
     }
     std::sort( vec_sort.begin(), vec_sort.end() );
+    std::sort( vec_sort_small.begin(), vec_sort_small.end() );
   }
 
   const int N;
+  const int N_small;
+
   BlockVector< int > bv_sort;
   BlockVector< int > bv_perm;
   std::vector< int > vec_sort;
+
+  BlockVector< int > bv_sort_small;
+  BlockVector< int > bv_perm_small;
+  std::vector< int > vec_sort_small;
 };
 
 /**
@@ -86,9 +104,13 @@ struct fill_bv_vec_random
 {
   fill_bv_vec_random()
     : N( 20000 )
+    , N_small( boost::sort::spreadsort::detail::min_sort_size - 10 )
     , bv_sort( N )
     , bv_perm( N )
     , vec_sort( N )
+    , bv_sort_small( N_small )
+    , bv_perm_small( N_small )
+    , vec_sort_small( N_small )
   {
     for ( int i = 0; i < N; ++i )
     {
@@ -96,26 +118,46 @@ struct fill_bv_vec_random
       bv_sort[ i ] = k;
       bv_perm[ i ] = k;
       vec_sort[ i ] = k;
+
+      if ( i < N_small )
+      {
+        bv_sort_small[ i ] = k;
+        bv_perm_small[ i ] = k;
+        vec_sort_small[ i ] = k;
+      }
     }
     std::sort( vec_sort.begin(), vec_sort.end() );
+    std::sort( vec_sort_small.begin(), vec_sort_small.end() );
   }
 
   const int N;
+  const int N_small;
+
   BlockVector< int > bv_sort;
   BlockVector< int > bv_perm;
   std::vector< int > vec_sort;
+
+  BlockVector< int > bv_sort_small;
+  BlockVector< int > bv_perm_small;
+  std::vector< int > vec_sort_small;
 };
 
 BOOST_AUTO_TEST_SUITE( test_sort )
 
 /**
  * Tests whether two arrays with randomly generated numbers are sorted
- * correctly when sorting with the built-in quicksort.
+ * correctly when sorting with NEST's own quicksort.
  */
 BOOST_FIXTURE_TEST_CASE( test_quicksort_random, fill_bv_vec_random )
 {
   nest_quicksort( bv_sort, bv_perm );
 
+  // We test here that the BlockVectors bv_sort and bv_perm are both
+  // sorted here. However, if something goes wrong and they for example
+  // contain only zeros, is_sorted will also return true, but the test
+  // should not pass. Therefore, in addition to require the BlockVectors
+  // to be sorted, we also require them to be equal to the sorted
+  // reference vector, vec_sort.
   BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
   BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
 
@@ -154,6 +196,15 @@ BOOST_FIXTURE_TEST_CASE( test_boost_random, fill_bv_vec_random )
 
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+
+  // Using smaller data sets to sort with the fallback algorithm.
+  sort( bv_sort_small, bv_perm_small );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_sort_small.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_perm_small.begin() ) );
 }
 
 /**
@@ -172,6 +223,15 @@ BOOST_FIXTURE_TEST_CASE( test_boost_linear, fill_bv_vec_linear )
 
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
   BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+
+  // Using smaller data sets to sort with the fallback algorithm.
+  sort( bv_sort_small, bv_perm_small );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_sort_small.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_perm_small.begin() ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

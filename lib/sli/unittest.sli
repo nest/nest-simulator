@@ -323,7 +323,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
  (echo ")
  /func load pcvs join
  ( exec" | ) join 
- statusdict /argv get First join
+ (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
 % command ==
@@ -397,7 +397,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
  (echo ")
  /func load pcvs join
  ( exec" | ) join 
- statusdict /argv get First join
+ (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
 % command ==
@@ -495,7 +495,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
   (echo ")
   /func load pcvs join
   ( exec" | ) join 
-  statusdict /argv get First join
+  (') statusdict /argv get First (') join join join
   ( -) join /command Set
 
   command 0 shpawn

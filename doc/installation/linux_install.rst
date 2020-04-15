@@ -71,6 +71,11 @@ The following are the basic steps to compile and install NEST from source code:
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
+Setting the module loading path
+-------------------------------
+
+
+
 .. admonition:: IMPORTANT!
 
  If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:

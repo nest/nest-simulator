@@ -633,7 +633,7 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
     nest.PlotLayer(grid_nodes);
 
 .. image:: ../../_static/img/NEST3_23_0.png
-  :width: 500
+  :width: 500px
 
 .. code-block:: ipython
 
@@ -643,7 +643,7 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
     nest.PlotLayer(free_nodes);
 
 .. image:: ../../_static/img/NEST3_24_0.png
-  :width: 500
+  :width: 500px
 
 After you have created your spatially distributed nodes, you can use `spatial` property to set
 node or connection parameters.

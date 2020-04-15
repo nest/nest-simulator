@@ -76,15 +76,17 @@ Setting the module loading path
 
 If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries.
 
-In order to correctly set the module loading path or build an extension module for NEST, you need to set the ``NEST_MODULE_PATH``.
+In order to correctly set the module loading path or build an extension module for NEST:
 
-You can do this correctly by sourcing ``nest_vars.sh``:
+1. Source ``nest_vars.sh``:
 
   .. code-block:: sh
 
       source </path/to/nest_install_dir>/bin/nest_vars.sh
 
-This way, you can set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
+2. Set the ``NEST_MODULE_PATH``.
+
+By sourcing ``nest_vars.sh``, you can set the necessary environment variables. You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
 
 See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../auto_examples/index>`.
 

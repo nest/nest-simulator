@@ -352,8 +352,8 @@ run_test ()
 # Set environment variables.
 # The NEST_ variants of the global variables were set by
 # cmake during configuration.
-export PYTHONPATH=$NEST_PYTHONPATH:$PYTHONPATH
-export PATH=$NEST_PATH:$PATH
+export PYTHONPATH="${NEST_PYTHONPATH}:${PYTHONPATH}"
+export PATH="${NEST_PATH}:${PATH}"
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
@@ -363,8 +363,8 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
-TEST_BASEDIR=${NEST_DOC_DIR:-"@CMAKE_INSTALL_FULL_DOCDIR@"}
-TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
+TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
+TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"
 TEST_RETFILE="${TEST_OUTDIR}/output.ret"
@@ -379,7 +379,7 @@ mkdir "${TEST_OUTDIR}"
 PYTHON="${PYTHON:-python}"
 PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
 
-TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
+TMPDIR="${TMPDIR:-${TEST_OUTDIR}}"
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
 NEST_DATA_PATH="${TEST_TMPDIR}"
 export NEST_DATA_PATH
@@ -612,25 +612,25 @@ fi
 #if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
 #    junit_open 'core.phase_6'
 #
-#    BASEDIR=$PWD
-#    tmpdir=$(mktemp -d)
+#    BASEDIR="$PWD"
+#    tmpdir="$(mktemp -d)"
 #
-#    TESTDIR=${TEST_BASEDIR}/musictests/
+#    TESTDIR="${TEST_BASEDIR}/musictests/"
 #
 #    for test_name in $(ls ${TESTDIR} | grep '.*\.music$') ; do
-#        music_file=${TESTDIR}/${test_name}
+#        music_file="${TESTDIR}/${test_name}"
 #
 #        # Collect the list of SLI files from the .music file.
 #        sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
 #        sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
 #
 #        # Check if there is an accompanying shell script for the test.
-#        sh_file=${TESTDIR}/$(basename ${music_file} .music).sh
-#        if test ! -f ${sh_file}; then unset sh_file; fi
+#        sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
+#        if test ! -f "${sh_file}"; then unset sh_file; fi
 #
 #        # Calculate the total number of processes in the .music file.
 #        np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-#        command=$(sli -c "${np} (@MUSIC_EXECUTABLE@) (${test_name}) mpirun =")
+#        command="$(sli -c "${np} (@MUSIC_EXECUTABLE@) (${test_name}) mpirun =")"
 #
 #        proc_txt="processes"
 #        if test $np -eq 1; then proc_txt="process"; fi
@@ -638,17 +638,17 @@ fi
 #        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 #
 #        # Copy everything to the tmpdir.
-#        cp ${music_file} ${sh_file} ${sli_files} ${tmpdir}
-#        cd ${tmpdir}
+#        cp "${music_file}" "${sh_file}" "${sli_files}" "${tmpdir}"
+#        cd "${tmpdir}"
 #
 #        # Create the runner script
 #        echo "#!/bin/sh" >  runner.sh
 #        echo "set +e" >> runner.sh
-#        echo "export NEST_DATA_PATH=${tmpdir}" >> runner.sh
+#        echo "export NEST_DATA_PATH=\"${tmpdir}\"" >> runner.sh
 #        echo "${command} > output.log 2>&1" >> runner.sh
 #        if test -n "${sh_file}"; then
-#            chmod 755 $(basename ${sh_file})
-#            echo "./"$(basename ${sh_file}) >> runner.sh
+#            chmod 755 "$(basename "${sh_file}")"
+#            echo "./$(basename "${sh_file}")" >> runner.sh
 #        fi
 #        echo "echo \$? > exit_code ; exit 0" >> runner.sh
 #
@@ -661,8 +661,8 @@ fi
 #        # call or of the accompanying shell script if present.
 #        exit_code=$(cat exit_code)
 #
-#        rm ${tmpdir}/*
-#        cd ${BASEDIR}
+#        rm "${tmpdir}"/*
+#        cd "${BASEDIR}"
 #
 #        # If the name of the test contains 'failure', we expect it to
 #        # fail and the test logic is inverted.
@@ -692,7 +692,7 @@ fi
 #        fi
 #    done
 #
-#    rm -rf $tmpdir
+#    rm -rf "$tmpdir"
 #
 #    junit_close
 #else
@@ -715,13 +715,13 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     #    of support for nosetests. We use the TEST_OUTDIR as Python-free
     #    dummy directory to search for tests.
 
-    if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where=${TEST_OUTDIR} >/dev/null 2>&1; then
+    if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where="${TEST_OUTDIR}" >/dev/null 2>&1; then
 
         echo
         echo "  Using nosetests."
         echo
 
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests 2>&1 \
+        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
@@ -794,7 +794,7 @@ echo
 echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
-if command -v ${NEST_PATH}/run_all_cpptests > /dev/null 2>&1; then
+if command -v "${NEST_PATH}/run_all_cpptests" > /dev/null 2>&1; then
   CPP_TEST_OUTPUT="$(${NEST_PATH}/run_all_cpptests 2>&1)"
   # TODO:
   # We should check the return code ($?) of run_all_cpptests here to see
@@ -806,8 +806,8 @@ if command -v ${NEST_PATH}/run_all_cpptests > /dev/null 2>&1; then
   # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
   # but does the check for failures work as it should?
   # At some point, we should also count skipped tests.
-  CPP_TEST_TOTAL=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')
-  CPP_TEST_FAILED=$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')
+  CPP_TEST_TOTAL="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')"
+  CPP_TEST_FAILED="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')"
 
   # replace empty strings by zero so arithmetic expressions below work
   CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}

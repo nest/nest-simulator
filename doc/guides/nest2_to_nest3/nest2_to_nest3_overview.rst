@@ -11,12 +11,13 @@ perform operations that were not possible in previous versions.
 
 .. seealso::
 
-  See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
+   See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 .. note::
 
-  Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
-  (and sometimes pyplot from matplotlib) imported.
+   With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
+   Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
+   (and sometimes pyplot from matplotlib) imported.
 
 What's new?
 -----------

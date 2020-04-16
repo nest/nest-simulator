@@ -984,8 +984,6 @@ Using parameters makes it easy to set node properties
 What's changed?
 ---------------
 
-With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
-
 .. _param_changes:
 
 Model parameters and their functionalities

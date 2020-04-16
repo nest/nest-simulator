@@ -208,6 +208,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
                             "or NumPy arrays with conn_spec=None")
         elif conn_spec is not None:
             raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
+        elif not (pre.ndim == 1 and post.ndim == 1):
+            raise ValueError("Sources and targets must be 1-dimensional NumPy arrays")
         else:
             connect_np_arrays = True
             conn_spec = 'one_to_one'

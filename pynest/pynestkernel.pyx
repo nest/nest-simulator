@@ -254,17 +254,17 @@ cdef class NESTEngine(object):
         if not HAVE_NUMPY:
             raise NESTErrors.PyNESTError("NumPy is not available")
 
-        if not (isinstance(sources, numpy.ndarray) and sources.ndim > 0) or not numpy.issubdtype(sources.dtype, numpy.integer):
-            raise TypeError('sources must be a NumPy array of integers')
-        if not (isinstance(targets, numpy.ndarray) and targets.ndim > 0) or not numpy.issubdtype(targets.dtype, numpy.integer):
-            raise TypeError('targets must be a NumPy array of integers')
-        if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim > 0):
-            raise TypeError('weights must be a NumPy array')
-        if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim > 0):
-            raise TypeError('delays must be a NumPy array')
-        if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim > 0) and
+        if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
+            raise TypeError('sources must be a 1-dimensional NumPy array of integers')
+        if not (isinstance(targets, numpy.ndarray) and targets.ndim == 1) or not numpy.issubdtype(targets.dtype, numpy.integer):
+            raise TypeError('targets must be a 1-dimensional NumPy array of integers')
+        if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim == 1):
+            raise TypeError('weights must be a 1-dimensional NumPy array')
+        if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+            raise TypeError('delays must be a 1-dimensional NumPy array')
+        if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
                                               numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
-            raise TypeError('syn_param_keys must be a NumPy array of strings')
+            raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
         if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
             raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
 

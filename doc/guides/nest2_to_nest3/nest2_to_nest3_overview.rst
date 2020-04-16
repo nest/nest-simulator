@@ -11,11 +11,11 @@ Introduction
 NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
 perform operations that were not possible in previous versions.
 
-.. note::
+.. admonition:: Python 3
 
-   With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
-   Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
-   (and sometimes pyplot from matplotlib) imported.
+   With NEST 3.0, we no longer support Python 2. Running the code snippets throughout this guide requires a freshly
+   started instance of Python (and sometimes pyplot from matplotlib). Check out our :doc:`Installation instructions <../../installation/linux_install>` for more
+   information on the dependencies.
 
 .. seealso::
 

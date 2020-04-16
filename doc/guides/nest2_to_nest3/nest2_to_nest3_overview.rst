@@ -5,19 +5,21 @@ NEST 3.0: What's new?
    :local:
    :depth: 2
 
+Introduction
+------------
 
 NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
 perform operations that were not possible in previous versions.
-
-.. seealso::
-
-   See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 .. note::
 
    With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
    Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
    (and sometimes pyplot from matplotlib) imported.
+
+.. seealso::
+
+   See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 What's new?
 -----------

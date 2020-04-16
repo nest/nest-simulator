@@ -32,14 +32,9 @@ New functionality for node handles (neurons and devices)
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.
 
+In most use cases, you will not need to make any changes to your scripts in NEST 3.0, unless you have used **topology** or **subnets**.
 
-.. note::
-
-   In **many use cases**, you will not need to make any changes to your scripts in NEST 3.0, unless you have used
-   topology or subnets.
-
-
-NodeCollection supports the following functionality
+NodeCollection supports the following functionality:
 
 -  :ref:`Indexing <indexing>`
 -  :ref:`Iteration <iterating>`

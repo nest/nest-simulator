@@ -1384,7 +1384,7 @@ Visualization functions
 NEST provides three functions to visualize networks:
 
 +---------------------------------+------------------------------------------+
-| ``PlotLayer()``                 | Plot nodes in a spatially distributed    | 
+| ``PlotLayer()``                 | Plot nodes in a spatially distributed    |
 |                                 | NodeCollection.                          |
 +---------------------------------+------------------------------------------+
 | ``PlotTargets()``               | Plot all targets of a node in a given    |
@@ -1431,46 +1431,45 @@ module, see the section titled `“Writing an Extension Module”
 <http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST
 Developer Manual. The basic steps required to get started are:
 
-1. From the NEST source directory, copy directory examples/MyModule to
+1. From the NEST source directory, copy the directory examples/MyModule to
    somewhere outside the NEST source, build or install directories.
-
-2. Change to the new location of MyModule and prepare by issuing
-   ``./bootstrap.sh``
-
-3. Leave MyModule and create a build directory for it, e.g., mmb next to
-   it
 
    .. code:: bash
 
-      cd ..
-      mkdir mmb
-      cd mmb
+      cp -r <path_to_nest_source>/examples/MyModule mm_src
 
-4. Configure. The configure process uses the script ``nest-config`` to
+2. Create a build directory for MyModule, e.g. mm_bld, next to
+   the copied source directory:
+
+   .. code:: bash
+
+      mkdir mm_bld
+      cd mm_bld
+
+3. Configure. The configure process uses the script ``nest-config`` to
    find out where NEST is installed, where the source code resides, and
    which compiler options were used for compiling NEST. If
    ``nest-config`` is not in your path, you need to provided it
-   explicitly like this
+   explicitly with ``-Dwith-nest`` like this
 
    .. code:: bash
 
-      cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
+      cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../mm_src
 
-5. MyModule will then be installed to ``\${NEST_INSTALL_DIR}``. This
+4. MyModule will then be installed to ``\${NEST_INSTALL_DIR}``. This
    ensures that NEST will be able to find initializing SLI files for the
    module. You should not use the ``--prefix`` to select a different
    installation destination. If you do, you must make sure to use
    addpath in SLI before loading the module to ensure that NEST will
    find the SLI initialization file for your module.
 
-6. Compile.
+5. Compile and install.
 
    .. code:: bash
 
-      make
       make install
 
-   The previous command installed MyModule to the NEST installation
+   MyModule is then installed to the NEST installation
    directory, including help files generated from the source code.
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``

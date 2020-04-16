@@ -46,6 +46,10 @@ Description:
 
 sigmoid_rate is an implementation of a nonlinear rate model with input
 function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.
+
+It either models a rate neuron with input noise (see rate_neuron_ipn)
+or a rate transformer (see rate_transformer_node).
+
 Input transformation can either be applied to individual inputs
 or to the sum of all inputs.
 
@@ -53,10 +57,19 @@ The model supports connections to other rate models with either zero or
 non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
+The following parameters can be set in the status dictionary.
+
+Nonlinear rate neurons can be created by typing
+nest.Create('sigmoid_rate_ipn'). Nonlinear rate transformers can be
+created by typing nest.Create('rate_transformer_sigmoid').
+
+
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
 
 ==================  ======= ==============================================
  rate               real    Rate (unitless)

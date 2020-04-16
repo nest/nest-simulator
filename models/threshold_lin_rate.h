@@ -46,18 +46,28 @@ Description
 +++++++++++
 
 threshold_lin_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = min( max( g * ( h - \theta ), 0 ), \alpha )`.
-Input transformation can either be applied to individual inputs
-or to the sum of all inputs.
+function \f$ input(h) = min( max( g * ( h - \theta ), 0 ), \alpha ) \f$.
+It either models a rate neuron with input noise (see rate_neuron_ipn),
+a rate neuron with output noise (see rate_neuron_opn) or a rate
+transformer (see rate_transformer_node). Input transformation can
+either be applied to individual inputs or to the sum of all inputs.
 
 The model supports connections to other rate models with either zero or
 non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
+Nonlinear rate neurons can be created by typing
+nest.Create('threshold_lin_rate_ipn') or
+nest.Create('threshold_lin_rate_opn') for input noise or output noise,
+respectively. Nonlinear rate transformers can be created by typing
+nest.Create('rate_transformer_threshold_lin').
+
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
 
 
 ==================  ======= ==============================================
@@ -74,6 +84,7 @@ The following parameters can be set in the status dictionary.
 
 
 Note:
+
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from

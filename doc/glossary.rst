@@ -57,6 +57,8 @@ Common abbreviations in NEST
    virtual process
 
 Physical units and variable names used for NEST parameters
+:orphan:
+
 -------------------------------------------------------------
 
 .. note::

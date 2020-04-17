@@ -1,3 +1,5 @@
+:orphan:
+
 Those parrot neurons, or why you never connect devices to each other
 --------------------------------------------------------------------
 

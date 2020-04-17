@@ -199,9 +199,9 @@ def api_client(call, *args, **kwargs):
     """
     call = getattr(nest, call)
     if callable(call):
-        if str(kwargs.get('return_doc', 'false')) == 'true':
+        if kwargs.get('inspect', None) == 'getdoc':
             response = inspect.getdoc(call)
-        elif str(kwargs.get('return_source', 'false')) == 'true':
+        elif kwargs.get('inspect', None) == 'getsource':
             response = inspect.getsource(call)
         else:
             args, kwargs = serialize(call, args, kwargs)

@@ -1,3 +1,5 @@
+:orphan:
+
 PyNEST example template
 ==========================
 

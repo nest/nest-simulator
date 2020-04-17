@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import requests
-from werkzeug.exceptions import BadRequest, NotFound
-from .. import pynestkernel as kernel
+from werkzeug.exceptions import BadRequest
+import inspect
+import nest
 
 
 class NESTServerClient(object):
@@ -37,12 +38,14 @@ class NESTServerClient(object):
         else:
             if response.status_code == 400:
                 raise BadRequest(response.text)
-            elif response.status_code == 404:
-                raise NotFound(response.text)
-            elif response.status_code == 409:
-                raise kernel.NESTError(response.text)
 
     def __getattr__(self, name):
-        def method(**kwargs):
-            return self._nest_server_api(name, kwargs)
+        def method(*args, **params):
+            call = getattr(nest, name)
+            paramKeys = list(inspect.signature(call).parameters.keys())
+            for (idx, arg) in enumerate(args):
+                paramKey = paramKeys[idx]
+                if paramKey not in params:
+                    params.update({paramKey: arg})
+            return self._nest_server_api(name, params)
         return method

@@ -44,7 +44,7 @@ CORS(app)
 
 @app.route('/version', methods=['GET'])
 @cross_origin()
-def nest_index():
+def route_version():
     """ Route to fetch version of NEST Simulator.
     """
     return jsonify(nest.version())
@@ -80,7 +80,7 @@ def route_exec():
             response['stdout'] = '\n'.join(stdout)
             return jsonify(data)
         except nest.kernel.NESTError as e:
-            abort(Response(getattr(e, 'errormessage'), 409))
+            abort(Response(getattr(e, 'errormessage'), 400))
         except Exception as e:
             abort(Response(str(e), 400))
 
@@ -96,7 +96,7 @@ nest_calls.sort()
 
 @app.route('/api', methods=['GET'])
 @cross_origin()
-def nest_api():
+def route_api():
     """ Route to list call functions in NEST.
     """
     return jsonify(nest_calls)
@@ -104,16 +104,12 @@ def nest_api():
 
 @app.route('/api/<call>', methods=['GET', 'POST'])
 @cross_origin()
-def nest_api_call(call):
+def route_api_call(call):
     """ Route to call function in NEST.
     """
     args, kwargs = get_arguments(request)
-    if call in nest_calls:
-        call = getattr(nest, call)
-        data = api_client(call, *args, **kwargs)
-        return jsonify(data)
-    else:
-        abort(Response('The request cannot be called in NEST.\n', 404))
+    data = api_client(call, *args, **kwargs)
+    return jsonify(data)
 
 
 # ----------------------
@@ -170,7 +166,7 @@ def get_or_error(func):
             abort(Response(getattr(e, 'errormessage'), 409))
         except Exception as e:
             abort(Response(str(e), 400))
-        return data, status
+        return data
     return func_wrapper
 
 
@@ -208,6 +204,7 @@ def serialize(call, params):
 def api_client(call, *args, **kwargs):
     """ API Client to call function in NEST.
     """
+    call = getattr(nest, call)
     if callable(call):
         if str(kwargs.get('return_doc', 'false')) == 'true':
             response = call.__doc__

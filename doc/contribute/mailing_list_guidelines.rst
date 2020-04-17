@@ -1,3 +1,5 @@
+:orphan:
+
 Guidelines for contributing to the mailing list
 =================================================
 

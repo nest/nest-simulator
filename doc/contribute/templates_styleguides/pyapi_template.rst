@@ -1,3 +1,5 @@
+:orphan:
+
 PyNEST API template
 =====================
 

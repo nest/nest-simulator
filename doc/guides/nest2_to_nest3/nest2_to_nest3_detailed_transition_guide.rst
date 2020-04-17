@@ -5,18 +5,13 @@ NEST 3.0: Detailed transition guide
 
 * Functions not mentioned are unchanged
 
-* Terms that changed for NEST 3.0 are marked in :green:`green`.
+* Terms that changed for NEST 3.0 are marked in :green:`green`
 
+* **Please note that NEST 3.0 no longer supports Python 2**
 
 .. contents:: Here you'll find
    :local:
    :depth: 2
-
-
-**Dependencies:**
-
- * Python 3.X
- * Matplotlib 3.X.X
 
 .. seealso::
 

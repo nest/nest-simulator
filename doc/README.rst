@@ -1,5 +1,7 @@
+:orphan:
+
 The doc folder
-===============
+==============
 
 The documentation for NEST is contained in this folder. We are currently working
 on improving the documentation and making updates. However, if you notice

@@ -1,3 +1,5 @@
+:orphan:
+
 The Connection Generator Interface
 ==================================
 

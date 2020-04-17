@@ -1,3 +1,5 @@
+:orphan:
+
 Vim support for SLI files
 =========================
 

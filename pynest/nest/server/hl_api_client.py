@@ -35,9 +35,8 @@ class NESTServerClient(object):
         response = requests.post(self.url_api + call, json=params, headers=self.headers)
         if response.ok:
             return response.json()
-        else:
-            if response.status_code == 400:
-                raise BadRequest(response.text)
+        elif response.status_code == 400:
+            raise BadRequest(response.text)
 
     def __getattr__(self, name):
         def method(*args, **params):

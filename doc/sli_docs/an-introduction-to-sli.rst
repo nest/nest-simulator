@@ -1,3 +1,5 @@
+:orphan:
+
 An Introduction to SLI
 ======================
 

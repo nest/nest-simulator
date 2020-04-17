@@ -21,8 +21,6 @@
 
 import requests
 from werkzeug.exceptions import BadRequest
-import inspect
-import nest
 
 
 class NESTServerClient(object):
@@ -39,12 +37,7 @@ class NESTServerClient(object):
             raise BadRequest(response.text)
 
     def __getattr__(self, name):
-        def method(*args, **params):
-            call = getattr(nest, name)
-            paramKeys = list(inspect.signature(call).parameters.keys())
-            for (idx, arg) in enumerate(args):
-                paramKey = paramKeys[idx]
-                if paramKey not in params:
-                    params.update({paramKey: arg})
-            return self._nest_server_api(name, params)
+        def method(*args, **kwargs):
+            kwargs.update({'args': args})
+            return self._nest_server_api(name, kwargs)
         return method

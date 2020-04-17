@@ -38,16 +38,9 @@ __all__ = [
     'app'
 ]
 
+
 app = Flask(__name__)
 CORS(app)
-
-
-@app.route('/version', methods=['GET'])
-@cross_origin()
-def route_version():
-    """ Route to fetch version of NEST Simulator.
-    """
-    return jsonify(nest.version())
 
 
 @app.route('/exec', methods=['GET', 'POST'])
@@ -116,7 +109,6 @@ def route_api_call(call):
 # Helpers for the server
 # ----------------------
 
-
 class Capturing(list):
     """ Monitor stdout contents i.e. print.
     """
@@ -140,16 +132,17 @@ def get_arguments(request):
         if isinstance(json, list):
             args = json
         elif isinstance(json, dict):
-            args = json.get('args', args)
-            kwargs = json.get('kwargs', json)
+            kwargs = json
+            if 'args' in kwargs:
+                args = list(kwargs.pop('args'))
     elif len(request.form) > 0:
         if 'args' in request.form:
-            args = request.form.getlist('args')
+            args = list(request.form.getlist('args'))
         else:
             kwargs = request.form.to_dict()
-    elif (len(request.args) > 0):
+    elif len(request.args) > 0:
         if 'args' in request.args:
-            args = request.args.getlist('args')
+            args = list(request.args.getlist('args'))
         else:
             kwargs = request.args.to_dict()
     return args, kwargs
@@ -160,44 +153,44 @@ def get_or_error(func):
     """
     def func_wrapper(call, *args, **kwargs):
         try:
-            data = func(call,  *args, **kwargs)
-            return data
+            return func(call,  *args, **kwargs)
         except nest.kernel.NESTError as e:
             abort(Response(getattr(e, 'errormessage'), 409))
         except Exception as e:
             abort(Response(str(e), 400))
-        return data
     return func_wrapper
 
 
-def NodeCollection(params):
+def NodeCollection(call, args, kwargs):
     """ Get Node Collection as arguments for NEST functions.
     """
-    keys = ['nodes', 'source', 'target', 'pre', 'post']
-    for key in keys:
-        if key in params:
-            params[key] = nest.NodeCollection(params[key])
-    return params
+    objectnames = ['nodes', 'source', 'target', 'pre', 'post']
+    paramKeys = list(inspect.signature(call).parameters.keys())
+    args = [nest.NodeCollection(arg) if (paramKeys[idx] in objectnames) else arg for (idx, arg) in enumerate(args)]
+    for (key, value) in kwargs.items():
+        if key in objectnames:
+            kwargs[key] = nest.NodeCollection(value)
+    return args, kwargs
 
 
-def serialize(call, params):
+def serialize(call, args, kwargs):
     """ Serialize arguments with keywords for call functions in NEST.
     """
-    nodeCollection = NodeCollection(params)
-    if call.startswith('Set'):
+    args, kwargs = NodeCollection(call, args, kwargs)
+    if call.__name__.startswith('Set'):
         status = {}
-        if call == 'SetDefaults':
-            status = nest.GetDefaults(nodeCollection['model'])
-        elif call == 'SetKernelStatus':
+        if call.__name__ == 'SetDefaults':
+            status = nest.GetDefaults(kwargs['model'])
+        elif call.__name__ == 'SetKernelStatus':
             status = nest.GetKernelStatus()
-        elif call == 'SetStructuralPlasticityStatus':
-            status = nest.GetStructuralPlasticityStatus(nodeCollection['params'])
-        elif call == 'SetStatus':
-            status = nest.GetStatus(nodeCollection['nodes'])
+        elif call.__name__ == 'SetStructuralPlasticityStatus':
+            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
+        elif call.__name__ == 'SetStatus':
+            status = nest.GetStatus(kwargs['nodes'])
         for key, val in kwargs['params'].items():
             if key in status:
-                nodeCollection['params'][key] = type(status[key])(val)
-    return nodeCollection
+                kwargs['params'][key] = type(status[key])(val)
+    return args, kwargs
 
 
 @get_or_error
@@ -207,11 +200,12 @@ def api_client(call, *args, **kwargs):
     call = getattr(nest, call)
     if callable(call):
         if str(kwargs.get('return_doc', 'false')) == 'true':
-            response = call.__doc__
+            response = inspect.getdoc(call)
         elif str(kwargs.get('return_source', 'false')) == 'true':
             response = inspect.getsource(call)
         else:
-            response = call(*args, **serialize(call.__name__, kwargs))
+            args, kwargs = serialize(call, args, kwargs)
+            response = call(*args, **kwargs)
     else:
         response = call
     return nest.hl_api.serializable(response)

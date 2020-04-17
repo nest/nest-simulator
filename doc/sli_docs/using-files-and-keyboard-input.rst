@@ -1,3 +1,5 @@
+:orphan:
+
 Using files and keyboard input
 ==============================
 

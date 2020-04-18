@@ -233,6 +233,16 @@ the percentage simulation time is reset to `0%` at the beginning of each call,
 but the absolute simulation time and the real-time factor account for the total
 elapsed times.
 
+The real-time factor should not be confused with the concept of *speedup*.
+Speedup refers to a ratio of wall-clock times, namely the wall-clock time
+needed to solve a problem serially and the wall-clock time needed to solve the
+same problem in parallel (e.g., by distributing the work across multiple
+threads or processes):
+
+.. math::
+
+    q_\text{speedup} = \frac{T_\text{wall, serial}}{T_\text{wall, parallel}}
+
 .. note::
 
     For large, distributed simulations, it is recommended to set

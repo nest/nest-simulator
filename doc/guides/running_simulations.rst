@@ -210,8 +210,8 @@ The progress of the simulation can be monitored by setting:
     SetKernelStatus({"print_time": True})
 
 If enabled, a line is printed to screen at every time step of the simulation to
-track the percentage and the absolute elapsed biological simulation time as
-well as the real-time factor, for example:
+track the percentage, the absolute elapsed biological simulation time and the
+real-time factor, for example:
 
 ::
 
@@ -226,11 +226,11 @@ argument to the ``Simulate()`` call):
     q_\text{real} = \frac{T_\text{wall}}{T_\text{sim}}
 
 If the real-time factor is larger than `1` as in the example above, the
-simulation runs more slowly than the wall-clock time passes.
+simulation runs slower than the wall-clock time.
 
-In the case that a simulation script contains multiple ``Simulate()`` calls,
+In case a simulation script contains multiple ``Simulate()`` calls,
 the percentage simulation time is reset to `0%` at the beginning of each call,
-but the abolute simulation time and the real-time factor account for the total
+but the absolute simulation time and the real-time factor account for the total
 elapsed times.
 
 .. note::

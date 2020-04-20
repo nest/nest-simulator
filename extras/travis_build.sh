@@ -32,11 +32,6 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-mkdir -p $HOME/.matplotlib
-cat > $HOME/.matplotlib/matplotlibrc <<EOF
-    backend : svg
-EOF
-
 # Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"
@@ -57,6 +52,10 @@ if [ "$xPYTHON" = "1" ] ; then
    if [[ $OSTYPE = darwin* ]]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
+   mkdir -p $HOME/.matplotlib
+   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
+   backend : svg
+EOF
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -87,6 +86,14 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBBOOST" = "1" ] ; then
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
+    chmod +x extras/install_libboost.sh
+    ./extras/install_libboost.sh
+else
+    CONFIGURE_BOOST="-Dwith-boost=OFF"
+fi
+
 if [ "$xSIONLIB" = "1" ] ; then
     CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
     chmod +x extras/install_sionlib.sh
@@ -107,14 +114,6 @@ if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
-
-# Download Boost
-wget --no-verbose https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
-tar -xzf boost_1_72_0.tar.gz
-rm -fr boost_1_72_0.tar.gz
-cp -fr boost_1_72_0 $HOME/.cache
-rm -fr boost_1_72_0
-CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
 
 NEST_VPATH=build
 NEST_RESULT=result
@@ -172,9 +171,9 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases.
-      #            The commit range might not properly reflect the history.
-      #            see https://github.com/travis-ci/travis-ci/issues/2668
+    # Note: BUG: Extracting the filenames may not work in all cases.
+    #            The commit range might not properly reflect the history.
+    #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using git diff against $TRAVIS_BRANCH."
        file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
@@ -280,20 +279,20 @@ echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
 
-    echo
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "+               R U N   N E S T   T E S T S U I T E                           +"
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
-        export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
-        export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    fi
-    make installcheck
-    echo "MSGBLD0300: Make installcheck completed."
+echo
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               R U N   N E S T   T E S T S U I T E                           +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0290: Running make installcheck."
+if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
+    export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
+    export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+fi
+make installcheck
+echo "MSGBLD0300: Make installcheck completed."
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "MSGBLD0310: This build was triggered by a pull request."

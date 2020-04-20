@@ -9,7 +9,7 @@ Installation instructions for NEST 2.10 and earlier
 
 The following are the basic steps to compile and install NEST from source code:
 
-*  :doc:`Download NEST <../download.rst>`
+*  :doc:`Download NEST <../download>`
 
 * Unpack the tarball::
 

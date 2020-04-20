@@ -64,14 +64,14 @@ def route_exec():
             response = {}
             if 'return' in kwargs:
                 if isinstance(kwargs['return'], list):
-                    return_data = {}
+                    data = {}
                     for variable in kwargs['return']:
-                        return_data[variable] = locals.get(variable, None)
+                        data[variable] = locals.get(variable, None)
                 else:
-                    return_data = locals.get(kwargs['return'], None)
-                response['data'] = nest.hl_api.serializable(return_data)
+                    data = locals.get(kwargs['return'], None)
+                response['data'] = nest.hl_api.serializable(data)
             response['stdout'] = '\n'.join(stdout)
-            return jsonify(data)
+            return jsonify(response)
         except nest.kernel.NESTError as e:
             abort(Response(getattr(e, 'errormessage'), 400))
         except Exception as e:
@@ -101,8 +101,8 @@ def route_api_call(call):
     """ Route to call function in NEST.
     """
     args, kwargs = get_arguments(request)
-    data = api_client(call, *args, **kwargs)
-    return jsonify(data)
+    response = api_client(call, *args, **kwargs)
+    return jsonify(response)
 
 
 # ----------------------
@@ -134,18 +134,18 @@ def get_arguments(request):
         elif isinstance(json, dict):
             kwargs = json
             if 'args' in kwargs:
-                args = list(kwargs.pop('args'))
+                args = kwargs.pop('args')
     elif len(request.form) > 0:
         if 'args' in request.form:
-            args = list(request.form.getlist('args'))
+            args = request.form.getlist('args')
         else:
             kwargs = request.form.to_dict()
     elif len(request.args) > 0:
         if 'args' in request.args:
-            args = list(request.args.getlist('args'))
+            args = request.args.getlist('args')
         else:
             kwargs = request.args.to_dict()
-    return args, kwargs
+    return list(args), kwargs
 
 
 def get_or_error(func):

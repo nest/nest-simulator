@@ -2,10 +2,10 @@
 
 
 Installation instructions for NEST 2.10 and earlier
-====================================================
+===================================================
 
 .. note:: These instructions contain only information on points that differ from
- current versions of NEST. :doc:`See the installation page for details <installation>`.
+ current versions of NEST. :doc:`See the installation page for details <index>`.
 
 The following are the basic steps to compile and install NEST from source code:
 
@@ -35,7 +35,7 @@ with appropriate configuration options
     make install
 
 Dependencies
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended
 if you use NEST interactively without Python. Although most Linux distributions

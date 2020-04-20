@@ -9,20 +9,21 @@ DAEMONIZE=0
 usage() {
   echo "NEST Server"
   echo "-----------"
-  echo "Usage: $0 log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-u <UID>]" >&2; exit 1
-
-  echo "Commands:
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-u <UID>]"
+  echo ""
+  echo "Commands:"
   echo "  log         display the sever log stored in /tmp/nest-server.log"
+  echo "  status      display the status of NEST Server"
   echo "  start       start a new instance of the server"
   echo "  stop        stop a server instance running on <HOST>:<PORT>"
   echo "  restart     restart (i.e. stop and start) a server on <HOST>:<PORT>"
   echo
   echo "Options:"
-  echo "  -d          daemonize the server process"  
-  echo "  -o          print all output to both the console and to the log"  
+  echo "  -d          daemonize the server process"
+  echo "  -o          print all output to both the console and to the log"
   echo "  -h <HOST>   use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
   echo "  -p <PORT>   use port <PORT> for opening the socket [default: 5000]"
-  echo "  -u <UID>    run the server under the user with ID <UID>"
+  echo "  -u <UID>    run the server under the user with ID <UID>" >&2; exit 1
 }
 
 log() {

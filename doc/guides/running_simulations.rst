@@ -223,7 +223,7 @@ argument to the ``Simulate()`` call):
 
 .. math::
 
-    q_\text{real} = \frac{T_\text{wall}}{T_\text{sim}}
+    q_\text{real} = \frac{T_\text{wall}}{T_\text{bio}}
 
 If the real-time factor is larger than `1` as in the example above, the
 simulation runs slower than the wall-clock time.

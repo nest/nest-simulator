@@ -26,7 +26,7 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#include "../nestkernel/source.h"
+#include "source.h"
 
 namespace boost
 {

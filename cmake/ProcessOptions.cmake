@@ -595,7 +595,7 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
       
-      include_directories( ${Boost_INCLUDE_DIR} )
+      include_directories( ${Boost_INCLUDE_DIRS} )
     endif ()
   endif ()
 endfunction()

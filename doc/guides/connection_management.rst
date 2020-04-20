@@ -381,8 +381,7 @@ Topological Connections
 
 If the connect functions above are not sufficient, the topology provides
 more sophisticated functions. For example, it is possible to create
-receptive field structures and much more! See :doc:`Topological
-Connections <topology/index>` for more information.
+receptive field structures and much more! See :doc:`spatial/index` for more information.
 
 .. _receptor-types:
 

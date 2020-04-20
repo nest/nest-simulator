@@ -1,4 +1,6 @@
-# extras/CMakeLists.txt
+# -*- coding: utf-8 -*-
+#
+# simple_network_api.py
 #
 # This file is part of NEST.
 #
@@ -17,30 +19,26 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY bibliography logos
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+from NESTServerClient import NESTClientAPI
 
-install( DIRECTORY help_generator
-    DESTINATION ${CMAKE_INSTALL_DATADIR}
-    )
 
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
-    )
+# API interface for NEST Server
+napi = NESTClientAPI()
 
-install( FILES nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    )
+# Reset kernel
+napi.ResetKernel()
 
-install( PROGRAMS
-    ${PROJECT_BINARY_DIR}/extras/nest-config
-    nest_indirect
-    nest_serial
-    nest-server
-    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+# Create nodes
+pg = napi.Create("poisson_generator", params={"rate": 6500.})
+neurons = napi.Create("iaf_psc_alpha", 100)
+sd = napi.Create("spike_detector")
 
-add_subdirectory( ConnPlotter )
-add_subdirectory( NESTServerClient )
+# Connect nodes
+napi.Connect(pg, neurons, syn_spec={'weight': 10.})
+napi.Connect(neurons, sd)
+
+# Simulate
+napi.Simulate(1000.0)
+
+# Get events
+events = napi.GetStatus(sd, 'events')[0]

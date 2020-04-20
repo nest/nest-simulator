@@ -1,4 +1,4 @@
-# extras/CMakeLists.txt
+# extras/NESTServerClient/CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -17,30 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY bibliography logos
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+if ( HAVE_PYTHON )
+  install( CODE "execute_process(
+  COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
+                             install --prefix=${CMAKE_INSTALL_PREFIX}
+                                     --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+                                     --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
+                                     --install-data=${CMAKE_INSTALL_FULL_DATADIR}
+    WORKING_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}\")"
+      )
 
-install( DIRECTORY help_generator
-    DESTINATION ${CMAKE_INSTALL_DATADIR}
-    )
-
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
-    )
-
-install( FILES nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    )
-
-install( PROGRAMS
-    ${PROJECT_BINARY_DIR}/extras/nest-config
-    nest_indirect
-    nest_serial
-    nest-server
-    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-
-add_subdirectory( ConnPlotter )
-add_subdirectory( NESTServerClient )
+endif ()

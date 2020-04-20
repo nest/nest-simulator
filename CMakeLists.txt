@@ -55,7 +55,7 @@ set( with-readline ON CACHE STRING "Find a readline library. To set a specific r
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
-set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installagion, set install path. [default=ON]" )
+set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )

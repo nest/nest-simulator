@@ -54,7 +54,7 @@ def _process_conn_spec(conn_spec):
         raise TypeError("conn_spec must be a string or dict")
 
 
-def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
+def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arrays):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
     if syn_spec is None:
         return syn_spec
@@ -71,10 +71,11 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                 if len(value.shape) == 1:
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
-                            raise kernel.NESTError(
-                                "'" + key + "' has to be an array of "
-                                "dimension " + str(prelength) + ", a "
-                                "scalar or a dictionary.")
+                            if connect_np_arrays:
+                                raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)}.")
+                            else:
+                                raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)},"
+                                                       " a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':

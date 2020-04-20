@@ -247,24 +247,26 @@ cdef class NESTEngine(object):
 
         return ret
 
-    def connect_arrays(self, sources, targets, weights, delays, receptor_type, synapse_model):
-        """Calls connect_arrays function, bypassing SLI to expose pointers to the Numpy arrays"""
+    def connect_arrays(self, sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
+        """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
         if self.pEngine is NULL:
             raise NESTErrors.PyNESTError("engine uninitialized")
         if not HAVE_NUMPY:
-            raise NESTErrors.PyNESTError("Numpy is not available")
+            raise NESTErrors.PyNESTError("NumPy is not available")
 
-        if not isinstance(sources, numpy.ndarray) or not numpy.issubdtype(sources.dtype, numpy.integer):
-            raise TypeError('sources must be a Numpy array of integers')
-        if not isinstance(targets, numpy.ndarray) or not numpy.issubdtype(targets.dtype, numpy.integer):
-            raise TypeError('targets must be a Numpy array of integers')
-        if weights is not None and not isinstance(weights, numpy.ndarray):
-            raise TypeError('weights must be a Numpy array')
-        if delays is not None and  not isinstance(delays, numpy.ndarray):
-            raise TypeError('delays must be a Numpy array')
-        if receptor_type is not None and not (isinstance(receptor_type, numpy.ndarray) and
-                                              numpy.issubdtype(receptor_type.dtype, numpy.integer)):
-            raise TypeError('receptor_type must be a Numpy array of integers')
+        if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
+            raise TypeError('sources must be a 1-dimensional NumPy array of integers')
+        if not (isinstance(targets, numpy.ndarray) and targets.ndim == 1) or not numpy.issubdtype(targets.dtype, numpy.integer):
+            raise TypeError('targets must be a 1-dimensional NumPy array of integers')
+        if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim == 1):
+            raise TypeError('weights must be a 1-dimensional NumPy array')
+        if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+            raise TypeError('delays must be a 1-dimensional NumPy array')
+        if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
+                                              numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
+            raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
+        if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
+            raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
 
         if not len(sources) == len(targets):
             raise ValueError('Sources and targets must be arrays of the same length.')
@@ -274,11 +276,13 @@ cdef class NESTEngine(object):
         if delays is not None:
             if not len(sources) == len(delays):
                 raise ValueError('delays must be an array of the same length as sources and targets.')
-        if receptor_type is not None:
-            if not len(sources) == len(receptor_type):
-                raise ValueError('receptor_type must be an array of the same length as sources and targets.')
+        if syn_param_values is not None:
+            if not len(syn_param_keys) == syn_param_values.shape[0]:
+                raise ValueError('syn_param_values must be a matrix with one array per key in syn_param_keys.')
+            if not len(sources) == syn_param_values.shape[1]:
+                raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
-        # Get pointers to the first element in each Numpy array
+        # Get pointers to the first element in each NumPy array
         cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
         cdef long* sources_ptr = &sources_mv[0]
 
@@ -297,18 +301,25 @@ cdef class NESTEngine(object):
             delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
             delays_ptr = &delays_mv[0]
 
-        cdef long[::1] r_type_mv
-        cdef long* r_type_ptr = NULL
-        if receptor_type is not None:
-            r_type_mv = numpy.ascontiguousarray(receptor_type, dtype=numpy.long)
-            r_type_ptr = &r_type_mv[0]
+        # Storing parameter keys in a vector of strings
+        cdef vector[string] param_keys_ptr
+        if syn_param_keys is not None:
+            for i, key in enumerate(syn_param_keys):
+                param_keys_ptr.push_back(key)
+
+        cdef double[:, ::1] param_values_mv
+        cdef double* param_values_ptr = NULL
+        if syn_param_values is not None:
+            param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
+            param_values_ptr = &param_values_mv[0][0]
 
         cdef string syn_model_string = synapse_model.encode('UTF-8')
 
         try:
-            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, r_type_ptr, len(sources), syn_model_string )
+            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
         except RuntimeError as e:
-            raise NESTErrors.PyNESTError(str(e))
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls('connect_arrays', '') from None
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 

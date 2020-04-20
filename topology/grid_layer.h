@@ -114,15 +114,15 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
-   * @param sind subnet index of node
-   * @returns position of node identified by Subnet local index value.
+   * @param sind index of node
+   * @returns position of node.
    */
   Position< D > get_position( index sind ) const;
 
   /**
    * Get position of node. Also allowed for non-local nodes.
    * @param lid local index of node
-   * @returns position of node identified by Subnet local index value.
+   * @returns position of node.
    */
   Position< D > lid_to_position( index lid ) const;
 

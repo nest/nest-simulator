@@ -1,30 +1,25 @@
-NEST 2.X vs. NEST 3.0 conversion reference guide
-==================================================
+NEST 3.0: Detailed transition guide
+===================================
 
-* This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 
-* Terms that changed for NEST 3.0 are marked in :green:`green`.
+* Terms that changed for NEST 3.0 are marked in :green:`green`
 
+* **Please note that NEST 3.0 no longer supports Python 2**
 
 .. contents:: Here you'll find
    :local:
    :depth: 2
 
-
-**Dependencies:**
-
- * Python 3.X
- * Matplotlib 3.X.X
-
 .. seealso::
 
-  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
+  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
 
 .. _setverbosity:
 
-Supress output on startup
+Suppress output on startup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+----------------------------------+

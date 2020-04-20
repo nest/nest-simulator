@@ -89,7 +89,7 @@ else
 fi
 
 if [ "$xLIBBOOST" = "1" ] ; then
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0"
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
     chmod +x extras/install_libboost.sh
     ./extras/install_libboost.sh
 else

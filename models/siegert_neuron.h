@@ -57,7 +57,9 @@ siegert_neuron is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
 synapses [2] and [3, their eq. 25]. The model can be used for a
-mean-field analysis of spiking networks.
+mean-field analysis of spiking networks. A constant mean input can be
+provided to create neurons with a target rate, e.g. to model a constant
+external input.
 
 The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
@@ -70,7 +72,7 @@ The following parameters can be set in the status dictionary.
 =====  ====== ==============================
  rate  1/s    Rate (1/s)
  tau   ms     Time constant
- mean  real   Additional constant input
+ mean  1/s    Additional constant input
 =====  ====== ==============================
 \endverbatim
 
@@ -79,13 +81,13 @@ used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
 
 \verbatim embed:rst
-=========  ======  =====================================================
+=========  ======  ================================================
  tau_m     ms      Membrane time constant
  tau_syn   ms      Time constant of postsynaptic currents
  t_ref     ms      Duration of refractory period
  theta     mV      Threshold relative to resting potential
- V_reset   mV      Reset relative to resting membrane potential
-=========  ======  =====================================================
+ V_reset   mV      Reset relative to resting potential
+=========  ======  ================================================
 \endverbatim
 
 References:
@@ -191,7 +193,7 @@ private:
     /** Refractory period in ms. */
     double t_ref_;
 
-    /** Constant input in Hz. */
+    /** Constant input in 1/s. */
     double mean_;
 
     /** Threshold in mV. */

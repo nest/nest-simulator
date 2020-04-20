@@ -41,4 +41,5 @@ napi.Connect(neurons, sd)
 napi.Simulate(1000.0)
 
 # Get events
-events = napi.GetStatus(sd, 'events')[0]
+n_events = napi.GetStatus(sd, 'n_events')[0]
+print('Number of events:', n_events)

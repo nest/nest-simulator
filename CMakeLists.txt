@@ -45,6 +45,7 @@ set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optional
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
 set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
+set( with-arborbackend OFF CACHE STRING "Request compilation with Arbor backend capability actived. Requires MPI,PYTHON & MPI4PY [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -163,6 +164,7 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_arbor_backend()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 

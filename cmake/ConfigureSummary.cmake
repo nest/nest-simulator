@@ -152,6 +152,12 @@ function( NEST_PRINT_CONFIG_SUMMARY )
     message( "Use Boost           : No" )
   endif ()
 
+  if ( HAVE_ARBORBACKEND )
+    message( "Use Arbor Backend   : Yes" )
+  else ()
+    message( "Use Arbor Backend   : No" )
+  endif ()
+
   if ( with-libraries )
     message( "Additional libraries:" )
     foreach ( lib ${with-libraries} )

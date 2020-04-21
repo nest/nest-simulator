@@ -241,6 +241,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , ismpi_name( "is_mpi" )
   , have_gsl_name( "have_gsl" )
   , have_music_name( "have_music" )
+  , have_arborbackend_name( "have_arborbackend" )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
@@ -463,6 +464,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_music_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_music_name, Token( new BoolDatum( false ) ) );
+#endif
+
+#ifdef HAVE_ARBORBACKEND
+  statusdict->insert( have_arborbackend_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_arborbackend_name, Token( new BoolDatum( false ) ) );
 #endif
 
 #ifdef HAVE_LIBNEUROSIM

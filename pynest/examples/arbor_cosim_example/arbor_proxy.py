@@ -31,8 +31,7 @@ def print_spike_array_d(to_print, force=False):
 
     # Assume that we received a spike array, no error checking
     print(print_prefix + "SPIKES: [", end='')
-    for spike in to_print:
-        msg =
+    for spike in to_print:       
         print("S[{}: {}, t={}]".format(spike[0], spike[1], spike[2], end=''))
     print("]")
     sys.stdout.flush()

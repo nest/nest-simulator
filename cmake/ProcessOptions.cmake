@@ -638,3 +638,26 @@ function( NEST_PROCESS_WITH_MPI4PY )
 
   endif ()
 endfunction ()
+
+function( NEST_PROCESS_WITH_ARBOR_BACKEND )
+  if (with-arborbackend)
+    # Question: does this cause an dependency on call order?
+	if (NOT HAVE_MPI)  
+	  message( FATAL_ERROR "arbor-backend needs MPI." )
+    endif ()
+	
+	if (NOT HAVE_PYTHON) 
+	  message( FATAL_ERROR "arbor-backend needs PYTHON." )
+	endif ()  
+	
+    include( FindPythonModule )	
+    
+	find_python_module(mpi4py)
+	if ( HAVE_MPI4PY )
+	  include_directories( "${PY_MPI4PY}/include" )
+	else ()
+	  message( FATAL_ERROR "CMake cannot find MPI4PY, needed for arbor-backend" )
+    endif ()
+	set( HAVE_ARBORBACKEND ON PARENT_SCOPE )
+  endif()
+endfunction()

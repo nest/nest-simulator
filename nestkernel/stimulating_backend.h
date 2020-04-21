@@ -1,5 +1,5 @@
 /*
- *  input_backend.h
+ *  stimulating_backend.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef INPUT_BACKEND_H
-#define INPUT_BACKEND_H
+#ifndef STIMULATING_BACKEND_H
+#define STIMULATING_BACKEND_H
 
 // C++ includes:
 #include <vector>
@@ -37,22 +37,22 @@ namespace nest
 class InputDevice;
 class Event;
 
-class InputBackend
+class StimulatingBackend
 {
 public:
-  InputBackend()
+  StimulatingBackend()
   {
   }
 
-  virtual ~InputBackend() throw()
+  virtual ~StimulatingBackend() throw()
   {
   }
 
   /**
-  * Enroll an `InputDevice` with the `InputBackend`.
+  * Enroll an `InputDevice` with the `StimulatingBackend`.
   *
   * When this function is called by an `InputDevice` @p device,
-  * the `InputBackend` can set up per-device data structures and
+  * the `StimulatingBackend` can set up per-device data structures and
   * properties. Individual device instances can be identified using
   * the `thread` and `node_id` of the @p device.
   *
@@ -88,7 +88,7 @@ public:
   virtual void enroll( InputDevice& device, const DictionaryDatum& params ) = 0;
 
   /**
-   * Disenroll an `InputDevice` from the `InputBackend`.
+   * Disenroll an `InputDevice` from the `StimulatingBackend`.
    *
    * This function is considered to be the opposite of enroll() in the
    * sense that it cancels the enrollment of a RecordingDevice from a
@@ -107,7 +107,7 @@ public:
 
   /**
    * To make the names of input quantities known to the
-   * `InputBackend`, the vectors @p double_value_names and @p
+   * `StimulatingBackend`, the vectors @p double_value_names and @p
    * long_value_names can be set appropriately.
    *
    * @param device the device to set the value names for
@@ -276,4 +276,4 @@ public:
 
 } // namespace
 
-#endif // INPUT_BACKEND_H
+#endif // STIMULATING_BACKEND_H

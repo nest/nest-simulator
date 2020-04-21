@@ -1,5 +1,5 @@
 /*
- *  input_backend.cpp
+ *  stimulating_backend.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "input_backend.h"
+#include "stimulating_backend.h"
 
-const std::vector< Name > nest::InputBackend::NO_DOUBLE_VALUE_NAMES;
-const std::vector< Name > nest::InputBackend::NO_LONG_VALUE_NAMES;
+const std::vector< Name > nest::StimulatingBackend::NO_DOUBLE_VALUE_NAMES;
+const std::vector< Name > nest::StimulatingBackend::NO_LONG_VALUE_NAMES;

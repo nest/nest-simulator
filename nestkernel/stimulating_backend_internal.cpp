@@ -1,5 +1,5 @@
 /*
- *  input_backend_internal.cpp
+ *  stimulating_backend_internal.cpp
  *
  *  This file is part of NEST.
  *
@@ -25,11 +25,11 @@
 
 
 // Includes from nestkernel:
-#include "input_backend_internal.h"
+#include "stimulating_backend_internal.h"
 #include "input_device.h"
 
 void
-nest::InputBackendInternal::enroll( InputDevice& device, const DictionaryDatum& params )
+nest::StimulatingBackendInternal::enroll( InputDevice& device, const DictionaryDatum& params )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -43,7 +43,7 @@ nest::InputBackendInternal::enroll( InputDevice& device, const DictionaryDatum& 
 }
 
 void
-nest::InputBackendInternal::disenroll( InputDevice& device )
+nest::StimulatingBackendInternal::disenroll( InputDevice& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -57,33 +57,33 @@ nest::InputBackendInternal::disenroll( InputDevice& device )
 
 
 void
-nest::InputBackendInternal::initialize()
+nest::StimulatingBackendInternal::initialize()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
 }
 
 void
-nest::InputBackendInternal::prepare()
+nest::StimulatingBackendInternal::prepare()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::cleanup()
+nest::StimulatingBackendInternal::cleanup()
 {
   // nothing to do
 }
 
 
 void
-nest::InputBackendInternal::finalize()
+nest::StimulatingBackendInternal::finalize()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::set_value_names( const InputDevice& device,
+nest::StimulatingBackendInternal::set_value_names( const InputDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -91,7 +91,7 @@ nest::InputBackendInternal::set_value_names( const InputDevice& device,
 }
 
 void
-nest::InputBackendInternal::check_device_status( const DictionaryDatum& params ) const
+nest::StimulatingBackendInternal::check_device_status( const DictionaryDatum& params ) const
 {
   // nothing to do
 }
@@ -100,43 +100,43 @@ nest::InputBackendInternal::check_device_status( const DictionaryDatum& params )
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::InputBackendInternal::get_status( DictionaryDatum& d ) const
+nest::StimulatingBackendInternal::get_status( DictionaryDatum& d ) const
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::set_status( const DictionaryDatum& d )
+nest::StimulatingBackendInternal::set_status( const DictionaryDatum& d )
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::pre_run_hook()
+nest::StimulatingBackendInternal::pre_run_hook()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::post_run_hook()
+nest::StimulatingBackendInternal::post_run_hook()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::post_step_hook()
+nest::StimulatingBackendInternal::post_step_hook()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::get_device_defaults( DictionaryDatum& params ) const
+nest::StimulatingBackendInternal::get_device_defaults( DictionaryDatum& params ) const
 {
   // nothing to do
 }
 
 void
-nest::InputBackendInternal::get_device_status( const nest::InputDevice& device,
+nest::StimulatingBackendInternal::get_device_status( const nest::InputDevice& device,
   DictionaryDatum& params_dictionary ) const
 {
   // nothing to do

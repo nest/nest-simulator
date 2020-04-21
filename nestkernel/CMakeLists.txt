@@ -111,8 +111,8 @@ set ( nestkernel_sources
       spatial.h spatial.cpp
       vose.h vose.cpp
       input_device.h input_device.cpp
-      input_backend.h input_backend.cpp
-      input_backend_internal.h input_backend_internal.cpp
+      stimulating_backend.h stimulating_backend.cpp
+      stimulating_backend_internal.h stimulating_backend_internal.cpp
       )
 
 if ( HAVE_SIONLIB )
@@ -127,7 +127,7 @@ if ( HAVE_RECORDINGBACKEND_ARBOR )
     ${nestkernel_sources}
     recording_backend_arbor.h recording_backend_arbor.cpp
     recording_backend_mpi.h recording_backend_mpi.cpp
-    input_backend_mpi.h input_backend_mpi.cpp
+    stimulating_backend_mpi.h stimulating_backend_mpi.cpp
   )
 endif ()
 

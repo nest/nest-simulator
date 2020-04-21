@@ -106,7 +106,7 @@ endif ()
 ################################################################################
 
 # needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" OR ${with-python} STREQUAL "3" )
+if ( ${with-python} STREQUAL "ON" )
   find_program( NOSETESTS NAMES nosetests )
 endif ()
 

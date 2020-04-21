@@ -75,8 +75,7 @@ Set default libraries::
                                                  ltdl, set install path. NEST uses the
                                                  ltdl for dynamic loading of external
                                                  user modules. [default=ON]
-    -Dwith-python=[OFF|ON|3]                     Build PyNEST. Options ON and 3 are
-                                                 equivalent. [default=ON]
+    -Dwith-python=[OFF|ON]                       Build PyNEST. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
                                                  If OFF, PyNEST has to be build from
                                                  a pre-cythonized pynestkernel.pyx.

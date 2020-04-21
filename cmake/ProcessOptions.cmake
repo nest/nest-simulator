@@ -381,7 +381,7 @@ function( NEST_PROCESS_WITH_PYTHON )
   set( HAVE_PYTHON OFF PARENT_SCOPE )
   if ( ${with-python} STREQUAL "2" )
     message( FATAL_ERROR "Python 2 is not supported, please use Python 3." )
-  elseif ( ${with-python} STREQUAL "ON" OR ${with-python} STREQUAL "3" )
+  elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
     find_package( PythonInterp 3 REQUIRED )

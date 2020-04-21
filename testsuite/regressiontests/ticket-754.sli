@@ -41,7 +41,7 @@ M_ERROR setverbosity
 
 % test 1: automatic re-seeding works
 {
-  /base_seed 0 def
+  /base_seed 143202461 def
 
   << /total_num_virtual_procs num_procs >> SetKernelStatus
 

@@ -114,6 +114,31 @@ void connect( NodeCollectionPTR sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
 
+/**
+ * @brief Connect arrays of node IDs one-to-one
+ *
+ * Connects an array of sources to an array of targets, with weights and
+ * delays from specified arrays, using the one-to-one
+ * rule. Additional synapse parameters can be specified with p_keys and p_values.
+ * Sources, targets, weights, delays, and receptor types are given
+ * as pointers to the first element. All arrays must have the same length,
+ * n. Weights, delays, and receptor types can be unspecified by passing a
+ * nullptr.
+ *
+ * The p_keys vector contains keys of additional synapse parameters, with
+ * associated values in the flat array p_values. If there are n sources and targets,
+ * and M additional synapse parameters, p_keys has a size of M, and the p_values array
+ * has length of M*n.
+ */
+void connect_arrays( long* sources,
+  long* targets,
+  double* weights,
+  double* delays,
+  std::vector< std::string >& p_keys,
+  double* p_values,
+  size_t n,
+  std::string syn_model );
+
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );

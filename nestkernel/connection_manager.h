@@ -30,7 +30,6 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "completed_checker.h"
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
@@ -38,6 +37,7 @@
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "per_thread_bool_indicator.h"
 #include "source_table.h"
 #include "target_table.h"
 #include "target_table_devices.h"
@@ -352,10 +352,8 @@ public:
    */
   void restructure_connection_tables( const thread tid );
 
-  void set_has_source_subsequent_targets( const thread tid,
-    const synindex syn_id,
-    const index lcid,
-    const bool subsequent_targets );
+  void
+  set_source_has_more_targets( const thread tid, const synindex syn_id, const index lcid, const bool more_targets );
 
   void no_targets_to_process( const thread tid );
 
@@ -582,7 +580,7 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  CompletedChecker have_connections_changed_;
+  PerThreadBoolIndicator have_connections_changed_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -591,13 +589,13 @@ private:
   bool has_primary_connections_;
 
   //! Check for primary connections (spikes) on each thread.
-  CompletedChecker check_primary_connections_;
+  PerThreadBoolIndicator check_primary_connections_;
 
   //! Whether secondary connections (e.g., gap junctions) exist.
   bool secondary_connections_exist_;
 
   //! Check for secondary connections (e.g., gap junctions) on each thread.
-  CompletedChecker check_secondary_connections_;
+  PerThreadBoolIndicator check_secondary_connections_;
 
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
@@ -801,12 +799,12 @@ ConnectionManager::restructure_connection_tables( const thread tid )
 }
 
 inline void
-ConnectionManager::set_has_source_subsequent_targets( const thread tid,
+ConnectionManager::set_source_has_more_targets( const thread tid,
   const synindex syn_id,
   const index lcid,
-  const bool subsequent_targets )
+  const bool more_targets )
 {
-  connections_[ tid ][ syn_id ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
+  connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
 }
 
 } // namespace nest

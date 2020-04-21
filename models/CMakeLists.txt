@@ -56,7 +56,6 @@ set( models_sources
     hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp
     ht_connection.h
     ht_neuron.h ht_neuron.cpp
-    iaf_chxk_2008.cpp iaf_chxk_2008.h
     iaf_chs_2007.cpp iaf_chs_2007.h
     iaf_cond_alpha.h iaf_cond_alpha.cpp
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
@@ -80,6 +79,8 @@ set( models_sources
     music_cont_out_proxy.h music_cont_out_proxy.cpp
     music_event_in_proxy.h music_event_in_proxy.cpp
     music_event_out_proxy.h music_event_out_proxy.cpp
+    music_rate_in_proxy.h music_rate_in_proxy.cpp
+    music_rate_out_proxy.h music_rate_out_proxy.cpp
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp

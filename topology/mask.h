@@ -102,6 +102,8 @@ template < int D >
 class Mask : public AbstractMask
 {
 public:
+  using AbstractMask::inside;
+
   ~Mask()
   {
   }
@@ -490,6 +492,8 @@ template < int D >
 class IntersectionMask : public Mask< D >
 {
 public:
+  using Mask< D >::inside;
+
   /**
    * Construct the intersection of the two given masks. Copies are made
    * of the supplied Mask objects.
@@ -537,6 +541,8 @@ template < int D >
 class UnionMask : public Mask< D >
 {
 public:
+  using Mask< D >::inside;
+
   /**
    * Construct the union of the two given masks. Copies are made
    * of the supplied Mask objects.
@@ -584,6 +590,8 @@ template < int D >
 class DifferenceMask : public Mask< D >
 {
 public:
+  using Mask< D >::inside;
+
   /**
    * Construct the difference of the two given masks. Copies are made
    * of the supplied Mask objects.
@@ -632,6 +640,8 @@ template < int D >
 class ConverseMask : public Mask< D >
 {
 public:
+  using Mask< D >::inside;
+
   /**
    * Construct the converse of the two given mask. A copy is made of the
    * supplied Mask object.
@@ -677,6 +687,8 @@ template < int D >
 class AnchoredMask : public Mask< D >
 {
 public:
+  using Mask< D >::inside;
+
   /**
    * Construct the converse of the two given mask. A copy is made of the
    * supplied Mask object.

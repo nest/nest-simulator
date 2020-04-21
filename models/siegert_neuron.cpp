@@ -113,13 +113,13 @@ RecordablesMap< siegert_neuron >::create()
  * ---------------------------------------------------------------- */
 
 nest::siegert_neuron::Parameters_::Parameters_()
-  : tau_( 1.0 )               // ms
-  , tau_m_( 5.0 )             // ms
-  , tau_syn_( 0.0 )           // ms
-  , t_ref_( 2.0 )             // ms
-  , mean_( 0.0 )              // mV
-  , theta_( 15.0 )            // mV, rel to E_L_
-  , V_reset_( 0.0 )           // mV, rel to E_L_
+  : tau_( 1.0 )     // ms
+  , tau_m_( 5.0 )   // ms
+  , tau_syn_( 0.0 ) // ms
+  , t_ref_( 2.0 )   // ms
+  , mean_( 0.0 )    // 1/ms
+  , theta_( 15.0 )  // mV, rel to E_L_
+  , V_reset_( 0.0 ) // mV, rel to E_L_
 {
 }
 

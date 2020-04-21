@@ -23,7 +23,6 @@
 // C++ includes:
 #include <iostream>
 
-
 // Includes from nestkernel:
 #include "input_backend_mpi.h"
 #include "input_device.h"
@@ -35,8 +34,6 @@ nest::InputBackendMPI::initialize()
   auto nthreads = kernel().vp_manager.get_num_threads();
   device_map devices( nthreads );
   devices_.swap( devices );
-  comm_map comms( nthreads );
-  commMap_.swap( comms );
 }
 
 void
@@ -47,10 +44,6 @@ nest::InputBackendMPI::finalize()
   {
     it_device.clear();
   }
-  for ( auto& it_comm : commMap_ )
-  {
-    it_comm.clear();
-  }
   devices_.clear();
   commMap_.clear();
 }
@@ -60,7 +53,6 @@ nest::InputBackendMPI::enroll( InputDevice& device, const DictionaryDatum& param
 {
   if ( device.get_type() == InputDevice::SPIKE_GENERATOR or device.get_type() == InputDevice::STEP_CURRENT_GENERATOR )
   {
-
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
 
@@ -102,59 +94,57 @@ nest::InputBackendMPI::set_value_names( const InputDevice& device,
 void
 nest::InputBackendMPI::prepare()
 {
-  // Create the connection with MPI per thread
-  // TODO Validate approach
+  // need to be run only by the master thread : it is the case because it's not run in parallel
+  thread thread_id_master = kernel().vp_manager.get_thread_id();
+  // Create the connection with MPI
   // 1) take all the ports of the connections
-  thread thread_id = kernel().vp_manager.get_thread_id();
-
-  // get port and update the list of device
-  for ( auto& it_device : devices_[ thread_id ] )
-  {
+  // get port and update the list of device only for master
+  for ( auto& it_device : devices_[ thread_id_master ] ) {
     // add the link between MPI communicator and the device (devices can share the same MPI communicator)
     std::string port_name;
     get_port( it_device.second.second, &port_name );
-    auto comm_it = commMap_[ thread_id ].find( port_name );
-    MPI_Comm* comm;
-    if ( comm_it != commMap_[ thread_id ].end() )
-    {
+    auto comm_it = commMap_.find( port_name );
+    MPI_Comm *comm;
+    if ( comm_it != commMap_.end() ) {
       comm = comm_it->second.first;
       comm_it->second.second += 1;
-    }
-    else
-    {
+    } else {
       comm = new MPI_Comm;
-      std::pair< MPI_Comm*, int > comm_count = std::make_pair( comm, 1 );
-      commMap_[ thread_id ].insert( std::make_pair( port_name, comm_count ) );
+      std::pair< MPI_Comm *, int > comm_count = std::make_pair( comm, 1 );
+      commMap_.insert( std::make_pair( port_name, comm_count ) );
     }
     it_device.second.first = comm;
   }
 
-  // 2) connect the thread to the MPI process it needs to be connected to
-  // WARNING can be a bug if it's needed that all threads are to be connected via MPI
-  for ( auto& it_comm : commMap_[ thread_id ] )
-  {
-    MPI_Comm_connect( it_comm.first.data(),
-      MPI_INFO_NULL,
-      0,
-      MPI_COMM_WORLD,
-      it_comm.second.first ); // should use the status for handle error
+  // 2) connect the master thread to the MPI process it needs to be connected to
+  for ( auto& it_comm : commMap_ ) {
+    MPI_Comm_connect(it_comm.first.data(),
+                     MPI_INFO_NULL,
+                     0,
+                     MPI_COMM_WORLD,
+                     it_comm.second.first); // should use the status for handle error
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Input connect", msg.str() );
-    fflush( stdout );
+    LOG(M_INFO, "MPI Input connect", msg.str());
   }
 }
 
 void
 nest::InputBackendMPI::pre_run_hook()
 {
-  // Receive information of MPI process
-  // TODO extend, for the moment it only deals with spike trains
-  const thread thread_id = kernel().vp_manager.get_thread_id();
-  for ( auto& it_device : devices_[ thread_id ] )
+  #pragma omp master
   {
-    receive_spike_train( *( it_device.second.first ), *( it_device.second.second ) );
+    for ( auto& it_comm : commMap_ )
+    {
+      bool value [ 1 ]  = { true } ;
+      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 0, *it_comm.second.first );
+    }
+    // Receive information of MPI process
+    for ( auto& it_device : devices_[ 0 ] ) {
+      receive_spike_train( *( it_device.second.first ), *( it_device.second.second ) );
+    }
   }
+  #pragma omp barrier
 }
 
 void
@@ -166,16 +156,16 @@ nest::InputBackendMPI::post_step_hook()
 void
 nest::InputBackendMPI::post_run_hook()
 {
-  // Send information about the end of the running part
-  // TODO Solve question : 1 thread or multiple threads send this information ?
-  thread thread_id = kernel().vp_manager.get_thread_id();
-  // WARNING can be a bug if all threads are to send ending MPI connection message
-  for ( auto& it_comm : commMap_[ thread_id ] )
+  #pragma omp master
   {
-    int value[ 1 ];
-    value[ 0 ] = thread_id;
-    MPI_Send( value, 1, MPI_INT, 0, 1, *it_comm.second.first );
+    // Send information about the end of the running part
+    for ( auto& it_comm : commMap_ )
+    {
+      bool value [ 1 ]  = { true } ;
+      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 1, *it_comm.second.first );
+    }
   }
+  #pragma omp barrier
 }
 
 void
@@ -183,23 +173,23 @@ nest::InputBackendMPI::cleanup()
 {
   // Disconnect all the MPI connection and send information about this disconnection
   // Clean all the elements in the map
-  thread thread_id = kernel().vp_manager.get_thread_id();
-  // WARNING can be a bug if all threads send ending MPI connection and
   // disconnect MPI message
-  for ( auto& it_comm : commMap_[ thread_id ] )
+  #pragma omp master
   {
-    int value[ 1 ];
-    value[ 0 ] = thread_id;
-    MPI_Send( value, 1, MPI_INT, 0, 2, *it_comm.second.first );
-    MPI_Comm_disconnect( it_comm.second.first );
-    delete ( it_comm.second.first );
+    for ( auto& it_comm : commMap_ ) {
+      bool value[ 1 ] = { true };
+      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 2, *it_comm.second.first );
+      MPI_Comm_disconnect( it_comm.second.first );
+      delete it_comm.second.first;
+    }
+    // clear map of devices
+    commMap_.clear();
+    thread thread_id_master = kernel().vp_manager.get_thread_id();
+    for ( auto& it_device : devices_[thread_id_master] ) {
+      it_device.second.first = nullptr;
+    }
   }
-  // clear map of devices
-  commMap_[ thread_id ].clear();
-  for ( auto& it_device : devices_[ thread_id ] )
-  {
-    it_device.second.first = nullptr;
-  }
+  #pragma omp barrier
 }
 
 void
@@ -243,7 +233,7 @@ nest::InputBackendMPI::get_port( InputDevice* device, std::string* port_name )
 void
 nest::InputBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
 {
-  // path of the file : path+label+id+.tx
+  // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port)
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
@@ -277,21 +267,22 @@ nest::InputBackendMPI::get_port( const index index_node, const std::string& labe
 void
 nest::InputBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDevice& device )
 {
-  // Send the first message with id of device and thread id
-  int message[ 2 ];
+  // Send the first message with id of device
+  int message[ 1 ];
   message[ 0 ] = device.get_node_id();
-  message[ 1 ] = kernel().vp_manager.get_thread_id();
-  MPI_Status status_mpi;
-  MPI_Send( message, 2, MPI_INT, 0, 0, comm );
+  MPI_Send( &message, 1, MPI_INT, 0, 0, comm );
   // Receive the size of data
+  MPI_Status status_mpi;
   int shape[ 1 ];
-  MPI_Recv( &shape, 1, MPI_INT, MPI_ANY_SOURCE, message[ 1 ], comm, &status_mpi );
+  MPI_Recv( &shape, 1, MPI_INT, MPI_ANY_SOURCE, message[ 0 ], comm, &status_mpi );
   // Receive the data ( for the moment only spike time )
   double* spikes{ new double[ shape[ 0 ] ]{} };
-  MPI_Recv( spikes, shape[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, message[ 1 ], comm, &status_mpi );
+  MPI_Recv( spikes, shape[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, message[ 0 ], comm, &status_mpi );
   std::vector< double > spikes_list( &spikes[ 0 ], &spikes[ shape[ 0 ] ] );
-  // Update the device with the data
-  device.update_from_backend( spikes_list );
+  // Update the device with the data in all the thread
+  for (auto &thread_device : devices_) {
+      thread_device.find( device.get_node_id() )->second.second->update_from_backend( spikes_list );
+   }
   delete[] spikes;
   spikes = nullptr;
 }

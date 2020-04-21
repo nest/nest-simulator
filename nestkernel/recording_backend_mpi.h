@@ -39,14 +39,15 @@ Send data with MPI
 When a recording device sends data to the ``mpi`` backend, it sends the
 event using MPI. Events are sent with the GID and the time stamp.
 
-Communication Protocol:
+Communication Protocol: (value,number,type,source/destination,tag)
 +++++++++++++++++++++++
-1. The mpi recording backend gets and sets information about the ports
-to be used for data communication.
-2. It creates a map of devices and MPI communicators
-3. Each time the backend receives and `event`, it sends it as ( 2, MPI.INT).
-The `event` is composed of time and the GID of the neurons.
-4. When the backend stops it sends a finish signal to the counterpart
+1) Connection of MPI port include in one file ( path+label+id+.txt )
+2) Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
+3) Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
+4) Send shape of the data of the run (shape, 1,I NT, 0, 0)
+5) Send data of the data of the run (data, shape, DOUBLE, 0, 0)
+6) Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+7) Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
 
 @author Lionel Kusch and Sandra Diaz
 @ingroup NESTio
@@ -58,8 +59,7 @@ namespace nest
 {
 
 /**
- * A simple recording backend implementation that prints all recorded data to
- * screen.
+ * A recording backend for sending information with MPI.
  */
 class RecordingBackendMPI : public RecordingBackend
 {
@@ -100,22 +100,28 @@ public:
 
 private:
   /**
+   * Buffer for saving events before to send it.
+   * The buffer sa 3 dimensions : thread_id, MPI_communicator_index and number of events
+   * elements : id of device, id of neurons, data ( one double )
+   */
+  std::vector< std::vector < std::vector< std::array<double, 3> > > > buffer_;
+  /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the gid of a device on a given thread
-   * with its MPI connection and device.
+   * with its MPI index and device. Only the master thread have the have a valid MPI communicator pointer.
   */
-  typedef std::vector< std::map< index, std::pair< MPI_Comm*, const RecordingDevice* > > > device_map;
+  typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
   /**
-   * A map of MPI communicator by thread.
+   * A map of MPI communicator use by the master thread for the MPI communication.
    * This map contains also the number of the device by MPI communicator.
    */
-  typedef std::vector< std::map< std::string, std::pair< MPI_Comm*, int > > > comm_map;
+  typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;
-
 
   static void get_port( const RecordingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
+  static void send_data( const MPI_Comm*, const double[], const int );
 };
 
 } // namespace

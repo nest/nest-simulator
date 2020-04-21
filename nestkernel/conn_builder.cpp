@@ -1693,7 +1693,8 @@ nest::SymmetricBernoulliBuilder::connect_()
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    RngPtr rng = make_rng< std::mt19937_64 >( s );
+    	assert( false && "fix the following later");
+    //RngPtr rng = make_rng< std::mt19937_64 >( s );
 
     try
     {
@@ -1714,7 +1715,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-          indegree = bino_dist( rng, param );
+assert(false); //          indegree = bino_dist( rng, param );
         }
         assert( indegree < sources_->size() );
 
@@ -1733,7 +1734,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         size_t i = 0;
         while ( i < indegree )
         {
-          snode_id = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+assert(false); //          snode_id = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
 
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
@@ -1756,14 +1757,14 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( target_thread == tid )
           {
             assert( target != NULL );
-            single_connect_( snode_id, *target, target_thread, rng );
+assert(false); //            single_connect_( snode_id, *target, target_thread, rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
             assert( source != NULL );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, rng );
+assert(false); //               single_connect_( ( *tnode_id ).node_id, *source, source_thread, rng );
           }
 
           ++i;

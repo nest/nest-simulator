@@ -45,18 +45,13 @@
 nest::mip_generator::Parameters_::Parameters_()
   : rate_( 0.0 ) // Hz
   , p_copy_( 1.0 )
-  , mother_seed_( 0 )
 {
-  rng_ = make_rng< std::mt19937_64 >( mother_seed_ );
 }
 
 nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
   : rate_( p.rate_ )
   , p_copy_( p.p_copy_ )
-  , mother_seed_( p.mother_seed_ )
 {
-  // deep copy of random number generator
-  rng_ = p.rng_->clone( p.mother_seed_ );
 }
 
 /* ----------------------------------------------------------------
@@ -68,7 +63,6 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::rate ] = rate_;
   ( *d )[ names::p_copy ] = p_copy_;
-  ( *d )[ names::mother_seed ] = mother_seed_;
 }
 
 void
@@ -76,22 +70,15 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::rate, rate_, node );
   updateValueParam< double >( d, names::p_copy, p_copy_, node );
+
   if ( rate_ < 0 )
   {
     throw BadProperty( "Rate must be non-negative." );
   }
-  if ( p_copy_ < 0 || p_copy_ > 1 )
+
+  if ( p_copy_ < 0 or p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );
-  }
-
-  bool reset_rng = updateValue< RngPtr >( d, names::mother_rng, rng_ );
-
-  // order important to avoid short-circuitung
-  reset_rng = updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
-  if ( reset_rng )
-  {
-    rng_->seed( mother_seed_ );
   }
 }
 
@@ -109,10 +96,9 @@ nest::mip_generator::mip_generator()
 nest::mip_generator::mip_generator( const mip_generator& n )
   : DeviceNode( n )
   , device_( n.device_ )
-  , P_( n.P_ ) // also causes deep copy of random nnumber generator
+  , P_( n.P_ )
 {
 }
-
 
 /* ----------------------------------------------------------------
  * Node initialization functions
@@ -130,6 +116,8 @@ void
 nest::mip_generator::init_buffers_()
 {
   device_.init_buffers();
+
+  B_.parent_rng_ = kernel().random_manager.create_node_specific_rng( get_node_id() );
 }
 
 void
@@ -150,24 +138,24 @@ nest::mip_generator::calibrate()
 void
 nest::mip_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not device_.is_active( T ) || P_.rate_ <= 0 )
+    if ( not device_.is_active( T ) or P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }
 
-    // generate spikes of mother process for each time slice
-    long n_mother_spikes = V_.poisson_dist_( P_.rng_ );
+    // generate spikes of parent process for each time slice
+    const unsigned long n_parent_spikes = V_.poisson_dist_( B_.parent_rng_ );
 
-    if ( n_mother_spikes )
+    if ( n_parent_spikes )
     {
       DSSpikeEvent se;
 
-      se.set_multiplicity( n_mother_spikes );
+      se.set_multiplicity( n_parent_spikes );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
@@ -176,22 +164,21 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 void
 nest::mip_generator::event_hook( DSSpikeEvent& e )
 {
-  // note: event_hook() receives a reference of the spike event that
-  // was originally created in the update function. there we set
-  // the multiplicty to store the number of mother spikes. the *same*
-  // reference will be delivered multiple times to the event hook,
-  // once for every receiver. when calling handle() of the receiver
-  // above, we need to change the multiplicty to the number of copied
-  // child process spikes, so afterwards it needs to be reset to correctly
-  // store the number of mother spikes again during the next call of
-  // event_hook().
-  // reichert
+  /*
+     We temporarily set the spike multiplicity here to the number of
+     spikes selected by the copy process. After spike delivery, the
+     multiplicity is reset to the number of parent spikes, so that this
+     value is available for delivery to the next target.
+
+     This is thread-safe because mip_generator is replicated on each thread.
+   */
 
   RngPtr rng = get_thread_rng( get_thread() );
-  unsigned long n_mother_spikes = e.get_multiplicity();
-  unsigned long n_spikes = 0;
+  const unsigned long n_parent_spikes = e.get_multiplicity();
 
-  for ( unsigned long n = 0; n < n_mother_spikes; n++ )
+  // TODO: draw n_spikes from binomial distribution
+  unsigned long n_spikes = 0;
+  for ( unsigned long n = 0; n < n_parent_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
     {
@@ -205,5 +192,5 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
     e.get_receiver().handle( e );
   }
 
-  e.set_multiplicity( n_mother_spikes );
+  e.set_multiplicity( n_parent_spikes );
 }

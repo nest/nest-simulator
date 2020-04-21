@@ -40,22 +40,26 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-// TODO: Maybe caching numbers can help
-
 namespace nest
 {
 
+/**
+ * Manage the kernel's random number generators.
+ *
+ * This manager provides one random number generator per thread plus
+ * the global RNG. It also handles selection of RNG type and seeding.
+ */
 class RandomManager : public ManagerInterface
 {
 public:
-  RandomManager()
-  {
-  }
-  ~RandomManager()
-  {
-  }
+  RandomManager();
+  ~RandomManager();
 
+  /**
+   * Register available RNG types, set default RNG type and create RNGs.
+   */
   virtual void initialize();
+
   virtual void finalize();
 
   virtual void set_status( const DictionaryDatum& );
@@ -72,32 +76,58 @@ public:
    **/
   RngPtr get_global_rng() const;
 
-private:
-  long rng_seed_;
+  /**
+   * Return random number generator with node-specific seed.
+   *
+   * @param node_id
+   * @return
+   */
+  RngPtr create_node_specific_rng( index node_id );
 
-  /** Vector of random number generators for threads. */
-  std::vector< RngPtr > thread_rngs_;
+  /**
+   * Register new random number generator type with manager.
+   *
+   * This allows NEST modules to add new RNG types.
+   *
+   * @param RNG_TYPE Class fulfilling requirements of C++ RNG.
+   **/
+  template < typename RNG_TYPE >
+  void register_rng_type( std::string name );
+
+private:
+  /** Available RNG types. */
+  std::map< std::string, BaseRNGFactory* > rng_types_;
+
+  /** Name of currently used RNG type. */
+  std::string current_rng_type_;
+
+  /** Base seed used when RNGs were last created. */
+  std::uint32_t base_seed_;
 
   /** Global random number generator. */
   RngPtr global_rng_;
 
-  /** */
-  std::string current_rng_type_;
-
-  /** */
-  std::map< std::string, RngPtr > rng_types_;
+  /** Random number generators for threads. */
+  std::vector< RngPtr > thread_rngs_;
 
   /**
+   * Replace current RNGs with newly seeded generators.
    *
+   * The new generators will be of type `current_rng_type_` and will be
+   * seeded using `base_seed_`.
    **/
-  template < typename RNG_TYPE_ >
-  void register_rng_type_( std::string name, bool set_as_default );
+  void reset_rngs_();
 
-  /**
-   *
-   **/
-  void create_rngs_();
+  static const std::string DEFAULT_RNG_TYPE_;
+  static const std::uint32_t DEFAULT_BASE_SEED_;
+  static const std::uint32_t NODE_RNG_SEED_OFFSET_;
 };
+
+inline RngPtr
+nest::RandomManager::get_global_rng() const
+{
+  return global_rng_;
+}
 
 inline RngPtr
 nest::RandomManager::get_thread_rng( thread tid ) const
@@ -107,11 +137,6 @@ nest::RandomManager::get_thread_rng( thread tid ) const
   return thread_rngs_[ tid ];
 }
 
-inline RngPtr
-nest::RandomManager::get_global_rng() const
-{
-  return global_rng_;
-}
 
 } // namespace nest
 

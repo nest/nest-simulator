@@ -24,6 +24,7 @@
 #define RANDOM_H
 
 // C++ includes:
+#include <initializer_list>
 #include <memory>
 #include <random>
 #include <utility>
@@ -38,10 +39,13 @@ namespace nest
 
 // Forward declarations
 struct BaseRNG;
+
 template < class DIST_TYPE_ >
 struct distribution;
 
 // Type definitions
+using RngPtr = std::shared_ptr< BaseRNG >;
+
 using uniform_int_distribution = distribution< std::uniform_int_distribution< unsigned long > >;
 using uniform_real_distribution = distribution< std::uniform_real_distribution<> >;
 using poisson_distribution = distribution< std::poisson_distribution< unsigned long > >;
@@ -50,8 +54,6 @@ using lognormal_distribution = distribution< std::lognormal_distribution<> >;
 using binomial_distribution = distribution< std::binomial_distribution< unsigned long > >;
 using gamma_distribution = distribution< std::gamma_distribution<> >;
 using exponential_distribution = distribution< std::exponential_distribution<> >;
-
-using RngPtr = std::shared_ptr< BaseRNG >;
 
 
 /**
@@ -95,13 +97,6 @@ struct BaseRNG
   virtual double operator()( std::gamma_distribution<>& d, std::gamma_distribution<>::param_type& p ) = 0;
   virtual double operator()( std::exponential_distribution<>& d, std::exponential_distribution<>::param_type& p ) = 0;
 
-
-  /**
-   * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
-   * @param seed State of the cloned RNG engine.
-   */
-  virtual RngPtr clone( unsigned long seed ) = 0;
-
   /**
    * @brief Uses the wrapped RNG engine to draw a double from a uniform distribution in the range [0, 1).
    */
@@ -112,12 +107,6 @@ struct BaseRNG
    * @param N Maximum value that can be drawn.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
-
-  /**
-   * @brief Sets the current state of the wrapped RNG engine.
-   * @param seed State of the RNG engine.
-   */
-  virtual void seed( unsigned long seed ) = 0;
 };
 
 /**
@@ -129,20 +118,18 @@ struct RNG final : public BaseRNG
 {
   using result_type = typename RNG_TYPE_::result_type;
 
-  RNG(){};
+  RNG() = delete;
+  RNG( const RNG_TYPE_& rng ) = delete;
 
-  RNG( result_type seed )
-    : rng_( seed )
-  {
-  }
-
-  RNG( RNG_TYPE_ rng )
-    : rng_( rng )
+  RNG( std::initializer_list< std::uint32_t > seed )
+    : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
+	std::seed_seq sseq( seed );
+	rng_.seed( sseq );
   }
 
-  // TODO: Can we use templates with override here?
+    // TODO: Can we use templates with override here?
   inline unsigned long operator()( std::uniform_int_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
@@ -228,12 +215,6 @@ struct RNG final : public BaseRNG
     return d( rng_, p );
   }
 
-  inline RngPtr
-  clone( result_type seed ) override
-  {
-    return std::make_shared< RNG< RNG_TYPE_ > >( seed );
-  }
-
   inline double
   drand() override
   {
@@ -247,18 +228,32 @@ struct RNG final : public BaseRNG
     return uniform_ulong_dist_( rng_, param );
   }
 
-  inline void
-  seed( result_type seed ) override
-  {
-    return rng_.seed( seed );
-  }
-
 private:
   RNG_TYPE_ rng_; //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
   std::uniform_real_distribution<> uniform_double_dist_0_1_;
 };
 
+struct BaseRNGFactory
+{
+  virtual ~BaseRNGFactory() {};
+
+  /**
+   * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
+   * @param seed Initializer list for seed sequence for RNG.
+   */
+  virtual RngPtr clone( std::initializer_list< std::uint32_t > seed ) const = 0;
+};
+
+template < typename RNG_TYPE_ >
+struct RNGFactory final : public BaseRNGFactory
+{
+  inline RngPtr
+  clone( std::initializer_list< std::uint32_t > seed ) const override
+  {
+	return std::make_shared< RNG< RNG_TYPE_ > >( seed );
+  }
+};
 
 /**
  * @brief Wrapper for distributions.
@@ -340,28 +335,6 @@ struct distribution
 private:
   DIST_TYPE_ distribution_; //!< Wrapped distribution
 };
-
-/**
- * @brief Makes an RngPtr to an RNG wrapper with a default state.
- */
-template < typename RNG_TYPE_ >
-RngPtr
-make_rng()
-{
-  return make_rng< RNG_TYPE_ >( 0 );
-}
-
-/**
- * @brief Makes an RngPtr to an RNG wrapper with a specified state.
- * @param seed State of the RNG.
- */
-template < typename RNG_TYPE_ >
-RngPtr
-make_rng( unsigned long seed )
-{
-  return std::make_shared< RNG< RNG_TYPE_ > >( seed );
-}
-
 
 } // namespace nest
 

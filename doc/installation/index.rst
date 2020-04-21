@@ -40,7 +40,15 @@ compile NEST from source, see section** :ref:`advanced_install`.
           sudo apt install devscripts build-essential software-properties-common dpkg-dev
           sudo add-apt-repository --enable-source ppa:nest-simulator/nest
 
-       2. Disable the binary package in the repository file by commenting it out.
+       2. Disable the binary package in the repository file created under
+           ``/etc/apt/sources.list.d/`` by commenting out the ``deb`` line, while
+           keeping the ``deb-src`` line. It should look similar to this:
+           
+           .. code-block:: bash
+           
+               #deb http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
+               deb-src http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
+
 
        3. Import the PPA GPC key and rebuild the package:
 
@@ -306,5 +314,4 @@ these instructions.**
 
     Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
     up-to-date with most recent version of NEST. We cannot support out-dated versions.
-
 

@@ -1,5 +1,5 @@
-PyNEST Examples
-=================
+PyNEST examples
+===============
 
 .. toctree::
    :maxdepth: 1

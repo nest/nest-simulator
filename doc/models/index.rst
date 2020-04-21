@@ -40,8 +40,7 @@ on Github for you to check out.
 
 * **Network models**
 
-     * :doc:`../topology/index`
-
+     * :doc:`../guides/spatial/index`
 
 * :doc:`create_model`
 

@@ -195,6 +195,14 @@ public:
   static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
+   * Create a NodeCollection from a single node ID. Results in a primitive.
+   *
+   * @param node_id Node ID from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const index node_id );
+
+  /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
    * kernel.
    *

@@ -103,8 +103,11 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(n[4], nc_4)
         self.assertEqual(n[-1], nc_4)
         self.assertEqual(n[-3], nc_2)
+        self.assertEqual(n[-5], nc_0)
         with self.assertRaises(nest.kernel.NESTError):
-            n[7]
+            n[5]
+        with self.assertRaises(nest.kernel.NESTError):
+            n[-6]
 
         nest.ResetKernel()
 
@@ -148,6 +151,10 @@ class TestNodeCollection(unittest.TestCase):
         n_slice_negative_end = n[:-3:]
         n_list_negative_end = n_slice_negative_end.tolist()
         self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7, 8])
+
+        n_slice_negative_start_end = n[-7:-4]
+        n_list_negative_start_end = n_slice_negative_start_end.tolist()
+        self.assertEqual(n_list_negative_start_end, [4, 5, 6])
 
         with self.assertRaises(nest.kernel.NESTError):
             n[::-3]

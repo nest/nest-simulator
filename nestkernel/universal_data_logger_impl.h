@@ -324,13 +324,10 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // if offset is not 0, adjust next recording step to account for it by
   // going one interval step back and adding the offset
-  if ( recording_offset_.get_steps() != 0 and kernel().simulation_manager.get_time().get_steps() == 0 )
+  if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = next_rec_step_ - rec_int_steps_ + recording_offset_.get_steps();
-  }
-  else if ( recording_offset_.get_steps() != 0 )
-  {
-    next_rec_step_ += recording_offset_.get_steps();
+    next_rec_step_ +=
+      ( recording_offset_.get_steps() - ( recording_offset_.get_steps() / next_rec_step_ ) * ( next_rec_step_ + 1 ) );
   }
 
   // number of data points per slice

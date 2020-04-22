@@ -9,7 +9,7 @@ export NEST_DATA_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DATADIR@"
 # NEST finds help files $NEST_DOC_DIR/help
 export NEST_DOC_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DOCDIR@"
 
-# The path where NEST shared libraries are generated. (Works also if $(DY)LD_LIBRARY_PATH is undefined.)
+# The path in which NEST dynamic libraries are found. Works also if $(DY)LD_LIBRARY_PATH is undefined.
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export DYLD_LIBRARY_PATH="$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest"${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
 else

@@ -1507,49 +1507,6 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 }
 #endif
 
-/** @BeginDocumentation
-   Name: SetStructuralPlasticityStatus - Set up parameters for structural
-   plasticity.
-
-   Synopsis:
-   Structural plasticity allows the user to treat the nodes as neurons with
-   synaptic elements, allowing new synapses to be created and existing synapses
-   to be deleted during the simulation according to a set of growth and
-   homeostatic rules. This function allows the user to set up various
-   parameters for structural plasticity.
-
-   Parameters:
-   structural_plasticity_dictionary - is a dictionary which states the settings
-   for the structural plasticity functionality
-
-   Author: Mikael Naveau, Sandra Diaz
-   FirstVersion: December 2014
-*/
-void
-NestModule::SetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  DictionaryDatum structural_plasticity_dictionary = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  kernel().sp_manager.set_status( structural_plasticity_dictionary );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
-void
-NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  DictionaryDatum current_status = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-  kernel().sp_manager.get_status( current_status );
-
-  i->OStack.pop( 1 );
-  i->OStack.push( current_status );
-  i->EStack.pop();
-}
-
 /**
  * Enable Structural Plasticity within the simulation. This allows
  * dynamic rewiring of the network based on mean electrical activity.
@@ -2030,8 +1987,6 @@ NestModule::init( SLIInterpreter* i )
 #endif
   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
-  i->createcommand( "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
-  i->createcommand( "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );

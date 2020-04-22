@@ -71,7 +71,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         nest.ResetKernel()
         delay = 1.0
         syn_model = 'static_synapse'
-        nest.SetStructuralPlasticityStatus(
+        nest.SetKernelStatus(
             {
                 'structural_plasticity_synapses': {
                     'syn1': {
@@ -94,7 +94,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetStructuralPlasticityStatus({
+                nest.SetKernelStatus({
                     'structural_plasticity_synapses': {'syn1': syn_dict}
                 })
                 neurons = nest.Create('iaf_psc_alpha', 2, {

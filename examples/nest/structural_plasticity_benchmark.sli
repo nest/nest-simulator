@@ -259,7 +259,7 @@
                                                             /pre_synaptic_element /axon_in
                                                         >>
                                         >>
-    >> SetStructuralPlasticityStatus
+    >> SetKernelStatus
 
 } def
 

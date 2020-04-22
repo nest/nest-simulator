@@ -36,7 +36,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     neuron_model = 'iaf_psc_alpha'
     nest.CopyModel('static_synapse', 'synapse_ex')
     nest.SetDefaults('synapse_ex', {'weight': 1.0, 'delay': 1.0})
-    nest.SetStructuralPlasticityStatus({
+    nest.SetKernelStatus({
         'structural_plasticity_synapses': {
             'synapse_ex': {
                 'synapse_model': 'synapse_ex',
@@ -73,7 +73,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     assert ('structural_plasticity_update_interval' in all)
     assert (all['structural_plasticity_update_interval'] == 10000.)
 
-    sp_synapses = nest.GetStructuralPlasticityStatus(
+    sp_synapses = nest.GetKernelStatus(
         'structural_plasticity_synapses'
     )
     syn = sp_synapses['syn1']
@@ -82,7 +82,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     assert (syn['pre_synaptic_element'] == 'Axon_ex')
     assert (syn['post_synaptic_element'] == 'Den_ex')
 
-    sp_interval = nest.GetStructuralPlasticityStatus(
+    sp_interval = nest.GetKernelStatus(
         'structural_plasticity_update_interval'
     )
     assert (sp_interval == 10000.)

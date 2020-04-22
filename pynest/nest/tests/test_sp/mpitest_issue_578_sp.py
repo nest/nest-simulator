@@ -44,7 +44,7 @@ class TestIssue578():
         )
         # Update the SP interval
         nest.EnableStructuralPlasticity()
-        nest.SetStructuralPlasticityStatus({
+        nest.SetKernelStatus({
             'structural_plasticity_update_interval': 1000.,
         })
 
@@ -78,7 +78,7 @@ class TestIssue578():
                     'pre_synaptic_element': 'Axon_ex',
                     'post_synaptic_element': 'Den_ex'}
 
-        nest.SetStructuralPlasticityStatus({
+        nest.SetKernelStatus({
             'structural_plasticity_synapses': {
                 'synapseEE': synDictE,
             }

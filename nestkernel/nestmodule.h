@@ -476,18 +476,6 @@ public:
   } setmaxbuffered_l_ifunction;
 #endif
 
-  class SetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } setstructuralplasticitystatus_Dfunction;
-
-  class GetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getstructuralplasticitystatus_function;
-
   class EnableStructuralPlasticity_Function : public SLIFunction
   {
   public:

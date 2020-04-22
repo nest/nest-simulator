@@ -9,6 +9,7 @@ Dependencies
 To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
 .. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
+
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
 The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages.

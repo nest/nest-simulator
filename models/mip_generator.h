@@ -69,11 +69,6 @@ The following parameters appear in the element's status dictionary:
 ============  ======== ================================================
 \endverbatim
 
-Remarks:
-
-The Poisson parent process is generated using a dedicated RNG of the same
-type as used by the kernel for all other purposes. This RNG is automatically
-seeded based on the seed set in the kernel.
 
 Sends: SpikeEvent
 
@@ -153,13 +148,6 @@ private:
 
   // ------------------------------------------------------------
 
-  struct Buffers_
-  {
-    RngPtr parent_rng_; //!< RNG for parent process
-  };
-
-  // ------------------------------------------------------------
-
   struct Variables_
   {
     poisson_distribution poisson_dist_; //!< poisson_distribution
@@ -169,7 +157,6 @@ private:
 
   StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
-  Buffers_ B_;
   Variables_ V_;
 };
 

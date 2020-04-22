@@ -81,15 +81,21 @@ print_nodes_to_stream( std::ostream& ostr )
 }
 
 RngPtr
-get_thread_rng( thread tid )
+get_thread_specific_rng( thread tid )
 {
-  return kernel().random_manager.get_thread_rng( tid );
+  return kernel().random_manager.get_thread_specific_rng( tid );
 }
 
 RngPtr
-get_global_rng()
+get_thread_synced_rng( thread tid )
 {
-  return kernel().random_manager.get_global_rng();
+  return kernel().random_manager.get_thread_synced_rng( tid );
+}
+
+RngPtr
+get_rank_synced_rng()
+{
+  return kernel().random_manager.get_rank_synced_rng();
 }
 
 void
@@ -509,7 +515,7 @@ create_parameter( const DictionaryDatum& param_dict )
 double
 get_value( const ParameterDatum& param )
 {
-  RngPtr rng = get_global_rng();
+  RngPtr rng = get_rank_synced_rng();
   return param->value( rng, nullptr );
 }
 
@@ -524,7 +530,7 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 {
   std::vector< double > result;
   result.reserve( nc->size() );
-  RngPtr rng = get_global_rng();
+  RngPtr rng = get_rank_synced_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
     auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );

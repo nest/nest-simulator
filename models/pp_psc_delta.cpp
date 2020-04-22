@@ -298,7 +298,7 @@ nest::pp_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = get_thread_rng( get_thread() );
+  V_.rng_ = get_thread_specific_rng( get_thread() );
 
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;

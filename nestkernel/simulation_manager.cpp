@@ -418,21 +418,6 @@ nest::SimulationManager::prepare()
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
-  // Check for synchrony of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( get_global_rng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::prepare",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
-
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
   {
@@ -515,6 +500,7 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  kernel().random_manager.check_rng_synchrony();
   kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )
@@ -569,6 +555,7 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
+  kernel().random_manager.check_rng_synchrony();
 }
 
 void
@@ -590,7 +577,7 @@ nest::SimulationManager::cleanup()
   // Check for synchronicity of global rngs over processes
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( not kernel().mpi_manager.grng_synchrony( get_global_rng()->ulrand( 100000 ) ) )
+    if ( not kernel().mpi_manager.grng_synchrony( get_rank_synced_rng()->ulrand( 100000 ) ) )
     {
       throw KernelException(
         "In SimulationManager::cleanup(): "

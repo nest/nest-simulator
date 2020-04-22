@@ -157,7 +157,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       positions_.reserve( num_nodes );
 
       const thread tid = kernel().vp_manager.get_thread_id();
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       for ( size_t i = 0; i < num_nodes; ++i )
       {

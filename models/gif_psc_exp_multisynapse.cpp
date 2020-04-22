@@ -305,7 +305,7 @@ nest::gif_psc_exp_multisynapse::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = get_thread_rng( get_thread() );
+  V_.rng_ = get_thread_specific_rng( get_thread() );
 
   const double tau_m = P_.c_m_ / P_.g_L_;
 

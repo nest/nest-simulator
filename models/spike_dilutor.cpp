@@ -160,7 +160,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 
   for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
-    if ( get_thread_rng( get_thread() )->drand() < P_.p_copy_ )
+    if ( get_thread_specific_rng( get_thread() )->drand() < P_.p_copy_ )
     {
       n_spikes++;
     }

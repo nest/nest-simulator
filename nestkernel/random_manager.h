@@ -66,23 +66,43 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   /**
-   * Get random number client of a thread.
-   */
-  RngPtr get_thread_rng( thread tid ) const;
-
-  /**
-   * Get global random number client.
-   * This RNG must be used in a synchronized fashion from all virtual processes.
-   **/
-  RngPtr get_global_rng() const;
-
-  /**
-   * Return random number generator with node-specific seed.
+   * Get thread-specific random number generator.
    *
-   * @param node_id
-   * @return
+   * Each thread can use this RNG freely and will receive an independent
+   * random number sequence.
    */
-  RngPtr create_node_specific_rng( index node_id );
+  RngPtr get_thread_specific_rng( thread tid ) const;
+
+  /**
+   * Get rank-synchronized random number generator.
+   *
+   * The rank-synchronized generator provides identical random number
+   * sequences on all MPI ranks. It may be used only by the master thread
+   * on each rank and must be used in lock-step across all ranks. Synchronization
+   * is checked by MPI exchange at certain points during a simulation.
+   **/
+  RngPtr get_rank_synced_rng() const;
+
+  /**
+   * Get thread-synchronized random number client.
+   *
+   * The kernel maintains one instance of a synchronized random number generator
+   * for each thread (and thus, across ranks, for each VP). The purpose of these
+   * synchronized generators is to provide identical random number sequences on
+   * each thread while threads execute in parallel. All threads must use the
+   * generators in lock-step to maintain synchrony. Synchronization
+   * is checked by MPI exchange at certain points during a simulation.
+   *
+   * @param tid Number of thread requesting generator
+   **/
+  RngPtr get_thread_synced_rng( thread tid ) const;
+
+  /**
+   * Confirm that rank- and thread-synchronized RNGs are in sync.
+   *
+   * @throws KernelException if RNGs are out of sync
+   */
+  void check_rng_synchrony() const;
 
   /**
    * Register new random number generator type with manager.
@@ -104,11 +124,14 @@ private:
   /** Base seed used when RNGs were last created. */
   std::uint32_t base_seed_;
 
-  /** Global random number generator. */
-  RngPtr global_rng_;
+  /** Random number generator synchronized across ranks. */
+  RngPtr rank_synced_rng_;
 
-  /** Random number generators for threads. */
-  std::vector< RngPtr > thread_rngs_;
+  /** Random number generators synchronized across threads. */
+  std::vector< RngPtr > thread_synced_rngs_;
+
+  /** Random number generators specific to threads. */
+  std::vector< RngPtr > thread_specific_rngs_;
 
   /**
    * Replace current RNGs with newly seeded generators.
@@ -118,25 +141,44 @@ private:
    **/
   void reset_rngs_();
 
+  /** RNG type used by default. */
   static const std::string DEFAULT_RNG_TYPE_;
+
+  /** Base seed used by default. */
   static const std::uint32_t DEFAULT_BASE_SEED_;
-  static const std::uint32_t NODE_RNG_SEED_OFFSET_;
+
+  /** Rank-synchronized seed-sequence initializer component. */
+  static const std::uint32_t RANK_SYNCED_SEEDER_;
+
+  /** Thread-synchronized seed-sequence initializer component. */
+  static const std::uint32_t THREAD_SYNCED_SEEDER_;
+
+  /** Thread-specific seed-sequence initializer component. */
+  static const std::uint32_t THREAD_SPECIFIC_SEEDER_;
 };
 
 inline RngPtr
-nest::RandomManager::get_global_rng() const
+nest::RandomManager::get_rank_synced_rng() const
 {
-  return global_rng_;
+  assert( kernel().vp_manager.get_thread_id() == 0 );  // rank-synced RNG to be used by master thread only
+  return rank_synced_rng_;
 }
 
 inline RngPtr
-nest::RandomManager::get_thread_rng( thread tid ) const
+nest::RandomManager::get_thread_synced_rng( thread tid ) const
 {
   assert( tid >= 0 );
-  assert( tid < static_cast< thread >( thread_rngs_.size() ) );
-  return thread_rngs_[ tid ];
+  assert( tid < static_cast< thread >( thread_specific_rngs_.size() ) );
+  return thread_synced_rngs_[ tid ];
 }
 
+inline RngPtr
+nest::RandomManager::get_thread_specific_rng( thread tid ) const
+{
+  assert( tid >= 0 );
+  assert( tid < static_cast< thread >( thread_specific_rngs_.size() ) );
+  return thread_specific_rngs_[ tid ];
+}
 
 } // namespace nest
 

@@ -33,8 +33,13 @@
 
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
+
 const std::uint32_t nest::RandomManager::DEFAULT_BASE_SEED_ = 143202461;
-const std::uint32_t nest::RandomManager::NODE_RNG_SEED_OFFSET_ = ( 1 << 30 ) - 1;
+
+const std::uint32_t nest::RandomManager::RANK_SYNCED_SEEDER_ = 0xc229212d;
+const std::uint32_t nest::RandomManager::THREAD_SYNCED_SEEDER_ = 0x37722d5e;
+const std::uint32_t nest::RandomManager::THREAD_SPECIFIC_SEEDER_ = 0xb84c9bae;
+
 
 nest::RandomManager::RandomManager()
   : current_rng_type_( DEFAULT_RNG_TYPE_ )
@@ -68,7 +73,7 @@ nest::RandomManager::finalize()
   }
 
   rng_types_.clear();
-  thread_rngs_.clear();
+  thread_specific_rngs_.clear();
 }
 
 void
@@ -125,14 +130,16 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
   }
 }
 
-nest::RngPtr
-nest::RandomManager::create_node_specific_rng( index node_id )
+void
+nest::RandomManager::check_rng_synchrony() const
 {
-  return rng_types_[ current_rng_type_ ]->clone( { base_seed_,
-	  	  	  	  	  	  	                NODE_RNG_SEED_OFFSET_,  // offset for node-based seeds
-                                            static_cast< std::uint32_t>( node_id & 0xFFFFFFFFU ),   // lower 32 bit of node_id
-											static_cast< std::uint32_t>( node_id >> 32U ) // upper 32 bit of node_id
-                                          } );
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    if ( not kernel().mpi_manager.grng_synchrony( get_rank_synced_rng()->ulrand( 100000 ) ) )
+    {
+	  throw KernelException( "Rank-synchronized random number generators are out of sync.");
+    }
+  }
 }
 
 template < typename RNG_TYPE >
@@ -145,15 +152,16 @@ nest::RandomManager::register_rng_type( std::string name )
 void
 nest::RandomManager::reset_rngs_()
 {
-  global_rng_ = rng_types_[ current_rng_type_ ]->clone( { base_seed_, 0 } );
+  rank_synced_rng_ = rng_types_[ current_rng_type_ ]->clone( { base_seed_, RANK_SYNCED_SEEDER_ } );
 
-  thread_rngs_.resize( kernel().vp_manager.get_num_threads() );
+  thread_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
     const std::uint32_t vp = kernel().vp_manager.get_vp();
-    thread_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, vp + 1 } );
+    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SYNCED_SEEDER_ } );
+    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
   }
 }
 

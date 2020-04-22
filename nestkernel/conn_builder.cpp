@@ -595,7 +595,7 @@ nest::OneToOneBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -733,7 +733,7 @@ nest::OneToOneBuilder::sp_connect_()
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       NodeCollection::const_iterator source_it = sources_->begin();
@@ -826,7 +826,7 @@ nest::AllToAllBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -919,7 +919,7 @@ nest::AllToAllBuilder::sp_connect_()
     const thread tid = kernel().vp_manager.get_thread_id();
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
@@ -1126,7 +1126,7 @@ nest::FixedInDegreeBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1287,7 +1287,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
-  RngPtr grng = get_global_rng();
+  RngPtr grng = get_rank_synced_rng();
 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
@@ -1330,7 +1330,7 @@ nest::FixedOutDegreeBuilder::connect_()
 
       try
       {
-        RngPtr rng = get_thread_rng( tid );
+        RngPtr rng = get_thread_specific_rng( tid );
 
         std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
@@ -1435,7 +1435,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
-  RngPtr grng = get_global_rng();
+  RngPtr grng = get_rank_synced_rng();
 
   // HEP: instead of counting upwards, we might count remaining_targets and
   // remaining_partitions down. why?
@@ -1479,7 +1479,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
-        RngPtr rng = get_thread_rng( tid );
+        RngPtr rng = get_thread_specific_rng( tid );
 
         // gather local target node IDs
         std::vector< index > thread_local_targets;
@@ -1567,7 +1567,7 @@ nest::BernoulliBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1682,19 +1682,12 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // Below, we create a thread-local RNG for each thread. To ensure
-  // that they all produce the same sequence on all MPI processes and
-  // thus the same connections are drawn everywhere, we draw a single
-  // number from the global RNG and use that to seed all of the RNGs.
-  RngPtr grng = get_global_rng();
-  const unsigned long s = grng->ulrand( std::numeric_limits< unsigned int >::max() );
-
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    	assert( false && "fix the following later");
-    //RngPtr rng = make_rng< std::mt19937_64 >( s );
+    // Use RNG generating same number sequence on all threads
+    RngPtr synced_rng = get_thread_synced_rng( tid );
 
     try
     {
@@ -1715,7 +1708,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-assert(false); //          indegree = bino_dist( rng, param );
+        	  indegree = bino_dist( synced_rng, param );
         }
         assert( indegree < sources_->size() );
 
@@ -1734,7 +1727,7 @@ assert(false); //          indegree = bino_dist( rng, param );
         size_t i = 0;
         while ( i < indegree )
         {
-assert(false); //          snode_id = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+        	  snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
@@ -1757,14 +1750,14 @@ assert(false); //          snode_id = ( *sources_ )[ rng->ulrand( sources_->size
           if ( target_thread == tid )
           {
             assert( target != NULL );
-assert(false); //            single_connect_( snode_id, *target, target_thread, rng );
+            single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
             assert( source != NULL );
-assert(false); //               single_connect_( ( *tnode_id ).node_id, *source, source_thread, rng );
+            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 
           ++i;
@@ -1868,7 +1861,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 
     try
     {
-      RngPtr rng = get_thread_rng( tid );
+      RngPtr rng = get_thread_specific_rng( tid );
 
       std::vector< index >::const_iterator tnode_id_it = targets.begin();
       std::vector< index >::const_iterator snode_id_it = sources.begin();

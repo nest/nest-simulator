@@ -47,7 +47,7 @@ class TestPairwiseBernoulli(TestParams):
 
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
-                hf.reset_seed(i, self.nr_threads)
+                hf.reset_seed(i+1, self.nr_threads)
                 self.setUpNetwork(conn_dict=self.conn_dict,
                                   N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)

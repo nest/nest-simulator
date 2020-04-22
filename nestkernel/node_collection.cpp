@@ -177,7 +177,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_node_id = current_first;
+  index old_node_id = 0;
   for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
     if ( *node_id == old_node_id )

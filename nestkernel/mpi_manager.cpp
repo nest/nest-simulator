@@ -695,6 +695,20 @@ nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffe
   MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
 }
 
+double
+nest::MPIManager::min_cross_ranks( double value )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MIN, comm );
+  return value;
+}
+
+double
+nest::MPIManager::max_cross_ranks( double value )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &value, 1, MPI_DOUBLE, MPI_MAX, comm );
+  return value;
+}
+
 void
 nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
 {
@@ -732,25 +746,6 @@ nest::MPIManager::synchronize()
   MPI_Barrier( comm );
 }
 
-// grng_synchrony: called at the beginning of each simulate
-bool
-nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
-{
-  if ( get_num_processes() > 1 )
-  {
-    std::vector< unsigned long > rnd_numbers( get_num_processes() );
-    MPI_Allgather( &process_rnd_number, 1, MPI_UNSIGNED_LONG, &rnd_numbers[ 0 ], 1, MPI_UNSIGNED_LONG, comm );
-    // compare all rnd numbers
-    for ( unsigned int i = 1; i < rnd_numbers.size(); ++i )
-    {
-      if ( rnd_numbers[ i - 1 ] != rnd_numbers[ i ] )
-      {
-        return false;
-      }
-    }
-  }
-  return true;
-}
 
 // any_true: takes a single bool, exchanges with all other processes,
 // and returns "true" if one or more processes provide "true"
@@ -1055,6 +1050,18 @@ nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffe
 {
   // Null operator for ranks == 1
   // Max already is the input
+}
+
+double
+nest::MPIManager::min_cross_ranks( double value )
+{
+  return value;
+}
+
+double
+nest::MPIManager::max_cross_ranks( double value )
+{
+  return value;
 }
 
 #endif /* #ifdef HAVE_MPI */

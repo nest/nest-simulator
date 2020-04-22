@@ -160,7 +160,6 @@ private:
 inline RngPtr
 nest::RandomManager::get_rank_synced_rng() const
 {
-  assert( kernel().vp_manager.get_thread_id() == 0 );  // rank-synced RNG to be used by master thread only
   return rank_synced_rng_;
 }
 

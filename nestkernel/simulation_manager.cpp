@@ -574,18 +574,6 @@ nest::SimulationManager::cleanup()
     return;
   }
 
-  // Check for synchronicity of global rngs over processes
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( get_rank_synced_rng()->ulrand( 100000 ) ) )
-    {
-      throw KernelException(
-        "In SimulationManager::cleanup(): "
-        "Global Random Number Generators are not "
-        "in sync at end of simulation." );
-    }
-  }
-
   kernel().node_manager.finalize_nodes();
   prepared_ = false;
 }

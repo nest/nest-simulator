@@ -77,6 +77,23 @@ nest::RandomManager::finalize()
 }
 
 void
+nest::RandomManager::reset_rngs_()
+{
+  rank_synced_rng_ = rng_types_[ current_rng_type_ ]->clone( { base_seed_, RANK_SYNCED_SEEDER_ } );
+
+  thread_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
+  thread_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
+
+#pragma omp parallel
+  {
+    const auto tid = kernel().vp_manager.get_thread_id();
+    const std::uint32_t vp = kernel().vp_manager.get_vp();
+    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SYNCED_SEEDER_ } );
+    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
+  }
+}
+
+void
 nest::RandomManager::get_status( DictionaryDatum& d )
 {
   ArrayDatum rng_types;
@@ -133,13 +150,47 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 void
 nest::RandomManager::check_rng_synchrony() const
 {
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  // TODO: Implement an MPI_ALLREDUCE operator checking for equality, so we don't need min and max.
+
+  // Compare more than a single number to avoid false negatives
+  const long NUM_ROUNDS = 5;
+
+  // We check rank-synchrony even if we are on a single process to keep the code simple.
+  for ( auto n = 0 ; n < NUM_ROUNDS ; ++n  )
   {
-    if ( not kernel().mpi_manager.grng_synchrony( get_rank_synced_rng()->ulrand( 100000 ) ) )
-    {
+    const auto r = rank_synced_rng_->drand();
+    const auto min = kernel().mpi_manager.min_cross_ranks( r );
+    const auto max = kernel().mpi_manager.max_cross_ranks( r );
+    if ( min != max )
+	{
 	  throw KernelException( "Rank-synchronized random number generators are out of sync.");
-    }
+	}
   }
+
+  // We check thread-synchrony under all circumstances to keep the code simple.
+  for ( auto n = 0 ; n < NUM_ROUNDS ; ++n  )
+  {
+	const index num_threads = kernel().vp_manager.get_num_threads();
+	double local_min = std::numeric_limits< double >::max();
+	double local_max = std::numeric_limits< double >::min();
+	for ( index t = 0 ; t < num_threads ; ++t )
+	{
+	  const auto r = thread_synced_rngs_[t]->drand();
+	  local_min = std::min( r, local_min );
+	  local_max = std::max( r, local_max );
+	}
+
+	// Finding the local min and max on each thread and then determining the
+	// global min/max, ensures that all ranks will learn about sync errors.
+	const long min = kernel().mpi_manager.min_cross_ranks( local_min );
+    const long max = kernel().mpi_manager.max_cross_ranks( local_max );
+    if ( min != max )
+	{
+	  throw KernelException( "Thread-synchronized random number generators are out of sync.");
+	}
+  }
+
+
 }
 
 template < typename RNG_TYPE >
@@ -148,20 +199,3 @@ nest::RandomManager::register_rng_type( std::string name )
 {
   rng_types_.insert( std::make_pair( name, new RNGFactory< RNG_TYPE >() ) );
 }
-
-void
-nest::RandomManager::reset_rngs_()
-{
-  rank_synced_rng_ = rng_types_[ current_rng_type_ ]->clone( { base_seed_, RANK_SYNCED_SEEDER_ } );
-
-  thread_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
-
-#pragma omp parallel
-  {
-    const auto tid = kernel().vp_manager.get_thread_id();
-    const std::uint32_t vp = kernel().vp_manager.get_vp();
-    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SYNCED_SEEDER_ } );
-    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
-  }
-}
-

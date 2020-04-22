@@ -71,7 +71,7 @@ SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 See also
 ++++++++
 
-synapsedict, static_synapse, iaf_psc_alpha_ps
+static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
 

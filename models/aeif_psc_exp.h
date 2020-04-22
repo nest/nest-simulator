@@ -92,8 +92,8 @@ Note that the spike detection threshold V_peak is automatically set to
 :math:`V_th+10` mV to avoid numerical instabilites that may result from
 setting V_peak too high.
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 

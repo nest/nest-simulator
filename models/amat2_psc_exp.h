@@ -41,7 +41,8 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
+Non-resetting leaky integrate-and-fire neuron model with exponential
+PSCs and adaptive threshold
 
 Description
 +++++++++++

@@ -82,7 +82,7 @@ receiving buffer via the following access pattern:
 
     we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
-Availability: Only when compiled with MPI and MUSIC
+This model is only available if NEST was compiled with MUSIC.
 
 Parameters
 ++++++++++

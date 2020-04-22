@@ -203,7 +203,6 @@ class NESTErrors(with_metaclass(NESTMappedException)):
         'BadParameter': 'KernelException',
         'DimensionMismatch': 'KernelException',
         'DistributionError': 'KernelException',
-        'SubnetExpected': 'KernelException',
         'SimulationError': 'KernelException',
         'InvalidDefaultResolution': 'KernelException',
         'InvalidTimeInModel': 'KernelException',

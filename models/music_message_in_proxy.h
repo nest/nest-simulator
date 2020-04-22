@@ -69,7 +69,9 @@ applications. The music_message_in_proxy represents an input port to
 which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
-Availability: Only when compiled with MUSIC
+To clear the data array, the parameter *n_messages* can be set to 0.
+
+This model is only available if NEST was compiled with MUSIC.
 
 Parameters
 ++++++++++
@@ -88,9 +90,6 @@ The following properties are available in the status dictionary:
  published   boolean A bool indicating if the port has been already published
                      with MUSIC
 ============ ======= =========================================================
-
-The parameter port_name can be set using SetStatus. The field n_messages
-can be set to 0 to clear the data arrays.
 
 See also
 ++++++++

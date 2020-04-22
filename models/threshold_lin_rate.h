@@ -42,32 +42,41 @@ namespace nest
 Short description
 +++++++++++++++++
 
-rate model with threshold-linear gain function
+Rate model with threshold-linear gain function
 
 Description
 +++++++++++
 
-threshold_lin_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = min( max( g * ( h - \theta ), 0 ), \alpha )`.
-Input transformation can either be applied to individual inputs
-or to the sum of all inputs.
+threshold_lin_rate is an implementation of a nonlinear rate model with
+input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+\alpha )`.  It either models a rate neuron with input noise (see
+rate_neuron_ipn), a rate neuron with output noise (see
+rate_neuron_opn) or a rate transformer (see
+rate_transformer_node). Input transformation can either be applied to
+individual inputs or to the sum of all inputs.
 
-The model supports connections to other rate models with either zero or
-non-zero delay, and uses the secondary_event concept introduced with
-the gap-junction framework.
+The model supports connections to other rate models with either zero
+or non-zero delay, and uses the secondary_event concept introduced
+with the gap-junction framework.
 
-Note:
+The boolean parameter linear_summation determines whether the input
+from different presynaptic neurons is first summed linearly and then
+transformed by a nonlinearity (true), or if the input from individual
+presynaptic neurons is first nonlinearly transformed and then summed
+up (false). Default is true.
 
-The boolean parameter linear_summation determines whether the
-input from different presynaptic neurons is first summed linearly and
-then transformed by a nonlinearity (true), or if the input from
-individual presynaptic neurons is first nonlinearly transformed and
-then summed up (false). Default is true.
+Nonlinear rate neuron instances can be obtained by creating models of
+type ``threshold_lin_rate_ipn`` for input noise or of type
+``threshold_lin_rate_opn`` output noise. Nonlinear rate transformers
+can be obtained by creating models of type
+``rate_transformer_threshold_lin``.
 
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
 
 ==================  ======= ==============================================
  rate               real    Rate (unitless)

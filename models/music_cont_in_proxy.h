@@ -65,6 +65,8 @@ The music_cont_in_proxy represents a complete port to which MUSIC can
 connect and send data. The music_cont_in_proxy can queried using
 GetStatus to retrieve the messages.
 
+This model is only available if NEST was compiled with MUSIC.
+
 Parameters
 ++++++++++
 

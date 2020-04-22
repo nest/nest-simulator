@@ -121,7 +121,6 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-
 References
 ++++++++++
 

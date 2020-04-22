@@ -61,7 +61,7 @@ the events. Multiple music_in_proxies can be configured to listen
 on the same port, but each channel can only listened to by a
 single proxy.
 
-Availability: Only when compiled with MUSIC
+This model is only available if NEST was compiled with MUSIC.
 
 Parameters
 ++++++++++

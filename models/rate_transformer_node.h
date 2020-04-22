@@ -54,11 +54,18 @@ Rate neuron that sums up incoming rates and applies a nonlinearity specified via
 Description
 +++++++++++
 
+Base class for rate transformer model of the form
+
+.. math::
+
+   X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
-the summed up incoming connections (True, default value) or to each input
-individually (False).
+the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
@@ -86,9 +93,7 @@ InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Parameters
 ++++++++++
 
-Only the parameter
-- linear_summation
-and the parameters from the class Nonlinearities can be set in the
+Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
 EndUserDocs */

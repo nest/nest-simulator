@@ -2,6 +2,8 @@
 
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 
+
+
 from sys import argv
 argv.append('--quiet')
 import sys
@@ -13,6 +15,11 @@ comm = MPI.COMM_WORLD.Split(0)  # is nest
 print("Getting nest")
 import nest
 
+
+STATUS_DICT = nest.ll_api.sli_func("statusdict")
+if (not  STATUS_DICT["have_arborbackend"]):
+    print ("Arbor_backend not available. Exit testscript!")
+    sys.exit(1)
 
 nest.set_communicator(comm)
 nest.SetKernelStatus({'recording_backends': {'arbor': {}}})

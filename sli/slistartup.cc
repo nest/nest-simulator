@@ -253,6 +253,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcode_skipped_no_threading_name( "skipped_no_threading" )
   , exitcode_skipped_no_gsl_name( "skipped_no_gsl" )
   , exitcode_skipped_no_music_name( "skipped_no_music" )
+  , exitcode_skipped_no_arborbackend_name( "skipped_no_arborbackend" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -518,6 +519,7 @@ SLIStartup::init( SLIInterpreter* i )
   exitcodes->insert( exitcode_skipped_no_threading_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_THREADING ) ) );
   exitcodes->insert( exitcode_skipped_no_gsl_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_GSL ) ) );
   exitcodes->insert( exitcode_skipped_no_music_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MUSIC ) ) );
+  exitcodes->insert( exitcode_skipped_no_arborbackend_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_ARBORBACKEND ) ) );
   exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( EXITCODE_SCRIPTERROR ) ) );
   exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( EXITCODE_USERABORT ) ) );

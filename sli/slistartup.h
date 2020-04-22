@@ -55,6 +55,7 @@
 #define EXITCODE_SKIPPED_NO_THREADING 203
 #define EXITCODE_SKIPPED_NO_GSL 204
 #define EXITCODE_SKIPPED_NO_MUSIC 205
+#define EXITCODE_SKIPPED_NO_ARBORBACKEND 206
 
 
 class SLIStartup : public SLIModule
@@ -120,6 +121,7 @@ public:
   Name exitcode_skipped_no_threading_name;
   Name exitcode_skipped_no_gsl_name;
   Name exitcode_skipped_no_music_name;
+  Name exitcode_skipped_no_arborbackend_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
   Name exitcode_userabort_name;

@@ -148,7 +148,7 @@ The following variables are set in ``nest_vars.sh``:
    * - ``PYTHONPATH``
      - Search path for non-standard Python module locations. Will be prepended to or created if it does not exist.
    * - ``PATH``
-     - Search path for binaries. Will be prepended to or created to if it does not exist.
+     - Search path for binaries. Will be prepended to or created if it does not exist.
    * - ``LD_LIBRARY_PATH``
      - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created to if it does not exist.
 

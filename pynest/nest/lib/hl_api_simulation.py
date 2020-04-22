@@ -222,7 +222,7 @@ def SetKernelStatus(params):
         The total number of virtual processes
     local_num_threads : int
         The local number of threads
-    num_processes : int
+    num_processes : int, read only
         The number of MPI processes
     off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication

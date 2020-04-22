@@ -215,7 +215,7 @@ nest::InputDevice::get_status( DictionaryDatum& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
-    kernel().io_manager.get_input_backend_device_defaults( P_.input_from_, d );
+    kernel().io_manager.get_stimulating_backend_device_defaults( P_.input_from_, d );
 
     // then overwrite with cached parameters
     for ( auto& kv_pair : *backend_params_ )
@@ -225,7 +225,7 @@ nest::InputDevice::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    kernel().io_manager.get_input_backend_device_status( P_.input_from_, *this, d );
+    kernel().io_manager.get_stimulating_backend_device_status( P_.input_from_, *this, d );
   }
 }
 

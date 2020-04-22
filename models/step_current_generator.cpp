@@ -269,7 +269,7 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-  InputDevice::calibrate( InputBackend::NO_DOUBLE_VALUE_NAMES, InputBackend::NO_LONG_VALUE_NAMES );
+  InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
   device_.calibrate();
 }
 

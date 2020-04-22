@@ -53,10 +53,11 @@ Description
 +++++++++++
 
 Base class for rate transformer model of the form
-@f[
-  X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
 
-@f]
+.. math::
+
+   X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
@@ -90,9 +91,7 @@ InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 Parameters
 ++++++++++
 
-Only the parameter
-- linear_summation
-and the parameters from the class Nonlinearities can be set in the
+Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
 FirstVersion: November 2017

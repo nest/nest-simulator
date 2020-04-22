@@ -32,8 +32,8 @@ void
 nest::RecordingBackendMPI::initialize()
 {
   auto nthreads = kernel().vp_manager.get_num_threads();
-  std::vector< std::vector < std::vector< std::array< double, 3 > > > >empty_vector( nthreads );
-  buffer_.swap(empty_vector);
+  std::vector< std::vector< std::vector< std::array< double, 3 > > > > empty_vector( nthreads );
+  buffer_.swap( empty_vector );
   device_map devices( nthreads );
   devices_.swap( devices );
 }
@@ -103,83 +103,88 @@ nest::RecordingBackendMPI::set_value_names( const RecordingDevice& device,
 void
 nest::RecordingBackendMPI::prepare()
 {
-  thread thread_id_master = 0 ;
-  #pragma omp parallel default(none) shared(thread_id_master)
+  thread thread_id_master = 0;
+#pragma omp parallel default( none ) shared( thread_id_master )
   {
-    #pragma omp master
-      {
-        // Create the connection with MPI
-        // 1) take all the ports of the connections
-        // get port and update the list of devices
-        thread_id_master = kernel().vp_manager.get_thread_id();
-        int count_max = 0;
-        for (auto &it_device : devices_[ thread_id_master ]) {
-          // add the link between MPI communicator and the device (devices can share the same MPI communicator)
-          std::string port_name;
-          get_port(std::get< 2 > (it_device.second), &port_name);
-          auto comm_it = commMap_.find(port_name);
-          MPI_Comm *comm;
-          int index_mpi;
-          if ( comm_it != commMap_.end() ) {
-            comm = std::get< 1 > ( comm_it->second );
-            std::get< 2 > ( comm_it->second ) += 1;
-            index_mpi = std::get< 0 > ( comm_it->second );
-          } else {
-            comm = new MPI_Comm;
-            std::tuple<int, MPI_Comm *, int> comm_count = std::make_tuple(count_max, comm, 1);
-            commMap_.insert(std::make_pair(port_name, comm_count));
-            index_mpi = count_max;
-            count_max += 1;
-          }
-          std::get< 0 >( it_device.second ) = index_mpi;
-          std::get< 1 >( it_device.second ) = comm;
-        }
-
-        // initialize the buffer
-        for (auto& thread_data: buffer_)
+#pragma omp master
+    {
+      // Create the connection with MPI
+      // 1) take all the ports of the connections
+      // get port and update the list of devices
+      thread_id_master = kernel().vp_manager.get_thread_id();
+      int count_max = 0;
+      for (auto &it_device : devices_[ thread_id_master ]) {
+        // add the link between MPI communicator and the device (devices can share the same MPI communicator)
+        std::string port_name;
+        get_port( std::get< 2 >( it_device.second ), &port_name );
+        auto comm_it = commMap_.find( port_name );
+        MPI_Comm *comm;
+        int index_mpi;
+        if ( comm_it != commMap_.end() )
         {
-          std::vector<std::vector< std::array< double, 3 > > > data_comm (count_max);
-          thread_data.swap(data_comm);
+          comm = std::get< 1 >( comm_it->second );
+          std::get< 2 >( comm_it->second ) += 1;
+          index_mpi = std::get< 0 >( comm_it->second );
         }
+        else
+        {
+          comm = new MPI_Comm;
+          std::tuple< int, MPI_Comm*, int > comm_count = std::make_tuple( count_max, comm, 1 );
+          commMap_.insert( std::make_pair( port_name, comm_count ) );
+          index_mpi = count_max;
+          count_max += 1;
+        }
+        std::get< 0 >( it_device.second ) = index_mpi;
+        std::get< 1 >( it_device.second ) = comm;
+      }
 
-        // 2) connect the thread to the MPI process it needs to be connected to
-        for ( auto& it_comm : commMap_ ) {
-          MPI_Comm_connect(it_comm.first.data(),
-                           MPI_INFO_NULL,
-                           0,
-                           MPI_COMM_WORLD,
-                           std::get< 1 >( it_comm.second ) ); // should use the status for handle error
-          std::ostringstream msg;
-          msg << "Connect to " << it_comm.first.data() << "\n";
-          LOG(M_INFO, "MPI Record connect", msg.str());
-        }
+      // initialize the buffer
+      for ( auto& thread_data : buffer_ )
+      {
+        std::vector< std::vector< std::array< double, 3 > > > data_comm( count_max );
+        thread_data.swap( data_comm );
       }
-    #pragma omp barrier
-      // Update all the thread
-      thread thread_id = kernel().vp_manager.get_thread_id();
-      if (thread_id != thread_id_master) {
-        for (auto &it_device : devices_[thread_id]) {
-          auto device_data = devices_[thread_id_master].find(it_device.first);
-          std::get<0>(it_device.second) = std::get<0>(device_data->second);
-          std::get<1>(it_device.second) = std::get<1>(device_data->second);
-        }
+
+      // 2) connect the thread to the MPI process it needs to be connected to
+      for ( auto& it_comm : commMap_ )
+      {
+        MPI_Comm_connect( it_comm.first.data(),
+            MPI_INFO_NULL,
+            0,
+            MPI_COMM_WORLD,
+            std::get< 1 >( it_comm.second ) ); // should use the status for handle error
+        std::ostringstream msg;
+        msg << "Connect to " << it_comm.first.data() << "\n";
+        LOG( M_INFO, "MPI Record connect", msg.str() );
       }
-    #pragma omp barrier
+    }
+#pragma omp barrier
+    // Update all the thread
+    thread thread_id = kernel().vp_manager.get_thread_id();
+    if ( thread_id != thread_id_master )
+    {
+      for ( auto &it_device : devices_[ thread_id ]) {
+        auto device_data = devices_[ thread_id_master ].find( it_device.first );
+        std::get< 0 >( it_device.second ) = std::get< 0 >( device_data->second );
+        std::get< 1 >( it_device.second ) = std::get< 1 >( device_data->second );
+      }
+    }
+#pragma omp barrier
   }
 }
 
 void
 nest::RecordingBackendMPI::pre_run_hook()
 {
-  #pragma omp master
+#pragma omp master
   {
     for ( auto& it_comm : commMap_ )
     {
-      bool value [ 1 ] = {true};
-      MPI_Send( &value, 1, MPI_CXX_BOOL, 0, 0, *std::get< 1 >(it_comm.second) );
+      bool value [ 1 ] = { true };
+      MPI_Send( &value, 1, MPI_CXX_BOOL, 0, 0, *std::get< 1 >( it_comm.second ) );
     }
-  };
-  #pragma omp barrier
+  }
+#pragma omp barrier
 }
 
 
@@ -192,31 +197,34 @@ nest::RecordingBackendMPI::post_step_hook()
 void
 nest::RecordingBackendMPI::post_run_hook()
 {
-  #pragma omp master
+#pragma omp master
   {
     // Receive information of MPI process
-    for ( auto& it_comm : commMap_ ) {
+    for ( auto& it_comm : commMap_ )
+    {
       // available to receive information
-      bool value [ 1 ];
+      bool value[ 1 ];
       MPI_Status status = MPI_Status();
-      MPI_Recv( &value, 1, MPI_CXX_BOOL, 0, 0, *std::get< 1 >(it_comm.second), &status );
-      int index_comm = std::get<0>( it_comm.second );
+      MPI_Recv( &value, 1, MPI_CXX_BOOL, 0, 0, *std::get< 1 >( it_comm.second ), &status );
+      int index_comm = std::get< 0 >( it_comm.second );
 
       std::vector< double > data;
-      for ( auto& data_thread: buffer_)
+      for ( auto& data_thread : buffer_ )
       {
-        for ( auto& data_sample: data_thread[index_comm]){
-          data.push_back(data_sample[0]);
-          data.push_back(data_sample[1]);
-          data.push_back(data_sample[2]);
+        for ( auto& data_sample : data_thread[ index_comm ] )
+        {
+          data.push_back( data_sample[ 0 ] );
+          data.push_back( data_sample[ 1 ] );
+          data.push_back( data_sample[ 2 ] );
         }
       }
-      send_data( std::get<1>( it_comm.second), data.data(), data.size() );
+      send_data( std::get< 1 >( it_comm.second ), data.data(), data.size() );
     }
     // clear the buffer
-    for( auto& data_thread : buffer_)
+    for ( auto& data_thread : buffer_ )
     {
-      for( auto& data_comm : data_thread){
+      for ( auto& data_comm : data_thread )
+      {
          data_comm.clear();
       }
     }
@@ -224,41 +232,42 @@ nest::RecordingBackendMPI::post_run_hook()
     for ( auto& it_comm : commMap_ )
     {
       int value[ 1 ] = { true };
-      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 1, *std::get< 1 >(it_comm.second ) );
+      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 1, *std::get< 1 >( it_comm.second ) );
     }
   }
-  #pragma omp barrier
+#pragma omp barrier
 }
 
 void
 nest::RecordingBackendMPI::cleanup()
 {
-  // Disconnect all the MPI connections and send information about this disconnection
-  // Clean all the elements in the map
-  // disconnect MPI
-  #pragma omp master
+// Disconnect all the MPI connections and send information about this disconnection
+// Clean all the elements in the map
+// disconnect MPI
+#pragma omp master
   {
     for ( auto& it_comm : commMap_ )
     {
       bool value[ 1 ] = { true };
-      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 2, *std::get< 1 >(it_comm.second) );
-      MPI_Comm_disconnect( std::get< 1 >(it_comm.second) );
+      MPI_Send( value, 1, MPI_CXX_BOOL, 0, 2, *std::get< 1 >( it_comm.second ) );
+      MPI_Comm_disconnect( std::get< 1 >( it_comm.second ) );
       delete ( std::get< 1 >( it_comm.second ) );
     }
     // clear the buffer
-    for( auto& data_thread : buffer_)
+    for ( auto& data_thread : buffer_ )
     {
       data_thread.clear();
     }
     // clear map of device
     commMap_.clear();
     thread thread_id_master = kernel().vp_manager.get_thread_id();
-    for ( auto& it_device : devices_[thread_id_master] ) {
-      std::get< 0 >(it_device.second) = -1;
-      std::get< 1 >(it_device.second) = nullptr;
+    for ( auto& it_device : devices_[ thread_id_master ] )
+    {
+      std::get< 0 >( it_device.second ) = -1;
+      std::get< 1 >( it_device.second ) = nullptr;
     }
   }
-  #pragma omp barrier
+#pragma omp barrier
 }
 
 void
@@ -296,8 +305,8 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
   auto it_devices = devices_[ thread_id ].find( recorder );
   if ( it_devices != devices_[ thread_id ].end() )
   {
-    std::array<double, 3> data{double( recorder ), double( sender ), stamp.get_ms()};
-    buffer_[ thread_id ][ std::get< 0 > (it_devices->second) ].push_back(data);
+    std::array< double, 3 > data{ double( recorder ), double( sender ), stamp.get_ms() };
+    buffer_[ thread_id ][ std::get< 0 >( it_devices->second ) ].push_back( data );
   }
   else
   {
@@ -359,11 +368,12 @@ nest::RecordingBackendMPI::get_port( const index index_node, const std::string& 
   file.close();
 }
 
-void nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[], const int size) {
+void
+nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[], const int size) {
   // Send the size of data
-  int shape[ 1 ];
-  shape [ 0 ] = size;
-  MPI_Send( &shape, 1, MPI_INT, 0, 0, *comm );
+  int shape[1];
+  shape[0] = size;
+  MPI_Send(&shape, 1, MPI_INT, 0, 0, *comm);
   // Receive the data ( for the moment only spike time )
-  MPI_Send( data, shape[ 0 ], MPI_DOUBLE, 0, 0, *comm);
+  MPI_Send(data, shape[0], MPI_DOUBLE, 0, 0, *comm);
 }

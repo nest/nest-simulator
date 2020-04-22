@@ -104,7 +104,7 @@ private:
    * The buffer sa 3 dimensions : thread_id, MPI_communicator_index and number of events
    * elements : id of device, id of neurons, data ( one double )
    */
-  std::vector< std::vector < std::vector< std::array<double, 3> > > > buffer_;
+  std::vector< std::vector< std::vector< std::array< double, 3 > > > > buffer_;
   /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the gid of a device on a given thread
@@ -121,7 +121,7 @@ private:
 
   static void get_port( const RecordingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
-  static void send_data( const MPI_Comm*, const double[], const int );
+  static void send_data( const MPI_Comm* comm, const double data[], int size);
 };
 
 } // namespace

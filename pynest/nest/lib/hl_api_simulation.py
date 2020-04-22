@@ -185,17 +185,21 @@ def SetKernelStatus(params):
 
     Parameters
     ----------
+
     params : dict
         Dictionary of parameters to set.
 
     Other parameters
     ----------------
+
     Some of the keywords in the kernel status dictionary are internally
     calculated, and cannot be defined by the user. These are flagged as
     `read only` in the parameter list. Use GetKernelStatus to access their
     assigned values.
 
     Time and resolution
+    ~~~~~~~~~~~~~~~~~~~
+
     resolution : float
         The resolution of the simulation (in ms)
     time : float
@@ -218,6 +222,8 @@ def SetKernelStatus(params):
         The smallest representable time value
 
     Parallel processing
+    ~~~~~~~~~~~~~~~~~~~
+
     total_num_virtual_procs : int
         The total number of virtual processes
     local_num_threads : int
@@ -235,6 +241,8 @@ def SetKernelStatus(params):
         be unique and differ from grng_seed.
 
     MPI buffers
+    ~~~~~~~~~~~
+
     adaptive_spike_buffers  : bool
         Whether MPI buffers for communication of spikes resize on the fly
     adaptive_target_buffers : bool
@@ -258,6 +266,8 @@ def SetKernelStatus(params):
         Maximal size of MPI buffers for communication of connections
 
     Waveform relaxation method (wfr)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     use_wfr : bool
         Whether to use waveform relaxation method
     wfr_comm_interval : float
@@ -270,6 +280,8 @@ def SetKernelStatus(params):
         Interpolation order of polynomial used in wfr iterations
 
     Synapses
+    ~~~~~~~~
+
     max_num_syn_models : int, read only
         Maximal number of synapse models supported
     sort_connections_by_source : bool
@@ -287,6 +299,8 @@ def SetKernelStatus(params):
         and deletion of plastic synapses)
 
     Output
+    ~~~~~~
+
     data_path : str
         A path, where all data is written to (default is the current
         directory)
@@ -307,6 +321,8 @@ def SetKernelStatus(params):
         devices such as poisson_generator.
 
     Miscellaneous
+    ~~~~~~~~~~~~~
+
     dict_miss_is_error : bool
         Whether missed dictionary entries are treated as errors
     keep_source_table : bool
@@ -314,6 +330,7 @@ def SetKernelStatus(params):
 
     See Also
     --------
+
     GetKernelStatus
 
     """
@@ -328,11 +345,13 @@ def GetKernelStatus(keys=None):
 
     Parameters
     ----------
+
     keys : str or list, optional
         Single parameter name or `list` of parameter names
 
     Returns
     -------
+
     dict:
         Parameter dictionary, if called without argument
     type:
@@ -342,6 +361,7 @@ def GetKernelStatus(keys=None):
 
     Raises
     ------
+
     TypeError
         If `keys` are of the wrong type.
 

@@ -43,7 +43,7 @@ Description
 +++++++++++
 
 lin_rate is an implementation of a rate model with linear input
-function \f$ input(h) = g * h \f$. It either models a rate neuron with
+function :math:`input(h) = g * h`. It either models a rate neuron with
 input noise (see rate_neuron_ipn), a rate neuron with output noise
 (see rate_neuron_opn) or a rate transformer (see
 rate_transformer_node).
@@ -51,10 +51,10 @@ rate_transformer_node).
 Linear rate neurons support multiplicative coupling which can be
 switched on and off via the boolean parameter mult_coupling
 (default=false). In case multiplicative coupling is active, the
-excitatory input of the model is multiplied with the function \f$
-mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate ) \f$ and the
-inhibitory input is multiplied with the function \f$
-mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate ) \f$.
+excitatory input of the model is multiplied with the function
+:math:`mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate )` and the
+inhibitory input is multiplied with the function
+:math:`mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate )`.
 
 The model supports connections to other rate models with either zero
 or non-zero delay, and it uses the secondary_event concept introduced

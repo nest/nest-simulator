@@ -48,7 +48,7 @@ Functions related to spatially distributed nodes
 
 .. note::
 
- This used to be the topology module, which was integrated into nest in 3.0
+ This used to be a separate topology module. Now, it is integrated into NEST 3.0.
 
 .. automodule:: nest.lib.hl_api_spatial
     :members:

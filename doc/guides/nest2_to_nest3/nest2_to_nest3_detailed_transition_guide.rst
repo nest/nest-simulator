@@ -1,30 +1,25 @@
-NEST 2.X vs. NEST 3.0 conversion reference guide
-==================================================
+NEST 3.0: Detailed transition guide
+===================================
 
-* This conversion guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 
-* Terms that changed for NEST 3.0 are marked in :green:`green`.
+* Terms that changed for NEST 3.0 are marked in :green:`green`
 
+* **Please note that NEST 3.0 no longer supports Python 2**
 
 .. contents:: Here you'll find
    :local:
    :depth: 2
 
-
-**Dependencies:**
-
- * Python 3.X
- * Matplotlib 3.X.X
-
 .. seealso::
 
-  You can find code examples of changes in NEST 3.0 :doc:`in our NEST-3 overview <../guides/from_nest2_to_nest3>`
+  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
 
 .. _setverbosity:
 
-Supress output on startup
+Suppress output on startup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------+----------------------------------+
@@ -78,11 +73,9 @@ Functions related to connection
 |                                             | *is given by synapse_model,*                  |
 |                                             | *not model.*                                  |
 +---------------------------------------------+-----------------------------------------------+
-| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(list, list,                |
+| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(np.array, np.array,        |
 | model="static_synapse")                     | conn_spec=None, syn_spec=None,                |
 |                                             | return_SynapseCollection=False)               |
-|                                             | *You should only use nest.Connect with lists* |
-|                                             | *if you have lists with non-unique node IDs.* |
 +---------------------------------------------+-----------------------------------------------+
 | nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`,  |
 | parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,             |
@@ -452,5 +445,3 @@ for spatially distributed nodes.
 |       | nest.spatial_distributions.gamma(nest.Parameter, kappa=1.0 |
 |       | theta=1.0) *returns* nest.Parameter                        |
 +-------+------------------------------------------------------------+
-
-

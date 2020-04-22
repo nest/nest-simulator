@@ -22,5 +22,5 @@ export NEST_PYTHON_PREFIX="${NEST_INSTALL_DIR}/@PYEXECDIR@"
 # Prepend NEST to PYTHONPATH. Works also if $PYTHONPATH is undefined.
 export PYTHONPATH="$NEST_PYTHON_PREFIX${PYTHONPATH:+:$PYTHONPATH}"
 
-# Make ``nest``/``sli``/etc. executables visible.
+# Make nest/sli/... executables visible.
 export PATH="${NEST_INSTALL_DIR}/bin:${PATH}"

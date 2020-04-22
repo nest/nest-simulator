@@ -19,7 +19,7 @@ fi
 # The path where the PyNEST bindings are installed.
 export NEST_PYTHON_PREFIX="${NEST_INSTALL_DIR}/@PYEXECDIR@"
 
-# Prepend NEST to PYTHONPATH. (Works also if $PYTHONPATH is undefined.)
+# Prepend NEST to PYTHONPATH. Works also if $PYTHONPATH is undefined.
 export PYTHONPATH="$NEST_PYTHON_PREFIX${PYTHONPATH:+:$PYTHONPATH}"
 
 # Make ``nest``/``sli``/etc. executables visible.

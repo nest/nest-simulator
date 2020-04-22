@@ -87,9 +87,9 @@ The following parameters can be set in the status dictionary.
  E_ex         mV      Excitatory reversal potential
  E_in         mV      Inhibitory reversal potential
  g_L          nS      Leak conductance
- tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
+ tau_rise_ex  ms      Rise time of the excitatory synaptic beta function
  tau_decay_ex ms      Rise time of the excitatory synaptic beta function
- tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
+ tau_rise_in  ms      Rise time of the inhibitory synaptic beta function
  tau_decay_in ms      Rise time of the inhibitory synaptic beta function
  I_e          pA      Constant input current
 ============= ====== =========================================================

@@ -220,7 +220,7 @@ def SetKernelStatus(params):
     Parallel processing
     total_num_virtual_procs : int
         The total number of virtual processes
-    local_num_threads : int, read only
+    local_num_threads : int
         The local number of threads
     num_processes : int
         The number of MPI processes

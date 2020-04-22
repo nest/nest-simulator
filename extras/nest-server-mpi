@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+
+"""NEST Client Performance Testbench.
+
+Usage:
+  run_benchmarks.py -h | --help
+  run_benchmarks.py clisrv [--host=HOST] [--port=PORT] [-o FILE] TESTCASE
+  run_benchmarks.py import [-o FILE] TESTCASE
+
+mpirun --oversubscribe -np 4 nest-server-mpi
+
+Test modes:
+  clisrv   use NEST via the NEST Client/Server API
+  import   use NEST via direct import
+
+Options:
+  -h --help     display usage information and exit
+  --host HOST   the host where the NEST Server runs [default: localhost]
+  --port PORT   the port of the NEST Server [default: 5000]
+  -o FILE, --output FILE   use FILE for the report instead of stdout
+
+"""
+
+from docopt import docopt
+
+if __name__ == '__main__':
+    opt = docopt(__doc__)
+
+
+import nest
+
+from mpi4py import MPI
+
+import time
+import sys
+
+from nest.server import run_mpi_app, serialize, do_exec
+
+
+comm = MPI.COMM_WORLD.Clone()
+rank = comm.Get_rank()
+
+
+if rank == 0:
+    print("==> Starting NEST Server Master on rank 0")
+    run_mpi_app(comm)
+else:
+    print("==> Starting NEST Server Worker on rank {}".format(rank))
+    while True:
+
+        print("==> WORKER/{}: waiting for command bcast".format(rank))
+        command = comm.bcast(None, root=0)
+        print("==> WORKER/{}: waiting for data bcast".format(rank))
+        data, args, kwargs = comm.bcast(None, root=0)
+        print("==> WORKER/{}: received data bcast, data={}".format(rank, data))
+        if command == 'exec':
+            do_exec(data, args, kwargs) # TODO: handle errors
+            print("==> WORKER/{} (exec): sending reponse gather, data={}".format(rank, data))
+            comm.gather(data, root=0)
+        if command == 'call':
+            call = getattr(nest, data['request']['call'])
+            data['request']['call'] = call.__name__
+            response = call(*args, **serialize(call.__name__, kwargs)) # TODO: handle errors
+            data['response']['data'] = nest.hl_api.serializable(response)
+            print("==> WORKER/{} (call): sending reponse gather, data={}".format(rank, data))
+            comm.gather(data, root=0)

@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import nest
+
 import array
 import inspect
 import io
@@ -26,20 +28,21 @@ import numpy as np
 import os
 import sys
 
-import nest
-
 import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-
 __all__ = [
-    'app'
+    'app',
+    'do_exec',
+    'run_mpi_app',
+    'serialize'
 ]
-
 
 app = Flask(__name__)
 CORS(app)
+
+mpi_comm = None
 
 
 @app.route('/', methods=['GET'])
@@ -49,16 +52,11 @@ def nest_index():
     """
     data = init_data(request)
     data['response']['version'] = nest.version()
+    data['response']['is_mpi'] = mpi_comm is not None
     return jsonify(data)
 
 
-@app.route('/exec', methods=['GET', 'POST'])
-@cross_origin()
-def route_exec():
-    """ Route to execute script in Python.
-    """
-    data = init_data(request)
-    args, kwargs = get_arguments(request, data)
+def do_exec(data, *args, **kwargs):
     with Capturing() as stdout:
         try:
             source = kwargs.get('source', '')
@@ -86,6 +84,29 @@ def route_exec():
             data['response']['data'] = None
             data['response']['status'] = 'error'
     data['response']['stdout'] = '\n'.join(stdout)
+
+
+@app.route('/exec', methods=['GET', 'POST'])
+@cross_origin()
+def route_exec():
+    """ Route to execute script in Python.
+    """
+    data = init_data(request)
+    args, kwargs = get_arguments(request, data)
+    if mpi_comm is not None:
+        print("==> MASTER (exec): sending command bcast")
+        mpi_comm.bcast('exec', root=0)
+        print("==> MASTER (exec): sending data bcast, data={}".format((data, args, kwargs)))
+        mpi_comm.bcast((data, args, kwargs), root=0)
+    do_exec(data, args, kwargs)
+    worker_responses = [None]
+    if mpi_comm is not None:
+        print("==> MASTER (exec): waiting for response gather")
+        worker_responses = mpi_comm.gather(None, root=0)
+    worker_responses[0] = nest.hl_api.serializable(data)
+    print("==> MASTER (call): worker_responses={}".format(worker_responses))
+    # TODO: combine worker_response data in a meaningful way
+
     return jsonify(data)
 
 
@@ -104,7 +125,7 @@ def nest_api():
     """ Route to list call functions in NEST.
     """
     data = init_data(request)
-    response = api_client(request, nest_calls, data)
+    response = api_client(nest_calls, data)
     return jsonify(response)
 
 
@@ -117,7 +138,7 @@ def nest_api_call(call):
     args, kwargs = get_arguments(request, data)
     if call in nest_calls:
         call = getattr(nest, call)
-        response = api_client(request, call, data, *args, **kwargs)
+        response = api_client(call, data, *args, **kwargs)
     else:
         data['response']['msg'] = 'The request cannot be called in NEST.'
         data['response']['status'] = 'error'
@@ -185,9 +206,9 @@ def get_arguments(request, data):
 def get_or_error(func):
     """ Wrapper to get data or error content.
     """
-    def func_wrapper(request, call, data, *args, **kwargs):
+    def func_wrapper(call, data, *args, **kwargs):
         try:
-            data = func(request, call, data, *args, **kwargs)
+            data = func(call, data, *args, **kwargs)
             if 'data' not in data['response']:
                 return data
             response = data['response']['data']
@@ -230,7 +251,7 @@ def serialize(call, kwargs):
 
 
 @get_or_error
-def api_client(request, call, data, *args, **kwargs):
+def api_client(call, data, *args, **kwargs):
     """ API Client to call function in NEST.
     """
     if callable(call):
@@ -240,9 +261,29 @@ def api_client(request, call, data, *args, **kwargs):
         elif str(kwargs.get('return_source', 'false')) == 'true':
             response = inspect.getsource(call)
         else:
+            if mpi_comm is not None:
+                print("==> MASTER (call): sending command bcast")
+                mpi_comm.bcast('call', root=0)
+                print("==> MASTER (call): sending data bcast, data={}".format((data, args, kwargs)))
+                mpi_comm.bcast((data, args, kwargs), root=0)
             response = call(*args, **serialize(call.__name__, kwargs))
+            worker_responses = [None]
+            if mpi_comm is not None:
+                print("==> MASTER (call): waiting for response gather")
+                worker_responses = mpi_comm.gather(None, root=0)
+            worker_responses[0] = nest.hl_api.serializable(response)
+            print("==> MASTER (call): worker_responses={}".format(worker_responses))
+            # TODO: combine worker_response in a meaningful way
     else:
         data['request']['call'] = call
         response = call
     data['response']['data'] = nest.hl_api.serializable(response)
     return data
+
+
+def run_mpi_app(comm):
+    global mpi_comm
+    mpi_comm = comm
+    # NEST segfaults if someone messes with the number of threads.
+    # Don't do this!
+    app.run(threaded=False)

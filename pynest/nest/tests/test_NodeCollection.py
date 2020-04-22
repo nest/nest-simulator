@@ -333,6 +333,17 @@ class TestNodeCollection(unittest.TestCase):
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
 
+    def test_raises_with_nonunique_nodes(self):
+        """Non-unique nodes in NodeCollection raises error"""
+        n = nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            n[1:3] + n[2:5]
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2, 2])
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
+
     def test_composite_NodeCollection(self):
         """Tests composite NodeCollection with patched node IDs"""
 

@@ -94,8 +94,10 @@ The following parameters can be set in the status dictionary.
  E_L          mV      Resting membrane potential
  C_m          pF      Capacity of the membrane
  tau_m        ms      Membrane time constant
- tau_syn_ex   ms      Time constant of postsynaptic excitatory currents
- tau_syn_in   ms      Time constant of postsynaptic inhibitory currents
+ tau_syn_ex   ms      Exponential decay time constant of excitatory synaptic
+                      current kernel
+ tau_syn_in   ms      Exponential decay time constant of inhibitory synaptic
+                      current kernel
  t_ref        ms      Duration of refractory period (V_m = V_reset)
  V_m          mV      Membrane potential in mV
  V_th         mV      Spike threshold in mV

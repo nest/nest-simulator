@@ -138,11 +138,11 @@ The following parameters can be set in the status dictionary.
 **Synaptic parameters**
 -------------------------------------------------------------------------------
  E_ex       mV      Excitatory reversal potential
- tau_syn_ex ms      Rise time of excitatory synaptic conductance (alpha
-                    function)
+ tau_syn_ex ms      Exponential decay time constant of excitatory synaptic
+                    conductance kernel
  E_in       mV      Inhibitory reversal potential
- tau_syn_in ms      Rise time of the inhibitory synaptic conductance
-                    (alpha function)
+ tau_syn_in ms      Exponential decay time constant of inhibitory synaptic
+                    conductance kernel
 =========== ======= ===========================================================
 
 ============= ======= =========================================================
@@ -237,8 +237,8 @@ private:
     double b;          //!< Spike-triggered adaptation in pA
     double V_th;       //!< Spike threshold in mV.
     double t_ref;      //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
+    double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms.
+    double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms.
     double I_e;        //!< Intrinsic current in pA.
 
     double gsl_error_tol; //!< error bound for GSL integrator

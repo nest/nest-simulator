@@ -146,7 +146,7 @@ The following variables are set in ``nest_vars.sh``:
    * - ``NEST_PYTHON_PREFIX``
      - The path where the PyNEST bindings are installed.
    * - ``PYTHONPATH``
-     - Search path for non-standard Python module locations. Will be prepended to or created to if it does not exist.
+     - Search path for non-standard Python module locations. Will be prepended to or created if it does not exist.
    * - ``PATH``
      - Search path for binaries. Will be prepended to or created to if it does not exist.
    * - ``LD_LIBRARY_PATH``

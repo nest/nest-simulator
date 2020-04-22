@@ -192,7 +192,7 @@ def SetKernelStatus(params):
     ----------------
     The following parameters are available from the kernel status dictionary.
     This is a list of all kernel parameters, the keys flagged with
-    `(read only)` are internally calculated and cannot be user defined.
+    `(read only)` are set by the NEST kernel and cannot be user defined.
     Their values can be consulted using GetKernelStatus.
 
     Time and resolution

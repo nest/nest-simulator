@@ -150,6 +150,6 @@ The following variables are set in ``nest_vars.sh``:
    * - ``PATH``
      - Search path for binaries. Will be prepended to or created if it does not exist.
    * - ``LD_LIBRARY_PATH``
-     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created to if it does not exist.
+     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created if it does not exist.
 
 If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries.

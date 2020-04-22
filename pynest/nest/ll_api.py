@@ -52,6 +52,7 @@ from . import pynestkernel as kernel      # noqa
 
 __all__ = [
     'check_stack',
+    'connect_arrays',
     'set_communicator',
     'get_debug',
     'set_debug',
@@ -70,6 +71,7 @@ engine = kernel.NESTEngine()
 
 sli_push = sps = engine.push
 sli_pop = spp = engine.pop
+connect_arrays = engine.connect_arrays
 
 
 def catching_sli_run(cmd):

@@ -86,7 +86,7 @@ Dependencies
 
 To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
-.. note:: NEST requires at least version v2.8.12 of cmake, but we recommend v3.4 or later. You can type ``cmake --version`` on the commandline to check your current version.
+.. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
@@ -94,10 +94,10 @@ The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by se
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python <http://www.python.org>`_
+- `Python 3.X <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
-- `matplotlib <http://matplotlib.org>`_
+- `Matplotlib 3.X <http://matplotlib.org>`_
 - `IPython <http://ipython.org>`_
 
 
@@ -109,7 +109,7 @@ What gets installed where
 By default, everything will be installed to the subdirectories ``/install/path/{bin,lib,share}``, where ``/install/path`` is the install path given to ``cmake``:
 
 - Executables ``/install/path/bin``
-- Dynamic libraries ``/install/path/lib/``
+- Dynamic libraries ``/install/path/lib/nest``
 - SLI libraries ``/install/path/share/nest/sli``
 - Documentation ``/install/path/share/doc/nest``
 - Examples ``/install/path/share/doc/nest/examples``

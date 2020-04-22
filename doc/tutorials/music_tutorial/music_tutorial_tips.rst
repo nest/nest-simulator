@@ -1,8 +1,8 @@
-Practical Tips
-========================
+Practical tips
+==============
 
 Start MUSIC using mpirun
---------------------------
+------------------------
 
     There is an alternative way to start a MUSIC simulation without the ``music``
     binary. The logic for parsing the configuration file is built into
@@ -35,8 +35,8 @@ Start MUSIC using mpirun
     you try to process comand line options in your Pynest script, it is
     very likely you will confuse MUSIC.
 
-Disable Messages
------------------
+Disable messages
+----------------
 
     NEST can be quite chatty as it connects things, especially with large
     networks. If we don’t want all that output, we can tell it to display only
@@ -52,7 +52,7 @@ Disable Messages
     few hundred cores.
 
 Comma as decimal point
-------------------------
+----------------------
 
     Sorting output spikes may fail if you, like the authors, come from a
     country that uses a comma as decimal separator and runs your computer in
@@ -76,7 +76,7 @@ Comma as decimal point
           cat output-*|LC_ALL=C sort -k 2 -n >output.spikes
 
 Build Autotool-enable project
-------------------------------
+-----------------------------
 
     To build an Autotool-enabled C/C++ project, you don’t actually need to
     be in the main directory. You can create a subdirectory and build

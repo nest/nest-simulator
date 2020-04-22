@@ -91,17 +91,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 include( GNUInstallDirs )
 
 ################################################################################
-#################        Do not install into /usr/local        #################
-################################################################################
-
-get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
-# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()
-
-################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
 
@@ -206,7 +195,7 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       PYTHON="${PYTHON}"
       NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
@@ -216,7 +205,7 @@ if ( HAVE_PYTHON )
 else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."

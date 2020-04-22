@@ -57,11 +57,9 @@ __all__ = [
     'load_help',
     'model_deprecation_warning',
     'restructure_data',
-    'serializable',
     'show_deprecation_warning',
     'show_help_with_pager',
     'SuppressedDeprecationWarning',
-    'to_json',
     'uni_str',
 ]
 
@@ -521,59 +519,6 @@ def model_deprecation_warning(model):
             ".format(model, _deprecation_warning[model]['replacement'])
             text = get_wrapped_text(text)
             show_deprecation_warning(model, text=text)
-
-
-def serializable(data):
-    """Make data serializable for JSON.
-
-    Parameters
-    ----------
-    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
-
-    Returns
-    -------
-    result : str, int, float, list, dict
-
-    """
-    try:
-        # Numpy array and NodeCollection can be converted to list
-        result = data.tolist()
-        return result
-    except AttributeError:
-        # Not able to inherently convert to list
-        pass
-
-    if isinstance(data, kernel.SLILiteral):
-        result = data.name
-
-    elif type(data) in [list, tuple]:
-        result = [serializable(d) for d in data]
-
-    elif isinstance(data, dict):
-        result = dict([(key, serializable(value))
-                       for key, value in data.items()])
-    else:
-        result = data
-
-    return result
-
-
-def to_json(data):
-    """Serialize data to JSON.
-
-    Parameters
-    ----------
-    data : str, int, float, SLILiteral, list, tuple, dict, ndarray
-
-    Returns
-    -------
-    data_json : str
-        JSON format of the data
-    """
-
-    data_serializable = serializable(data)
-    data_json = json.dumps(data_serializable)
-    return data_json
 
 
 def restructure_data(result, keys):

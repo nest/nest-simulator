@@ -224,7 +224,7 @@ def SetKernelStatus(params):
         The local number of threads
     num_processes : int
         The number of MPI processes
-    off_grid_spiking : bool, read only
+    off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication
     grng_seed : int
         Seed for global random number generator used synchronously by all

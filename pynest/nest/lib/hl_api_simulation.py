@@ -190,10 +190,10 @@ def SetKernelStatus(params):
 
     Other parameters
     ----------------
-    The following parameters are available from the kernel status dictionary.
-    This is a list of all kernel parameters, the keys flagged with
-    `(read only)` are set by the NEST kernel and cannot be user defined.
-    Their values can be consulted using GetKernelStatus.
+    Some of the keywords in the kernel status dictionary are internally
+    calculated, and cannot be defined by the user. These are flagged as
+    `read only` in the parameter list. Use GetKernelStatus to access their
+    assigned values.
 
     Time and resolution
     resolution : float
@@ -311,13 +311,6 @@ def SetKernelStatus(params):
         Whether missed dictionary entries are treated as errors
     keep_source_table : bool
         Whether to keep source table after connection setup is complete
-
-    Notes
-    -----
-    Some of the keywords in the kernel status dictionary are internally
-    calculated, and cannot be defined by the user. These are flagged as
-    `read only` in the parameter list. Use GetKernelStatus to access their
-    assigned values.
 
     See Also
     --------

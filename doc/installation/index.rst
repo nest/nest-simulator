@@ -241,7 +241,7 @@ these instructions.**
 
    .. tab:: macOS
 
-       For further options on installing NEST on macOS, see :doc:`mac_install` for Macs.
+       For further options on installing NEST on macOS, see :doc:`mac_install`.
 
 
    .. tab:: HPC systems
@@ -265,5 +265,4 @@ these instructions.**
 
     Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
     up-to-date with most recent version of NEST. We cannot support out-dated versions.
-
 

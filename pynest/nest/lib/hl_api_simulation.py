@@ -315,7 +315,7 @@ def SetKernelStatus(params):
     Notes
     -----
     Some of the keywords in the kernel status dictionary are internally
-    calculated, and should not be defined by the user. These are flagged as
+    calculated, and cannot be defined by the user. These are flagged as
     `read only` in the parameter list. Use GetKernelStatus to access their
     assigned values.
 

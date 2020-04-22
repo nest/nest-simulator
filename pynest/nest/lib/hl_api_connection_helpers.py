@@ -28,7 +28,7 @@ import numpy
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_types import Mask, Parameter
+from .hl_api_types import Mask, NodeCollection, Parameter
 
 __all__ = [
     '_connect_layers_needed',
@@ -54,11 +54,17 @@ def _process_conn_spec(conn_spec):
         raise TypeError("conn_spec must be a string or dict")
 
 
-def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arrays):
+def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
     if syn_spec is None:
+        # for data_connect, return "static_synapse" by default
+        if data_connect:
+            return {"synapse_model": "static_synapse"}
+
         return syn_spec
+
     rule = conn_spec['rule']
+
     if isinstance(syn_spec, str):
         return kernel.SLILiteral(syn_spec)
     elif isinstance(syn_spec, dict):
@@ -71,7 +77,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                 if len(value.shape) == 1:
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
-                            if connect_np_arrays:
+                            if data_connect:
                                 raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)}.")
                             else:
                                 raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)},"
@@ -135,8 +141,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
         return syn_spec
-    else:
-        raise TypeError("syn_spec must be a string or dict")
+
+    raise TypeError("syn_spec must be a string or dict")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
@@ -233,3 +239,50 @@ def _connect_spatial(pre, post, projections):
     projections = fixdict(projections)
     sps(projections)
     sr('ConnectLayers')
+
+
+def _check_input_nodes(pre, post):
+    '''
+    Check the properties of `pre` and `post` nodes:
+
+    * if both `pre` and `post` are NodeCollections or can be converted to
+      NodeCollections (i.e. contain unique IDs), then proceed to "normal"
+      connect (potentially after conversion to NodeCollection)
+    * if both `pre` and `post` are arrays and contain non-unique items, then
+      we proceed to "data_connect"
+    * if at least one of them has non-unique items and they have different
+      sizes, then raise an error.
+    '''
+    data_connect = False
+
+    pre_is_nc, post_is_nc = True, True
+
+    if not isinstance(pre, NodeCollection):
+        # check if it can be converted
+        if len(set(pre)) == len(pre):
+            pre = NodeCollection(pre)
+        else:
+            pre_is_nc = False
+
+    if not isinstance(post, NodeCollection):
+        # check if it can be converted
+        if len(set(post)) == len(post):
+            post = NodeCollection(post)
+        else:
+            post_is_nc = False
+
+    if not pre_is_nc or not post_is_nc:
+        assert len(pre) == len(post), "If `pre` and `post` contain non-unique IDs, then " \
+                                      "they must have the same length."
+
+        # convert them to arrays
+        pre  = np.array(pre, dtype=int)
+        post = np.array(post, dtype=int)
+
+        # check dimension
+        if not (pre.ndim == 1 and post.ndim == 1):
+            raise ValueError("Sources and targets must be 1-dimensional arrays")
+
+        data_connect = True
+
+    return data_connect, pre, post

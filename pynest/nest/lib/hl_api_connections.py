@@ -28,8 +28,9 @@ import numpy
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
-from .hl_api_connection_helpers import (_connect_layers_needed, _connect_spatial,
-                                        _process_conn_spec, _process_spatial_projections, _process_syn_spec)
+from .hl_api_connection_helpers import (_check_input_nodes, _connect_layers_needed,
+                                        _connect_spatial, _process_conn_spec,
+                                        _process_spatial_projections, _process_syn_spec)
 from .hl_api_nodes import Create
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 from .hl_api_info import GetStatus
@@ -125,9 +126,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Parameters
     ----------
-    pre : NodeCollection (or np.array)
+    pre : NodeCollection (or array-like object)
         Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection (or np.array)
+    post : NodeCollection (or array-like object)
         Postsynaptic nodes, as object representing the IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
@@ -200,30 +201,26 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_mgnt`
     """
+    data_connect, pre, post = _check_input_nodes(pre, post)
 
-    connect_np_arrays = False
-    if isinstance(pre, numpy.ndarray) or isinstance(post, numpy.ndarray):
-        if not (isinstance(pre, numpy.ndarray) and isinstance(post, numpy.ndarray)):
-            raise TypeError("Sources and targets must either both be NodeCollections, "
-                            "or NumPy arrays with conn_spec=None")
-        elif conn_spec is not None:
+    if data_connect:
+        if conn_spec is not None:
             raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
-        elif not (pre.ndim == 1 and post.ndim == 1):
-            raise ValueError("Sources and targets must be 1-dimensional NumPy arrays")
-        else:
-            connect_np_arrays = True
-            conn_spec = 'one_to_one'
+
+        conn_spec = 'one_to_one'
+
+    print(data_connect, type(pre), type(post))
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
     processed_syn_spec = _process_syn_spec(
-        syn_spec, processed_conn_spec, len(pre), len(post), connect_np_arrays)
+        syn_spec, processed_conn_spec, len(pre), len(post), data_connect)
 
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
-    if connect_np_arrays:
+    if data_connect:
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
         if processed_syn_spec is None:
@@ -255,13 +252,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     sps(pre)
     sps(post)
-
-    if not isinstance(pre, NodeCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a "
-                        "NodeCollection")
-    if not isinstance(post, NodeCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a "
-                        "NodeCollection")
 
     # In some cases we must connect with ConnectLayers instead.
     if _connect_layers_needed(processed_conn_spec, processed_syn_spec):

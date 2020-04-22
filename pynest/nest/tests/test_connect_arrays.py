@@ -31,18 +31,34 @@ class TestConnectArrays(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_connect_arrays(self):
+    def test_connect_arrays_unique(self):
         """Connecting NumPy arrays of node IDs"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = np.arange(1, n+1, dtype=np.uint64)
-        weights = np.ones(len(sources))
-        delays = np.ones(len(sources))
-        syn_model = 'static_synapse'
+        weights = 1.
+        delays  = 1.
 
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
-                                                 'synapse_model': syn_model})
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
+
+        conns = nest.GetConnections()
+        for s, t, w, d, c in zip(sources, targets, weights, delays, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
+
+    def test_connect_arrays_nonunique(self):
+        """Connecting NumPy arrays of node IDs"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = np.array([1, 1, 3, 5, 4, 5, 9, 0, 2, 8], dtype=np.uint64)
+        weights = np.ones(n)
+        delays  = np.ones(n)
+
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
 
         conns = nest.GetConnections()
         for s, t, w, d, c in zip(sources, targets, weights, delays, conns):
@@ -179,18 +195,28 @@ class TestConnectArrays(unittest.TestCase):
                                                      })
 
     def test_connect_arrays_wrong_dtype(self):
-        """Raises exception when connecting NumPy arrays with wrong dtype"""
+        """Automatically correct NumPy arrays with wrong dtype"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.double)
         targets = np.arange(1, n+1, dtype=np.double)
-        weights = np.ones(len(sources))
-        delays = np.ones(len(sources))
+        weights = 1.
+        delays  = 1.
         syn_model = 'static_synapse'
 
-        with self.assertRaises(TypeError):
-            nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
-                                                     'synapse_model': syn_model})
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
+                                                 'synapse_model': syn_model})
+
+        conns = nest.GetConnections()
+
+        for s, t, w, d, r, a, tau, c in zip(sources, targets, weights, delays, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
+            self.assertEqual(c.receptor, r)
+            self.assertEqual(c.alpha, a)
+            self.assertEqual(c.tau, tau)
 
     def test_connect_arrays_wrong_arraytype(self):
         """Raises exception when connecting arrays with wrong array type"""

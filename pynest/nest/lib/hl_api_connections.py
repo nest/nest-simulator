@@ -209,8 +209,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
         conn_spec = 'one_to_one'
 
-    print(data_connect, type(pre), type(post))
-
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted

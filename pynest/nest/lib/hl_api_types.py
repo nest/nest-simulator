@@ -224,6 +224,10 @@ class NodeCollection(object):
         else:
             raise IndexError('only integers and slices are valid indices')
 
+    def __array__(self, dtype=None):
+        ''' Numpy compatibility function '''
+        return numpy.array(self.tolist(), dtype=dtype)
+
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
 
@@ -417,6 +421,11 @@ class NodeCollection(object):
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
+
+        # numpy compatibility check
+        if attr.startswith('__array_'):
+            raise AttributeError
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):

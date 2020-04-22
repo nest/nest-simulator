@@ -24,7 +24,7 @@ These are helper functions to ease the definition of the
 Connect function.
 """
 
-import numpy
+import numpy as np
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
@@ -69,11 +69,11 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
         return kernel.SLILiteral(syn_spec)
     elif isinstance(syn_spec, dict):
         for key, value in syn_spec.items():
-            # if value is a list, it is converted to a numpy array
+            # if value is a list, it is converted to a np array
             if isinstance(value, (list, tuple)):
-                value = numpy.asarray(value)
+                value = np.asarray(value)
 
-            if isinstance(value, (numpy.ndarray, numpy.generic)):
+            if isinstance(value, (np.ndarray, np.generic)):
                 if len(value.shape) == 1:
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
@@ -140,6 +140,11 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
                             "only be used in conjunction with rules "
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
+
+        # check that "spynapse_model" is there for data_connect
+        if data_connect and "synapse_model" not in syn_spec:
+            syn_spec["synapse_model"] = "static_synapse"
+
         return syn_spec
 
     raise TypeError("syn_spec must be a string or dict")
@@ -260,14 +265,14 @@ def _check_input_nodes(pre, post):
     if not isinstance(pre, NodeCollection):
         # check if it can be converted
         if len(set(pre)) == len(pre):
-            pre = NodeCollection(pre)
+            pre = NodeCollection(np.array(pre, dtype=int))
         else:
             pre_is_nc = False
 
     if not isinstance(post, NodeCollection):
         # check if it can be converted
         if len(set(post)) == len(post):
-            post = NodeCollection(post)
+            post = NodeCollection(np.array(post, dtype=int))
         else:
             post_is_nc = False
 

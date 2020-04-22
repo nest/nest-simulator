@@ -499,7 +499,6 @@ def show_help_with_pager(hlpobj, pager=None):
         return
 
     try:
-        # pagerl = pager.split(" ")
         pagerl = shlex.split(pager)
         subprocess.check_call(pagerl + [objf])
     except (OSError, IOError, subprocess.CalledProcessError):

@@ -193,7 +193,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8
@@ -274,6 +274,8 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
+
+source $NEST_RESULT/bin/nest_vars.sh
 
     echo
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

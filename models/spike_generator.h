@@ -176,8 +176,7 @@ SpikeEvent
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
 EndUserDocs 
 */
-
-class spike_generator : public InputDevice
+class spike_generator : public InputDevice, public StimulatingDevice< SpikeEvent >
 {
 
 public:
@@ -220,7 +219,7 @@ public:
 
   // ------------------------------------------------------------
 
-  struct SpikeState_ : State_
+  struct SpikeState_ : InputDevice::State_
   {
     SpikeState_();
     size_t position_; //!< index of next spike to deliver
@@ -228,7 +227,7 @@ public:
 
   // ------------------------------------------------------------
 
-  struct SpikeParameters_ : Parameters_
+  struct SpikeParameters_ : InputDevice::Parameters_
   {
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
@@ -282,7 +281,6 @@ private:
 
   void update( Time const&, long, long ) override;
 
-  StimulatingDevice< SpikeEvent > device_;
   SpikeParameters_ P_;
   SpikeState_ S_;
 };
@@ -290,7 +288,7 @@ private:
 inline port
 spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -311,7 +309,7 @@ spike_generator::get_status( DictionaryDatum& d ) const
 {
   InputDevice::get_status( d );
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice::get_status( d );
 }
 
 } // namespace

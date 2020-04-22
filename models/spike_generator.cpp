@@ -302,7 +302,7 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
 
 nest::spike_generator::spike_generator()
   : InputDevice()
-  , device_()
+  , StimulatingDevice()
   , P_()
   , S_()
 {
@@ -310,7 +310,7 @@ nest::spike_generator::spike_generator()
 
 nest::spike_generator::spike_generator( const spike_generator& n )
   : InputDevice( n )
-  , device_( n.device_ )
+  , StimulatingDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
@@ -326,21 +326,21 @@ nest::spike_generator::init_state_( const Node& proto )
 {
   const spike_generator& pr = downcast< spike_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  // TODO temporarly remove for intermediate refactor StimulatingDevice::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::spike_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice::init_buffers();
 }
 
 void
 nest::spike_generator::calibrate()
 {
   InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
-  device_.calibrate();
+  StimulatingDevice::calibrate();
 }
 
 
@@ -353,7 +353,7 @@ nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
 {
   SpikeParameters_ ptmp = P_; // temporary copy in case of errors
 
-  const Time& origin = device_.get_origin();
+  const Time& origin = StimulatingDevice::get_origin();
   // For the input backend
   if ( not input_spikes.empty() )
   {
@@ -401,7 +401,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
-  const Time& origin = device_.get_origin();
+  const Time& origin = StimulatingDevice::get_origin();
 
   // We fire all spikes with time stamps up to including sliceT0 + to
   while ( S_.position_ < P_.spike_stamps_.size() )
@@ -419,7 +419,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       break;
     }
 
-    if ( device_.is_active( tnext_stamp ) )
+    if ( StimulatingDevice::is_active( tnext_stamp ) )
     {
       SpikeEvent* se;
 
@@ -480,7 +480,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
   else
   {
-    origin = device_.get_origin();
+    origin = StimulatingDevice::get_origin();
   }
 
   // throws if BadProperty
@@ -491,7 +491,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice::set_status( d );
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;

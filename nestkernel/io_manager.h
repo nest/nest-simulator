@@ -122,8 +122,8 @@ public:
   void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
   void check_input_backend_device_status( const Name&, const DictionaryDatum& );
-  void get_input_backend_device_defaults( const Name&, DictionaryDatum& );
-  void get_input_backend_device_status( const Name&, const InputDevice&, DictionaryDatum& );
+  void get_stimulating_backend_device_defaults( const Name&, DictionaryDatum& );
+  void get_stimulating_backend_device_status( const Name&, const InputDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
@@ -140,7 +140,7 @@ private:
   /**
    * A mapping from names to registered input backends
    */
-  std::map< Name, StimulatingBackend* > input_backends_;
+  std::map< Name, StimulatingBackend* > stimulating_backends_;
 };
 
 } // namespace nest

@@ -1015,14 +1015,14 @@ nest::SimulationManager::print_progress_()
     // ms
     double t_real_acc = ( t_real_ ) / 1000.;
     double t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
-    // real-time factor = wall-clock time / biological simulation time
+    // real-time factor = wall-clock time / model time
     rt_factor = t_real_acc / t_sim_acc;
   }
 
   int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
 
   std::cout << "\r[ " << std::setw( 3 ) << std::right << percentage << "% ] "
-            << "Biological simulation time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms() << " ms, "
+            << "Model time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms() << " ms, "
             << "Real-time factor: " << std::setprecision( 4 ) << rt_factor
             << std::resetiosflags( std::ios_base::floatfield );
   std::flush( std::cout );

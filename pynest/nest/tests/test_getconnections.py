@@ -53,6 +53,49 @@ class GetConnectionsTestCase(unittest.TestCase):
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
 
+        weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        d1 = tuple({"weight": w} for w in weights)
+
+        c5 = nest.GetConnections(a, a)
+        c5.set(d1)
+        s2 = c5.get('weight')
+        self.assertEqual(s2, list(weights))
+
+        c6 = nest.GetConnections()
+        self.assertEqual(c1, c6)
+
+    def test_GetConnectionsTargetModels(self):
+        """GetConnections iterating models for target"""
+        for model in nest.Models():
+            alpha = nest.Create('iaf_psc_alpha')
+            try:
+                other = nest.Create(model)
+                nest.Connect(alpha, other)
+            except nest.kernel.NESTError:
+                # If we can't create a node with this model, or connect
+                # to a node of this model, we ignore it.
+                continue
+            conns = nest.GetConnections(alpha, other)
+            self.assertEqual(
+                len(conns), 1,
+                'Failed to get connection with target model {}'.format(model))
+
+    def test_GetConnectionsSourceModels(self):
+        """GetConnections iterating models for source"""
+        for model in nest.Models():
+            alpha = nest.Create('iaf_psc_alpha')
+            try:
+                other = nest.Create(model)
+                nest.Connect(other, alpha)
+            except nest.kernel.NESTError:
+                # If we can't create a node with this model, or connect
+                # to a node of this model, we ignore it.
+                continue
+            conns = nest.GetConnections(other, alpha)
+            self.assertEqual(
+                len(conns), 1,
+                'Failed to get connection with source model {}'.format(model))
+
 
 def suite():
 

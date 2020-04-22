@@ -90,60 +90,60 @@ public:
   virtual void set_synapse_status( const index lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /**
-   * Add ConnectionID with given source_gid and lcid to conns. If
-   * target_gid is given, only add connection if target_gid matches
-   * the gid of the target of the connection.
+   * Add ConnectionID with given source_node_id and lcid to conns. If
+   * target_node_id is given, only add connection if target_node_id matches
+   * the node_id of the target of the connection.
    */
-  virtual void get_connection( const index source_gid,
-    const index target_gid,
+  virtual void get_connection( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const index lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionID with given source_gid and lcid to conns. If
-   * target_neuron_gids is given, only add connection if
-   * target_neuron_gids contains the gid of the target of the connection.
+   * Add ConnectionID with given source_node_id and lcid to conns. If
+   * target_neuron_node_ids is given, only add connection if
+   * target_neuron_node_ids contains the node ID of the target of the connection.
    */
-  virtual void get_connection_with_specified_targets( const index source_gid,
-    const std::vector< size_t >& target_neuron_gids,
+  virtual void get_connection_with_specified_targets( const index source_node_id,
+    const std::vector< size_t >& target_neuron_node_ids,
     const thread tid,
     const index lcid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionIDs with given source_gid to conns, looping over
-   * all lcids. If target_gid is given, only add connection if
-   * target_gid matches the gid of the target of the connection.
+   * Add ConnectionIDs with given source_node_id to conns, looping over
+   * all lcids. If target_node_id is given, only add connection if
+   * target_node_id matches the node ID of the target of the connection.
    */
-  virtual void get_all_connections( const index source_gid,
-    const index target_gid,
+  virtual void get_all_connections( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * For a given target_gid add lcids of all connections with matching
-   * gid of target to source_lcids.
+   * For a given target_node_id add lcids of all connections with matching
+   * node ID of target to source_lcids.
    */
   virtual void
-  get_source_lcids( const thread tid, const index target_gid, std::vector< index >& source_lcids ) const = 0;
+  get_source_lcids( const thread tid, const index target_node_id, std::vector< index >& source_lcids ) const = 0;
 
   /**
-   * For a given start_lcid add gids of all targets that belong to the
-   * same source to target_gids.
+   * For a given start_lcid add node IDs of all targets that belong to the
+   * same source to target_node_ids.
    */
-  virtual void get_target_gids( const thread tid,
+  virtual void get_target_node_ids( const thread tid,
     const index start_lcid,
     const std::string& post_synaptic_element,
-    std::vector< index >& target_gids ) const = 0;
+    std::vector< index >& target_node_ids ) const = 0;
 
   /**
-   * For a given lcid return the gid of the target of the connection.
+   * For a given lcid return the node ID of the target of the connection.
    */
-  virtual index get_target_gid( const thread tid, const unsigned int lcid ) const = 0;
+  virtual index get_target_node_id( const thread tid, const unsigned int lcid ) const = 0;
 
   /**
    * Send the event e to all connections of this Connector.
@@ -163,14 +163,14 @@ public:
   /**
    * Update weights of dopamine modulated STDP connections.
    */
-  virtual void trigger_update_weight( const long vt_gid,
+  virtual void trigger_update_weight( const long vt_node_id,
     const thread tid,
     const std::vector< spikecounter >& dopa_spikes,
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   /**
-   * Sort connections according to source gids.
+   * Sort connections according to source node IDs.
    */
   virtual void sort_connections( BlockVector< Source >& ) = 0;
 
@@ -178,24 +178,24 @@ public:
    * Set a flag in the connection indicating whether the following
    * connection belongs to the same source.
    */
-  virtual void set_has_source_subsequent_targets( const index lcid, const bool has_subsequent_targets ) = 0;
+  virtual void set_source_has_more_targets( const index lcid, const bool has_more_targets ) = 0;
 
   /**
    * Return lcid of the first connection after start_lcid (inclusive)
-   * where the gid of the target matches target_gid. If there are no matches,
+   * where the node_id of the target matches target_node_id. If there are no matches,
    * the function returns invalid_index.
    */
-  virtual index find_first_target( const thread tid, const index start_lcid, const index target_gid ) const = 0;
+  virtual index find_first_target( const thread tid, const index start_lcid, const index target_node_id ) const = 0;
 
   /**
-   * Return lcid of first connection where the gid of the target
-   * matches target_gid; consider only the connections with lcids
+   * Return lcid of first connection where the node ID of the target
+   * matches target_node_id; consider only the connections with lcids
    * given in matching_lcids. If there is no match, the function returns
    * invalid_index.
    */
   virtual index find_matching_target( const thread tid,
     const std::vector< index >& matching_lcids,
-    const index target_gid ) const = 0;
+    const index target_node_id ) const = 0;
 
   /**
    * Disable the transfer of events through the connection at position
@@ -249,9 +249,9 @@ public:
 
     C_[ lcid ].get_status( dict );
 
-    // get target gid here, where tid is available
+    // get target node ID here, where tid is available
     // necessary for hpc synapses using TargetIdentifierIndex
-    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_gid() );
+    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_node_id() );
   }
 
   void
@@ -262,17 +262,15 @@ public:
     C_[ lcid ].set_status( dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
-
-  Connector< ConnectionT >&
+  void
   push_back( const ConnectionT& c )
   {
     C_.push_back( c );
-    return *this;
   }
 
   void
-  get_connection( const index source_gid,
-    const index target_gid,
+  get_connection( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const index lcid,
     const long synapse_label,
@@ -282,18 +280,19 @@ public:
     {
       if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
       {
-        const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-        if ( current_target_gid == target_gid or target_gid == 0 )
+        const index current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
+        if ( current_target_node_id == target_node_id or target_node_id == 0 )
         {
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
+          conns.push_back(
+            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
         }
       }
     }
   }
 
   void
-  get_connection_with_specified_targets( const index source_gid,
-    const std::vector< size_t >& target_neuron_gids,
+  get_connection_with_specified_targets( const index source_node_id,
+    const std::vector< size_t >& target_neuron_node_ids,
     const thread tid,
     const index lcid,
     const long synapse_label,
@@ -303,36 +302,37 @@ public:
     {
       if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
       {
-        const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-        if ( std::find( target_neuron_gids.begin(), target_neuron_gids.end(), current_target_gid )
-          != target_neuron_gids.end() )
+        const index current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
+        if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
+          != target_neuron_node_ids.end() )
         {
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid, current_target_gid, tid, syn_id_, lcid ) ) );
+          conns.push_back(
+            ConnectionDatum( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) ) );
         }
       }
     }
   }
 
   void
-  get_all_connections( const index source_gid,
-    const index target_gid,
+  get_all_connections( const index source_node_id,
+    const index target_node_id,
     const thread tid,
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
-      get_connection( source_gid, target_gid, tid, lcid, synapse_label, conns );
+      get_connection( source_node_id, target_node_id, tid, lcid, synapse_label, conns );
     }
   }
 
   void
-  get_source_lcids( const thread tid, const index target_gid, std::vector< index >& source_lcids ) const
+  get_source_lcids( const thread tid, const index target_node_id, std::vector< index >& source_lcids ) const
   {
     for ( index lcid = 0; lcid < C_.size(); ++lcid )
     {
-      const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-      if ( current_target_gid == target_gid and not C_[ lcid ].is_disabled() )
+      const index current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
+      if ( current_target_node_id == target_node_id and not C_[ lcid ].is_disabled() )
       {
         source_lcids.push_back( lcid );
       }
@@ -340,10 +340,10 @@ public:
   }
 
   void
-  get_target_gids( const thread tid,
+  get_target_node_ids( const thread tid,
     const index start_lcid,
     const std::string& post_synaptic_element,
-    std::vector< index >& target_gids ) const
+    std::vector< index >& target_node_ids ) const
   {
     index lcid = start_lcid;
     while ( true )
@@ -351,10 +351,10 @@ public:
       if ( C_[ lcid ].get_target( tid )->get_synaptic_elements( post_synaptic_element ) != 0.0
         and not C_[ lcid ].is_disabled() )
       {
-        target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
+        target_node_ids.push_back( C_[ lcid ].get_target( tid )->get_node_id() );
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
+      if ( not C_[ lcid ].source_has_more_targets() )
       {
         break;
       }
@@ -364,9 +364,9 @@ public:
   }
 
   index
-  get_target_gid( const thread tid, const unsigned int lcid ) const
+  get_target_node_id( const thread tid, const unsigned int lcid ) const
   {
-    return C_[ lcid ].get_target( tid )->get_gid();
+    return C_[ lcid ].get_target( tid )->get_node_id();
   }
 
   void
@@ -388,11 +388,12 @@ public:
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
     index lcid_offset = 0;
+
     while ( true )
     {
       ConnectionT& conn = C_[ lcid + lcid_offset ];
       const bool is_disabled = conn.is_disabled();
-      const bool has_source_subsequent_targets = conn.has_source_subsequent_targets();
+      const bool source_has_more_targets = conn.source_has_more_targets();
 
       e.set_port( lcid + lcid_offset );
       if ( not is_disabled )
@@ -400,7 +401,7 @@ public:
         conn.send( e, tid, cp );
         send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
-      if ( not has_source_subsequent_targets )
+      if ( not source_has_more_targets )
       {
         break;
       }
@@ -414,7 +415,7 @@ public:
   void send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp );
 
   void
-  trigger_update_weight( const long vt_gid,
+  trigger_update_weight( const long vt_node_id,
     const thread tid,
     const std::vector< spikecounter >& dopa_spikes,
     const double t_trig,
@@ -422,8 +423,9 @@ public:
   {
     for ( size_t i = 0; i < C_.size(); ++i )
     {
-      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties().get_vt_gid()
-        == vt_gid )
+      if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
+             ->get_common_properties()
+             .get_vt_node_id() == vt_node_id )
       {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,
@@ -440,23 +442,23 @@ public:
   }
 
   void
-  set_has_source_subsequent_targets( const index lcid, const bool has_subsequent_targets )
+  set_source_has_more_targets( const index lcid, const bool has_more_targets )
   {
-    C_[ lcid ].set_has_source_subsequent_targets( has_subsequent_targets );
+    C_[ lcid ].set_source_has_more_targets( has_more_targets );
   }
 
   index
-  find_first_target( const thread tid, const index start_lcid, const index target_gid ) const
+  find_first_target( const thread tid, const index start_lcid, const index target_node_id ) const
   {
     index lcid = start_lcid;
     while ( true )
     {
-      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid and not C_[ lcid ].is_disabled() )
+      if ( C_[ lcid ].get_target( tid )->get_node_id() == target_node_id and not C_[ lcid ].is_disabled() )
       {
         return lcid;
       }
 
-      if ( not C_[ lcid ].has_source_subsequent_targets() )
+      if ( not C_[ lcid ].source_has_more_targets() )
       {
         return invalid_index;
       }
@@ -466,11 +468,11 @@ public:
   }
 
   index
-  find_matching_target( const thread tid, const std::vector< index >& matching_lcids, const index target_gid ) const
+  find_matching_target( const thread tid, const std::vector< index >& matching_lcids, const index target_node_id ) const
   {
     for ( size_t i = 0; i < matching_lcids.size(); ++i )
     {
-      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == target_gid )
+      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_node_id() == target_node_id )
       {
         return matching_lcids[ i ];
       }

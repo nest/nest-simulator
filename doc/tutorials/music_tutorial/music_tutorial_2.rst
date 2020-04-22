@@ -17,7 +17,7 @@ configuration file:
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    neurons = nest.Create('iaf_neuron', 2, [{'I_e': 400.0}, {'I_e': 405.0}])
+    neurons = nest.Create('iaf_psc_alpha', 2, [{'I_e': 400.0}, {'I_e': 405.0}])
 
     music_out = nest.Create('music_event_out_proxy', 1,
         params = {'port_name':'p_out'})
@@ -26,8 +26,7 @@ configuration file:
         nest.Connect([n], music_out, "one_to_one",{'music_channel': i})
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"withgid": True, "withtime": True, "to_file": True,
-        "label": "send", "file_extension": "spikes"})
+    nest.SetStatus(sdetector, {"record_to": "ascii", "label": "send"})
 
     nest.Connect(neurons, sdetector)
 
@@ -40,7 +39,7 @@ and one with 405mA, just so they will respond differently. If you use
 ipython to work interactively, you can check their current status
 dictionary with ``nest.GetStatus(neurons)``. The definitive
 documentation for NEST nodes is the header file, in this case
-``models/iaf_neuron.h`` in the NEST source.
+``models/iaf_psc_alpha.h`` in the NEST source.
 
 We create a single ``music_event_out_proxy`` for our
 output on line 8, and set the port name. We loop over all the neurons on
@@ -73,8 +72,7 @@ simulate for one second.
     parrots = nest.Create("parrot_neuron", 2)
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"withgid": True, "withtime": True, "to_file": True,
-        "label": "receive", "file_extension": "spikes"})
+    nest.SetStatus(sdetector, {"record_to": ["ascii"], "label": "receive"})
 
     nest.Connect(music_in, parrots, 'one_to_one', {"weight":1.0, "delay": 2.0})
     nest.Connect(parrots, sdetector)

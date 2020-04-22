@@ -27,6 +27,10 @@
 // C++ includes:
 #include <cmath>
 
+// Includes from libnestutil:
+#include "beta_normalization_factor.h"
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
@@ -376,48 +380,48 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
+nest::ht_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::E_Na, E_Na );
-  updateValue< double >( d, names::E_K, E_K );
-  updateValue< double >( d, names::g_NaL, g_NaL );
-  updateValue< double >( d, names::g_KL, g_KL );
-  updateValue< double >( d, names::tau_m, tau_m );
-  updateValue< double >( d, names::theta_eq, theta_eq );
-  updateValue< double >( d, names::tau_theta, tau_theta );
-  updateValue< double >( d, names::tau_spike, tau_spike );
-  updateValue< double >( d, names::t_ref, t_ref );
-  updateValue< double >( d, names::g_peak_AMPA, g_peak_AMPA );
-  updateValue< double >( d, names::tau_rise_AMPA, tau_rise_AMPA );
-  updateValue< double >( d, names::tau_decay_AMPA, tau_decay_AMPA );
-  updateValue< double >( d, names::E_rev_AMPA, E_rev_AMPA );
-  updateValue< double >( d, names::g_peak_NMDA, g_peak_NMDA );
-  updateValue< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
-  updateValue< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
-  updateValue< double >( d, names::E_rev_NMDA, E_rev_NMDA );
-  updateValue< double >( d, names::V_act_NMDA, V_act_NMDA );
-  updateValue< double >( d, names::S_act_NMDA, S_act_NMDA );
-  updateValue< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA );
-  updateValue< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA );
-  updateValue< bool >( d, names::instant_unblock_NMDA, instant_unblock_NMDA );
-  updateValue< double >( d, names::g_peak_GABA_A, g_peak_GABA_A );
-  updateValue< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A );
-  updateValue< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A );
-  updateValue< double >( d, names::E_rev_GABA_A, E_rev_GABA_A );
-  updateValue< double >( d, names::g_peak_GABA_B, g_peak_GABA_B );
-  updateValue< double >( d, names::tau_rise_GABA_B, tau_rise_GABA_B );
-  updateValue< double >( d, names::tau_decay_GABA_B, tau_decay_GABA_B );
-  updateValue< double >( d, names::E_rev_GABA_B, E_rev_GABA_B );
-  updateValue< double >( d, names::g_peak_NaP, g_peak_NaP );
-  updateValue< double >( d, names::E_rev_NaP, E_rev_NaP );
-  updateValue< double >( d, names::g_peak_KNa, g_peak_KNa );
-  updateValue< double >( d, names::E_rev_KNa, E_rev_KNa );
-  updateValue< double >( d, names::tau_D_KNa, tau_D_KNa );
-  updateValue< double >( d, names::g_peak_T, g_peak_T );
-  updateValue< double >( d, names::E_rev_T, E_rev_T );
-  updateValue< double >( d, names::g_peak_h, g_peak_h );
-  updateValue< double >( d, names::E_rev_h, E_rev_h );
-  updateValue< bool >( d, names::voltage_clamp, voltage_clamp );
+  updateValueParam< double >( d, names::E_Na, E_Na, node );
+  updateValueParam< double >( d, names::E_K, E_K, node );
+  updateValueParam< double >( d, names::g_NaL, g_NaL, node );
+  updateValueParam< double >( d, names::g_KL, g_KL, node );
+  updateValueParam< double >( d, names::tau_m, tau_m, node );
+  updateValueParam< double >( d, names::theta_eq, theta_eq, node );
+  updateValueParam< double >( d, names::tau_theta, tau_theta, node );
+  updateValueParam< double >( d, names::tau_spike, tau_spike, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  updateValueParam< double >( d, names::g_peak_AMPA, g_peak_AMPA, node );
+  updateValueParam< double >( d, names::tau_rise_AMPA, tau_rise_AMPA, node );
+  updateValueParam< double >( d, names::tau_decay_AMPA, tau_decay_AMPA, node );
+  updateValueParam< double >( d, names::E_rev_AMPA, E_rev_AMPA, node );
+  updateValueParam< double >( d, names::g_peak_NMDA, g_peak_NMDA, node );
+  updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
+  updateValueParam< double >( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
+  updateValueParam< double >( d, names::E_rev_NMDA, E_rev_NMDA, node );
+  updateValueParam< double >( d, names::V_act_NMDA, V_act_NMDA, node );
+  updateValueParam< double >( d, names::S_act_NMDA, S_act_NMDA, node );
+  updateValueParam< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA, node );
+  updateValueParam< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA, node );
+  updateValueParam< bool >( d, names::instant_unblock_NMDA, instant_unblock_NMDA, node );
+  updateValueParam< double >( d, names::g_peak_GABA_A, g_peak_GABA_A, node );
+  updateValueParam< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A, node );
+  updateValueParam< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A, node );
+  updateValueParam< double >( d, names::E_rev_GABA_A, E_rev_GABA_A, node );
+  updateValueParam< double >( d, names::g_peak_GABA_B, g_peak_GABA_B, node );
+  updateValueParam< double >( d, names::tau_rise_GABA_B, tau_rise_GABA_B, node );
+  updateValueParam< double >( d, names::tau_decay_GABA_B, tau_decay_GABA_B, node );
+  updateValueParam< double >( d, names::E_rev_GABA_B, E_rev_GABA_B, node );
+  updateValueParam< double >( d, names::g_peak_NaP, g_peak_NaP, node );
+  updateValueParam< double >( d, names::E_rev_NaP, E_rev_NaP, node );
+  updateValueParam< double >( d, names::g_peak_KNa, g_peak_KNa, node );
+  updateValueParam< double >( d, names::E_rev_KNa, E_rev_KNa, node );
+  updateValueParam< double >( d, names::tau_D_KNa, tau_D_KNa, node );
+  updateValueParam< double >( d, names::g_peak_T, g_peak_T, node );
+  updateValueParam< double >( d, names::E_rev_T, E_rev_T, node );
+  updateValueParam< double >( d, names::g_peak_h, g_peak_h, node );
+  updateValueParam< double >( d, names::E_rev_h, E_rev_h, node );
+  updateValueParam< bool >( d, names::voltage_clamp, voltage_clamp, node );
 
   if ( g_peak_AMPA < 0 )
   {
@@ -556,13 +560,13 @@ nest::ht_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node )
+nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node, Node* nodeptr )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::theta, y_[ THETA ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], nodeptr );
+  updateValueParam< double >( d, names::theta, y_[ THETA ], nodeptr );
 
   bool equilibrate = false;
-  updateValue< bool >( d, names::equilibrate, equilibrate );
+  updateValueParam< bool >( d, names::equilibrate, equilibrate, nodeptr );
   if ( equilibrate )
   {
     y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
@@ -703,34 +707,7 @@ nest::ht_neuron::init_buffers_()
 double
 nest::ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak )
 {
-  /* The solution to the beta function ODE obtained by the solver is
-   *
-   *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
-   *
-   * with a = 1/tau_1, b = 1/tau_2, a != b. The maximum of this function is at
-   *
-   *   t* = 1/(a-b) ln a/b
-   *
-   * We want to scale the function so that
-   *
-   *   max g == g(t*) == g_peak
-   *
-   * We thus need to set
-   *
-   *   c = g_peak * ( a - b ) / ( e^(-b t*) - e^(-a t*) )
-   *
-   * See Rotter & Diesmann, Biol Cybern 81:381 (1999) and Roth and van Rossum,
-   * Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
-   * MIT Press, 2010.
-   */
-
-  const double t_peak = ( tau_2 * tau_1 ) * std::log( tau_2 / tau_1 ) / ( tau_2 - tau_1 );
-
-  const double prefactor = ( 1 / tau_1 ) - ( 1 / tau_2 );
-
-  const double peak_value = ( std::exp( -t_peak / tau_2 ) - std::exp( -t_peak / tau_1 ) );
-
-  return g_peak * prefactor / peak_value;
+  return g_peak * beta_normalization_factor( tau_1, tau_2 );
 }
 
 void
@@ -776,10 +753,10 @@ nest::ht_neuron::get_status( DictionaryDatum& d ) const
 void
 nest::ht_neuron::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, *this );  // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, *this, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

@@ -1,0 +1,63 @@
+/*
+ *  issue-1212.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1212
+
+Synopsis: (issue-1212) run -> NEST exits if test fails
+
+Description:
+This test makes sure that using a weight recorder with a probabilistic
+synapse that drops a spike doesn't result in a segfault.
+
+Author: Håkon Mørk
+FirstVersion: January 2020
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  /sg /spike_generator << /spike_times [ 10. ] >> Create def
+  /source_parrot /parrot_neuron Create def
+  /target_parrot /parrot_neuron Create def
+  /wr /weight_recorder Create def
+
+  /bernoulli_synapse /bernoulli_synapse_wr << /weight_recorder wr >> CopyModel
+
+  sg source_parrot Connect
+
+  source_parrot target_parrot
+  << /rule /one_to_one >>
+  << /synapse_model /bernoulli_synapse_wr
+     /p_transmit 0.0
+     /weight 1.0 >>
+  Connect
+
+  20. Simulate
+}
+pass_or_die
+
+endusing

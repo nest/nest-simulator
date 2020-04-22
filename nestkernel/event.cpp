@@ -35,9 +35,9 @@
 namespace nest
 {
 Event::Event()
-  : sender_gid_( 0 ) // initializing to 0 as this is an unsigned type
-                     // gid 0 is network, can never send an event, so
-                     // this is safe
+  : sender_node_id_( 0 ) // initializing to 0 as this is an unsigned type
+                         // node ID 0 is network, can never send an event, so
+                         // this is safe
   , sender_( NULL )
   , receiver_( NULL )
   , p_( -1 )
@@ -123,7 +123,7 @@ void DiffusionConnectionEvent::operator()()
 }
 
 nest::index
-nest::Event::get_receiver_gid( void ) const
+nest::Event::get_receiver_node_id( void ) const
 {
-  return receiver_->get_gid();
+  return receiver_->get_node_id();
 }

@@ -30,7 +30,7 @@ synchronize over time due to the gap-junction connection.
 """
 
 import nest
-import pylab as pl
+import matplotlib.pyplot as plt
 import numpy
 
 nest.ResetKernel()
@@ -43,17 +43,14 @@ nest.SetKernelStatus({'resolution': 0.05})
 
 neuron = nest.Create('hh_psc_alpha_gap', 2)
 
-vm = nest.Create('voltmeter', params={'to_file': False,
-                                      'withgid': True,
-                                      'withtime': True,
-                                      'interval': 0.1})
+vm = nest.Create('voltmeter', params={'interval': 0.1})
 
 ###############################################################################
 # Then we set the constant current input, modify the inital membrane
 # potential of one of the neurons and connect the neurons to the ``voltmeter``.
 
 nest.SetStatus(neuron, {'I_e': 100.})
-nest.SetStatus([neuron[0]], {'V_m': -10.})
+nest.SetStatus(neuron[0], {'V_m': -10.})
 
 nest.Connect(vm, neuron, 'all_to_all')
 
@@ -64,8 +61,8 @@ nest.Connect(vm, neuron, 'all_to_all')
 # `neuron[0]`:
 
 nest.Connect(neuron, neuron,
-             {'rule': 'all_to_all', 'autapses': False},
-             {'model': 'gap_junction', 'weight': 0.5})
+             {'rule': 'all_to_all', 'allow_autapses': False},
+             {'synapse_model': 'gap_junction', 'weight': 0.5})
 
 ###############################################################################
 # Finally we start the simulation and plot the membrane potentials of both
@@ -77,11 +74,11 @@ senders = nest.GetStatus(vm, 'events')[0]['senders']
 times = nest.GetStatus(vm, 'events')[0]['times']
 V = nest.GetStatus(vm, 'events')[0]['V_m']
 
-pl.figure(1)
-pl.plot(times[numpy.where(senders == 1)],
-        V[numpy.where(senders == 1)], 'r-')
-pl.plot(times[numpy.where(senders == 2)],
-        V[numpy.where(senders == 2)], 'g-')
-pl.xlabel('time (ms)')
-pl.ylabel('membrane potential (mV)')
-pl.show()
+plt.figure(1)
+plt.plot(times[numpy.where(senders == 1)],
+         V[numpy.where(senders == 1)], 'r-')
+plt.plot(times[numpy.where(senders == 2)],
+         V[numpy.where(senders == 2)], 'g-')
+plt.xlabel('time (ms)')
+plt.ylabel('membrane potential (mV)')
+plt.show()

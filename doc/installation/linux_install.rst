@@ -3,8 +3,8 @@ Ubuntu/Debian Installation
 
 .. _standard:
 
-Standard Installation
-------------------------
+Installation from source
+--------------------------
 
 The following are the basic steps to compile and install NEST from source code:
 
@@ -14,8 +14,6 @@ The following are the basic steps to compile and install NEST from source code:
 .. code-block:: bash
 
     sudo apt-get install -y \
-    build-essential \
-    cmake \
     cython \
     libgsl-dev \
     libltdl-dev \
@@ -55,8 +53,12 @@ The following are the basic steps to compile and install NEST from source code:
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
+.. note::
+    If you want to use Python 3, add the configuration option
+    ``cmake -Dwith-python=3 -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>``
 
 .. note::  ``/install/path`` should be an absolute path
+
 
 
 * Compile and install NEST:
@@ -69,7 +71,7 @@ The following are the basic steps to compile and install NEST from source code:
 
 NEST should now be successfully installed on your system. You should now be able to ``import nest``  from a python or ipython shell.
 
-.. admonition:: Important!
+.. admonition:: IMPORTANT!
 
  If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries. In this case, please run:
 
@@ -86,7 +88,7 @@ Dependencies
 
 To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
-.. note:: NEST requires at least version v2.8.12 of cmake, but we recommend v3.4 or later. You can type ``cmake --version`` on the commandline to check your current version.
+.. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
@@ -94,10 +96,10 @@ The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by se
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python <http://www.python.org>`_
+- `Python 3.X <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
-- `matplotlib <http://matplotlib.org>`_
+- `Matplotlib 3.X <http://matplotlib.org>`_
 - `IPython <http://ipython.org>`_
 
 

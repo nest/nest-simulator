@@ -63,27 +63,26 @@ per second.
 References
 ~~~~~~~~~~~~
 
-.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent plasticity in balanced random
-       networks. Neural Comput 19(6):1437-67
-.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines for
-       neuroscience. Front. Neuroinform. 6:26
+.. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+       plasticity in balanced random networks. Neural Comput 19(6):1437-67
+.. [2] Helias et al (2012). Supercomputers ready for use as discovery machines
+       for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
 
 """
 
-from __future__ import print_function  # for Python 2
 import numpy as np
 import os
 import sys
 import time
+import scipy.special as sp
 
 import nest
 import nest.raster_plot
 
 M_INFO = 10
 M_ERROR = 30
-
 
 
 ###############################################################################
@@ -103,7 +102,6 @@ params = {
     'path_name': '.',       # path where all files will have to be written
     'log_file': 'log',      # naming scheme for the log files
 }
-
 
 
 def convert_synapse_weight(tau_m, tau_syn, C_m):
@@ -137,7 +135,6 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
 tau_syn = 0.32582722403722841
 
 
-
 brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
@@ -160,10 +157,10 @@ brunel_params = {
         'V_m': 5.7  # mean value of membrane potential
     },
 
-###############################################################################
-# Note that Kunkel et al. (2014) report different values. The values
-# in the paper were used for the benchmarks on K, the values given
-# here were used for the benchmark on JUQUEEN.
+    ####################################################################
+    # Note that Kunkel et al. (2014) report different values. The values
+    # in the paper were used for the benchmarks on K, the values given
+    # here were used for the benchmark on JUQUEEN.
 
     'randomize_Vm': True,
     'mean_potential': 5.7,
@@ -191,6 +188,7 @@ brunel_params = {
 
 ###############################################################################
 # Function Section
+
 
 def build_network(logger):
     """Builds the network including setting of simulation and neuron
@@ -226,21 +224,10 @@ def build_network(logger):
         nest.message(M_INFO, 'build_network',
                      'Randomzing membrane potentials.')
 
-        seed = nest.GetKernelStatus(
-            'rng_seeds')[-1] + 1 + nest.GetStatus([0], 'vp')[0]
-        rng = np.random.RandomState(seed=seed)
-
-        for node in get_local_nodes(E_neurons):
-            nest.SetStatus([node],
-                           {'V_m': rng.normal(
-                               brunel_params['mean_potential'],
-                               brunel_params['sigma_potential'])})
-
-        for node in get_local_nodes(I_neurons):
-            nest.SetStatus([node],
-                           {'V_m': rng.normal(
-                               brunel_params['mean_potential'],
-                               brunel_params['sigma_potential'])})
+        random_vm = nest.random.normal(brunel_params['mean_potential'],
+                                       brunel_params['sigma_potential'])
+        nest.GetLocalNodeCollection(E_neurons).V_m = random_vm
+        nest.GetLocalNodeCollection(I_neurons).V_m = random_vm
 
     # number of incoming excitatory connections
     CE = int(1. * NE / params['scale'])
@@ -270,8 +257,10 @@ def build_network(logger):
         detector_label = os.path.join(
             brunel_params['filestem'],
             'alpha_' + str(stdp_params['alpha']) + '_spikes')
-        E_detector = nest.Create('spike_detector', 1, {
-            'withtime': True, 'to_file': True, 'label': detector_label})
+        E_detector = nest.Create('spike_detector', params={
+            'record_to': 'ascii',
+            'label': detector_label
+        })
 
     BuildNodeTime = time.time() - tic
 
@@ -295,44 +284,47 @@ def build_network(logger):
     # Connect Poisson generator to neuron
 
     nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
     nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'model': 'syn_ex'})
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
 
     nest.Connect(E_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'stdp_pl_synapse_hom_hpc'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> excitatory population.')
 
     nest.Connect(I_neurons, E_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_in'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
 
     nest.Connect(E_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CE,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_ex'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
 
     nest.Connect(I_neurons, I_neurons,
                  {'rule': 'fixed_indegree', 'indegree': CI,
-                     'autapses': False, 'multapses': True},
-                 {'model': 'syn_in'})
+                  'allow_autapses': False, 'allow_multapses': True},
+                 {'synapse_model': 'syn_in'})
 
     if params['record_spikes']:
-        local_neurons = list(get_local_nodes(E_neurons))
+        if params['nvp'] != 1:
+            local_neurons = nest.GetLocalNodeCollection(E_neurons)
+        else:
+            local_neurons = E_neurons
 
         if len(local_neurons) < brunel_params['Nrec']:
             nest.message(
@@ -401,7 +393,7 @@ def compute_rate(sdet):
 
     """
 
-    n_local_spikes = nest.GetStatus(sdet, 'n_events')[0]
+    n_local_spikes = sdet.n_events
     n_local_neurons = brunel_params['Nrec']
     simtime = params['simtime']
     return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
@@ -415,28 +407,9 @@ def memory_thisjob():
 
 def lambertwm1(x):
     """Wrapper for LambertWm1 function"""
-    nest.ll_api.sr('{} LambertWm1'.format(x))
-    return nest.ll_api.spp()
+    # Using scipy to mimic the gsl_sf_lambert_Wm1 function.
+    return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
-
-def get_local_nodes(nodes):
-    """Generator for efficient looping over local nodes
-
-    Assumes nodes is a continous list of gids [1, 2, 3, ...], e.g., as
-    returned by Create. Only works for nodes with proxies, i.e.,
-    regular neurons.
-
-    """
-
-    nvp = nest.GetKernelStatus('total_num_virtual_procs')  # step size
-
-    i = 0
-    while i < len(nodes):
-        if nest.GetStatus([nodes[i]], 'local')[0]:
-            yield nodes[i]
-            i += nvp
-        else:
-            i += 1
 
 class Logger(object):
     """Logger context manager used to properly log memory and timing
@@ -479,6 +452,7 @@ class Logger(object):
     def __exit__(self, exc_type, exc_val, traceback):
         if nest.Rank() < self.max_rank_log:
             self.f.close()
+
 
 if __name__ == '__main__':
     run_simulation()

@@ -108,6 +108,7 @@ public:
   Name have_gsl_name;
   Name have_music_name;
   Name have_libneurosim_name;
+  Name have_sionlib_name;
   Name ndebug_name;
 
   Name exitcodes_name;

@@ -35,12 +35,13 @@ decision will be made.
 """
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 import numpy
 
-#####################################################################################
-# First,the function ``build_network`` is defined to build the network and
-# return the handles of two decision units and the ``Multimeter``
+##########################################################################
+# First,the function ``build_network`` is defined to build the network
+# and return the handles of two decision units and the ``multimeter``
+
 
 def build_network(sigma, dt):
     nest.ResetKernel()
@@ -50,35 +51,36 @@ def build_network(sigma, dt):
     D2 = nest.Create('lin_rate_ipn', params=Params)
 
     nest.Connect(D1, D2, 'all_to_all', {
-        'model': 'rate_connection_instantaneous', 'weight': -0.2})
+        'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
     nest.Connect(D2, D1, 'all_to_all', {
-        'model': 'rate_connection_instantaneous', 'weight': -0.2})
+        'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
 
     mm = nest.Create('multimeter')
-    nest.SetStatus(mm, {'interval': dt, 'record_from': ['rate']})
+    mm.set(interval=dt, record_from=['rate'])
     nest.Connect(mm, D1, syn_spec={'delay': dt})
     nest.Connect(mm, D2, syn_spec={'delay': dt})
 
     return D1, D2, mm
 
 
-#####################################################################################
+###########################################################################
 # The function ``build_network`` takes the noise parameter sigma
 # and the time resolution as arguments.
-# First, the Kernel is reset and the ``use_wfr`` (waveform-relaxation) is set to
-# false while the resolution is set to the specified value `dt`.
-# Two rate neurons with linear activation functions are created and the
-# handle is stored in the variables `D1` and `D2`. The output of both decision
-# units is rectified at zero.
-# The two decisions units are coupled via mutual inhibition.
-# Next the multimeter is created and the handle stored in mm and the option
-# ``record_from`` is set. The multimeter is then connected to the two units
-# in order to 'observe' them.  The ``Connect`` function takes the handles as input.
+# First, the Kernel is reset and the ``use_wfr`` (waveform-relaxation)
+# is set to false while the resolution is set to the specified value
+# `dt`.  Two rate neurons with linear activation functions are created
+# and the handle is stored in the variables `D1` and `D2`. The output
+# of both decision units is rectified at zero.  The two decisions
+# units are coupled via mutual inhibition.  Next the multimeter is
+# created and the handle stored in mm and the option ``record_from``
+# is set. The multimeter is then connected to the two units in order
+# to 'observe' them.  The ``Connect`` function takes the handles as
+# input.
 
-##################################################################################
-# The decision making process is simulated for three different levels of noise
-# and three differences in evidence for a given decision. The activity of both
-# decision units is plotted for each scenario.
+###########################################################################
+# The decision making process is simulated for three different levels
+# of noise and three differences in evidence for a given decision. The
+# activity of both decision units is plotted for each scenario.
 
 fig_size = [14, 8]
 fig_rows = 3
@@ -88,14 +90,13 @@ face = 'white'
 edge = 'white'
 
 ax = [None] * fig_plots
-fig = pylab.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
+fig = plt.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
 
 dt = 1e-3
 sigma = [0.0, 0.1, 0.2]
 dE = [0.0, 0.004, 0.008]
 T = numpy.linspace(0, 200, 200 / dt - 1)
 for i in range(9):
-
     c = i % 3
     r = int(i / 3)
     D1, D2, mm = build_network(sigma[r], dt)
@@ -105,8 +106,8 @@ for i in range(9):
 # the decision units and the multimeter are stored in `D1`, `D2` and `mm`
 
     nest.Simulate(100.0)
-    nest.SetStatus(D1, {'mu': 1. + dE[c]})
-    nest.SetStatus(D2, {'mu': 1. - dE[c]})
+    D1.mu = 1. + dE[c]
+    D2.mu = 1. - dE[c]
     nest.Simulate(100.0)
 
 ########################################################################
@@ -115,28 +116,28 @@ for i in range(9):
 # this amount of time. After an initial period in the absence of evidence
 # for either decision, evidence is given by changing the state of each
 
-    senders = data[0]['events']['senders']
-    voltages = data[0]['events']['rate']
+    senders = mm.get('events', 'senders')
+    voltages = mm.get('events', 'rate')
 
 ########################################################################
 # The activity values ('voltages') are read out by the multimeter
 
     ax[i] = fig.add_subplot(fig_rows, fig_cols, i + 1)
-    ax[i].plot(T, voltages[numpy.where(senders == D1)],
+    ax[i].plot(T, voltages[numpy.where(senders == D1.global_id)],
                'b', linewidth=2, label="D1")
-    ax[i].plot(T, voltages[numpy.where(senders == D2)],
+    ax[i].plot(T, voltages[numpy.where(senders == D2.global_id)],
                'r', linewidth=2, label="D2")
     ax[i].set_ylim([-.5, 12.])
     ax[i].get_xaxis().set_ticks([])
     ax[i].get_yaxis().set_ticks([])
     if c == 0:
-        ax[i].set_ylabel("activity ($\sigma=%.1f$) " % (sigma[r]))
+        ax[i].set_ylabel(r"activity ($\sigma=%.1f$) " % (sigma[r]))
         ax[i].get_yaxis().set_ticks([0, 3, 6, 9, 12])
 
     if r == 0:
-        ax[i].set_title("$\Delta E=%.3f$ " % (dE[c]))
+        ax[i].set_title(r"$\Delta E=%.3f$ " % (dE[c]))
         if c == 2:
-            pylab.legend(loc=0)
+            plt.legend(loc=0)
     if r == 2:
         ax[i].get_xaxis().set_ticks([0, 50, 100, 150, 200])
         ax[i].set_xlabel('time (ms)')
@@ -153,4 +154,4 @@ for i in range(9):
 # evidence for the two decisions, noise can lead to the 'wrong' decision.
 
 
-pylab.show()
+plt.show()

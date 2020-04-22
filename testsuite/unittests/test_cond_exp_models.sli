@@ -43,15 +43,15 @@ M_WARNING setverbosity
   /param_in Set
   /sg_weight Set
 
-  /e_ex n GetStatus param_ex get def
-  /e_in n GetStatus param_in get def
+  /e_ex n GetStatus 0 get param_ex get def
+  /e_in n GetStatus 0 get param_in get def
 
   n << /E_ex e_ex /E_in e_in >> SetStatus
   /sg /spike_generator Create def
   sg << /spike_times [1.0] >> SetStatus
   sg n sg_weight 1.0 Connect
   T Simulate
-  n GetStatus /V_m get
+  n GetStatus 0 get /V_m get
 } def
 
 
@@ -64,7 +64,7 @@ modeldict keys
     % Reference value
     /n model Create def
     T Simulate
-    /vm_ref n GetStatus /V_m get def
+    /vm_ref n GetStatus 0 get /V_m get def
 
     {
       % Default parameters, with excitatory input

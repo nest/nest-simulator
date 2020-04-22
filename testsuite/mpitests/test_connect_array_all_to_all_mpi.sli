@@ -45,20 +45,19 @@ skip_if_not_threaded
 [2 3] % check for 2, 3 processes
 {
 
-/N 10 def          % number of neurons in each subnet
+/N 10 def          % number of neurons in each population
 
 ResetKernel
 
-0 <<
+<<
   /local_num_threads 2
->> SetStatus
+>> SetKernelStatus
 
-/gid1 N 1 add def            % gid1 = N + 1
-/gid2 N 2 mul def            % gid2 = N * 2
-/net1 [1 N] Range def        % global ids of source subnet
-/net2 [gid1 gid2] Range def  % global ids of target subnet
+/node_id1 N 1 add def            % node_id1 = N + 1
 
-/iaf_psc_alpha N 2 mul Create ;  % creates source and target subnets
+% create sources and targets
+/sources /iaf_psc_alpha N Create def
+/targets /iaf_psc_alpha N Create def
 
 /NC N N mul def     % number of connections = N^2
 /Dmax NC 1 add def  % maximum delay
@@ -68,52 +67,56 @@ ResetKernel
 % cv_dv converts sli-array type to double-vector type
 
 % synapses and connection dictionaries
-/syn_dict << /model /static_synapse /weight Warr /delay Darr >> def
+/syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /all_to_all >> def
 
-net1 net2 conn_dict syn_dict Connect % connects source to target subnet
+sources targets conn_dict syn_dict Connect % connects source to target
 
 /pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process
-net2 % loop on all neurons of target subnet
+targets % loop through all target neurons
 {
-        /neuron2 exch def
+  /neuron2 exch def
 
-        neuron2 GetStatus /local get  % checks if neuron2 is local or not
-        {
-                /n_loc n_loc 1 add def  % increases n_loc
-                % gets all connections to the target neuron
-                /conn << /target [neuron2] >> GetConnections def
+  neuron2 GetStatus /local get  % checks if neuron2 is local or not
+  {
+    /n_loc n_loc 1 add def  % increases n_loc
 
-                /sdict_lst conn GetSynapseStatus def % gets info on synapses
+    % gets all connections to the target neuron
+    /conn << /target [neuron2] cvnodecollection >> GetConnections def
 
-                /Warr1 0 array def % creates empty weight array
+    /sdict_lst conn GetStatus def % gets info on synapses
 
-                sdict_lst % loop on synapses that connect to target neuron
-                {
-                        /sdict exch def
-                        /w sdict /weight get def  % gets synaptic weight
-                        /d sdict /delay get def   % gets synaptic delay
-                        /diff d w sub def         % diff = delay - weight 
-                        diff 1.0 eq               % checks that d = w + 1
-			pass and /pass exch def   % updates control flag
+    /Warr1 0 array def % creates empty weight array
 
-                        /Warr1 Warr1 w append def  % appends w to Warr1
-                } forall
+    sdict_lst % loop on synapses that connect to target neuron
+    {
+      /sdict exch def
+      /w sdict /weight get def  % gets synaptic weight
+      /d sdict /delay get def   % gets synaptic delay
+      /diff d w sub def         % diff = delay - weight
+      diff 1.0 eq               % checks that d = w + 1
+	  pass and /pass exch def   % updates control flag
 
-                Warr1 length N eq         % checks the size of Warr1
-		pass and /pass exch def   % updates control flag
+      /Warr1 Warr1 w append def  % appends w to Warr1
+    } forall
 
-                /i1 neuron2 gid1 sub N mul def  % first index = (n2 - gid1) * N
+    Warr1 length N eq         % checks the size of Warr1
+	pass and /pass exch def   % updates control flag
 
-                % get row of original weight array
-                % and compare it with Warr1
-                /Wdiff Warr cva i1 N getinterval Warr1 sub def
-                % check that all elements of the difference are zero
-                Wdiff 0.0 HasDifferentMemberQ not
-		pass and /pass exch def   % updates control flag
+    /i1 neuron2 node_id1 sub N mul def  % first index = (n2 - node_id1) * N
+    % get row of original weight array
+    % and compare it with Warr1
+    /Wdiff Warr cva i1 N getinterval Warr1 sub def
 
-        } if
-} forall
+    % check that all elements of the difference are zero
+    Wdiff 0.0 HasDifferentMemberQ not
+    pass and /pass exch def   % updates control flag
+
+  }
+  if   % neuron2 is local
+}
+forall  % neurons in targets
+
 pass n_loc 0 gt and
 } distributed_collect_assert_or_die

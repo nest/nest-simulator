@@ -22,12 +22,15 @@ SuSe::
 
     sudo zypper install virtualbox
 
+
+Windows users can follow instructions on the website (see above).
+
 NEST image setup
 ------------------
 
-* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/nest-live.ova>`_
+* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/NEST_2.20.0_Virtual_Box_lubuntu_18.04.ova>`_
 
-* Start Virtual Box and import the virtual machine image "lubuntu-16.04_nest-2.14.0.ova" (**File** > **Import Appliance**)
+* Start Virtual Box and import the virtual machine image "NEST_2.20.0_Virtual_Box_lubuntu_18.04.ova" (**File** > **Import Appliance**)
 
 * Once imported, you can run the NEST image
 
@@ -44,6 +47,7 @@ Notes
 
 * To install Guest Additions, select **Devices** > **Insert Guest Additions CD image...**  (top left of the VirtualBox Window). Then, open a terminal (Ctrl+Alt+t), go to "/media/nest/VBOXADDITIONS.../" and run "sudo bash VboxLinuxAdditions.run".
 
-* To set the correct language layout for your keyboard (e.g., from "US" to "DE"), you can use the program "lxkeymap", which you start by typing "lxkeymap" in the terminal.
+* To set the correct language layout for your keyboard (e.g., from "US" to "DE"), open a terminal and type: "sudo dpkg-reconfigure keyboard-configuration". After setting the correct keyboard map you have to reboot the system to activate the changes.
+
 
 

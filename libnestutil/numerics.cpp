@@ -109,3 +109,20 @@ dtruncate( double x )
   std::modf( x, &ip );
   return ip;
 }
+
+bool
+is_integer( double n )
+{
+  double int_part;
+  double frac_part = std::modf( n, &int_part );
+
+  // Since n > 0 and modf always rounds towards zero, a value of n just below an
+  // integer will result in frac_part = 0.99999.... . We subtract from 1 in this case.
+  if ( frac_part > 0.5 )
+  {
+    frac_part = 1 - frac_part;
+  }
+
+  // factor 4 allows for two bits of rounding error
+  return frac_part < 4 * n * std::numeric_limits< double >::epsilon();
+}

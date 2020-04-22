@@ -45,7 +45,7 @@ namespace nest
 Name: spike_generator - A device which generates spikes from an array with
                         spike-times.
 
-Synopsis: spike_generator Create -> gid
+Synopsis: spike_generator Create -> node_id
 
 Description:
 
@@ -129,7 +129,8 @@ onto the grid will be handled as follows for different option settings:
     ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
          step 31, offset -0.0999
 
-    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step 100).
+    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step
+100).
     Then, any spike times set, at this time, must be later than step 100.
 
     /spike_generator << /spike_times [10.0001] >> Create
@@ -142,7 +143,8 @@ onto the grid will be handled as follows for different option settings:
     /spike_generator
       << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
     Create
-    ---> spike at step 101, spike shifted into the future, and spike at step 110,
+    ---> spike at step 101, spike shifted into the future, and spike at step
+110,
          not shifted, since it is in the future anyways
 
 
@@ -199,6 +201,12 @@ public:
   has_proxies() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -260,8 +268,6 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    bool deprecation_warning_issued_;
-
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
@@ -273,7 +279,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&, State_&, const Time&, const Time& );
+    void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.

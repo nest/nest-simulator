@@ -366,9 +366,10 @@ template < typename value_type_ >
 inline size_t
 BlockVector< value_type_ >::size() const
 {
-  size_t element_index;
+  size_t element_index; // Where we are in the current block
   if ( finish_.block_index_ >= blockmap_.size() )
   {
+    // If the current block is completely filled
     element_index = 0;
   }
   else

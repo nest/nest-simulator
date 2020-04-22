@@ -42,7 +42,6 @@ trigger immediate spiking
 
 Untested models
 ---------------
-* ``aeif_cond_alpha_RK5``
 * ``gif_pop_psc_exp``
 * ``hh_cond_exp_traub``
 * ``hh_cond_beta_gap_traub``
@@ -68,9 +67,7 @@ neurons_interspike = [
 
 neurons_interspike_ps = [
     "iaf_psc_alpha_canon",
-    "iaf_psc_alpha_presc",
     "iaf_psc_alpha_ps",
-    "iaf_psc_delta_canon",
     "iaf_psc_delta_ps",
     "iaf_psc_exp_ps",
 ]
@@ -82,7 +79,6 @@ neurons_with_clamping = [
 
 # Models that cannot be tested
 ignore_model = [
-     "aeif_cond_alpha_RK5",      # This one is faulty and will be removed
      "gif_pop_psc_exp",          # This one commits spikes at same time
      "hh_cond_exp_traub",        # This one does not support V_reset
      "hh_cond_beta_gap_traub",   # This one does not support V_reset
@@ -142,11 +138,11 @@ class TestRefractoryCase(unittest.TestCase):
         model : str
           Name of the neuronal model.
         sd : tuple
-            GID of the spike detector.
+            node ID of the spike detector.
         vm : tuple
-            GID of the voltmeter.
+            node ID of the voltmeter.
         neuron : tuple
-            GID of the recorded neuron.
+            node ID of the recorded neuron.
 
         Returns
         -------
@@ -198,7 +194,7 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
-            sd = nest.Create("spike_detector", params={'precise_times': True})
+            sd = nest.Create("spike_detector")
             cg = nest.Create("dc_generator", params={"amplitude": 1200.})
 
             # For models that do not clamp V_m, use very large current to

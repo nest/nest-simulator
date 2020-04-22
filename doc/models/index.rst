@@ -1,4 +1,4 @@
-Model Directory
+Model directory
 ===============
 
 Here you can find the list of all the models implemented in NEST for neurons,
@@ -36,15 +36,11 @@ on Github for you to check out.
 
 * **Device categories**
 
-    * :doc:`generator`
-    * :doc:`detector`
     * :doc:`music`
-    * :doc:`devices`
 
 * **Network models**
 
-     * :doc:`../topology/index`
-
+     * :doc:`../guides/spatial/index`
 
 * :doc:`create_model`
 

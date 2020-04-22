@@ -132,9 +132,9 @@ u  f mul /w Set
 ResetKernel
 
 
-0 << 
+<< 
     /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 
 /spike_generator Create /sg Set
@@ -148,12 +148,10 @@ sg <<
      /stop 3.0              % in ms
    >> SetStatus
 
-
 /tau_syn P /tau_syn get def
 P /tau_syn_ex tau_syn put
 P /tau_syn_in tau_syn put
 P /tau_syn undef
-
 
 /iaf_psc_alpha Create /neuron Set
 neuron P SetStatus
@@ -163,7 +161,7 @@ neuron P SetStatus
 
 
 /voltmeter Create /vm Set
-vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 
 sg neuron w  delay Connect

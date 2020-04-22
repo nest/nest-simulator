@@ -27,6 +27,7 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "enum_bitfield.h"
 #include "logging.h"
 
 // Includes from librandom:
@@ -50,14 +51,51 @@ void fail_exit( int exitcode );
 void install_module( const std::string& module_name );
 
 void reset_kernel();
-void reset_network();
 
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
-void print_network( index gid, index depth, std::ostream& out = std::cout );
 
-librandom::RngPtr get_vp_rng_of_gid( index target );
+enum class RegisterConnectionModelFlags : unsigned
+{
+  REGISTER_HPC = 1 << 0,
+  REGISTER_LBL = 1 << 1,
+  IS_PRIMARY = 1 << 2,
+  HAS_DELAY = 1 << 3,
+  SUPPORTS_WFR = 1 << 4,
+  REQUIRES_SYMMETRIC = 1 << 5,
+  REQUIRES_CLOPATH_ARCHIVING = 1 << 6
+};
+
+template <>
+struct EnableBitMaskOperators< RegisterConnectionModelFlags >
+{
+  static const bool enable = true;
+};
+
+const RegisterConnectionModelFlags default_connection_model_flags = RegisterConnectionModelFlags::REGISTER_HPC
+  | RegisterConnectionModelFlags::REGISTER_LBL | RegisterConnectionModelFlags::IS_PRIMARY
+  | RegisterConnectionModelFlags::HAS_DELAY;
+
+const RegisterConnectionModelFlags default_secondary_connection_model_flags =
+  RegisterConnectionModelFlags::SUPPORTS_WFR | RegisterConnectionModelFlags::HAS_DELAY;
+
+/**
+ * Register connection model (i.e. an instance of a class inheriting from `Connection`).
+ */
+template < template < typename > class ConnectorModelT >
+void register_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_connection_model_flags );
+
+/**
+ * Register secondary connection models (e.g. gap junctions, rate-based models).
+ */
+template < template < typename > class ConnectorModelT >
+void register_secondary_connection_model( const std::string& name,
+  const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+
+void print_nodes_to_stream( std::ostream& out = std::cout );
+
 librandom::RngPtr get_vp_rng( thread tid );
 librandom::RngPtr get_global_rng();
 
@@ -70,16 +108,44 @@ DictionaryDatum get_node_status( const index node_id );
 void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-index create( const Name& model_name, const index n );
+NodeCollectionPTR create( const Name& model_name, const index n );
 
-void connect( const GIDCollection& sources,
-  const GIDCollection& targets,
+NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+
+void connect( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params );
+
+/**
+ * @brief Connect arrays of node IDs one-to-one
+ *
+ * Connects an array of sources to an array of targets, with weights and
+ * delays from specified arrays, using the one-to-one
+ * rule. Additional synapse parameters can be specified with p_keys and p_values.
+ * Sources, targets, weights, delays, and receptor types are given
+ * as pointers to the first element. All arrays must have the same length,
+ * n. Weights, delays, and receptor types can be unspecified by passing a
+ * nullptr.
+ *
+ * The p_keys vector contains keys of additional synapse parameters, with
+ * associated values in the flat array p_values. If there are n sources and targets,
+ * and M additional synapse parameters, p_keys has a size of M, and the p_values array
+ * has length of M*n.
+ */
+void connect_arrays( long* sources,
+  long* targets,
+  double* weights,
+  double* delays,
+  std::vector< std::string >& p_keys,
+  double* p_values,
+  size_t n,
+  std::string syn_model );
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );
+
 /**
  * @fn run(const double& time)
  * @brief Run a partial simulation for `time` ms
@@ -127,19 +193,29 @@ void copy_model( const Name& oldmodname, const Name& newmodname, const Dictionar
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
-void change_subnet( const index node_gid );
-index current_subnet();
-
-ArrayDatum get_nodes( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes,
-  const bool return_gids_only );
-
-ArrayDatum get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
-
-ArrayDatum get_children( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
-
-void restore_nodes( const ArrayDatum& node_list );
+ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum add_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
+ParameterDatum
+compare_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const DictionaryDatum& d );
+ParameterDatum
+conditional_parameter( const ParameterDatum& param1, const ParameterDatum& param2, const ParameterDatum& param3 );
+ParameterDatum min_parameter( const ParameterDatum& param, const double other_value );
+ParameterDatum max_parameter( const ParameterDatum& param, const double other_value );
+ParameterDatum redraw_parameter( const ParameterDatum& param, const double min, const double max );
+ParameterDatum exp_parameter( const ParameterDatum& param );
+ParameterDatum sin_parameter( const ParameterDatum& param );
+ParameterDatum cos_parameter( const ParameterDatum& param );
+ParameterDatum pow_parameter( const ParameterDatum& param, const double exponent );
+ParameterDatum dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y );
+ParameterDatum
+dimension_parameter( const ParameterDatum& param_x, const ParameterDatum& param_y, const ParameterDatum& param_z );
+ParameterDatum create_parameter( const DictionaryDatum& param_dict );
+double get_value( const ParameterDatum& param );
+bool is_spatial( const ParameterDatum& param );
+std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
+std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
 }
 
 

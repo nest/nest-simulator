@@ -31,6 +31,7 @@
 #include "genericmodel.h"
 #include "manager_interface.h"
 #include "model.h"
+#include "nest.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
@@ -57,12 +58,6 @@ public:
    */
   virtual void finalize();
 
-
-  // TODO: register subnet, proxynode and siblingcontainer in the
-  // constructor and provide three getters for them. See L130 and
-  // following in network.cpp. Also make sure that the ModelManager is
-  // initialized before the NodeManager is.
-
   /**
    * Resize the structures for the Connector objects if necessary.
    * This function should be called after number of threads, min_delay,
@@ -72,7 +67,6 @@ public:
    * request to all ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
-
 
   /**
    *
@@ -87,17 +81,7 @@ public:
   /**
    *
    */
-  Model* get_subnet_model();
-
-  /**
-   *
-   */
-  Model* get_siblingcontainer_model();
-
-  /**
-   *
-   */
-  Node* get_proxy_node( thread tid, index gid );
+  Node* get_proxy_node( thread tid, index node_id );
 
   /**
    *
@@ -179,31 +163,26 @@ public:
   void set_model_defaults( Name name, DictionaryDatum params );
 
   /**
-   * Register a synape model with default Connector and without any common
-   * properties. Convenience function that used the default Connector model
-   * GenericConnectorModel.
-   * @param name The name under which the ConnectorModel will be registered.
-   */
-  template < typename ConnectionT >
-  void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false,
-    const bool requires_clopath_archiving = false );
-
-  /**
    * Register a synape model with a custom Connector model and without any
    * common properties.
+   *
+   * "hpc synapses" use `TargetIdentifierIndex` for `ConnectionT` and store
+   * the target neuron in form of a 2 Byte index instead of an 8 Byte pointer.
+   * This limits the number of thread local neurons to 65,536. No support for
+   * different receptor types. Otherwise identical to non-hpc version.
+   *
+   * When called, this function should be specialised by a class template,
+   * e.g. `BernoulliConnection< targetidentifierT >`
+   *
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < typename ConnectionT, template < typename > class ConnectorModelT >
+  template < template < typename targetidentifierT > class ConnectionT >
   void register_connection_model( const std::string& name,
-    const bool requires_symmetric = false,
-    const bool requires_clopath_archiving = false );
+    const RegisterConnectionModelFlags flags = default_connection_model_flags );
 
-  template < typename ConnectionT >
+  template < template < typename targetidentifierT > class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    const bool has_delay = true,
-    const bool requires_symmetric = false,
-    const bool supports_wfr = true );
+    const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
 
   /**
    * @return The model id of a given model name
@@ -395,9 +374,9 @@ private:
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
-  Model* subnet_model_;
-  Model* siblingcontainer_model_;
   Model* proxynode_model_;
+
+  Node* create_proxynode_( thread t, int model_id );
 
   //! Placeholders for remote nodes, one per thread
   std::vector< std::vector< Node* > > proxy_nodes_;
@@ -417,18 +396,6 @@ ModelManager::get_model( index m ) const
   }
 
   return models_[ m ];
-}
-
-inline Model*
-ModelManager::get_subnet_model()
-{
-  return subnet_model_;
-}
-
-inline Model*
-ModelManager::get_siblingcontainer_model()
-{
-  return siblingcontainer_model_;
 }
 
 inline Node*

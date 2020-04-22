@@ -112,10 +112,17 @@ public:
   {
     return false;
   }
+
   bool
   local_receiver() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::other;
   }
 
   /**
@@ -159,7 +166,7 @@ private:
   {
     Parameters_();
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 
@@ -193,15 +200,13 @@ volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   Archiving_Node::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::other );
 }
 
 inline void
 volume_transmitter::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

@@ -20,102 +20,102 @@
  *
  */
 
-/* 
+/*
     Contains:
     - simulation parameters
     - recording parameters
 */
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%     	Simulation parameters		%%%        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                           RNG parameters                        %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%   Master seed for random number generators. Actual seeds will be
+%%      master_seed ... master_seed + 2 * n_vp.
+%%   Thus different master seeds must be spaced by at least
+%%      2*n_vp + 1
+%%   see Gewaltig et al. (2012) for details
+%%
 
-/run_mode (test) def  % (test) for writing files to 
-                      % directory containing microcircuit.sli 
-                      % (production) for writing files
-                      % to a chosen absolute path. 
-
-/t_sim 1000.0 def     % simulated time (ms)
-/dt 0.1 def           % simulation step (ms). Default is 0.1 ms.
-
-% master seed for random number generators
-% actual seeds will be master_seed ... master_seed + 2*n_vp
-%  ==>> different master seeds must be spaced by at least 2*n_vp + 1
-% see Gewaltig et al. (2012) for details       
 /master_seed 123456 def   % changes rng_seeds and grng_seed
 
-/n_compute_nodes 1 def	    	    	    % number of compute nodes
 
-/n_mpi_procs_per_compute_node 1 def	    % number of MPI processes per compute node
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                        Simulation parameters                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/n_threads_per_mpi_proc 2 def	            % number of threads per MPI process
+/t_sim 1000.0 def                    % simulated time (ms)
+
+/dt 0.1 def                          % simulation step (ms)
+
+/n_compute_nodes 1 def	             % number of compute nodes
+
+/n_mpi_procs_per_compute_node 1 def  % number of MPI processes per compute node
+
+/n_threads_per_mpi_proc 2 def	     % number of threads per MPI process
+
+/walltime_limit (8:0:0) def    	     % walltime limit for simulation
+
+/memory_limit (500mb) def            % memory limit for simulation
+
+/output_path (.) def                 % output directory for data
+
+/n_vp n_compute_nodes n_mpi_procs_per_compute_node mul
+      n_threads_per_mpi_proc mul def
 
 
-/n_vp n_compute_nodes n_mpi_procs_per_compute_node mul n_threads_per_mpi_proc mul def
-      		      				% number of virtual processes
-                                                % This should be an integer multiple of 
-                                                % the number of MPI processes 
-                                                % See Morrison et al. (2005) Neural Comput
-/walltime (8:0:0) def		% walltime for simulation
-
-/memory (500mb) def		% total memory
-                                % use for instance 4gb for a full-scale simulation
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%     	Recording parameters		%%%        
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                       Recording parameters                      %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /overwrite_existing_files true def
 
-% whether to record spikes from a fixed fraction of neurons in each population
-% If false, a fixed number of neurons is recorded in each population.
-% record_fraction_neurons_spikes true with f_rec_spikes 1. records all spikes
+%% Whether to record spikes from a fixed fraction of neurons in each
+%% population. If true, /frac_rec_spikes specifies that fraction, if
+%% false, /n_rec_spikes many neurons are recorded in each population.
+%% Setting /record_fraction_neurons_spikes to true and /f_rec_spikes
+%% to 1.0 records all spikes.
+
 /record_fraction_neurons_spikes true def
+/frac_rec_spikes 0.1 def
+/n_rec_spikes 100 def
 
-record_fraction_neurons_spikes
-{
-    /frac_rec_spikes 0.1 def
-}{
-    /n_rec_spikes 100 def
-} ifelse
+%% Whether to record voltage from a fixed fraction of neurons in each
+%% population. Semantics are as for /record_fraction_neurons_spikes.
 
-% whether to record voltage from a fixed fraction of neurons in each population
 /record_fraction_neurons_voltage true def
+/frac_rec_voltage 0.02 def
+/n_rec_voltage 20 def
 
-record_fraction_neurons_voltage
-{
-    /frac_rec_voltage 0.02 def
-}{
-    /n_rec_voltage 20 def
-} ifelse
+%% Whether to write recorded spikes and membrane potentials to file
 
-% whether to write any recorded cortical spikes to file
 /save_cortical_spikes true def
-
-% whether to write any recorded membrane potentials to file
 /save_voltages true def
 
-% whether to record thalamic spikes (only used when n_thal in
-% network_params.sli is nonzero)
-/record_thalamic_spikes true def
+%% Whether to record thalamic spikes (only used when n_thal in
+%% network_params.sli is not zero) and whether to storem them to file
 
-% whether to write any recorded thalamic spikes to file
+/record_thalamic_spikes true def
 /save_thalamic_spikes true def
 
-% name of file to which to write global IDs
-/GID_filename (population_GIDs.dat) def
+%% Prefixes for recorder file names
 
-% stem for spike detector file labels
 /spike_detector_label (spikes_) def
-
-% stem for voltmeter file labels
 /voltmeter_label (voltages_) def
-
-% stem for thalamic spike detector file labels
 /th_spike_detector_label (th_spikes_) def
 
-% file name for standard output
-/std_out (output.txt) def
+%% Name of the file to which the global IDs of the different
+%% populations are stored
 
-% file name for error output
-/error_out (errors.txt) def
+/nodeID_filename (population_nodeIDs.dat) def
+
+%% Filenames for redirecting stdout and stderr of the simulation
+
+/std_out (output.txt) def
+/std_err (errors.txt) def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                         NEST parameters                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/nest_path (/opt/nest) def  % the base path of the NEST installation

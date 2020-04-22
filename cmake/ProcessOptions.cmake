@@ -641,7 +641,6 @@ endfunction ()
 
 function( NEST_PROCESS_WITH_ARBOR_BACKEND )
   if (with-arborbackend)
-    # Question: does this cause an dependency on call order?
 	if (NOT HAVE_MPI)  
 	  message( FATAL_ERROR "arbor-backend needs MPI." )
     endif ()

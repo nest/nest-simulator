@@ -106,8 +106,6 @@ for rate, weight in zip(rates, weights):
     else:
         tau_syn = tau_syn_in
 
-    t_psp = np.arange(0., 10. * (tau_m * ms + tau_syn * ms), 0.0001)
-
     # We define the form of a single PSP, which allows us to match the
     # maximal value to or chosen weight.
 
@@ -204,11 +202,12 @@ nest.Simulate(simtime)
 # omitted so initial transients do not perturb our results. We then print the
 # results from theory and simulation.
 
-v_free = vm.get('events', 'V_m')[500:-1]
+v_free = vm.events['V_m']
+Nskip = 500
 print('mean membrane potential (actual / calculated): {0} / {1}'
-      .format(np.mean(v_free), mu * 1000))
+      .format(np.mean(v_free[Nskip:]), mu * 1000))
 print('variance (actual / calculated): {0} / {1}'
-      .format(np.var(v_free), sigma2 * 1e6))
+      .format(np.var(v_free[Nskip:]), sigma2 * 1e6))
 print('firing rate (actual / calculated): {0} / {1}'
       .format(nest.GetStatus(sd, 'n_events')[0] /
               (n_neurons * simtime * ms), r))

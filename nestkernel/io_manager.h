@@ -30,7 +30,7 @@
 #include "manager_interface.h"
 
 #include "recording_backend.h"
-#include "input_backend.h"
+#include "stimulating_backend.h"
 
 namespace nest
 {
@@ -140,7 +140,7 @@ private:
   /**
    * A mapping from names to registered input backends
    */
-  std::map< Name, InputBackend* > input_backends_;
+  std::map< Name, StimulatingBackend* > input_backends_;
 };
 
 } // namespace nest

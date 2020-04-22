@@ -1,5 +1,5 @@
 /*
- *  input_backend_mpi.h
+ *  stimulating_backend_mpi.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef INPUT_BACKEND_MPI_H
-#define INPUT_BACKEND_MPI_H
+#ifndef STIMULATING_BACKEND_MPI_H
+#define STIMULATING_BACKEND_MPI_H
 
-#include "input_backend.h"
+#include "stimulating_backend.h"
 #include "nest_types.h"
 #include "nest_time.h"
 #include <set>
@@ -63,20 +63,20 @@ namespace nest
 /**
  * A simple input backend MPI implementation
  */
-class InputBackendMPI : public InputBackend
+class StimulatingBackendMPI : public StimulatingBackend
 {
 public:
   /**
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()
    */
-  InputBackendMPI() = default;
+  StimulatingBackendMPI() = default;
 
   /**
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~InputBackendMPI() noexcept override = default;
+  ~StimulatingBackendMPI() noexcept override = default;
 
   void initialize() override;
 
@@ -132,4 +132,4 @@ private:
 
 } // namespace
 
-#endif // INPUT_BACKEND_MPI_H
+#endif // STIMULATING_BACKEND_MPI_H

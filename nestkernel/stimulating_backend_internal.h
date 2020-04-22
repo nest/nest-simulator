@@ -1,5 +1,5 @@
 /*
- *  input_backend_internal.h
+ *  stimulating_backend_internal.h
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef INPUT_BACKEND_INTERNAL_H
-#define INPUT_BACKEND_INTERNAL_H
+#ifndef STIMULATING_BACKEND_INTERNAL_H
+#define STIMULATING_BACKEND_INTERNAL_H
 
-#include "input_backend.h"
+#include "stimulating_backend.h"
 
 /* BeginDocumentation
 
-Internal input backend
+Internal stimulatingh backend
 ######################
 Internal backend is the default backend. This backend does nothing.
 
@@ -41,20 +41,20 @@ namespace nest
 /**
  * A simple input backend internal implementation
  */
-class InputBackendInternal : public InputBackend
+class StimulatingBackendInternal : public StimulatingBackend
 {
 public:
   /**
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()
    */
-  InputBackendInternal() = default;
+  StimulatingBackendInternal() = default;
 
   /**
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~InputBackendInternal() noexcept override = default;
+  ~StimulatingBackendInternal() noexcept override = default;
 
 
   void initialize() override;
@@ -98,4 +98,4 @@ private:
 
 } // namespace
 
-#endif // INPUT_BACKEND_INTERNAL_H
+#endif // STIMULATING_BACKEND_INTERNAL_H

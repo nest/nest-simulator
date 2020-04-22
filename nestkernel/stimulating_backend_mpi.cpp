@@ -1,5 +1,5 @@
 /*
- *  input_backend_mpi.cpp
+ *  stimulating_backend_mpi.cpp
  *
  *  This file is part of NEST.
  *
@@ -24,12 +24,12 @@
 #include <iostream>
 
 // Includes from nestkernel:
-#include "input_backend_mpi.h"
+#include "stimulating_backend_mpi.h"
 #include "input_device.h"
 
 
 void
-nest::InputBackendMPI::initialize()
+nest::StimulatingBackendMPI::initialize()
 {
   auto nthreads = kernel().vp_manager.get_num_threads();
   device_map devices( nthreads );
@@ -37,7 +37,7 @@ nest::InputBackendMPI::initialize()
 }
 
 void
-nest::InputBackendMPI::finalize()
+nest::StimulatingBackendMPI::finalize()
 {
   // clear vector of map
   for ( auto& it_device : devices_ )
@@ -49,7 +49,7 @@ nest::InputBackendMPI::finalize()
 }
 
 void
-nest::InputBackendMPI::enroll( InputDevice& device, const DictionaryDatum& params )
+nest::StimulatingBackendMPI::enroll( InputDevice& device, const DictionaryDatum& params )
 {
   if ( device.get_type() == InputDevice::SPIKE_GENERATOR or device.get_type() == InputDevice::STEP_CURRENT_GENERATOR )
   {
@@ -71,7 +71,7 @@ nest::InputBackendMPI::enroll( InputDevice& device, const DictionaryDatum& param
 }
 
 void
-nest::InputBackendMPI::disenroll( InputDevice& device )
+nest::StimulatingBackendMPI::disenroll( InputDevice& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -84,7 +84,7 @@ nest::InputBackendMPI::disenroll( InputDevice& device )
 }
 
 void
-nest::InputBackendMPI::set_value_names( const InputDevice& device,
+nest::StimulatingBackendMPI::set_value_names( const InputDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -92,7 +92,7 @@ nest::InputBackendMPI::set_value_names( const InputDevice& device,
 }
 
 void
-nest::InputBackendMPI::prepare()
+nest::StimulatingBackendMPI::prepare()
 {
   // need to be run only by the master thread : it is the case because it's not run in parallel
   thread thread_id_master = kernel().vp_manager.get_thread_id();
@@ -135,7 +135,7 @@ nest::InputBackendMPI::prepare()
 }
 
 void
-nest::InputBackendMPI::pre_run_hook()
+nest::StimulatingBackendMPI::pre_run_hook()
 {
 #pragma omp master
   {
@@ -154,13 +154,13 @@ nest::InputBackendMPI::pre_run_hook()
 }
 
 void
-nest::InputBackendMPI::post_step_hook()
+nest::StimulatingBackendMPI::post_step_hook()
 {
   // nothing to do
 }
 
 void
-nest::InputBackendMPI::post_run_hook()
+nest::StimulatingBackendMPI::post_run_hook()
 {
 #pragma omp master
   {
@@ -175,7 +175,7 @@ nest::InputBackendMPI::post_run_hook()
 }
 
 void
-nest::InputBackendMPI::cleanup()
+nest::StimulatingBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
 // Clean all the elements in the map
@@ -201,45 +201,45 @@ nest::InputBackendMPI::cleanup()
 }
 
 void
-nest::InputBackendMPI::check_device_status( const DictionaryDatum& params ) const
+nest::StimulatingBackendMPI::check_device_status( const DictionaryDatum& params ) const
 {
   // nothing to do
 }
 
 void
-nest::InputBackendMPI::get_device_defaults( DictionaryDatum& params ) const
+nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& params ) const
 {
   // nothing to do
 }
 
 void
-nest::InputBackendMPI::get_device_status( const nest::InputDevice& device, DictionaryDatum& params_dictionary ) const
-{
-  // nothing to do
-}
-
-
-void
-nest::InputBackendMPI::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
-{
-  // nothing to do
-}
-
-void
-nest::InputBackendMPI::set_status( const DictionaryDatum& d )
+nest::StimulatingBackendMPI::get_device_status( const nest::InputDevice& device, DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
 }
 
 
 void
-nest::InputBackendMPI::get_port( InputDevice* device, std::string* port_name )
+nest::StimulatingBackendMPI::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+{
+  // nothing to do
+}
+
+void
+nest::StimulatingBackendMPI::set_status( const DictionaryDatum& d )
+{
+  // nothing to do
+}
+
+
+void
+nest::StimulatingBackendMPI::get_port( InputDevice* device, std::string* port_name )
 {
   get_port( device->get_node_id(), device->get_label(), port_name );
 }
 
 void
-nest::InputBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
+nest::StimulatingBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
 {
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port)
@@ -273,7 +273,7 @@ nest::InputBackendMPI::get_port( const index index_node, const std::string& labe
 }
 
 void
-nest::InputBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDevice& device )
+nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDevice& device )
 {
   // Send the first message with id of device
   int message[ 1 ];

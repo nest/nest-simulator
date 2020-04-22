@@ -34,7 +34,7 @@
 #include "node.h"
 #include "device.h"
 #include "device_node.h"
-#include "input_backend.h"
+#include "stimulating_backend.h"
 #include "nest_types.h"
 #include "kernel_manager.h"
 

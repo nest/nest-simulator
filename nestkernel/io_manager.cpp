@@ -47,7 +47,6 @@
 #include "recording_backend_arbor.h"
 #endif
 #include "recording_backend_mpi.h"
-#include "input_backend_mpi.h"
 #endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"

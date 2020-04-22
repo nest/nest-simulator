@@ -144,7 +144,7 @@ class NodeCollection(object):
     Class for `NodeCollection`.
 
     `NodeCollection` represents the nodes of a network. The class supports
-    iteration, concatination, indexing, slicing, membership, length, convertion to and
+    iteration, concatenation, indexing, slicing, membership, length, conversion to and
     from lists, test for membership, and test for equality. By using the
     membership functions :py:func:`get()` and :py:func:`set()`, you can get and set desired
     parameters.
@@ -212,14 +212,22 @@ class NodeCollection(object):
                 start = 1
             else:
                 start = key.start + 1 if key.start >= 0 else key.start
+                if abs(start) > self.__len__():
+                    raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = key.stop if key.stop >= 0 else key.stop
+                stop = key.stop if key.stop >= 0 else key.stop - 1
+                if abs(stop) > self.__len__():
+                    raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
+            if step < 1:
+                raise IndexError('slicing step for NodeCollection must be strictly positive')
 
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
+            if abs(key + (key >= 0)) > self.__len__():
+                raise IndexError('index value outside of the NodeCollection')
             return sli_func('Take', self._datum, [key + (key >= 0)])
         else:
             raise IndexError('only integers and slices are valid indices')

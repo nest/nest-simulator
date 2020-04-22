@@ -43,7 +43,7 @@ Description
 +++++++++++
 
 tanh_rate is an implementation of a nonlinear rate model with input
-function \f$ input(h) = \tanh(g * (h-\theta)) \f$. It either models a
+function :math:`input(h) = \tanh(g * (h-\theta))`. It either models a
 rate neuron with input noise (see rate_neuron_ipn), a rate neuron with
 output noise (see rate_neuron_opn) or a rate transformer (see
 rate_transformer_node). Input transformation can either be applied to

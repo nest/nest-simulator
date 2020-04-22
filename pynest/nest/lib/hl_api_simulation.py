@@ -347,7 +347,7 @@ def GetKernelStatus(keys=None):
 
     Notes
     -----
-    See SetDocKernelStatus for documentation on each parameter key.
+    See SetKernelStatus for documentation on each parameter key.
 
     See Also
     --------

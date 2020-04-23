@@ -296,9 +296,8 @@ for model in models_with_documentation:
 # -- Copy documentation for Microcircuit Model ----------------------------
 
 source = r'../pynest/examples/Potjans_2014'
-destination = r'microcircuit'
+destination = r'examples'
 
 if os.path.exists(destination) and os.path.isdir(destination):
-    rmtree(destination)
-copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py'))
-os.rename("./microcircuit/README.rst", "./microcircuit/index.rst")
+    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py', '*.rst'), dirs_exist_ok=True)
+

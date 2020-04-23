@@ -1,7 +1,7 @@
 PyNEST microcircuit
 ===================
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann. 
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_. 
 
 Here you can inspect all files belonging to this example:
 
@@ -13,3 +13,10 @@ Here you can inspect all files belonging to this example:
 * :doc:`stimulus_params.py <../auto_examples/Potjans_2014/stimulus_params>`: parameters for optional external stimulation
 * :doc:`sim_params.py <../auto_examples/Potjans_2014/sim_params>`: simulation parameters
 * `reference_data <https://github.com/nest/nest-simulator/tree/master/pynest/examples/Potjans_2014/reference_data>`_: reference data and figures obtained by executing run_microcircuit.py with default parameters
+
+References
+----------
+
+.. [1]  Potjans TC. and Diesmann M. 2014. The cell-type specific cortical
+        microcircuit: relating structure and activity in a full-scale spiking
+        network model. Cerebral Cortex. 24(3):785–806. DOI: `10.1093/cercor/bhs358 <https://doi.org/10.1093/cercor/bhs358>`__.

@@ -60,7 +60,6 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
  879  /t2_neuron1  Set
 1249  /t3_neuron1  Set
 
-% neuron with defined parameters should fire spikes at 20.5 and 81.9 ms
 209  /t1_neuron2  Set
 801  /t2_neuron2  Set
 

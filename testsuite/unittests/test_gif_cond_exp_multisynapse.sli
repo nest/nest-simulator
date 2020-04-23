@@ -48,16 +48,27 @@ SeeAlso: gif_cond_exp_multisynapse, testsuite::test_gif_cond_exp
 % This test should only run if we have GSL
 skip_if_without_gsl
 
+% % neuron with default parameters should fire spikes at 29.9, 62.1, 1000.5 and
+% % 141.7 ms
+% 299  /t1_neuron1  Set
+% 621  /t2_neuron1  Set
+% 1005  /t3_neuron1  Set
+% 1417 /t4_neuron1  Set
+
+% % neuron with defined parameters should fire spikes at 16.5 and 44.1 ms
+% 165  /t1_neuron2  Set
+% 441  /t2_neuron2  Set
 % neuron with default parameters should fire spikes at 29.9, 62.1, 1000.5 and
 % 141.7 ms
-299  /t1_neuron1  Set
-621  /t2_neuron1  Set
-1005  /t3_neuron1  Set
-1417 /t4_neuron1  Set
 
-% neuron with defined parameters should fire spikes at 16.5 and 44.1 ms
-165  /t1_neuron2  Set
-441  /t2_neuron2  Set
+% Revised reference data obtained by running model with NEST3
+290  /t1_neuron1  Set
+602  /t2_neuron1  Set
+967  /t3_neuron1  Set
+1394 /t4_neuron1  Set
+
+167  /t1_neuron2  Set
+461  /t2_neuron2  Set
 
 /:run_test
 {
@@ -119,7 +130,7 @@ clear
   t4_neuron1 eq rot
   t3_neuron1 eq rot
   t2_neuron1 eq rot
-  t1_neuron1 eq and and and
+  t1_neuron1 eq and and and and
 } assert_or_die
 
 % Test 4: defined parameters

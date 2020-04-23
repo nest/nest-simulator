@@ -14,7 +14,7 @@ and NEST is configured properly.
 
 Please install MUSIC using the instructions on `the MUSIC website <https://github.com/INCF/MUSIC>`_.
 
-In the install of NEST, you need to add the following configuration option to
+In the installation of NEST, you need to add the following configuration option to
 your cmake.
 
 .. code-block:: sh
@@ -47,8 +47,6 @@ constructs.
 While the focus here is on MUSIC, we need to know a few things about how
 NEST works in order to understand how MUSIC interacts with it.
 
-Go straight to part 1 of tutorial - connect 2 simulations using PyNEST
-
 The Basics of NEST
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -58,7 +56,7 @@ and connections between them.
 Neurons are the basic building blocks, and in NEST they are generally
 spiking point neuron models. Devices are supporting units that for
 instance generate inputs to neurons or record data from them. The
-Poisson spike generator, the spike detector recording device and the
+poisson spike generator, the spike detector recording device, and the
 MUSIC input and output proxies are all devices. Neurons and devices are
 collectively called nodes, and are connected using connections.
 

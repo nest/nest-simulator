@@ -143,6 +143,13 @@ NodeCollection::create( const TokenArray& node_idsarray )
   return NodeCollection::create_( node_ids );
 }
 
+
+NodeCollectionPTR
+NodeCollection::create( const index node_id )
+{
+  return NodeCollection::create_( { node_id } );
+}
+
 NodeCollectionPTR
 NodeCollection::create_()
 {

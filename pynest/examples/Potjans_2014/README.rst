@@ -17,7 +17,7 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
    | |img1| | |img2| | |img3| |
    +--------+--------+--------+
    
-Left: network sketch from [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
+Left: network sketch [2]_. Middle: raster plot showing spiking activity. Right: firing rates as box plots.
 
 Citing this code
 ################

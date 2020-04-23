@@ -637,13 +637,13 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-   Name: Create - create a number of equal nodes in the current subnet
+   Name: Create - create nodes
 
    Synopsis:
-   /model          Create -> node_ids
-   /model n        Create -> node_ids
-   /model   params Create -> node_ids
-   /model n params Create -> node_ids
+   /model          Create -> NodeCollection
+   /model n        Create -> NodeCollection
+   /model   params Create -> NodeCollection
+   /model n params Create -> NodeCollection
 
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
@@ -655,9 +655,8 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 
    Description:
    Create generates n new network objects of the supplied model
-   type. If n is not given, a single node is created. The objects
-   are added as children of the current working node. params is a
-   dictsionary with parameters for the new nodes.
+   type. If n is not given, a single node is created. params is a
+   dictionary with parameters for the new nodes.
 
    SeeAlso: modeldict
 */
@@ -760,22 +759,6 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
-  i->EStack.pop();
-}
-
-void
-NestModule::Connect_nonunique_ia_ia_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  TokenArray sources = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray targets = getValue< TokenArray >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, synapse_params );
-
-  i->OStack.pop( 3 );
   i->EStack.pop();
 }
 
@@ -1525,8 +1508,11 @@ NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i 
 }
 
 /**
- * Enable Structural Plasticity within the simulation. This means, allowing
+ * Enable Structural Plasticity within the simulation. This allows
  * dynamic rewiring of the network based on mean electrical activity.
+ * Please note that, in the current implementation of structural plasticity,
+ * spikes could occasionally be delivered via connections that were not present
+ * at the time of the spike.
  * @param i
  */
 void
@@ -1950,7 +1936,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
-  i->createcommand( "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

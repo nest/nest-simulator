@@ -284,7 +284,7 @@ void
 nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
   poisson_distribution::param_type param( B_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dist_( get_thread_rng( get_thread() ), param );
+  long n_spikes = V_.poisson_dist_( get_thread_specific_rng( get_thread() ), param );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

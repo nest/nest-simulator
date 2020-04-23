@@ -77,7 +77,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   thread tgt_thread,
   const Layer< D >& source )
 {
-  RngPtr rng = get_thread_rng( tgt_thread );
+  RngPtr rng = get_thread_specific_rng( tgt_thread );
 
   // We create a source pos vector here that can be updated with the
   // source position. This is done to avoid creating and destroying
@@ -386,7 +386,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
       thread target_thread = tgt->get_thread();
-      RngPtr rng = get_thread_rng( target_thread );
+      RngPtr rng = get_thread_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       // We create a source pos vector here that can be updated with the
@@ -509,7 +509,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = tgt->get_thread();
-      RngPtr rng = get_thread_rng( target_thread );
+      RngPtr rng = get_thread_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       std::vector< double > source_pos_vector( D );
@@ -679,7 +679,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< double > probabilities;
 
     // Find potential targets and probabilities
-    RngPtr rng = get_global_rng();
+    RngPtr rng = get_rank_synced_rng();
     target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
     std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
@@ -716,7 +716,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
     {
-      index random_id = lottery.get_random_id( get_global_rng() );
+      index random_id = lottery.get_random_id( get_rank_synced_rng() );
       if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
       {
         --i;

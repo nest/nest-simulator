@@ -292,7 +292,7 @@ nest::gif_psc_exp::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = get_thread_rng( get_thread() );
+  V_.rng_ = get_thread_specific_rng( get_thread() );
 
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
   V_.P11in_ = std::exp( -h / P_.tau_in_ );

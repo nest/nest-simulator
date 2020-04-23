@@ -253,7 +253,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = get_thread_rng( get_thread() );
+  V_.rng_ = get_thread_specific_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double >::min();
 
   double tau_eta_max = -1; // finding max of tau_eta_

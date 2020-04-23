@@ -1,5 +1,5 @@
 Download NEST
-===================
+=============
 
 .. admonition:: Try NEST 3.0
 
@@ -23,7 +23,7 @@ If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`
 
 
 Download the source code
--------------------------
+------------------------
 
 * If you are compiling NEST from source, you can |link-pre|\ |version|\ |link-post|
 
@@ -33,19 +33,17 @@ Download the source code
 
 .. |link-post| raw:: html
 
-    .tar.gz">download the latest release here</a>
+    .tar.gz">download the latest release here</a>.
 
-* Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`.
-
- |link-pregit|\ |version|\ |link-postgit|
+* Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`. |link-pregit|\ |version|\ |link-postgit|
 
 .. |link-pregit| raw:: html
 
-* Get the `source code of the latest release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
+    <a href="https://github.com/nest/nest-simulator/releases/tag/v
 
 .. |link-postgit| raw:: html
 
-    ">Get the release notes here</a>
+    ">Get the release notes here</a>.
 
 * You can also test out the `latest developer version <https://github.com/nest/nest-simulator>`_ from GitHub.
 
@@ -58,12 +56,11 @@ Download the source code
 .. _download_livemedia:
 
 Download the NEST image for VMs
---------------------------------
+-------------------------------
 
 The VM image of NEST is available in the OVA format, and is suitable, for example, for importing into VirtualBox.
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
 After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
-
 
 * Download the |link-preova|\ |version|\ |link-postova|
 
@@ -75,11 +72,13 @@ After downloading the virtual machine, check out the :doc:`install instructions 
 
      .ova">latest release of the NEST VM image</a>
 
+* Download the `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
+
 * After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
 
 
 Older versions of VM images
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 `NEST Live Media 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova>`_
 

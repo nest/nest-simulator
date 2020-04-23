@@ -1,8 +1,8 @@
-NEST Installation Instructions
-================================
+Install NEST
+============
 
-Standard Installation Instructions
-------------------------------------
+Standard installation
+---------------------
 
 **These installation instructions should work for most users, who do
 not need custom configurations for their systems. If you want to
@@ -218,8 +218,8 @@ If installation didn't work, see the :doc:`troubleshooting section <../troublesh
 
 .. _advanced_install:
 
-Advanced Installation Instructions
------------------------------------
+Advanced installation
+---------------------
 
 **If you need special configuration options or want to compile NEST yourself, follow
 these instructions.**
@@ -241,7 +241,7 @@ these instructions.**
 
    .. tab:: macOS
 
-       For further options on installing NEST on macOS, see :ref:`mac_manual` for Macs.
+       For further options on installing NEST on macOS, see :doc:`mac_install` for Macs.
 
 
    .. tab:: HPC systems

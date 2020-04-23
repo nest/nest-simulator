@@ -23,7 +23,6 @@ set( nestkernel_sources
     archiving_node.h archiving_node.cpp
     clopath_archiving_node.h clopath_archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
-    completed_checker.h completed_checker.cpp
     connection.h
     connection_label.h
     common_properties_hom_w.h
@@ -53,6 +52,7 @@ set( nestkernel_sources
     modelrange_manager.h modelrange_manager.cpp
     node.h node.cpp
     parameter.h parameter.cpp
+    per_thread_bool_indicator.h per_thread_bool_indicator.cpp
     proxynode.h proxynode.cpp
     random_manager.h random_manager.cpp
     recording_device.h recording_device.cpp
@@ -66,6 +66,7 @@ set( nestkernel_sources
     conn_builder.h conn_builder_impl.h conn_builder.cpp
     conn_builder_factory.h
     music_event_handler.h music_event_handler.cpp
+    music_rate_in_handler.h music_rate_in_handler.cpp
     music_manager.cpp music_manager.h
     nest.h nest_impl.h nest.cpp
     synaptic_element.h synaptic_element.cpp

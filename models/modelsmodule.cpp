@@ -55,7 +55,6 @@
 #include "hh_psc_alpha_gap.h"
 #include "ht_neuron.h"
 #include "iaf_chs_2007.h"
-#include "iaf_chxk_2008.h"
 #include "iaf_cond_alpha.h"
 #include "iaf_cond_alpha_mc.h"
 #include "iaf_cond_beta.h"
@@ -153,6 +152,8 @@
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
 #include "music_message_in_proxy.h"
+#include "music_rate_in_proxy.h"
+#include "music_rate_out_proxy.h"
 #endif
 
 namespace nest
@@ -253,7 +254,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
 #ifdef HAVE_GSL
-  kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
   kernel().model_manager.register_node_model< iaf_cond_beta >( "iaf_cond_beta" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
@@ -289,6 +289,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< music_cont_in_proxy >( "music_cont_in_proxy" );
   kernel().model_manager.register_node_model< music_cont_out_proxy >( "music_cont_out_proxy" );
   kernel().model_manager.register_node_model< music_message_in_proxy >( "music_message_in_proxy" );
+  kernel().model_manager.register_node_model< music_rate_in_proxy >( "music_rate_in_proxy" );
+  kernel().model_manager.register_node_model< music_rate_out_proxy >( "music_rate_out_proxy" );
 #endif
 
   // register all connection models

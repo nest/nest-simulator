@@ -269,7 +269,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
   // age_distribution object propagates one time step and returns number of spikes
-  unsigned long n_spikes = B_.internal_states_[ prt ].update( V_.transition_prob_, get_thread_rng( get_thread() ) );
+  unsigned long n_spikes = B_.internal_states_[ prt ].update( V_.transition_prob_, get_thread_specific_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

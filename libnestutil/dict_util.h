@@ -53,9 +53,9 @@ updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node*
     {
       throw BadParameter( "Cannot use Parameter with this model." );
     }
-    auto vp = kernel().vp_manager.suggest_vp_for_node_id( node->get_node_id() );
+    auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
     auto tid = kernel().vp_manager.vp_to_thread( vp );
-    auto rng = get_thread_rng( tid );
+    auto rng = get_thread_specific_rng( tid );
     value = pd->get()->value( rng, node );
     return true;
   }

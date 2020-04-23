@@ -79,7 +79,7 @@ class TestFixedTotalNumber(TestParams):
                 self.N, fan, self.N_s, self.N_t)
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
-                hf.reset_seed(123456 * i % 511, self.nr_threads)
+                hf.reset_seed(i + 1, self.nr_threads)
                 self.setUpNetwork(conn_dict=conn_params,
                                   N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)

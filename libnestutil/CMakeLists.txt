@@ -18,6 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( nestutil_sources
+    beta_normalization_factor.h
     block_vector.h
     compose.hpp
     enum_bitfield.h
@@ -39,6 +40,7 @@ target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 
 target_include_directories( nestutil PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${Boost_INCLUDE_DIRS}
     )
 
 install( TARGETS nestutil

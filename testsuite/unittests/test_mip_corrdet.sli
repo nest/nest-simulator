@@ -66,7 +66,7 @@ userdict begin
     /local_num_threads 1
     /resolution h
     /overwrite_files true
-    /rng_seed 0 % because test data was produced for seed = 0
+    /rng_seed 12345
 >> SetKernelStatus
 
 /mip_generator Create dup /mg Set

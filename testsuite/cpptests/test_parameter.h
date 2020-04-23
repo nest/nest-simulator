@@ -54,7 +54,11 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ParameterDatum uniform_pd = new nest::UniformParameter( d );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
-  auto rng = nest::make_rng< std::mt19937_64 >( 0 );
+
+  // We need to go via a factory to avoid compiler confusion
+  nest::RNGFactory< std::mt19937_64 > rf;
+  nest::RngPtr rng = rf.clone( { 1234567890, 23423423 } );
+
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );
 }
 
@@ -71,12 +75,16 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
   DictionaryDatum d = new Dictionary();
   ( *d )[ nest::names::max ] = max;
   ParameterDatum uniform_int_pd = new nest::UniformIntParameter( d );
-  auto rng = nest::make_rng< std::mt19937_64 >( 0 );
+
+  // We need to go via a factory to avoid compiler confusion
+  nest::RNGFactory< std::mt19937_64 > rf;
+  nest::RngPtr rng = rf.clone( { 1234567890, 23423423 } );
+
   for ( int i = 0; i < num_iterations; ++i )
   {
     auto value = uniform_int_pd->value( rng, nullptr );
     // Test makes no sense if the return value of the Parameter is not floating point.
-    static_assert( std::is_floating_point< decltype( value ) >::value );
+    static_assert( std::is_floating_point< decltype( value ) >::value, "Return type not floating point" );
     BOOST_REQUIRE_EQUAL( value, static_cast< long >( value ) );
     BOOST_REQUIRE_LT( value, max ); // Require value < max
     BOOST_REQUIRE_GE( value, 0 );   // Require value >= 0

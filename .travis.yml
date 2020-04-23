@@ -24,7 +24,7 @@
 
 language: python
 
-# Using the Sudo-enabled Ubuntu Xenial (16.04 LTS).
+# Using the Sudo-enabled Ubuntu Bionic (18.04 LTS).
 sudo: required
 dist: bionic
 

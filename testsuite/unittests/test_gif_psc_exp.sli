@@ -44,14 +44,25 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 (unittest) run
 /unittest using
 
-% neuron with default parameters should fire spikes at 44.4, 81.9 and 121.4 ms
-444  /t1_neuron1  Set
-819  /t2_neuron1  Set
-1214 /t3_neuron1  Set
+% Original reference data valid until NEST 2.20.1
+% % neuron with default parameters should fire spikes at 44.4, 81.9 and 121.4 ms
+% 444  /t1_neuron1  Set
+% 819  /t2_neuron1  Set
+% 1214 /t3_neuron1  Set
+
+% % neuron with defined parameters should fire spikes at 20.5 and 81.9 ms
+% 205  /t1_neuron2  Set
+% 819  /t2_neuron2  Set
+
+% Revised reference data obtained by running model with NEST3
+% Should be replaced with statistical test.
+ 485  /t1_neuron1  Set
+ 879  /t2_neuron1  Set
+1249  /t3_neuron1  Set
 
 % neuron with defined parameters should fire spikes at 20.5 and 81.9 ms
-205  /t1_neuron2  Set
-819  /t2_neuron2  Set
+209  /t1_neuron2  Set
+801  /t2_neuron2  Set
 
 /:run_test
 {

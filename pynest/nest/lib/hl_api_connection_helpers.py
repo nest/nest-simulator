@@ -281,7 +281,7 @@ def _check_input_nodes(pre, post):
                                       "they must have the same length."
 
         # convert them to arrays
-        pre  = np.array(pre, dtype=int)
+        pre = np.array(pre, dtype=int)
         post = np.array(post, dtype=int)
 
         # check dimension

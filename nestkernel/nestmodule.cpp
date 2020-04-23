@@ -772,22 +772,6 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-void
-NestModule::Connect_nonunique_ia_ia_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  TokenArray sources = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray targets = getValue< TokenArray >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, synapse_params );
-
-  i->OStack.pop( 3 );
-  i->EStack.pop();
-}
-
 /** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
@@ -1995,7 +1979,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
-  i->createcommand( "Connect_nonunique_ia_ia_D", &connect_nonunique_ia_ia_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

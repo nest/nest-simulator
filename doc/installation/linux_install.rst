@@ -9,6 +9,7 @@ Dependencies
 To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
 .. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
+
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
 The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages.
@@ -98,13 +99,13 @@ What gets installed where
 By default, everything will be installed to the subdirectories ``/install/path/{bin,lib,share}``, where ``/install/path`` is the install path given to ``cmake``:
 
 - Executables ``/install/path/bin``
-- Dynamic libraries ``/install/path/lib/``
-- SLI libraries ``/install/path/share/nest/sli``
-- Documentation ``/install/path/share/doc/nest``
-- Examples ``/install/path/share/doc/nest/examples``
-- PyNEST ``/install/path/lib/pythonX.Y/site-packages/nest``
-- PyNEST examples ``/install/path/share/doc/nest/examples/pynest``
-- Extras ``/install/path/share/nest/extras/``
+- Dynamic libraries ``/install/path/lib/``
+- SLI libraries ``/install/path/share/nest/sli``
+- Documentation ``/install/path/share/doc/nest``
+- Examples ``/install/path/share/doc/nest/examples``
+- PyNEST ``/install/path/lib/pythonX.Y/site-packages/nest``
+- PyNEST examples ``/install/path/share/doc/nest/examples/pynest``
+- Extras ``/install/path/share/nest/extras/``
 
 If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths. For example, if you are using bash:
 
@@ -148,8 +149,8 @@ The following variables are set in ``nest_vars.sh``:
    * - ``PYTHONPATH``
      - Search path for non-standard Python module locations. Will be prepended to or created if it does not exist.
    * - ``PATH``
-     - Search path for binaries. Will be prepended to or created to if it does not exist.
+     - Search path for binaries. Will be prepended to or created if it does not exist.
    * - ``LD_LIBRARY_PATH``
-     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created to if it does not exist.
+     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created if it does not exist.
 
 If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries.

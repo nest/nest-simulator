@@ -215,7 +215,7 @@ nest::inhomogeneous_poisson_generator::init_state_( const Node& proto )
 {
   const inhomogeneous_poisson_generator& pr = downcast< inhomogeneous_poisson_generator >( proto );
 
-  StimulatingDevice< SpikeEvent >init_state( pr );
+  StimulatingDevice< SpikeEvent > init_state( pr );
 }
 
 void

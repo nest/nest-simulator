@@ -413,7 +413,9 @@ IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, Di
 }
 
 void
-IOManager::get_stimulating_backend_device_status( const Name& backend_name, const InputDevice& device, DictionaryDatum& d )
+IOManager::get_stimulating_backend_device_status( const Name& backend_name,
+  const InputDevice& device,
+  DictionaryDatum& d )
 {
   stimulating_backends_[ backend_name ]->get_device_status( device, d );
 }

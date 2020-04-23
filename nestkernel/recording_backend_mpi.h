@@ -121,7 +121,7 @@ private:
 
   static void get_port( const RecordingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
-  static void send_data( const MPI_Comm* comm, const double data[], int size);
+  static void send_data( const MPI_Comm* comm, const double data[], int size );
 };
 
 } // namespace

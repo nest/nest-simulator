@@ -113,12 +113,13 @@ nest::RecordingBackendMPI::prepare()
       // get port and update the list of devices
       thread_id_master = kernel().vp_manager.get_thread_id();
       int count_max = 0;
-      for (auto &it_device : devices_[ thread_id_master ]) {
+      for ( auto& it_device : devices_[ thread_id_master ] )
+      {
         // add the link between MPI communicator and the device (devices can share the same MPI communicator)
         std::string port_name;
         get_port( std::get< 2 >( it_device.second ), &port_name );
         auto comm_it = commMap_.find( port_name );
-        MPI_Comm *comm;
+        MPI_Comm* comm;
         int index_mpi;
         if ( comm_it != commMap_.end() )
         {
@@ -149,10 +150,10 @@ nest::RecordingBackendMPI::prepare()
       for ( auto& it_comm : commMap_ )
       {
         MPI_Comm_connect( it_comm.first.data(),
-            MPI_INFO_NULL,
-            0,
-            MPI_COMM_WORLD,
-            std::get< 1 >( it_comm.second ) ); // should use the status for handle error
+          MPI_INFO_NULL,
+          0,
+          MPI_COMM_WORLD,
+          std::get< 1 >( it_comm.second ) ); // should use the status for handle error
         std::ostringstream msg;
         msg << "Connect to " << it_comm.first.data() << "\n";
         LOG( M_INFO, "MPI Record connect", msg.str() );
@@ -163,7 +164,8 @@ nest::RecordingBackendMPI::prepare()
     thread thread_id = kernel().vp_manager.get_thread_id();
     if ( thread_id != thread_id_master )
     {
-      for ( auto &it_device : devices_[ thread_id ]) {
+      for ( auto& it_device : devices_[ thread_id ] )
+      {
         auto device_data = devices_[ thread_id_master ].find( it_device.first );
         std::get< 0 >( it_device.second ) = std::get< 0 >( device_data->second );
         std::get< 1 >( it_device.second ) = std::get< 1 >( device_data->second );
@@ -180,7 +182,7 @@ nest::RecordingBackendMPI::pre_run_hook()
   {
     for ( auto& it_comm : commMap_ )
     {
-      bool value [ 1 ] = { true };
+      bool value[ 1 ] = { true };
       MPI_Send( &value, 1, MPI_CXX_BOOL, 0, 0, *std::get< 1 >( it_comm.second ) );
     }
   }
@@ -225,7 +227,7 @@ nest::RecordingBackendMPI::post_run_hook()
     {
       for ( auto& data_comm : data_thread )
       {
-         data_comm.clear();
+        data_comm.clear();
       }
     }
     // Send information about the end of the running part
@@ -369,11 +371,12 @@ nest::RecordingBackendMPI::get_port( const index index_node, const std::string& 
 }
 
 void
-nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[], const int size) {
+nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[], const int size )
+{
   // Send the size of data
-  int shape[1];
-  shape[0] = size;
-  MPI_Send(&shape, 1, MPI_INT, 0, 0, *comm);
+  int shape[ 1 ];
+  shape[ 0 ] = size;
+  MPI_Send( &shape, 1, MPI_INT, 0, 0, *comm );
   // Receive the data ( for the moment only spike time )
-  MPI_Send(data, shape[0], MPI_DOUBLE, 0, 0, *comm);
+  MPI_Send( data, shape[ 0 ], MPI_DOUBLE, 0, 0, *comm );
 }

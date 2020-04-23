@@ -123,11 +123,11 @@ nest::StimulatingBackendMPI::prepare()
   // 2) connect the master thread to the MPI process it needs to be connected to
   for ( auto& it_comm : commMap_ )
   {
-    MPI_Comm_connect(it_comm.first.data(),
-        MPI_INFO_NULL,
-        0,
-        MPI_COMM_WORLD,
-        it_comm.second.first ); // should use the status for handle error
+    MPI_Comm_connect( it_comm.first.data(),
+      MPI_INFO_NULL,
+      0,
+      MPI_COMM_WORLD,
+      it_comm.second.first ); // should use the status for handle error
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
     LOG( M_INFO, "MPI Input connect", msg.str() );
@@ -141,7 +141,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
   {
     for ( auto& it_comm : commMap_ )
     {
-      bool value[ 1 ]  = { true };
+      bool value[ 1 ] = { true };
       MPI_Send( value, 1, MPI_CXX_BOOL, 0, 0, *it_comm.second.first );
     }
     // Receive information of MPI process
@@ -167,7 +167,7 @@ nest::StimulatingBackendMPI::post_run_hook()
     // Send information about the end of the running part
     for ( auto& it_comm : commMap_ )
     {
-      bool value[ 1 ]  = { true };
+      bool value[ 1 ] = { true };
       MPI_Send( value, 1, MPI_CXX_BOOL, 0, 1, *it_comm.second.first );
     }
   }
@@ -192,7 +192,7 @@ nest::StimulatingBackendMPI::cleanup()
     // clear map of devices
     commMap_.clear();
     thread thread_id_master = kernel().vp_manager.get_thread_id();
-    for ( auto& it_device : devices_[thread_id_master] )
+    for ( auto& it_device : devices_[ thread_id_master ] )
     {
       it_device.second.first = nullptr;
     }
@@ -213,7 +213,8 @@ nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& params ) cons
 }
 
 void
-nest::StimulatingBackendMPI::get_device_status( const nest::InputDevice& device, DictionaryDatum& params_dictionary ) const
+nest::StimulatingBackendMPI::get_device_status( const nest::InputDevice& device,
+  DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
 }
@@ -288,10 +289,10 @@ nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDev
   MPI_Recv( spikes, shape[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, message[ 0 ], comm, &status_mpi );
   std::vector< double > spikes_list( &spikes[ 0 ], &spikes[ shape[ 0 ] ] );
   // Update the device with the data in all the thread
-  for (auto &thread_device : devices_)
+  for ( auto& thread_device : devices_ )
   {
-      thread_device.find( device.get_node_id() )->second.second->update_from_backend( spikes_list );
-   }
+    thread_device.find( device.get_node_id() )->second.second->update_from_backend( spikes_list );
+  }
   delete[] spikes;
   spikes = nullptr;
 }

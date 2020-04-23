@@ -1,18 +1,11 @@
 PyNEST microcircuit
 ===================
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann. 
 
-.. toctree::
-   :maxdepth: 1
+Here you can inspect all files belonging to this example:
 
-   pynest_microcircuit_link
-
-You can open files used directly here.
-
-File structure
---------------
-
+* :doc:`README <pynest_microcircuit_link>`: documentation of this microcircuit model implementation and its usage
 * :doc:`run_microcircuit.py <../auto_examples/Potjans_2014/run_microcircuit>`: an example script to try out the microcircuit
 * :doc:`network.py <../auto_examples/Potjans_2014/network>`: the main Network class with functions to build and simulate the network
 * :doc:`helpers.py <../auto_examples/Potjans_2014/helpers>`: helper functions for network construction, simulation and evaluation

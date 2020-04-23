@@ -149,31 +149,33 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.delay, d)
             self.assertEqual(c.receptor, r)
 
-    # ~ def test_connect_arrays_additional_synspec_params(self):
-        # ~ """Connecting NumPy arrays with additional syn_spec params"""
-        # ~ n = 10
-        # ~ nest.Create('iaf_psc_exp_multisynapse', n)
-        # ~ sources = np.arange(1, n+1, dtype=np.uint64)
-        # ~ targets = np.array(non_unique, dtype=np.uint64)
-        # ~ weights = np.ones(len(sources))
-        # ~ delays = np.ones(len(sources))
-        # ~ syn_model = 'vogels_sprekeler_synapse'
-        # ~ receptor_type = np.ones(len(sources), dtype=np.uint64)
-        # ~ alpha = 0.1*np.ones(len(sources))
-        # ~ tau = 20.*np.ones(len(sources))
-        # ~ nest.Connect(sources, targets,
-                     # ~ syn_spec={'weight': weights, 'delay': delays, 'receptor_type': receptor_type,
-                               # ~ 'alpha': alpha, 'tau': tau})
+    def test_connect_arrays_additional_synspec_params(self):
+        """Connecting NumPy arrays with additional syn_spec params"""
+        n = 10
+        nest.Create('iaf_psc_exp_multisynapse', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = non_unique
+        weights = np.ones(len(sources))
+        delays = np.ones(len(sources))
+        syn_model = 'vogels_sprekeler_synapse'
+        receptor_type = np.ones(len(sources), dtype=np.uint64)
+        alpha = 0.1*np.ones(len(sources))
+        tau = 20.*np.ones(len(sources))
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model,
+                                                 'receptor_type': receptor_type,
+                                                 'alpha': alpha,
+                                                 'tau': tau
+                                                 })
 
-        # ~ conns = nest.GetConnections()
-        # ~ for s, t, w, d, r, a, tau, c in zip(sources, targets, weights, delays, receptor_type, alpha, tau, conns):
-            # ~ self.assertEqual(c.source, s)
-            # ~ self.assertEqual(c.target, t)
-            # ~ self.assertEqual(c.weight, w)
-            # ~ self.assertEqual(c.delay, d)
-            # ~ self.assertEqual(c.receptor, r)
-            # ~ self.assertEqual(c.alpha, a)
-            # ~ self.assertEqual(c.tau, tau)
+        conns = nest.GetConnections()
+        for s, t, w, d, r, a, tau, c in zip(sources, targets, weights, delays, receptor_type, alpha, tau, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
+            self.assertEqual(c.weight, w)
+            self.assertEqual(c.delay, d)
+            self.assertEqual(c.receptor, r)
+            self.assertEqual(c.alpha, a)
+            self.assertEqual(c.tau, tau)
 
     def test_connect_arrays_float_rtype(self):
         """Raises exception when not using integer value for receptor_type"""

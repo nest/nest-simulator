@@ -860,7 +860,7 @@ public:
     assert( false );
     return 0;
   }
-  
+
 private:
   void set_lid_( index );          //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* );     //!< Set pointer to parent subnet.

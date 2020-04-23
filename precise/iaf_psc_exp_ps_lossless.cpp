@@ -30,7 +30,6 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "propagator_stability.h"
 #include "regula_falsi.h"
 

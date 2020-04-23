@@ -85,6 +85,7 @@ M_ERROR setverbosity
 [
   /iaf_psc_alpha_ps 
   /iaf_psc_delta_ps
+  /iaf_psc_alpha_presc
   % other precise models should be tested as well
  ] 
  /models Set

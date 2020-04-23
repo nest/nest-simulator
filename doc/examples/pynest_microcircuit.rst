@@ -19,3 +19,4 @@ File structure
 * :doc:`network_params.py <../_build/html/auto_examples/Potjans_2014/network_params.py>`: network and neuron parameters
 * :doc:`stimulus_params.py <../_build/html/auto_examples/Potjans_2014/stimulus_params.py>`: parameters for optional external stimulation
 * :doc:`sim_params.py <../_build/html/auto_examples/Potjans_2014/sim_params.py>`: simulation parameters
+* `reference_data <https://github.com/nest/nest-simulator/tree/master/pynest/examples/Potjans_2014/reference_data>`_

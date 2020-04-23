@@ -201,10 +201,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_mgnt`
     """
-    data_connect, pre, post = _check_input_nodes(pre, post)
-
-    if data_connect and conn_spec != 'one_to_one':
-        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")
+    data_connect, pre, post = _check_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)

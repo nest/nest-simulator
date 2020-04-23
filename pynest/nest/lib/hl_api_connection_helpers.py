@@ -246,10 +246,12 @@ def _connect_spatial(pre, post, projections):
     sr('ConnectLayers')
 
 
-def _check_input_nodes(pre, post):
+def _check_input_nodes(pre, post, conn_spec):
     '''
     Check the properties of `pre` and `post` nodes:
 
+    * if `conn_spec` is "one_to_one", skip uniqueness check for better speed
+      and use data_connect
     * if both `pre` and `post` are NodeCollections or can be converted to
       NodeCollections (i.e. contain unique IDs), then proceed to "normal"
       connect (potentially after conversion to NodeCollection)
@@ -263,15 +265,15 @@ def _check_input_nodes(pre, post):
     pre_is_nc, post_is_nc = True, True
 
     if not isinstance(pre, NodeCollection):
-        # check if it can be converted
-        if len(set(pre)) == len(pre):
+        # skip uniqueness check for data_connect compatible `conn_spec`
+        if conn_spec != 'one_to_one' and len(set(pre)) == len(pre):
             pre = NodeCollection(np.array(pre, dtype=int))
         else:
             pre_is_nc = False
 
     if not isinstance(post, NodeCollection):
-        # check if it can be converted
-        if len(set(post)) == len(post):
+        # skip uniqueness check for data_connect compatible `conn_spec`
+        if conn_spec != 'one_to_one' and len(set(post)) == len(post):
             post = NodeCollection(np.array(post, dtype=int))
         else:
             post_is_nc = False
@@ -289,5 +291,8 @@ def _check_input_nodes(pre, post):
             raise ValueError("Sources and targets must be 1-dimensional arrays")
 
         data_connect = True
+
+    if data_connect and conn_spec != 'one_to_one':
+        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")
 
     return data_connect, pre, post

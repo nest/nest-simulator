@@ -41,7 +41,7 @@ class TestConnectArrays(unittest.TestCase):
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = np.arange(1, n+1, dtype=np.uint64)
         weights = 1.5
-        delays  = 1.4
+        delays = 1.4
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
 
@@ -60,7 +60,7 @@ class TestConnectArrays(unittest.TestCase):
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = non_unique
         weights = np.ones(n)
-        delays  = np.ones(n)
+        delays = np.ones(n)
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
                      conn_spec="one_to_one")
@@ -209,7 +209,7 @@ class TestConnectArrays(unittest.TestCase):
         sources = np.arange(1, n+1, dtype=np.double)
         targets = np.array(non_unique, dtype=np.double)
         weights = np.ones(n)
-        delays  = np.ones(n)
+        delays = np.ones(n)
         syn_model = 'static_synapse'
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
@@ -230,7 +230,7 @@ class TestConnectArrays(unittest.TestCase):
         sources = list(range(1, n+1))
         targets = np.arange(1, n+1, dtype=np.double)
         weights = 1.
-        delays  = 1.
+        delays = 1.
         syn_model = 'static_synapse'
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})

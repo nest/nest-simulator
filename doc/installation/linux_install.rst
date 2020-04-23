@@ -6,7 +6,7 @@ Ubuntu/Debian Installation
 Dependencies
 ------------
 
-To build NEST, you need a recent version of `CMake <https://cmake.org>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
+To build NEST, you need a recent version of `CMake <https://cmake.org/install>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
 .. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
 

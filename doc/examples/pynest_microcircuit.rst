@@ -19,4 +19,4 @@ File structure
 * :doc:`network_params.py <../auto_examples/Potjans_2014/network_params>`: network and neuron parameters
 * :doc:`stimulus_params.py <../auto_examples/Potjans_2014/stimulus_params>`: parameters for optional external stimulation
 * :doc:`sim_params.py <../auto_examples/Potjans_2014/sim_params>`: simulation parameters
-* `reference_data <https://github.com/nest/nest-simulator/tree/master/pynest/examples/Potjans_2014/reference_data>`_
+* `reference_data <https://github.com/nest/nest-simulator/tree/master/pynest/examples/Potjans_2014/reference_data>`_: reference data and figures obtained by executing run_microcircuit.py with default parameters

@@ -75,7 +75,7 @@ addons:
     sources:
      - r-packages-trusty
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-bionic-7
+     - llvm-toolchain-bionic
     packages:
      - gcc-8
      - g++-8

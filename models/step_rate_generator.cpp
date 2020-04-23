@@ -225,7 +225,7 @@ nest::step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_&
 
 nest::step_rate_generator::step_rate_generator()
   : DeviceNode()
-  , device_()
+  , StimulatingDevice< DelayedRateConnectionEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -235,7 +235,7 @@ nest::step_rate_generator::step_rate_generator()
 
 nest::step_rate_generator::step_rate_generator( const step_rate_generator& n )
   : DeviceNode( n )
-  , device_( n.device_ )
+  , StimulatingDevice< DelayedRateConnectionEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -252,13 +252,13 @@ nest::step_rate_generator::init_state_( const Node& proto )
 {
   const step_rate_generator& pr = downcast< step_rate_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< DelayedRateConnectionEvent >::init_state( pr );
 }
 
 void
 nest::step_rate_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< DelayedRateConnectionEvent >::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -270,7 +270,7 @@ nest::step_rate_generator::calibrate()
 {
   B_.logger_.init();
 
-  device_.calibrate();
+  StimulatingDevice< DelayedRateConnectionEvent >::calibrate();
 }
 
 
@@ -317,7 +317,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
     }
 
     // but send only if active
-    if ( device_.is_active( Time::step( curr_time ) ) )
+    if ( StimulatingDevice< DelayedRateConnectionEvent >::is_active( Time::step( curr_time ) ) )
     {
       S_.rate_ = B_.amp_;
       new_rates[ offs ] = B_.amp_;

@@ -76,11 +76,12 @@ References
 See also
 ++++++++
 
-ppd_sup_generator, poisson_generator_ps, spike_generator
+ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
+StimulatingDevice
 
 EndUserDocs */
 
-class gamma_sup_generator : public DeviceNode
+class gamma_sup_generator : public DeviceNode, StimulatingDevice< CurrentEvent >
 {
 
 public:
@@ -210,7 +211,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
   Variables_ V_;
   Buffers_ B_;
@@ -219,7 +219,7 @@ private:
 inline port
 gamma_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< CurrentEvent >::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -245,7 +245,7 @@ inline void
 gamma_sup_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< CurrentEvent >::get_status( d );
 }
 
 inline void
@@ -257,7 +257,7 @@ gamma_sup_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< CurrentEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

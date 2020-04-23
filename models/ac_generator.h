@@ -83,14 +83,14 @@ CurrentEvent
 See also
 ++++++++
 
-dc_generator, noise_generator, step_current_generator
+dc_generator, noise_generator, step_current_generator, StimulatingDevice,
+Device
 
 EndUserDocs */
 
 namespace nest
 {
-
-class ac_generator : public DeviceNode
+class ac_generator : public DeviceNode, public StimulatingDevice< CurrentEvent >
 {
 
 public:
@@ -207,7 +207,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   static RecordablesMap< ac_generator > recordablesMap_;
   Parameters_ P_;
   State_ S_;
@@ -218,7 +217,7 @@ private:
 inline port
 ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< CurrentEvent >::enforce_single_syn_type( syn_id );
 
   CurrentEvent e;
   e.set_sender( *this );
@@ -241,7 +240,7 @@ ac_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< CurrentEvent >::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -257,7 +256,7 @@ ac_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< CurrentEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

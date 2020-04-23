@@ -87,11 +87,11 @@ DelayedRateConnectionEvent
 See also
 ++++++++
 
-step_current_generator
+step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
 
-class step_rate_generator : public DeviceNode
+class step_rate_generator : public DeviceNode, StimulatingDevice< DelayedRateConnectionEvent >
 {
 
 public:
@@ -217,7 +217,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< DelayedRateConnectionEvent > device_;
   static RecordablesMap< step_rate_generator > recordablesMap_;
   Parameters_ P_;
   State_ S_;
@@ -227,7 +226,7 @@ private:
 inline port
 step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< DelayedRateConnectionEvent >::enforce_single_syn_type( syn_id );
 
   DelayedRateConnectionEvent e;
   e.set_sender( *this );
@@ -249,7 +248,7 @@ inline void
 step_rate_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< DelayedRateConnectionEvent >::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -263,7 +262,7 @@ step_rate_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< DelayedRateConnectionEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

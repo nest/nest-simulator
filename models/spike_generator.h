@@ -309,7 +309,7 @@ spike_generator::get_status( DictionaryDatum& d ) const
 {
   InputDevice::get_status( d );
   P_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulatingDevice< SpikeEvent >::get_status( d );
 }
 
 } // namespace

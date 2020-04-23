@@ -225,7 +225,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
 
 nest::step_current_generator::step_current_generator()
   : InputDevice()
-  , device_()
+  , StimulatingDevice< CurrentEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -235,7 +235,7 @@ nest::step_current_generator::step_current_generator()
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
   : InputDevice( n )
-  , device_( n.device_ )
+  , StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -252,13 +252,13 @@ nest::step_current_generator::init_state_( const Node& proto )
 {
   const step_current_generator& pr = downcast< step_current_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  // TODO solve intermediate refactor StimulatingDevice< CurrentEvent >::init_state( pr );
 }
 
 void
 nest::step_current_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< CurrentEvent >::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -270,7 +270,7 @@ nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
   InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
-  device_.calibrate();
+  StimulatingDevice< CurrentEvent >::calibrate();
 }
 
 
@@ -312,7 +312,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
     }
 
     // but send only if active
-    if ( device_.is_active( Time::step( curr_time ) ) )
+    if ( StimulatingDevice< CurrentEvent >::is_active( Time::step( curr_time ) ) )
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );

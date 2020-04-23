@@ -302,7 +302,7 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
 
 nest::spike_generator::spike_generator()
   : InputDevice()
-  , StimulatingDevice()
+  , StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
 {
@@ -310,7 +310,7 @@ nest::spike_generator::spike_generator()
 
 nest::spike_generator::spike_generator( const spike_generator& n )
   : InputDevice( n )
-  , StimulatingDevice( n )
+  , StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
@@ -326,14 +326,14 @@ nest::spike_generator::init_state_( const Node& proto )
 {
   const spike_generator& pr = downcast< spike_generator >( proto );
 
-  // TODO temporarly remove for intermediate refactor StimulatingDevice::init_state( pr );
+  // TODO temporarly remove for intermediate refactor StimulatingDevice< SpikeEvent >::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::spike_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulatingDevice< SpikeEvent >::init_buffers();
 }
 
 void

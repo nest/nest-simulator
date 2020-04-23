@@ -168,7 +168,7 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public DeviceNode
+class sinusoidal_gamma_generator : public DeviceNode, StimulatingDevice< SpikeEvent >
 {
 
 public:
@@ -336,7 +336,6 @@ private:
   //! compute hazard for given target index, including time-step factor
   double hazard_( port ) const;
 
-  StimulatingDevice< SpikeEvent > device_;
   static RecordablesMap< sinusoidal_gamma_generator > recordablesMap_;
 
   Parameters_ P_;
@@ -348,7 +347,7 @@ private:
 inline port
 sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< SpikeEvent >::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -397,7 +396,7 @@ sinusoidal_gamma_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< SpikeEvent >::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -410,7 +409,7 @@ sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< SpikeEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

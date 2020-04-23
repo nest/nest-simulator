@@ -174,7 +174,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
   : DeviceNode()
-  , device_()
+  , StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -184,7 +184,7 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoidal_poisson_generator& n )
   : DeviceNode( n )
-  , device_( n.device_ )
+  , StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -200,14 +200,14 @@ nest::sinusoidal_poisson_generator::init_state_( const Node& proto )
 {
   const sinusoidal_poisson_generator& pr = downcast< sinusoidal_poisson_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< SpikeEvent >::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::sinusoidal_poisson_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< SpikeEvent >::init_buffers();
   B_.logger_.reset();
 }
 
@@ -217,7 +217,7 @@ nest::sinusoidal_poisson_generator::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  device_.calibrate();
+  StimulatingDevice< SpikeEvent >::calibrate();
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
@@ -268,7 +268,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
     }
 
     // create spikes
-    if ( S_.rate_ > 0 && device_.is_active( Time::step( start + lag ) ) )
+    if ( S_.rate_ > 0 && StimulatingDevice< SpikeEvent >::is_active( Time::step( start + lag ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {

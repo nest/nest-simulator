@@ -72,14 +72,14 @@ nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
 
 nest::poisson_generator::poisson_generator()
   : DeviceNode()
-  , device_()
+  , StimulatingDevice< SpikeEvent >()
   , P_()
 {
 }
 
 nest::poisson_generator::poisson_generator( const poisson_generator& n )
   : DeviceNode( n )
-  , device_( n.device_ )
+  , StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
 {
 }
@@ -94,19 +94,19 @@ nest::poisson_generator::init_state_( const Node& proto )
 {
   const poisson_generator& pr = downcast< poisson_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< SpikeEvent >::init_state( pr );
 }
 
 void
 nest::poisson_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< SpikeEvent >::init_buffers();
 }
 
 void
 nest::poisson_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice< SpikeEvent >::calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -130,7 +130,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not device_.is_active( T + Time::step( lag ) ) )
+    if ( not StimulatingDevice< SpikeEvent >::is_active( T + Time::step( lag ) ) )
     {
       continue; // no spike at this lag
     }

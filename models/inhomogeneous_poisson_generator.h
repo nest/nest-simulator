@@ -86,11 +86,12 @@ SpikeEvent
 See also
 ++++++++
 
-sinusoidal_poisson_generator, step_current_generator
+sinusoidal_poisson_generator, step_current_generator, Device,
+StimulatingDevice
 
 EndUserDocs */
 
-class inhomogeneous_poisson_generator : public DeviceNode
+class inhomogeneous_poisson_generator : public DeviceNode, public StimulatingDevice< SpikeEvent >
 {
 
 public:
@@ -172,8 +173,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
-
   Parameters_ P_;
   Buffers_ B_;
   Variables_ V_;
@@ -185,7 +184,7 @@ inhomogeneous_poisson_generator::send_test_event( Node& target,
   synindex syn_id,
   bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< SpikeEvent >::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -208,7 +207,7 @@ inline void
 inhomogeneous_poisson_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< SpikeEvent >::get_status( d );
 }
 
 inline void
@@ -220,7 +219,7 @@ inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< SpikeEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -106,14 +106,14 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 
 nest::pulsepacket_generator::pulsepacket_generator()
   : Node()
-  , device_()
+  , StimulatingDevice< SpikeEvent >()
   , P_()
 {
 }
 
 nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
   : Node( ppg )
-  , device_( ppg.device_ )
+  , StimulatingDevice< SpikeEvent >( ppg )
   , P_( ppg.P_ )
 {
 }
@@ -127,19 +127,19 @@ nest::pulsepacket_generator::init_state_( const Node& proto )
 {
   const pulsepacket_generator& pr = downcast< pulsepacket_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< SpikeEvent >::init_state( pr );
 }
 
 void
 nest::pulsepacket_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< SpikeEvent >::init_buffers();
 }
 
 void
 nest::pulsepacket_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice< SpikeEvent >::calibrate();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -177,7 +177,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() ) || ( not StimulatingDevice< SpikeEvent >::is_active( T ) ) )
   {
     return; // nothing left to do
   }

@@ -173,14 +173,14 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
 
 nest::ppd_sup_generator::ppd_sup_generator()
   : DeviceNode()
-  , device_()
+  , StimulatingDevice< CurrentEvent >()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
   : DeviceNode( n )
-  , device_( n.device_ )
+  , StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
 {
 }
@@ -195,19 +195,19 @@ nest::ppd_sup_generator::init_state_( const Node& proto )
 {
   const ppd_sup_generator& pr = downcast< ppd_sup_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< CurrentEvent >::init_state( pr );
 }
 
 void
 nest::ppd_sup_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< CurrentEvent >::init_buffers();
 }
 
 void
 nest::ppd_sup_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice< CurrentEvent >::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -250,7 +250,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
   {
     Time t = T + Time::step( lag );
 
-    if ( not device_.is_active( t ) )
+    if ( not StimulatingDevice< CurrentEvent >::is_active( t ) )
     {
       continue; // no spike at this lag
     }

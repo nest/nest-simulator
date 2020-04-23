@@ -82,11 +82,11 @@ SpikeEvent
 See also
 ++++++++
 
-spike_generator
+spike_generator, StimulatingDevice
 
 EndUserDocs */
 
-class pulsepacket_generator : public Node
+class pulsepacket_generator : public Node, StimulatingDevice< SpikeEvent >
 {
 
 public:
@@ -175,8 +175,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
-
   Parameters_ P_;
   Buffers_ B_;
   Variables_ V_;
@@ -185,7 +183,7 @@ private:
 inline port
 pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice< SpikeEvent >::enforce_single_syn_type( syn_id );
 
   SpikeEvent e;
   e.set_sender( *this );
@@ -197,7 +195,7 @@ inline void
 pulsepacket_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice< SpikeEvent >::get_status( d );
 }
 
 inline void
@@ -209,7 +207,7 @@ pulsepacket_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice< SpikeEvent >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

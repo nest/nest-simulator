@@ -219,7 +219,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
   : DeviceNode()
-  , device_()
+  , StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -229,7 +229,7 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
   : DeviceNode( n )
-  , device_( n.device_ )
+  , StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -245,14 +245,14 @@ nest::sinusoidal_gamma_generator::init_state_( const Node& proto )
 {
   const sinusoidal_gamma_generator& pr = downcast< sinusoidal_gamma_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< SpikeEvent >::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::sinusoidal_gamma_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< SpikeEvent >::init_buffers();
   B_.logger_.reset();
 
   std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
@@ -286,7 +286,7 @@ nest::sinusoidal_gamma_generator::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  device_.calibrate();
+  StimulatingDevice< SpikeEvent >::calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
@@ -333,7 +333,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, c
     S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
-    if ( P_.num_trains_ > 0 && S_.rate_ > 0 && device_.is_active( Time::step( V_.t_steps_ - 1 ) ) )
+    if ( P_.num_trains_ > 0 && S_.rate_ > 0 && StimulatingDevice< SpikeEvent >::is_active( Time::step( V_.t_steps_ - 1 ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {

@@ -32,13 +32,8 @@ import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-try:
-  # works for werkzeug<1.0
-  from werkzeug import abort, Response
-except:
-  # works for werkzeug>=1.0
-  from werkzeug.exceptions import abort
-  from werkzeug.wrappers import Response
+import werkzeug.exceptions import abort
+from werkzeug.wrappers import Response
 
 
 __all__ = [

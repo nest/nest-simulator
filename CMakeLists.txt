@@ -44,8 +44,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
-set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py [default=OFF]" )
+set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )

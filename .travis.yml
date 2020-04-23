@@ -26,7 +26,7 @@ language: python
 
 # Using the Sudo-enabled Ubuntu Xenial (16.04 LTS).
 sudo: required
-dist: xenial
+dist: bionic
 
 stages:
    - Staticcheck
@@ -75,7 +75,7 @@ addons:
     sources:
      - r-packages-trusty
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-trusty-7
+     - llvm-toolchain-bionic-7
     packages:
      - gcc-8
      - g++-8
@@ -86,12 +86,12 @@ addons:
      - libreadline6-dev
      - libncurses5-dev
      - libgsl0-dev
-     - python-all-dev
-     - ipython
+     - python3-all-dev
+     - ipython3
      - pkg-config
      - openmpi-bin
      - libopenmpi-dev
-     - python-nose
+     - python3-nose
      - libpcre3
      - libpcre3-dev
      - llvm-3.6-dev
@@ -103,7 +103,7 @@ addons:
      - libboost-python-dev
      - libboost-program-options-dev
      - libboost-test-dev
-     - python-mpi4py
+     - python3-mpi4py
 cache:
    directory:
      - $HOME/.cache

@@ -1,7 +1,7 @@
 PyNEST microcircuit
 ===================
 
-Here is the PyNEST implementation of the microcircuit model by Potjans and Diesmann.
+This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann.
 
 .. toctree::
    :maxdepth: 1

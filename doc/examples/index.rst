@@ -88,7 +88,7 @@ PyNEST examples
    :maxdepth: 1
    :caption: Microcircuit example
 
-   ../microcircuit/index
+   Microcircuit model (based on Potjans and Diesmann, 2014) <../microcircuit/index>
 
 .. toctree::
    :maxdepth: 1

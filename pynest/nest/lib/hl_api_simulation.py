@@ -189,8 +189,8 @@ def SetKernelStatus(params):
     params : dict
         Dictionary of parameters to set.
 
-    Other parameters
-    ----------------
+    Params dictionary
+    --------------------
 
     Some of the keywords in the kernel status dictionary are internally
     calculated, and cannot be defined by the user. These are flagged as

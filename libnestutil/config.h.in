@@ -116,8 +116,8 @@
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
 
-/* ARBORBACKEND support enabled? */
-#cmakedefine HAVE_ARBORBACKEND 1
+/* Recording backend Arbor support enabled? */
+#cmakedefine HAVE_RECORDINGBACKEND_ARBOR 1
 
 /* define if M_E is defined */
 #cmakedefine HAVE_M_E 1

@@ -26,7 +26,7 @@
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_ARBORBACKEND
+#ifdef HAVE_RECORDINGBACKEND_ARBOR
 // C includes:
 #include <memory>
 
@@ -101,6 +101,6 @@ private:
 
 } // namespace
 
-#endif //HAVE_ARBORBACKEND
+#endif // HAVE_RECORDINGBACKEND_ARBOR
 
 #endif // RECORDING_BACKEND_ARBOR_H

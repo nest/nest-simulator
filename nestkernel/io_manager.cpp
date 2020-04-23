@@ -42,9 +42,9 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
-#ifdef HAVE_ARBORBACKEND
+#ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
-#endif // HAVE_ARBORBACKEND
+#endif // HAVE_RECORDINGBACKEND_ARBOR
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
 #endif
@@ -309,9 +309,9 @@ IOManager::register_recording_backends_()
   recording_backends_.insert( std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert( std::make_pair( "memory", new RecordingBackendMemory() ) );
   recording_backends_.insert( std::make_pair( "screen", new RecordingBackendScreen() ) );
-#ifdef HAVE_ARBORBACKEND
+#ifdef HAVE_RECORDINGBACKEND_ARBOR
   recording_backends_.insert( std::make_pair( "arbor", new RecordingBackendArbor() ) );
-#endif // HAVE_ARBORBACKEND
+#endif // HAVE_RECORDINGBACKEND_ARBOR
 #ifdef HAVE_SIONLIB
   recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif

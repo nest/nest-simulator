@@ -15,8 +15,8 @@ import nest
 
 
 STATUS_DICT = nest.ll_api.sli_func("statusdict")
-if (not  STATUS_DICT["have_arborbackend"]):
-    print ("Arbor_backend not available. Exit testscript!")
+if (not STATUS_DICT["have_recordingbackend_arbor"]):
+    print("Recording backend Arbor available. Exit testscript!")
     sys.exit(1)
 
 nest.set_communicator(comm)

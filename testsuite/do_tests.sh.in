@@ -220,7 +220,7 @@ junit_close ()
 #   ' 203 Skipped (Threading required),'\
 #   ' 204 Skipped (GSL required),'\
 #   ' 205 Skipped (MUSIC required),'
-#   ' 206 Skipped (ARBORBACKEND required),'
+#   ' 206 Skipped (Recording backend Arbor required),'
 #   codes_failure=\
 #   ' 1 Failed: missed assertion,'\
 #   ' 2 Failed: error in tested code block,'\
@@ -440,7 +440,7 @@ CODES_SKIPPED=\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
 ' 205 Skipped (MUSIC required),'\
-' 206 Skipped (ARBORBACKEND required),'
+' 206 Skipped (Recording backend Arbor required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'

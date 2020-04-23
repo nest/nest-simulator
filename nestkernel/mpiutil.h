@@ -53,11 +53,10 @@ int broadcast( int local, MPI_Comm comm, int root );
 unsigned broadcast( unsigned local, MPI_Comm comm, int root );
 float broadcast( float local, MPI_Comm comm, int root );
 
-#ifdef HAVE_ARBORBACKEND
+#ifdef HAVE_RECORDINGBACKEND_ARBOR
 struct comm_info;
 comm_info get_comm_info( bool is_arbor, MPI_Comm comm );
-#endif // HAVE_ARBORBACKEND
-
+#endif // HAVE_RECORDINGBACKEND_ARBOR
 
 } // namespace shadow
 } // namespace arb

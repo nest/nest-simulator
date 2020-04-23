@@ -34,8 +34,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, short-term plasticity
 
-quantal_stp_synapse - Probabilistic synapse model with short term plasticity
-############################################################################
+Short description
++++++++++++++++++
+
+Probabilistic synapse model with short term plasticity
 
 Description
 +++++++++++
@@ -69,10 +71,8 @@ The following parameters can be set in the status dictionary:
  tau_rec    ms      Time constant for facilitation, default=0 (off)
 ==========  ======= =========================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
@@ -86,18 +86,15 @@ References
        Neural Networks, 15(2):155-161.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 
-
 Transmits
 +++++++++
 
 SpikeEvent
 
-FirstVersion: December 2013
-
 See also
 ++++++++
 
-tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
+tsodyks2_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
 

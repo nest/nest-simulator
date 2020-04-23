@@ -31,8 +31,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, binary
 
-ginzburg_neuron - Binary stochastic neuron with sigmoidal activation function
-#############################################################################
+Short description
++++++++++++++++++
+
+Binary stochastic neuron with sigmoidal activation function
 
 Description
 +++++++++++
@@ -83,10 +85,8 @@ advisable to set the property 'allow_multapses' to false.
 The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
-
 Parameters
 ++++++++++
-
 
 ====== ============= ===========================================================
  tau_m  ms           Membrane time constant (mean inter-update-interval)
@@ -97,10 +97,8 @@ Parameters
  c3     1/mV         Slope factor of sigmoidal gain
 ====== ============= ===========================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
@@ -113,7 +111,6 @@ References
        (Eds.), Springer.
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
-
 Sends
 +++++
 
@@ -123,8 +120,6 @@ Receives
 ++++++++
 
 SpikeEvent, PotentialRequest
-
-First version: February 2010
 
 See also
 ++++++++

@@ -70,8 +70,10 @@ extern "C" int aeif_cond_alpha_dynamics_DT0( double, const double*, double*, voi
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-aeif_cond_alpha - Conductance based exponential integrate-and-fire neuron model
-###############################################################################
+Short description
++++++++++++++++++
+
+Conductance based exponential integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -154,7 +156,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-
 
 Sends
 +++++

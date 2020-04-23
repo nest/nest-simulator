@@ -49,13 +49,10 @@ namespace nest
 
 /* BeginUserDocs: device, MUSIC
 
-music_cont_in_proxy - A device which receives continuous data from MUSIC
-########################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-music_cont_in_proxy
+A device which receives continuous data from MUSIC
 
 Description
 +++++++++++
@@ -67,6 +64,8 @@ It uses the MUSIC library to receive the data from other applications.
 The music_cont_in_proxy represents a complete port to which MUSIC can
 connect and send data. The music_cont_in_proxy can queried using
 GetStatus to retrieve the messages.
+
+This model is only available if NEST was compiled with MUSIC.
 
 Parameters
 ++++++++++
@@ -83,10 +82,6 @@ The following properties are available in the status dictionary:
 =========== ======= ========================================================
 
 The parameter port_name can be set using SetStatus.
-
-First version: July 2010
-
-Availability: Only when compiled with MUSIC
 
 See also
 ++++++++

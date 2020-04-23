@@ -58,8 +58,10 @@ extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
-################################################################################################
+Short description
++++++++++++++++++
+
+Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
 
 Description
 +++++++++++
@@ -77,7 +79,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ========  ======= ===========================================================
  V_m      mV      Membrane potential

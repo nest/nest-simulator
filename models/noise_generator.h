@@ -43,13 +43,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-noise_generator - Device to generate Gaussian white noise current
-#################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-noise_generator
+Device to generate Gaussian white noise current
 
 Description
 +++++++++++
@@ -77,22 +74,6 @@ If the modulation is added the current is given by
 For a detailed discussion of the properties of the noise generator, please see
 the noise_generator.ipynb notebook included in the NEST source code
 (docs/model_details).
-
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary:
-
-
-========== ======  =========================================================
- mean      pA      Mean value of the noise current
- std       pA      Standard deviation of noise current
- dt        ms      Interval between changes in current, default 1.0ms
- std_mod   pA      Modulated standard deviation of noise current
- phase     real    Phase of sine modulation (0-360 deg)
- frequency Hz      Frequency of sine modulation
-========== ======  =========================================================
-
 
 Remarks:
 - All targets receive different currents.
@@ -124,15 +105,24 @@ Remarks:
   currents computed. When there exists only a single target, this would be
   equivalent to the actual current provided to that target.
 
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary:
+
+========== ======  =========================================================
+ mean      pA      Mean value of the noise current
+ std       pA      Standard deviation of noise current
+ dt        ms      Interval between changes in current, default 1.0ms
+ std_mod   pA      Modulated standard deviation of noise current
+ phase     real    Phase of sine modulation (0-360 deg)
+ frequency Hz      Frequency of sine modulation
+========== ======  =========================================================
+
 Sends
 +++++
 
 CurrentEvent
-
-See also
-++++++++
-
-Device
 
 EndUserDocs */
 

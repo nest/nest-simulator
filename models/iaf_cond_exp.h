@@ -58,8 +58,10 @@ extern "C" int iaf_cond_exp_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron model
-#############################################################################
+Short description
++++++++++++++++++
+
+Simple conductance based leaky integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -90,7 +92,6 @@ The following parameters can be set in the status dictionary.
  I_e        pA      Constant input current
 =========== ======  =======================================================
 
-
 Sends
 +++++
 
@@ -104,13 +105,11 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
        16:159-175.
        DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-
 
 See also
 ++++++++

@@ -34,8 +34,10 @@
 
 /* BeginUserDocs: integrate-and-fire, current-based
 
-glif_psc - Current-based generalized leaky integrate and fire (GLIF)
-model
+Short description
++++++++++++++++++
+
+Current-based generalized leaky integrate-and-fire models
 
 Description
 +++++++++++

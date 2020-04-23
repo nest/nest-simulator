@@ -37,8 +37,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential PSCs
-#########################################################################
+Short description
++++++++++++++++++
+
+Leaky integrate-and-fire neuron model with exponential PSCs
 
 Description
 +++++++++++
@@ -82,11 +84,24 @@ optimization levels. A future version of iaf_psc_exp will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_neurons_singularity.ipynb in the
+NEST source code (docs/model_details).
+
+iaf_psc_exp can handle current input in two ways: Current input
+through receptor_type 0 are handled as stepwise constant current
+input as in other iaf models, i.e., this current directly enters
+the membrane potential equation. Current input through
+receptor_type 1, in contrast, is filtered through an exponential
+kernel with the time constant of the excitatory synapse,
+tau_syn_ex. For an example application, see [6].
+
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ===========  =======  ========================================================
  E_L          mV      Resting membrane potential
@@ -102,27 +117,8 @@ The following parameters can be set in the status dictionary.
  t_spike      ms      Point in time of last spike
 ===========  =======  ========================================================
 
-
-Remarks:
-
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in the
-NEST source code (docs/model_details).
-
-iaf_psc_exp can handle current input in two ways: Current input
-through receptor_type 0 are handled as stepwise constant current
-input as in other iaf models, i.e., this current directly enters
-the membrane potential equation. Current input through
-receptor_type 1, in contrast, is filtered through an exponential
-kernel with the time constant of the excitatory synapse,
-tau_syn_ex. For an example application, see [6].
-
-
 References
 ++++++++++
-
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
@@ -139,7 +135,6 @@ References
        metastable state driven by colored noise. Physical Review E 92:052119
        DOI: https://doi.org/10.1103/PhysRevE.92.052119
 
-
 Sends
 +++++
 
@@ -149,8 +144,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-First version: March 2006
 
 See also
 ++++++++

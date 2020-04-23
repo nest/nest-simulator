@@ -41,8 +41,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_nn_symm_synapse - Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
-###############################################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
 
 Description
 +++++++++++
@@ -85,7 +87,6 @@ Parameters
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
 
-
 Transmits
 +++++++++
 
@@ -94,16 +95,12 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Morrison A., Aertsen A., Diesmann M. (2007) Spike-timing dependent
        plasticity in balanced random networks, Neural Comput. 19:1437--1467
 
 .. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-
-
-  FirstVersion: March 2006
 
 See also
 ++++++++

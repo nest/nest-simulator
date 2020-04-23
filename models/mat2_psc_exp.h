@@ -38,8 +38,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
-###############################################################################################################
+Short description
++++++++++++++++++
+
+Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and adaptive threshold
 
 Description
 +++++++++++
@@ -82,7 +84,6 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-
 ============ =======  ========================================================
  C_m          pF      Capacity of the membrane
  E_L          mV      Resting potential
@@ -101,7 +102,6 @@ The following parameters can be set in the status dictionary:
                       relative to E_L as in [3]_)
 ============ =======  ========================================================
 
-
 The following state variables can be read out with the multimeter device:
 
 ====== ====  =================================
@@ -109,17 +109,14 @@ The following state variables can be read out with the multimeter device:
  V_th  mV    Two-timescale adaptive threshold
 ====== ====  =================================
 
-
 Remarks:
 
 tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
 degenerate case of the ODE describing the model [1]_. For very similar values,
 numerics will be unstable.
 
-
 References
 ++++++++++
-
 
 .. [1] Rotter S and Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
@@ -143,8 +140,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-FirstVersion: Mai 2009
 
 EndUserDocs */
 

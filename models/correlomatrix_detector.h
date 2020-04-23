@@ -38,10 +38,13 @@
 
 namespace nest
 {
+
 /* BeginUserDocs: device, detector
 
-correlomatrix_detector - Device for measuring the covariance matrix from several inputs
-#######################################################################################
+Short description
++++++++++++++++++
+
+Device for measuring the covariance matrix from several inputs
 
 Device name
 +++++++++++
@@ -81,9 +84,28 @@ The correlomatrix_detector has a variable number of inputs which can be set
 via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
+Remarks:
+
+This recorder does not record to file, screen or memory in the usual
+sense.
+
+@note Correlomatrix detectors IGNORE any connection delays.
+
+@note Correlomatrix detector breaks with the persistence scheme as
+ follows: the internal buffers for storing spikes are part
+ of State_, but are initialized by init_buffers_().
+
+ @todo The correlation detector could be made more efficient as follows
+ (HEP 2008-07-01):
+ - incoming_ is vector of two deques
+ - let handle() push_back() entries in incoming_ and do nothing else
+ - keep index to last "old spike" in each incoming_; cannot
+   be iterator since that may change
+ - update() deletes all entries before now-tau_max, sorts the new
+   entries, then registers new entries in histogram
+
 Parameters
 ++++++++++
-
 
 ================ ========= ====================================================
 Tstart           real      Time when to start counting events. This time should
@@ -115,33 +137,10 @@ n_events         list of   number of events from all sources
                  integers
 ================ ========= ====================================================
 
-
-Remarks:
-This recorder does not record to file, screen or memory in the usual
-sense.
-
-@note Correlomatrix detectors IGNORE any connection delays.
-
-@note Correlomatrix detector breaks with the persistence scheme as
- follows: the internal buffers for storing spikes are part
- of State_, but are initialized by init_buffers_().
-
- @todo The correlation detector could be made more efficient as follows
- (HEP 2008-07-01):
- - incoming_ is vector of two deques
- - let handle() push_back() entries in incoming_ and do nothing else
- - keep index to last "old spike" in each incoming_; cannot
-   be iterator since that may change
- - update() deletes all entries before now-tau_max, sorts the new
-   entries, then registers new entries in histogram
-
-
 Receives
 ++++++++
 
 SpikeEvent
-
-FirstVersion: 2013/02/27
 
 See also
 ++++++++

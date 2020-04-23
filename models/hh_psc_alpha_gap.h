@@ -60,8 +60,10 @@ extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* 
 
 /* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, gap junction
 
-hh_psc_alpha_gap - Hodgkin-Huxley neuron model with gap-junction support
-########################################################################
+Short description
++++++++++++++++++
+
+Hodgkin-Huxley neuron model with gap-junction support
 
 Description
 +++++++++++
@@ -69,7 +71,6 @@ Description
 hh_psc_alpha_gap is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
 additionally supports gap junctions.
-
 
 1. Post-synaptic currents
 Incoming spike events induce a post-synaptic change of current modelled
@@ -89,7 +90,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ===========  ====== ============================================================
 tau_ex       ms      Rise time of the excitatory synaptic alpha function
@@ -112,10 +112,8 @@ Act_n        real    Activation variable n
 I_e          pA      External input current
 ===========  ====== ============================================================
 
-
 References
 ++++++++++
-
 
 .. [1] Gerstner W, Kistler W. Spiking neuron models: Single neurons,
        populations, plasticity. Cambridge University Press
@@ -132,8 +130,6 @@ References
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal netowrk simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
-
 
 Sends
 +++++

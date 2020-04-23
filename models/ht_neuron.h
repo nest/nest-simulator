@@ -65,8 +65,10 @@ extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, Hill-Tononi plasticity
 
-ht_neuron - Neuron model after Hill & Tononi (2005)
-###################################################
+Short description
++++++++++++++++++
+
+Neuron model after Hill & Tononi (2005)
 
 Description
 +++++++++++
@@ -139,7 +141,6 @@ equilibrate                  If given and true, time-dependent activation
                              present values.
 ============================ =================================================
 
-
 @Note Conductances are unitless in this model and currents are in mV.
 
 Sends
@@ -152,11 +153,8 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-FirstVersion: October 2009; full revision November 2016
-
 References
 ++++++++++
-
 
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
        thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
@@ -165,7 +163,6 @@ References
        unblock of NMDA receptors limits their  contribution to spike generation
        in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
        DOI: https://doi.org/10.1152/jn.01038.2002
-
 
 See also
 ++++++++

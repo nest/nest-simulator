@@ -32,14 +32,29 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets)
-#####################################################################################
+Short description
++++++++++++++++++
+
+Synapse type with spike-timing dependent plasticity (triplets)
 
 Description
 +++++++++++
 
 stdp_triplet_synapse is a connection with spike time dependent
 plasticity accounting for spike triplet effects (as defined in [1]_).
+
+Notes:
+- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
+  Kplus and Kplus_triplet and decay with time-constants tau_plus and
+  tau_plus_triplet, respectively.
+- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the post-synaptic
+  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
+  tau_minus and tau_minus_triplet, respectively. These two time-constants
+  can be set as properties of the postsynaptic neuron.
+- This version implements the 'all-to-all' spike interaction of [1]_. The
+  'nearest-spike' interaction of [1]_ can currently not be implemented
+  without changing the postsynaptic archiving-node (clip the traces to a
+  maximum of 1).
 
 Parameters
 ++++++++++
@@ -67,7 +82,6 @@ Parameters
  Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1]_)
 =============== ======  ===========================================
 
-
 Transmits
 +++++++++
 
@@ -76,26 +90,9 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
        of spike timing-dependent plasticity.  The Journal of Neuroscience
        26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
-
-
-Notes:
-- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
-  Kplus and Kplus_triplet and decay with time-constants tau_plus and
-  tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the post-synaptic
-  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-  tau_minus and tau_minus_triplet, respectively. These two time-constants
-  can be set as properties of the postsynaptic neuron.
-- This version implements the 'all-to-all' spike interaction of [1]_. The
-  'nearest-spike' interaction of [1]_ can currently not be implemented
-  without changing the postsynaptic archiving-node (clip the traces to a
-  maximum of 1).
-
-FirstVersion: Nov 2007
 
 See also
 ++++++++

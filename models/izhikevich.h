@@ -36,8 +36,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire
 
-izhikevich - Izhikevich neuron model
-####################################
+Short description
++++++++++++++++++
+
+Izhikevich neuron model
 
 Description
 +++++++++++
@@ -71,12 +73,10 @@ other purposes, it is recommended to use the standard technique for forward
 Euler integration. In this case, consistent_integration must be set to true
 (default).
 
-
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ======================= =======  ==============================================
  V_m                    mV       Membrane potential
@@ -91,14 +91,11 @@ The following parameters can be set in the status dictionary.
  consistent_integration boolean  Use standard integration technique
 ======================= =======  ==============================================
 
-
 References
 ++++++++++
 
-
 .. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
        on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
-
 
 Sends
 +++++
@@ -109,8 +106,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-First version: 2009
 
 See also
 ++++++++

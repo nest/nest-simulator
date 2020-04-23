@@ -47,8 +47,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-sinusoidal_gamma_generator - Generates sinusoidally modulated gamma spike trains
-################################################################################
+Short description
++++++++++++++++++
+
+Generates sinusoidally modulated gamma spike trains
 
 Device name
 +++++++++++
@@ -113,14 +115,10 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
        stimulus-response models of neural spiking activity. Journal of
        Neuroscience Methods, 105:25-3.
        DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
-
-
-FirstVersion: October 2007, May 2013
 
 See also
 ++++++++

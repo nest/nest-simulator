@@ -40,8 +40,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with multiple ports
-######################################################################################
+Short description
++++++++++++++++++
+
+Leaky integrate-and-fire neuron model with multiple ports
 
 Description
 +++++++++++

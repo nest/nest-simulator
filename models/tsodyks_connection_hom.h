@@ -33,8 +33,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, short-term plasticity
 
-tsodyks_synapse_hom - Synapse type with short term plasticity using homogenous parameters
-#########################################################################################
+Short description
++++++++++++++++++
+
+Synapse type with short term plasticity using homogenous parameters
 
 Description
 +++++++++++
@@ -85,7 +87,6 @@ an arbitrary postsynaptic effect depending on y(t).
 Parameters
 ++++++++++
 
-
 ========  ======  ======================================================
  U        real    Maximum probability of release [0,1]
  tau_psc  ms      Time constant of synaptic current
@@ -97,7 +98,6 @@ Parameters
                   cleft [0,1]
 ========  ======  ======================================================
 
-
 Remarks:
 
 The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
@@ -107,23 +107,19 @@ model.
 References
 ++++++++++
 
-
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. Journal of Neuroscience,
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
-
 
 Transmits
 +++++++++
 
 SpikeEvent
 
-FirstVersion: March 2006
-
 See also
 ++++++++
 
-synapsedict, tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w,
+tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w
 
 EndUserDocs */
 

@@ -32,8 +32,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-vogels_sprekeler_synapse - Synapse type for symmetric spike-timing dependent plasticity with constant depression
-################################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for symmetric spike-timing dependent plasticity with constant depression
 
 Description
 +++++++++++
@@ -56,7 +58,6 @@ Parameters
                 [1]_)
 ======  ======  =========================================================
 
-
 Transmits
 +++++++++
 
@@ -68,14 +69,6 @@ References
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science,
        334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
-
-
-FirstVersion: January 2016
-
-See also
-++++++++
-
-synapsedict
 
 EndUserDocs */
 

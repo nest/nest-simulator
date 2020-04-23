@@ -41,8 +41,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-dc_generator - provides direct current (DC) input
-#################################################
+Short description
++++++++++++++++++
+
+provides direct current (DC) input
 
 Device name
 +++++++++++
@@ -58,7 +60,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary:
-
 
 ========== ======  =============================
  amplitude pA      Amplitude of current

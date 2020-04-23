@@ -36,8 +36,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-tanh_rate - rate model with hyperbolic tangent non-linearity
-############################################################
+Short description
++++++++++++++++++
+
+rate model with hyperbolic tangent non-linearity
 
 Description
 +++++++++++
@@ -66,7 +68,6 @@ The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 
-
 ==================  ======= ==============================================
  rate               real    Rate (unitless)
  tau                ms      Time constant of rate dynamics
@@ -77,7 +78,6 @@ transformers.
  linear_summation   boolean Specifies type of non-linearity (see above)
  rectify_output     boolean Switch to restrict rate to values >= 0
 ==================  ======= ==============================================
-
 
 Note:
 
@@ -90,7 +90,6 @@ then summed up (false). Default is true.
 References
 ++++++++++
 
-
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -99,7 +98,6 @@ References
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
 
 Sends
 +++++

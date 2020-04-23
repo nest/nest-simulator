@@ -38,15 +38,13 @@
 
 namespace nest
 {
+
 /* BeginUserDocs: device, detector
 
-correlospinmatrix_detector - Device for measuring the covariance matrix from several inputs
-###########################################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-correlomatrix_detector
+Device for measuring the covariance matrix from several inputs
 
 Description
 +++++++++++
@@ -70,9 +68,24 @@ The correlospinmatrix_detector has a variable number of inputs which can be
 set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
+Remarks:
+
+This recorder does not record to file, screen or memory in the usual
+sense. The result must be obtained by a call to GetStatus. Setting either
+N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
+
+Correlospinmatrix detectors IGNORE any connection delays.
+
+Correlospinmatrix detector breaks with the persistence scheme as
+follows: the internal buffers for storing spikes are part
+of State_, but are initialized by init_buffers_().
+
+See pynest/examples/correlospinmatrix_detector_two_neuron.py
+for a script reproducing a setting studied in Fig 1 of Grinzburg &
+Sompolinsky (1994) PRE 50(4) p. 3171.
+
 Parameters
 ++++++++++
-
 
 ================ ========= ====================================================
 Tstart           real      Time when to start counting events. This time should
@@ -102,37 +115,15 @@ count_covariance 3D        matrix of read-only -raw, auto/cross correlation
                  integers
 ================ ========= ====================================================
 
-
-Remarks:
-
-This recorder does not record to file, screen or memory in the usual
-sense. The result must be obtained by a call to GetStatus. Setting either
-N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
-
-Correlospinmatrix detectors IGNORE any connection delays.
-
-Correlospinmatrix detector breaks with the persistence scheme as
-follows: the internal buffers for storing spikes are part
-of State_, but are initialized by init_buffers_().
-
-
-Example:
-
-See  pynest/examples/correlospinmatrix_detector_two_neuron.py
-for a script reproducing a setting studied in Fig 1 of Grinzburg &
-Sompolinsky (1994) PRE 50(4) p. 3171.
-
 Receives
 ++++++++
 
 SpikeEvent
 
-FirstVersion: 2015/08/25
-
 See also
 ++++++++
 
-correlation_detector, correlomatrix_detector, spike_detector,
+correlation_detector, correlomatrix_detector, spike_detector
 
 EndUserDocs */
 

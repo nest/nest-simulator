@@ -40,13 +40,10 @@ namespace nest
 
 /* BeginUserDocs: device, detector
 
-spin_detector - Device for detecting binary states in neurons
-#############################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-spin_detector
+Device for detecting binary states in neurons
 
 Description
 +++++++++++
@@ -100,7 +97,6 @@ EndUserDocs */
  * stores them via its RecordingDevice.
  *
  */
-
 class spin_detector : public RecordingDevice
 {
 

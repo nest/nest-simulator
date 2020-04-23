@@ -41,13 +41,10 @@ namespace nest
 
 /* BeginUserDocs: device, detector
 
-correlation_detector - Device for evaluating cross correlation between two spike sources
-########################################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-correlation_detector
+Device for evaluating cross correlation between two spike sources
 
 Description
 +++++++++++
@@ -61,7 +58,7 @@ In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors the
 Kahan summation algorithm is used when calculating the weighted histogram.
 (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-Both are arrays of :math:`2*\tau_{max}/\delta_\tau+1` values containing the
+Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:
 
 Let :math:`t_{1,i}` be the spike times of source 1,
@@ -72,8 +69,8 @@ with :math:`t_{2,j}-t_{1,i}` in
 
 .. math::
 
-    n*\delta_\tau - \tau_{max} - \delta_\tau/2 
-    n*\delta_\tau - \tau_{max} + \delta_\tau/2 
+    n*\delta_\tau - \tau_{max} - \delta_\tau/2
+    n*\delta_\tau - \tau_{max} + \delta_\tau/2
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
@@ -87,7 +84,6 @@ receptor_port = 1 will be used as spike source 2.
 
 Parameters
 ++++++++++
-
 
 ==================== ======== ==================================================
 Tstart               real     Time when to start counting events. This time
@@ -124,7 +120,6 @@ n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
 ==================== ======== ==================================================
 
-
 Remarks:
 
 This recorder does not record to file, screen or memory in the usual
@@ -155,8 +150,6 @@ Receives
 ++++++++
 
 SpikeEvent
-
-FirstVersion: 2007/5/21
 
 See also
 ++++++++

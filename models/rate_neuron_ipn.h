@@ -46,8 +46,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-rate_neuron_ipn - Base class for rate model with input noise
-############################################################
+Short description
++++++++++++++++++
+
+Base class for rate model with input noise
 
 Description
 +++++++++++

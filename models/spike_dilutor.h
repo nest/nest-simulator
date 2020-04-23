@@ -36,8 +36,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-spike_dilutor - repeats incoming spikes with a certain probability
-##################################################################
+Short description
++++++++++++++++++
+
+repeats incoming spikes with a certain probability
 
 Device name
 +++++++++++
@@ -60,11 +62,9 @@ Parameters
 
 The following parameters appear in the element's status dictionary:
 
-
 ======== ======  ================
  p_copy  real    Copy probability
 ======== ======  ================
-
 
 Sends
 +++++

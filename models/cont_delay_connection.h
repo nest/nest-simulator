@@ -35,8 +35,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, continuous delay
 
-cont_delay_synapse - Synapse type for continuous delays
-#######################################################
+Short description
++++++++++++++++++
+
+Synapse type for continuous delays
 
 Description
 +++++++++++
@@ -66,12 +68,10 @@ Transmits
 
 SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
-First version: June 2007
-
 See also
 ++++++++
 
-synapsedict, static_synapse, iaf_psc_alpha_ps
+static_synapse, iaf_psc_alpha_ps
 
 EndUserDocs */
 

@@ -59,8 +59,10 @@ extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
 
-aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
-######################################################################################################
+Short description
++++++++++++++++++
+
+Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
 
 Description
 +++++++++++
@@ -97,7 +99,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ======== ======= =======================================
 **Dynamic state variables**
@@ -137,7 +138,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       numerical instabilities.
 ============= ======= =========================================================
 
-
 Sends
 +++++
 
@@ -151,12 +151,10 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-
 
 See also
 ++++++++

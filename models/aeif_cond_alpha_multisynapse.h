@@ -44,20 +44,23 @@
 
 /* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
 
-aeif_cond_alpha_multisynapse - Conductance based adaptive exponential integrate-and-fire neuron model
-#####################################################################################################
+Short description
++++++++++++++++++
+
+Conductance based adaptive exponential integrate-and-fire neuron model
 
 Description
 +++++++++++
 
-aeif_cond_alpha_multisynapse is a conductance-based adaptive exponential
-integrate-and-fire neuron model according to Brette and Gerstner (2005) with multiple synaptic rise time and decay
-time constants, and synaptic conductance modeled by an alpha function.
+aeif_cond_alpha_multisynapse is a conductance-based adaptive
+exponential integrate-and-fire neuron model according to Brette and
+Gerstner (2005) with multiple synaptic rise time and decay time
+constants, and synaptic conductance modeled by an alpha function.
 
-It allows an arbitrary number of synaptic
-time constants. Synaptic conductance is modeled by an alpha function, as
-described by A. Roth and M.C.W. van Rossum in Computational Modeling Methods
-for Neuroscientists, MIT Press 2013, Chapter 6.
+It allows an arbitrary number of synaptic time constants. Synaptic
+conductance is modeled by an alpha function, as described by A. Roth
+and M.C.W. van Rossum in Computational Modeling Methods for
+Neuroscientists, MIT Press 2013, Chapter 6.
 
 The time constants are supplied by an array, "tau_syn", and the pertaining
 synaptic reversal potentials are supplied by the array "E_rev". Port numbers
@@ -78,7 +81,8 @@ where
  I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
 the synapse i is excitatory or inhibitory depending on the value of
-:math:`E_{rev,i}` and the differential equation for the spike-adaptation current `w` is
+:math:`E_{rev,i}` and the differential equation for the
+spike-adaptation current `w` is
 
 .. math::
 

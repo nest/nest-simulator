@@ -41,13 +41,10 @@ namespace nest
 
 /* BeginUserDocs: device, generator
 
-inhomogeneous_poisson_generator - provides Poisson spike trains at a piecewise constant rate
-############################################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-inhomogeneous_poisson_generator
+Provides Poisson spike trains at a piecewise constant rate
 
 Description
 +++++++++++
@@ -62,7 +59,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary:
-
 
 ==================== ================ =========================================
  rate_times          list of ms       Times at which rate changes

@@ -53,13 +53,10 @@ namespace nest
 
 /* BeginUserDocs: device, MUSIC
 
-music_cont_out_proxy - A device which sends continuous data from NEST to MUSIC
-##############################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-music_cont_out_proxy
+A device which sends continuous data from NEST to MUSIC
 
 Description
 +++++++++++
@@ -85,11 +82,12 @@ receiving buffer via the following access pattern:
 
     we want to get "V_m" for neuron with node ID 5: buffer[ 1*1 + 0 ]
 
+This model is only available if NEST was compiled with MUSIC.
+
 Parameters
 ++++++++++
 
 The following properties are available in the status dictionary:
-
 
 ============ ========  ========================================================
  interval    ms        Recording interval
@@ -103,11 +101,6 @@ The following properties are available in the status dictionary:
                        from, obtained from the /recordables entry of the
                        model from which one wants to record
 ============ ========  ========================================================
-
-
-First version: March 2016
-
-Availability: Only when compiled with MPI and MUSIC
 
 See also
 ++++++++

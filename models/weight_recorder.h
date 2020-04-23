@@ -39,11 +39,6 @@
 weight_recorder - Recording weights from synapses
 #################################################
 
-Device name
-+++++++++++
-
-weight_recorder
-
 Description
 +++++++++++
 
@@ -73,7 +68,6 @@ synapses that fulfill the given criteria.
    >>> post = nest.Create("iaf_psc_alpha", 10)
 
    >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-
 
 EndUserDocs */
 

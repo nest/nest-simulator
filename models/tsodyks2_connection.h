@@ -34,8 +34,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, short-term plasticity
 
-tsodyks2_synapse - Synapse type with short term plasticity
-##########################################################
+Short description
++++++++++++++++++
+
+Synapse type with short term plasticity
 
 Description
 +++++++++++
@@ -57,7 +59,6 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-
 ========  ======  ========================================================
  U        real    Maximum probability of release (U1) [0,1], default=0.5
  u        real    Maximum probability of release (U_se) [0,1],
@@ -67,7 +68,6 @@ The following parameters can be set in the status dictionary:
  tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
 
-
 Remarks:
 
 Under identical conditions, the tsodyks2_synapse produces
@@ -76,10 +76,8 @@ the qualitative behavior is identical. The script
 test_tsodyks2_synapse.py in the examples compares the two synapse
 models.
 
-
 References
 ++++++++++
-
 
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
        pyramidal neurons depends on neurotransmitter release probability.
@@ -93,18 +91,15 @@ References
        Neural Networks, 15(2):155-61.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
 
-
 Transmits
 +++++++++
 
 SpikeEvent
 
-FirstVersion: October 2011
-
 See also
 ++++++++
 
-tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
+tsodyks_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
 

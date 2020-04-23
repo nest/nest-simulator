@@ -265,6 +265,18 @@ nest::multimeter::calibrate_time( const TimeConverter& tc )
   P_.offset_ = tc.from_old_tics( P_.offset_.get_tics() );
 }
 
+
+//
+// Declaration of voltmeter subclass
+//
+
+class voltmeter : public multimeter
+{
+public:
+  voltmeter();
+  voltmeter( const voltmeter& );
+};
+
 } // namespace nest
 
 #endif

@@ -61,8 +61,10 @@ extern "C" int hh_cond_beta_gap_traub_dynamics( double, const double*, double*, 
 
 /* BeginUserDocs: neuron, Hodgkin-Huxley, conductance-based
 
-hh_cond_beta_gap_traub - modified Hodgkin-Huxley neuron with added gap junction support and beta function synaptic conductance
-##############################################################################################################################
+Short description
++++++++++++++++++
+
+Hodgkin-Huxley neuron with gap junction support and beta function synaptic conductances
 
 Description
 +++++++++++
@@ -116,7 +118,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 ============ ======  =======================================================
 V_m          mV      Membrane potential
 V_T          mV      Voltage offset that controls dynamics. For default
@@ -138,7 +139,6 @@ E_K          mV      Potassium reversal potential
 g_K          nS      Potassium peak conductance
 I_e          pA      External input current
 ============ ======  =======================================================
-
 
 References
 ++++++++++

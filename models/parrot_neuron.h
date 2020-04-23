@@ -35,8 +35,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, parrot
 
-parrot_neuron - Neuron that repeats incoming spikes
-###################################################
+Short description
++++++++++++++++++
+
+Neuron that repeats incoming spikes
 
 Description
 +++++++++++
@@ -74,13 +76,6 @@ Sends
 +++++
 
 SpikeEvent
-
-Parameters
-++++++++++
-
-No parameters to be set in the status dictionary.
-
-FirstVersion: May 2006
 
 EndUserDocs */
 

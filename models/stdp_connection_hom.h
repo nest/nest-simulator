@@ -34,8 +34,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-stdp_synapse_hom - Synapse type for spike-timing dependent plasticity using homogeneous parameters
-##################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plasticity using homogeneous parameters
 
 Description
 +++++++++++
@@ -49,14 +51,13 @@ exponent can be set separately for potentiation and depression.
 
 Examples:
 
-    multiplicative STDP [2]_  mu_plus = mu_minus = 1.0
-    additive STDP       [3]_  mu_plus = mu_minus = 0.0
-    Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
-    van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
+* multiplicative STDP [2]_  mu_plus = mu_minus = 1.0
+* additive STDP       [3]_  mu_plus = mu_minus = 0.0
+* Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
+* van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
 
 Parameters
 ++++++++++
-
 
 ========= =======  ======================================================
  tau_plus ms       Time constant of STDP window, potentiation
@@ -68,7 +69,6 @@ Parameters
  mu_minus real     Weight dependence exponent, depression
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
-
 
 Remarks:
 
@@ -82,7 +82,6 @@ SpikeEvent
 
 References
 ++++++++++
-
 
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
        temporally asymmetric hebbian plasticity. Journal of Neuroscience,
@@ -99,13 +98,10 @@ References
        20(23):8812-8821.
        DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
 
-
-FirstVersion: March 2006
-
 See also
 ++++++++
 
-synapsedict, tsodyks_synapse, static_synapse
+tsodyks_synapse, static_synapse
 
 EndUserDocs */
 

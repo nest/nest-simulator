@@ -216,18 +216,14 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
     # set the rpath only when installed
     if ( APPLE )
       set( CMAKE_INSTALL_RPATH
-          "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
           "@loader_path/../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: @loader_path at <prefix>/lib/python2.7/site-packages/nest
-          "@loader_path/../../.."
+          # for pynestkernel: @loader_path at <prefix>/lib/python3.x/site-packages/nest
           "@loader_path/../../../nest"
           PARENT_SCOPE )
     else ()
       set( CMAKE_INSTALL_RPATH
-          "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: origin at <prefix>/lib/python2.7/site-packages/nest
-          "\$ORIGIN/../../.."
+          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "\$ORIGIN/../../../nest"
           PARENT_SCOPE )
     endif ()

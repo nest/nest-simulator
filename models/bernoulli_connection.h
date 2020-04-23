@@ -33,20 +33,23 @@ namespace nest
 
 /* BeginUserDocs: synapse, static
 
-bernoulli_synapse - Static synapse with stochastic transmission
-###############################################################
+Short description
++++++++++++++++++
+
+Static synapse with stochastic transmission
 
 Description
 +++++++++++
 
-Spikes are transmitted by bernoulli_synapse following a Bernoulli trial with
-success probability p_transmit. This synaptic mechanism was inspired by the
-results described in [1]_ of greater transmission probability for stronger
-excitatory connections and it was previously applied in [2]_ and [3].
+Spikes are transmitted by bernoulli_synapse following a Bernoulli
+trial with success probability p_transmit. This synaptic mechanism was
+inspired by the results described in [1]_ of greater transmission
+probability for stronger excitatory connections and it was previously
+applied in [2]_ and [3].
 
-bernoulli_synapse does not support any kind of plasticity. It simply stores
-the parameters target, weight, transmission probability, delay and
-receiver port for each connection.
+bernoulli_synapse does not support any kind of plasticity. It simply
+stores the parameters target, weight, transmission probability, delay
+and receiver port for each connection.
 
 Parameters
 ++++++++++
@@ -54,9 +57,6 @@ Parameters
 =========== ====== ===================================================
  p_transmit real   Transmission probability, must be between 0 and 1
 =========== ====== ===================================================
-
-
-First version: June 2017
 
 Transmits
 +++++++++
@@ -66,7 +66,6 @@ DoubleDataEvent, DataLoggingRequest
 
 References
 ++++++++++
-
 
 .. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
        neuronal network of the C2 barrel column in mouse primary
@@ -85,7 +84,7 @@ References
 See also
 ++++++++
 
-synapsedict, static_synapse, static_synapse_hom_w
+static_synapse, static_synapse_hom_w
 
 EndUserDocs */
 

@@ -38,8 +38,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-sigmoid_rate - rate model with sigmoidal gain function
-######################################################
+Short description
++++++++++++++++++
+
+Rate neuron model with sigmoidal gain function
 
 Description:
 +++++++++++++
@@ -83,7 +85,6 @@ transformers.
  rectify_output     boolean Switch to restrict rate to values >= 0
 ==================  ======= ==============================================
 
-
 Note:
 
 The boolean parameter linear_summation determines whether the
@@ -91,7 +92,6 @@ input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
-
 
 References
 ++++++++++
@@ -105,7 +105,6 @@ References
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
 
 Sends
 +++++

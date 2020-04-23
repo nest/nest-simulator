@@ -36,8 +36,11 @@ namespace nest
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-iaf_psc_delta - Leaky integrate-and-fire neuron model
-#####################################################
+Short description
++++++++++++++++++
+
+Current-based leaky integrate-and-fire neuron model with delta-shaped
+post-synaptic currents
 
 Description
 +++++++++++

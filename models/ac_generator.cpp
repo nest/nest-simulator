@@ -139,8 +139,7 @@ nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::ac_generator()
-  : DeviceNode()
-  , StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -149,8 +148,7 @@ nest::ac_generator::ac_generator()
 }
 
 nest::ac_generator::ac_generator( const ac_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

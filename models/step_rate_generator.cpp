@@ -224,8 +224,7 @@ nest::step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_&
  * ---------------------------------------------------------------- */
 
 nest::step_rate_generator::step_rate_generator()
-  : DeviceNode()
-  , StimulatingDevice< DelayedRateConnectionEvent >()
+  : StimulatingDevice< DelayedRateConnectionEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -234,8 +233,7 @@ nest::step_rate_generator::step_rate_generator()
 }
 
 nest::step_rate_generator::step_rate_generator( const step_rate_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< DelayedRateConnectionEvent >( n )
+  : StimulatingDevice< DelayedRateConnectionEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

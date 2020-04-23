@@ -92,15 +92,13 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* no
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::poisson_generator_ps()
-  : DeviceNode()
-  , device_()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
 {
 }
 
 nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
 {
 }
@@ -115,13 +113,13 @@ nest::poisson_generator_ps::init_state_( const Node& proto )
 {
   const poisson_generator_ps& pr = downcast< poisson_generator_ps >( proto );
 
-  device_.init_state( pr.device_ );
+  nest::Device::init_state( pr );
 }
 
 void
 nest::poisson_generator_ps::init_buffers_()
 {
-  device_.init_buffers();
+  nest::Device::init_buffers();
 
   // forget all about past, but do not discard connection information
   B_.next_spike_.clear();
@@ -131,7 +129,7 @@ nest::poisson_generator_ps::init_buffers_()
 void
 nest::poisson_generator_ps::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice< CurrentEvent >::calibrate();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
@@ -161,7 +159,7 @@ nest::poisson_generator_ps::calibrate()
       min_time = std::min( min_time, it->first );
     }
 
-    if ( min_time < device_.get_origin() + device_.get_start() )
+    if ( min_time < StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_start() )
     {
       B_.next_spike_.clear(); // will be resized with neg_infs below
     }
@@ -197,8 +195,8 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
    * The (included) upper boundary is the right edge of the slice, T + to.
    * of the slice.
    */
-  V_.t_min_active_ = std::max( T + Time::step( from ), device_.get_origin() + device_.get_start() );
-  V_.t_max_active_ = std::min( T + Time::step( to ), device_.get_origin() + device_.get_stop() );
+  V_.t_min_active_ = std::max( T + Time::step( from ), StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_start() );
+  V_.t_max_active_ = std::min( T + Time::step( to ), StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
   if ( V_.t_min_active_ < V_.t_max_active_ )

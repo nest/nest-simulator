@@ -25,6 +25,7 @@
 
 // Includes from nestkernel:
 #include "device.h"
+#include "device_node.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -89,7 +90,7 @@ namespace nest
  * @ingroup Devices
  */
 template < typename EmittedEvent >
-class StimulatingDevice : public Device
+class StimulatingDevice : public Device, public DeviceNode
 {
 public:
   StimulatingDevice();
@@ -105,9 +106,52 @@ public:
    */
   bool is_active( const Time& ) const;
   void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& ) const;
+  
+  using Device::calibrate;
+  using Node::calibrate;
+  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
   void enforce_single_syn_type( synindex );
+  
+  /**
+   * Device type.
+   */
+  enum Type
+  {
+    STEP_CURRENT_GENERATOR,
+    SPIKE_GENERATOR
+  };
+
+  virtual Type get_type() const = 0;
+  const std::string& get_label() const;
+  virtual void update_from_backend( std::vector< double > input_spikes ) = 0;
+
+protected:
+    void set_initialized_();
+    
+    struct Parameters_
+    {
+    std::string label_;  //!< A user-defined label for symbolic device names.
+    bool time_in_steps_; //!< Flag indicating if time is recorded in steps or ms.
+    Name input_from_;    //!< Array of input backends to use.
+
+    Parameters_();
+    Parameters_( const Parameters_& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& ) const;
+  } P_;
+
+  struct State_
+  {
+    size_t n_events_;
+
+    State_();
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& ) const;
+  } S_;
 
 private:
   /**
@@ -118,20 +162,49 @@ private:
    * stored here, even though it is an implementation detail.
    */
   synindex first_syn_id_;
+  
+  DictionaryDatum backend_params_;
 };
 
 template < typename EmittedEvent >
 StimulatingDevice< EmittedEvent >::StimulatingDevice()
-  : Device()
+  : DeviceNode()
+  , Device()
   , first_syn_id_( invalid_synindex )
+  , backend_params_( new Dictionary )
 {
 }
 
 template < typename EmittedEvent >
 StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
-  : Device( sd )
+  : DeviceNode( sd )
+  , Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
+  , backend_params_( new Dictionary )
 {
+}
+
+template < typename EmittedEvent >
+void
+StimulatingDevice< EmittedEvent >::set_initialized_()
+{
+  kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
+}
+
+template < typename EmittedEvent >
+void
+StimulatingDevice< EmittedEvent >::calibrate( const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
+  Device::calibrate();
+  kernel().io_manager.set_input_value_names( P_.input_from_, *this, double_value_names, long_value_names );
+}
+
+template < typename EmittedEvent >
+const std::string&
+StimulatingDevice< EmittedEvent >::get_label() const
+{
+  return P_.label_;
 }
 
 // specializations must be declared inside namespace
@@ -176,12 +249,23 @@ StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
   return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
-template < typename EmittedEvent >
+/*template < typename EmittedEvent >
 inline void
 StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 {
+  P_.get( d );
+  S_.get( d );
   Device::get_status( d );
 }
+
+template < typename EmittedEvent >
+inline void
+StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) const
+{
+  P_.set( d );
+  S_.set( d );
+  Device::set_status( d );
+}*/
 
 template < typename EmittedEvent >
 inline void

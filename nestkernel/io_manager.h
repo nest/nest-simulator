@@ -106,7 +106,7 @@ public:
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_input( const Name&, InputDevice&, const DictionaryDatum& );
+  void enroll_input( const Name&, StimulatingDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
@@ -114,7 +114,7 @@ public:
     const std::vector< Name >& long_value_names );
 
   void set_input_value_names( const Name& backend_name,
-    const InputDevice& device,
+    const StimulatingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
@@ -123,7 +123,7 @@ public:
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
   void check_input_backend_device_status( const Name&, const DictionaryDatum& );
   void get_stimulating_backend_device_defaults( const Name&, DictionaryDatum& );
-  void get_stimulating_backend_device_status( const Name&, const InputDevice&, DictionaryDatum& );
+  void get_stimulating_backend_device_status( const Name&, const StimulatingDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );

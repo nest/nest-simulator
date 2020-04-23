@@ -346,7 +346,7 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
 }
 
 void
-nest::IOManager::enroll_input( const Name& backend_name, InputDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_input( const Name& backend_name, StimulatingDevice& device, const DictionaryDatum& params )
 {
   for ( auto& it : stimulating_backends_ )
   {
@@ -373,7 +373,7 @@ IOManager::set_recording_value_names( const Name& backend_name,
 
 void
 IOManager::set_input_value_names( const Name& backend_name,
-  const InputDevice& device,
+  const StimulatingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -414,7 +414,7 @@ IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, Di
 
 void
 IOManager::get_stimulating_backend_device_status( const Name& backend_name,
-  const InputDevice& device,
+  const StimulatingDevice& device,
   DictionaryDatum& d )
 {
   stimulating_backends_[ backend_name ]->get_device_status( device, d );

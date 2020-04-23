@@ -112,8 +112,7 @@ nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::dc_generator()
-  : DeviceNode()
-  , device_()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -122,8 +121,7 @@ nest::dc_generator::dc_generator()
 }
 
 nest::dc_generator::dc_generator( const dc_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -140,14 +138,14 @@ nest::dc_generator::init_state_( const Node& proto )
 {
   const dc_generator& pr = downcast< dc_generator >( proto );
 
-  device_.init_state( pr.device_ );
+  StimulatingDevice< CurrentEvent >::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::dc_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice< CurrentEvent >::init_buffers();
   B_.logger_.reset();
 }
 
@@ -156,7 +154,7 @@ nest::dc_generator::calibrate()
 {
   B_.logger_.init();
 
-  device_.calibrate();
+  StimulatingDevice< CurrentEvent >::calibrate();
 }
 
 
@@ -178,7 +176,7 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
   {
     S_.I_ = 0.0;
 
-    if ( device_.is_active( Time::step( start + offs ) ) )
+    if ( StimulatingDevice< CurrentEvent >::is_active( Time::step( start + offs ) ) )
     {
       S_.I_ = P_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );

@@ -173,8 +173,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
-  : DeviceNode()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -183,8 +182,7 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
 }
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoidal_poisson_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

@@ -91,7 +91,7 @@ StimulatingDevice
 
 EndUserDocs */
 
-class inhomogeneous_poisson_generator : public DeviceNode, public StimulatingDevice< SpikeEvent >
+class inhomogeneous_poisson_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

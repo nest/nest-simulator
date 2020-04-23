@@ -168,7 +168,7 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public DeviceNode, StimulatingDevice< SpikeEvent >
+class sinusoidal_gamma_generator : StimulatingDevice< SpikeEvent >
 {
 
 public:

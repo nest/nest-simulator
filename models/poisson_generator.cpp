@@ -71,15 +71,13 @@ nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::poisson_generator()
-  : DeviceNode()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
 {
 }
 
 nest::poisson_generator::poisson_generator( const poisson_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
 {
 }

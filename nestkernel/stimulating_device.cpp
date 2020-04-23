@@ -1,5 +1,5 @@
 /*
- *  input_device.cpp
+ *  stimulating_device.cpp
  *
  *  This file is part of NEST.
  *
@@ -23,68 +23,37 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "kernel_manager.h"
-#include "input_device.h"
+#include "stimulating_device.h"
 
-nest::InputDevice::InputDevice()
-  : DeviceNode()
-  , Device()
-  , P_()
-  , backend_params_( new Dictionary )
-{
-}
 
-nest::InputDevice::InputDevice( const InputDevice& id )
-  : DeviceNode( id )
-  , Device( id )
-  , P_( id.P_ )
-  , backend_params_( new Dictionary( *id.backend_params_ ) )
-{
-}
-
-void
-nest::InputDevice::set_initialized_()
-{
-  kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
-}
-
-void
-nest::InputDevice::calibrate( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  Device::calibrate();
-  kernel().io_manager.set_input_value_names( P_.input_from_, *this, double_value_names, long_value_names );
-}
-
-const std::string&
-nest::InputDevice::get_label() const
-{
-  return P_.label_;
-}
-
-nest::InputDevice::Parameters_::Parameters_()
+template < typename EmittedEvent >
+nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
   , input_from_( names::internal )
 {
 }
 
-nest::InputDevice::Parameters_::Parameters_( const Parameters_& p )
+template < typename EmittedEvent >
+nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_( const Parameters_& p )
   : label_( p.label_ )
   , time_in_steps_( p.time_in_steps_ )
   , input_from_( p.input_from_ )
 {
 }
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::Parameters_::get( DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   ( *d )[ names::input_from ] = LiteralDatum( input_from_ );
 }
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::Parameters_::set( const DictionaryDatum& d )
+nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum& d ) const
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -110,13 +79,15 @@ nest::InputDevice::Parameters_::set( const DictionaryDatum& d )
   }
 }
 
-nest::InputDevice::State_::State_()
+template < typename EmittedEvent >
+nest::StimulatingDevice< EmittedEvent >::State_::State_()
   : n_events_( 0 )
 {
 }
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::State_::get( DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::State_::get( DictionaryDatum& d ) const
 {
   // if we already have the n_events entry, we add to it, otherwise we create it
   if ( d->known( names::n_events ) )
@@ -130,8 +101,9 @@ nest::InputDevice::State_::get( DictionaryDatum& d ) const
   }
 }
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::State_::set( const DictionaryDatum& d )
+nest::StimulatingDevice< EmittedEvent >::State_::set( const DictionaryDatum& d ) const
 {
   size_t n_events = n_events_;
   if ( updateValue< long >( d, names::n_events, n_events ) )
@@ -149,8 +121,9 @@ nest::InputDevice::State_::set( const DictionaryDatum& d )
   }
 }
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::set_status( const DictionaryDatum& d )
+nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) const
 {
   if ( kernel().simulation_manager.has_been_prepared() )
   {
@@ -202,8 +175,9 @@ nest::InputDevice::set_status( const DictionaryDatum& d )
 }
 
 
+template < typename EmittedEvent >
 void
-nest::InputDevice::get_status( DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -227,12 +201,4 @@ nest::InputDevice::get_status( DictionaryDatum& d ) const
   {
     kernel().io_manager.get_stimulating_backend_device_status( P_.input_from_, *this, d );
   }
-}
-
-bool
-nest::InputDevice::is_active( Time const& T ) const
-{
-  const long stamp = T.get_steps();
-
-  return get_t_min_() < stamp and stamp <= get_t_max_();
 }

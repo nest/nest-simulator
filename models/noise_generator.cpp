@@ -175,8 +175,7 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
  * ---------------------------------------------------------------- */
 
 nest::noise_generator::noise_generator()
-  : DeviceNode()
-  , StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -189,8 +188,7 @@ nest::noise_generator::noise_generator()
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

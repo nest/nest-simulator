@@ -301,16 +301,14 @@ nest::spike_generator::SpikeParameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::spike_generator()
-  : InputDevice()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
 {
 }
 
 nest::spike_generator::spike_generator( const spike_generator& n )
-  : InputDevice( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {

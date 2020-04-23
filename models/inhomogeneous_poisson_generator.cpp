@@ -190,8 +190,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
  * ---------------------------------------------------------------- */
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
-  : DeviceNode()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
   , B_()
   , V_()
@@ -199,8 +198,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
 }
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , B_( n.B_ )
   , V_( n.V_ )

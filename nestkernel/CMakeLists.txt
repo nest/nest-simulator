@@ -60,7 +60,7 @@ set ( nestkernel_sources
       ring_buffer.h ring_buffer.cpp
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
-      stimulating_device.h
+      stimulating_device.h stimulating_device.cpp
       target_identifier.h
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
@@ -110,7 +110,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       vose.h vose.cpp
-      input_device.h input_device.cpp
+      input_device.h
       stimulating_backend.h stimulating_backend.cpp
       stimulating_backend_internal.h stimulating_backend_internal.cpp
       )

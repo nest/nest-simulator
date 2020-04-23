@@ -218,8 +218,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
-  : DeviceNode()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -228,8 +227,7 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
 }
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

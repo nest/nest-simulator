@@ -34,7 +34,7 @@
 namespace nest
 {
 
-class InputDevice;
+class StimulatingDevice;
 class Event;
 
 class StimulatingBackend
@@ -49,9 +49,9 @@ public:
   }
 
   /**
-  * Enroll an `InputDevice` with the `StimulatingBackend`.
+  * Enroll an `StimulatingDevice` with the `StimulatingBackend`.
   *
-  * When this function is called by an `InputDevice` @p device,
+  * When this function is called by an `StimulatingDevice` @p device,
   * the `StimulatingBackend` can set up per-device data structures and
   * properties. Individual device instances can be identified using
   * the `thread` and `node_id` of the @p device.
@@ -77,7 +77,7 @@ public:
   * device-specific backend properties and an output facility of some
   * kind.
   *
-  * @param device the InputDevice to be enrolled
+  * @param device the StimulatingDevice to be enrolled
   * @param params device-specific backend parameters
   *
   * @see set_value_names(), disenroll(), write(),
@@ -85,10 +85,10 @@ public:
   *
   * @ingroup NESTio
   */
-  virtual void enroll( InputDevice& device, const DictionaryDatum& params ) = 0;
+  virtual void enroll( StimulatingDevice& device, const DictionaryDatum& params ) = 0;
 
   /**
-   * Disenroll an `InputDevice` from the `StimulatingBackend`.
+   * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
    *
    * This function is considered to be the opposite of enroll() in the
    * sense that it cancels the enrollment of a RecordingDevice from a
@@ -103,7 +103,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( InputDevice& device ) = 0;
+  virtual void disenroll( StimulatingDevice& device ) = 0;
 
   /**
    * To make the names of input quantities known to the
@@ -118,7 +118,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void set_value_names( const InputDevice& device,
+  virtual void set_value_names( const StimulatingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names ) = 0;
 
@@ -198,7 +198,7 @@ public:
   }
 
   virtual void
-  clear( const InputDevice& )
+  clear( const StimulatingDevice& )
   {
   }
 
@@ -248,7 +248,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const InputDevice& device, DictionaryDatum& params ) const = 0;
+  virtual void get_device_status( const StimulatingDevice& device, DictionaryDatum& params ) const = 0;
 
   virtual void
   set_status( const DictionaryDatum& )
@@ -261,12 +261,12 @@ public:
   }
 
   virtual void
-  set_input_device_status( const InputDevice& device, const DictionaryDatum& d )
+  set_input_device_status( const StimulatingDevice& device, const DictionaryDatum& d )
   {
   }
 
   virtual void
-  get_input_device_status( const InputDevice& device, DictionaryDatum& d ) const
+  get_input_device_status( const StimulatingDevice& device, DictionaryDatum& d ) const
   {
   }
 

@@ -31,7 +31,7 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "input_device.h"
+#include "stimulating_device.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
@@ -89,7 +89,7 @@ StimulatingDevice
 
 EndUserDocs */
 
-class step_current_generator : public InputDevice, StimulatingDevice< CurrentEvent >
+class step_current_generator : StimulatingDevice< CurrentEvent >
 {
 
 public:

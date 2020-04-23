@@ -34,7 +34,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
-#include "input_device.h"
+#include "stimulating_device.h"
 
 namespace nest
 {
@@ -176,7 +176,7 @@ SpikeEvent
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
 EndUserDocs 
 */
-class spike_generator : public InputDevice, public StimulatingDevice< SpikeEvent >
+class spike_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

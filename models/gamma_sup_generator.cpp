@@ -176,15 +176,13 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* nod
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : DeviceNode()
-  , StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
 {
 }

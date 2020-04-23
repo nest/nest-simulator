@@ -224,8 +224,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : InputDevice()
-  , StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
   , S_()
   , B_( *this )
@@ -234,8 +233,7 @@ nest::step_current_generator::step_current_generator()
 }
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
-  : InputDevice( n )
-  , StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

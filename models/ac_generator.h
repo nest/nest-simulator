@@ -90,7 +90,7 @@ EndUserDocs */
 
 namespace nest
 {
-class ac_generator : public DeviceNode, public StimulatingDevice< CurrentEvent >
+class ac_generator : public StimulatingDevice< CurrentEvent >
 {
 
 public:

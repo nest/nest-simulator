@@ -172,15 +172,13 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::ppd_sup_generator()
-  : DeviceNode()
-  , StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice< CurrentEvent >()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice< CurrentEvent >( n )
   , P_( n.P_ )
 {
 }

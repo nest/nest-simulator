@@ -13,8 +13,8 @@ Standards-Version: 4.1.1
 Package: nest
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python3, libboost-all-dev, libltdl-dev,
-	libreadline-dev, libncurses-dev, libgsl-dev, openmpi-bin,
-	python3-dev, libopenmpi-dev, libgomp1, libomp-dev, libibverbs-dev, libpcre3, libpcre3-dev, jq,
+	libreadline-dev, libncurses-dev, libgsl-dev,
+	python3-dev, libgomp1, libomp-dev, libibverbs-dev, libpcre3, libpcre3-dev, jq,
 	python3-numpy, python3-pandas, python3-scipy, python3-matplotlib, python3-mpi4py, python3-setuptools,
 	python3-pydot, python3-tk, cython3
 Description: NEST is a simulator for networks of spiking neurons.

@@ -1,2 +1,2 @@
-.. include:: ../pynest/examples/Potjans_2014/README.rst
+.. include:: ../../pynest/examples/Potjans_2014/README.rst
 

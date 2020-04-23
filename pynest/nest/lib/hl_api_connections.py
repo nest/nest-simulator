@@ -203,11 +203,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     """
     data_connect, pre, post = _check_input_nodes(pre, post)
 
-    if data_connect:
-        if conn_spec is not None:
-            raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
-
-        conn_spec = 'one_to_one'
+    if data_connect and conn_spec != 'one_to_one':
+        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)

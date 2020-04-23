@@ -32,9 +32,9 @@
 #include "nest_types.h"
 #include "nestmodule.h"
 #include "node_collection.h"
-#include "random.h"
+#include "random_generators.h"
 
-// Includes from sli:
+// Includes from libnestutil:
 #include "dictutils.h"
 
 namespace nest

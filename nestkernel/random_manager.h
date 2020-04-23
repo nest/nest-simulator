@@ -35,10 +35,8 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "random.h"
-
-// Includes from sli:
 #include "dictdatum.h"
+#include "random_generators.h"
 
 namespace nest
 {
@@ -59,7 +57,6 @@ public:
    * Register available RNG types, set default RNG type and create RNGs.
    */
   virtual void initialize();
-
   virtual void finalize();
 
   virtual void set_status( const DictionaryDatum& );
@@ -116,7 +113,7 @@ public:
 
 private:
   /** Available RNG types. */
-  std::map< std::string, BaseRNGFactory* > rng_types_;
+  std::map< std::string, BaseRandomGeneratorFactory* > rng_types_;
 
   /** Name of currently used RNG type. */
   std::string current_rng_type_;

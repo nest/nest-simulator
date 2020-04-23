@@ -28,7 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "random.h"
+#include "random_generators.h"
 
 namespace nest
 {

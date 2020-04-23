@@ -66,7 +66,7 @@ References:
  [2] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold 
      Integration with Continuous Spike Times in Discrete Time Neural Network 
      Simulations. Neural Computation 19:47--79
-SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha_presc, iaf_psc_delta_ps,  testsuite::test_iaf_ps_dc_t_accuracy
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_delta_ps,  testsuite::test_iaf_ps_dc_t_accuracy
 */
 
 (unittest) run
@@ -92,7 +92,6 @@ M_ERROR setverbosity
 [
   /iaf_psc_alpha_ps 
   /iaf_psc_delta_ps
-  /iaf_psc_alpha_presc
   % other precise models should be added to this list
 ]
  /models Set

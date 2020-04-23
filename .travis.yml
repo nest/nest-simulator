@@ -73,10 +73,12 @@ jobs:
 addons:
    apt:
     sources:
-     - r-packages-trusty
+     - *BASE_SOURCES
+     - r-packages-bionic
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-bionic
+     - llvm-toolchain-bionic-9
     packages:
+     - *BASE_PACKAGES
      - gcc-8
      - g++-8
      - clang-7
@@ -94,7 +96,7 @@ addons:
      - python3-nose
      - libpcre3
      - libpcre3-dev
-     - llvm-3.6-dev
+     - llvm-9-dev
      - jq
      - pep8
      - libboost-filesystem-dev

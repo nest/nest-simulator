@@ -1,5 +1,5 @@
 Introduction to the MUSIC Interface
-=====================================
+===================================
 
 The `MUSIC interface <http://software.incf.org/software/music>`_, a
 standard by the INCF, allows the transmission of data between applications
@@ -24,7 +24,7 @@ your cmake.
     make install
 
 A Quick Introduction to NEST and MUSIC
----------------------------------------
+--------------------------------------
 
 In this tutorial, we will show you how to use the MUSIC library together
 with NEST. We will cover how to use the library from PyNEST and from the
@@ -48,7 +48,7 @@ While the focus here is on MUSIC, we need to know a few things about how
 NEST works in order to understand how MUSIC interacts with it.
 
 The Basics of NEST
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 A NEST network consists of three types of elements: neurons, devices,
 and connections between them.
@@ -161,7 +161,7 @@ from a port, then sends the appropriate channel inputs to each input
 proxy. These proxies each connect to the recipient neurons as above.
 
 Publication
--------------
+-----------
 
 Djurfeldt M. et al. 2010. Run-time interoperability between neuronal
 network simulators based on the music framework. Neuroinformatics.

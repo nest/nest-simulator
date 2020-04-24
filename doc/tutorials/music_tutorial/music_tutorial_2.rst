@@ -1,5 +1,5 @@
 Connect two NEST simulations using MUSIC
-======================================================
+========================================
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`

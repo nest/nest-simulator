@@ -103,4 +103,8 @@ in the introduciton is quite helpful, but the best resource is the set
 of example models in the NEST source code distribution. That will show
 you many useful idioms and typical ways to accomplish common tasks.
 
+.. note::
+
+   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+
 

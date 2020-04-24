@@ -35,7 +35,7 @@
 
 // Includes from nestkernel
 #include "nest_datums.h"
-#include "../../nestkernel/random_generators.h"
+#include "random_generators.h"
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 

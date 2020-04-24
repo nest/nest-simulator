@@ -96,7 +96,7 @@ input as in other iaf models, i.e., this current directly enters
 the membrane potential equation. Current input through
 receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
-tau_syn_ex. For an example application, see [6].
+tau_syn_ex. For an example application, see [4]_.
 
 Parameters
 ++++++++++

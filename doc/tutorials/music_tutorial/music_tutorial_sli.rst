@@ -56,7 +56,7 @@ Note that we use ``Set`` to assign the index on the stack
 to a variable. We’d have to rotate the top stack elements if we wanted to
 use ``def``.
 
-For the receiving sli file, *receiver.sli*, we have:
+For the receiving SLI file, *receiver.sli*, we have:
 
 ::
 

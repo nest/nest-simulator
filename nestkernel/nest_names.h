@@ -283,8 +283,6 @@ extern const Name messages;
 extern const Name min;
 extern const Name min_delay;
 extern const Name model;
-extern const Name mother_rng;
-extern const Name mother_seed;
 extern const Name ms_per_tic;
 extern const Name mu;
 extern const Name mu_minus;

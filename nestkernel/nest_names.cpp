@@ -262,8 +262,6 @@ const Name messages( "messages" );
 const Name min( "min" );
 const Name min_delay( "min_delay" );
 const Name model( "model" );
-const Name mother_rng( "mother_rng" );
-const Name mother_seed( "mother_seed" );
 const Name ms_per_tic( "ms_per_tic" );
 const Name mu( "mu" );
 const Name mu_minus( "mu_minus" );

@@ -56,6 +56,7 @@ set( with-readline ON CACHE STRING "Find a readline library. To set a specific r
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
+set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -89,17 +90,6 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
 include( GNUInstallDirs )
-
-################################################################################
-#################        Do not install into /usr/local        #################
-################################################################################
-
-get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
-# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -300,7 +290,8 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}" )
+  "${SIONLIB_LIBRARIES}"
+  "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
@@ -315,7 +306,8 @@ set( ALL_INCLUDES_tmp
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}" )
+  "${MPI_CXX_INCLUDE_PATH}"
+  "${BOOST_INCLUDE_DIR}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

@@ -24,6 +24,8 @@
 Music example receiver script
 ------------------------------
 
+Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+
 """
 
 import sys

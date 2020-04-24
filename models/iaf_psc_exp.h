@@ -63,7 +63,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]_. A flow chart can be found in [3].
+[2]_. A flow chart can be found in [3]_.
 
 Spiking in this model can be either deterministic (delta=0) or stochastic (delta
 > 0). In the stochastic case this model implements a type of spike response

@@ -7,6 +7,10 @@ at runtime. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization and
 with custom applications that also use the MUSIC interface.
 
+.. note::
+
+   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+
 Setup of System
 -----------------
 To use MUSIC with NEST, we first need to ensure MUSIC is installed on our system

@@ -519,8 +519,8 @@ SLIStartup::init( SLIInterpreter* i )
   exitcodes->insert( exitcode_skipped_no_threading_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_THREADING ) ) );
   exitcodes->insert( exitcode_skipped_no_gsl_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_GSL ) ) );
   exitcodes->insert( exitcode_skipped_no_music_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MUSIC ) ) );
-  exitcodes->insert( 
-    exitcode_skipped_no_recordingbackend_arbor_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_RECORDINGBACKEND_ARBOR ) ) );
+  exitcodes->insert( exitcode_skipped_no_recordingbackend_arbor_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_RECORDINGBACKEND_ARBOR ) ) );
   exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( EXITCODE_SCRIPTERROR ) ) );
   exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( EXITCODE_USERABORT ) ) );

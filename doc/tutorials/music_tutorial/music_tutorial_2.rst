@@ -65,7 +65,7 @@ For the receiving process script, *receive.py* we do:
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    music_in = nest.Create("music_event_in_proxy", 2, params={'port_name': 'p_in'})
+    music_in = nest.Create("music_event_in_proxy", 2, {'port_name': 'p_in'})
 
     music_in.music_channel = [c for c in range(len(music_in))]
 

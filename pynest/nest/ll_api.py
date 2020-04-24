@@ -85,6 +85,7 @@ __all__ = [
     'sps',
     'sr',
     'stack_checker',
+    'take_array_index',
 ]
 
 
@@ -92,6 +93,7 @@ engine = kernel.NESTEngine()
 
 sli_push = sps = engine.push
 sli_pop = spp = engine.pop
+take_array_index = engine.take_array_index
 connect_arrays = engine.connect_arrays
 
 

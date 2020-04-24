@@ -80,14 +80,14 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
       )
   if ( RESULT EQUAL 0 )
     # only extract defines; include is already looked for before
-    set( SIONLIB_DEFINES "" CACHE INTERNAL "cmake sucks" )
+    set( SIONLIB_DEFINES "" CACHE INTERNAL "sionlib" )
     # make list
     string( REPLACE " " ";" FLAGS ${SIONLIB_CFLAGS_OUTPUT} )
     foreach ( def ${FLAGS} )
       # def starts with -D....
       if ( "${def}" MATCHES "^-D.*" )
         # add to defines
-        set( SIONLIB_DEFINES ${SIONLIB_DEFINES} "${def}" CACHE INTERNAL "cmake sucks" )
+        set( SIONLIB_DEFINES ${SIONLIB_DEFINES} "${def}" CACHE INTERNAL "sionlib" )
         # add current definition at CMake level
         add_definitions( "${def}" )
       endif ()
@@ -102,7 +102,7 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
   if ( RESULT EQUAL 0 )
-    set( SIONLIB_LIBRARIES "" CACHE INTERNAL "cmake sucks" )
+    set( SIONLIB_LIBRARIES "" CACHE INTERNAL "sionlib" )
     # make list
     string( REPLACE " " ";" LIBS ${SIONLIB_LIBS_OUTPUT} )
     foreach ( lib ${LIBS} )
@@ -117,7 +117,7 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
             HINTS ${SIONLIB_ROOT_DIR}/lib
             )
         if ( NOT FULL_${lib_name} STREQUAL "FULL_${lib_name}-NOTFOUND" )
-          set( SIONLIB_LIBRARIES ${SIONLIB_LIBRARIES} ${FULL_${lib_name}} CACHE INTERNAL "cmake sucks" )
+          set( SIONLIB_LIBRARIES ${SIONLIB_LIBRARIES} ${FULL_${lib_name}} CACHE INTERNAL "sionlib" )
         else ()
           message( WARNING "Cannot find SIONlib library '${lib_name}'." )
           unset( SIONLIB_LIBRARIES CACHE )

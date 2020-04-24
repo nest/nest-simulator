@@ -23,14 +23,12 @@
 #ifndef SINUSOIDAL_POISSON_GENERATOR_H
 #define SINUSOIDAL_POISSON_GENERATOR_H
 
-// C++ includes:
-#include <random>
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 

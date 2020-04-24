@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <deque>
-#include <random>
 #include <vector>
 
 // Includes from nestkernel:
@@ -33,6 +32,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 
 namespace nest

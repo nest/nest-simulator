@@ -23,12 +23,11 @@
 #ifndef PP_POP_PSC_BETA_H
 #define PP_POP_PSC_BETA_H
 
-// C++ includes:
-#include <random>
 
 // Includes from nestkernel:
 #include "nest.h"
 #include "node.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 

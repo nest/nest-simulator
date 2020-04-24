@@ -23,14 +23,12 @@
 #ifndef IAF_CHS_2007_H
 #define IAF_CHS_2007_H
 
-// C++ includes:
-#include <random>
-
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"

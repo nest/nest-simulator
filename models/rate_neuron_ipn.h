@@ -27,7 +27,6 @@
 #include "config.h"
 
 // C++ includes:
-#include <random>
 #include <string>
 
 // Includes from nestkernel:
@@ -36,6 +35,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "recordables_map.h"
 #include "universal_data_logger.h"
@@ -252,7 +252,6 @@ private:
     // propagator for noise
     double input_noise_factor_;
 
-    RngPtr rng_;
     normal_distribution normal_dist_; //!< normal distribution
   };
 

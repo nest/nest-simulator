@@ -24,7 +24,6 @@
 #define TEST_PARAMETER_H
 
 // C++ includes
-#include <random>      // std::mt19937_64
 #include <type_traits> // std::is_floating_point
 
 // The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70

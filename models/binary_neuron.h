@@ -26,7 +26,6 @@
 // C++ includes:
 #include <cmath>
 #include <limits>
-#include <random>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -41,6 +40,7 @@
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"

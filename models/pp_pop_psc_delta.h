@@ -23,14 +23,12 @@
 #ifndef PP_POP_PSC_DELTA_H
 #define PP_POP_PSC_DELTA_H
 
-// C++ includes:
-#include <random>
-
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 

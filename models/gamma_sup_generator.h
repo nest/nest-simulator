@@ -24,7 +24,6 @@
 #define GAMMA_SUP_GENERATOR_H
 
 // C++ includes:
-#include <random>
 #include <vector>
 
 // Includes from nestkernel:
@@ -32,6 +31,7 @@
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 
 namespace nest

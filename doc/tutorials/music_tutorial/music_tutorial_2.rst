@@ -8,7 +8,7 @@ from :doc:`the introduction to this tutorial <music_tutorial_1>`.
 We need a sending process, a receiving process and a MUSIC
 configuration file.
 
-To try out the example, save the following sending process code in a python file
+To try out the example, save the following sending process code in a Python file
 called *send.py*.
 
 
@@ -239,4 +239,3 @@ did in our earlier python example. This is far more effective, and the
 outside process is not limited to the generators implemented in NEST but
 can create any kind of spiking input. In the next section we will take a
 look at how to do this.
-

@@ -14,7 +14,7 @@ the scope of this tutorial. The code follows the same structure as the
 other examples, and should be straightforward to follow. But we will
 give a few pointers for how to connect things with MUSIC.
 
-The sli version of the sending process file from
+The SLI version of the sending process file from
 :doc:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, *sender.sli*, is outlined
 below. Comments are prefixed with a “%”.
 

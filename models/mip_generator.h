@@ -134,8 +134,8 @@ private:
    */
   struct Parameters_
   {
-    double rate_;               //!< process rate in Hz
-    double p_copy_;             //!< copy probability for each spike in the parent process
+    double rate_;   //!< process rate in Hz
+    double p_copy_; //!< copy probability for each spike in the parent process
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );

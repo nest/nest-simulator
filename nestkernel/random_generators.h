@@ -35,7 +35,8 @@ namespace nest
 
 // Forward declarations
 class BaseRandomGenerator;
-template < typename DistributionT > class RandomDistribution;
+template < typename DistributionT >
+class RandomDistribution;
 
 // Type definitions
 using RngPtr = std::shared_ptr< BaseRandomGenerator >;
@@ -55,7 +56,9 @@ using exponential_distribution = RandomDistribution< std::exponential_distributi
 class BaseRandomGenerator
 {
 public:
-  virtual ~BaseRandomGenerator() {}
+  virtual ~BaseRandomGenerator()
+  {
+  }
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine.
@@ -120,11 +123,11 @@ public:
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
-	std::seed_seq sseq( seed );
-	rng_.seed( sseq );
+    std::seed_seq sseq( seed );
+    rng_.seed( sseq );
   }
 
-    // TODO: Can we use templates with override here?
+  // TODO: Can we use templates with override here?
   inline unsigned long operator()( std::uniform_int_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
@@ -235,7 +238,7 @@ private:
 class BaseRandomGeneratorFactory
 {
 public:
-  virtual ~BaseRandomGeneratorFactory() {};
+  virtual ~BaseRandomGeneratorFactory(){};
 
   /**
    * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
@@ -254,7 +257,7 @@ public:
   inline RngPtr
   create( std::initializer_list< std::uint32_t > seed_initializer ) const override
   {
-	return std::make_shared< RandomGenerator< RandomEngineT > >( seed_initializer );
+    return std::make_shared< RandomGenerator< RandomEngineT > >( seed_initializer );
   }
 };
 

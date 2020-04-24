@@ -1708,7 +1708,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-        	  indegree = bino_dist( synced_rng, param );
+          indegree = bino_dist( synced_rng, param );
         }
         assert( indegree < sources_->size() );
 
@@ -1727,7 +1727,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         size_t i = 0;
         while ( i < indegree )
         {
-        	  snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the

@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
 
   // We need to go via a factory to avoid compiler confusion
-  //nest::RandomGeneratorFactory< std::mt19937_64 > rf;
+  // nest::RandomGeneratorFactory< std::mt19937_64 > rf;
   nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );
 
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );

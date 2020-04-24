@@ -194,17 +194,6 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
-from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-
-
-def config_inited_handler(app, config):
-    ExtractUserDocs(
-        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="from_cpp/"
-    )
-    ConvertMarkdownFiles()
-
-
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -223,10 +212,6 @@ def setup(app):
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/copybutton.js")
     app.add_javascript("js/custom.js")
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect('config-inited', config_inited_handler)
-
 
 # -- Options for LaTeX output ---------------------------------------------
 

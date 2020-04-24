@@ -19,6 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+gif_cond_exp_multisynapse
++++++++++++++++++++++++++
+
+"""
 
 neuron = nest.Create('gif_cond_exp_multisynapse',
                      params={'E_rev': [0.0, -85.0],

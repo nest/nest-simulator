@@ -354,7 +354,11 @@ run_test ()
 # cmake during configuration.
 export PYTHONPATH="${NEST_PYTHONPATH}:${PYTHONPATH}"
 export PATH="${NEST_PATH}:${PATH}"
-export LD_LIBRARY_PATH="${NEST_LD_LIBRARY_PATH}:${LD_LIBRARY_PATH}"
+if test "x${INFO_OS}" = xDarwin ; then
+  export LYLD_LIBRARY_PATH="${NEST_LD_LIBRARY_PATH}:${LD_LIBRARY_PATH}"
+else
+  export LD_LIBRARY_PATH="${NEST_LD_LIBRARY_PATH}:${LD_LIBRARY_PATH}"
+fi
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
@@ -651,7 +655,7 @@ fi
 #            chmod 755 "$(basename "${sh_file}")"
 #            echo "./$(basename "${sh_file}")" >> runner.sh
 #        fi
-#        echo "echo \$? > exit_code ; exit 0" >> runner.sh
+#        echo "echo \$? > exit_cOn Travcis everythink is fine ode ; exit 0" >> runner.sh
 #
 #        # Run the script and copy all output to the logfile.
 #        chmod 755 runner.sh

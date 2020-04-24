@@ -151,7 +151,7 @@ public:
 
     for ( unsigned long n = 0; n < n_spikes_in; ++n )
     {
-      if ( get_thread_specific_rng( t )->drand() < p_transmit_ )
+      if ( get_vp_specific_rng( t )->drand() < p_transmit_ )
       {
         ++n_spikes_out;
       }

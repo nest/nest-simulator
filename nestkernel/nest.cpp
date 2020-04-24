@@ -81,21 +81,21 @@ print_nodes_to_stream( std::ostream& ostr )
 }
 
 RngPtr
-get_thread_specific_rng( thread tid )
-{
-  return kernel().random_manager.get_thread_specific_rng( tid );
-}
-
-RngPtr
-get_thread_synced_rng( thread tid )
-{
-  return kernel().random_manager.get_thread_synced_rng( tid );
-}
-
-RngPtr
 get_rank_synced_rng()
 {
   return kernel().random_manager.get_rank_synced_rng();
+}
+
+RngPtr
+get_vp_synced_rng( thread tid )
+{
+  return kernel().random_manager.get_vp_synced_rng( tid );
+}
+
+RngPtr
+get_vp_specific_rng( thread tid )
+{
+  return kernel().random_manager.get_vp_specific_rng( tid );
 }
 
 void

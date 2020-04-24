@@ -305,7 +305,7 @@ nest::iaf_psc_exp::calibrate()
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
-  V_.rng_ = get_thread_specific_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 }
 
 void

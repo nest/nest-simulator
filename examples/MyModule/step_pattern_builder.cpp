@@ -110,7 +110,7 @@ mynest::StepPatternBuilder::connect_()
 
     {
       // allocate pointer to thread-specific random generator
-      nest::RngPtr rng = nest::get_thread_specific_rng( tid );
+      nest::RngPtr rng = nest::get_vp_specific_rng( tid );
 
       for ( auto target_it = targets_->begin(); target_it < targets_->end();
             advance_( target_it, targets_->end(), target_step_ ) )

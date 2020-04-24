@@ -143,7 +143,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
     }
 
     // generate spikes of parent process for each time slice
-    const unsigned long n_parent_spikes = V_.poisson_dist_( get_thread_synced_rng( get_thread() ) );
+    const unsigned long n_parent_spikes = V_.poisson_dist_( get_vp_synced_rng( get_thread() ) );
 
     if ( n_parent_spikes )
     {
@@ -167,7 +167,7 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
      This is thread-safe because mip_generator is replicated on each thread.
    */
 
-  RngPtr rng = get_thread_specific_rng( get_thread() );
+  RngPtr rng = get_vp_specific_rng( get_thread() );
   const unsigned long n_parent_spikes = e.get_multiplicity();
 
   // TODO: draw n_spikes from binomial distribution

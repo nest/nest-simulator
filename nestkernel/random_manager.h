@@ -63,14 +63,6 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   /**
-   * Get thread-specific random number generator.
-   *
-   * Each thread can use this RNG freely and will receive an independent
-   * random number sequence.
-   */
-  RngPtr get_thread_specific_rng( thread tid ) const;
-
-  /**
    * Get rank-synchronized random number generator.
    *
    * The rank-synchronized generator provides identical random number
@@ -81,18 +73,26 @@ public:
   RngPtr get_rank_synced_rng() const;
 
   /**
-   * Get thread-synchronized random number client.
+   * Get VP-synchronized random number client.
    *
    * The kernel maintains one instance of a synchronized random number generator
    * for each thread (and thus, across ranks, for each VP). The purpose of these
    * synchronized generators is to provide identical random number sequences on
-   * each thread while threads execute in parallel. All threads must use the
-   * generators in lock-step to maintain synchrony. Synchronization
+   * each VP while VPs execute in parallel. All VPs (ie all threads on all ranks)
+   * must use the generators in lock-step to maintain synchrony. Synchronization
    * is checked by MPI exchange at certain points during a simulation.
    *
    * @param tid Number of thread requesting generator
    **/
-  RngPtr get_thread_synced_rng( thread tid ) const;
+  RngPtr get_vp_synced_rng( thread tid ) const;
+
+  /**
+   * Get VP-specific random number generator.
+   *
+   * Each VP (thread) can use this RNG freely and will receive an independent
+   * random number sequence.
+   */
+  RngPtr get_vp_specific_rng( thread tid ) const;
 
   /**
    * Confirm that rank- and thread-synchronized RNGs are in sync.
@@ -124,11 +124,11 @@ private:
   /** Random number generator synchronized across ranks. */
   RngPtr rank_synced_rng_;
 
-  /** Random number generators synchronized across threads. */
-  std::vector< RngPtr > thread_synced_rngs_;
+  /** Random number generators synchronized across VPs. */
+  std::vector< RngPtr > vp_synced_rngs_;
 
-  /** Random number generators specific to threads. */
-  std::vector< RngPtr > thread_specific_rngs_;
+  /** Random number generators specific to VPs. */
+  std::vector< RngPtr > vp_specific_rngs_;
 
   /**
    * Replace current RNGs with newly seeded generators.
@@ -161,19 +161,19 @@ nest::RandomManager::get_rank_synced_rng() const
 }
 
 inline RngPtr
-nest::RandomManager::get_thread_synced_rng( thread tid ) const
+nest::RandomManager::get_vp_synced_rng( thread tid ) const
 {
   assert( tid >= 0 );
-  assert( tid < static_cast< thread >( thread_specific_rngs_.size() ) );
-  return thread_synced_rngs_[ tid ];
+  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  return vp_synced_rngs_[ tid ];
 }
 
 inline RngPtr
-nest::RandomManager::get_thread_specific_rng( thread tid ) const
+nest::RandomManager::get_vp_specific_rng( thread tid ) const
 {
   assert( tid >= 0 );
-  assert( tid < static_cast< thread >( thread_specific_rngs_.size() ) );
-  return thread_specific_rngs_[ tid ];
+  assert( tid < static_cast< thread >( vp_specific_rngs_.size() ) );
+  return vp_specific_rngs_[ tid ];
 }
 
 } // namespace nest

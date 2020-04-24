@@ -73,7 +73,7 @@ nest::RandomManager::finalize()
   }
 
   rng_types_.clear();
-  thread_specific_rngs_.clear();
+  vp_specific_rngs_.clear();
 }
 
 void
@@ -81,15 +81,15 @@ nest::RandomManager::reset_rngs_()
 {
   rank_synced_rng_ = rng_types_[ current_rng_type_ ]->create( { base_seed_, RANK_SYNCED_SEEDER_ } );
 
-  thread_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
-  thread_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
+  vp_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
+  vp_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
     const std::uint32_t vp = kernel().vp_manager.get_vp();
-    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
-    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
+    vp_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
+    vp_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
   }
 }
 
@@ -175,7 +175,7 @@ nest::RandomManager::check_rng_synchrony() const
 	double local_max = std::numeric_limits< double >::min();
 	for ( index t = 0 ; t < num_threads ; ++t )
 	{
-	  const auto r = thread_synced_rngs_[t]->drand();
+	  const auto r = vp_synced_rngs_[t]->drand();
 	  local_min = std::min( r, local_min );
 	  local_max = std::max( r, local_max );
 	}

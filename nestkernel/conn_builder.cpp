@@ -595,7 +595,7 @@ nest::OneToOneBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -733,7 +733,7 @@ nest::OneToOneBuilder::sp_connect_()
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       NodeCollection::const_iterator source_it = sources_->begin();
@@ -826,7 +826,7 @@ nest::AllToAllBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -919,7 +919,7 @@ nest::AllToAllBuilder::sp_connect_()
     const thread tid = kernel().vp_manager.get_thread_id();
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
@@ -1126,7 +1126,7 @@ nest::FixedInDegreeBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1330,7 +1330,7 @@ nest::FixedOutDegreeBuilder::connect_()
 
       try
       {
-        RngPtr rng = get_thread_specific_rng( tid );
+        RngPtr rng = get_vp_specific_rng( tid );
 
         std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
@@ -1479,7 +1479,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
-        RngPtr rng = get_thread_specific_rng( tid );
+        RngPtr rng = get_vp_specific_rng( tid );
 
         // gather local target node IDs
         std::vector< index > thread_local_targets;
@@ -1567,7 +1567,7 @@ nest::BernoulliBuilder::connect_()
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1687,7 +1687,7 @@ nest::SymmetricBernoulliBuilder::connect_()
     const thread tid = kernel().vp_manager.get_thread_id();
 
     // Use RNG generating same number sequence on all threads
-    RngPtr synced_rng = get_thread_synced_rng( tid );
+    RngPtr synced_rng = get_vp_synced_rng( tid );
 
     try
     {
@@ -1861,7 +1861,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 
     try
     {
-      RngPtr rng = get_thread_specific_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       std::vector< index >::const_iterator tnode_id_it = targets.begin();
       std::vector< index >::const_iterator snode_id_it = sources.begin();

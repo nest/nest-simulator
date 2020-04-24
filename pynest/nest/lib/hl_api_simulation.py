@@ -232,13 +232,17 @@ def SetKernelStatus(params):
         The number of MPI processes
     off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication
-    grng_seed : int
-        Seed for global random number generator used synchronously by all
-        virtual processes to create, e.g., fixed fan-out connections.
-    rng_seeds : array
-        Seeds for the per-virtual-process random number generators used for
-        most purposes. Array with one integer per virtual process, all must
-        be unique and differ from grng_seed.
+
+    Random number generators
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    rng_types : list, read only
+        Names of random number generator types available.
+    rng_type : str
+        Name of random number generator type used by kernel
+    rng_seed : int
+        Seed value used as basis of seeding of all random number generators 
+        generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
+ 
 
     MPI buffers
     ~~~~~~~~~~~

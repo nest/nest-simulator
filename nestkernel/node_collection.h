@@ -332,7 +332,7 @@ public:
   virtual long find( const index ) const = 0;
 
 private:
-  unsigned long fingerprint_; //!< Unique identity of the kernel that created the //!< NodeCollection
+  unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
   static NodeCollectionPTR create_( const std::vector< index >& );
 };

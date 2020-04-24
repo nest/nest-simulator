@@ -30,7 +30,7 @@ Description:
 
  A DC current is injected for a finite duration. The time of the first
  spike is compared to the theoretical value for different computation
- step sizes and interpolation orders.
+ step sizes.
 
  Computation step sizes are specified as base 2 values.
 
@@ -63,7 +63,7 @@ References:
  [2] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold 
      Integration with Continuous Spike Times in Discrete Time Neural Network 
      Simulations. Neural Computation 19:47--79
-SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha_presc, iaf_psc_delta_ps, testsuite::test_iaf_ps_dc_accuracy
+SeeAlso: iaf_psc_alpha_ps, iaf_psc_delta_ps, testsuite::test_iaf_ps_dc_accuracy
 */
 
 (unittest) run
@@ -71,22 +71,23 @@ SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha_presc, iaf_psc_delta_ps, testsuite::tes
 
 M_ERROR setverbosity
 
--14 /min_exponent Set
-
-[0 min_exponent -1] Range   /hlist Set
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Parameters of simulation schedule.
+% Test parameters
 %
-5.0                         /T     Set
-[  % interpolation order   tolerated error [mv]
- [ 0   1e-4  ]  
- [ 1   1e-10 ]  
- [ 2   1e-13 ]
- [ 3   1e-13 ]
-] /Olist Set
+
+-14 /min_exponent Set
+[0 min_exponent -1] Range /hlist Set
+5.0 /T Set
+1e-13 /tolerance Set  % tolerated error [mv]
+
+% models to be tested
+[
+  /iaf_psc_alpha_ps 
+  /iaf_psc_delta_ps
+  % other precise models should be tested as well
+ ] 
+ /models Set
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,12 +107,10 @@ exch
 {1 sub min_exponent leq} assert_or_die  % sufficient resolution?
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % Parameters of neuron model.
 %
-
 
 <<
   /E_L       0.0      % resting potential in mV 
@@ -133,126 +132,78 @@ params begin userdict begin
 %
 /SimAtResolution
 {
- dup /i Set
- dexp /h Set
+  dup /i Set
+  dexp /h Set
 
+  ResetKernel
+  0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
 
- ResetKernel
- 0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
+  models {Create dup params SetStatus} Map /neurons Set
 
- [
-  /iaf_psc_alpha_ps 
-  /iaf_psc_alpha_presc
-  /iaf_psc_delta_ps  % this list can be extended
- ]
- {Create dup params SetStatus} Map /neurons Set
+  T Simulate
 
- neurons {/Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
-
-
- T Simulate
-
- neurons
- {[exch /t_spike get dup t sub abs]}  Map Flatten
-
- i prepend
-
+  neurons
+  { [ exch /t_spike get dup t sub abs ] } Map Flatten
+  i prepend
 } def
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% do for all interpolation orders
-%
-{
- Olist  
- {
-  [/O /tolerance] Set
-
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Reference value
- %
- % V is the exact value of the membrane potential at the end 
- % of the simulation.       
- %
-
- % tau_m neg 1 c_m V_th mul tau_m I_e mul div sub ln mul
-
- (-tau_m*ln( 1.0 - (C_m*V_th)/(tau_m*I_e) )) ExecMath /t Set
-
-
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- %
- % Perform simulations at all resolutions and collect results
- %
- hlist {SimAtResolution} Map 
-
-
- dup print_details                    % uncomment for debugging
-
- {Rest 2 Partition [/All 2] Part} Map  % select columns containing
-                                       % the timing errors
- [-1] Part                             % select only highest resolution
-  Flatten {tolerance lt} Map
- } Map
-
- Flatten true exch {and} Fold
-}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% helper function for debugging, 
 % prints detailed table of results
 %
 /print_details
 {
-cout default 15 setprecision 
+  cout default 15 setprecision 
 
-endl
-endl
-(order: ) <- O <- (, exact value of membrane potential after ) <-
-T <- ( ms is ) <-
-t <- ( ms.) <- endl 
+  endl endl
+  (The precise spike time is ) <- t <- ( ms.) <- endl endl
 
-endl
+  (                 log_2 h) <-
+  models
+  {
+    exch (      ) <- exch <- ( [ms]) <-
+    (               error [ms]) <-
+  } forall
+  endl
 
-(               h in ms    ) <-
-(        alpha_canon [ms]) <-
-(        error         [ms]) <-
-(          alpha_presc [ms]) <-
-(      error           [ms]) <- 
-(          delta_canon [ms]) <-
-(        error         [ms]) <-
-endl
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(--------------------------) <-
-(------------------------) <-
-endl
+  models length 2 mul 1 add
+  {
+    (--------------------------) <-
+  } repeat
+  endl
 
-exch
-{
- {
-  exch 24 setw exch <- (  ) <-
- }
- forall
- endl
-}
-forall 
-;
+  exch
+  {
+    { exch 24 setw exch <- (  ) <- } forall endl
+  }
+  forall 
+  ;
 }
 def
 
-exec
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Perform test
+%
+{
+  % Reference value
+  (-tau_m*ln( 1.0 - (C_m*V_th)/(tau_m*I_e) )) ExecMath /t Set
 
-% executes the overall test
+  % Perform simulations across resolutions
+  hlist { SimAtResolution } Map 
+
+  dup print_details
+
+  % select columns with timing errors, highest resolution only
+  { Rest 2 Partition [/All 2] Part } Map [-1] Part
+  
+  % test against tolerance limit                             
+  Flatten { tolerance lt } Map
+
+  % combine results
+  Flatten true exch {and} Fold
+}
 assert_or_die

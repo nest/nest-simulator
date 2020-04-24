@@ -35,6 +35,11 @@ Start MUSIC using mpirun
     you try to process comand line options in your Pynest script, it is
     very likely you will confuse MUSIC.
 
+    .. note::
+
+       Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+
+
 Disable messages
 ----------------
 

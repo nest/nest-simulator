@@ -22,7 +22,7 @@ called *send.py*.
 
     neurons = nest.Create('iaf_psc_alpha', 2, {'I_e': [400.0, 405.0]})
 
-    music_out = nest.Create('music_event_out_proxy', 1, params={'port_name':'p_out'})
+    music_out = nest.Create('music_event_out_proxy', 1, {'port_name':'p_out'})
 
     for i, neuron in enumerate(neurons):
         nest.Connect(neuron, music_out, "one_to_one", {'music_channel': i})

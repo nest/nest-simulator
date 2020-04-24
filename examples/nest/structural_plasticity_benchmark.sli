@@ -234,8 +234,7 @@
         /resolution dt
         /total_num_virtual_procs nvp
         /overwrite_files overwrite_files
-        /rng_seeds [0 nvp 1 sub] Range seed add
-        /grng_seed seed nvp add
+        /rng_seed seed
       >> SetKernelStatus
 
     EnableStructuralPlasticity

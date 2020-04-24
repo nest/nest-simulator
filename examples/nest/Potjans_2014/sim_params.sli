@@ -37,7 +37,7 @@
 %%   see Gewaltig et al. (2012) for details
 %%
 
-/master_seed 123456 def   % changes rng_seeds and grng_seed
+/rng_seed 123456 def   % NEST kernel seed 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -177,8 +177,7 @@ plt.title('One spike train for all targets')
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
-                          "rng_seeds": [256 * seed + 2]})
+    nest.SetKernelStatus({"resolution": dt, "rng_seed": seed})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')

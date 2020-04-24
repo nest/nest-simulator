@@ -183,7 +183,7 @@ for trial in [0, 1]:
     # the simulation Kernel. In addition, we ensure that there is no spike left in
     # the spike detector.
 
-    nest.SetKernelStatus({"rng_seeds": [seed_NEST], 'time': 0.0})
+    nest.SetKernelStatus({"rng_seed": seed_NEST, 'time': 0.0})
     spikedetector.n_events = 0
 
     # We assign random initial membrane potentials to all neurons

@@ -229,7 +229,7 @@ def simulate(parameters):
     nest.ResetKernel()
     nest.set_verbosity('M_FATAL')
 
-    nest.SetKernelStatus({'rng_seeds': [parameters['seed']],
+    nest.SetKernelStatus({'rng_seed': parameters['seed'],
                           'resolution': parameters['dt']})
 
     nest.SetDefaults('iaf_psc_alpha', neuron_parameters)

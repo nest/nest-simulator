@@ -120,6 +120,70 @@ for how to set the delay when creating synapses.
 
 .. _stepped_simulations:
 
+
+Random numbers: Generators and Seeds
+------------------------------------
+
+Most NEST simulations will use random numbers, e.g., to generate Poisson
+spike trains, to randomize connectivity or neuronal spike emission. NEST
+manages random number generators for all these purposes internally, providing
+separate random number streams for parallel processes automatically.
+
+By default, NEST will use a fixed default seed to initialize all random
+number streams, so running the same NEST simulation script twice will give
+identical results. To sample the statistical variation of model dynamics,
+you need to set different random seeds. The following example shows this 
+for a simple loop over different realizations:
+
+::
+
+    for n in range(5):
+        nest.ResetKernel()
+        nest.SetKernelStatus({'rng_seed': n+1})   # seed > 0 required
+        
+        # build network
+        # simulate network
+        # collect data
+        
+Valid random number seeds are numbers from :math:`1` to :math:`2^{31}-1`.
+
+Since random number generators in reality are deterministic algorithms, there
+is a risk that the random number streams provided by NEST contain some structure
+or correlations that "resonate" with a property of a neuronal network model.
+You should therefore *always* validate simulations results by simulating with
+different random number generators. You can see which generators are available
+using
+
+::
+
+    nest.GetKernelStatus('rng_types')
+    
+To select any of the random number generator types available, use one of the
+following
+
+::
+
+    nest.SetKernelStatus({'rng_type': 'mt19937'})  
+    nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 12234})  
+
+In the first case, the `rng_seed` set previously (or the default seed) is used,
+otherwise the seed specified.
+
+
+Random numbers may depend on compiler used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NEST uses the random number capabilities provided by the C++11 standard library.
+Different implementations of this library use different algorithms to generate,
+e.g., Poissonian- or Gaussian-distributed random numbers. Therefore, *precise simulation
+results will depend on which implementation of the C++11 standard library you
+used to compile NEST*. To our knowledge, three different implementations exist at
+present, provided respectively by GCC, Clang and Microsoft.
+
+ 
+
+
+
 Splitting a simulation into multiple intervals
 ----------------------------------------------
 
@@ -187,8 +251,7 @@ a Poisson spike train using different seeds and output files for each run:
 
     for n in range(10):
         nest.ResetKernel()
-        nest.SetKernelStatus({'grng_seed': 100*n + 1,
-                              'rng_seeds': [100*n + 2]})
+        nest.SetKernelStatus({'rng_seed': n + 1})  # seed > 0 required
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
         sd = nest.Create('spike_detector',

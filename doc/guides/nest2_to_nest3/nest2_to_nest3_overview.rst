@@ -1365,6 +1365,50 @@ All details about the new infrastructure can be found in the guide on
 :doc:`recording from simulations <recording_from_simulations>`.
 
 
+Much simpler handling of random number generators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All random number generators managed by the NEST kernel are now seeded by
+providing a single seed :math:`s`  with :math:`1\leq s \leq 2^{31}-1`. The
+kernel automatically seeds the random number streams on the various parallel
+processes:
+
+  +---------------------------------------------+---------------------------------------+
+  | NEST 2.x                                    | NEST 3.0                              |
+  +=============================================+=======================================+
+  |                                             |                                       |
+  | ::                                          | ::                                    |
+  |                                             |                                       |
+  |     msd = n_threads * seed + 1              |     nest.SetKernelStatus({            |
+  |     nest.SetKernelStatus({                  |                    'rng_seed': seed}) |
+  |        'grng_seed': msd,                    |                                       |
+  |        'rng_seeds': range(msd+1,            |                                       |
+  |                           msd+1+n_threads)  |                                       |
+  |        })                                   |                                       |
+  |                                             |                                       |
+  +---------------------------------------------+---------------------------------------+
+
+Changing the type of random number generator to use is easy now 
+
+  +---------------------------------------------+---------------------------------------+
+  | NEST 2.x                                    | NEST 3.0                              |
+  +=============================================+=======================================+
+  |                                             |                                       |
+  | ::                                          | ::                                    |
+  |                                             |                                       |
+  |     # too difficult to show here            |     nest.SetKernelStatus({            |
+  |                                             |               'rng_type': 'mt19937'}) |
+  |                                             |                                       |
+  +---------------------------------------------+---------------------------------------+
+
+Which random number generator types are available can be checked by
+
+::
+
+    nest.GetKernelStatus('rng_types')
+    
+
+
 What's removed?
 ---------------
 

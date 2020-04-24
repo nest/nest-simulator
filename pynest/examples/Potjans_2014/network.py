@@ -274,24 +274,17 @@ class Network:
             {'local_num_threads': self.sim_dict['local_num_threads']})
         N_vp = nest.GetKernelStatus('total_num_virtual_procs')
 
-        master_seed = self.sim_dict['master_seed']
-        grng_seed = master_seed + N_vp
-        rng_seeds = (master_seed + N_vp + 1 + np.arange(N_vp)).tolist()
+        rng_seed = self.sim_dict['rng_seed']
 
         if nest.Rank() == 0:
-            print('Master seed: {} '.format(master_seed))
+            print('RNG seed: {} '.format(rng_seed))
             print('  Total number of virtual processes: {}'.format(N_vp))
-            print('  Global random number generator seed: {}'.format(grng_seed))
-            print(
-                '  Seeds for random number generators of virtual processes: ' +
-                '{}'.format(rng_seeds))
 
         # pass parameters to NEST kernel
         self.sim_resolution = self.sim_dict['sim_resolution']
         kernel_dict = {
             'resolution': self.sim_resolution,
-            'grng_seed': grng_seed,
-            'rng_seeds': rng_seeds,
+            'rng_seed': rng_seed,
             'overwrite_files': self.sim_dict['overwrite_files'],
             'print_time': self.sim_dict['print_time']}
         nest.SetKernelStatus(kernel_dict)

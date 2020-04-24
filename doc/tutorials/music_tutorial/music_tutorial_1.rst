@@ -15,7 +15,7 @@ and NEST is configured properly.
 Please install MUSIC using the instructions on `the MUSIC website <https://github.com/INCF/MUSIC>`_.
 
 In the installation of NEST, you need to add the following configuration option to
-your cmake.
+your CMake.
 
 .. code-block:: sh
 

@@ -655,7 +655,7 @@ fi
 #            chmod 755 "$(basename "${sh_file}")"
 #            echo "./$(basename "${sh_file}")" >> runner.sh
 #        fi
-#        echo "echo \$? > exit_cOn Travcis everythink is fine ode ; exit 0" >> runner.sh
+#        echo "echo \$? > exit_code ; exit 0" >> runner.sh
 #
 #        # Run the script and copy all output to the logfile.
 #        chmod 755 runner.sh

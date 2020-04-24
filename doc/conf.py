@@ -37,8 +37,11 @@ import pip
 
 import subprocess
 
-from subprocess import check_output, CalledProcessError
+from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
 from mock import Mock as MagicMock
+
+from subprocess import check_output, CalledProcessError
 
 source_suffix = ['.rst']
 
@@ -54,7 +57,6 @@ sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
-
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -197,6 +199,15 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
+from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+
+
+def config_inited_handler(app, config):
+    ExtractUserDocs(
+        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
+        outdir="from_cpp/"
+    )
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -215,6 +226,19 @@ def setup(app):
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/copybutton.js")
     app.add_javascript("js/custom.js")
+    app.add_javascript("js/copybutton.js")
+    app.add_config_value('recommonmark_config', {
+        'auto_toc_tree_section': 'Contents',
+        'enable_inline_math': True,
+        'enable_auto_doc_ref': True,
+        'enable_eval_rst': True
+    }, True)
+    app.add_transform(AutoStructify)
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
+
 
 # -- Options for LaTeX output ---------------------------------------------
 

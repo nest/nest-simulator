@@ -96,7 +96,7 @@ latency, as we do on line 23. In line 26 we do a one-to-one
 connection between the input proxies and the parrot neurons, and set
 the desired delay.
 
-For the MUSIC configuration file we now need to use `binary=nest` to make it
+For the MUSIC configuration file, we now need to use `binary=nest` to make it
 run with nest, and pass the correct files as arguments:
 
 .. code-block:: sh

@@ -67,7 +67,7 @@ neuron like dynamics interacting by point events is described in
 
 Spiking in this model can be either deterministic (delta=0) or stochastic (delta
 > 0). In the stochastic case this model implements a type of spike response
-model with escape noise [4, 5].
+model with escape noise [4]_.
 
 Remarks:
 

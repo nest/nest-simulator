@@ -609,8 +609,8 @@ else
 fi
 
 echo
-echo "Phase 6: MUSIC TESTS ARE DEACTIVATED AND SKIPPED"
-echo
+echo "Phase 6: Running MUSIC tests is deactivated"
+echo "-------------------------------------------"
 #echo
 #echo "Phase 6: Running MUSIC tests"
 #echo "----------------------------"

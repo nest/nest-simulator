@@ -35,7 +35,7 @@
 
 // Includes from nestkernel
 #include "nest_datums.h"
-#include "random.h"
+#include "random_generators.h"
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
 
   // We need to go via a factory to avoid compiler confusion
-  nest::RNGFactory< std::mt19937_64 > rf;
-  nest::RngPtr rng = rf.clone( { 1234567890, 23423423 } );
+  //nest::RandomGeneratorFactory< std::mt19937_64 > rf;
+  nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );
 
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );
 }
@@ -77,8 +77,8 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
   ParameterDatum uniform_int_pd = new nest::UniformIntParameter( d );
 
   // We need to go via a factory to avoid compiler confusion
-  nest::RNGFactory< std::mt19937_64 > rf;
-  nest::RngPtr rng = rf.clone( { 1234567890, 23423423 } );
+  nest::RandomGeneratorFactory< std::mt19937_64 > rf;
+  nest::RngPtr rng = rf.create( { 1234567890, 23423423 } );
 
   for ( int i = 0; i < num_iterations; ++i )
   {

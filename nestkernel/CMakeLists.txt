@@ -54,6 +54,7 @@ set( nestkernel_sources
     parameter.h parameter.cpp
     per_thread_bool_indicator.h per_thread_bool_indicator.cpp
     proxynode.h proxynode.cpp
+    random_generators.h
     random_manager.h random_manager.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h

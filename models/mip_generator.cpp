@@ -22,8 +22,6 @@
 
 #include "mip_generator.h"
 
-// C++ includes
-#include <random>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -32,11 +30,9 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "random.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
+//#include "dict.h"
+//#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

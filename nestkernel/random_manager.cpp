@@ -28,7 +28,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "random.h"
+#include "random_generators.h"
 #include "vp_manager_impl.h"
 
 
@@ -55,8 +55,8 @@ nest::RandomManager::~RandomManager()
 void
 nest::RandomManager::initialize()
 {
+  register_rng_type< std::mt19937 >( "mt19937" );
   register_rng_type< std::mt19937_64 >( "mt19937_64" );
-  register_rng_type< std::ranlux48 >( "ranlux48" );  // TODO: remove, testing only
 
   current_rng_type_ = DEFAULT_RNG_TYPE_;
   base_seed_ = DEFAULT_BASE_SEED_;
@@ -79,7 +79,7 @@ nest::RandomManager::finalize()
 void
 nest::RandomManager::reset_rngs_()
 {
-  rank_synced_rng_ = rng_types_[ current_rng_type_ ]->clone( { base_seed_, RANK_SYNCED_SEEDER_ } );
+  rank_synced_rng_ = rng_types_[ current_rng_type_ ]->create( { base_seed_, RANK_SYNCED_SEEDER_ } );
 
   thread_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );
   thread_specific_rngs_.resize( kernel().vp_manager.get_num_threads() );
@@ -88,8 +88,8 @@ nest::RandomManager::reset_rngs_()
   {
     const auto tid = kernel().vp_manager.get_thread_id();
     const std::uint32_t vp = kernel().vp_manager.get_vp();
-    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SYNCED_SEEDER_ } );
-    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->clone( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
+    thread_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
+    thread_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
   }
 }
 
@@ -197,5 +197,5 @@ template < typename RNG_TYPE >
 void
 nest::RandomManager::register_rng_type( std::string name )
 {
-  rng_types_.insert( std::make_pair( name, new RNGFactory< RNG_TYPE >() ) );
+  rng_types_.insert( std::make_pair( name, new RandomGeneratorFactory< RNG_TYPE >() ) );
 }

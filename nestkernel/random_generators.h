@@ -1,5 +1,5 @@
 /*
- *  random.h
+ *  random_generators.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RANDOM_H
-#define RANDOM_H
+#ifndef RANDOM_GENERATORS_H
+#define RANDOM_GENERATORS_H
 
 // C++ includes:
 #include <initializer_list>
@@ -30,39 +30,33 @@
 #include <utility>
 #include <type_traits>
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "name.h"
-
 namespace nest
 {
 
 // Forward declarations
-struct BaseRNG;
-
-template < class DIST_TYPE_ >
-struct distribution;
+class BaseRandomGenerator;
+template < typename DistributionT > class RandomDistribution;
 
 // Type definitions
-using RngPtr = std::shared_ptr< BaseRNG >;
+using RngPtr = std::shared_ptr< BaseRandomGenerator >;
 
-using uniform_int_distribution = distribution< std::uniform_int_distribution< unsigned long > >;
-using uniform_real_distribution = distribution< std::uniform_real_distribution<> >;
-using poisson_distribution = distribution< std::poisson_distribution< unsigned long > >;
-using normal_distribution = distribution< std::normal_distribution<> >;
-using lognormal_distribution = distribution< std::lognormal_distribution<> >;
-using binomial_distribution = distribution< std::binomial_distribution< unsigned long > >;
-using gamma_distribution = distribution< std::gamma_distribution<> >;
-using exponential_distribution = distribution< std::exponential_distribution<> >;
-
+using uniform_int_distribution = RandomDistribution< std::uniform_int_distribution< unsigned long > >;
+using uniform_real_distribution = RandomDistribution< std::uniform_real_distribution<> >;
+using poisson_distribution = RandomDistribution< std::poisson_distribution< unsigned long > >;
+using normal_distribution = RandomDistribution< std::normal_distribution<> >;
+using lognormal_distribution = RandomDistribution< std::lognormal_distribution<> >;
+using binomial_distribution = RandomDistribution< std::binomial_distribution< unsigned long > >;
+using gamma_distribution = RandomDistribution< std::gamma_distribution<> >;
+using exponential_distribution = RandomDistribution< std::exponential_distribution<> >;
 
 /**
  * @brief Base class for RNG engine wrappers.
- *
- * The base class has no function implementations; all functions are pure virtual.
  */
-struct BaseRNG
+class BaseRandomGenerator
 {
+public:
+  virtual ~BaseRandomGenerator() {}
+
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine.
    * One operator per distribution must be defined.
@@ -111,17 +105,18 @@ struct BaseRNG
 
 /**
  * @brief Wrapper for RNG engines.
- * @tparam RNG_TYPE_ Type of the wrapped engine.
+ * @tparam RandomEngineT Type of the wrapped engine, must conform with the C++11 random engine interface.
  */
-template < typename RNG_TYPE_ >
-struct RNG final : public BaseRNG
+template < typename RandomEngineT >
+class RandomGenerator final : public BaseRandomGenerator
 {
-  using result_type = typename RNG_TYPE_::result_type;
+public:
+  using result_type = typename RandomEngineT::result_type;
 
-  RNG() = delete;
-  RNG( const RNG_TYPE_& rng ) = delete;
+  RandomGenerator() = delete;
+  RandomGenerator( const RandomEngineT& rng ) = delete;
 
-  RNG( std::initializer_list< std::uint32_t > seed )
+  RandomGenerator( std::initializer_list< std::uint32_t > seed )
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
@@ -229,29 +224,37 @@ struct RNG final : public BaseRNG
   }
 
 private:
-  RNG_TYPE_ rng_; //!< Wrapped RNG engine.
+  RandomEngineT rng_; //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
   std::uniform_real_distribution<> uniform_double_dist_0_1_;
 };
 
-struct BaseRNGFactory
+/**
+ * Base class for random generator factory.
+ */
+class BaseRandomGeneratorFactory
 {
-  virtual ~BaseRNGFactory() {};
+public:
+  virtual ~BaseRandomGeneratorFactory() {};
 
   /**
    * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
-   * @param seed Initializer list for seed sequence for RNG.
+   * @param seed_initializer Initializer list for C++11-conforming SeedSeq for RNG.
    */
-  virtual RngPtr clone( std::initializer_list< std::uint32_t > seed ) const = 0;
+  virtual RngPtr create( std::initializer_list< std::uint32_t > seed_initializer ) const = 0;
 };
 
-template < typename RNG_TYPE_ >
-struct RNGFactory final : public BaseRNGFactory
+/**
+ * @tparam RandomEngineT Must be compatible with C++11 random number engine interface.
+ */
+template < typename RandomEngineT >
+class RandomGeneratorFactory final : public BaseRandomGeneratorFactory
 {
+public:
   inline RngPtr
-  clone( std::initializer_list< std::uint32_t > seed ) const override
+  create( std::initializer_list< std::uint32_t > seed_initializer ) const override
   {
-	return std::make_shared< RNG< RNG_TYPE_ > >( seed );
+	return std::make_shared< RandomGenerator< RandomEngineT > >( seed_initializer );
   }
 };
 
@@ -259,19 +262,20 @@ struct RNGFactory final : public BaseRNGFactory
  * @brief Wrapper for distributions.
  * The result_type of the distribution must be unsigned long or double.
  *
- * @tparam DIST_TYPE_ Type of the wrapped distribution.
+ * @tparam DistributionT Type of the wrapped RandomDistribution.
  */
-template < typename DIST_TYPE_ >
-struct distribution
+template < typename DistributionT >
+class RandomDistribution
 {
-  using result_type = typename DIST_TYPE_::result_type;
-  using param_type = typename DIST_TYPE_::param_type;
+public:
+  using result_type = typename DistributionT::result_type;
+  using param_type = typename DistributionT::param_type;
 
   /**
    * @brief Constructs a distribution object with its default parameters.
    */
-  distribution() = default;
-  ~distribution() = default;
+  RandomDistribution() = default;
+  ~RandomDistribution() = default;
 
   /**
    * @brief Generating function.
@@ -281,7 +285,7 @@ struct distribution
    *
    * @param g Pointer to the RNG wrapper.
    */
-  inline result_type operator()( std::shared_ptr< BaseRNG > g )
+  inline result_type operator()( std::shared_ptr< BaseRandomGenerator > g )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );
@@ -297,7 +301,7 @@ struct distribution
    * @param g Pointer to the RNG wrapper.
    * @param params Distribution parameter set to use.
    */
-  inline result_type operator()( std::shared_ptr< BaseRNG > g, param_type& params )
+  inline result_type operator()( std::shared_ptr< BaseRandomGenerator > g, param_type& params )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );
@@ -333,9 +337,9 @@ struct distribution
   }
 
 private:
-  DIST_TYPE_ distribution_; //!< Wrapped distribution
+  DistributionT distribution_; //!< Wrapped RandomDistribution
 };
 
 } // namespace nest
 
-#endif /* #ifndef RANDOM_H */
+#endif /* #ifndef RANDOM_GENERATORS_H */

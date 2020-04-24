@@ -554,7 +554,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "cmake sucks" )
+      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )
@@ -566,7 +566,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
 
     # is linked in nestkernel/CMakeLists.txt
     if ( SIONLIB_FOUND )
-      set( HAVE_SIONLIB ON CACHE INTERNAL "cmake sucks" )
+      set( HAVE_SIONLIB ON CACHE INTERNAL "sionlib" )
     endif ()
   endif ()
 endfunction()

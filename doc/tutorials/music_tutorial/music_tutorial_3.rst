@@ -9,16 +9,15 @@ to implement a MUSIC interface in simulators. But it is not a
 complicated API, so you can easily use it for your own applications that
 connect to a MUSIC-enabled simulation.
 
-.. note::
-
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
-
 Let’s take a look at a pair of programs that send and receive spikes.
 These can be used as inputs or outputs to the NEST models we created
 above with no change to the code. C++ code tends to be somewhat
 longwinded so we only show the relevant parts here. The C++ interface is
-divided into a setup phase and a runtime phase. Let’s look at the setup
-phase first:
+divided into a setup phase and a runtime phase. You can see the setup below. 
+
+.. note::
+
+   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 .. code-block:: cpp
     :linenos:

@@ -22,7 +22,7 @@
 
 #define BOOST_TEST_MODULE cpptests
 #define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 // Includes from cpptests
 #include "test_block_vector.h"

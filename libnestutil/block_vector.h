@@ -29,6 +29,8 @@
 #include <iterator>
 #include <cassert>
 
+#include "sliexceptions.h"
+
 template < typename value_type_ >
 class BlockVector;
 template < typename value_type_, typename ref_, typename ptr_ >
@@ -75,7 +77,7 @@ public:
   using value_type = value_type_;
   using pointer = ptr_;
   using reference = ref_;
-  using difference_type = long int;
+  using difference_type = typename BlockVector< value_type >::difference_type;
 
   bv_iterator() = default;
 
@@ -107,17 +109,23 @@ public:
   bv_iterator& operator--();
   bv_iterator& operator+=( difference_type );
   bv_iterator& operator-=( difference_type );
-  bv_iterator operator+( difference_type );
-  bv_iterator operator-( difference_type );
+  bv_iterator operator+( difference_type ) const;
+  bv_iterator operator-( difference_type ) const;
   bv_iterator operator++( int );
+  bv_iterator operator--( int );
   reference operator*() const;
   pointer operator->() const;
   difference_type operator-( const iterator& ) const;
   difference_type operator-( const const_iterator& ) const;
 
+  reference operator[]( difference_type n ) const;
+
   bool operator==( const bv_iterator& ) const;
   bool operator!=( const bv_iterator& ) const;
   bool operator<( const bv_iterator& ) const;
+  bool operator>( const bv_iterator& ) const;
+  bool operator<=( const bv_iterator& ) const;
+  bool operator>=( const bv_iterator& ) const;
 
 private:
   /**
@@ -143,8 +151,15 @@ class BlockVector
   friend class bv_iterator;
 
 public:
+  using value_type = value_type_;
+  using difference_type = typename std::vector< value_type >::difference_type;
+  using const_reference = const value_type&;
+  using const_pointer = const value_type*;
   using iterator = bv_iterator< value_type_, value_type_&, value_type_* >;
   using const_iterator = bv_iterator< value_type_, const value_type_&, const value_type_* >;
+  using reverse_iterator = std::reverse_iterator< iterator >;
+  using const_reverse_iterator = std::reverse_iterator< const_iterator >;
+  using size_type = size_t;
 
   /**
    * @brief Creates an empty BlockVector.
@@ -246,6 +261,39 @@ public:
    * @brief Returns the block-size.
    */
   int get_max_block_size() const;
+
+  /**
+   * @brief Returns the size() of the largest possible BlockVector.
+   */
+  size_type max_size() const;
+
+  /**
+   * @brief Returns a read/write reverse iterator that points to the last
+   * element in the BlockVector. Iteration is done in reverse element
+   * order.
+   */
+  reverse_iterator rbegin();
+
+  /**
+   * @brief Returns a read-only (constant) reverse iterator that points to
+   * the last element in the BlockVector. Iteration is done in reverse
+   * element order.
+   */
+  reverse_iterator rbegin() const;
+
+  /**
+   * @brief Returns a read/write reverse iterator that points to one
+   * before the first element in the BlockVector. Iteration is done in
+   * reverse element order.
+   */
+  reverse_iterator rend();
+
+  /**
+   * @brief Returns a read-only (constant) reverse iterator that points to
+   * one before the first element in the BlockVector. Iteration is done in
+   * reverse element order.
+   */
+  reverse_iterator rend() const;
 
 private:
   //! Vector holding blocks containing data.
@@ -462,6 +510,41 @@ BlockVector< value_type_ >::get_max_block_size() const
   return max_block_size;
 }
 
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::size_type
+BlockVector< value_type_ >::max_size() const
+{
+  throw NotImplemented( "BlockVector max_size() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rbegin()
+{
+  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rbegin() const
+{
+  throw NotImplemented( "BlockVector rbegin() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rend()
+{
+  throw NotImplemented( "BlockVector rend() is not implemented." );
+}
+
+template < typename value_type_ >
+inline typename BlockVector< value_type_ >::reverse_iterator
+BlockVector< value_type_ >::rend() const
+{
+  throw NotImplemented( "BlockVector rend() is not implemented." );
+}
+
 /////////////////////////////////////////////////////////////
 //        BlockVector iterator method implementation       //
 /////////////////////////////////////////////////////////////
@@ -530,6 +613,10 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator+=( difference_type val )
 {
+  if ( val < 0 )
+  {
+    return operator-=( -val );
+  }
   for ( difference_type i = 0; i < val; ++i )
   {
     operator++();
@@ -540,6 +627,10 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 template < typename value_type_, typename ref_, typename ptr_ >
 inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, ptr_ >::operator-=( difference_type val )
 {
+  if ( val < 0 )
+  {
+    return operator+=( -val );
+  }
   for ( difference_type i = 0; i < val; ++i )
   {
     operator--();
@@ -548,14 +639,16 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, ptr_ >::operator+( difference_type val )
+inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, ptr_ >::operator+(
+  difference_type val ) const
 {
   bv_iterator tmp = *this;
   return tmp += val;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
-inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, ptr_ >::operator-( difference_type val )
+inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, ptr_ >::operator-(
+  difference_type val ) const
 {
   bv_iterator tmp = *this;
   return tmp -= val;
@@ -566,6 +659,14 @@ inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, pt
 {
   bv_iterator< value_type_, ref_, ptr_ > old( *this );
   ++( *this );
+  return old;
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bv_iterator< value_type_, ref_, ptr_ > bv_iterator< value_type_, ref_, ptr_ >::operator--( int )
+{
+  bv_iterator< value_type_, ref_, ptr_ > old( *this );
+  --( *this );
   return old;
 }
 
@@ -606,6 +707,13 @@ operator-( const const_iterator& other ) const
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
+inline typename bv_iterator< value_type_, ref_, ptr_ >::reference bv_iterator< value_type_, ref_, ptr_ >::operator[](
+  difference_type n ) const
+{
+  return *( *this + n );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
 inline bool bv_iterator< value_type_, ref_, ptr_ >::operator==(
   const bv_iterator< value_type_, ref_, ptr_ >& rhs ) const
 {
@@ -626,10 +734,36 @@ inline bool bv_iterator< value_type_, ref_, ptr_ >::operator<( const bv_iterator
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator>( const bv_iterator& rhs ) const
+{
+  return ( block_index_ > rhs.block_index_ or ( block_index_ == rhs.block_index_ and block_it_ > rhs.block_it_ ) );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator<=( const bv_iterator& rhs ) const
+{
+  return operator<( rhs ) or operator==( rhs );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bool bv_iterator< value_type_, ref_, ptr_ >::operator>=( const bv_iterator& rhs ) const
+{
+  return operator>( rhs ) or operator==( rhs );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
 inline typename bv_iterator< value_type_, ref_, ptr_ >::iterator
 bv_iterator< value_type_, ref_, ptr_ >::const_cast_() const
 {
   return iterator( block_vector_, block_index_, block_it_, current_block_end_ );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline bv_iterator< value_type_, ref_, ptr_ > operator+(
+  typename bv_iterator< value_type_, ref_, ptr_ >::difference_type n,
+  bv_iterator< value_type_, ref_, ptr_ >& x )
+{
+  return x + n;
 }
 
 #endif /* BLOCK_VECTOR_H_ */

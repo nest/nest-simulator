@@ -20,7 +20,7 @@ called *send.py*.
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    neurons = nest.Create('iaf_psc_alpha', 2, params={'I_e': [400.0, 405.0]})
+    neurons = nest.Create('iaf_psc_alpha', 2, {'I_e': [400.0, 405.0]})
 
     music_out = nest.Create('music_event_out_proxy', 1, params={'port_name':'p_out'})
 

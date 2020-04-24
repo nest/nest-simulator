@@ -55,8 +55,8 @@ nest::RandomManager::~RandomManager()
 void
 nest::RandomManager::initialize()
 {
+  register_rng_type< std::mt19937 >( "mt19937" );
   register_rng_type< std::mt19937_64 >( "mt19937_64" );
-  register_rng_type< std::ranlux48 >( "ranlux48" );  // TODO: remove, testing only
 
   current_rng_type_ = DEFAULT_RNG_TYPE_;
   base_seed_ = DEFAULT_BASE_SEED_;

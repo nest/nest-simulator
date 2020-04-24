@@ -8,7 +8,7 @@ Dependencies
 
 To build NEST, you need a recent version of `CMake <https://cmake.org/install>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
 
-.. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16.X. You can type ``cmake --version`` on the commandline to check your current version.
+.. note:: NEST requires CMake 3.12 or higher, but we recommend version 3.16. You can type ``cmake --version`` on the commandline to check your current version.
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
 
@@ -16,10 +16,10 @@ The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by se
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python 3.X <http://www.python.org>`_
+- `Python 3.5 or higher <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
-- `Matplotlib 3.X <http://matplotlib.org>`_
+- `Matplotlib 3.0 or higher <http://matplotlib.org>`_
 - `IPython <http://ipython.org>`_
 
 
@@ -32,17 +32,17 @@ The following are the basic steps to compile and install NEST from source code. 
 
 .. code-block:: bash
 
-    sudo apt-get install -y \
+    sudo apt install -y \
     cython \
     libgsl-dev \
     libltdl-dev \
     libncurses-dev \
     libreadline-dev \
-    python-all-dev \
-    python-numpy \
-    python-scipy \
-    python-matplotlib \
-    python-nose \
+    python3-all-dev \
+    python3-numpy \
+    python3-scipy \
+    python3-matplotlib \
+    python3-nose \
     openmpi-bin \
     libopenmpi-dev
 

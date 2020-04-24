@@ -32,7 +32,7 @@ import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-import werkzeug.exceptions import abort
+from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
 

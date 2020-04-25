@@ -144,7 +144,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Notes
     -----
     It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
-    with no connection specification, and a synapse specification, `syn_spec`, with at least the synapse model.
+    specifying "one_to_one" for `conn_spec`.
+    In that case, the arrays may contain non-unique IDs.
     You may also specify weight, delay, and receptor type for each connection as NumPy arrays in the `syn_spec`
     dictionary.
 

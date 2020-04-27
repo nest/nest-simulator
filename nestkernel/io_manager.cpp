@@ -311,7 +311,7 @@ IOManager::register_recording_backends_()
   recording_backends_.insert( std::make_pair( "screen", new RecordingBackendScreen() ) );
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
   recording_backends_.insert( std::make_pair( "arbor", new RecordingBackendArbor() ) );
-#endif // HAVE_RECORDINGBACKEND_ARBOR
+#endif
 #ifdef HAVE_SIONLIB
   recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif

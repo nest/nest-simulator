@@ -51,7 +51,9 @@ def UserDocExtractor(
     This method searches for "BeginUserDocs" and "EndUserDocs" keywords and
     extracts all text inbetween as user-level documentation. The keyword
     "BeginUserDocs" may optionally be followed by a colon ":" and a comma
-    separated list of tags till the end of the line.
+    separated list of tags till the end of the line. Note that this allows tags
+    to contain spaces, i.e. you do not need to introduce underscores or hyphens
+    for multi-word tags.
 
     Example
     -------
@@ -71,19 +73,23 @@ def UserDocExtractor(
     Parameters
     ----------
 
-    filenames
-    : Any iterable with input file names (relative to `basedir`).
-    basedir
-    : Directory to which input `filenames` are relative.
-    replace_ext
-    : Replacement for the extension of the original filename when writing to `outdir`.
-    outdir
-    : Directory where output files are created.
+    filenames : iterable
+       Any iterable with input file names (relative to `basedir`).
+
+    basedir : str, path
+       Directory to which input `filenames` are relative.
+
+    replace_ext : str
+       Replacement for the extension of the original filename when writing to `outdir`.
+
+    outdir : str, path
+       Directory where output files are created.
 
     Returns
     -------
-    Dictionary mapping tags to lists of documentation filenames (relative to
-    `outdir`).
+
+    dict
+       mapping tags to lists of documentation filenames (relative to `outdir`).
     """
     if not os.path.exists(outdir):
         log.info("creating output directory "+outdir)
@@ -132,15 +138,19 @@ def make_hierarchy(tags, *basetags):
 
     Parameters
     ----------
-    tags
-    : flat dictionary of tag to entry
+    tags : dict
+       flat dictionary of tag to entry
 
-    basetags
-    : iterable of a subset of tags.keys(), if no basetags are given the
-      original tags list is returned unmodified.
+    basetags : iterable
+       iterable of a subset of tags.keys(), if no basetags are given the
+       original tags list is returned unmodified.
 
-    Returns a hierarchical dictionary of (dict or set) with items in the
-    intersection of basetag.
+    Returns
+    -------
+
+    dict
+       A hierarchical dictionary of (dict or set) with items in the
+       intersection of basetag.
     """
     if not basetags:
         return tags
@@ -169,15 +179,18 @@ def rst_index(hierarchy, underlines='=-~'):
 
     Parameters
     ----------
-    hierarchy
-    : any dict or dict-of-dict returned from `make_hierarchy()`
-    underlines
-    : list of characters to use for underlining deeper levels of the generated
-      index.
+    hierarchy : dict
+       dictionary or dict-of-dict returned from `make_hierarchy()`
+
+    underlines : iterable
+       list of characters to use for underlining deeper levels of the generated
+       index.
 
     Returns
     -------
-    String with pretty index.
+
+    str
+       formatted pretty index.
     """
     def mktitle(t, ul):
         return t+'\n'+ul*len(t)+'\n'
@@ -206,7 +219,24 @@ def rst_index(hierarchy, underlines='=-~'):
 
 def reverse_dict(tags):
     """
-    return the reversed dict-of-list
+    Return the reversed dict-of-list
+
+    Given a dictionary `keys:values`, this function creates the inverted
+    dictionary `value:[key, key2, ...]` with one entry per value of the given
+    dict. Since many keys can have the same value, the reversed dict must have
+    list-of-keys as values.
+
+    Parameters
+    ----------
+
+    tags : dict
+       Values must be hashable to be used as keys for the result.
+
+    Returns
+    -------
+
+    dict
+       Mapping the original values to lists of original keys.
     """
     revdict = dict()
     for tag, items in tags.items():
@@ -216,6 +246,25 @@ def reverse_dict(tags):
 
 
 def CreateTagIndices(tags, outdir="from_cpp/"):
+    """
+    This function generates all combinations of tags and creates an index page
+    for each combination using `rst_index`.
+
+    Parameters
+    ----------
+
+    tags : dict
+       dictionary of tags
+
+    outdir : str, path
+       path to the intended output directory (handed to `rst_index`.
+
+    Returns
+    -------
+
+    list
+        list of names of generated files.
+    """
     taglist = list(tags.keys())
     if "" in taglist:
         taglist.remove('')
@@ -258,6 +307,18 @@ class JsonWriter(object):
 def ExtractUserDocs(listoffiles, basedir='..', outdir='from_cpp'):
     """
     Extract and build all user documentation and build tag indices.
+
+    Writes extracted information to JSON files in outdir. In particular the
+    list of seen tags mapped to files they appear in, and the indices generated
+    from all combinations of tags.
+
+    Parameters are the same as for `UserDocExtractor` and are handed to it
+    unmodified.
+
+    Returns
+    -------
+
+    None
     """
     data = JsonWriter(outdir)
     # Gather all information and write RSTs

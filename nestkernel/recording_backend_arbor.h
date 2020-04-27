@@ -27,6 +27,7 @@
 #include "config.h"
 
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
+
 // C includes:
 #include <memory>
 

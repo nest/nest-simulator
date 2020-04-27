@@ -66,6 +66,7 @@
 #include "iaf_psc_exp.h"
 #include "iaf_psc_exp_htum.h"
 #include "iaf_psc_exp_multisynapse.h"
+#include "iaf_neat.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
 #include "mat2_psc_exp.h"
@@ -215,6 +216,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
   kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
+  kernel().model_manager.register_node_model< iaf_neat >( "iaf_neat" );
   kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );

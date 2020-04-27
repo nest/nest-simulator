@@ -26,7 +26,7 @@
 #include "recording_backend.h"
 #include <set>
 
-/* BeginDocumentation
+/* BeginUserDocs: recording backend
 
 Write data to the terminal
 ##########################
@@ -68,7 +68,7 @@ Parameter summary
   steps, i.e., in integer multiples of the resolution and an offset,
   rather than just in ms.
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {

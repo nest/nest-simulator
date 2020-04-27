@@ -180,10 +180,10 @@ Examples:
     dmm = nest.GetStatus(voltmeter)[0]
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
-    import pylab
-    pylab.figure(2)
-    pylab.plot(ts, Vms)
-    pylab.show()
+    import matplotlib.pyplot as plt
+    plt.figure(2)
+    plt.plot(ts, Vms)
+    plt.show()
 
 Sends: SpikeEvent
 

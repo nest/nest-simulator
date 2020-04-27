@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: device, recorder
 
 Recording weights from synapses
 ###############################
@@ -67,7 +67,7 @@ synapses that fulfill the given criteria.
    >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
 
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {

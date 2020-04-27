@@ -32,11 +32,6 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-mkdir -p $HOME/.matplotlib
-cat > $HOME/.matplotlib/matplotlibrc <<EOF
-    backend : svg
-EOF
-
 # Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"
@@ -58,6 +53,10 @@ if [ "$xPYTHON" = "1" ] ; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
    export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+   mkdir -p $HOME/.matplotlib
+   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
+   backend : svg
+EOF
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -88,6 +87,14 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBBOOST" = "1" ] ; then
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
+    chmod +x extras/install_libboost.sh
+    ./extras/install_libboost.sh
+else
+    CONFIGURE_BOOST="-Dwith-boost=OFF"
+fi
+
 if [ "$xSIONLIB" = "1" ] ; then
     CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
     chmod +x extras/install_sionlib.sh
@@ -108,9 +115,6 @@ fi
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
-    CONFIGURE_BOOST="-Dwith-boost=OFF"
-else
-    CONFIGURE_BOOST="-Dwith-boost=ON"
 fi
  
 NEST_VPATH=build

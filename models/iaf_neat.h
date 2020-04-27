@@ -31,6 +31,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+#include "synapses_neat.h"
+
 namespace nest
 {
 
@@ -82,6 +84,10 @@ private:
   void calibrate();
 
   void update( Time const&, const long, const long );
+
+  // synapses consist of ConductanceWindow and voltagedependence
+  ConductanceWindow* m_cond_w = new ExpCond();
+  VoltageDependence* m_v_dep = new DrivingForce(0.0);
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_neat >;

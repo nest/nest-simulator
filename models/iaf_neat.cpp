@@ -280,41 +280,50 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
+  double g_syn = 0., f_v = 0.;
+
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.r_ == 0 )
-    {
+    // advance the synapse
+    m_cond_w->update();
+    // compute synaptic input
+    g_syn = m_cond_w->get_cond();
+    f_v = m_v_dep->f(get_V_m_());
+
+    // if ( S_.r_ == 0 )
+    // {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
+      // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + g_syn * f_v) + V_.P33_ * S_.y3_;
 
-      // if we have accumulated spikes from refractory period,
-      // add and reset accumulator
-      if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
-      {
-        S_.y3_ += S_.refr_spikes_buffer_;
-        S_.refr_spikes_buffer_ = 0.0;
-      }
+    //   // if we have accumulated spikes from refractory period,
+    //   // add and reset accumulator
+    //   if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+    //   {
+    //     S_.y3_ += S_.refr_spikes_buffer_;
+    //     S_.refr_spikes_buffer_ = 0.0;
+    //   }
 
-      // lower bound of membrane potential
-      S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
-    }
-    else // neuron is absolute refractory
-    {
-      // read spikes from buffer and accumulate them, discounting
-      // for decay until end of refractory period
-      if ( P_.with_refr_input_ )
-      {
-        S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
-      }
-      else
-      {
-        // clear buffer entry, ignore spike
-        B_.spikes_.get_value( lag );
-      }
+    //   // lower bound of membrane potential
+    //   S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
+    // }
+    // else // neuron is absolute refractory
+    // {
+    //   // read spikes from buffer and accumulate them, discounting
+    //   // for decay until end of refractory period
+    //   if ( P_.with_refr_input_ )
+    //   {
+    //     S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+    //   }
+    //   else
+    //   {
+    //     // clear buffer entry, ignore spike
+    //     B_.spikes_.get_value( lag );
+    //   }
 
-      --S_.r_;
-    }
+    //   --S_.r_;
+    // }
 
     // threshold crossing
     if ( S_.y3_ >= P_.V_th_ )
@@ -332,6 +341,9 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // set new input current
     S_.y0_ = B_.currents_.get_value( lag );
 
+    // reset synapse
+    m_cond_w->reset_lag();
+
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
@@ -345,9 +357,10 @@ nest::iaf_neat::handle( SpikeEvent& e )
   // EX: We must compute the arrival time of the incoming spike
   //     explicity, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
-  //     is clumsy and should be improved.
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  // //     is clumsy and should be improved.
+  // B_.spikes_.add_value(
+  //   e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  m_cond_w->handle(e);
 }
 
 void

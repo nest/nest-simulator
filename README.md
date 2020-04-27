@@ -6,6 +6,7 @@
 [![Latest Version](https://img.shields.io/badge/latest%20version-2.20.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.20.0)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 
+
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
 morphology of individual neurons. The development of NEST is coordinated by the

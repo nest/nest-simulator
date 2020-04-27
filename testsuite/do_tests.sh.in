@@ -642,8 +642,10 @@ echo "-------------------------------------------"
 #        echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
 #        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 #
-#        # Copy everything to the tmpdir. Not all files have to exist and therefore variables can also be empty.
-#        # To prevent 'cp' from terminating, exit code and error message is suppressed.
+#        # Copy everything to the tmpdir. As some files might not
+#        # exist, variables can also be empty. To prevent 'cp' from
+#        # terminating on non-existent files, its exit code and error
+#        # message are suppressed.
 #        cp "${music_file}" "${sh_file}" "${sli_files}" "${tmpdir}" 2>/dev/null || :
 #        cd "${tmpdir}"
 #

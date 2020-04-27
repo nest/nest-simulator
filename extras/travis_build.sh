@@ -53,6 +53,7 @@ if [ "$xPYTHON" = "1" ] ; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
    export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+
    mkdir -p $HOME/.matplotlib
    cat > $HOME/.matplotlib/matplotlibrc <<EOF 
    backend : svg

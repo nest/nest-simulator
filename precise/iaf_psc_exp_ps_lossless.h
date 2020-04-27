@@ -92,6 +92,8 @@ makes the detection of threshold crossing more difficult [1].
 Support for different time constants may be added in the future,
 see issue #921.
 
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
 
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E

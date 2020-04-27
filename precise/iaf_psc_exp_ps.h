@@ -100,6 +100,9 @@ will numerically behave as if tau_m is equal to tau_syn_ex or
 tau_syn_in, respectively, to avoid numerical instabilities.
 For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
 
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
+
 References:
 
   [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold

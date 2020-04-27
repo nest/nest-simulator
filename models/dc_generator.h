@@ -46,15 +46,16 @@ Short description
 
 provides direct current (DC) input
 
-Device name
-+++++++++++
-
-dc_generator
-
 Description
 +++++++++++
 
-The dc_generator provides a constant DC input to the connected node. The unit of the current is pA.
+The dc_generator provides a constant DC input to the connected
+node. The unit of the current is pA.
+
+The dc_generator is rather inefficient, since it needs to send the
+same current information on each time step. If you only need a
+constant bias current into a neuron, you could instead directly set
+the property *I_e*, which is available in many neuron models.
 
 Parameters
 ++++++++++
@@ -64,13 +65,6 @@ The following parameters can be set in the status dictionary:
 ========== ======  =============================
  amplitude pA      Amplitude of current
 ========== ======  =============================
-
-Remarks:
-
-The dc_generator is rather inefficient, since it needs to
-send the same current information on each time step. If you
-only need a constant bias current into a neuron, you should
-set it directly in the neuron, e.g., dc_generator.
 
 Sends
 +++++

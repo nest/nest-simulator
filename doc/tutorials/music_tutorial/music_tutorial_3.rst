@@ -282,7 +282,7 @@ queue is empty we’re done and go back around the main loop again.
 Lastly we call ``runtime.finalize()`` as before.
 
 Building the Code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 We have to build our ``C++`` code. The example code is
 already set up for the GNU Autotools, just to show how to do this for a

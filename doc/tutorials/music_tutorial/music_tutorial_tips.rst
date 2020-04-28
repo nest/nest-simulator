@@ -44,7 +44,7 @@ Disable messages
 
     .. code:: python
 
-        nest.sli_run("M_ERROR setverbosity")
+        nest.set_verbosity("M_ERROR")
 
     There is unfortunately no straightforward way to suppress the
     initial welcome message. That is somewhat unfortunate, as they add

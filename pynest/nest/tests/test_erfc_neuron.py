@@ -85,7 +85,7 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
         """ sets up an erfc neuron and spin detector. """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': 0})
+        nest.SetKernelStatus({'rng_seed': 1})
 
         self.neuron = nest.Create('erfc_neuron', 1,
                                   {'sigma': sigma, 'theta': theta})

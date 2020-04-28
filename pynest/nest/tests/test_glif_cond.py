@@ -102,12 +102,10 @@ class GLIFCONDTestCase(unittest.TestCase):
         """
         Runs a two-sided Kolmogorov-Smirnov statistic test on a set of spikes against a set of reference spikes.
         """
-        p_value_lim = 0.9
-        d_lim = 0.2
+        p_value_lim = 0.1
         d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
         print(f'd={d}, p_value={p_value}')
         self.assertGreater(p_value, p_value_lim)
-        self.assertLess(d, d_lim)
 
     def test_lif(self):
         """

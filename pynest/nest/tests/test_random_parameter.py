@@ -48,6 +48,9 @@ class RandomParameterTestCase(unittest.TestCase):
         d, p_val = scipy.stats.kstest(param_values, cdf, args=cdf_args)
         self.assertGreater(p_val, p_val_lim)
 
+    def setUp(self):
+        nest.ResetKernel()
+
     def test_uniform(self):
         """Test uniform distribution Parameter"""
         w_min = -1.3

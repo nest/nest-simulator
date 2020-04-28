@@ -45,7 +45,8 @@ namespace nest
 Short description
 +++++++++++++++++
 
-simulate the superimposed spike train of a population of Poisson processes with dead time
+simulate the superimposed spike train of a population of Poisson
+processes with dead time
 
 Device name
 +++++++++++

@@ -46,8 +46,8 @@ mkdir $myhome/more-example-networks
 
 SKIP_LIST="
     Potjans_2014/
-    music_cont_out_proxy_example/ 
-    LeNovere_2012/       
+    music_cont_out_proxy_example/
+    LeNovere_2012/
 "
 
 FAILURES=0
@@ -56,7 +56,7 @@ FAILURES=0
 SKIP_LIST=$(echo $SKIP_LIST | sed -e 's/ +/ /g' -e 's/^ *//' -e 's/ *$//')
 
 # Create a regular expression for grep that removes the excluded files
-case "$SKIP_LIST" in  
+case "$SKIP_LIST" in
     *\ * ) # We have spaces in the list
         SKIP='('$(echo $SKIP_LIST | tr ' ' '|' )')' ;;
     *)
@@ -66,7 +66,7 @@ esac
 # Find all examples in the installation directory
 EXAMPLES=$(find ${SEARCH_DIR:-$exampleshome} -type f -name \*.py -o -name \*.sli | sort -t. -k3)
 
-# 
+#
 if test -n "$SKIP_LIST"; then
     EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)
 fi
@@ -82,7 +82,7 @@ for i in $EXAMPLES ; do
     cd $(dirname $i)
 
     workdir=$PWD
-    
+
     example=$(basename $i)
     examplename=$(basename $i .py)
 
@@ -92,10 +92,10 @@ for i in $EXAMPLES ; do
         runner=nest
     elif [ $ext = py ] ; then
 		#in letzte Zeile Bild Erzeugung einfügen
-		echo "import pylab \npylab.savefig('$imgdir/$examplename.svg')" >> $example
+		echo "import matplotlib.pyplot as plt \nplt.savefig('$imgdir/$examplename.svg')" >> $example
 		# Bilder generieren
 		#ipython $value
-    
+
         runner=python
     fi
 
@@ -109,7 +109,7 @@ for i in $EXAMPLES ; do
 	# letzte Zeile in Python Dateien löschen
 	sed -i '$d' $example
 	# nochmal letzte Zeile in Python Dateien löschen
-	sed -i '$d' $example    
+	sed -i '$d' $example
 
     # valides HTML
     mkdir $myhome/py_sample/$examplename
@@ -122,7 +122,7 @@ for i in $EXAMPLES ; do
 		echo '<li><a href="../py_sample/'$examplename'/index.html">'$examplename'</a></li>' >> $myhome/more-example-networks/index.tmpl.html
 	fi
 
-   
+
 
     cat $myhome/templates/sample-header.tmpl $myhome/py_sample/$examplename/$examplename.html $myhome/templates/sample-footer.tmpl > $myhome/py_sample/$examplename/index.html
 

@@ -225,7 +225,6 @@ def setup(app):
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect('config-inited', config_inited_handler)
 
-
 # -- Options for LaTeX output ---------------------------------------------
 
 

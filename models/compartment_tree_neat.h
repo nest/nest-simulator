@@ -41,7 +41,7 @@ public:
     // associated location
     int m_loc_index;
     // voltage variable
-    double m_v;
+    double m_v = 0.;
     // electrical parameters
     double m_ca; // compartment capacitance [uF]
     double m_gc; // coupling conductance with parent (meaningless if root) [uS]
@@ -49,13 +49,14 @@ public:
     double m_el; // leak current reversal potential [mV]
     // for numerical integration
     double m_ff = 0., m_gg = 0., m_hh = 0.;
-    double m_ff_const, m_gg_const, m_hh_const;
     // passage counter
     int m_n_passed = 0.;
 
     // constructor, destructor
-    CompNode();
-    ~CompNode();
+    CompNode(int node_index, int parent_index, std::vector< int > child_indices,
+            double ca, double gc,
+            double gl, double el);
+    ~CompNode(){};
     // initialization
     void setSimConstants();
     void reset();
@@ -71,8 +72,6 @@ private:
     /*
     structural data containers for the compartment model
     */
-    // number of locations
-    int m_n_loc;
     // std::vector of all nodes (first node should be root)
     std::vector< CompNode > m_nodes;
 
@@ -81,8 +80,8 @@ private:
     // std::vector of pointers to nodes that are leafs
     std::vector< CompNode* > m_leafs;
 
-    // for simulation
-    double m_dt;
+    // timestep for simulation [ms]
+    double m_dt = 0.1;
 
     //recursion function
     void solve_matrix_downsweep(CompNode* node_ptr,
@@ -95,12 +94,11 @@ private:
 
 public:
     // constructor, destructor
-    CompTree();
-    ~CompTree();
+    CompTree(){};
+    ~CompTree(){};
 
     // initialization functions for tree structure
     void add_node(int node_index, int parent_index, std::vector< int > child_indices,
-                 int loc_index,
                  double ca, double gc,
                  double gl, double el);
     void init();

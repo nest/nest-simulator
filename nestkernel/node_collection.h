@@ -203,6 +203,15 @@ public:
   static NodeCollectionPTR create( const index node_id );
 
   /**
+   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   *
+   * @param node_ids Array of node IDs from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const std::vector< index >& node_ids );
+
+  /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
    * kernel.
    *

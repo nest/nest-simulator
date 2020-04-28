@@ -47,11 +47,6 @@ Short description
 
 simulate the superimposed spike train of a population of gamma process
 
-Device name
-+++++++++++
-
-gamma_sup_generator
-
 Description
 +++++++++++
 

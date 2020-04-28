@@ -23,8 +23,6 @@
 #ifndef AC_GENERATOR_H
 #define AC_GENERATOR_H
 
-// provides AC input current
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
@@ -35,13 +33,10 @@
 
 /* BeginUserDocs: device, generator
 
-ac_generator - Produce an alternating current (AC) input
-########################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-ac_generator
+Produce an alternating current (AC) input
 
 Description
 +++++++++++
@@ -59,7 +54,6 @@ where
 
     om  = 2 * \pi * frequency \\
     \phi = phase / 180 * \pi
-
 
 Parameters
 ++++++++++
@@ -80,7 +74,6 @@ References
 .. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
        invariant linear systems with applications to neuronal modeling,
        Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
-
 
 Sends
 +++++

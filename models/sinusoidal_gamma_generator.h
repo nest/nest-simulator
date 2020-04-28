@@ -52,11 +52,6 @@ Short description
 
 Generates sinusoidally modulated gamma spike trains
 
-Device name
-+++++++++++
-
-sinusoidal_gamma_generator
-
 Description
 +++++++++++
 
@@ -69,6 +64,21 @@ The instantaneous rate of the process is given by
 .. math::
 
  f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
+
+Remarks:
+
+- The gamma generator requires 0 <= amplitude <= rate.
+- The state of the generator is reset on calibration.
+- The generator does not support precise spike timing.
+- You can use the multimeter to sample the rate of the generator.
+- The generator will create different trains if run at different
+  temporal resolutions.
+
+Individual spike trains vs single spike train:
+By default, the generator sends a different spike train to each of its
+targets. If /individual_spike_trains is set to false using either
+SetDefaults or CopyModel before a generator node is created, the generator
+will send the same spike train to all of its targets.
 
 Parameters
 ++++++++++
@@ -85,22 +95,6 @@ The following parameters can be set in the status dictionary:
  order                   real     Gamma order (>= 1), default: 1
  individual_spike_trains boolean  See note below, default: true
 ======================== ======== ==============================================
-
-
-Remarks:
-
-- The gamma generator requires 0 <= amplitude <= rate.
-- The state of the generator is reset on calibration.
-- The generator does not support precise spike timing.
-- You can use the multimeter to sample the rate of the generator.
-- The generator will create different trains if run at different
-  temporal resolutions.
-
-- Individual spike trains vs single spike train:
-  By default, the generator sends a different spike train to each of its
-  targets. If /individual_spike_trains is set to false using either
-  SetDefaults or CopyModel before a generator node is created, the generator
-  will send the same spike train to all of its targets.
 
 Receives
 ++++++++

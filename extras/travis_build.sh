@@ -52,8 +52,6 @@ if [ "$xPYTHON" = "1" ] ; then
    if [[ $OSTYPE = darwin* ]]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
-   export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-
    mkdir -p $HOME/.matplotlib
    cat > $HOME/.matplotlib/matplotlibrc <<EOF 
    backend : svg
@@ -108,7 +106,7 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
     ./extras/install_csa-libneurosim.sh
-    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
@@ -281,8 +279,6 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
-
-source $NEST_RESULT/bin/nest_vars.sh
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

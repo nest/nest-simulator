@@ -28,7 +28,7 @@ Synopsis: (test_spike_dilutor) run -> count the average number of spikes repeate
 
 Description:
 100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike detectors.
-If the average number of spikes detected by spike detectors equals to 20 (with marginal error 3), the dilutor works fine.
+If the average number of spikes detected by spike detectors is within 5% relative to the expected value, the dilutor works fine.
 
 Author: Hesam Setareh, April 2015
  */
@@ -39,7 +39,7 @@ Author: Hesam Setareh, April 2015
 /t 5000.0 def
 /p 0.2 def
 /expected t p mul def
-/eps 0.01 def
+/eps 0.05 def
 
 [
 1.0

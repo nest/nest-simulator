@@ -46,8 +46,8 @@ SeeAlso: mip_generator, correlation_detector
 %
 % Cross check generated with cross_check_test_mip_corrdet.py
 %
-[ 2559 2462 2543 2554 2519 2533 2576 2524 2479 2478 5182 2566
-  2589 2523 2513 2461 2569 2551 2542 2542 2561 ] { cvd } Map /expected_hist Set
+[ 2447 2530 2446 2451 2490 2483 2537 2503 2418 2493 4878 2573
+  2463 2493 2424 2516 2502 2490 2442 2436 2523 ] { cvd } Map /expected_hist Set
 
 /run_test
 {

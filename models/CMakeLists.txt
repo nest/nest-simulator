@@ -47,7 +47,7 @@ set( models_sources
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
-    glif_cond.h glif_cond.cpp     
+    glif_cond.h glif_cond.cpp
     glif_psc.h glif_psc.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_cond_beta_gap_traub.h hh_cond_beta_gap_traub.cpp
@@ -69,6 +69,7 @@ set( models_sources
     iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     iaf_neat.h iaf_neat.cpp
+    synapses_neat.h synapses_neat.cpp
     izhikevich.h izhikevich.cpp
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp

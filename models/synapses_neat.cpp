@@ -18,6 +18,8 @@ void nest::ExpCond::init(){
   m_p = std::exp(-m_dt / m_tau);
   m_g = 0.;
   m_lag = 0.;
+
+  m_b_spikes.clear();
 };
 
 void nest::ExpCond::set_params(double tau){
@@ -48,6 +50,8 @@ void nest::Exp2Cond::init(){
   m_g_r = 0.; m_g_d = 0.;
   m_g = 0.;
   m_lag = 0.;
+
+  m_b_spikes.clear();
 };
 
 void nest::Exp2Cond::set_params(double tau_r, double tau_d){

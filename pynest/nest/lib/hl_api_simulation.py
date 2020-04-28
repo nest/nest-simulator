@@ -240,9 +240,9 @@ def SetKernelStatus(params):
     rng_type : str
         Name of random number generator type used by kernel
     rng_seed : int
-        Seed value used as basis of seeding of all random number generators 
+        Seed value used as basis of seeding of all random number generators
         generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
- 
+
 
     MPI buffers
     ~~~~~~~~~~~

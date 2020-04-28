@@ -128,7 +128,7 @@ For your convenience, a shell script setting all required environment variables 
 
    source </install/path/>bin/nest_vars.sh
 
-You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically.
+You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically whenever you open a new terminal.
 
 The following variables are set in ``nest_vars.sh``:
 
@@ -136,21 +136,21 @@ The following variables are set in ``nest_vars.sh``:
    :header-rows: 1
    :widths: 10 30
 
-   * - Path
+   * - Variable
      - Description
    * - ``NEST_INSTALL_DIR``
      - NEST installation directory. Contains ``bin``, ``lib``, etc.
    * - ``NEST_DATA_DIR``	
-     - NEST finds standard *.sli files ``$NEST_DATA_DIR/sli``
+     - NEST finds standard *.sli files in ``$NEST_DATA_DIR/sli``
    * - ``NEST_DOC_DIR``
-     - NEST built-in online help finds help files ``$NEST_DOC_DIR/help``
+     - NEST built-in online help finds help files in ``$NEST_DOC_DIR/help``
    * - ``NEST_PYTHON_PREFIX``
      - The path where the PyNEST bindings are installed.
    * - ``PYTHONPATH``
-     - Search path for non-standard Python module locations. Will be prepended to or created if it does not exist.
+     - Search path for non-standard Python module locations. Will be newly set or prepended to the already existing variable if it is already set.
    * - ``PATH``
-     - Search path for binaries. Will be prepended to or created if it does not exist.
+     - Search path for binaries. Will be newly set or prepended to the already existing variable if it is already set.
    * - ``LD_LIBRARY_PATH``
-     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS.  Will be prepended to or created if it does not exist.
+     - Search path for shared objects (*.so files). Note: called ``DYLD_LIBRARY_PATH`` on MacOS. Will be newly set or prepended to the already existing variable if it is already set.
 
 If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries.

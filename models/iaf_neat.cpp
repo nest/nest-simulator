@@ -244,6 +244,21 @@ nest::iaf_neat::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
+  // define the compartment tree
+  // node 0
+  int index0 = 0, parent_index0 = -1, loc_index0 = 0; std::vector<int> child_indices0{ 1 };
+  double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
+  m_c_tree.add_node(index0, parent_index0, child_indices0,
+                    loc_index0,
+                    ca0, gc0, gl0, el0);
+  // node 1
+  int index1 = 1, parent_index1 = 0, loc_index1 = 1; std::vector<int> child_indices1{ -1 };
+  double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
+  m_c_tree.add_node(index1, parent_index1, child_indices1,
+                    loc_index1,
+                    ca1, gc1, gl1, el1);
+  m_c_tree.init();
+
 
   V_.P33_ = std::exp( -h / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;

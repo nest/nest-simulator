@@ -64,7 +64,7 @@ void nest::Exp2Cond::set_params(double tau_r, double tau_d){
 void nest::Exp2Cond::update(){
   const double dt = Time::get_resolution().get_ms();
   if(abs(dt - m_dt) > 1.0e-9){
-    m_dt = dt
+    m_dt = dt;
     m_p_r = std::exp(-dt / m_tau_r); m_p_d = std::exp(-dt / m_tau_d);
   }
   // update conductance

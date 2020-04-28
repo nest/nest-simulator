@@ -32,6 +32,7 @@
 #include "universal_data_logger.h"
 
 #include "synapses_neat.h"
+#include "compartment_tree_neat.h"
 
 namespace nest
 {
@@ -88,6 +89,9 @@ private:
   // synapses consist of ConductanceWindow and voltagedependence
   ConductanceWindow* m_cond_w = new ExpCond();
   VoltageDependence* m_v_dep = new DrivingForce(0.0);
+
+  // initialize a compartment tree
+  CompTree m_c_tree;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_neat >;

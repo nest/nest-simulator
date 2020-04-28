@@ -210,8 +210,8 @@ nitpick_ignore = [('py:class', 'None'),
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
-    app.add_javascript("js/copybutton.js")
-    app.add_javascript("js/custom.js")
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
 
 # -- Options for LaTeX output ---------------------------------------------
 

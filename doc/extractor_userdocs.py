@@ -95,7 +95,7 @@ def UserDocExtractor(
         log.info("extracting user documentation from %s...", filename)
         nfiles_total += 1
         match = None
-        with open(os.path.join(basedir, filename)) as infile:
+        with open(os.path.join(basedir, filename), 'r', encoding='utf8') as infile:
             match = userdoc_re.search(infile.read())
         if not match:
             log.warning("No user documentation found in " + filename)

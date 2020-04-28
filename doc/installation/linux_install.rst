@@ -120,7 +120,7 @@ The script ``/install/path/bin/nest_vars.sh`` can be sourced in ``.bashrc`` and 
 Environment variables
 ---------------------
 
-There are several environment variables that describe where components of the NEST installation can be found. In particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that your operating system can find the NEST binaries and libraries.
+A number of environment variables are used to specify where the components of a NEST installation are found. In particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that your operating system can find the NEST binaries, its libraries and custom extension modules.
 
 A shell script is provided in ``</install/path/>bin/nest_vars.sh`` to make setting the environment variables more convenient. Setting the environment variables in your active shell session requires sourcing the script:
 

@@ -22,8 +22,6 @@ protected:
   double m_dt = 0.0;
   // conductance g
   double m_g = 0.0;
-  // number of time-steps since last network update ste
-  double m_lag = 0.0;
 
   // spike buffer
   RingBuffer m_b_spikes;
@@ -37,9 +35,8 @@ public:
   virtual void set_params(double tau_r, double tau_d){};
 
   // update functions
-  virtual void update(){};
+  virtual void update( const long lag ){};
   void handle(SpikeEvent& e);
-  void reset_lag(){m_lag = 0.;};
 
   double get_cond(){return m_g;};
 };
@@ -57,7 +54,7 @@ public:
 
     void set_params(double tau) override;
 
-    void update() override;
+    void update( const long lag ) override;
 };
 
 class Exp2Cond: public ConductanceWindow{
@@ -76,7 +73,7 @@ public:
 
     void set_params(double tau_r, double tau_d) override;
 
-    void update() override;
+    void update( const long lag ) override;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

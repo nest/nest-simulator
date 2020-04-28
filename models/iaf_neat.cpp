@@ -234,6 +234,7 @@ nest::iaf_neat::init_buffers_()
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
   Archiving_Node::clear_history();
+  m_cond_w->init();
 }
 
 void
@@ -286,7 +287,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     // advance the synapse
-    m_cond_w->update();
+    m_cond_w->update( lag );
     // compute synaptic input
     g_syn = m_cond_w->get_cond();
     f_v = m_v_dep->f(get_V_m_());
@@ -340,9 +341,6 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
 
     // set new input current
     S_.y0_ = B_.currents_.get_value( lag );
-
-    // reset synapse
-    m_cond_w->reset_lag();
 
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );

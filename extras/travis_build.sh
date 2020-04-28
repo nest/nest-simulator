@@ -280,6 +280,11 @@ echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
 
+echo "readelf"
+readelf -d /home/travis/build/nest/nest-simulator/result/nest
+echo "ldd"
+ldd /home/travis/build/nest/nest-simulator/result/nest
+
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               R U N   N E S T   T E S T S U I T E                           +"

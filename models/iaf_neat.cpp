@@ -360,9 +360,6 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
-
-  // reset synapse
-  m_cond_w->reset_lag();
 }
 
 void

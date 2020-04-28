@@ -24,9 +24,9 @@
 
 language: python
 
-# Using the Sudo-enabled Ubuntu Xenial (16.04 LTS).
+# Using the Sudo-enabled Ubuntu Bionic (18.04 LTS).
 sudo: required
-dist: xenial
+dist: bionic
 
 stages:
    - Staticcheck
@@ -41,25 +41,25 @@ jobs:
   include:
     - stage: Staticcheck
       python: 3.6.7
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
+      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
+      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
     - stage: MPI-Threading-Python
       python: 3.6.7
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only Python
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only Python
     - stage: Python-Full-build
       python: 3.6.7
-      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
+      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: Clang7
       language: cpp
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
@@ -73,10 +73,12 @@ jobs:
 addons:
    apt:
     sources:
-     - r-packages-trusty
+     - *BASE_SOURCES
+     - r-packages-bionic
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-trusty-7
+     - llvm-toolchain-bionic-9
     packages:
+     - *BASE_PACKAGES
      - gcc-8
      - g++-8
      - clang-7
@@ -86,15 +88,15 @@ addons:
      - libreadline6-dev
      - libncurses5-dev
      - libgsl0-dev
-     - python-all-dev
-     - ipython
+     - python3-all-dev
+     - ipython3
      - pkg-config
      - openmpi-bin
      - libopenmpi-dev
-     - python-nose
+     - python3-nose
      - libpcre3
      - libpcre3-dev
-     - llvm-3.6-dev
+     - llvm-9-dev
      - jq
      - pep8
      - libboost-filesystem-dev
@@ -103,7 +105,7 @@ addons:
      - libboost-python-dev
      - libboost-program-options-dev
      - libboost-test-dev
-     - python-mpi4py
+     - python3-mpi4py
 cache:
    directory:
      - $HOME/.cache
@@ -139,6 +141,7 @@ before_install:
          cp extras/install_csa-libneurosim.sh $HOME
          cp extras/install_music.sh $HOME
          cp extras/install_sionlib.sh $HOME
+         cp extras/install_libboost.sh $HOME
          cd $HOME/build
          echo $PATH
          # Upgrade pip and setuptools

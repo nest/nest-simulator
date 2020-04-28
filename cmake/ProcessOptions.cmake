@@ -375,16 +375,12 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  if ( ${with-python} STREQUAL "2" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+  elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    if ( ${with-python} STREQUAL "ON" )
-      find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )
-      find_package( PythonInterp 2 REQUIRED )
-    elseif ( ${with-python} STREQUAL "3" )
-      find_package( PythonInterp 3 REQUIRED )
-    endif ()
+    find_package( PythonInterp 3 REQUIRED )
 
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
@@ -458,7 +454,7 @@ function( NEST_PROCESS_WITH_OPENMP )
   if ( NOT TARGET OpenMP::OpenMP_CXX )
     add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
   endif()
- 
+
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )
@@ -554,7 +550,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "cmake sucks" )
+      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )
@@ -566,7 +562,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
 
     # is linked in nestkernel/CMakeLists.txt
     if ( SIONLIB_FOUND )
-      set( HAVE_SIONLIB ON CACHE INTERNAL "cmake sucks" )
+      set( HAVE_SIONLIB ON CACHE INTERNAL "sionlib" )
     endif ()
   endif ()
 endfunction()
@@ -580,8 +576,10 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_ROOT "${with-boost}" )
     endif ()
 
+    set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
+    set(Boost_USE_RELEASE_LIBS ON) # only find release libs
     # Needs Boost version >=1.58.0 to use Boost sorting
-    find_package( Boost 1.58.0 COMPONENTS unit_test_framework )
+    find_package( Boost 1.58.0 )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )

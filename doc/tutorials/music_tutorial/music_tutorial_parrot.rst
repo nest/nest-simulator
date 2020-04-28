@@ -1,7 +1,7 @@
 Those parrot neurons, or why you never connect devices to each other
 --------------------------------------------------------------------
 
-In ``receivesimple.py`` above, we used parrot neurons as
+In ``receive.py`` in :doc:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, we used parrot neurons as
 target for the input proxies, then connected the spike detector to those
 neurons. Couldn’t we have connected the spike detector directly to the
 proxies?
@@ -13,7 +13,7 @@ simulation, but devices such as the spike detector and the MUSIC event
 handler are usually duplicated aross all nodes.
 
 When you connect a set of neurons to a spike detector, you normally
-don’t want all that spike data travel across the network to a single
+don’t want all that spike data to travel across the network to a single
 computing node where it gets saved. It would be very inefficient.
 Instead, the spike detector is duplicated on each node and each clone
 saves the data from its local neurons. In the same way, the MUSIC event
@@ -23,16 +23,16 @@ channels that its local targets request.
 But if you connect the input proxies directly to the spike detector,
 *all* channels have a local spike detector target on every computing
 node. We would get duplicate spike traces, one for each MPI process on
-the receiving side. To test this, replace line 21 in
+the receiving side. To test this, replace line 18 in
 ``receive.py`` with
 
 .. code-block:: python
 
     nest.Connect(music_in, sdetector)
 
-Run this simulation and you will notice that the
+Run this simulation and you will notice that
 ``receive-N-0.spikes`` and
-:math:``receive-N-1.spikes`` are now identical and about twice as
+``receive-N-1.spikes`` are now identical and about twice as
 big as before. Collate the input files and compare again:
 
 .. code-block::
@@ -56,9 +56,9 @@ applied anywhere along the path from the inputs to the outputs.
 
 The lesson is that you don’t connect two NEST devices to each other
 unless the documentation specifically tells you that you can. Always add
-a layer of normal neuron models, such as parrot neurons, in between.
+a layer of neuron models, such as parrot neurons, in between.
 This is true for devices in general of course, but this connection
 pattern, where you want to record the MUSIC input from another
-simulation, is so common that it’s worth warning for this.
+simulation, is so common that it’s worth warning about this.
 
 

@@ -302,7 +302,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     // advance the synapse
-    m_cond_w->update();
+    m_cond_w->update( lag );
     // compute synaptic input
     g_syn = m_cond_w->get_cond();
     f_v = m_v_dep->f(get_V_m_());

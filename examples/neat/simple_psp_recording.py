@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import nest
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -23,4 +23,4 @@ events_neat = nest.GetStatus(m_neat, 'events')[0]
 plt.plot(events['times'], events['V_m'], label='iaf_psc_delta')
 plt.plot(events_neat['times'], events_neat['V_m'], label='iaf_neat')
 plt.legend()
-plt.savefig('simple_psp_recording.pdf')
+plt.show()

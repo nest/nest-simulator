@@ -88,7 +88,7 @@ The following are the basic steps to compile and install NEST from source code. 
 
 NEST should now be successfully installed on your system.
 
-* Before using NEST, make sure that all the environment variables are set correctly. See the section `Environment variables`_ for details.
+* Before using NEST, make sure that all required environment variables are set correctly. In short, this can be established by sourcing the shell script `nest_vars.sh`, which is installed into the path for binaries selected during the CMake run. See the section `Environment variables`_ for details.
 
 * See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../auto_examples/index>`.
 

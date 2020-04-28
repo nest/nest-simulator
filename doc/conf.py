@@ -220,7 +220,6 @@ def setup(app):
     app.add_stylesheet('css/pygments.css')
     app.add_javascript("js/copybutton.js")
     app.add_javascript("js/custom.js")
-    app.add_transform(AutoStructify)
 
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events

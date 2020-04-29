@@ -117,6 +117,8 @@ For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
 A further improvement of precise simulation is implemented in iaf_psc_exp_ps
 based on [3].
 
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
 
 References:
 

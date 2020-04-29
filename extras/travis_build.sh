@@ -32,11 +32,6 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-mkdir -p $HOME/.matplotlib
-cat > $HOME/.matplotlib/matplotlibrc <<EOF
-    backend : svg
-EOF
-
 # Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"
@@ -57,6 +52,12 @@ if [ "$xPYTHON" = "1" ] ; then
    if [[ $OSTYPE = darwin* ]]; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
    fi
+   export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
+
+   mkdir -p $HOME/.matplotlib
+   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
+   backend : svg
+EOF
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -87,6 +88,14 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBBOOST" = "1" ] ; then
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
+    chmod +x extras/install_libboost.sh
+    ./extras/install_libboost.sh
+else
+    CONFIGURE_BOOST="-Dwith-boost=OFF"
+fi
+
 if [ "$xSIONLIB" = "1" ] ; then
     CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
     chmod +x extras/install_sionlib.sh
@@ -99,6 +108,7 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
     ./extras/install_csa-libneurosim.sh
+    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
@@ -106,9 +116,6 @@ fi
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
-    CONFIGURE_BOOST="-Dwith-boost=OFF"
-else
-    CONFIGURE_BOOST="-Dwith-boost=ON"
 fi
  
 NEST_VPATH=build
@@ -193,7 +200,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8
@@ -275,20 +282,15 @@ echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
 
-    echo
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "+               R U N   N E S T   T E S T S U I T E                           +"
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "MSGBLD0290: Running make installcheck."
-    if [ "$TRAVIS_PYTHON_VERSION" = "2.7.13" ]; then
-        export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    elif [ "$TRAVIS_PYTHON_VERSION" = "3.6.7" ]; then
-        export PYTHONPATH=/usr/lib/x86_64-linux-gnu/:$PYTHONPATH
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
-    fi
-    make installcheck
-    echo "MSGBLD0300: Make installcheck completed."
+source $NEST_RESULT/bin/nest_vars.sh
+
+echo
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               R U N   N E S T   T E S T S U I T E                           +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0290: Running make installcheck."
+make installcheck
+echo "MSGBLD0300: Make installcheck completed."
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "MSGBLD0310: This build was triggered by a pull request."

@@ -38,7 +38,7 @@
 #include "dictutils.h"
 #include "name.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: device, recorder
 
 Sampling continuous quantities from neurons
 ###########################################
@@ -105,7 +105,7 @@ fail if carried out in the wrong direction, i.e., trying to connect the
    ``record_from`` property is already set to record the variable ``V_m``
    from the neurons it is connected to.
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {

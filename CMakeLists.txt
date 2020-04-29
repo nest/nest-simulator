@@ -44,7 +44,6 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -56,6 +55,7 @@ set( with-readline ON CACHE STRING "Find a readline library. To set a specific r
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
+set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -91,22 +91,11 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 include( GNUInstallDirs )
 
 ################################################################################
-#################        Do not install into /usr/local        #################
-################################################################################
-
-get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
-# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()
-
-################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
 
 # needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+if ( ${with-python} STREQUAL "ON" )
   find_program( NOSETESTS NAMES nosetests )
 endif ()
 
@@ -299,7 +288,8 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}" )
+  "${SIONLIB_LIBRARIES}"
+  "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
@@ -314,7 +304,8 @@ set( ALL_INCLUDES_tmp
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}" )
+  "${MPI_CXX_INCLUDE_PATH}"
+  "${BOOST_INCLUDE_DIR}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

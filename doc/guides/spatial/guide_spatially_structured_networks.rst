@@ -1449,7 +1449,7 @@ Developer Manual. The basic steps required to get started are:
 3. Configure. The configure process uses the script ``nest-config`` to
    find out where NEST is installed, where the source code resides, and
    which compiler options were used for compiling NEST. If
-   ``nest-config`` is not in your path, you need to provided it
+   ``nest-config`` is not in your path, you need to provide it
    explicitly with ``-Dwith-nest`` like this
 
    .. code:: bash
@@ -1478,64 +1478,78 @@ elliptic mask by creating a class called ``EllipticMask``. Note that
 elliptical masks are already part of NEST see
 Sec. \ :ref:`3.3 <sec:conn_masks>`. That elliptical mask is defined in a
 different way than what we will do here though, so this can still be
-used as an introductory example. First, we must include another header
-file:
+used as an introductory example. First, we must include the header
+files for the ``Mask`` parent class:
 
 .. code:: c
 
    #include "mask.h"
+   #include "mask_impl.h"
 
 The ``Mask`` class has a few methods that must be overridden:
 
 .. code:: c
 
-     class EllipticMask : public nest::Mask<2>
+   class EllipticMask : public nest::Mask< 2 >
+   {
+   public:
+     EllipticMask( const DictionaryDatum& d )
+       : rx_( 1.0 )
+       , ry_( 1.0 )
      {
-     public:
-       EllipticMask(const DictionaryDatum& d):
-         rx_(1.0), ry_(1.0)
-         {
-           updateValue<double>(d, "r_x", rx_);
-           updateValue<double>(d, "r_y", ry_);
-         }
+       updateValue< double >( d, "r_x", rx_ );
+       updateValue< double >( d, "r_y", ry_ );
+     }
 
-       using Mask<2>::inside;
+     using Mask< 2 >::inside;
 
-       // returns true if point is inside the ellipse
-       bool inside(const nest::Position<2> &p) const
-         { return p[0]*p[0]/rx_/rx_ + p[1]*p[1]/ry_/ry_ <= 1.0; }
+     // returns true if point is inside the ellipse
+     bool
+     inside( const nest::Position< 2 >& p ) const
+     {
+       return p[ 0 ] * p[ 0 ] / rx_ / rx_ + p[ 1 ] * p[ 1 ] / ry_ / ry_ <= 1.0;
+     }
 
-       // returns true if the whole box is inside the ellipse
-       bool inside(const nest::Box<2> &b) const
-         {
-           nest::Position<2> p = b.lower_left;
+     // returns true if the whole box is inside the ellipse
+     bool
+     inside( const nest::Box< 2 >& b ) const
+     {
+       nest::Position< 2 > p = b.lower_left;
 
-           // Test if all corners are inside mask
-           if (not inside(p)) return false;       // (0,0)
-           p[0] = b.upper_right[0];
-           if (not inside(p)) return false;       // (0,1)
-           p[1] = b.upper_right[1];
-           if (not inside(p)) return false;       // (1,1)
-           p[0] = b.lower_left[0];
-           if (not inside(p)) return false;       // (1,0)
+       // Test if all corners are inside mask
+       if ( not inside( p ) )
+         return false; // (0,0)
+       p[ 0 ] = b.upper_right[ 0 ];
+       if ( not inside( p ) )
+         return false; // (0,1)
+       p[ 1 ] = b.upper_right[ 1 ];
+       if ( not inside( p ) )
+         return false; // (1,1)
+       p[ 0 ] = b.lower_left[ 0 ];
+       if ( not inside( p ) )
+         return false; // (1,0)
 
-           return true;
-         }
+       return true;
+     }
 
-       // returns bounding box of ellipse
-       nest::Box<2> get_bbox() const
-         {
-           nest::Position<2> ll(-rx_,-ry_);
-           nest::Position<2> ur(rx_,ry_);
-           return nest::Box<2>(ll,ur);
-         }
+     // returns bounding box of ellipse
+     nest::Box< 2 >
+     get_bbox() const
+     {
+       nest::Position< 2 > ll( -rx_, -ry_ );
+       nest::Position< 2 > ur( rx_, ry_ );
+       return nest::Box< 2 >( ll, ur );
+     }
 
-       nest::Mask<2> * clone() const
-         { return new EllipticMask(*this); }
+     nest::Mask< 2 >*
+     clone() const
+     {
+       return new EllipticMask( *this );
+     }
 
-     protected:
-       double rx_, ry_;
-     };
+   protected:
+     double rx_, ry_;
+   };
 
 The overridden methods include a test if a point is inside the mask, and
 for efficiency reasons also a test if a box is fully inside the mask. We
@@ -1543,15 +1557,13 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-.. TODO: how does registering work with mymodule in 3.0?
-
 The mask class must then be registered with the topology module, and this
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 
 .. code:: c
 
-       nest::TopologyModule::register_mask<EllipticMask>("elliptic");
+   nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
 
 After compiling and installing the module, the mask is available to be
 used in connections, e.g.
@@ -1559,9 +1571,9 @@ used in connections, e.g.
 ::
 
    nest.Install('mymodule')
-   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[1., 1.]))
+   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[1., 1.]))
    nest.Connect(l, l, {'rule': 'pairwise_bernoulli',
-                       'p': 1.0,
+                       'p': 0.5,
                        'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 
 

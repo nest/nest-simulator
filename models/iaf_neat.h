@@ -89,6 +89,7 @@ private:
   // synapses consist of ConductanceWindow and voltagedependence
   ConductanceWindow* m_cond_w = new ExpCond();
   VoltageDependence* m_v_dep = new DrivingForce(0.0);
+  AMPASyn* m_syn = new AMPASyn(0);
 
   // initialize a compartment tree
   CompTree m_c_tree;

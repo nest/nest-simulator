@@ -235,6 +235,7 @@ nest::iaf_neat::init_buffers_()
   B_.logger_.reset();   // includes resize
   Archiving_Node::clear_history();
   m_cond_w->init();
+  m_syn->init();
 }
 
 void
@@ -357,21 +358,41 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   assert( from < to );
 
   double g_syn = 0., f_v = 0.;
+  // for new synapses
+  std::pair< double, double > gf_syn(0., 0.);
+  std::vector< double > v_vals{0.};
 
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {
-    // advance the synapse
-    m_cond_w->update( lag );
+
+    /*
+    First model
+    */
+    // // advance the synapse
+    // m_cond_w->update( lag );
+    // // compute synaptic input
+    // g_syn = m_cond_w->get_cond();
+    // f_v = m_v_dep->f(get_V_m_());
+    // // integration step
+    // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + g_syn * f_v) + V_.P33_ * S_.y3_;
+
+    /*
+    Second model
+    */
+    m_syn->update( lag );
     // compute synaptic input
-    g_syn = m_cond_w->get_cond();
-    f_v = m_v_dep->f(get_V_m_());
+    v_vals[0] = get_V_m_();
+    gf_syn = m_syn->f_numstep(v_vals);
+
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
+
+
 
     // if ( S_.r_ == 0 )
     // {
       // neuron not refractory
       // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + g_syn * f_v) + V_.P33_ * S_.y3_;
 
     //   // if we have accumulated spikes from refractory period,
     //   // add and reset accumulator
@@ -433,7 +454,15 @@ nest::iaf_neat::handle( SpikeEvent& e )
   // //     is clumsy and should be improved.
   // B_.spikes_.add_value(
   //   e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
-  m_cond_w->handle(e);
+
+  /*
+  First model
+  */
+  // m_cond_w->handle(e);
+  /*
+  Second model
+  */
+  m_syn->handle(e);
 }
 
 void

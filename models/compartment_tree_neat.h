@@ -103,6 +103,9 @@ public:
                  double gl, double el);
     void init();
 
+    // getters and setters
+    std::vector< double > get_voltage();
+
     // construct the numerical integration matrix and vector
     void construct_matrix(std::vector< double > i_in);
     // solve the matrix equation for next timestep voltage

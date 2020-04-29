@@ -243,6 +243,7 @@ nest::iaf_neat::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
+  const double dt = h;
 
   // define the compartment tree
   // node 0
@@ -253,11 +254,66 @@ nest::iaf_neat::calibrate()
                     ca0, gc0, gl0, el0);
   // node 1
   int index1 = 1, parent_index1 = 0;
-  std::vector<int> child_indices1{ -1 };
+  std::vector<int> child_indices1; // empty because leaf
   double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
   m_c_tree.add_node(index1, parent_index1, child_indices1,
                     ca1, gc1, gl1, el1);
   m_c_tree.init();
+
+  /*
+  Test 1: matrix inversion
+  */
+  std::cout << std::endl;
+  std::cout << "--- Testing matrix inversion ---" << std::endl;
+  // input current
+  std::vector< double > i_in{.1, .2};
+  // matrix
+  double a00 = ca0/dt + gl0/2. + gc1/2.;
+  double a01 = -gc1/2.;
+  double a10 = -gc1/2.;
+  double a11 = ca1/dt + gl1/2. + gc1/2.;
+  // vector
+  double b0 = ca0/dt * el0 - gl0 * (el0/2. - el0) + gc1 * (el0 - el1)/2. + i_in[0];
+  double b1 = ca1/dt * el1 - gl1 * (el1/2. - el1) + gc1 * (el1 - el0)/2. + i_in[1];
+  // hand-crafted solution
+  double det = a00 * a11 - a10 * a01;
+  double v0 = (b0 * a11 - b1 * a01) / det;
+  double v1 = (b1 * a00 - b0 * a10) / det;
+  // compartment tree solution
+  m_c_tree.construct_matrix(i_in);
+  m_c_tree.solve_matrix();
+  std::vector< double > v_sol = m_c_tree.get_voltage();
+  // print test result
+  std::cout << "v_sol_manual = (" << v0 << ", " << v1 << ")" << std::endl;
+  std::cout << "v_sol_comptr = (" << v_sol[0] << ", " << v_sol[1] << ")" << std::endl;
+
+  /*
+  Test 2: attenuation
+  */
+  std::cout << std::endl;
+  std::cout << "--- Testing attenuation simulation ---" << std::endl;
+  // attenuation 1->0
+  m_c_tree.init();
+  v0 = el0; v1 = el1;
+  i_in[0] = 0., i_in[1] = 0.2;
+  for(int ii = 0; ii < 10000; ii++){
+    m_c_tree.construct_matrix(i_in);
+    m_c_tree.solve_matrix();
+
+  }
+  v_sol = m_c_tree.get_voltage();
+  std::cout << "attenuation 1->0 manual = " << gc1 / (gl0 + gc1) << std::endl;
+  std::cout << "attenuation 1->0 comptr = " << (v_sol[0] - el0) / (v_sol[1] - el1) << std::endl;
+  // attenuation 0->1
+  m_c_tree.init();
+  i_in[0] = 0.15, i_in[1] = 0.;
+  for(int ii = 0; ii < 10000; ii++){
+    m_c_tree.construct_matrix(i_in);
+    m_c_tree.solve_matrix();
+  }
+  v_sol = m_c_tree.get_voltage();
+  std::cout << "attenuation 0->1 manual = " << gc1 / (gl1 + gc1) << std::endl;
+  std::cout << "attenuation 0->1 comptr = " << (v_sol[1] - el1) / (v_sol[0] - el0) << std::endl;
 
 
   V_.P33_ = std::exp( -h / P_.tau_m_ );

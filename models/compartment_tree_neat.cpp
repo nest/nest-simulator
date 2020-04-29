@@ -33,7 +33,7 @@ inline double nest::CompNode::calc_v(double v_in){
     // reset recursion variables
     m_xx = 0.0; m_yy = 0.0;
     // compute voltage
-    m_v = m_ff - v_in * m_hh / m_gg;
+    m_v = (m_ff - v_in * m_hh) / m_gg;
     return m_v;
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +56,7 @@ void nest::CompTree::add_node(
     m_nodes.push_back(node);
 };
 
+// initialization functions
 void nest::CompTree::init(){
     m_dt = Time::get_resolution().get_ms();
 
@@ -68,12 +69,11 @@ void nest::CompTree::init(){
     set_leafs();
     set_root();
 }
-
 void nest::CompTree::set_leafs(){
     m_leafs.clear();
     for(std::vector< CompNode >::iterator node_it = m_nodes.begin();
         node_it != m_nodes.end(); node_it++){
-        if((*node_it).m_child_indices[0] == -1){
+        if(int((*node_it).m_child_indices.size()) == 0){
             m_leafs.push_back(&(*node_it));
         }
     }
@@ -90,6 +90,16 @@ void nest::CompTree::set_root(){
     assert(found == 1);
 };
 
+// getters and setters
+std::vector< double > nest::CompTree::get_voltage(){
+    std::vector< double > v_comp;
+    for(std::vector< CompNode >::iterator node_it = m_nodes.begin();
+        node_it != m_nodes.end(); node_it++){
+        v_comp.push_back(node_it->m_v);
+    }
+    return v_comp;
+}
+
 // construct the matrix equation to be solved
 void nest::CompTree::construct_matrix(std::vector< double > i_in){
     assert(i_in.size() == m_nodes.size());
@@ -103,8 +113,10 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
 
         // matrix diagonal element
         m_nodes[ii].m_gg = m_nodes[ii].m_ca / dt +
-                           m_nodes[ii].m_gl / 2. +
-                           m_nodes[ii].m_gc / 2.;
+                           m_nodes[ii].m_gl / 2.;
+        if(p_ind >= 0){
+            m_nodes[ii].m_gg += m_nodes[ii].m_gc / 2.;
+        }
         for(std::vector< int >:: iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
             m_nodes[ii].m_gg += m_nodes[*jj].m_gc / 2.;
         }
@@ -112,11 +124,14 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
         m_nodes[ii].m_hh = -m_nodes[ii].m_gc / 2.;
 
         // right hand side
-        m_nodes[ii].m_ff = m_nodes[ii].m_ca / dt * m_nodes[ii].m_v -
-                           m_nodes[ii].m_gl * (m_nodes[ii].m_v / 2. - m_nodes[ii].m_el) -
-                           m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[p_ind].m_v) / 2.;
+        m_nodes[ii].m_ff = i_in[ii] +
+                           m_nodes[ii].m_ca / dt * m_nodes[ii].m_v -
+                           m_nodes[ii].m_gl * (m_nodes[ii].m_v / 2. - m_nodes[ii].m_el);
+        if(p_ind >= 0){
+            m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[p_ind].m_v) / 2.;
+        }
         for(std::vector< int >:: iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
-            m_nodes[ii].m_ff += m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[*jj].m_v) / 2.;
+            m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[*jj].m_v) / 2.;
         }
     } // for
 };

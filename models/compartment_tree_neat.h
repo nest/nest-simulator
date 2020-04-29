@@ -108,6 +108,7 @@ public:
 
     // construct the numerical integration matrix and vector
     void construct_matrix(std::vector< double > i_in);
+    void add_synapse_contribution(int comp_ind, std::pair< double, double > gf_syn);
     // solve the matrix equation for next timestep voltage
     void solve_matrix();
 

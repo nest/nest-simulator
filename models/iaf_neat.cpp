@@ -245,7 +245,10 @@ nest::iaf_neat::calibrate()
   const double h = Time::get_resolution().get_ms();
   const double dt = h;
 
-  // define the compartment tree
+  // Tests added here //////////////////////////////////////////////////////////
+  /*
+  Tree structure for testing
+  */
   // node 0
   int index0 = 0, parent_index0 = -1;
   std::vector<int> child_indices0{ 1 };
@@ -314,6 +317,7 @@ nest::iaf_neat::calibrate()
   v_sol = m_c_tree.get_voltage();
   std::cout << "attenuation 0->1 manual = " << gc1 / (gl1 + gc1) << std::endl;
   std::cout << "attenuation 0->1 comptr = " << (v_sol[1] - el1) / (v_sol[0] - el0) << std::endl;
+  //////////////////////////////////////////////////////////////////////////////
 
 
   V_.P33_ = std::exp( -h / P_.tau_m_ );

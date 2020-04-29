@@ -117,7 +117,7 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
         if(p_ind >= 0){
             m_nodes[ii].m_gg += m_nodes[ii].m_gc / 2.;
         }
-        for(std::vector< int >:: iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
+        for(std::vector< int >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
             m_nodes[ii].m_gg += m_nodes[*jj].m_gc / 2.;
         }
         // matrix off diagonal element
@@ -130,11 +130,15 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
         if(p_ind >= 0){
             m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[p_ind].m_v) / 2.;
         }
-        for(std::vector< int >:: iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
+        for(std::vector< int >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
             m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[*jj].m_v) / 2.;
         }
     } // for
 };
+void nest::CompTree::add_synapse_contribution(int comp_ind, std::pair< double, double > gf_syn){
+  m_nodes[comp_ind].m_gg += gf_syn.first;
+  m_nodes[comp_ind].m_ff += gf_syn.second;
+}
 
 // solve matrix with O(n) algorithm
 void nest::CompTree::solve_matrix(){

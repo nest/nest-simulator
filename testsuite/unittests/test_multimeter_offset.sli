@@ -318,7 +318,7 @@ assert_or_die
 
   /resolution 0.1 def
 
-  /reference_solution [offset interval add initsimtime simtime add interval] Range def
+  /reference_solution [offset interval add interval add initsimtime simtime add interval] Range def
 
   ResetKernel
 

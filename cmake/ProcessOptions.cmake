@@ -221,6 +221,17 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "@loader_path/../../../nest"
           PARENT_SCOPE )
     else ()
+      # set run-time search path (RPATH) so that dynamic libraries in ``lib/nest`` can be located
+
+      # Note: "$ORIGIN" is not a CMake string, but a special keyword for the dynamic loader. It refers to the path in
+      # which the object is located, e.g. ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest and sli executables,
+      # ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all dynamic libraries except PyNEST (libnestkernel.so, etc.), and
+      # something like ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH
+      # is relative to this origin, so the binary ``bin/nest`` can find the files in the relative location
+      # ``../lib/nest``, and similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities
+      # on all generated objects.
+      #
+      # PyNEST can only act as an entry point; it does not need to be included in the other objects' RPATH itself.
       set( CMAKE_INSTALL_RPATH
           # for binaries
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"

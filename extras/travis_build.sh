@@ -281,9 +281,11 @@ make install
 echo "MSGBLD0280: Make install completed."
 
 echo "readelf"
-readelf -d /home/travis/build/nest/nest-simulator/result/nest
+readelf -d /home/travis/build/nest/nest-simulator/result/bin/nest
+readelf -d /home/travis/build/nest/nest-simulator/result/lib/nest/libnestkernel.so
+
 echo "ldd"
-ldd /home/travis/build/nest/nest-simulator/result/nest
+ldd /home/travis/build/nest/nest-simulator/result/bin/nest
 
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

@@ -256,8 +256,15 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
     str
        formatted pretty index.
     """
-    def mktitle(t, ul):
-        return t+'\n'+ul*len(t)+'\n'
+    def mktitle(t, ul, link=None):
+        text = t
+        if t != t.upper():
+            text = t.title()  # title-case any tag that is not an acronym
+        title = ':doc:`{text} <{filename}>`'.format(
+            text = text,
+            filename = link or "index_"+t)
+        text = title+'\n'+ul*len(title)+'\n'
+        return text
 
     def mkitem(t):
         return "* :doc:`%s`" % os.path.splitext(t)[0]
@@ -278,8 +285,6 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
         else:
             title = " & ".join(tags)
         if title and not len(hierarchy) == 1:   # not print title if already selected by current_tags
-            if title != title.upper():
-                title = title.title()  # title-case any tag that is not an acronym
             output.append(mktitle(title, underlines[0]))
         if isinstance(items, dict):
             output.append(rst_index(items, current_tags, underlines[1:], top=False))

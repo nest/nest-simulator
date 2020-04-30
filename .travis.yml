@@ -28,12 +28,13 @@ language: python
 sudo: required
 dist: bionic
 
+env:
+  global:
+    - MAKEFLAGS="-j 2"
 stages:
    - Staticcheck
    - MPI-Threading-Python
-   - Python-Full-build
-   - Clang7
-   - OsX
+   - Python-Full-build-Clang7-OsX
 
 # list of build stages to run. Stages with the same name get run in parallel.
 

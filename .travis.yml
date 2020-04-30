@@ -137,7 +137,7 @@ before_install:
          #  pyenv install --list
          #  pyenv global 3.6.7
          #fi
-         if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ] then
+         if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ]; then
            pyenv install --list
            pyenv global 3.6.7
          fi

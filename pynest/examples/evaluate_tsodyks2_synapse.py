@@ -92,12 +92,11 @@ t2_params = t1_params.copy()  # for tsodyks2_synapse
 
 nest.SetDefaults("tsodyks2_synapse", t1_params)
 nest.SetDefaults("tsodyks_synapse", t2_params)
-nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3.})
 
 ###############################################################################
 # Create three neurons.
 
-neuron = nest.Create("iaf_psc_exp", 3)
+neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 
 ###############################################################################
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two

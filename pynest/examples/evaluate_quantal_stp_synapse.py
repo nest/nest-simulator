@@ -110,13 +110,12 @@ t2_params['weight'] = 1. / n_syn
 
 nest.SetDefaults("tsodyks2_synapse", t1_params)
 nest.SetDefaults("quantal_stp_synapse", t2_params)
-nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3.})
 
 ###############################################################################
 # We create three different neurons.
 # Neuron one is the sender, the two other neurons receive the synapses.
 
-neuron = nest.Create("iaf_psc_exp", 3)
+neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 
 ###############################################################################
 # The connection from neuron 1 to neuron 2 is a deterministic synapse.

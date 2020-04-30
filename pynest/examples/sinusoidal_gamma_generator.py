@@ -65,14 +65,15 @@ nest.SetKernelStatus({'resolution': 0.01})
 # (``spike_detector``) and connect them to the generators using ``Connect``.
 
 
-g = nest.Create('sinusoidal_gamma_generator', n=2,
+num_nodes = 2
+g = nest.Create('sinusoidal_gamma_generator', n=num_nodes,
                 params=[{'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 2.0},
                         {'rate': 10000.0, 'amplitude': 5000.0,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
-m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_detector', 2)
+m = nest.Create('multimeter', num_nodes, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_detector', num_nodes)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -81,27 +82,27 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_detector`` using
-# ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
+# After simulating, the spikes are extracted from the ``spike_detector`` and
+# plots are created with panels for the PST and ISI histograms.
 
 colors = ['b', 'g']
 
-for j in range(2):
+for j in range(num_nodes):
 
     ev = m[j].events
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus(s[j])[0]['events']['times']
+    spike_times = s[j].events['times']
     plt.subplot(221)
-    h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
+    h, e = np.histogram(spike_times, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])
     plt.step(e[:-1], h * 1000 / 5., color=colors[j], where='post')
     plt.title('PST histogram and firing rates')
     plt.ylabel('Spikes per second')
 
     plt.subplot(223)
-    plt.hist(np.diff(sp), bins=np.arange(0., 0.505, 0.01),
+    plt.hist(np.diff(spike_times), bins=np.arange(0., 0.505, 0.01),
              histtype='step', color=colors[j])
     plt.title('ISI histogram')
 

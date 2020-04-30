@@ -246,9 +246,9 @@ class StructralPlasticityExample:
 
 ####################################################################################
 # In order to save the amount of average calcium concentration in each
-# population through time we create the function ``record_ca``. Here we use the
-# ``GetStatus`` function to retrieve the value of `Ca` for every neuron in the
-# network and then store the average.
+# population through time we create the function ``record_ca``. Here we use
+# the retrieve the value of `Ca` for every neuron in the network and then
+# store the average.
 
     def record_ca(self):
         ca_e = self.nodes_e.Ca,  # Calcium concentration
@@ -260,11 +260,10 @@ class StructralPlasticityExample:
 
 ####################################################################################
 # In order to save the state of the connectivity in the network through time
-# we create the function ``record_connectivity``. Here we use the ``GetStatus``
-# function to retrieve the number of connected pre-synaptic elements of each
-# neuron. The total amount of excitatory connections is equal to the total
-# amount of connected excitatory pre-synaptic elements. The same applies for
-# inhibitory connections.
+# we create the function ``record_connectivity``. Here we retrieve the number
+# of connected pre-synaptic elements of each neuron. The total amount of
+# excitatory connections is equal to the total amount of connected excitatory
+# pre-synaptic elements. The same applies for inhibitory connections.
 
     def record_connectivity(self):
         syn_elems_e = self.nodes_e.synaptic_elements

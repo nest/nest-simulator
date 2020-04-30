@@ -69,7 +69,8 @@ nest.ResetKernel()
 h = 0.1             # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
-tau_max = 100.0
+tau_max = 100.0  # ms correlation window
+t_bin = 10.0  # ms bin size
 pc = 0.5
 nu = 100.0
 
@@ -102,16 +103,10 @@ nest.Connect(pn2, cd)
 
 nest.Simulate(T)
 
-n_events = cd.get('n_events')
-n1 = n_events[0]
-n2 = n_events[1]
+n_events_1, n_events_2 = cd.n_events
 
-lmbd1 = (n1 / (T - tau_max)) * 1000.0
-lmbd2 = (n2 / (T - tau_max)) * 1000.0
-
-h = 0.1
-tau_max = 100.0  # ms correlation window
-t_bin = 10.0  # ms bin size
+lmbd1 = (n_events_1 / (T - tau_max)) * 1000.0
+lmbd2 = (n_events_2 / (T - tau_max)) * 1000.0
 
 spikes = sd.get('events', 'senders')
 

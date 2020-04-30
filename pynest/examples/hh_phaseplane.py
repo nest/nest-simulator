@@ -67,8 +67,8 @@ neuron = nest.Create('hh_psc_alpha')
 # Numerically obtain equilibrium state
 nest.Simulate(1000)
 
-m_eq = neuron[0].Act_m
-h_eq = neuron[0].Inact_h
+m_eq = neuron.Act_m
+h_eq = neuron.Inact_h
 
 neuron.I_e = amplitude  # Apply external current
 
@@ -87,15 +87,15 @@ for i, V in enumerate(V_vec):
         # Set V_m and n
         neuron.set(V_m=V, Act_n=n, Act_m=m_eq, Inact_h=h_eq)
         # Find state
-        V_m = neuron[0].V_m
-        Act_n = neuron[0].Act_n
+        V_m = neuron.V_m
+        Act_n = neuron.Act_n
 
         # Simulate a short while
         nest.Simulate(dt)
 
         # Find difference between new state and old state
-        V_m_new = neuron[0].V_m - V
-        Act_n_new = neuron[0].Act_n - n
+        V_m_new = neuron.V_m - V
+        Act_n_new = neuron.Act_n - n
 
         # Store in vector for later analysis
         V_matrix[j, i] = abs(V_m_new)
@@ -120,16 +120,16 @@ print('AP-trajectory')
 # ap will contain the trace of a single action potential as one possible
 # numerical solution in the vector field
 ap = np.zeros([1000, 2])
-for i in range(1, 1001):
+for i in range(1000):
     # Find state
-    V_m = neuron[0].V_m
-    Act_n = neuron[0].Act_n
+    V_m = neuron.V_m
+    Act_n = neuron.Act_n
 
     if i % 10 == 0:
         # Write new state next to old state
         print('Vm: \t', V_m)
         print('Act_n:', Act_n)
-    ap[i - 1] = np.array([V_m, Act_n])
+    ap[i] = np.array([V_m, Act_n])
 
     # Simulate again
     neuron.set(Act_m=m_eq, Inact_h=h_eq)

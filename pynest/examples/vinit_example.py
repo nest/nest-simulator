@@ -71,8 +71,7 @@ for vinit in numpy.arange(-100, -50, 10, float):
     nest.ResetKernel()
 
     cbn = nest.Create("iaf_cond_exp_sfa_rr")
-
-    nest.SetStatus(cbn, "V_m", vinit)
+    cbn.V_m = vinit
 
     voltmeter = nest.Create("voltmeter")
     nest.Connect(voltmeter, cbn)

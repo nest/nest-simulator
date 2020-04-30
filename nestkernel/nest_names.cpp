@@ -264,6 +264,7 @@ const Name message_times( "messages_times" );
 const Name messages( "messages" );
 const Name min( "min" );
 const Name min_delay( "min_delay" );
+const Name min_rate( "min_rate" );
 const Name model( "model" );
 const Name mother_rng( "mother_rng" );
 const Name mother_seed( "mother_seed" );

@@ -169,6 +169,9 @@ private:
     /** Mean input.*/
     double mu_;
 
+    /** Minimum rate.*/
+    double min_rate_;
+
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.

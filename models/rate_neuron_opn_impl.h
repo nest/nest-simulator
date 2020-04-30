@@ -114,7 +114,7 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   if ( updateValueParam< double >( d, names::mean, mu_, node ) )
   {
     LOG( M_WARNING,
-      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
   }
@@ -122,7 +122,7 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   if ( updateValueParam< double >( d, names::std, sigma_, node ) )
   {
     LOG( M_WARNING,
-      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );
   }

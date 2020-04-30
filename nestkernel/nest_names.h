@@ -285,6 +285,7 @@ extern const Name message_times;
 extern const Name messages;
 extern const Name min;
 extern const Name min_delay;
+extern const Name min_rate;
 extern const Name model;
 extern const Name mother_rng;
 extern const Name mother_seed;

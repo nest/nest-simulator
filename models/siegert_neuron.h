@@ -47,8 +47,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-siegert_neuron - model for mean-field analysis of spiking networks
-##################################################################
+Short description
++++++++++++++++++
+
+model for mean-field analysis of spiking networks
 
 Description
 +++++++++++

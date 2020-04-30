@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, spike-timing-dependent-plasticity
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 Short description
 +++++++++++++++++

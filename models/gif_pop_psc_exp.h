@@ -40,8 +40,10 @@ class Network;
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-gif_pop_psc_exp - Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and adaptation
-############################################################################################################################
+Short description
++++++++++++++++++
+
+Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and adaptation
 
 Description
 +++++++++++

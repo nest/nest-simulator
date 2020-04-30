@@ -60,8 +60,10 @@ extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, 
 
 /* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, Clopath plasticity, current-based
 
-aeif_psc_delta_clopath - Adaptive exponential integrate-and-fire neuron
-#######################################################################
+Short description
++++++++++++++++++
+
+Adaptive exponential integrate-and-fire neuron
 
 Description
 +++++++++++

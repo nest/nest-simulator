@@ -50,8 +50,10 @@ extern "C" int gif_cond_exp_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-gif_cond_exp - Conductance-based generalized integrate-and-fire neuron model
-############################################################################
+Short description
++++++++++++++++++
+
+Conductance-based generalized integrate-and-fire neuron model
 
 Description
 +++++++++++

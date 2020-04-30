@@ -28,8 +28,13 @@
 
 /* BeginUserDocs: recording backend
 
+Short description
++++++++++++++++++
+
 Write data to the terminal
-##########################
+
+Description
++++++++++++
 
 When initially conceiving and debugging simulations, it can be useful
 to check recordings in a more ad hoc fashion. The recording backend

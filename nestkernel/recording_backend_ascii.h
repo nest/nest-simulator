@@ -32,8 +32,13 @@
 
 .. _ascii_backend:
 
+Short description
++++++++++++++++++
+
 Write data to plain text files
-##############################
+
+Description
++++++++++++
 
 The `ascii` recording backend writes collected data persistently to a
 plain text ASCII file. It can be used for small to medium sized

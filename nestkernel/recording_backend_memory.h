@@ -28,8 +28,13 @@
 
 /* BeginUserDocs: recording backend
 
+Short description
++++++++++++++++++
+
 Store data in main memory
-#########################
+
+Description
++++++++++++
 
 When a recording device sends data to the ``memory`` backend, it is
 stored internally in efficient vectors. These vectors are made available to the

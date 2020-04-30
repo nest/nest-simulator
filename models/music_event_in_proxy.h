@@ -40,7 +40,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: devices, MUSIC
+/* BeginUserDocs: device, MUSIC, spike
 
 Short description
 +++++++++++++++++

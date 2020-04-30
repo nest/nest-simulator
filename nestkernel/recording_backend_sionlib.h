@@ -33,8 +33,13 @@
 
 .. _sionlib_backend:
 
+Short description
++++++++++++++++++
+
 Store data to an efficient binary format
-########################################
+
+Description
++++++++++++
 
 The `sionlib` recording backend writes collected data persistently to
 a binary container file (or to a rather small set of such files). This

@@ -36,8 +36,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, rate
 
-lin_rate - Linear rate model
-############################
+Short description
++++++++++++++++++
+
+Linear rate model
 
 Description
 +++++++++++

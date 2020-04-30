@@ -38,10 +38,12 @@
 #include "dictutils.h"
 #include "name.h"
 
-/* BeginUserDocs: device, recorder
+/* BeginUserDocs: device, recorder, continuous
 
-multimeter - Sampling continuous quantities from neurons
-########################################################
+Short description
++++++++++++++++++
+
+Sampling continuous quantities from neurons
 
 Device name
 +++++++++++

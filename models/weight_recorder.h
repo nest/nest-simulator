@@ -34,10 +34,12 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginUserDocs: device, recorder
+/* BeginUserDocs: device, recorder, synapse
 
-weight_recorder - Recording weights from synapses
-#################################################
+Short description
++++++++++++++++++
+
+Recording weights from synapses
 
 Description
 +++++++++++

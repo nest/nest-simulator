@@ -199,7 +199,7 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="from_cpp/"
+        outdir="userdocs/"
     )
 
 nitpick_ignore = [('py:class', 'None'),

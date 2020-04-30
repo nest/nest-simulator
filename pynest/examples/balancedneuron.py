@@ -84,7 +84,7 @@ voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
 
 ###################################################################################
-# Fourth, the ``poisson_generator`` (`noise`) is configured using ``set``.
+# Fourth, the ``poisson_generator`` (`noise`) is configured.
 # Note that we need not set parameters for the neuron, the spike detector, and
 # the voltmeter, since they have satisfactory defaults.
 

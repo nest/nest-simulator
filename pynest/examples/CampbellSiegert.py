@@ -209,5 +209,4 @@ print('mean membrane potential (actual / calculated): {0} / {1}'
 print('variance (actual / calculated): {0} / {1}'
       .format(np.var(v_free[Nskip:]), sigma2 * 1e6))
 print('firing rate (actual / calculated): {0} / {1}'
-      .format(nest.GetStatus(sd, 'n_events')[0] /
-              (n_neurons * simtime * ms), r))
+      .format(sd.n_events / (n_neurons * simtime * ms), r))

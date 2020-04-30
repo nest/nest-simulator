@@ -25,9 +25,6 @@
 This script simulates an excitatory and an inhibitory population on
 the basis of the network used in [1]_.
 
-In contrast to ``brunel-alpha-numpy.py``, this variant uses NEST's builtin
-connection routines to draw the random connections instead of NumPy.
-
 When connecting the network customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
 detectors the average firing rates of the neurons in the populations
@@ -172,24 +169,15 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model ``iaf_psc_alpha`` and ``poisson_generator`` using
-# ``SetDefaults``. This function expects the model to be the inserted as a
-# string and the parameter to be specified in a dictionary. All instances of
-# theses models created after this point will have the properties specified
-# in the dictionary by default.
-
-nest.SetDefaults("iaf_psc_alpha", neuron_params)
-nest.SetDefaults("poisson_generator", {"rate": p_rate})
-
-###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
 # as the poisson generator and two spike detectors. The spike detectors will
-# later be used to record excitatory and inhibitory spikes.
+# later be used to record excitatory and inhibitory spikes. Properties of the
+# nodes are inserted via ``param``, which expects a dictinary.
 
-nodes_ex = nest.Create("iaf_psc_alpha", NE)
-nodes_in = nest.Create("iaf_psc_alpha", NI)
-noise = nest.Create("poisson_generator")
+nodes_ex = nest.Create("iaf_psc_alpha", NE, param=neuron_params)
+nodes_in = nest.Create("iaf_psc_alpha", NI, param=neuron_params)
+noise = nest.Create("poisson_generator", param={"rate": p_rate})
 espikes = nest.Create("spike_detector")
 ispikes = nest.Create("spike_detector")
 

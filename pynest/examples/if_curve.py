@@ -84,12 +84,9 @@ class IF_curve():
         nest.SetKernelStatus({'local_num_threads': self.n_threads})
 
         #######################################################################
-        # We set the default parameters of the neuron model to those
-        # defined above and create neurons and devices.
+        # We create neurons and devices with specified parameters.
 
-        if self.params:
-            nest.SetDefaults(self.model, self.params)
-        self.neuron = nest.Create(self.model, self.n_neurons)
+        self.neuron = nest.Create(self.model, self.n_neurons, self.params if self.params else {})
         self.noise = nest.Create('noise_generator')
         self.spike_detector = nest.Create('spike_detector')
 

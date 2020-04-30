@@ -124,17 +124,12 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
-
-nest.SetDefaults("siegert_neuron", neuron_params)
-
-###############################################################################
 # Creation of the nodes using ``Create``. One rate neuron represents the
 # excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 # population assuming homogeneity of the populations.
 
-siegert_ex = nest.Create("siegert_neuron", 1)
-siegert_in = nest.Create("siegert_neuron", 1)
+siegert_ex = nest.Create("siegert_neuron", params=neuron_params)
+siegert_in = nest.Create("siegert_neuron", params=neuron_params)
 
 ###############################################################################
 # The Poisson drive in the SLIFN is replaced by a driving rate neuron,
@@ -142,7 +137,7 @@ siegert_in = nest.Create("siegert_neuron", 1)
 # neuron is controlled by setting ``mean`` to the rate of the corresponding
 # poisson generator in the SLIFN.
 
-siegert_drive = nest.Create('siegert_neuron', 1, params={'mean': p_rate})
+siegert_drive = nest.Create('siegert_neuron', params={'mean': p_rate})
 
 ###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter

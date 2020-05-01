@@ -35,9 +35,9 @@ private:
 
 public:
     // tree structure indices
-    int m_index;
-    int m_parent_index; // negative value means node is root
-    std::vector< int > m_child_indices;
+    long m_index;
+    long m_parent_index; // negative value means node is root
+    std::vector< long > m_child_indices;
     // associated location
     int m_loc_index;
     // voltage variable
@@ -53,7 +53,7 @@ public:
     int m_n_passed = 0.;
 
     // constructor, destructor
-    CompNode(int node_index, int parent_index, std::vector< int > child_indices,
+    CompNode(long node_index, long parent_index, std::vector< long > child_indices,
             double ca, double gc,
             double gl, double el);
     ~CompNode(){};
@@ -98,7 +98,7 @@ public:
     ~CompTree(){};
 
     // initialization functions for tree structure
-    void add_node(int node_index, int parent_index, std::vector< int > child_indices,
+    void add_node(long node_index, long parent_index, std::vector< long > child_indices,
                  double ca, double gc,
                  double gl, double el);
     void init();

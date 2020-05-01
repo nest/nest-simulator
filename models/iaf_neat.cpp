@@ -250,19 +250,11 @@ nest::iaf_neat::calibrate()
   /*
   Tree structure for testing
   */
-  // node 0
-  int index0 = 0, parent_index0 = -1;
-  std::vector<int> child_indices0{ 1 };
-  double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
-  m_c_tree.add_node(index0, parent_index0, child_indices0,
-                    ca0, gc0, gl0, el0);
-  // node 1
-  int index1 = 1, parent_index1 = 0;
-  std::vector<int> child_indices1; // empty because leaf
-  double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
-  m_c_tree.add_node(index1, parent_index1, child_indices1,
-                    ca1, gc1, gl1, el1);
   m_c_tree.init();
+
+  // variables needed for manual computations below
+  const double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
+  const double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
 
   /*
   Test 1: matrix inversion

@@ -35,6 +35,7 @@ stages:
    - Staticcheck
    - MPI-Threading-GSL-Python
    - Python-Full-build-Clang7-OsX
+   - ARM64
 
 # list of build stages to run. Stages with the same name get run in parallel.
 
@@ -52,7 +53,7 @@ jobs:
     - stage: MPI-Threading-GSL-Python
       env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
     - stage: MPI-Threading-GSL-Python
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=0 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Only Python
+      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Only Python
     - stage: Python-Full-build-Clang7-OsX
       python: 3.6.7
       env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
@@ -64,7 +65,7 @@ jobs:
       osx_image: xcode10.3 # Python 3.7.5 running on macOS 10.14.4
       language: shell      # language 'python' results in errors on macOS
       env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
-
+    
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:

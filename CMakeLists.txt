@@ -194,6 +194,7 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 add_custom_target( update_environment
   COMMAND bash -c "source ${PROJECT_BINARY_DIR}/extras/nest_vars.sh"
+  COMMENT "Preparing environment..."
 )
 
 if ( HAVE_PYTHON )
@@ -213,7 +214,7 @@ else ()
   )
 endif ()
 
-add_dependencies(installcheck update_environment)
+add_dependencies( installcheck update_environment )
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

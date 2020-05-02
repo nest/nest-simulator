@@ -192,12 +192,14 @@ enable_testing()
 set( TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log )
 file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
+add_custom_target( update_environment
+  COMMAND bash -c "source ${CMAKE_INSTALL_FULL_DATADIR}/bin/nest_vars.sh"
+)
+
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       PYTHON="${PYTHON}"
-      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
@@ -205,12 +207,13 @@ if ( HAVE_PYTHON )
 else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
+
+add_dependencies(installcheck update_environment)
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

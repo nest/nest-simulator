@@ -106,7 +106,11 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
     ./extras/install_csa-libneurosim.sh
-    export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    if [[ $OSTYPE" == "darwin"* ]]; then
+        export DYLD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+    else
+        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    fi
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
@@ -115,7 +119,7 @@ if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
- 
+
 NEST_VPATH=build
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then

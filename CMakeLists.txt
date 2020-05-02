@@ -193,7 +193,7 @@ set( TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log )
 file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 add_custom_target( update_environment
-  COMMAND bash -c "source ${CMAKE_INSTALL_FULL_DATADIR}/bin/nest_vars.sh"
+  COMMAND bash -c "source ${PROJECT_BINARY_DIR}/extras/nest_vars.sh"
 )
 
 if ( HAVE_PYTHON )

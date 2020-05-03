@@ -79,8 +79,9 @@ transformers.
  g                 real    Gain parameter
  mu                real    Mean of the Gaussian gain function
  sigma             real    Standard deviation of Gaussian gain function
+ rectify_rate      real    Rectfying rate
  linear_summation  boolean Specifies type of non-linearity (see above)
- rectify_output    boolean Switch to restrict rate to values >= 0
+ rectify_output    boolean Switch to restrict rate to values >= rectify_rate
 =================  ======= ==============================================
 \endverbatim
 

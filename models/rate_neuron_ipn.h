@@ -170,7 +170,7 @@ private:
     double mu_;
 
     /** Minimum rate.*/
-    double min_rate_;
+    double rectify_rate_;
 
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.

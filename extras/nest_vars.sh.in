@@ -2,7 +2,7 @@
 
 # NEST is installed here. When you relocate NEST, change these variables.
 NEST_LIB_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/nest/"
-NEST_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@PROJECT_BINARY_DIR/"
+NEST_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_FULL_BINDIR/"
 
 # The path in which NEST dynamic libraries are found.
 # Works also if $(DY)LD_LIBRARY_PATH is undefined.

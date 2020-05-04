@@ -9,7 +9,7 @@ with custom applications that also use the MUSIC interface.
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 Setup of System
 -----------------

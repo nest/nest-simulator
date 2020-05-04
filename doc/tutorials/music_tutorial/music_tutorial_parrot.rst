@@ -63,7 +63,6 @@ simulation, is so common that it’s worth warning about this.
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
-
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 

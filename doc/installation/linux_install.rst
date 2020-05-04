@@ -122,7 +122,7 @@ Environment variables
 
 A number of environment variables are used to specify where the components of a NEST installation are found. In particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that your operating system can find the NEST binaries, its libraries and custom extension modules.
 
-For your convenience, a shell script setting all required environment variables is provided in ``</install/path/>bin/nest_vars.sh``. Setting the environment variables in your active shell session requires sourcing the script:
+For your convenience, a shell script setting all required environment variables is provided in ``/install/path/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires sourcing the script:
 
 .. code-block:: sh
 

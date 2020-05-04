@@ -228,7 +228,7 @@ nest::RNGManager::create_rngs_()
 
       if ( not rng )
       {
-        throw KernelException("Error initializing knuthlfg");
+        throw KernelException( "Error initializing knuthlfg" );
       }
 
       rng_.push_back( rng );

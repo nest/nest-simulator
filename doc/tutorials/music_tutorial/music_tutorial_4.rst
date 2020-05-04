@@ -104,7 +104,5 @@ C++.
 
 As the ``pymusic`` bindings are still quite new the
 documentation is still lagging behind. This quick introduction should
-nevertheless bee enough for you to get going with the bindings. And
-should you need further help, the authors are only an email away.
-
+nevertheless be enough for you to get going with the bindings. Feel free to ask our `Mailing List <https://www.nest-initiative.org/mailinglist/>`_  if you need further help.
 

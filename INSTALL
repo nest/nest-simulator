@@ -25,7 +25,7 @@ Choice of CMake Version
 
 We recommend to use `cmake` v3.4 or later, even though installing NEST with
 `cmake` v2.8.12 will in most cases work properly.
-For more detailed information please see below: `Python3 Binding (PyNEST)`
+For more detailed information please see below: `Python Binding (PyNEST)`
 
 Choice of compiler
 ==================
@@ -84,8 +84,7 @@ Set default libraries:
                                                  ltdl, set install path. NEST uses the
                                                  ltdl for dynamic loading of external
                                                  user modules. [default=ON]
-    -Dwith-python=[OFF|ON|2|3]                   Build PyNEST. To set a specific Python
-                                                 version, set 2 or 3. [default=ON]
+    -Dwith-python=[OFF|ON]                       Build PyNEST. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
                                                  If OFF, PyNEST has to be build from
                                                  a pre-cythonized pynestkernel.pyx.
@@ -147,14 +146,10 @@ are impatient, use
 
 as an argument to `cmake`.
 
-Python3 Binding (PyNEST)
-=========================
+Python Binding (PyNEST)
+=======================
 
-To force a Python3-binding in a mixed Python2/3 environment pass
-
-    -Dwith-python=3
-
-as an argument to `cmake`.
+Note that since NEST 3.0, support for Python 2 has been dropped. Please use Python 3 instead.
 
 `cmake` usually autodetects your Python installation.
 In some cases `cmake` might not be able to localize the Python interpreter
@@ -231,22 +226,11 @@ Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
     cythonize pynestkernel.pyx
 
 Copy the generated file `pynestkernel.cpp` into `</path/to/NEST/src>/pynest` on
-BlueGene/Q and point `-Dwith-python=<...>` to a valid python version for cross
-compilation:
-
-    -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython
-or (much better)
-    -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3
+BlueGene/Q.
 
 CMake <3.4 is buggy about finding the matching libraries (for many years).
 Thus, you also have to specify `PYTHON_LIBRARY` and `PYTHON_INCLUDE_DIR`
 if they are not found OR the incorrect libraries are found, e.g.:
-
-```
--DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0
--DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7
-```
-or (much better)
 ```
 -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
 -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m
@@ -262,14 +246,13 @@ cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
   -Dcythonize-pynest=OFF \
 	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
 	  -DCMAKE_CXX_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlcxx_r \
-	  -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3 \
 	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a \
 	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m \
   -Dwith-ltdl=OFF \
   <nest-src>
 ```
 
-Further, for running PyNEST, make sure all python dependencies are installed and
+Further, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly:
 ```
 module load python3/3.4.2

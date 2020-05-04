@@ -375,16 +375,12 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  if ( ${with-python} STREQUAL "2" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+  elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    if ( ${with-python} STREQUAL "ON" )
-      find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )
-      find_package( PythonInterp 2 REQUIRED )
-    elseif ( ${with-python} STREQUAL "3" )
-      find_package( PythonInterp 3 REQUIRED )
-    endif ()
+    find_package( PythonInterp 3 REQUIRED )
 
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )

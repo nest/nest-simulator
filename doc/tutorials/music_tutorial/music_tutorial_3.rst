@@ -17,7 +17,8 @@ divided into a setup phase and a runtime phase. You can see the setup below.
 
 .. note::
 
-   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
 
 .. code-block:: cpp
     :linenos:

@@ -44,7 +44,7 @@
 #include "recording_backend_screen.h"
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
-#endif // HAVE_RECORDINGBACKEND_ARBOR
+#endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
 #endif

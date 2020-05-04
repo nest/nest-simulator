@@ -1431,14 +1431,14 @@ module, see the section titled `“Writing an Extension Module”
 <http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST
 Developer Manual. The basic steps required to get started are:
 
-1. From the NEST source directory, copy the directory examples/MyModule to
+1. From the NEST source directory, copy the directory ``examples/MyModule`` to
    somewhere outside the NEST source, build or install directories.
 
    .. code:: bash
 
       cp -r <path_to_nest_source>/examples/MyModule mm_src
 
-2. Create a build directory for MyModule, e.g. mm_bld, next to
+2. Create a build directory for MyModule, e.g. ``mm_bld``, next to
    the copied source directory:
 
    .. code:: bash

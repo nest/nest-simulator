@@ -111,15 +111,11 @@ By default, everything will be installed to the subdirectories ``/install/path/{
 - PyNEST examples ``/install/path/share/doc/nest/examples/pynest``
 - Extras ``/install/path/share/nest/extras/``
 
-If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths. For example, if you are using bash:
+If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths.
+Please refer to the :ref:`next section <environment_variables>` section for this.
 
-.. code-block:: sh
 
-    export PATH=$PATH:/install/path/bin
-    export PYTHONPATH=/install/path/lib/pythonX.Y/site-packages:$PYTHONPATH
-
-The script ``/install/path/bin/nest_vars.sh`` can be sourced in ``.bashrc`` and will set these paths for you. This also allows to switch between NEST installations in a convenient manner.
-
+.. _environment_variables:
 
 Environment variables
 ---------------------

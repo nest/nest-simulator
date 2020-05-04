@@ -298,6 +298,30 @@ Functions related to models
 No Change
 
 
+Functions related to random number generators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In NEST 2.x you would have to set a global seed and individual seeds for each virtual process manually.
+In NEST 3.0 you set only a single `rng_seed`, which is used as a base for all other seeds.
+
++-------------------------------------------------+----------------------------------------------------------------+
+| NEST 2.x                                        | NEST 3.0                                                       |
++=================================================+================================================================+
+| nest.SetKernelStatus({’grng_seed’ : msd+N_vp})  | nest.SetKernelStatus({'rng_seed': msd})                        |
++-------------------------------------------------+                                                                |
+| nest.SetKernelStatus({’rng_seeds’ : range(      |                                                                |
+| msd+N_vp+1, msd+2*N_vp+1)})                     |                                                                |
+|                                                 |                                                                |
++-------------------------------------------------+----------------------------------------------------------------+
+| nest.ll_api.sli_func('rngdict keys')            | nest.GetKernelStatus('rng_types')                              |
+|                                                 |                                                                |
++-------------------------------------------------+----------------------------------------------------------------+
+| nest.ll_api.sli_run('0 << /grng                 | nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 101}) |
+| rngdict/MT19937 :: 101 CreateRNG >> SetStatus') |                                                                |
+|                                                 |                                                                |
++-------------------------------------------------+----------------------------------------------------------------+
+
+
 Functions related to parallel computing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

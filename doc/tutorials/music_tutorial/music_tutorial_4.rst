@@ -15,7 +15,7 @@ differences to the C++ API. The full example code is in the
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 .. code-block:: python
     :linenos:
@@ -106,5 +106,4 @@ As the ``pymusic`` bindings are still quite new the
 documentation is still lagging behind. This quick introduction should
 nevertheless bee enough for you to get going with the bindings. And
 should you need further help, the authors are only an email away.
-
 

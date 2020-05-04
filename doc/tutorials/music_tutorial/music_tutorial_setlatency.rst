@@ -32,7 +32,6 @@ connections this may no longer be the case.
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
-
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 

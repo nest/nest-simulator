@@ -3,7 +3,7 @@ Connect two NEST simulations using MUSIC
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`
@@ -238,4 +238,3 @@ did in our earlier python example. This is far more effective, and the
 outside process is not limited to the generators implemented in NEST but
 can create any kind of spiking input. In the next section we will take a
 look at how to do this.
-

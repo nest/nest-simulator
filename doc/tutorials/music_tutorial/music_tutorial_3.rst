@@ -17,7 +17,7 @@ divided into a setup phase and a runtime phase. You can see the setup below.
 
 .. note::
 
-   Please note that MUSIC and Arbor are mutually exclusive and cannot be enabled at the same time. 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive and cannot be enabled at the same time. 
 
 .. code-block:: cpp
     :linenos:
@@ -413,5 +413,4 @@ straightforward user-level input and output applications. But there is a
 lot more to the MUSIC API, especially if you intend to implement it as a
 simulator interface, so you should consult the documentation for more
 details.
-
 

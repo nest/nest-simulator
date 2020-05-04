@@ -1450,7 +1450,7 @@ Developer Manual. The basic steps required to get started are:
    find out where NEST is installed, where the source code resides, and
    which compiler options were used for compiling NEST. If
    ``nest-config`` is not in your path, you need to provide it
-   explicitly with ``-Dwith-nest`` like this
+   explicitly with ``-Dwith-nest`` as follows:
 
    .. code:: bash
 

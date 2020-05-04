@@ -69,22 +69,6 @@ bail_out ()
     exit 1
 }
 
-#
-# ask_results
-#
-ask_results ()
-{
-    echo "***"
-    echo "*** Please report the problem at"
-    echo "***     https://github.com/nest/nest-simulator/issues"
-    echo "***"
-    echo "*** To help us diagnose the problem, please attach the archived content"
-    echo "*** of these directories to the issue:"
-    echo "***     - '${TEST_OUTDIR}'"
-    echo "***     - '${TEST_TMPDIR}'"
-    echo "***"
-    echo
-}
 
 #
 # portable_inplace_sed file_name expression
@@ -848,7 +832,15 @@ echo
 if test ${TEST_FAILED} -gt 0 ; then
     echo "***"
     echo "*** There were errors detected during the run of the NEST test suite!"
-    ask_results
+    echo "***"
+    echo "*** Please report the problem at"
+    echo "***     https://github.com/nest/nest-simulator/issues"
+    echo "***"
+    echo "*** To help us diagnose the problem, please attach the archived content"
+    echo "*** of these directories to the issue:"
+    echo "***     - '${REPORTDIR}'"
+    echo "***"
+    echo
 else
     rm -rf "${TEST_TMPDIR}"
 fi

@@ -21,7 +21,7 @@
 #
 # set up environment variables
 #
-. ${CMAKE_INSTALL_FULL_BINDIR}/nest_vars.sh
+. @CMAKE_INSTALL_FULL_BINDIR@/nest_vars.sh
 
 #
 # usage [exit_code bad_option]

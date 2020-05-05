@@ -648,3 +648,25 @@ function( NEST_PROCESS_WITH_MPI4PY )
 
   endif ()
 endfunction ()
+
+function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
+  if (with-recordingbackend-arbor)
+	if (NOT HAVE_MPI)  
+	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
+    endif ()
+	
+	if (NOT HAVE_PYTHON) 
+	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
+	endif ()  
+	
+    include( FindPythonModule )	
+    
+	find_python_module(mpi4py)
+	if ( HAVE_MPI4PY )
+	  include_directories( "${PY_MPI4PY}/include" )
+	else ()
+	  message( FATAL_ERROR "CMake cannot find mpi4py, needed for recording backend Arbor" )
+    endif ()
+	set( HAVE_RECORDINGBACKEND_ARBOR ON PARENT_SCOPE )
+  endif()
+endfunction()

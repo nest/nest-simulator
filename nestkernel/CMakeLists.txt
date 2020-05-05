@@ -107,7 +107,7 @@ if ( HAVE_SIONLIB )
       )
 endif ()
 
-if ( HAVE_MPI )
+if ( HAVE_RECORDINGBACKEND_ARBOR )
   set( nestkernel_sources
     ${nestkernel_sources}
     recording_backend_arbor.h recording_backend_arbor.cpp

@@ -225,6 +225,7 @@ junit_close ()
 #   ' 203 Skipped (Threading required),'\
 #   ' 204 Skipped (GSL required),'\
 #   ' 205 Skipped (MUSIC required),'
+#   ' 206 Skipped (Recording backend Arbor required),'
 #   codes_failure=\
 #   ' 1 Failed: missed assertion,'\
 #   ' 2 Failed: error in tested code block,'\
@@ -437,7 +438,8 @@ CODES_SKIPPED=\
 ' 202 Skipped (build with-mpi=OFF required),'\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
-' 205 Skipped (MUSIC required),'
+' 205 Skipped (MUSIC required),'\
+' 206 Skipped (Recording backend Arbor required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
@@ -605,6 +607,9 @@ else
   echo "  for distributed computing. See the file README.md for details."
 fi
 
+echo
+echo "Phase 6: Running MUSIC tests is deactivated"
+echo "-------------------------------------------"
 #echo
 #echo "Phase 6: Running MUSIC tests"
 #echo "----------------------------"
@@ -636,8 +641,11 @@ fi
 #        echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
 #        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 #
-#        # Copy everything to the tmpdir.
-#        cp "${music_file}" "${sh_file}" "${sli_files}" "${tmpdir}"
+#        # Copy everything to the tmpdir. As some files might not
+#        # exist, variables can also be empty. To prevent 'cp' from
+#        # terminating on non-existent files, its exit code and error
+#        # message are suppressed.
+#        cp "${music_file}" "${sh_file}" "${sli_files}" "${tmpdir}" 2>/dev/null || :
 #        cd "${tmpdir}"
 #
 #        # Create the runner script

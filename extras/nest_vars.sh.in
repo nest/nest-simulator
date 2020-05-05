@@ -7,7 +7,7 @@ NEST_BIN_DIR="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_FULL_BINDIR/"
 # The path in which NEST dynamic libraries are found.
 # Works also if $(DY)LD_LIBRARY_PATH is undefined.
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    export DYLD_LIBRARY_PATH="$NEST_LIB_DIR"${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+    export DYLD_LIBRARY_PATH="$NEST_LIB_DIR${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 else
     export LD_LIBRARY_PATH="$NEST_LIB_DIR"${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 fi

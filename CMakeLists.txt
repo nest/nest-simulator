@@ -211,6 +211,13 @@ else ()
   )
 endif ()
 
+# N.B. to ensure "make install" is always run before "make installcheck", we
+# would ideally like to add:
+#   add_dependencies( installcheck install )
+# However, issue in CMake at time of writing (May 2020, see
+# https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
+# so.
+
 ################################################################################
 ##################        Define Subdirectories here          ##################
 ################################################################################

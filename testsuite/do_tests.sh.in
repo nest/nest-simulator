@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This script runs all test scripts that use the unittest library
 #
@@ -17,6 +17,11 @@
 #
 # They return a specific exit code
 #
+
+#
+# set up environment variables
+#
+source ${CMAKE_INSTALL_FULL_BINDIR}/nest_vars.sh
 
 #
 # usage [exit_code bad_option]

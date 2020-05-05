@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # NEST is installed here. When you relocate NEST, change this variable.
 export NEST_INSTALL_DIR="@CMAKE_INSTALL_PREFIX@"

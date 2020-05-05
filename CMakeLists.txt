@@ -192,11 +192,6 @@ enable_testing()
 set( TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log )
 file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
-add_custom_target( update_environment
-  COMMAND bash -c "source /home/travis/build/nest/nest-simulator/result/bin/nest_vars.sh"
-  COMMENT "Preparing environment (path: ${PROJECT_BINARY_DIR}/extras/nest_vars.sh)..."
-)
-
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
@@ -213,8 +208,6 @@ else ()
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
-
-add_dependencies( installcheck update_environment )
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

@@ -31,9 +31,6 @@
 Store data in main memory
 #########################
 
-Description
-+++++++++++
-
 When a recording device sends data to the ``memory`` backend, it is
 stored internally in efficient vectors. These vectors are made available to the
 user level in the device's status dictionary under the key ``events``.

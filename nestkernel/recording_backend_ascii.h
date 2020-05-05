@@ -35,9 +35,6 @@
 Write data to plain text files
 ##############################
 
-Description
-+++++++++++
-
 The `ascii` recording backend writes collected data persistently to a
 plain text ASCII file. It can be used for small to medium sized
 simulations, where the ease of a simple data format outweighs the

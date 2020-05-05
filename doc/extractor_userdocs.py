@@ -121,6 +121,10 @@ def UserDocExtractor(
                 doc = rewrite_short_description(doc, filename)
             except ValueError as e:
                 log.warning("Documentation added unfixed: %s", e)
+            try:
+                doc = rewrite_see_also(doc, filename, tags)
+            except ValueError as e:
+                log.warning("Failed to rebuild 'See also' section: %s", e)
             write_rst_files(doc, tags, outdir, outname)
 
     log.info("%4d tags found:\n%s", len(tagdict), pformat(list(tagdict.keys())))
@@ -128,7 +132,6 @@ def UserDocExtractor(
     log.info("%4d files in input", nfiles_total)
     log.info("%4d files with documentation", nfiles)
     return tagdict
-
 
 
 def rewrite_short_description(doc, filename, short_description="Short description"):
@@ -161,19 +164,71 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
         raise ValueError("No sections found in '%s'!" % filename)
     name = os.path.splitext(os.path.basename(filename))[0]
     for title, nexttitle in zip(titles, titles[1:]+[None]):
-        if title.group(1) == short_description:
-            secstart = title.end()
-            secend = None   # None = end of string
-            if nexttitle:
-                secend = nexttitle.start()
-            sdesc = doc[secstart:secend].strip().replace('\n', ' ')
-            fixed_title = "%s – %s" % (name, sdesc)
-            return (
-                doc[:title.start()]
-                + fixed_title + "\n" + "=" * len(fixed_title) + "\n\n"
-                + doc[nexttitle.start():]
-                )
+        if title.group(1) != short_description:
+            continue
+        secstart = title.end()
+        secend = len(doc) + 1 # last section ends at end of document
+        if nexttitle:
+            secend = nexttitle.start()
+        sdesc = doc[secstart:secend].strip().replace('\n', ' ')
+        fixed_title = "%s – %s" % (name, sdesc)
+        return (
+            doc[:title.start()]
+            + fixed_title + "\n" + "=" * len(fixed_title) + "\n\n"
+            + doc[secend:]
+            )
     raise ValueError("No section '%s' found in %s!", short_description, filename)
+
+
+def rewrite_see_also(doc, filename, tags, see_also="See also"):
+    '''
+    Modify a given text by replacing the first section named as given in
+    `see_also` by the filename and content of that section.
+
+    Parameters
+    ----------
+
+    doc : str
+      restructured text with all sections
+
+    filename : str, path
+      name that is inserted in the replaced title (and used for useful error
+      messages).
+
+    see_also : str
+      title of the section that is to be rewritten to the document title
+
+    Returns
+    -------
+
+    str
+        original parameter doc with see_also section replaced
+    '''
+
+    titles = getTitles(doc)
+    if not titles:
+        raise ValueError("No sections found in '%s'!" % filename)
+
+    def rightcase(text):
+        ' make text title-case except for acronyms '
+        if text != text.upper():
+            return text.title()  # title-case any tag that is not an acronym
+        return text   # return acronyms unmodified
+
+    for title, nexttitle in zip(titles, titles[1:]+[None]):
+        if title.group(1) != see_also:
+            continue
+        secstart = title.end()
+        secend = len(doc) + 1 # last section ends at end of document
+        if nexttitle:
+            secend = nexttitle.start()
+        log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, doc[secstart:secend].strip().replace('\n', ' '))
+        return (
+            doc[:secstart]
+            + "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag)) for tag in tags]) + "\n\n"
+            + doc[secend:]
+            )
+    raise ValueError("No section '%s' found in %s!", see_also, filename)
 
 
 def write_rst_files(doc, tags, outdir, outname):
@@ -271,7 +326,7 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
 
     output = list()
     if top:
-        page_title = "Documentation by Keyword"
+        page_title = "Model Directory"
         if len(hierarchy.keys()) == 1:
             page_title += ": " + ", ".join(current_tags)
         output.append(page_title)

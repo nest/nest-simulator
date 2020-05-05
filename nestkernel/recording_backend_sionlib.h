@@ -33,10 +33,8 @@
 
 .. _sionlib_backend:
 
-Short description
-+++++++++++++++++
-
 Store data to an efficient binary format
+########################################
 
 Description
 +++++++++++

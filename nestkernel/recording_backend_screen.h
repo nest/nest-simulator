@@ -28,10 +28,8 @@
 
 /* BeginUserDocs: recording backend
 
-Short description
-+++++++++++++++++
-
 Write data to the terminal
+##########################
 
 Description
 +++++++++++

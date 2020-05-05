@@ -32,10 +32,8 @@
 
 .. _ascii_backend:
 
-Short description
-+++++++++++++++++
-
 Write data to plain text files
+##############################
 
 Description
 +++++++++++

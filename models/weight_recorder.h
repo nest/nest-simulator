@@ -34,7 +34,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginUserDocs: device, recorder, synapse
+/* BeginUserDocs: device, recorder
 
 Short description
 +++++++++++++++++

@@ -28,10 +28,8 @@
 
 /* BeginUserDocs: recording backend
 
-Short description
-+++++++++++++++++
-
 Store data in main memory
+#########################
 
 Description
 +++++++++++

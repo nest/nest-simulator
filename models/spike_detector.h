@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "recording_device.h"
 
-/* BeginUserDocs: device, recorder, spike, detector
+/* BeginUserDocs: device, recorder, spike
 
 Short description
 +++++++++++++++++

@@ -20,15 +20,13 @@ documentation.
 
 This manual describes the spatial functionalities included with NEST 3.0.
 
-.. TODO: Chapter 5 about parameters?
-
 In the next section of this manual, we introduce spatially distributed nodes.
 In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect spatial nodes with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
-spatial networks. Chapter \ :ref:`5 <ch:extending>` deals with the more
-advanced topic of extending the functionalities with custom masks provided
-by C++ classes in an extension module.
+spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
+boundaries using Parameters, and the more advanced topic of extending the
+functionalities with custom masks provided by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
 the NEST source code directory under
@@ -632,9 +630,10 @@ using periodic boundary conditions, since the mask would “wrap around”
 in that case and pool nodes would be considered multiple times as
 targets.
 
-If none of the mask types provided in the library meet your
-need, you may add more mask types in a NEST extension module. This is
-covered in Chapter \ `5 <#ch:extending>`__.
+If none of the mask types provided in the library meet your need, you may
+define custom masks, either by introducing a cut-off to the connection
+probability using Parameters, or by adding more mask types in a NEST extension
+module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
 
 .. _sec:free_masks:
 
@@ -1393,7 +1392,7 @@ NEST provides three functions to visualize networks:
 | ``PlotProbabilityParameter()``  | Add indication of mask and probability   |
 |                                 | ``p`` to  plot of NodeCollection. This   |
 |                                 | function is usually called by            |
-|                                 | `PlotTargets``.                          |
+|                                 | ``PlotTargets``.                         |
 +---------------------------------+------------------------------------------+
 
 .. _fig_vislayer:
@@ -1416,20 +1415,83 @@ center neuron are shown, as well as mask and connection probability.
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
 
-.. TODO: adding masks need to be updated for 3.0?
+.. _ch:custom_masks:
 
-.. _ch:extending:
+Creating custom masks
+---------------------
 
-Adding masks
-------------
+In some cases, the built-in masks may not meet your needs, and you want to
+create a custom mask. There are two ways to do this: the first is to use Parameters
+to introduce a cut-off to the connection probability. The second is to implement a custom
+mask in C++ as a module.
 
-This chapter will show examples of how to extend NEST by adding custom
-masks. Some knowledge of the C++ programming language is needed for this.
-The functions will be added as a part of an extension module which is
-dynamically loaded into NEST. For more information on writing an extension
-module, see the section titled `“Writing an Extension Module”
-<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST
-Developer Manual. The basic steps required to get started are:
+Using Parameters is the most accessible option; the entire implementation is done on
+the PyNEST level. However, the price for this flexibility is reduced connection efficiency
+compared to masks implemented in C++. Combining Parameters to give the wanted behaviour may
+also be difficult if the mask specifications are complex.
+
+Implementing a custom mask in C++ gives much higher connection performance and greater freedom
+in implementation, but requires some knowledge of the C++ language. As the mask in this case
+is implemented in an extension module, which is dynamically loaded into NEST, it also requires
+some additional steps for installation.
+
+.. _sec:maskparameter:
+
+Using Parameters to specify connection boundaries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use Parameters that represent spatial distances between nodes to create a connection
+probability with mask behaviour. For this you need to create a condition Parameter that describes
+the boundary of the mask. As condition Parameters evaluate to either ``0`` or ``1``, it can be
+used alone, used with the ``nest.logic.conditional()`` Parameter, or multiplied with another
+Parameter or value, before passing it as the connection probability.
+
+As an example, we will define an elliptical connection boundary using Parameters. First we define
+variables controlling the shape of the ellipse.
+
+::
+
+   rx = 0.5   # radius in the x-direction
+   ry = 0.25  # radius in the y-direction
+
+Next we define the connection boundary. We only want to connect to targets inside an ellipse, so
+the condition is
+
+.. math::
+
+   \frac{x^2}{r_x^2}+\frac{y^2}{r_y^2} \leq 1,
+
+where :math:`x` and :math:`y` are the distances between the source and target neuron, in x- and
+y-directions, respectively. We use this expression to define the boundary using Parameters.
+
+::
+
+   x = nest.spatial.distance.x
+   y = nest.spatial.distance.y
+   lhs = x * x / rx**2 + y * y / ry**2
+   mask_param = nest.logic.conditional(lhs <= 1.0, 0.5, 0.0)
+   # Could also have defined it as
+   # mask_param = 0.5*(lhs <= 1.0)
+
+Then we can use the Parameter as connection probability when connecting populations with spatial
+information.
+
+::
+
+   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[1., 1.]))
+   nest.Connect(l, l, {'rule': 'pairwise_bernoulli', 'p': mask_param})
+
+.. _sec:maskmodule:
+
+Adding masks in a module
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+If using Parameters to define a connection boundary is not efficient enough, or
+if you need more flexibility in defining the mask, you have to add a custom
+mask, written in C++, as a part of an extension module. For more information
+on writing an extension module, see the section titled `“Writing an Extension Module”
+<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST Developer
+Manual. The basic steps required to get started are:
 
 1. From the NEST source directory, copy the directory ``examples/MyModule`` to
    somewhere outside the NEST source, build or install directories.
@@ -1456,7 +1518,7 @@ Developer Manual. The basic steps required to get started are:
 
       cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../mm_src
 
-4. MyModule will then be installed to ``\${NEST_INSTALL_DIR}``. This
+4. MyModule will then be installed to ``${NEST_INSTALL_DIR}``. This
    ensures that NEST will be able to find initializing SLI files for the
    module. You should not use the ``--prefix`` to select a different
    installation destination. If you do, you must make sure to use

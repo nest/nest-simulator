@@ -75,7 +75,7 @@ run_test ()
 
     echo "${param_script}" | grep -q '\.sli'
     if test $? -eq 0 ; then
-      command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      command="'${NEST_BINARY}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
       command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi

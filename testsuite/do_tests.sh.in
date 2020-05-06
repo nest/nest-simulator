@@ -70,6 +70,23 @@ bail_out ()
 }
 
 #
+# ask_results
+#
+ask_results ()
+{
+    echo "***"
+    echo "*** Please report the problem at"
+    echo "***     https://github.com/nest/nest-simulator/issues"
+    echo "***"
+    echo "*** To help us diagnose the problem, please attach the archived content"
+    echo "*** of these directories to the issue:"
+    echo "***     - '${TEST_OUTDIR}'"
+    echo "***     - '${TEST_TMPDIR}'"
+    echo "***"
+    echo
+}
+
+#
 # sed has different syntax for extended regular expressions
 # on different operating systems:
 # BSD: -E
@@ -78,17 +95,8 @@ bail_out ()
 EXTENDED_REGEX_PARAM=r
 /bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
 
-
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
-
-
-
-
-
-
-
-
 
 # Set environment variables.
 # The NEST_ variants of the global variables were set by
@@ -588,15 +596,7 @@ echo
 if test ${TEST_FAILED} -gt 0 ; then
     echo "***"
     echo "*** There were errors detected during the run of the NEST test suite!"
-    echo "***"
-    echo "*** Please report the problem at"
-    echo "***     https://github.com/nest/nest-simulator/issues"
-    echo "***"
-    echo "*** To help us diagnose the problem, please attach the archived content"
-    echo "*** of these directories to the issue:"
-    echo "***     - '${REPORTDIR}'"
-    echo "***"
-    echo
+    ask_results
 else
     rm -rf "${TEST_TMPDIR}"
 fi

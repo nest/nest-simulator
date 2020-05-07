@@ -44,7 +44,7 @@ junit_open ()
 {
     if test "x$1" = x ; then
         echo 'junit_open: file_name not given!'
-	exit 1
+        exit 1
     fi
 
     JUNIT_FILE="${TEST_OUTDIR}/TEST-$1.xml"
@@ -75,12 +75,12 @@ junit_write ()
 {
     if test "x${JUNIT_FILE}" = x ; then
         echo 'junit_write: report file not open, call junit_open first!'
-	exit 1
+        exit 1
     fi
 
     if test "x$1" = x || test "x$2" = x ; then
-	echo 'junit_write: classname and testname arguments are mandatory!'
-	exit 1
+        echo 'junit_write: classname and testname arguments are mandatory!'
+        exit 1
     fi
 
     JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
@@ -105,7 +105,7 @@ junit_close ()
 {
     if test "x${JUNIT_FILE}" = x ; then
         echo 'junit_close: report file not open, call junit_open first!'
-	exit 1
+        exit 1
     fi
 
     portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"

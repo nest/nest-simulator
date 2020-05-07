@@ -1421,9 +1421,10 @@ Creating custom masks
 ---------------------
 
 In some cases, the built-in masks may not meet your needs, and you want to
-create a custom mask. There are two ways to do this: the first is to use Parameters
-to introduce a cut-off to the connection probability. The second is to implement a custom
-mask in C++ as a module.
+create a custom mask. There are two ways to do this: 
+
+1. To use Parameters to introduce a cut-off to the connection probability. 
+2. To implement a custom mask in C++ as a module.
 
 Using Parameters is the most accessible option; the entire implementation is done on
 the PyNEST level. However, the price for this flexibility is reduced connection efficiency
@@ -1441,12 +1442,12 @@ Using Parameters to specify connection boundaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use Parameters that represent spatial distances between nodes to create a connection
-probability with mask behaviour. For this you need to create a condition Parameter that describes
+probability with mask behaviour. For this, you need to create a condition Parameter that describes
 the boundary of the mask. As condition Parameters evaluate to either ``0`` or ``1``, it can be
-used alone, used with the ``nest.logic.conditional()`` Parameter, or multiplied with another
+used alone, with the ``nest.logic.conditional()`` Parameter, or multiplied with another
 Parameter or value, before passing it as the connection probability.
 
-As an example, we will define an elliptical connection boundary using Parameters. First we define
+As an example, we will define an elliptical connection boundary using Parameters. First, we define
 variables controlling the shape of the ellipse.
 
 ::
@@ -1454,7 +1455,7 @@ variables controlling the shape of the ellipse.
    rx = 0.5   # radius in the x-direction
    ry = 0.25  # radius in the y-direction
 
-Next we define the connection boundary. We only want to connect to targets inside an ellipse, so
+Next, we define the connection boundary. We only want to connect to targets inside an ellipse, so
 the condition is
 
 .. math::
@@ -1473,7 +1474,7 @@ y-directions, respectively. We use this expression to define the boundary using 
    # Could also have defined it as
    # mask_param = 0.5*(lhs <= 1.0)
 
-Then we can use the Parameter as connection probability when connecting populations with spatial
+Then, we can use the Parameter as connection probability when connecting populations with spatial
 information.
 
 ::

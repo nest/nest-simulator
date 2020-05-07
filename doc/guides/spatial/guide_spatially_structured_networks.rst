@@ -25,7 +25,7 @@ In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect spatial nodes with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
 spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
-boundaries using Parameters, and the more advanced topic of extending the
+boundaries using parameters, and the more advanced topic of extending the
 functionalities with custom masks provided by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
@@ -278,10 +278,10 @@ Note the following points:
    element coordinates, i.e., of two-element tuples of floats giving the
    (:math:`x`, :math:`y`)-coordinates of the elements, or a ``Parameter`` object.
 
--  When using a Parameter object for the positions, the number of dimensions have to be specified
+-  When using a parameter object for the positions, the number of dimensions have to be specified
    by the ``num_dimensions`` variable. num_dimensions can either be 2 or 3.
 
--  When using a Parameter object you also need to specify how many elements you want to create
+-  When using a parameter object you also need to specify how many elements you want to create
    by specifying ``'n'`` in the ``Create`` call. This is **not** the case when you pass a list to
    the ``nest.spatial.free`` object.
 
@@ -525,7 +525,7 @@ Mask
 
 Connection probability or ``p``
    The *connection probability*, specified as ``p`` in the connection
-   specifications, is either a value, or a Parameter which specifies the
+   specifications, is either a value, or a parameter which specifies the
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
    certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
@@ -632,7 +632,7 @@ targets.
 
 If none of the mask types provided in the library meet your need, you may
 define custom masks, either by introducing a cut-off to the connection
-probability using Parameters, or by adding more mask types in a NEST extension
+probability using parameters, or by adding more mask types in a NEST extension
 module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
 
 .. _sec:free_masks:
@@ -870,7 +870,7 @@ NEST supports probabilistic connections through the
 ``pairwise_bernoulli`` connection rule. The probability can then be a constant,
 depend on the position of the source or the target neuron, or on the
 distance between a driver and a pool node to a connection probability. To
-create dependencies on neuron positions, NEST Parameters objects are used.
+create dependencies on neuron positions, NEST parameters objects are used.
 NEST then generates a connection according to this probability.
 
 Probabilistic connections between layers can be generated in two different
@@ -925,7 +925,7 @@ position can be used. The others can only be used when connecting.
 
 NEST provides some functions to help create distributions based on the position of the nodes, for
 instance the distance between two neurons, shown in the table below. The table also includes
-Parameters drawing values from random distributions.
+parameters drawing values from random distributions.
 
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
@@ -1039,7 +1039,7 @@ passed along in a synapse dictionary to the ``Connect`` call.
 
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
-Parameters. The code examples used to generate the figures are shown below.
+parameters. The code examples used to generate the figures are shown below.
 All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
@@ -1093,7 +1093,7 @@ Randomized weights and delays
       :start-after: #{ conn5uniform #}
       :end-before: #{ end #}
 
-  By using the ``nest.random.uniform()`` Parameter for weights or delays, one can
+  By using the ``nest.random.uniform()`` parameter for weights or delays, one can
   obtain randomized values for weights and delays, as shown by the red
   circles in the bottom panel of :numref:`fig_conn5`.
 
@@ -1105,22 +1105,22 @@ Randomized weights and delays
    Distance-dependent and randomized weights and delays. See text for
    details.
 
-Designing distance-dependent Parameters
+Designing distance-dependent parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although NEST comes with some pre-defined functions that can be used to
-create distributions of distance-dependent Parameters, there is no limit
-to how Parameters can be combined.
+create distributions of distance-dependent parameters, there is no limit
+to how parameters can be combined.
 
-.. TODO: reference to Parameter documentation
+.. TODO: reference to parameter documentation
 
-As an example, we will now combine some Parameters to create a new Parameter that is
+As an example, we will now combine some parameters to create a new parameter that is
 linear (actually affine) with respect to the displacement between the nodes, of the form
 
 .. math:: p = 0.5 + d_x + 2 d_y.
 
 \ where :math:`d_x` and :math:`d_y` are the displacements between the source and
-target neuron on the x and y axis, respectively. The Parameter is then simply:
+target neuron on the x and y axis, respectively. The parameter is then simply:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_param_design #}
@@ -1421,14 +1421,14 @@ Creating custom masks
 ---------------------
 
 In some cases, the built-in masks may not meet your needs, and you want to
-create a custom mask. There are two ways to do this: 
+create a custom mask. There are two ways to do this:
 
-1. To use Parameters to introduce a cut-off to the connection probability. 
+1. To use parameters to introduce a cut-off to the connection probability.
 2. To implement a custom mask in C++ as a module.
 
-Using Parameters is the most accessible option; the entire implementation is done on
+Using parameters is the most accessible option; the entire implementation is done on
 the PyNEST level. However, the price for this flexibility is reduced connection efficiency
-compared to masks implemented in C++. Combining Parameters to give the wanted behaviour may
+compared to masks implemented in C++. Combining parameters to give the wanted behaviour may
 also be difficult if the mask specifications are complex.
 
 Implementing a custom mask in C++ gives much higher connection performance and greater freedom
@@ -1438,16 +1438,16 @@ some additional steps for installation.
 
 .. _sec:maskparameter:
 
-Using Parameters to specify connection boundaries
+Using parameters to specify connection boundaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can use Parameters that represent spatial distances between nodes to create a connection
-probability with mask behaviour. For this, you need to create a condition Parameter that describes
-the boundary of the mask. As condition Parameters evaluate to either ``0`` or ``1``, it can be
-used alone, with the ``nest.logic.conditional()`` Parameter, or multiplied with another
-Parameter or value, before passing it as the connection probability.
+You can use parameters that represent spatial distances between nodes to create a connection
+probability with mask behaviour. For this, you need to create a condition parameter that describes
+the boundary of the mask. As condition parameters evaluate to either ``0`` or ``1``, it can be
+used alone, with the ``nest.logic.conditional()`` parameter, or multiplied with another
+parameter or value, before passing it as the connection probability.
 
-As an example, we will define an elliptical connection boundary using Parameters. First, we define
+As an example, we will define an elliptical connection boundary using parameters. First, we define
 variables controlling the shape of the ellipse.
 
 ::
@@ -1463,7 +1463,7 @@ the condition is
    \frac{x^2}{r_x^2}+\frac{y^2}{r_y^2} \leq 1,
 
 where :math:`x` and :math:`y` are the distances between the source and target neuron, in x- and
-y-directions, respectively. We use this expression to define the boundary using Parameters.
+y-directions, respectively. We use this expression to define the boundary using parameters.
 
 ::
 
@@ -1474,7 +1474,7 @@ y-directions, respectively. We use this expression to define the boundary using 
    # Could also have defined it as
    # mask_param = 0.5*(lhs <= 1.0)
 
-Then, we can use the Parameter as connection probability when connecting populations with spatial
+Then, we can use the parameter as connection probability when connecting populations with spatial
 information.
 
 ::
@@ -1487,7 +1487,7 @@ information.
 Adding masks in a module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If using Parameters to define a connection boundary is not efficient enough, or
+If using parameters to define a connection boundary is not efficient enough, or
 if you need more flexibility in defining the mask, you have to add a custom
 mask, written in C++, as a part of an extension module. For more information
 on writing an extension module, see the section titled `“Writing an Extension Module”

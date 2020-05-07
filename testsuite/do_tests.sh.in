@@ -6,7 +6,7 @@
 # language's native `unittest` library to assert certain invariants
 # and thus ensure a correctly working installation of NEST.
 #
-# For commandline options, see the the function usage() below.
+# For commandline options, see the function usage() below.
 #
 
 #
@@ -50,15 +50,6 @@ while test $# -gt 0 ; do
     esac
     shift
 done
-
-#
-# bail_out message
-#
-bail_out ()
-{
-    echo "$1"
-    exit 1
-}
 
 #
 # ask_results

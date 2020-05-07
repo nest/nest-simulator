@@ -308,6 +308,7 @@ run_test ()
     else
         TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
+        FAILED_TESTS="${FAILED_TESTS}\n${param_script}"
 
 	cat ${TEST_OUTFILE}
 
@@ -425,6 +426,8 @@ TEST_TOTAL=0
 TEST_PASSED=0
 TEST_SKIPPED=0
 TEST_FAILED=0
+
+FAILED_TESTS=""
 
 TIME_TOTAL=0
 TIME_ELAPSED=0
@@ -732,11 +735,17 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
-        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
-        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
-        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
+        ntsummary=`@PYTHON@ -c "import junitparser as jp; r = jp.JUnitXml.fromfile('${TEST_OUTDIR}/pynest_tests.xml'); pl = ['.'.join((s.classname, s.name)) for s in r if s.result and not isinstance(s.result, jp.junitparser.Skipped)]; print(r.tests, r.skipped, r.failures, r.errors, pl)"`
 
+        PYNEST_TEST_TOTAL="$( echo ${ntsummary} | cut -d' ' -f1 )"
+        PYNEST_TEST_SKIPPED="$( echo ${ntsummary} | cut -d' ' -f2 )"
+        PYNEST_TEST_FAILURES="$( echo ${ntsummary} | cut -d' ' -f3 )"
+        PYNEST_TEST_ERRORS="$( echo ${ntsummary} | cut -d' ' -f4 )"
+
+        PYNEST_FAILED="$( echo $ntsummary | cut -d'[' -f2 | cut -d']' -f1 | sed s/\'//g | tr , '\n' )"
+        
+        FAILED_TESTS="${FAILED_TESTS}\n${PYNEST_FAILED}"
+        
         # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
         if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
           # PYNEST_TEST_FAILURES is a valid number
@@ -847,7 +856,10 @@ echo
 
 if test ${TEST_FAILED} -gt 0 ; then
     echo "***"
-    echo "*** There were errors detected during the run of the NEST test suite!"
+    echo "*** The following tests failed while running the NEST Testsuite:"
+    echo
+    echo ${FAILED_TESTS}
+    echo
     ask_results
 else
     rm -rf "${TEST_TMPDIR}"

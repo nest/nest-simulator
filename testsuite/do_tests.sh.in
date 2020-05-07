@@ -1,21 +1,12 @@
 #!/bin/sh
 #
-# This script runs all test scripts that use the unittest library
+# This script runs the NEST testsuite.
 #
-# unittest provides functions that quit NEST with a non-zero exit
-# code upon errors. This is checked here and used to print a nice
-# summary after all tests have been run.
+# The test suite consists of SLI and Python scripts that use the
+# language's native `unittest` library to assert certain invariants
+# and thus ensure a correctly working installation of NEST.
 #
-# For testing this script, these files may be handy:
-#
-#   exitcode0.sli
-#   exitcode1.sli
-#   exitcode2.sli
-#   exitcode3.sli
-#   exitcode99.sli
-#   exitcode126.sli
-#
-# They return a specific exit code
+# For commandline options, see the the function usage() below.
 #
 
 #
@@ -95,6 +86,7 @@ ask_results ()
 EXTENDED_REGEX_PARAM=r
 /bin/sh -c "echo 'hello' | sed -${EXTENDED_REGEX_PARAM} 's/[aeou]/_/g' "  >/dev/null 2>&1 || EXTENDED_REGEX_PARAM=E
 
+# source helpers to make their functions available
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
@@ -103,14 +95,6 @@ EXTENDED_REGEX_PARAM=r
 # cmake during configuration.
 export PYTHONPATH="${NEST_PYTHONPATH}:${PYTHONPATH}"
 export PATH="${NEST_PATH}:${PATH}"
-
-# Gather some information about the host
-INFO_ARCH="$(uname -m)"
-INFO_HOME="$(/bin/sh -c 'echo ~')"
-INFO_HOST="$(hostname -f)"
-INFO_OS="$(uname -s)"
-INFO_USER="$(whoami)"
-INFO_VER="$(uname -r)"
 
 TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
 TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"
@@ -164,7 +148,7 @@ fi
 NEST_BINARY=nest_serial
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
-if test "x${INFO_OS}" = xDarwin ; then
+if test "$(uname -s)" = "Darwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
     defaults write com.apple.CrashReporter DialogType server
 fi
@@ -602,7 +586,7 @@ else
 fi
 
 # Mac OS X: Restore old crash reporter state
-if test "x${INFO_OS}" = xDarwin ; then
+if test "$(uname -s)" = "Darwin"; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 

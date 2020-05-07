@@ -26,6 +26,14 @@ JUNIT_TESTS=
 JUNIT_FAILURES=
 JUNIT_CLASSNAME='core'
 
+# Gather some information about the host
+INFO_ARCH="$(uname -m)"
+INFO_HOME="$(/bin/sh -c 'echo ~')"
+INFO_HOST="$(hostname -f)"
+INFO_OS="$(uname -s)"
+INFO_USER="$(whoami)"
+INFO_VER="$(uname -r)"
+
 TIME_TOTAL=0
 TIME_ELAPSED=0
 

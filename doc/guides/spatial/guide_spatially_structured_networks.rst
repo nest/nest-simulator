@@ -1447,8 +1447,11 @@ the boundary of the mask. As condition parameters evaluate to either ``0`` or ``
 used alone, with the ``nest.logic.conditional()`` parameter, or multiplied with another
 parameter or value, before passing it as the connection probability.
 
-As an example, we will define an elliptical connection boundary using parameters. First, we define
-variables controlling the shape of the ellipse.
+As an example, suppose we want to create connections to 50 % of the target nodes, but only to those
+within an elliptical area around each source node. Using ``nest.spatial.distance`` parameters, we
+can define a parameter that creates an elliptical connection boundary.
+
+First, we define variables controlling the shape of the ellipse.
 
 ::
 
@@ -1471,7 +1474,8 @@ y-directions, respectively. We use this expression to define the boundary using 
    y = nest.spatial.distance.y
    lhs = x * x / rx**2 + y * y / ry**2
    mask_param = nest.logic.conditional(lhs <= 1.0, 0.5, 0.0)
-   # Could also have defined it as
+   # Because the probability outside the ellipse is zero,
+   # we could also have defined the parameter as
    # mask_param = 0.5*(lhs <= 1.0)
 
 Then, we can use the parameter as connection probability when connecting populations with spatial

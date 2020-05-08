@@ -308,7 +308,7 @@ run_test ()
     else
         TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
-        FAILED_TESTS="${FAILED_TESTS}\n${param_script}"
+        FAILED_TESTS="${FAILED_TESTS} ${param_script}"
 
 	cat ${TEST_OUTFILE}
 
@@ -742,9 +742,9 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         PYNEST_TEST_FAILURES="$( echo ${ntsummary} | cut -d' ' -f3 )"
         PYNEST_TEST_ERRORS="$( echo ${ntsummary} | cut -d' ' -f4 )"
 
-        PYNEST_FAILED="$( echo $ntsummary | cut -d'[' -f2 | cut -d']' -f1 | sed s/\'//g | tr , '\n' )"
+        PYNEST_FAILED="$( echo $ntsummary | cut -d'[' -f2 | cut -d']' -f1 | sed s/\'//g )"
         
-        FAILED_TESTS="${FAILED_TESTS}\n${PYNEST_FAILED}"
+        FAILED_TESTS="${FAILED_TESTS} ${PYNEST_FAILED}"
         
         # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
         if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
@@ -857,9 +857,12 @@ echo
 if test ${TEST_FAILED} -gt 0 ; then
     echo "***"
     echo "*** The following tests failed while running the NEST Testsuite:"
-    echo
-    echo ${FAILED_TESTS}
-    echo
+    echo "***"
+    for ft in ${FAILED_TESTS}
+    do
+      echo "***     ${ft}"
+    done
+    echo "***"
     ask_results
 else
     rm -rf "${TEST_TMPDIR}"

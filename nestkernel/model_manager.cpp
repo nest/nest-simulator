@@ -423,12 +423,6 @@ ModelManager::connector_requires_clopath_archiving( const synindex syn_id ) cons
 void
 ModelManager::clear_models_( bool called_from_destructor )
 {
-  // no message on destructor call, may come after MPI_Finalize()
-  if ( not called_from_destructor )
-  {
-    LOG( M_INFO, "ModelManager::clear_models_", "Models will be cleared and parameters reset." );
-  }
-
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
   // init()

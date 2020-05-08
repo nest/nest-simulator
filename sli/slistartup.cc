@@ -349,14 +349,6 @@ SLIStartup::init( SLIInterpreter* i )
       SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DATA_DIR=%1", slihomepath ).c_str() );
   }
 
-  // check for supplied NEST_DOC_DIR
-  std::string slidocdir_env = checkenvpath( "NEST_DOC_DIR", i, slidocdir );
-  if ( slidocdir_env != "" )
-  {
-    slidocdir = slidocdir_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DOC_DIR=%1", slidocdir ).c_str() );
-  }
-
   // check for supplied NEST_INSTALL_DIR
   std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
   if ( sliprefix_env != "" )

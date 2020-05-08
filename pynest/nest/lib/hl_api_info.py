@@ -88,14 +88,8 @@ def helpdesk():
 
     """
 
-    if 'NEST_DOC_DIR' not in os.environ:
-        print(
-            'NEST help needs to know where NEST is installed.'
-            'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
-        return
-
-    helpfile = os.path.join(os.environ['NEST_DOC_DIR'], 'help',
-                            'helpindex.html')
+    nestdocdir = sli_func("statusdict/prgdocdir ::")
+    helpfile = os.path.join(nestdocdir, 'help', 'helpindex.html')
 
     # Under Windows systems webbrowser.open is incomplete
     # See <https://bugs.python.org/issue8232>

@@ -364,7 +364,7 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
-TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
+TEST_BASEDIR="$(nest -c "statusdict/prgdocdir :: =only)"
 TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"

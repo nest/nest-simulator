@@ -1,6 +1,6 @@
 #! /bin/sh
 
-prefix=${NEST_INSTALL_DIR:-@CMAKE_INSTALL_PREFIX@}
+prefix="@CMAKE_INSTALL_PREFIX@"
 exec_prefix=${prefix}
 
 usage()

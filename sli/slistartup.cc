@@ -334,15 +334,6 @@ SLIStartup::init( SLIInterpreter* i )
   i->createcommand( getenv_name, &getenvfunction );
   std::string fname;
 
-  // check for supplied NEST_INSTALL_DIR
-  std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
-  if ( sliprefix_env != "" )
-  {
-    sliprefix = sliprefix_env; // absolute path & directory exists
-    i->message(
-      SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
-  }
-
   // check for sli-init.sli
   if ( not checkpath( slilibdir, fname ) )
   {

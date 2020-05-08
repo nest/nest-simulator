@@ -444,12 +444,6 @@ def show_help_with_pager(hlpobj, pager=None):
         pager to use, False if you want to display help using print().
     """
 
-    if 'NEST_INSTALL_DIR' not in os.environ:
-        print(
-            'NEST help needs to know where NEST is installed.'
-            'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
-        return
-
     # check that help is available
     objf = get_help_filepath(hlpobj)
     if objf is None:

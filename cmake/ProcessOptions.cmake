@@ -375,16 +375,12 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  if ( ${with-python} STREQUAL "2" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+  elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    if ( ${with-python} STREQUAL "ON" )
-      find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )
-      find_package( PythonInterp 2 REQUIRED )
-    elseif ( ${with-python} STREQUAL "3" )
-      find_package( PythonInterp 3 REQUIRED )
-    endif ()
+    find_package( PythonInterp 3 REQUIRED )
 
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
@@ -638,3 +634,25 @@ function( NEST_PROCESS_WITH_MPI4PY )
 
   endif ()
 endfunction ()
+
+function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
+  if (with-recordingbackend-arbor)
+	if (NOT HAVE_MPI)  
+	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
+    endif ()
+	
+	if (NOT HAVE_PYTHON) 
+	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
+	endif ()  
+	
+    include( FindPythonModule )	
+    
+	find_python_module(mpi4py)
+	if ( HAVE_MPI4PY )
+	  include_directories( "${PY_MPI4PY}/include" )
+	else ()
+	  message( FATAL_ERROR "CMake cannot find mpi4py, needed for recording backend Arbor" )
+    endif ()
+	set( HAVE_RECORDINGBACKEND_ARBOR ON PARENT_SCOPE )
+  endif()
+endfunction()

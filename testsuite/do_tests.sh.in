@@ -729,7 +729,8 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo "  Using nosetests."
         echo
 
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
+        PYNEST_TEST_DIR="$(python -c 'import nest; print(nest.__path__)')/tests"
+        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${PYNEST_TEST_DIR}" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"

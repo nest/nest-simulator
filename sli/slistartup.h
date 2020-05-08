@@ -62,7 +62,7 @@ class SLIStartup : public SLIModule
 {
   const std::string startupfilename;
   const std::string slilibpath;
-  std::string slihomepath;
+  std::string slilibdir;
   std::string slidocdir;
   std::string sliprefix;
 

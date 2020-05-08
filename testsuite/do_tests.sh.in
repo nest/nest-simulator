@@ -378,7 +378,7 @@ fi
 mkdir "${TEST_OUTDIR}"
 
 PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
+PYTHON_HARNESS="@CMAKE_INSTALL_FULL_DATADIR@/extras/do_tests.py"
 
 TMPDIR="${TMPDIR:-${TEST_OUTDIR}}"
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"

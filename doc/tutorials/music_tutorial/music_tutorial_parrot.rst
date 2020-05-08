@@ -61,4 +61,9 @@ This is true for devices in general of course, but this connection
 pattern, where you want to record the MUSIC input from another
 simulation, is so common that it’s worth warning about this.
 
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
+
 

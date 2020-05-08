@@ -51,7 +51,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: device, MUSIC, continuous
+/* BeginUserDocs: device, MUSIC
 
 Short description
 +++++++++++++++++

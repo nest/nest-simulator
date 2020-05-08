@@ -38,7 +38,7 @@
 #include "dictutils.h"
 #include "name.h"
 
-/* BeginUserDocs: device, recorder, continuous
+/* BeginUserDocs: device, recorder
 
 Short description
 +++++++++++++++++

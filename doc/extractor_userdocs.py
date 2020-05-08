@@ -182,8 +182,11 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
 
 def rewrite_see_also(doc, filename, tags, see_also="See also"):
     '''
-    Modify a given text by replacing the first section named as given in
-    `see_also` by the filename and content of that section.
+    Replace the content of a section named `see_also` in the document `doc`
+    with links to indices of all its tags.
+
+    The original content of the section -if not empty- will discarded and
+    logged as a warning.
 
     Parameters
     ----------
@@ -194,6 +197,10 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
     filename : str, path
       name that is inserted in the replaced title (and used for useful error
       messages).
+
+    tags : iterable (list or dict)
+      all tags the given document is linked to. These are used to construct the
+      links in the `see_also` section.
 
     see_also : str
       title of the section that is to be rewritten to the document title
@@ -210,7 +217,27 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
         raise ValueError("No sections found in '%s'!" % filename)
 
     def rightcase(text):
-        ' make text title-case except for acronyms '
+        '''
+        Make text title-case except for acronyms, where an acronym is
+        identified simply by being all upper-case.
+
+        This function operates on the whole string, so a text with mixed
+        acronyms and non-acronyms will not be recognized and everything will be
+        title-cased, including the embedded acronyms.
+
+        Parameters
+        ----------
+
+        text : str
+          text that needs to be changed to the right casing.
+
+        Returns
+        -------
+
+        str
+          original text with poentially different characters being
+          upper-/lower-case.
+        '''
         if text != text.upper():
             return text.title()  # title-case any tag that is not an acronym
         return text   # return acronyms unmodified
@@ -222,7 +249,9 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
         secend = len(doc) + 1 # last section ends at end of document
         if nexttitle:
             secend = nexttitle.start()
-        log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, doc[secstart:secend].strip().replace('\n', ' '))
+        original = doc[secstart:secend].strip().replace('\n', ' ')
+        if original:
+            log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, original)
         return (
             doc[:secstart]
             + "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag)) for tag in tags]) + "\n\n"

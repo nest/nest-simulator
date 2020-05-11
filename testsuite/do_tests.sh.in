@@ -135,7 +135,7 @@ junit_open ()
 
     echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
 
-    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX skip=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
+    echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skip=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
     echo '  <properties>' >> "${JUNIT_FILE}"
     echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
@@ -347,7 +347,6 @@ export PATH="${NEST_PATH}:${PATH}"
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
-INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
 INFO_VER="$(uname -r)"
 
@@ -732,6 +731,7 @@ echo "-----------------------------------------"
 
 if command -v "${NEST_PATH}/run_all_cpptests" > /dev/null 2>&1; then
   CPP_TEST_OUTPUT=$( ${NEST_PATH}/run_all_cpptests --logger=JUNIT,error,"${TEST_OUTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi

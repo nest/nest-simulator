@@ -33,56 +33,52 @@ import os
 import sys
 
 
-
 def parse_result_file(fname):
 
     results = jp.JUnitXml.fromfile(fname)
 
-    failed_tests = ['.'.join((case.classname, case.name)) for case in results 
-        if case.result and not isinstance(case.result, jp.junitparser.Skipped)]
+    failed_tests = ['.'.join((case.classname, case.name)) for case in results
+                    if case.result and not isinstance(case.result, jp.junitparser.Skipped)]
 
-    return {'Tests': results.tests, 
-            'Skipped': results.skipped, 
-            'Failures': results.failures, 
+    return {'Tests': results.tests,
+            'Skipped': results.skipped,
+            'Failures': results.failures,
             'Errors': results.errors,
             'Time': results.time,
             'Failed tests': failed_tests}
 
 
 if __name__ == '__main__':
-    
+
     assert len(sys.argv) == 2, 'summarize_tests must be called with TEST_OUTDIR.'
 
     test_outdir = sys.argv[1]
 
     results = {}
-    totals = {'Tests': 0, 'Skipped': 0, 
+    totals = {'Tests': 0, 'Skipped': 0,
               'Failures': 0, 'Errors': 0,
               'Time': 0, 'Failed tests': []}
 
-    print(os.path.join(test_outdir, '*.xml'))
-    print(glob.glob(os.path.join(test_outdir, '*.xml')))
-    
     for pfile in sorted(glob.glob(os.path.join(test_outdir, '*.xml'))):
-    
+
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace('_', ' ')
         ph_res = parse_result_file(pfile)
         results[ph_name] = ph_res
         for k, v in ph_res.items():
             totals[k] += v
-            
+
     print()
     print("NEST Testsuite Results")
     print()
     cols = ['Tests', 'Skipped', 'Failures', 'Errors', 'Time']
-    tline = '-' * ( len(cols) * 10 + 20 )
+    tline = '-' * (len(cols) * 10 + 20)
 
     print(tline)
     print('{:<20s}'.format('Phase'), end='')
     for c in cols:
         print('{:>10s}'.format(c), end='')
     print()
-    
+
     print(tline)
     for pn, pr in results.items():
         print('{:<20s}'.format(pn), end='')
@@ -90,16 +86,16 @@ if __name__ == '__main__':
             fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
             print(fstr.format(pr[c]), end='')
         print()
-    
-    print(tline)    
+
+    print(tline)
     print('{:<20s}'.format('Total'), end='')
     for c in cols:
         fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
         print(fstr.format(totals[c]), end='')
     print()
-    print(tline)    
+    print(tline)
     print()
-    
+
     if totals['Failures'] + totals['Errors'] > 0:
         print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
         print('    The following tests failed:')
@@ -109,9 +105,8 @@ if __name__ == '__main__':
         print('    Please report test failures by creating an issue at')
         print('        https://github.com/nest/nest_simulator/issues')
         print()
-            
+
         sys.exit(1)
     else:
         print('The NEST Testsuite passed successfully.')
         print()
-

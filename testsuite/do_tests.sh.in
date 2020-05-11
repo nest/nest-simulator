@@ -858,8 +858,7 @@ if test ${TEST_FAILED} -gt 0 ; then
     echo "***"
     echo "*** The following tests failed while running the NEST Testsuite:"
     echo "***"
-    for ft in ${FAILED_TESTS}
-    do
+    for ft in ${FAILED_TESTS}; do
       echo "***     ${ft}"
     done
     echo "***"

@@ -249,7 +249,7 @@ public:
    * Increases the size of the MPI buffer for communication of spikes if it
    * needs to be increased. Returns whether the size was changed.
    */
-  bool increase_buffer_size_spike_data();
+  bool increase_buffer_size_spike_data( const std::vector< unsigned int >& send_buffer_spike_data_counts );
 
   /**
    * Returns whether MPI buffers for communication of connections are adaptive.
@@ -282,6 +282,9 @@ private:
   size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for
   // communication of spikes
 
+  size_t max_vector_size_spike_data_; //!< maximal size of vector for
+  // communication of spikes
+
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
   // connections resize on the fly
 
@@ -294,8 +297,11 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
 
+  //! Maximum number of spikes to be sent by any MPI process.
+  std::vector< long > max_spike_count_;
+
 #ifdef HAVE_MPI
-  //! array containing communication partner for each step.
+  //! Array containing communication partner for each step.
   std::vector< int > comm_step_;
   unsigned int COMM_OVERFLOW_ERROR;
 
@@ -527,24 +533,41 @@ MPIManager::increase_buffer_size_target_data()
 }
 
 inline bool
-MPIManager::increase_buffer_size_spike_data()
+MPIManager::increase_buffer_size_spike_data( const std::vector< unsigned int >& send_buffer_spike_data_counts )
 {
   assert( adaptive_spike_buffers_ );
+
+  // Find the maximum spike count.
+  // As expected by communicate_Allreduce_max_in_place(), max_spike_count_ is a vector of size == 1.
+  max_spike_count_[ 0 ] = *std::max_element(
+      send_buffer_spike_data_counts.begin(),
+      send_buffer_spike_data_counts.end() );
+  communicate_Allreduce_max_in_place( max_spike_count_ );
+
+  // Multiply by number of MPI processes for full buffer size.
+  max_spike_count_[ 0 ] *= get_num_processes();
+
   if ( buffer_size_spike_data_ >= max_buffer_size_spike_data_ )
   {
     return false;
   }
   else
   {
-    if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ )
+    // Set buffer size for correct number of elements.
+    // Avoid resize of vector by returning false.
+    if ( max_spike_count_[ 0 ] <= max_vector_size_spike_data_ )
     {
-      set_buffer_size_spike_data( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
+      set_buffer_size_spike_data( max_spike_count_[ 0 ] );
+      return false;
     }
+    // max_spike_count_[ 0 ] > max_vector_size_spike_data.
+    // Allow resize to minimise number of communication passes.
     else
     {
-      set_buffer_size_spike_data( max_buffer_size_spike_data_ );
+      max_vector_size_spike_data_ = buffer_size_spike_data_ * growth_factor_buffer_spike_data_;
+      set_buffer_size_spike_data( max_vector_size_spike_data_ );
+      return true;
     }
-    return true;
   }
 }
 

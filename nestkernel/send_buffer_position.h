@@ -72,6 +72,11 @@ public:
   unsigned int end( const thread rank ) const;
 
   /**
+   * Returns send count of specified rank.
+   */
+  unsigned int count( const thread rank ) const;
+
+  /**
    * Returns whether the part of the buffer on the specified rank has been
    * filled.
    *
@@ -135,6 +140,12 @@ inline unsigned int
 SendBufferPosition::end( const thread rank ) const
 {
   return end_[ rank_to_index_( rank ) ];
+}
+
+inline unsigned int
+SendBufferPosition::count( const thread rank ) const
+{
+  return idx( rank ) - begin( rank );
 }
 
 inline bool

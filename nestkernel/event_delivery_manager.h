@@ -260,7 +260,8 @@ private:
   template < typename SpikeDataT >
   void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position,
-    std::vector< SpikeDataT >& send_buffer );
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< unsigned int >& send_counts );
 
   /**
    * Resets marker in MPI buffer that signals end of communication
@@ -425,6 +426,11 @@ private:
   std::vector< SpikeData > recv_buffer_spike_data_;
   std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
   std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
+
+  /**
+   * Number of spikes to send to each MPI process.
+   */
+  std::vector< unsigned int > send_buffer_spike_data_counts_;
 
   std::vector< TargetData > send_buffer_target_data_;
   std::vector< TargetData > recv_buffer_target_data_;

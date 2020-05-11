@@ -428,7 +428,7 @@ private:
   std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
 
   /**
-   * Number of spikes to send to each MPI process.
+   * Number of spikes to each MPI process.
    */
   std::vector< unsigned int > send_buffer_spike_data_counts_;
 

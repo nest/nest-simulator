@@ -69,22 +69,6 @@ bail_out ()
     exit 1
 }
 
-#
-# ask_results
-#
-ask_results ()
-{
-    echo "***"
-    echo "*** Please report the problem at"
-    echo "***     https://github.com/nest/nest-simulator/issues"
-    echo "***"
-    echo "*** To help us diagnose the problem, please attach the archived content"
-    echo "*** of these directories to the issue:"
-    echo "***     - '${TEST_OUTDIR}'"
-    echo "***     - '${TEST_TMPDIR}'"
-    echo "***"
-    echo
-}
 
 #
 # portable_inplace_sed file_name expression
@@ -104,7 +88,16 @@ time_cmd()
     start=`date +%s%N`
     $1
     end=`date +%s%N`
-    echo `awk "BEGIN {print ($end - $start) / 1000000000}"`
+
+    # On macOS, `date +%s%N` returns time in seconds followed by N.
+    # The following distinguishes which date version was used.
+    if test "x${start:${#start}-1:1}" != xN ; then
+        echo $(( ( ${end} - ${start} ) / 1000000000 ))
+    else
+        start=${start:0:${#start}-1}
+        end=${end:0:${#end}-1}
+        echo $(( ${end} - ${start} ))
+    fi
 }
 
 #
@@ -118,8 +111,8 @@ EXTENDED_REGEX_PARAM=r
 
 JUNIT_FILE=
 JUNIT_TESTS=
+JUNIT_SKIPS=
 JUNIT_FAILURES=
-JUNIT_CLASSNAME='core'
 
 #
 # junit_open file_name
@@ -130,8 +123,9 @@ junit_open ()
         bail_out 'junit_open: file_name not given!'
     fi
 
-    JUNIT_FILE="${TEST_OUTDIR}/TEST-$1.xml"
+    JUNIT_FILE="${TEST_OUTDIR}/$1.xml"
     JUNIT_TESTS=0
+    JUNIT_SKIPS=0
     JUNIT_FAILURES=0
 
     TIME_TOTAL=0
@@ -141,13 +135,11 @@ junit_open ()
 
     echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
 
-    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
+    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX skip=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
     echo '  <properties>' >> "${JUNIT_FILE}"
     echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.home\" value=\"${INFO_HOME}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.name\" value=\"${INFO_USER}\" />" >> "${JUNIT_FILE}"
     echo '  </properties>' >> "${JUNIT_FILE}"
 }
 
@@ -163,8 +155,6 @@ junit_write ()
     if test "x$1" = x || test "x$2" = x ; then
         bail_out 'junit_write: classname and testname arguments are mandatory!'
     fi
-
-    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
 
     printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\"" >> "${JUNIT_FILE}"
 
@@ -190,6 +180,7 @@ junit_close ()
 
     portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/tests=XXX/tests=\"${JUNIT_TESTS}\"/"
+    portable_inplace_sed "${JUNIT_FILE}" "s/skip=XXX/skip=\"${JUNIT_SKIPS}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
 
     echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"
@@ -284,8 +275,10 @@ run_test ()
 
     chmod 755 "${TEST_RUNFILE}"
 
-    TIME_ELAPSED="$( time_cmd "${TEST_RUNFILE}" 2>&1 )"
-    TIME_TOTAL="$( awk "BEGIN { print (${TIME_TOTAL} + ${TIME_ELAPSED}) ; }" )"
+    TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" 2>&1 )
+    TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
+    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+    
     rm -f "${TEST_RUNFILE}"
 
     exit_code="$(cat "${TEST_RETFILE}")"
@@ -296,21 +289,16 @@ run_test ()
     msg_dirty_skip=${param_skipped##* ${exit_code} }
     msg_clean=${msg_dirty%%,*}
     if test "${msg_dirty}" != "${param_success}" ; then
-        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
         explanation="${msg_clean}"
         junit_failure=
     elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
-        TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+        JUNIT_SKIPS=$(( ${JUNIT_SKIPS} + 1 ))
         msg_dirty=${msg_dirty_skip}
         msg_clean=${msg_dirty%%,*}
         explanation="${msg_clean}"
         junit_failure=
     else
-        TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
-        FAILED_TESTS="${FAILED_TESTS} ${param_script}"
-
-	cat ${TEST_OUTFILE}
 
         msg_dirty=${param_failure##* ${exit_code} }
         msg_clean=${msg_dirty%%,*}
@@ -328,17 +316,17 @@ run_test ()
     echo "${explanation}"
 
     if test "x${msg_error}" != x ; then
-	echo ==================================================
-	echo "Following is the full output of the test:"
-	echo ==================================================
+	      echo ==================================================
+	      echo "Following is the full output of the test:"
+	      echo ==================================================
         echo "${msg_error}"
-	echo ==================================================
+	      echo ==================================================
     fi
 
     echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
     echo >> "${TEST_LOGFILE}" "----------------------------------------"
 
-    junit_write "${JUNIT_CLASSNAME}.${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
+    junit_write "${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
     if test "x${unexpected_exitcode}" != x ; then
@@ -359,10 +347,8 @@ export PATH="${NEST_PATH}:${PATH}"
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
-INFO_HOME="$(/bin/sh -c 'echo ~')"
 INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
-INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
 TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
@@ -422,13 +408,6 @@ if test "x${INFO_OS}" = xDarwin ; then
     defaults write com.apple.CrashReporter DialogType server
 fi
 
-TEST_TOTAL=0
-TEST_PASSED=0
-TEST_SKIPPED=0
-TEST_FAILED=0
-
-FAILED_TESTS=""
-
 TIME_TOTAL=0
 TIME_ELAPSED=0
 
@@ -449,7 +428,7 @@ echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
 echo '-------------------------------------------------------------'
 
-junit_open 'core.phase_1'
+junit_open '01_basic_tests'
 
 CODES_SUCCESS=' 0 Success'
 CODES_FAILURE=
@@ -475,7 +454,7 @@ echo
 echo "Phase 2: Testing SLI's unittest library"
 echo "---------------------------------------"
 
-junit_open 'core.phase_2'
+junit_open '02_selftests'
 
 # assert_or_die uses pass_or_die, so pass_or_die should be tested first.
 
@@ -555,7 +534,7 @@ echo
 echo "Phase 3: Running NEST unit tests"
 echo "--------------------------------"
 
-junit_open 'core.phase_3'
+junit_open '03_unittests'
 
 for test_ext in sli py ; do
       for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
@@ -569,7 +548,7 @@ echo
 echo "Phase 4: Running regression tests"
 echo "---------------------------------"
 
-junit_open 'core.phase_4'
+junit_open '04_regressiontests'
 
 for test_ext in sli py ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
@@ -583,7 +562,7 @@ echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
 if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
-    junit_open 'core.phase_5'
+    junit_open '05_mpitests'
 
     NEST_BINARY=nest_indirect
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
@@ -618,7 +597,7 @@ echo "-------------------------------------------"
 #echo "Phase 6: Running MUSIC tests"
 #echo "----------------------------"
 #if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
-#    junit_open 'core.phase_6'
+#    junit_open '06_music_tests'
 #
 #    BASEDIR="$PWD"
 #    tmpdir="$(mktemp -d)"
@@ -728,77 +707,17 @@ if test "x${TEST_PYNEST}" = xtrue ; then
 
     if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where="${TEST_OUTDIR}" >/dev/null 2>&1; then
 
-        echo
-        echo "  Using nosetests."
-        echo
-
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
+        @PYTHON@ @NOSETESTS@ -v \
+                   --with-xunit --xunit-testsuite-name="07_pynest_tests" --xunit-file="${TEST_OUTDIR}/07_pynest_tests.xml" \
+                   "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
-        ntsummary=`@PYTHON@ -c "import junitparser as jp; r = jp.JUnitXml.fromfile('${TEST_OUTDIR}/pynest_tests.xml'); pl = ['.'.join((s.classname, s.name)) for s in r if s.result and not isinstance(s.result, jp.junitparser.Skipped)]; print(r.tests, r.skipped, r.failures, r.errors, pl)"`
-
-        PYNEST_TEST_TOTAL="$( echo ${ntsummary} | cut -d' ' -f1 )"
-        PYNEST_TEST_SKIPPED="$( echo ${ntsummary} | cut -d' ' -f2 )"
-        PYNEST_TEST_FAILURES="$( echo ${ntsummary} | cut -d' ' -f3 )"
-        PYNEST_TEST_ERRORS="$( echo ${ntsummary} | cut -d' ' -f4 )"
-
-        PYNEST_FAILED="$( echo $ntsummary | cut -d'[' -f2 | cut -d']' -f1 | sed s/\'//g )"
-        
-        FAILED_TESTS="${FAILED_TESTS} ${PYNEST_FAILED}"
-        
-        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
-        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
-          # PYNEST_TEST_FAILURES is a valid number
-          :
-        else
-          PYNEST_TEST_FAILURES=0
-        fi
-        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
-          # PYNEST_TEST_ERRORS is a valid number
-          :
-        else
-          PYNEST_TEST_ERRORS=0
-        fi
-        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
-          # PYNEST_TEST_SKIPPED is a valid number
-          :
-        else
-          PYNEST_TEST_SKIPPED=0
-        fi
-        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
-        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
-
     else
-
         echo
-        echo "  Nosetests unavailable. Using fallback test harness."
-        echo "  Fewer tests will be excuted."
+        echo "  Not running pynest tests because nosetests is missing."
         echo
-
-        "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-
-        PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
-
-        rm -f "pynest_test_numbers.log"
-
     fi
 
-    echo
-    echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-    echo "     Passed: ${PYNEST_TEST_PASSED}"
-    echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-    echo "     Failed: ${PYNEST_TEST_FAILED}"
-
-    PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
-    PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-
-    TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
-    TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))
-    TEST_SKIPPED=$(( $TEST_SKIPPED + $PYNEST_TEST_SKIPPED ))
-    TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
 else
     echo
     echo "Phase 7: Running PyNEST tests"
@@ -812,68 +731,21 @@ echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
 if command -v "${NEST_PATH}/run_all_cpptests" > /dev/null 2>&1; then
-  CPP_TEST_OUTPUT="$(${NEST_PATH}/run_all_cpptests 2>&1)"
-  # TODO:
-  # We should check the return code ($?) of run_all_cpptests here to see
-  # if a fatal crash occured. We cannot simply test $? != 0, since
-  # run_all_cpptests will return a non-zero code if tests fail.
-
-  # TODO:
-  # The regex for the total number seems fine according to
-  # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
-  # but does the check for failures work as it should?
-  # At some point, we should also count skipped tests.
-  CPP_TEST_TOTAL="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')"
-  CPP_TEST_FAILED="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')"
-
-  # replace empty strings by zero so arithmetic expressions below work
-  CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
-  CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
-  CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
-
-  TEST_TOTAL=$(( $TEST_TOTAL + $CPP_TEST_TOTAL ))
-  TEST_PASSED=$(( $TEST_PASSED + $CPP_TEST_PASSED ))
-  TEST_FAILED=$(( $TEST_FAILED + $CPP_TEST_FAILED ))
-
-  echo "  C++ tests : ${CPP_TEST_TOTAL}"
-  echo "     Passed : ${CPP_TEST_PASSED}"
-  echo "     Failed : ${CPP_TEST_FAILED}"
-
+  CPP_TEST_OUTPUT=$( ${NEST_PATH}/run_all_cpptests --logger=JUNIT,error,"${TEST_OUTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
 
 echo
-echo "NEST Testsuite Summary"
-echo "----------------------"
-echo "  NEST Executable: $(which nest)"
-echo "  SLI Executable : $(which sli)"
-echo "  Total number of tests: ${TEST_TOTAL}"
-echo "     Passed: ${TEST_PASSED}"
-echo "     Skipped: ${TEST_SKIPPED} ${PYNEST_TEST_SKIPPED_TEXT:-}"
-echo "     Failed: ${TEST_FAILED} ${PYNEST_TEST_FAILED_TEXT:-}"
-echo
+echo "Test suite summary"
+echo "------------------"
 
-if test ${TEST_FAILED} -gt 0 ; then
-    echo "***"
-    echo "*** The following tests failed while running the NEST Testsuite:"
-    echo "***"
-    for ft in ${FAILED_TESTS}; do
-      echo "***     ${ft}"
-    done
-    echo "***"
-    ask_results
-else
-    rm -rf "${TEST_TMPDIR}"
-fi
+@PYTHON@ "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
+TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
 if test "x${INFO_OS}" = xDarwin ; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 
-if test ${TEST_FAILED} -gt 0 ; then
-    exit 1
-else
-    exit 0
-fi
+exit $TESTSUITE_RESULT

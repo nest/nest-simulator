@@ -39,6 +39,8 @@ install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
+install( PROGRAMS
+             summarize_tests.py 
+             ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
     )

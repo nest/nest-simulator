@@ -21,7 +21,7 @@ please follow the guidelines below:
 
       * the steps you took that lead to the problem.
       * the specific error messages you get.
-      * relevant system and version information (e.g.,  Ubuntu 18.04/ NEST 2.20 installed using Conda).
+      * relevant system and version information (e.g.,  Ubuntu 18.04/ NEST 2.20.1 installed using Conda).
 
 #. Keep topics separate.
 

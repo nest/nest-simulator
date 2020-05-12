@@ -1,3 +1,10 @@
+nest (2.20.1-0ubuntu1ppa1) unstable; urgency=low
+
+  * NEST v2.20.1
+  * Added boost to /debian files
+
+ -- Steffen Graber <s.graber@fz-juelich.de>  Tue, 17 Mar 2020 07:00:00 +0000
+
 nest (2.18.0+1SNAPSHOT-0ubuntu1ppa1) unstable; urgency=low
 
   * NEST daily builds of master in 'ppa:nest-simulator/nest-nightly'

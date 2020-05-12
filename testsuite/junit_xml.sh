@@ -43,6 +43,9 @@ time_cmd()
     $1
     end=$(date +%s%N)
 
+    echo "TIME START ${start}"
+    echo "TIME END ${end}" 
+
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
     if test "x${start: -1}" != xN ; then     # space before -1 required!
@@ -50,9 +53,6 @@ time_cmd()
     else
         echo $(( ${end%N} - ${start%N} ))
     fi
-    
-    echo "TIME START ${start}"
-    echo "TIME END ${end}" 
 }
 
 JUNIT_FILE=

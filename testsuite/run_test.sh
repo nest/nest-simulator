@@ -106,6 +106,7 @@ run_test ()
     chmod 700 "${TEST_RUNFILE}"
 
     TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
+    echo "TIME ELAPSED ::${TIME_ELAPSED}::
     TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
     JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
     

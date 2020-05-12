@@ -273,9 +273,9 @@ run_test ()
     echo "${command}" >> "${TEST_RUNFILE}"
     echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
 
-    chmod 755 "${TEST_RUNFILE}"
+    chmod 700 "${TEST_RUNFILE}"
 
-    TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" 2>&1 )
+    TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
     TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
     JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
     

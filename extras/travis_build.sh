@@ -32,6 +32,8 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
+echo "SHELL VERSION $( /bin/sh --version )"
+
 # Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"

@@ -19,6 +19,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# This file only contains helper functions for the NEST testsuite.
+# It is meant to be sourced from do_tests.sh rather than being run
+# directly.
+
+
 #
 # run_test script_name codes_success codes_failure
 #

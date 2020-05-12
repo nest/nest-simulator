@@ -20,15 +20,13 @@ documentation.
 
 This manual describes the spatial functionalities included with NEST 3.0.
 
-.. TODO: Chapter 5 about parameters?
-
 In the next section of this manual, we introduce spatially distributed nodes.
 In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect spatial nodes with each other, before discussing in
 Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
-spatial networks. Chapter \ :ref:`5 <ch:extending>` deals with the more
-advanced topic of extending the functionalities with custom masks provided
-by C++ classes in an extension module.
+spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
+boundaries using parameters, and the more advanced topic of extending the
+functionalities with custom masks provided by C++ classes in an extension module.
 
 You will find the Python scripts used in the examples in this manual in
 the NEST source code directory under
@@ -280,10 +278,10 @@ Note the following points:
    element coordinates, i.e., of two-element tuples of floats giving the
    (:math:`x`, :math:`y`)-coordinates of the elements, or a ``Parameter`` object.
 
--  When using a Parameter object for the positions, the number of dimensions have to be specified
+-  When using a parameter object for the positions, the number of dimensions have to be specified
    by the ``num_dimensions`` variable. num_dimensions can either be 2 or 3.
 
--  When using a Parameter object you also need to specify how many elements you want to create
+-  When using a parameter object you also need to specify how many elements you want to create
    by specifying ``'n'`` in the ``Create`` call. This is **not** the case when you pass a list to
    the ``nest.spatial.free`` object.
 
@@ -527,7 +525,7 @@ Mask
 
 Connection probability or ``p``
    The *connection probability*, specified as ``p`` in the connection
-   specifications, is either a value, or a Parameter which specifies the
+   specifications, is either a value, or a parameter which specifies the
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
    certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
@@ -632,9 +630,10 @@ using periodic boundary conditions, since the mask would “wrap around”
 in that case and pool nodes would be considered multiple times as
 targets.
 
-If none of the mask types provided in the library meet your
-need, you may add more mask types in a NEST extension module. This is
-covered in Chapter \ `5 <#ch:extending>`__.
+If none of the mask types provided in the library meet your need, you may
+define custom masks, either by introducing a cut-off to the connection
+probability using parameters, or by adding more mask types in a NEST extension
+module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
 
 .. _sec:free_masks:
 
@@ -871,7 +870,7 @@ NEST supports probabilistic connections through the
 ``pairwise_bernoulli`` connection rule. The probability can then be a constant,
 depend on the position of the source or the target neuron, or on the
 distance between a driver and a pool node to a connection probability. To
-create dependencies on neuron positions, NEST Parameters objects are used.
+create dependencies on neuron positions, NEST parameters objects are used.
 NEST then generates a connection according to this probability.
 
 Probabilistic connections between layers can be generated in two different
@@ -926,7 +925,7 @@ position can be used. The others can only be used when connecting.
 
 NEST provides some functions to help create distributions based on the position of the nodes, for
 instance the distance between two neurons, shown in the table below. The table also includes
-Parameters drawing values from random distributions.
+parameters drawing values from random distributions.
 
   +----------------------------------------------+--------------------+------------------------------------------------------+
   | Distribution function                        | Arguments          | Function                                             |
@@ -1040,7 +1039,7 @@ passed along in a synapse dictionary to the ``Connect`` call.
 
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
-Parameters. The code examples used to generate the figures are shown below.
+parameters. The code examples used to generate the figures are shown below.
 All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
@@ -1094,7 +1093,7 @@ Randomized weights and delays
       :start-after: #{ conn5uniform #}
       :end-before: #{ end #}
 
-  By using the ``nest.random.uniform()`` Parameter for weights or delays, one can
+  By using the ``nest.random.uniform()`` parameter for weights or delays, one can
   obtain randomized values for weights and delays, as shown by the red
   circles in the bottom panel of :numref:`fig_conn5`.
 
@@ -1106,22 +1105,22 @@ Randomized weights and delays
    Distance-dependent and randomized weights and delays. See text for
    details.
 
-Designing distance-dependent Parameters
+Designing distance-dependent parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although NEST comes with some pre-defined functions that can be used to
-create distributions of distance-dependent Parameters, there is no limit
-to how Parameters can be combined.
+create distributions of distance-dependent parameters, there is no limit
+to how parameters can be combined.
 
-.. TODO: reference to Parameter documentation
+.. TODO: reference to parameter documentation
 
-As an example, we will now combine some Parameters to create a new Parameter that is
+As an example, we will now combine some parameters to create a new parameter that is
 linear (actually affine) with respect to the displacement between the nodes, of the form
 
 .. math:: p = 0.5 + d_x + 2 d_y.
 
 \ where :math:`d_x` and :math:`d_y` are the displacements between the source and
-target neuron on the x and y axis, respectively. The Parameter is then simply:
+target neuron on the x and y axis, respectively. The parameter is then simply:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn_param_design #}
@@ -1384,7 +1383,7 @@ Visualization functions
 NEST provides three functions to visualize networks:
 
 +---------------------------------+------------------------------------------+
-| ``PlotLayer()``                 | Plot nodes in a spatially distributed    | 
+| ``PlotLayer()``                 | Plot nodes in a spatially distributed    |
 |                                 | NodeCollection.                          |
 +---------------------------------+------------------------------------------+
 | ``PlotTargets()``               | Plot all targets of a node in a given    |
@@ -1393,7 +1392,7 @@ NEST provides three functions to visualize networks:
 | ``PlotProbabilityParameter()``  | Add indication of mask and probability   |
 |                                 | ``p`` to  plot of NodeCollection. This   |
 |                                 | function is usually called by            |
-|                                 | `PlotTargets``.                          |
+|                                 | ``PlotTargets``.                         |
 +---------------------------------+------------------------------------------+
 
 .. _fig_vislayer:
@@ -1416,63 +1415,130 @@ center neuron are shown, as well as mask and connection probability.
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
 
-.. TODO: adding masks need to be updated for 3.0?
+.. _ch:custom_masks:
 
-.. _ch:extending:
+Creating custom masks
+---------------------
 
-Adding masks
-------------
+In some cases, the built-in masks may not meet your needs, and you want to
+create a custom mask. There are two ways to do this:
 
-This chapter will show examples of how to extend NEST by adding custom
-masks. Some knowledge of the C++ programming language is needed for this.
-The functions will be added as a part of an extension module which is
-dynamically loaded into NEST. For more information on writing an extension
-module, see the section titled `“Writing an Extension Module”
-<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST
-Developer Manual. The basic steps required to get started are:
+1. To use parameters to introduce a cut-off to the connection probability.
+2. To implement a custom mask in C++ as a module.
 
-1. From the NEST source directory, copy directory examples/MyModule to
+Using parameters is the most accessible option; the entire implementation is done on
+the PyNEST level. However, the price for this flexibility is reduced connection efficiency
+compared to masks implemented in C++. Combining parameters to give the wanted behaviour may
+also be difficult if the mask specifications are complex.
+
+Implementing a custom mask in C++ gives much higher connection performance and greater freedom
+in implementation, but requires some knowledge of the C++ language. As the mask in this case
+is implemented in an extension module, which is dynamically loaded into NEST, it also requires
+some additional steps for installation.
+
+.. _sec:maskparameter:
+
+Using parameters to specify connection boundaries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can use parameters that represent spatial distances between nodes to create a connection
+probability with mask behaviour. For this, you need to create a condition parameter that describes
+the boundary of the mask. As condition parameters evaluate to either ``0`` or ``1``, it can be
+used alone, with the ``nest.logic.conditional()`` parameter, or multiplied with another
+parameter or value, before passing it as the connection probability.
+
+As an example, suppose we want to create connections to 50 % of the target nodes, but only to those
+within an elliptical area around each source node. Using ``nest.spatial.distance`` parameters, we
+can define a parameter that creates an elliptical connection boundary.
+
+First, we define variables controlling the shape of the ellipse.
+
+::
+
+   rx = 0.5   # radius in the x-direction
+   ry = 0.25  # radius in the y-direction
+
+Next, we define the connection boundary. We only want to connect to targets inside an ellipse, so
+the condition is
+
+.. math::
+
+   \frac{x^2}{r_x^2}+\frac{y^2}{r_y^2} \leq 1,
+
+where :math:`x` and :math:`y` are the distances between the source and target neuron, in x- and
+y-directions, respectively. We use this expression to define the boundary using parameters.
+
+::
+
+   x = nest.spatial.distance.x
+   y = nest.spatial.distance.y
+   lhs = x * x / rx**2 + y * y / ry**2
+   mask_param = nest.logic.conditional(lhs <= 1.0, 0.5, 0.0)
+   # Because the probability outside the ellipse is zero,
+   # we could also have defined the parameter as
+   # mask_param = 0.5*(lhs <= 1.0)
+
+Then, we can use the parameter as connection probability when connecting populations with spatial
+information.
+
+::
+
+   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[1., 1.]))
+   nest.Connect(l, l, {'rule': 'pairwise_bernoulli', 'p': mask_param})
+
+.. _sec:maskmodule:
+
+Adding masks in a module
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+If using parameters to define a connection boundary is not efficient enough, or
+if you need more flexibility in defining the mask, you have to add a custom
+mask, written in C++, as a part of an extension module. For more information
+on writing an extension module, see the section titled `“Writing an Extension Module”
+<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST Developer
+Manual. The basic steps required to get started are:
+
+1. From the NEST source directory, copy the directory ``examples/MyModule`` to
    somewhere outside the NEST source, build or install directories.
 
-2. Change to the new location of MyModule and prepare by issuing
-   ``./bootstrap.sh``
+   .. code:: bash
 
-3. Leave MyModule and create a build directory for it, e.g., mmb next to
-   it
+      cp -r <path_to_nest_source>/examples/MyModule mm_src
+
+2. Create a build directory for MyModule, e.g. ``mm_bld``, next to
+   the copied source directory:
 
    .. code:: bash
 
-      cd ..
-      mkdir mmb
-      cd mmb
+      mkdir mm_bld
+      cd mm_bld
 
-4. Configure. The configure process uses the script ``nest-config`` to
+3. Configure. The configure process uses the script ``nest-config`` to
    find out where NEST is installed, where the source code resides, and
    which compiler options were used for compiling NEST. If
-   ``nest-config`` is not in your path, you need to provided it
-   explicitly like this
+   ``nest-config`` is not in your path, you need to provide it
+   explicitly with ``-Dwith-nest`` as follows:
 
    .. code:: bash
 
-      cmake -Dwith-nest=${NEST_INSTALL_PREFIX}/bin/nest-config ../MyModule
+      cmake -Dwith-nest=${NEST_INSTALL_PREFIX}/bin/nest-config ../mm_src
 
-5. MyModule will be installed to ``\${NEST_INSTALL_PREFIX}/lib/nest``. This
-   ensures that NEST will be able to the module and initializing SLI files
-   for the module. You should not use the ``--prefix`` to select a different
-   installation destination. If you do, you must make sure to use
+4. MyModule will be installed to ``${NEST_INSTALL_PREFIX}``. This
+   ensures that NEST will be able to find the module and initializing SLI
+   files for the module. You should not use the ``--prefix`` to select a
+   different installation destination. If you do, you must make sure to use
    addpath in SLI before loading the module to ensure that NEST will
    find the SLI initialization file for your module. You also might have
    to set `LD_LIBRARY_PATH` (on Linux) or `DYLD_LIBRARY_PATH` on macOS
    accordingly for the module itself to be found.
 
-6. Compile.
+5. Compile and install.
 
    .. code:: bash
 
-      make
       make install
 
-   The previous command installed MyModule to the NEST installation
+   MyModule is then installed to the NEST installation
    directory, including help files generated from the source code.
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``
@@ -1481,64 +1547,78 @@ elliptic mask by creating a class called ``EllipticMask``. Note that
 elliptical masks are already part of NEST see
 Sec. \ :ref:`3.3 <sec:conn_masks>`. That elliptical mask is defined in a
 different way than what we will do here though, so this can still be
-used as an introductory example. First, we must include another header
-file:
+used as an introductory example. First, we must include the header
+files for the ``Mask`` parent class:
 
 .. code:: c
 
    #include "mask.h"
+   #include "mask_impl.h"
 
 The ``Mask`` class has a few methods that must be overridden:
 
 .. code:: c
 
-     class EllipticMask : public nest::Mask<2>
+   class EllipticMask : public nest::Mask< 2 >
+   {
+   public:
+     EllipticMask( const DictionaryDatum& d )
+       : rx_( 1.0 )
+       , ry_( 1.0 )
      {
-     public:
-       EllipticMask(const DictionaryDatum& d):
-         rx_(1.0), ry_(1.0)
-         {
-           updateValue<double>(d, "r_x", rx_);
-           updateValue<double>(d, "r_y", ry_);
-         }
+       updateValue< double >( d, "r_x", rx_ );
+       updateValue< double >( d, "r_y", ry_ );
+     }
 
-       using Mask<2>::inside;
+     using Mask< 2 >::inside;
 
-       // returns true if point is inside the ellipse
-       bool inside(const nest::Position<2> &p) const
-         { return p[0]*p[0]/rx_/rx_ + p[1]*p[1]/ry_/ry_ <= 1.0; }
+     // returns true if point is inside the ellipse
+     bool
+     inside( const nest::Position< 2 >& p ) const
+     {
+       return p[ 0 ] * p[ 0 ] / rx_ / rx_ + p[ 1 ] * p[ 1 ] / ry_ / ry_ <= 1.0;
+     }
 
-       // returns true if the whole box is inside the ellipse
-       bool inside(const nest::Box<2> &b) const
-         {
-           nest::Position<2> p = b.lower_left;
+     // returns true if the whole box is inside the ellipse
+     bool
+     inside( const nest::Box< 2 >& b ) const
+     {
+       nest::Position< 2 > p = b.lower_left;
 
-           // Test if all corners are inside mask
-           if (not inside(p)) return false;       // (0,0)
-           p[0] = b.upper_right[0];
-           if (not inside(p)) return false;       // (0,1)
-           p[1] = b.upper_right[1];
-           if (not inside(p)) return false;       // (1,1)
-           p[0] = b.lower_left[0];
-           if (not inside(p)) return false;       // (1,0)
+       // Test if all corners are inside mask
+       if ( not inside( p ) )
+         return false; // (0,0)
+       p[ 0 ] = b.upper_right[ 0 ];
+       if ( not inside( p ) )
+         return false; // (0,1)
+       p[ 1 ] = b.upper_right[ 1 ];
+       if ( not inside( p ) )
+         return false; // (1,1)
+       p[ 0 ] = b.lower_left[ 0 ];
+       if ( not inside( p ) )
+         return false; // (1,0)
 
-           return true;
-         }
+       return true;
+     }
 
-       // returns bounding box of ellipse
-       nest::Box<2> get_bbox() const
-         {
-           nest::Position<2> ll(-rx_,-ry_);
-           nest::Position<2> ur(rx_,ry_);
-           return nest::Box<2>(ll,ur);
-         }
+     // returns bounding box of ellipse
+     nest::Box< 2 >
+     get_bbox() const
+     {
+       nest::Position< 2 > ll( -rx_, -ry_ );
+       nest::Position< 2 > ur( rx_, ry_ );
+       return nest::Box< 2 >( ll, ur );
+     }
 
-       nest::Mask<2> * clone() const
-         { return new EllipticMask(*this); }
+     nest::Mask< 2 >*
+     clone() const
+     {
+       return new EllipticMask( *this );
+     }
 
-     protected:
-       double rx_, ry_;
-     };
+   protected:
+     double rx_, ry_;
+   };
 
 The overridden methods include a test if a point is inside the mask, and
 for efficiency reasons also a test if a box is fully inside the mask. We
@@ -1546,15 +1626,13 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-.. TODO: how does registering work with mymodule in 3.0?
-
 The mask class must then be registered with the topology module, and this
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 
 .. code:: c
 
-       nest::TopologyModule::register_mask<EllipticMask>("elliptic");
+   nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
 
 After compiling and installing the module, the mask is available to be
 used in connections, e.g.
@@ -1562,9 +1640,9 @@ used in connections, e.g.
 ::
 
    nest.Install('mymodule')
-   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(rows=11, columns=11, extent=[1., 1.]))
+   l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[1., 1.]))
    nest.Connect(l, l, {'rule': 'pairwise_bernoulli',
-                       'p': 1.0,
+                       'p': 0.5,
                        'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 
 

@@ -39,10 +39,14 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
+    echo "PRE START"
     t_start=$( date +%s%N )
-    $1
+    echo "PRE SLEEP"
+    sleep 2
+    echo "POST SLEEP"
     t_end=$( date +%s%N )
-
+    echo "POST END"
+    
     echo "TRYING FIRST SUBS ::x${t_start: -1}::"
     echo "DONE FIRST"
     echo "TRYING MATH SIMPLE $(( ${t_end} - ${t_start} ))"

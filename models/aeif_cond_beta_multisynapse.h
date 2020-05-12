@@ -264,7 +264,7 @@ private:
 
     double gsl_error_tol; //!< Error bound for GSL integrator
 
-    bool has_connections_;    //!< Boolean flag which indicates whether the neuron has connections
+    bool has_connections_; //!< Boolean flag which indicates whether the neuron has connections
 
     Parameters_(); //!< Sets default parameter values
 

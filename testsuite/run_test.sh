@@ -63,10 +63,6 @@
 #   contain an entry != "" for the returned exit code, the pass is counted as
 #   failed, too, and unexpected exit code is logged).
 #
-# First Version by Ruediger Kupper, 07 Jul 2008
-# Modified by Jochen Eppler and Markus Diesmann
-# Modified by Yury V. Zaytsev
-#
 run_test ()
 {
     TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))

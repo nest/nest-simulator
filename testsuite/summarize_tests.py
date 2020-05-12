@@ -109,11 +109,10 @@ if __name__ == '__main__':
         print()
         print(tline)
         print()
-        
+
         sys.exit(1)
     else:
         print('The NEST Testsuite passed successfully.')
         print()
         print(tline)
         print()
-        

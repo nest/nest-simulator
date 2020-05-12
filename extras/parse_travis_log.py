@@ -439,7 +439,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
             if in_installcheck_section:
                 if line.strip() == "NEST Testsuite Results":
                     in_results_section = True
-                
+
                 if in_results_section:
                     if line.startswith("Total"):
                         parts = line.split()
@@ -718,22 +718,23 @@ def errors_table(summary):
 
 def report_failed_tests(failed_tests):
     """Create a table of tests that have failed.
-    
+
     Parameters
     ----------
     List of failed tests.
-    
+
     Returns
     -------
     Formatted string, empty if no tests failed.
     """
-    
+
     if failed_tests:
-        return '\n\nFailed tests:' + ''.join('\n  ' + ft for ft in failed_tests)
+        return ('\n\nFailed tests:' +
+                ''.join('\n  ' + ft for ft in failed_tests))
     else:
         return ''
-    
-    
+
+
 def printable_summary(list_of_changed_files,
                       status_cmake_configure,
                       status_make,
@@ -750,8 +751,8 @@ def printable_summary(list_of_changed_files,
                       number_of_warnings,
                       number_of_tests_total,
                       number_of_tests_failed,
-                      number_of_tests_skipped, 
-                      failed_tests, 
+                      number_of_tests_skipped,
+                      failed_tests,
                       test_time,
                       ignore_vera,
                       ignore_cppcheck,
@@ -1000,7 +1001,6 @@ if __name__ == '__main__':
         summary_warnings = makebuild_summary(log_filename, "MSGBLD0250",
                                              "MSGBLD0260")
 
-
     # Summarize the NEST test suite results.
     (status_tests, number_of_tests_total, number_of_tests_failed,
      number_of_tests_skipped, failed_tests, test_time) = \
@@ -1046,8 +1046,8 @@ if __name__ == '__main__':
                             number_of_warnings,
                             number_of_tests_total,
                             number_of_tests_failed,
-                            number_of_tests_skipped, 
-                            failed_tests, 
+                            number_of_tests_skipped,
+                            failed_tests,
                             test_time,
                             ignore_vera,
                             ignore_cppcheck,

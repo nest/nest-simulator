@@ -1,4 +1,3 @@
-
 # run_test.sh
 #
 # This file is part of NEST.

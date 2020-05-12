@@ -39,20 +39,9 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    echo "PRE START"
     t_start=$( date +%s%N )
-    echo "PRE SLEEP"
-    sleep 2
-    echo "POST SLEEP"
+    $1
     t_end=$( date +%s%N )
-    echo "POST END"
-    
-    echo "TRYING FIRST SUBS ::x${t_start: -1}::"
-    echo "DONE FIRST"
-    echo "TRYING MATH SIMPLE $(( ${t_end} - ${t_start} ))"
-    echo "DONE SIMPLE"
-    echo "TRYING MATH ALL $(( ( ${t_end} - ${t_start} ) / 1000000000 ))"
-    echo "DONE ALL"
     
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
@@ -62,12 +51,6 @@ time_cmd()
         echo $(( ${t_end%N} - ${t_start%N} ))
     fi
 }
-
-echo "TESTING TIME"
-time_cmd "sleep 1"
-echo "DONE FIRST TEST"
-FOO=$( time_cmd "sleep 1" )
-echo "SECOND TEST: ${FOO}"
 
 JUNIT_FILE=
 JUNIT_TESTS=

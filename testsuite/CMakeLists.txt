@@ -40,7 +40,7 @@ install( DIRECTORY ${TESTSUBDIRS}
     )
 
 install( PROGRAMS
-             summarize_tests.py 
+             run_test.sh junit_xml.sh summarize_tests.py 
              ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
     )

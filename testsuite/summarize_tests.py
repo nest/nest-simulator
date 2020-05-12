@@ -67,11 +67,13 @@ if __name__ == '__main__':
         for k, v in ph_res.items():
             totals[k] += v
 
-    print()
-    print("NEST Testsuite Results")
-    print()
     cols = ['Tests', 'Skipped', 'Failures', 'Errors', 'Time']
     tline = '-' * (len(cols) * 10 + 20)
+
+    print()
+    print()
+    print(tline)
+    print('NEST Testsuite Results')
 
     print(tline)
     print('{:<20s}'.format('Phase'), end='')
@@ -98,15 +100,20 @@ if __name__ == '__main__':
 
     if totals['Failures'] + totals['Errors'] > 0:
         print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
-        print('    The following tests failed:')
+        print('    The following tests failed')
         for t in totals['Failed tests']:
-            print('        {:s}'.format(t))
+            print('    | {:s}'.format(t))   # | marks line for parsing
         print()
         print('    Please report test failures by creating an issue at')
         print('        https://github.com/nest/nest_simulator/issues')
         print()
-
+        print(tline)
+        print()
+        
         sys.exit(1)
     else:
         print('The NEST Testsuite passed successfully.')
         print()
+        print(tline)
+        print()
+        

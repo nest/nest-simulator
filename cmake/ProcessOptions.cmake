@@ -213,16 +213,34 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
     # (but later on when installing)
     set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE PARENT_SCOPE )
 
-    # set the rpath only when installed
+    # set run-time search path (RPATH) so that dynamic libraries in ``lib/nest`` can be located
+
+    # Note: "$ORIGIN" (on Linux) and "@loader_path" (on MacOS) are not CMake variables, but special keywords for the
+    # Linux resp. the macOS dynamic loader. They refer to the path in which the object is located, e.g.
+    # ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest and sli executables, ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all
+    # dynamic libraries except PyNEST (libnestkernel.so, etc.), and  something like
+    # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
+    # this origin, so the binary ``bin/nest`` can find the files in the relative location ``../lib/nest``, and
+    # similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities on all generated
+    # objects.
+
+    # PyNEST can only act as an entry point; it does not need to be included in the other objects' RPATH itself.
+
     if ( APPLE )
       set( CMAKE_INSTALL_RPATH
+          # for binaries
           "@loader_path/../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: @loader_path at <prefix>/lib/python3.x/site-packages/nest
+          # for libraries (except pynestkernel)
+          "@loader_path/../../${CMAKE_INSTALL_LIBDIR}/nest"
+          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "@loader_path/../../../nest"
           PARENT_SCOPE )
     else ()
       set( CMAKE_INSTALL_RPATH
+          # for binaries
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
+          # for libraries (except pynestkernel)
+          "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
           # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "\$ORIGIN/../../../nest"
           PARENT_SCOPE )

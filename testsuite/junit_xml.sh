@@ -39,19 +39,19 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    start=$(date +%s%N)
+    t_start=$( date +%s%N )
     $1
-    end=$(date +%s%N)
+    t_end=$( date +%s%N )
 
-    echo "TIME START ${start}"
-    echo "TIME END ${end}" 
+    echo "TIME START ${t_start}"
+    echo "TIME END ${t_end}" 
 
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
-    if test "x${start: -1}" != xN ; then     # space before -1 required!
-        echo $(( ( ${end} - ${start} ) / 1000000000 ))
+    if test "x${t_start: -1}" != xN ; then     # space before -1 required!
+        echo $(( ( ${t_end} - ${t_start} ) / 1000000000 ))
     else
-        echo $(( ${end%N} - ${start%N} ))
+        echo $(( ${t_end%N} - ${t_start%N} ))
     fi
 }
 

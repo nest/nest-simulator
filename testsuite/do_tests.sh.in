@@ -34,6 +34,8 @@
 #
 . @CMAKE_INSTALL_FULL_BINDIR@/nest_vars.sh
 
+echo "DATE OUT ::$(date +%s%N)::"
+
 #
 # usage [exit_code bad_option]
 #

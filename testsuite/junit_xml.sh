@@ -39,9 +39,9 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    start=`date +%s%N`
+    start=$(date +%s%N)
     $1
-    end=`date +%s%N`
+    end=$(date +%s%N)
 
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
@@ -50,6 +50,9 @@ time_cmd()
     else
         echo $(( ${end%N} - ${start%N} ))
     fi
+    
+    echo "TIME START ${start}"
+    echo "TIME END ${end}" 
 }
 
 JUNIT_FILE=

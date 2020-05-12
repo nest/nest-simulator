@@ -45,12 +45,10 @@ time_cmd()
 
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
-    if test "x${start:${#start}-1:1}" != xN ; then
+    if test "x${start: -1}" != xN ; then     # space before -1 required!
         echo $(( ( ${end} - ${start} ) / 1000000000 ))
     else
-        start=${start:0:${#start}-1}
-        end=${end:0:${#end}-1}
-        echo $(( ${end} - ${start} ))
+        echo $(( ${end%N} - ${start%N} ))
     fi
 }
 

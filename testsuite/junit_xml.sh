@@ -39,15 +39,17 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    echo "COMMAND IS :: $1 ::"
     t_start=$( date +%s%N )
-    echo "TIME START ${t_start}"
     $1
-    echo "COMMAND EXECUTED"
     t_end=$( date +%s%N )
 
-    echo "TIME END ${t_end}" 
-
+    echo "TRYING FIRST SUBS ::x${t_start: -1}::"
+    echo "DONE FIRST"
+    echo "TRYING MATH SIMPLE $(( ${t_end} - ${t_start} ))"
+    echo "DONE SIMPLE"
+    echo "TRYING MATH ALL $(( ( ${t_end} - ${t_start} ) / 1000000000 ))"
+    echo "DONE ALL"
+    
     # On macOS, `date +%s%N` returns time in seconds followed by N.
     # The following distinguishes which date version was used.
     if test "x${t_start: -1}" != xN ; then     # space before -1 required!

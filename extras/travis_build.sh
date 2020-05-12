@@ -32,39 +32,6 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-echo "DATE OUT ::$(date +%s%N)::"
-
-#
-# measure runtime of command
-#
-time_cmd()
-{
-    echo "COMMAND IS :: $1 ::"
-    t_start=$( date +%s%N )
-    echo "TIME START ${t_start}"
-    $1
-    echo "COMMAND EXECUTED"
-    t_end=$( date +%s%N )
-
-    echo "TIME END ${t_end}" 
-
-    # On macOS, `date +%s%N` returns time in seconds followed by N.
-    # The following distinguishes which date version was used.
-    if test "x${t_start: -1}" != xN ; then     # space before -1 required!
-        echo $(( ( ${t_end} - ${t_start} ) / 1000000000 ))
-    else
-        echo $(( ${t_end%N} - ${t_start%N} ))
-    fi
-}
-
-echo "TESTING TIME"
-time_cmd "sleep 1"
-echo "DONE FIRST TEST"
-FOO=$( time_cmd "sleep 1" )
-echo "SECOND TEST: ${FOO}"
-
-
-
 # Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"

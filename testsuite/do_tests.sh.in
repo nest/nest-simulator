@@ -30,6 +30,11 @@
 
 
 #
+# set up environment variables
+#
+. @CMAKE_INSTALL_FULL_BINDIR@/nest_vars.sh
+
+#
 # usage [exit_code bad_option]
 #
 usage ()
@@ -100,12 +105,6 @@ EXTENDED_REGEX_PARAM=r
 # source helpers to make their functions available
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
-
-# Set environment variables.
-# The NEST_ variants of the global variables were set by
-# cmake during configuration.
-export PYTHONPATH="${NEST_PYTHONPATH}:${PYTHONPATH}"
-export PATH="${NEST_PATH}:${PATH}"
 
 TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
 TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"

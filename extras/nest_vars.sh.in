@@ -10,7 +10,7 @@ export NEST_DATA_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DATADIR@"
 export NEST_DOC_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DOCDIR@"
 
 # The path in which NEST dynamic libraries are found. Works also if $(DY)LD_LIBRARY_PATH is undefined.
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [ "`uname`" = "Darwin" ]; then
     export DYLD_LIBRARY_PATH="$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest"${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
 else
     export LD_LIBRARY_PATH="$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest"${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}

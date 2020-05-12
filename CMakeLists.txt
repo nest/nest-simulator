@@ -197,9 +197,7 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       PYTHON="${PYTHON}"
-      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
@@ -207,12 +205,18 @@ if ( HAVE_PYTHON )
 else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
+
+# N.B. to ensure "make install" is always run before "make installcheck", we
+# would ideally like to add:
+#   add_dependencies( installcheck install )
+# However, an issue in CMake at time of writing (May 2020, see
+# https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
+# so.
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

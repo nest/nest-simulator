@@ -39,11 +39,13 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
+    echo "COMMAND IS :: $1 ::"
     t_start=$( date +%s%N )
+    echo "TIME START ${t_start}"
     $1
+    echo "COMMAND EXECUTED"
     t_end=$( date +%s%N )
 
-    echo "TIME START ${t_start}"
     echo "TIME END ${t_end}" 
 
     # On macOS, `date +%s%N` returns time in seconds followed by N.
@@ -54,6 +56,12 @@ time_cmd()
         echo $(( ${t_end%N} - ${t_start%N} ))
     fi
 }
+
+echo "TESTING TIME"
+time_cmd "sleep 1"
+echo "DONE FIRST TEST"
+FOO=$( time_cmd "sleep 1" )
+echo "SECOND TEST: ${FOO}"
 
 JUNIT_FILE=
 JUNIT_TESTS=

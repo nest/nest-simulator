@@ -1,5 +1,5 @@
 
-# run_tests.sh
+# run_test.sh
 #
 # This file is part of NEST.
 #
@@ -25,7 +25,7 @@
 
 
 #
-# run_test script_name codes_success codes_failure
+# run_test script_name codes_success codes_skipped codes_failure
 #
 # script_name: name of a .sli / .py script in $TEST_BASEDIR
 #

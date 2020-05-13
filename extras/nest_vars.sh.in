@@ -3,5 +3,5 @@
 # Make PyNEST available by prepending its path to PYTHONPATH in a safe way.
 export PYTHONPATH="@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@${PYTHONPATH:+:$PYTHONPATH}"
 
-# Make NEST executables available by prepending to PATH.
+# Make NEST executables available by prepending their path to PATH.
 export PATH="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@:${PATH}"

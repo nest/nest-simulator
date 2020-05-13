@@ -167,15 +167,15 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
         if title.group(1) != short_description:
             continue
         secstart = title.end()
-        secend = len(doc) + 1 # last section ends at end of document
+        secend = len(doc) + 1  # last section ends at end of document
         if nexttitle:
             secend = nexttitle.start()
         sdesc = doc[secstart:secend].strip().replace('\n', ' ')
         fixed_title = "%s – %s" % (name, sdesc)
         return (
-            doc[:title.start()]
-            + fixed_title + "\n" + "=" * len(fixed_title) + "\n\n"
-            + doc[secend:]
+            doc[:title.start()] +
+            fixed_title + "\n" + "=" * len(fixed_title) + "\n\n" +
+            doc[secend:]
             )
     raise ValueError("No section '%s' found in %s!", short_description, filename)
 
@@ -246,16 +246,17 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
         if title.group(1) != see_also:
             continue
         secstart = title.end()
-        secend = len(doc) + 1 # last section ends at end of document
+        secend = len(doc) + 1  # last section ends at end of document
         if nexttitle:
             secend = nexttitle.start()
         original = doc[secstart:secend].strip().replace('\n', ' ')
         if original:
             log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, original)
         return (
-            doc[:secstart]
-            + "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag)) for tag in tags]) + "\n\n"
-            + doc[secend:]
+            doc[:secstart] +
+            "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag))
+                                for tag in tags]) + "\n\n" +
+            doc[secend:]
             )
     raise ValueError("No section '%s' found in %s!", see_also, filename)
 
@@ -345,8 +346,8 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
         if t != t.upper():
             text = t.title()  # title-case any tag that is not an acronym
         title = ':doc:`{text} <{filename}>`'.format(
-            text = text,
-            filename = link or "index_"+t)
+            text=text,
+            filename=link or "index_"+t)
         text = title+'\n'+ul*len(title)+'\n'
         return text
 
@@ -429,7 +430,7 @@ def CreateTagIndices(tags, outdir="userdocs/"):
     """
     taglist = list(tags.keys())
     maxtaglen = max([len(t) for t in tags])
-    for tag, count in sorted([(tag, len(lst)) for tag,lst in tags.items()], key=lambda x:x[1]):
+    for tag, count in sorted([(tag, len(lst)) for tag, lst in tags.items()], key=lambda x: x[1]):
         log.info("    %%%ds tag in %%d files" % maxtaglen, tag, count)
     if "" in taglist:
         taglist.remove('')
@@ -437,7 +438,8 @@ def CreateTagIndices(tags, outdir="userdocs/"):
     depth = min(4, len(taglist))    # how many levels of indices to create at most
     nindices = sum([comb(len(taglist), L) for L in range(depth-1)])
     log.info("indices down to level %d → %d possible keyword combinations", depth, nindices)
-    for current_tags in tqdm(chain(*[combinations(taglist, L) for L in range(depth-1)]), unit="idx", desc="keyword indices", total=nindices):
+    for current_tags in tqdm(chain(*[combinations(taglist, L) for L in range(depth-1)]), unit="idx",
+                             desc="keyword indices", total=nindices):
         current_tags = sorted(current_tags)
         indexname = "index%s.rst" % "".join(["_"+x for x in current_tags])
 
@@ -500,9 +502,9 @@ def getTitles(text):
         log.debug("MATCH from %s to %s: %s", match.start(), match.end(), pformat(match.groupdict()))
         if len(match.group('title')) != len(match.group('underline')):
             log.warning("Length of section title '%s' (%d) does not match length of underline (%d)",
-                match.group('title'),
-                len(match.group('title')),
-                len(match.group('underline')))
+                        match.group('title'),
+                        len(match.group('title')),
+                        len(match.group('underline')))
         titles.append(match)
     return titles
 
@@ -538,7 +540,7 @@ def getSections(text, titles=None):
             secend = following.start()
         if title.group('title') in sections:
             log.warning('Duplicate title in user documentation of %s', filename)
-        sections.append( (title.group('title'), text[secstart:secend].strip()) )
+        sections.append((title.group('title'), text[secstart:secend].strip()))
     return sections
 
 

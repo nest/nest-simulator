@@ -255,7 +255,7 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
         return (
             doc[:secstart] +
             "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag))
-                                for tag in tags]) + "\n\n" +
+                             for tag in tags]) + "\n\n" +
             doc[secend:]
             )
     raise ValueError("No section '%s' found in %s!", see_also, filename)

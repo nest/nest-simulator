@@ -52,6 +52,15 @@ time_cmd()
     fi
 }
 
+#
+# bail_out message
+#
+bail_out ()
+{
+    echo "$1"
+    exit 1
+}
+
 JUNIT_FILE=
 JUNIT_TESTS=
 JUNIT_SKIPS=
@@ -95,7 +104,7 @@ junit_open ()
 }
 
 #
-# junit_write classname testname [fail_message fail_trace]
+# junit_write classname testname status [fail_message fail_trace]
 #
 junit_write ()
 {
@@ -107,17 +116,18 @@ junit_write ()
         bail_out 'junit_write: classname and testname arguments are mandatory!'
     fi
 
-    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\"" >> "${JUNIT_FILE}"
+    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\">" >> "${JUNIT_FILE}"
 
-    if test "x$3" != x ; then
-        echo '>' >> "${JUNIT_FILE}"
-        echo "    <failure message=\"$3\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
-        echo "$4" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
-        echo "]]></failure>" >> "${JUNIT_FILE}"
-        echo "  </testcase>" >> "${JUNIT_FILE}"
-    else
-        echo ' />' >> "${JUNIT_FILE}"
+    if test "x$3" = xskipped ; then
+        echo "    <skipped message=\"$4\" type=\"\"></skipped>" >> "${JUNIT_FILE}"
     fi
+
+    if test "x$3" = xfailure ; then
+        echo "    <failure message=\"$4\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
+        echo "$5" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
+        echo "]]></failure>" >> "${JUNIT_FILE}"
+    fi
+    echo "  </testcase>" >> "${JUNIT_FILE}"
 }
 
 #

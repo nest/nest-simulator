@@ -119,13 +119,15 @@ run_test ()
     msg_clean=${msg_dirty%%,*}
     if test "${msg_dirty}" != "${param_success}" ; then
         explanation="${msg_clean}"
+        junit_status=pass
         junit_failure=
     elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
         JUNIT_SKIPS=$(( ${JUNIT_SKIPS} + 1 ))
         msg_dirty=${msg_dirty_skip}
         msg_clean=${msg_dirty%%,*}
         explanation="${msg_clean}"
-        junit_failure=
+        junit_status=skipped
+        junit_failure="${explanation}"
     else
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
 
@@ -139,6 +141,7 @@ run_test ()
             unexpected_exitcode=true
         fi
 
+        junit_status=failure
         junit_failure="${exit_code} (${explanation})"
     fi
 
@@ -155,7 +158,7 @@ run_test ()
     echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
     echo >> "${TEST_LOGFILE}" "----------------------------------------"
 
-    junit_write "${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
+    junit_write "${junit_class}" "${junit_name}" "${junit_status}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
     if test "x${unexpected_exitcode}" != x ; then

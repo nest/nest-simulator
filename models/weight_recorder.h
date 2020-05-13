@@ -36,8 +36,10 @@
 
 /* BeginUserDocs: device, recorder
 
-weight_recorder - Recording weights from synapses
-#################################################
+Short description
++++++++++++++++++
+
+Recording weights from synapses
 
 Description
 +++++++++++

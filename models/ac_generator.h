@@ -65,8 +65,8 @@ Parameters
  phase       degree   Phase of sine current (0-360 deg)
 ==========   ======   ====================================
 
-Setting start and stop (see StimulatingDevice) only windows the current
-as defined above. It does not shift the time axis.
+Setting start and stop only windows the current as defined above. It does not shift
+the time axis. See :doc:`stimulating_the_network` for details.
 
 References
 ++++++++++
@@ -83,7 +83,7 @@ CurrentEvent
 See also
 ++++++++
 
-StimulatingDevice, dc_generator, step_current_generator
+dc_generator, noise_generator, step_current_generator
 
 EndUserDocs */
 

@@ -26,7 +26,7 @@ try:
     from math import comb   # breaks in python<3.8
 except ImportError:
     from math import factorial as fac
-    comb = lambda n,k: fac(n) / (fac(k) * fac(n - k))
+    comb = lambda n, k: fac(n) / (fac(k) * fac(n - k))
 import os
 import glob
 import json

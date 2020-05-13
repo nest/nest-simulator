@@ -106,7 +106,7 @@ EXTENDED_REGEX_PARAM=r
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-TEST_BASEDIR="$(nest -c 'statusdict/prgdocdir :: =only')"
+TEST_BASEDIR="$(sli -c 'statusdict/prgdocdir :: =only')"
 TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"

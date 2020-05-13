@@ -82,11 +82,6 @@ Receives
 
 SpikeEvent
 
-See also
-++++++++
-
-spike_detector, Device, RecordingDevice
-
 EndUserDocs */
 
 /**

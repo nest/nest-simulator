@@ -76,7 +76,6 @@ The following parameters can be set in the status dictionary.
  mean  real   Additional constant input
 =====  ====== ==============================
 
-
 The following parameters can be set in the status directory and are
 used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
@@ -93,7 +92,6 @@ iaf_psc_exp/delta.
 
 References
 ++++++++++
-
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a

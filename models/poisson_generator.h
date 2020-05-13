@@ -72,7 +72,7 @@ SpikeEvent
 See also
 ++++++++
 
-poisson_generator_ps, Device, parrot_neuron
+poisson_generator_ps, parrot_neuron
 
 EndUserDocs */
 

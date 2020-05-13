@@ -39,7 +39,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-repeats incoming spikes with a certain probability
+Repeat incoming spikes with a certain probability
 
 Device name
 +++++++++++

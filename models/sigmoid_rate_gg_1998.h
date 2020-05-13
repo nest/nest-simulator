@@ -69,7 +69,6 @@ The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 
-
 ==================  ======= ==============================================
  rate               real    Rate (unitless)
  tau                ms      Time constant of rate dynamics
@@ -91,7 +90,6 @@ then summed up (false). Default is true.
 
 References
 ++++++++++
-
 
 .. [1] Gancarz G, Grossberg S (1998). A neural model of the saccade generator
        in the reticular formation. Neural Networks, 11(7):1159–1174.

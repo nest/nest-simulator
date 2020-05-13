@@ -151,7 +151,6 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
        processes and applications to neural modeling. Journal of
        Computational Neuroscience 28(2):267-284

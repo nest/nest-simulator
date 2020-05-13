@@ -96,7 +96,6 @@ then summed up (false). Default is true.
 References
 ++++++++++
 
-
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.

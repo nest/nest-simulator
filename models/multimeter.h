@@ -45,11 +45,6 @@ Short description
 
 Sampling continuous quantities from neurons
 
-Device name
-+++++++++++
-
-multimeter
-
 Description
 +++++++++++
 

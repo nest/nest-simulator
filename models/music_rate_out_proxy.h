@@ -80,8 +80,6 @@ Examples
 /music_rate_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect
 
-First version: June 2019
-
 Availability: Only when compiled with MUSIC
 
 See also

@@ -82,7 +82,7 @@ SpikeEvent
 See also
 ++++++++
 
-spike_generator, StimulatingDevice
+spike_generator
 
 EndUserDocs */
 

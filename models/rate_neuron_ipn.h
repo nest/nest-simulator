@@ -88,7 +88,6 @@ to the summed excitatory and inhibitory inputs if linear_summation=True.
 References
 ++++++++++
 
-
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.

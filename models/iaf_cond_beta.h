@@ -116,7 +116,6 @@ Remarks:
 
 References
 ++++++++++
-
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,

@@ -45,13 +45,8 @@ namespace nest
 Short description
 +++++++++++++++++
 
-simulate the superimposed spike train of a population of Poisson
+Simulate the superimposed spike train of a population of Poisson
 processes with dead time
-
-Device name
-+++++++++++
-
-ppd_sup_generator
 
 Description
 +++++++++++
@@ -88,7 +83,7 @@ References
 See also
 ++++++++
 
-gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
+gamma_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
 

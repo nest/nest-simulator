@@ -22,7 +22,13 @@
 import re
 from tqdm import tqdm
 from pprint import pformat
-from math import comb
+try:
+    from math import comb   # breaks in python<3.8
+except ImportError:
+    from math import factorial as fac
+
+    def comb(n, k):
+        return fac(n) / (fac(k) * fac(n - k))
 import os
 import glob
 import json

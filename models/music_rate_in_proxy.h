@@ -42,15 +42,12 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/* BeginUserDocs:
+/* BeginUserDocs: device, rate, MUSIC
 
-music_rate_in_proxy - A device which receives rate data from MUSIC
-##################################################################
+Short description
++++++++++++++++++
 
-Device name
-+++++++++++
-
-music_rate_in_proxy
+A device which receives rate data from MUSIC
 
 Description
 +++++++++++

@@ -199,7 +199,7 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="from_cpp/"
+        outdir="userdocs/"
     )
 
 
@@ -219,8 +219,8 @@ nitpick_ignore = [('py:class', 'None'),
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
-    app.add_javascript("js/copybutton.js")
-    app.add_javascript("js/custom.js")
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
 
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events

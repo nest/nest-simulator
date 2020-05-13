@@ -40,8 +40,10 @@
 
 /* BeginUserDocs: device, recorder
 
-multimeter - Sampling continuous quantities from neurons
-########################################################
+Short description
++++++++++++++++++
+
+Sampling continuous quantities from neurons
 
 Device name
 +++++++++++

@@ -68,6 +68,7 @@ Short description
 
 Multi-compartment conductance-based leaky integrate-and-fire neuron model
 
+
 Description
 +++++++++++
 

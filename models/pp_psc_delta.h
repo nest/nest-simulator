@@ -40,8 +40,10 @@ namespace nest
 
 /* BeginUserDocs: neuron, point process, current-based
 
-pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs
-###############################################################################
+Short description
++++++++++++++++++
+
+Point process neuron with leaky integration of delta-shaped PSCs
 
 Description
 +++++++++++

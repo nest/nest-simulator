@@ -35,8 +35,10 @@
 
 /* BeginUserDocs: device, recorder, spike
 
+Short description
++++++++++++++++++
+
 Collecting spikes from neurons
-##############################
 
 Description
 +++++++++++

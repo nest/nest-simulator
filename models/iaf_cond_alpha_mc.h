@@ -66,7 +66,8 @@ extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void*
 Short description
 +++++++++++++++++
 
-PROTOTYPE Multi-compartment conductance-based leaky integrate-and-fire neuron model
+Multi-compartment conductance-based leaky integrate-and-fire neuron model
+
 
 Description
 +++++++++++
@@ -117,8 +118,6 @@ for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma", "proximal", and "distal", respectively. In the list below,
 these parameters are marked with an asterisk.
 
-
-
 ============ ======= ==========================================================
  V_m*        mV      Membrane potential
  E_L*        mV      Leak reversal potential
@@ -135,19 +134,6 @@ these parameters are marked with an asterisk.
  V_th        mV      Spike threshold in mV
  V_reset     mV      Reset potential of the membrane
 ============ ======= ==========================================================
-
-
-Example:
-See pynest/examples/mc_neuron.py.
-
-Remarks:
-
-This is a prototype for illustration which has undergone only limited
-testing. Details of the implementation and user-interface will likely
-change. USE AT YOUR OWN PERIL!
-
-@note All parameters that occur for both compartments
-and dendrite are stored as C arrays, with index 0 being soma.
 
 Sends
 +++++
@@ -589,6 +575,6 @@ iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-
 #endif // HAVE_GSL
+
 #endif // IAF_COND_ALPHA_MC_H

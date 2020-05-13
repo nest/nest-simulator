@@ -136,8 +136,6 @@ class NodeCollectionIterator(object):
         self._increment += 1
         return val
 
-    next = __next__  # Python2.x
-
 
 class NodeCollection(object):
     """
@@ -478,8 +476,6 @@ class SynapseCollectionIterator(object):
 
     def __next__(self):
         return SynapseCollection(next(self._iter))
-
-    next = __next__  # Python2.x
 
 
 class SynapseCollection(object):

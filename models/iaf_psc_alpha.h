@@ -95,7 +95,7 @@ The following parameters can be set in the status dictionary.
 
 =========== ======  ==========================================================
  V_m        mV      Membrane potential
- E_L        mV      Resting membrane potenial
+ E_L        mV      Resting membrane potential
  C_m        pF      Capacity of the membrane
  tau_m      ms      Membrane time constant
  t_ref      ms      Duration of refractory period

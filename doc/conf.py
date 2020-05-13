@@ -202,6 +202,7 @@ def config_inited_handler(app, config):
         outdir="userdocs/"
     )
 
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),

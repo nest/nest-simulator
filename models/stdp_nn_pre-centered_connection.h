@@ -324,6 +324,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection(
   , mu_plus_( rhs.mu_plus_ )
   , mu_minus_( rhs.mu_minus_ )
   , Wmax_( rhs.Wmax_ )
+  , Kplus_( rhs.Kplus_ )
   , t_lastspike_( rhs.t_lastspike_ )
 {
 }

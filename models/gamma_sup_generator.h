@@ -45,7 +45,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-simulate the superimposed spike train of a population of gamma process
+Simulate the superimposed spike train of a population of gamma process
 
 Description
 +++++++++++

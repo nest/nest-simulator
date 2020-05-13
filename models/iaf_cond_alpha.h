@@ -58,8 +58,10 @@ extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron model
-###############################################################################
+Short description
++++++++++++++++++
+
+Simple conductance based leaky integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -114,7 +116,6 @@ Remarks:
 
 References
 ++++++++++
-
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of

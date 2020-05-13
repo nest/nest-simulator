@@ -58,8 +58,10 @@ extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron model
-##############################################################################
+Short description
++++++++++++++++++
+
+Simple conductance based leaky integrate-and-fire neuron model
 
 Description
 +++++++++++
@@ -74,7 +76,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 ============= ====== =========================================================
  V_m          mV      Membrane potential
@@ -115,7 +116,6 @@ Remarks:
 
 References
 ++++++++++
-
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of

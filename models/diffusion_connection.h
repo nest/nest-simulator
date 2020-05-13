@@ -30,8 +30,10 @@ namespace nest
 
 /* BeginUserDocs: synapse, instantaneous rate
 
-diffusion_connection - Synapse type for instantaneous rate connections between neurons of type siegert_neuron
-##############################################################################################################
+Short description
++++++++++++++++++
+
+Synapse type for instantaneous rate connections between neurons of type siegert_neuron
 
 Description
 +++++++++++

@@ -40,9 +40,11 @@ class Network;
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-gif_pop_psc_exp - Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and
+Short description
++++++++++++++++++
+
+Population of generalized integrate-and-fire neurons with exponential postsynaptic currents and
 adaptation
-############################################################################################################################
 
 Description
 +++++++++++
@@ -127,7 +129,6 @@ N                ---          use N gif_psc_exp
 
 References
 ++++++++++
-
 
 .. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
        columns: From spiking neurons to interacting neural populations of

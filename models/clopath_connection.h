@@ -51,7 +51,7 @@ Description
 +++++++++++
 
 clopath_synapse is a connector to create Clopath synapses as defined
-in [1]__. In contrast to usual STDP, the change of the synaptic weight does
+in [1]_. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 

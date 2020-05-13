@@ -74,7 +74,7 @@ CurrentEvent
 See also
 ++++++++
 
-Device, StimulatingDevice
+ac_generator, noise_generator, step_current_generator
 
 EndUserDocs */
 

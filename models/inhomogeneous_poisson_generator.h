@@ -86,7 +86,7 @@ SpikeEvent
 See also
 ++++++++
 
-sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice
+sinusoidal_poisson_generator, step_current_generator
 
 EndUserDocs */
 

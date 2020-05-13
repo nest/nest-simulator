@@ -86,7 +86,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 =========== ======  ===========================================================
  V_m        mV      Membrane potential
  E_L        mV      Leak reversal potential

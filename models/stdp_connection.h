@@ -75,7 +75,6 @@ SpikeEvent
 References
 ++++++++++
 
-
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
        temporally asymmetric hebbian plasticity. Journal of Neuroscience,
        23:3697-3714 DOI: https://doi.org/10.1523/JNEUROSCI.23-09-03697.2003
@@ -94,7 +93,7 @@ References
 See also
 ++++++++
 
-synapsedict, tsodyks_synapse, static_synapse
+tsodyks_synapse, static_synapse
 
 EndUserDocs */
 

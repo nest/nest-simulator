@@ -139,7 +139,6 @@ initial wavelet/spike at simulation onset
 References
 ++++++++++
 
-
 .. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
        populations, plasticity. New York: Cambridge university press.
 .. [2] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational

@@ -97,7 +97,7 @@ References
 See also
 ++++++++
 
-stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
+stdp_triplet_synapse_hpc, stdp_synapse, static_synapse
 
 EndUserDocs */
 

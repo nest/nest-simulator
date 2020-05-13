@@ -83,7 +83,7 @@ CurrentEvent
 See also
 ++++++++
 
-ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
+ac_generator, dc_generator, step_current_generator
 
 EndUserDocs */
 

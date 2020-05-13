@@ -77,7 +77,6 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-
 ============= ====== =========================================================
  V_m          mV      Membrane potential
  E_L          mV      Leak reversal potential
@@ -117,7 +116,6 @@ Remarks:
 
 References
 ++++++++++
-
 
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of

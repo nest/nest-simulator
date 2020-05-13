@@ -154,7 +154,7 @@ SpikeEvent
 See also
 ++++++++
 
-spike_detector, Device, PseudoRecordingDevice
+spike_detector
 
 EndUserDocs */
 

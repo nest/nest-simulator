@@ -73,7 +73,6 @@ Parameters
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
-
 ===============  ======= ==================================================
  rate            real    Rate (unitless)
  tau             ms      Time constant of rate dynamics
@@ -92,7 +91,6 @@ transformers.
 
 References
 ++++++++++
-
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
        M (2017). Integration of continuous-time dynamics in a spiking neural

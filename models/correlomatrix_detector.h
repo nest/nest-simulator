@@ -46,11 +46,6 @@ Short description
 
 Device for measuring the covariance matrix from several inputs
 
-Device name
-+++++++++++
-
-correlomatrix_detector
-
 Description
 +++++++++++
 
@@ -145,7 +140,7 @@ SpikeEvent
 See also
 ++++++++
 
-correlation_detector, spike_detector, Device, PseudoRecordingDevice
+correlation_detector, spike_detector
 
 EndUserDocs */
 

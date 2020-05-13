@@ -131,7 +131,6 @@ N                ---          use N gif_psc_exp
 References
 ++++++++++
 
-
 .. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
        columns: From spiking neurons to interacting neural populations of
        finite size. PLoS Computational Biology.

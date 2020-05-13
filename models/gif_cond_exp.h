@@ -187,7 +187,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
 References
 ++++++++++
 
-
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
        Parameter extraction and classification of three cortical neuron types
        reveals two distinct adaptation mechanisms. Journal of

@@ -91,7 +91,6 @@ addons:
      - pkg-config
      - openmpi-bin
      - libopenmpi-dev
-     - python3-nose
      - libpcre3
      - libpcre3-dev
      - llvm-9-dev

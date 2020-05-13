@@ -473,8 +473,8 @@ else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
 
-
-@PYTHON@ "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
+# Use plain python here to collect results
+python "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
 TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state

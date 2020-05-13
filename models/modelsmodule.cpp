@@ -102,7 +102,6 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
-#include "voltmeter.h"
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 

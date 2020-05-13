@@ -29,14 +29,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup binary
+/* BeginUserDocs: neuron, binary
 
-Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
-                        function.
+Short description
++++++++++++++++++
 
-Description:
+Binary stochastic neuron with sigmoidal activation function
+
+Description
++++++++++++
 
 The ginzburg_neuron is an implementation of a binary neuron that
 is irregularly updated as Poisson time points. At each update
@@ -44,25 +45,25 @@ point the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
-The gain function g used here is \f$ g(h) = c1*h + c2 * 0.5*(1 +
-\tanh(c3*(h-\theta))) \f$ (output clipped to [0,1]). This allows to
+The gain function g used here is :math:`g(h) = c1*h + c2 * 0.5*(1 +
+\tanh(c3*(h-\theta)))` (output clipped to [0,1]). This allows to
 obtain affin-linear (c1!=0, c2!=0, c3=0) or sigmoidal (c1=0,
 c2=1, c3!=0) shaped gain functions.  The latter choice
-corresponds to the definition in [1], giving the name to this
+corresponds to the definition in [1]_, giving the name to this
 neuron model.
 The choice c1=0, c2=1, c3=beta/2 corresponds to the Glauber
-dynamics [2], \f$ g(h) = 1 / (1 + \exp(-\beta (h-\theta))) \f$.
-The time constant \f$ \tau_m \f$ is defined as the mean
+dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
+The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reprodce
-simulations with asynchronous update [1], the time constant needs
-to be chosen as \f$ \tau_m = dt*N \f$, where dt is the simulation time
+simulations with asynchronous update [1]_, the time constant needs
+to be chosen as :math:`\tau_m = dt*N`, where dt is the simulation time
 step and N the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every \f$ \tau_m \f$ ms. Since in the original paper [1] neurons
+average every :math:`\tau_m` ms. Since in the original paper [1]_ neurons
 are coupled with zero delay, this implementation follows this
-definition. It uses the update scheme described in [3] to
-maintain causality: The incoming events in time step \f$ t_i \f$ are
+definition. It uses the update scheme described in [3]_ to
+maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay d, the user has to specify the
@@ -84,10 +85,9 @@ advisable to set the property 'allow_multapses' to false.
 The neuron accepts several sources of currents, e.g. from a
 noise_generator.
 
+Parameters
+++++++++++
 
-Parameters:
-
-\verbatim embed:rst
 ====== ============= ===========================================================
  tau_m  ms           Membrane time constant (mean inter-update-interval)
  theta  mV           Threshold for sigmoidal activation function
@@ -96,11 +96,10 @@ Parameters:
  c2     probability  Prefactor of sigmoidal gain
  c3     1/mV         Slope factor of sigmoidal gain
 ====== ============= ===========================================================
-\endverbatim
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
        DOI: https://doi.org/10.1103/PhysRevE.50.3171
@@ -111,18 +110,24 @@ References:
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer.
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, PotentialRequest
+SpikeEvent
 
-FirstVersion: February 2010
+Receives
+++++++++
 
-Author: Moritz Helias
+SpikeEvent, PotentialRequest
 
-SeeAlso: pp_psc_delta
-*/
+See also
+++++++++
+
+pp_psc_delta
+
+EndUserDocs */
+
 class gainfunction_ginzburg
 {
 private:

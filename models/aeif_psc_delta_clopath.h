@@ -60,8 +60,10 @@ extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, 
 
 /* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, Clopath plasticity, current-based
 
-aeif_psc_delta_clopath - Adaptive exponential integrate-and-fire neuron
-#######################################################################
+Short description
++++++++++++++++++
+
+Adaptive exponential integrate-and-fire neuron
 
 Description
 +++++++++++
@@ -79,12 +81,17 @@ duration of the spike influences the evolution of the convolved versions
 synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
 used to compute the change of the synaptic weight.
 
+Note:
+Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
+mentioned in [1]_. However, they are part of an reference implementation
+by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
+important to mimic a spike which is otherwise not described by the aeif neuron
+model.
+
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
-
 
 =========== ======  ===================================================
 **Dynamic state variables**
@@ -111,7 +118,6 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
  tau_minus   ms      Time constant of u_bar_minus
  tau_bar_ar ms      Time constant of u_bar_bar
 ============ ======  =================================================
-
 
 ========== ======  ===================================================
 **Spike adaptation parameters**
@@ -140,14 +146,12 @@ elay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
 U_ref_squared real    Reference value for u_bar_bar_^2.
 ============= ======= =======================================================
 
-
 =======  ====== =============================================================
 **Other parameters**
 -----------------------------------------------------------------------------
 t_clamp  ms     Duration of clamping of Membrane potential after a spike
 V_clamp  mV     Value to which the Membrane potential is clamped
 =======  ====== ============================================================
-
 
 ============= ======= =========================================================
 **Integration parameters**
@@ -156,15 +160,6 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-
-
-Note:
-
-Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
-mentioned in [1]_. However, they are part of an reference implementation
-by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
-important to mimic a spike which is otherwise not described by the aeif neuron
-model.
 
 Sends
 +++++
@@ -470,4 +465,5 @@ aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
+
 #endif // AEIF_PSC_DELTA_CLOPATH_H

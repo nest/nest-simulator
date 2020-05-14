@@ -142,11 +142,13 @@ before_install:
          cp extras/install_libboost.sh $HOME
          cd $HOME/build
          echo $PATH
+
          # Upgrade pip and setuptools
          if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ]; then
            pyenv install --list
            pyenv global 3.6.10
          fi
+
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
            brew --version
            brew update
@@ -162,8 +164,12 @@ before_install:
            brew leaves
            brew cask list
          fi
-         pip install --upgrade pip setuptools
 
+         # updating pip breaks on osx
+         if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+           pip install --upgrade pip setuptools
+         fi
+        
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create

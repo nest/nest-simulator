@@ -39,13 +39,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator, rate
 
-Name: step_rate_generator - provides a piecewise constant input rate
+Short description
++++++++++++++++++
 
-Description:
+Provide a piecewise constant input rate
+
+Description
++++++++++++
 
 The rate_generator provides a piecewise constant rate input to the
 connected rate unit(s). Please note that this input is handled in the same
@@ -53,23 +55,11 @@ way as input from any other rate unit, i.e. it is processed by the input
 function of the receiving rate unit. The amplitude of the rate is changed
 at the specified times. The unit of the rate is Hz.
 
-Parameters:
-
-The following parameters can be set in the status dictionary:
-
-\verbatim embed:rst
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
-\endverbatim
-
-If false, times will be rounded to the nearest step if they are
-less than tic/2 from the step, otherwise NEST reports an error.
-If true,  times are rounded to the nearest step if within tic/2
-from the step, otherwise they are rounded up to the *end* of the
-step.
+If allow_offgrid_times is false, times will be rounded to the nearest
+grid point if they are less than tic/2 from the grid point, otherwise
+NEST reports an error. If true, times are rounded to the nearest grid
+point if within tic/2 from the grid point, otherwise they are rounded
+up to the *end* of the grid point.
 
 Note:
 
@@ -78,22 +68,29 @@ to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
 
-Examples:
+Parameters
+++++++++++
 
-The rate can be altered in the following way:
+The following parameters can be set in the status dictionary:
 
-   /step_rate_generator Create /sc Set
-   sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
 
-   The amplitude of the rate will be 0.0 Hz in the time interval [0, 0.2),
-   2.0 Hz in the interval [0.2, 0.5) and 4.0 Hz from then on.
+Sends
++++++
 
-Sends: DelayedRateConnectionEvent
+DelayedRateConnectionEvent
 
-Author: Sandra Nestler, David Dahmen
+See also
+++++++++
 
-SeeAlso: step_current_generator, Device, StimulatingDevice
-*/
+step_current_generator
+
+EndUserDocs */
+
 class step_rate_generator : public DeviceNode
 {
 

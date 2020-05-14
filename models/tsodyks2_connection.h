@@ -32,17 +32,19 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stp
+/* BeginUserDocs: synapse, short-term plasticity
 
-Name: tsodyks2_synapse - Synapse type with short term plasticity.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type with short term plasticity
+
+Description
++++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
-facilitation according to [1] and [2]. It solves Eq (2) from [1] and
-modulates U according to eq. (2) of [2].
+facilitation according to [1]_ and [2]_. It solves Eq (2) from [1]_ and
+modulates U according to eq. (2) of [2]_.
 
 This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
@@ -52,11 +54,11 @@ The parameter A_se from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
 ========  ======  ========================================================
  U        real    Maximum probability of release (U1) [0,1], default=0.5
  u        real    Maximum probability of release (U_se) [0,1],
@@ -65,9 +67,8 @@ The following parameters can be set in the status dictionary:
  tau_fac  ms      Time constant for facilitation, default = 0(off)
  tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
-\endverbatim
 
- Remarks:
+Remarks:
 
 Under identical conditions, the tsodyks2_synapse produces
 slightly lower peak amplitudes than the tsodyks_synapse. However,
@@ -75,10 +76,9 @@ the qualitative behavior is identical. The script
 test_tsodyks2_synapse.py in the examples compares the two synapse
 models.
 
+References
+++++++++++
 
-References:
-
-\verbatim embed:rst
 .. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
        pyramidal neurons depends on neurotransmitter release probability.
        PNAS, 94(2):719-23.
@@ -90,16 +90,19 @@ References:
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-61.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-FirstVersion: October 2011
+SpikeEvent
 
-Author: Marc-Oliver Gewaltig, based on tsodyks_synapse by Moritz Helias
+See also
+++++++++
 
-SeeAlso: tsodyks_synapse, synapsedict, stdp_synapse, static_synapse
-*/
+tsodyks_synapse, stdp_synapse, static_synapse
+
+EndUserDocs */
+
 template < typename targetidentifierT >
 class Tsodyks2Connection : public Connection< targetidentifierT >
 {
@@ -208,8 +211,8 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonS
   double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // now we compute spike number n+1
-  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]
+  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
 
   // We use the current values for the spike number n.
   e.set_receiver( *target );

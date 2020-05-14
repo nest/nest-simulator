@@ -34,16 +34,18 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: lin_rate - Linear rate model
+Short description
++++++++++++++++++
 
-Description:
+Linear rate model
+
+Description
++++++++++++
 
 lin_rate is an implementation of a rate model with linear input
-function \f$ input(h) = g * h \f$. It either models a rate neuron with
+function :math:`input(h) = g * h`. It either models a rate neuron with
 input noise (see rate_neuron_ipn), a rate neuron with output noise
 (see rate_neuron_opn) or a rate transformer (see
 rate_transformer_node).
@@ -51,10 +53,10 @@ rate_transformer_node).
 Linear rate neurons support multiplicative coupling which can be
 switched on and off via the boolean parameter mult_coupling
 (default=false). In case multiplicative coupling is active, the
-excitatory input of the model is multiplied with the function \f$
-mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate ) \f$ and the
-inhibitory input is multiplied with the function \f$
-mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate ) \f$.
+excitatory input of the model is multiplied with the function
+:math:`mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate )` and the
+inhibitory input is multiplied with the function
+:math:`mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate )`.
 
 The model supports connections to other rate models with either zero
 or non-zero delay, and it uses the secondary_event concept introduced
@@ -65,12 +67,12 @@ nest.Create('lin_rate_ipn') or nest.Create('lin_rate_opn') for input
 noise or output noise, respectively. Linear rate transformers can be
 created by typing nest.Create('rate_transformer_lin').
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
-\verbatim embed:rst
 ===============  ======= ==================================================
  rate            real    Rate (unitless)
  tau             ms      Time constant of rate dynamics
@@ -85,11 +87,11 @@ transformers.
  theta_in        real    Shift in multiplicative coupling
  rectify_output  boolean Switch to restrict rate to values >= 0
 ===============  ======= ==================================================
-\endverbatim
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
        M (2017). Integration of continuous-time dynamics in a spiking neural
        network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -99,18 +101,26 @@ References:
        in distributed neuronal network simulations.
        Frontiers Neuroinformatics, 9:22.
        DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+Sends
++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+See also
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed,
+rate_connection_instantaneous, rate_connection_delayed,
 rate_neuron_ipn, rate_neuron_opn
-*/
+
+EndUserDocs */
 
 class nonlinearities_lin_rate
 {

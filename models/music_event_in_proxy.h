@@ -40,13 +40,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup music
+/* BeginUserDocs: device, MUSIC, spike
 
-Name: music_event_in_proxy - A device which receives spikes from MUSIC.
+Short description
++++++++++++++++++
 
-Description:
+A device which receives spikes from MUSIC
+
+Description
++++++++++++
 
 A music_event_in_proxy can be used to pass spikes to nodes within NEST
 which are received from another application.
@@ -59,11 +61,13 @@ the events. Multiple music_in_proxies can be configured to listen
 on the same port, but each channel can only listened to by a
 single proxy.
 
-Parameters:
+This model is only available if NEST was compiled with MUSIC.
+
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 
-\verbatim embed:rst
 ============== ======== =======================================================
  port_name     string   The name of the MUSIC input port to listen to (default:
                         event_in)
@@ -71,29 +75,18 @@ The following properties are available in the status dictionary:
  registered    boolean  A bool indicating if the port has been already
                         registered with the corresponding MUSIC event handler
 ============== ======== =======================================================
-\endverbatim
 
 The parameters port_name and music_channel can be set using SetStatus.
 The acceptable latency of the MUSIC input port can be set using the
 command SetAcceptableLatency.
 
-Examples:
+See also
+++++++++
 
-    /music_event_in_proxy Create /meip Set
-    meip << /music_channel 2 >> SetStatus
-    /iaf_psc_alpha Create /n Set
-    (event_in) 0.2 SetAcceptableLatency
-    meip n Connect
+SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy, music_message_in_proxy
 
-Author: Moritz Helias, Jochen Martin Eppler
+EndUserDocs */
 
-FirstVersion: October 2008
-
-Availability: Only when compiled with MUSIC
-
-SeeAlso: SetAcceptableLatency, music_event_out_proxy, music_cont_in_proxy,
-music_message_in_proxy
-*/
 class music_event_in_proxy : public DeviceNode
 {
 

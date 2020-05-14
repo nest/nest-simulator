@@ -100,11 +100,11 @@ instance:
 Recorders for every-day situations
 ----------------------------------
 
-.. include:: ../from_cpp/multimeter.rst
+.. include:: ../userdocs/multimeter.rst
 
-.. include:: ../from_cpp/spike_detector.rst
+.. include:: ../userdocs/spike_detector.rst
 
-.. include:: ../from_cpp/weight_recorder.rst
+.. include:: ../userdocs/weight_recorder.rst
 
 .. _recording_backends:
 
@@ -174,12 +174,12 @@ dictionary to ``SetKernelStatus``.
 
     nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
 
-.. include:: ../from_cpp/recording_backend_memory.rst
+.. include:: ../userdocs/recording_backend_memory.rst
 
-.. include:: ../from_cpp/recording_backend_ascii.rst
+.. include:: ../userdocs/recording_backend_ascii.rst
 
-.. include:: ../from_cpp/recording_backend_screen.rst
+.. include:: ../userdocs/recording_backend_screen.rst
 
 .. _sionlib_backend:
 
-.. include:: ../from_cpp/recording_backend_sionlib.rst
+.. include:: ../userdocs/recording_backend_sionlib.rst

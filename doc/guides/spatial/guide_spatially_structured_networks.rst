@@ -1529,7 +1529,7 @@ Manual. The basic steps required to get started are:
    to select a different installation destination. If you do, you must make
    sure to use ``addpath`` in SLI before loading the module to let NEST
    find the SLI initialization file for your module. You also might have
-   to set `LD_LIBRARY_PATH` (on Linux) or `DYLD_LIBRARY_PATH` (on macOS)
+   to set ``LD_LIBRARY_PATH`` (on Linux) or ``DYLD_LIBRARY_PATH`` (on macOS)``
    for the module itself to be found.
 
 5. Compile and install.

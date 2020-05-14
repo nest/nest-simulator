@@ -39,19 +39,20 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_nn_restr_synapse - Synapse type for spike-timing dependent
-plasticity with restricted symmetric nearest-neighbour spike pairing
-scheme.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity with restricted
+symmetric nearest-neighbour spike pairing scheme
+
+Description
++++++++++++
 
 stdp_nn_restr_synapse is a connector to create synapses with spike time
 dependent plasticity with the restricted symmetric nearest-neighbour spike
-pairing scheme (fig. 7C in [1]).
+pairing scheme (fig. 7C in [1]_).
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
@@ -68,12 +69,13 @@ post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
 result in a potentiation pair 20-to-10).
 
 The implementation relies on an additional variable - the postsynaptic
-eligibility trace [1] (implemented on the postsynaptic neuron side). It
+eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
 decays exponentially with the time constant tau_minus and increases to 1 on
 a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
 
-Parameters:
-\verbatim embed:rst
+Parameters
+++++++++++
+
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -84,29 +86,30 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
+
 .. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-\endverbatim
 
-FirstVersion: March 2006
+See also
+++++++++
 
-Author: Moritz Helias, Abigail Morrison
+stdp_synapse, stdp_nn_symm_synapse
 
-Adapted by: Philipp Weidel, Alex Serenko
-
-SeeAlso: stdp_synapse, stdp_nn_symm_synapse
-*/
+EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPNNRestrConnection : public Connection< targetidentifierT >
 {
@@ -266,11 +269,11 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   if ( start != finish )
   {
     double nearest_neighbor_Kminus;
-    double value_to_throw_away; // discard Kminus and triplet_Kminus here
+    double value_to_throw_away; // discard Kminus and Kminus_triplet here
     target->get_K_values( t_spike - dendritic_delay,
       value_to_throw_away, // discard Kminus
       nearest_neighbor_Kminus,
-      value_to_throw_away // discard triplet_Kminus
+      value_to_throw_away // discard Kminus_triplet
       );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }

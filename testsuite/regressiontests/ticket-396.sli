@@ -50,19 +50,19 @@ M_ERROR setverbosity
 % test against changing local_num_threads
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_threads 0 /local_num_threads get 2 mul def
-  0 << /resolution new_res >> SetStatus
-  0 << /local_num_threads new_threads >> SetStatus
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_threads GetKernelStatus /local_num_threads get 2 mul def
+  << /resolution new_res >> SetKernelStatus
+  << /local_num_threads new_threads >> SetKernelStatus
 } fail_or_die
 
 % test against changing total_num_virtual_procs
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /resolution new_res >> SetStatus
-  0 << /total_num_virtual_procs new_procs >> SetStatus
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_procs GetKernelStatus /total_num_virtual_procs get 2 mul def
+  << /resolution new_res >> SetKernelStatus
+  << /total_num_virtual_procs new_procs >> SetKernelStatus
 } fail_or_die
 
 
@@ -77,46 +77,46 @@ skip_if_not_threaded
 % check that we can change either way before setting resolution
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_threads 0 /local_num_threads get 2 mul def
-  0 << /local_num_threads new_threads >> SetStatus
-  0 << /resolution new_res >> SetStatus
-  0 /resolution get new_res eq
-  0 /local_num_threads get new_threads eq
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_threads GetKernelStatus /local_num_threads get 2 mul def
+  << /local_num_threads new_threads >> SetKernelStatus
+  << /resolution new_res >> SetKernelStatus
+  GetKernelStatus /resolution get new_res eq
+  GetKernelStatus /local_num_threads get new_threads eq
   and
 } assert_or_die
 
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /total_num_virtual_procs new_procs >> SetStatus
-  0 << /resolution new_res >> SetStatus
-  0 /resolution get new_res eq
-  0 /total_num_virtual_procs get new_procs eq
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_procs GetKernelStatus /total_num_virtual_procs get 2 mul def
+  << /total_num_virtual_procs new_procs >> SetKernelStatus
+  << /resolution new_res >> SetKernelStatus
+  GetKernelStatus /resolution get new_res eq
+  GetKernelStatus /total_num_virtual_procs get new_procs eq
   and
 } assert_or_die
 
 % test that we can set in single call
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_threads 0 /local_num_threads get 2 mul def
-  0 << /local_num_threads new_threads
-       /resolution new_res >> SetStatus
-  0 /resolution get new_res eq
-  0 /local_num_threads get new_threads eq
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_threads GetKernelStatus /local_num_threads get 2 mul def
+  << /local_num_threads new_threads
+       /resolution new_res >> SetKernelStatus
+  GetKernelStatus /resolution get new_res eq
+  GetKernelStatus /local_num_threads get new_threads eq
   and
 } assert_or_die
 
 { 
   ResetKernel
-  /new_res 0 /resolution get 2 mul def
-  /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /total_num_virtual_procs new_procs 
-       /resolution new_res >> SetStatus
-  0 /resolution get new_res eq
-  0 /total_num_virtual_procs get new_procs eq
+  /new_res GetKernelStatus /resolution get 2 mul def
+  /new_procs GetKernelStatus /total_num_virtual_procs get 2 mul def
+  << /total_num_virtual_procs new_procs 
+       /resolution new_res >> SetKernelStatus
+  GetKernelStatus /resolution get new_res eq
+  GetKernelStatus /total_num_virtual_procs get new_procs eq
   and
 } assert_or_die
 

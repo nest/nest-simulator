@@ -38,7 +38,7 @@ References
 
 import nest
 import numpy
-import pylab
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # A loop runs over a range of initial membrane voltages.
@@ -79,14 +79,15 @@ for vinit in numpy.arange(-100, -50, 10, float):
 
     nest.Simulate(75.0)
 
-    t = nest.GetStatus(voltmeter, "events")[0]["times"]
-    v = nest.GetStatus(voltmeter, "events")[0]["V_m"]
+    t = voltmeter.get("events", "times")
+    v = voltmeter.get("events", "V_m")
 
-    pylab.plot(t, v, label="initial V_m = %.2f mV" % vinit)
+    plt.plot(t, v, label="initial V_m = %.2f mV" % vinit)
 
 ###############################################################################
 # Set the legend and the labels for the plot outside of the loop.
 
-pylab.legend(loc=4)
-pylab.xlabel("time (ms)")
-pylab.ylabel("V_m (mV)")
+plt.legend(loc=4)
+plt.xlabel("time (ms)")
+plt.ylabel("V_m (mV)")
+plt.show()

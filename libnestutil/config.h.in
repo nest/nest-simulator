@@ -116,6 +116,9 @@
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
 
+/* Recording backend Arbor support enabled? */
+#cmakedefine HAVE_RECORDINGBACKEND_ARBOR 1
+
 /* define if M_E is defined */
 #cmakedefine HAVE_M_E 1
 
@@ -175,6 +178,12 @@
 
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
+
+/* Is SIONlib available? */
+#cmakedefine HAVE_SIONLIB 1
+
+/* Is mpi4py available? */
+#cmakedefine HAVE_MPI4PY 1
 
 /* Bit counts for Target members */
 #define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@

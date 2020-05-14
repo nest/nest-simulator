@@ -44,6 +44,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+// Includes from
+
 // Includes from sli:
 #include "stringdatum.h"
 
@@ -61,16 +63,18 @@ namespace nest
  */
 extern "C" int ht_neuron_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup ht_neuron
+/* BeginUserDocs: neuron, Hill-Tononi plasticity
 
-Name: ht_neuron - Neuron model after Hill & Tononi (2005).
+Short description
++++++++++++++++++
 
-Description:
+Neuron model after Hill & Tononi (2005)
+
+Description
++++++++++++
 
 This model neuron implements a slightly modified version of the
-neuron model described in [1]. The most important properties are:
+neuron model described in [1]_. The most important properties are:
 
 - Integrate-and-fire with threshold adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
@@ -85,18 +89,19 @@ Documentation and Examples:
 - pynest/examples/intrinsic_currents_spiking.py
 - pynest/examples/intrinsic_currents_subthreshold.py
 
-Parameters:
+Parameters
+++++++++++
 
-\verbatim embed:rst
-=============== ======= ===========================================================
+=============== ======= =========================================================
  V_m            mV      Membrane potential
  tau_m          ms      Membrane time constant applying to all currents except
-                        repolarizing K-current (see [1], p 1677)
+                        repolarizing K-current (see [1]_, p 1677)
  t_ref          ms      Refractory time and duration of post-spike repolarizing
-                        potassium current (t_spike in [1])
+                        potassium current (t_spike in [1]_)
  tau_spike      ms      Membrane time constant for post-spike repolarizing
                         potassium current
- voltage_clamp  boolean If true, clamp voltage to value at beginning of simulation
+ voltage_clamp  boolean If true, clamp voltage to value at beginning of
+ simulation
                         (default: false, mainly for testing)
  theta          mV      Threshold
  theta_eq       mV      Equilibrium value
@@ -106,9 +111,10 @@ Parameters:
  g_NaL          nS      Conductance for sodium leak currents
  E_Na           mV      Reversal potential for Na leak currents
  tau_D_KNa      ms      Relaxation time constant for I_KNa
- receptor_types         Dictionary mapping synapse names to ports on neuron model
+ receptor_types         Dictionary mapping synapse names to ports on neuron
+ model
  recordables            List of recordable quantities
-=============== ======= ===========================================================
+=============== ======= =========================================================
 
 +------------------------------------------------------------+
 |{E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B} |
@@ -134,20 +140,22 @@ equilibrate                  If given and true, time-dependent activation
                              SetStatus call; otherwise they retain their
                              present values.
 ============================ =================================================
-\endverbatim
 
 @Note Conductances are unitless in this model and currents are in mV.
 
-Author: Hans Ekkehard Plesser
+Sends
++++++
 
-Sends: SpikeEvent
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-FirstVersion: October 2009; full revision November 2016
+Receives
+++++++++
 
-References:
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
        thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
        DOI: https://doi.org/10.1152/jn.00915.2004
@@ -155,10 +163,14 @@ References:
        unblock of NMDA receptors limits their  contribution to spike generation
        in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
        DOI: https://doi.org/10.1152/jn.01038.2002
-\endverbatim
 
-SeeAlso: ht_connection
-*/
+See also
+++++++++
+
+ht_connection
+
+EndUserDocs */
+
 class ht_neuron : public Archiving_Node
 {
 public:
@@ -227,8 +239,8 @@ private:
   {
     Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
     // Leaks
@@ -297,7 +309,6 @@ private:
 public:
   struct State_
   {
-
     // y_ = [V, theta, Synapses]
     enum StateVecElems_
     {
@@ -341,7 +352,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron& );
+    void set( const DictionaryDatum&, const ht_neuron&, Node* node );
   };
 
 private:
@@ -372,10 +383,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;             //!< step size in ms
     double integration_step_; //!< current integration time step, updated by GSL
 

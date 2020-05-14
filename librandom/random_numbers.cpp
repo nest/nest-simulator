@@ -47,7 +47,7 @@
 #include "dictdatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "lockptrdatum_impl.h"
+#include "sharedptrdatum.h"
 #include "sliexceptions.h"
 #include "tokenutils.h"
 
@@ -61,9 +61,9 @@ SLIType RandomNumbers::RdvType;
 SLIType RandomNumbers::RdvFactoryType;
 
 
-template class lockPTRDatum< librandom::RandomGen, &RandomNumbers::RngType >;
-template class lockPTRDatum< librandom::RandomDev, &RandomNumbers::RdvType >;
-template class lockPTRDatum< librandom::GenericRandomDevFactory, &RandomNumbers::RdvFactoryType >;
+template class sharedPtrDatum< librandom::RandomGen, &RandomNumbers::RngType >;
+template class sharedPtrDatum< librandom::RandomDev, &RandomNumbers::RdvType >;
+template class sharedPtrDatum< librandom::GenericRandomDevFactory, &RandomNumbers::RdvFactoryType >;
 
 Dictionary* RandomNumbers::rngdict_ = 0;
 Dictionary* RandomNumbers::rdvdict_ = 0;

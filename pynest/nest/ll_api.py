@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
+import inspect
 """
 Low-level API of PyNEST Module
 """
@@ -36,45 +38,23 @@ if 'linux' in sys.platform and 'Anaconda' in sys.version:
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
     import scipy
-except:
+except ImportError:
     pass
 
 # Make MPI-enabled NEST import properly. The underlying problem is that the
 # shared object pynestkernel dynamically opens other libraries that open
 # yet other libraries.
-try:
-    # Python 3.3 and later has flags in os
-    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
-except AttributeError:
-    # Python 2.6 and 2.7 have flags in ctypes, but RTLD_NOW may only
-    # be available in dl or DLFCN and is required at least under
-    # Ubuntu 14.04. The latter two are not available under OSX,
-    # but OSX does not have and does not need RTLD_NOW. We therefore
-    # first try dl and DLFCN, then ctypes just for OSX.
-    try:
-        import dl
-        sys.setdlopenflags(dl.RTLD_GLOBAL | dl.RTLD_NOW)
-    except (ImportError, AttributeError):
-        try:
-            import DLFCN
-            sys.setdlopenflags(DLFCN.RTLD_GLOBAL | DLFCN.RTLD_NOW)
-        except (ImportError, AttributeError):
-            import ctypes
-            try:
-                sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
-            except AttributeError:
-                # We must test this last, since it is the only case without
-                # RTLD_NOW (OSX)
-                sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
-import inspect
-import functools
+# Python 3.3 and later has flags in os
+sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+
 from . import pynestkernel as kernel      # noqa
 
 __all__ = [
     'check_stack',
+    'connect_arrays',
+    'set_communicator',
     'get_debug',
-    'pcd',
     'set_debug',
     'sli_func',
     'sli_pop',
@@ -84,6 +64,7 @@ __all__ = [
     'sps',
     'sr',
     'stack_checker',
+    'take_array_index',
 ]
 
 
@@ -91,7 +72,8 @@ engine = kernel.NESTEngine()
 
 sli_push = sps = engine.push
 sli_pop = spp = engine.pop
-pcd = engine.push_connection_datums
+take_array_index = engine.take_array_index
+connect_arrays = engine.connect_arrays
 
 
 def catching_sli_run(cmd):
@@ -131,6 +113,7 @@ def catching_sli_run(cmd):
         exceptionCls = getattr(kernel.NESTErrors, errorname)
         raise exceptionCls(commandname, message)
 
+
 sli_run = sr = catching_sli_run
 
 
@@ -163,7 +146,6 @@ def sli_func(s, *args, **kwargs):
     r,q = sli_func('dup rollu add',2,3)
     r   = sli_func('add',2,3)
     r   = sli_func('add pop',2,3)
-    l   = sli_func('CreateLayer', {...}, namespace='topology')
     """
 
     # check for namespace
@@ -294,8 +276,33 @@ def check_stack(thing):
 initialized = False
 
 
+def set_communicator(comm):
+    """Set global communicator for NEST.
+
+    Paramters
+    ---------
+    comm: MPI.Comm from mpi4py
+
+    Raises
+    ------
+    _kernel.NESTError
+    """
+
+    if "mpi4py" not in sys.modules:
+        raise _kernel.NESTError("set_communicator: "
+                                "mpi4py not loaded.")
+
+    engine.set_communicator(comm)
+
+
 def init(argv):
     """Initializes NEST.
+
+    If the environment variable PYNEST_QUIET is set, NEST will not print
+    welcome text containing the version and other information. Likewise,
+    if the environment variable PYNEST_DEBUG is set, NEST starts in debug
+    mode. Note that the same effect can be achieved by using the
+    commandline arguments --quiet and --debug respectively.
 
     Parameters
     ----------
@@ -319,13 +326,16 @@ def init(argv):
     # or other modules.
     nest_argv = argv[:]
 
-    quiet = "--quiet" in nest_argv
-    if quiet:
+    quiet = "--quiet" in nest_argv or 'PYNEST_QUIET' in os.environ
+    if "--quiet" in nest_argv:
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
         nest_argv.remove("--debug")
     if "--sli-debug" in nest_argv:
         nest_argv.remove("--sli-debug")
+        nest_argv.append("--debug")
+
+    if 'PYNEST_DEBUG' in os.environ and '--debug' not in nest_argv:
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
@@ -352,5 +362,4 @@ def init(argv):
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")
 
 
-if 'DELAY_PYNEST_INIT' not in os.environ:
-    init(sys.argv)
+init(sys.argv)

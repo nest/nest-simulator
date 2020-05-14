@@ -4,7 +4,7 @@ Part 1: Neurons and simple neural networks
 Introduction
 ------------
 
-In this handout we cover the first steps in using PyNEST to simulate
+In this section we cover the first steps in using PyNEST to simulate
 neuronal networks. When you have worked through this material, you will
 know how to:
 
@@ -106,109 +106,109 @@ Creating Nodes
 A neural network in NEST consists of two basic element types: nodes and
 connections. Nodes are either neurons, devices or sub-networks. Devices
 are used to stimulate neurons or to record from them. Nodes can be
-arranged in sub-networks to build hierarchical networks such as layers,
-columns, and areas - we will get to this later in the course. For now we
-will work in the default sub-network which is present when we start
-NEST, known as the ``root node``.
+arranged with spatial structure to build networks distributed in space
+- we will get to this later in the course. For now we
+will work with the default network structure of NEST.
 
-To begin with, the root sub-network is empty. New nodes are created with
-the command ``Create``, which takes as arguments the model name of the
+New nodes are created with the command ``Create``, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
-the initialising parameters. The function returns a list of handles to
-the new nodes, which you can assign to a variable for later use. These
-handles are integer numbers, called *ids*. Many PyNEST functions expect
-or return a list of ids (see `command overview`_). Thus, it is
+the initialising parameters. The function returns a ``NodeCollection`` of handles to
+the new nodes, which you can assign to a variable for later use. A ``NodeCollection`` is a compact
+representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
+or return a ``NodeCollectoin`` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
-After having imported NEST and also the Pylab interface to Matplotlib [4]_,
-which we will use to display the results, we can start reating nodes.
+After having imported NEST and Matplotlib [4]_,
+which we will use to display the results, we can start creating nodes.
 As a first example, we will create a neuron of type
 ``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
-alpha-shaped postsynaptic currents. The function returns a list of the
+alpha-shaped postsynaptic currents. The function returns a NodeCollection of the
 ids of all the created neurons, in this case only one, which we store in
 a variable called ``neuron``.
 
 ::
 
-    import pylab
+    import matplotlib.pyplot as plt
     import nest
     neuron = nest.Create("iaf_psc_alpha")
 
-We can now use the id to access the properties of this neuron.
+We can now use the NodeCollection to access the properties of this neuron.
 Properties of nodes in NEST are generally accessed via Python
 dictionaries of key-value pairs of the form ``{key: value}``. In order
 to see which properties a neuron has, you may ask it for its status.
 
 ::
 
-    nest.GetStatus(neuron)
+    neuron.get()
 
 This will print out the corresponding dictionary in the Python console.
 Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to ``GetStatus``:
+of keys, as an optional argument to ``get``:
 
 ::
 
-    nest.GetStatus(neuron, "I_e")
-    nest.GetStatus(neuron, ["V_reset", "V_th"])
+    neuron.get("I_e")
+    neuron.get(["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a tuple with one element. In the second
+``I_e``; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a nested tuple. If ``GetStatus`` is
-called for a list of nodes, the dimension of the outer tuple is the
-length of the node list, and the dimension of the inner tuples is the
-number of keys specified.
+neuron, and receive the result as a dictionary . If ``get`` is
+called on a NodeCollection with more than one element, the returned dictionary
+will contain lists with the same number of elements as the number of nodes in
+the NodeCollection. If ``get`` is called with a specific key on a NodeCollection
+with several elements, a list the size of the NodeCollection will be returned.
 
-To modify the properties in the dictionary, we use ``SetStatus``. In the
-following example, the background current is set to 376.0pA, a value
+To modify the properties in the dictionary, we use ``set``. In the
+following example, the background current is set to 375.0pA, a value
 causing the neuron to spike periodically.
 
 ::
 
-    nest.SetStatus(neuron, {"I_e": 376.0})
+    neuron.set(I_e=375.0)
 
 Note that we can set several properties at the same time by giving
-multiple comma separated key:value pairs in the dictionary. Also be
+multiple comma separated key:value pairs in a dictionary. Also be
 aware that NEST is type sensitive - if a particular property is of type
 ``double``, then you do need to explicitly write the decimal point:
 
 ::
 
-    nest.SetStatus(neuron, {"I_e": 376})
+    neuron.set({"I_e": 375})
 
 will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
 
+Another way of setting and getting parameters is to ask the NodeCollection
+directly
+
+::
+
+    neuron.I_e = 376.0
+    neuron.I_e
+
 Next we create a ``multimeter``, a *device* we can use to record the
-membrane voltage of a neuron over time. We set its property ``withtime``
-such that it will also record the points in time at which it samples the
-membrane voltage. The property ``record_from`` expects a list of the
-names of the variables we would like to record. The variables exposed to
-the multimeter vary from model to model. For a specific model, you can
-check the names of the exposed variables by looking at the neuron’s
-property ``recordables``.
+membrane voltage of a neuron over time. The property ``record_from``
+expects a list of the names of the variables we would like to
+record. The variables exposed to the multimeter vary from model to
+model. For a specific model, you can check the names of the exposed
+variables by looking at the neuron’s property ``recordables``.
 
 ::
 
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
+    multimeter.set(record_from=["V_m"])
 
 We now create a ``spikedetector``, another device that records the
-spiking events produced by a neuron. We use the optional keyword
-argument ``params`` to set its properties. This is an alternative to
-using ``SetStatus``. The property ``withgid`` indicates whether the
-spike detector is to record the source id from which it received the
-event (i.e. the id of our neuron).
+spiking events produced by a neuron.
 
 ::
 
-    spikedetector = nest.Create("spike_detector",
-                    params={"withgid": True, "withtime": True})
+    spikedetector = nest.Create("spike_detector")
 
 A short note on naming: here we have called the neuron ``neuron``, the
 multimeter ``multimeter`` and so on. Of course, you can assign your
@@ -271,20 +271,11 @@ the multimeter.
 
 ::
 
-    dmm = nest.GetStatus(multimeter)[0]
+    dmm = multimeter.get()
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain the list of status dictionaries for all
-queried nodes. Here, the variable ``multimeter`` is the id of only one
-node, so the returned list just contains one dictionary. We extract the
-first element of this list by indexing it (hence the ``[0]`` at the
-end). This type of operation occurs quite frequently when using PyNEST,
-as most functions are designed to take in and return lists, rather than
-individual values. This is to make operations on groups of items (the
-usual case when setting up neuronal network simulations) more
-convenient.
-
+In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
 This dictionary contains an entry named ``events`` which holds the
 recorded data. It is itself a dictionary with the entries ``V_m`` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
@@ -295,30 +286,30 @@ understanding of its structure, and then in the next step extract the
 dictionary ``events``, and so on.
 
 Now we are ready to display the data in a figure. To this end, we make
-use of ``pylab``.
+use of ``matplotlib`` and the ``pyplot`` module.
 
 ::
 
-    import pylab
-    pylab.figure(1)
-    pylab.plot(ts, Vms)
+    import matplotlib.pyplot as plt
+    plt.figure(1)
+    plt.plot(ts, Vms)
 
 The second line opens a figure (with the number 1), and the third line
 actually produces the plot. You can’t see it yet because we have not
-used ``pylab.show()``. Before we do that, we proceed analogously to
+used ``plt.show()``. Before we do that, we proceed analogously to
 obtain and display the spikes from the spike detector.
 
 ::
 
-    dSD = nest.GetStatus(spikedetector,keys="events")[0]
+    dSD = spikedetector.get("events")
     evs = dSD["senders"]
     ts = dSD["times"]
-    pylab.figure(2)
-    pylab.plot(ts, evs, ".")
-    pylab.show()
+    plt.figure(2)
+    plt.plot(ts, evs, ".")
+    plt.show()
 
-Here we extract the events more concisely by using the optional keyword
-argument ``keys`` to ``GetStatus``. This extracts the dictionary element
+Here we extract the events more concisely by sending the parameter name to ``get``.
+This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
@@ -339,7 +330,7 @@ current given a different value:
 ::
 
     neuron2 = nest.Create("iaf_psc_alpha")
-    nest.SetStatus(neuron2 , {"I_e": 370.0})
+    neuron2.set({"I_e": 370.0})
 
 now connect this newly created neuron to the multimeter:
 
@@ -354,13 +345,13 @@ lines.
 
 ::
 
-    pylab.figure(2)
+    plt.figure(2)
     Vms1 = dmm["events"]["V_m"][::2] # start at index 0: till the end: each second entry
     ts1 = dmm["events"]["times"][::2]
-    pylab.plot(ts1, Vms1)
+    plt.plot(ts1, Vms1)
     Vms2 = dmm["events"]["V_m"][1::2] # start at index 1: till the end: each second entry
     ts2 = dmm["events"]["times"][1::2]
-    pylab.plot(ts2, Vms2)
+    plt.plot(ts2, Vms2)
 
 Additional information can be found at
 http://docs.scipy.org/doc/numpy-1.10.0/reference/arrays.indexing.html.
@@ -379,14 +370,14 @@ respectively.
 
     noise_ex = nest.Create("poisson_generator")
     noise_in = nest.Create("poisson_generator")
-    nest.SetStatus(noise_ex, {"rate": 80000.0})
-    nest.SetStatus(noise_in, {"rate": 15000.0})
+    noise_ex.set(rate=80000.0)
+    noise_in.set(rate=15000.0)
 
 Additionally, the constant input current should be set to 0:
 
 ::
 
-    nest.SetStatus(neuron, {"I_e": 0.0})
+    neuron.set(I_e=0.0)
 
 Each event of the excitatory generator should produce a postsynaptic
 current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
@@ -394,7 +385,7 @@ weights can be defined in a dictionary, which is passed to the
 ``Connect`` function using the keyword ``syn_spec`` (synapse
 specifications). In general all parameters determining the synapse can
 be specified in the synapse dictionary, such as ``"weight"``,
-``"delay"``, the synaptic model (``"model"``) and parameters specific to
+``"delay"``, the synaptic model (``"synapse_model"``) and parameters specific to
 the synaptic model.
 
 ::
@@ -447,13 +438,12 @@ a constant input current, and add a second neuron.
 
 ::
 
-    import pylab
     import nest
     neuron1 = nest.Create("iaf_psc_alpha")
-    nest.SetStatus(neuron1, {"I_e": 376.0})
+    neuron1.set(I_e=376.0)
     neuron2 = nest.Create("iaf_psc_alpha")
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
+    multimeter.set(record_from=["V_m"])
 
 We now connect ``neuron1`` to ``neuron2``, and record the membrane
 potential from ``neuron2`` so we can observe the postsynaptic potentials
@@ -469,7 +459,7 @@ addition to the weight, the following shortcut is available:
 
 ::
 
-    nest.Connect(neuron1, neuron2, syn_spec={"weight":20, "delay":1.0})
+    nest.Connect(neuron1, neuron2, syn_spec={"weight":20.0, "delay":1.0})
 
 If you simulate the network and plot the membrane potential as before,
 you should then see the postsynaptic potentials of ``neuron2`` evoked by
@@ -490,23 +480,22 @@ Nodes
 ~~~~~
 
 -  ``Create(model, n=1, params=None)``
-    Create ``n`` instances of type ``model`` in the current
-    sub-network. Parameters for the new nodes can be given as
+    Create ``n`` instances of type ``model``. Parameters for the new nodes can be given as
     ``params`` (a single dictionary, or a list of dictionaries with
     size ``n``). If omitted, the ``model``\ ’s defaults are used.
 
--  ``GetStatus(nodes, keys=None)``
-    Return a list of parameter dictionaries for the given list of
-    ``nodes``. If ``keys`` is given, a list of values is returned
-    instead. ``keys`` may also be a list, in which case the returned
-    list contains lists of values.
+-  ``get(*params, **kwargs)``
+    Return a dictionary with parameter values for the NodeCollection it is called
+    on. If ``params`` is a single string, a list of values is returned
+    instead. ``params`` may also be a list of strings, in which case the returned
+    dictionary contains lists of requested values.
 
--  ``SetStatus(nodes, params, val=None)``
-    Set the parameters of the given ``nodes`` to ``params``, which may
+-  ``set(params=None, **kwargs)``
+    Set the parameters on the NodeCollection it is called on to ``params``, which may
     be a single dictionary, or a list of dictionaries of the same size
-    as ``nodes``. If ``val`` is given, ``params`` has to be the name of
-    a property, which is set to ``val`` on the ``nodes``. ``val`` can
-    be a single value, or a list of the same size as ``nodes``.
+    as the NodeCollection. If ``kwargs`` is given, it has to be names and values of
+    an attribute as keyword=argument pairs. The values
+    can be single values or list of the same size as the NodeCollection.
 
 Connections
 ~~~~~~~~~~~
@@ -514,28 +503,27 @@ Connections
 This is an abbreviated version of the documentation for the ``Connect``
 function, please see NEST’s online help for the full version and
 :doc:`Connection Management <../../guides/connection_management>` for an introduction
-and worked examples.
+and examples.
 
--  `Connect(pre, post, conn_spec=None, syn_spec=None, model=None)``
-   Connect pre neurons to post neurons.Neurons in pre and post are
-   connected using the specified connectivity (``"one_to_one"`` by
-   default) and synapse type (``"static_synapse"`` by default). Details
-   depend on the connectivity rule. Note: Connect does not iterate over
-   subnets, it only connects explicitly specified nodes. ``pre`` -
-   presynaptic neurons, given as list of GIDs ``post`` - presynaptic
-   neurons, given as list of GIDs ``conn_spec`` - name or dictionary
-   specifying connectivity rule, see below ``syn_spec`` - name or
-   dictionary specifying synapses, see below
+-  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``
+    Connect pre neurons to post neurons. Neurons in pre and post are
+    connected using the specified connectivity (``"all_to_all"`` by
+    default) and synapse type (``"static_synapse"`` by default). Details
+    depend on the connectivity rule. ``pre`` -
+    presynaptic neurons, given as a NodeCollection of node IDs ``post`` - presynaptic
+    neurons, given as a NodeCollection of node IDs ``conn_spec`` - name or dictionary
+    specifying connectivity rule, see below ``syn_spec`` - name or
+    dictionary specifying synapses, see below.
 
 Connectivity
 ^^^^^^^^^^^^
 
 Connectivity is either specified as a string containing the name of a
-connectivity rule (default: ``"one_to_one"``) or as a dictionary
+connectivity rule (default: ``"all_to_all"``) or as a dictionary
 specifying the rule and rule-specific parameters (e.g. ``"indegree"``),
 which must be given. In addition switches allowing self-connections
-(``"autapses"``, default: ``True``) and multiple connections between a
-pair of neurons (``"multapses"``, default: ``True``) can be contained in
+(``"allow_autapses"``, default: ``True``) and multiple connections between a
+pair of neurons (``"allow_multapses"``, default: ``True``) can be contained in
 the dictionary.
 
 Synapse
@@ -543,20 +531,19 @@ Synapse
 
 The synapse model and its properties can be inserted either as a string
 describing one synapse model (synapse models are listed in the
-synapsedict) or as a dictionary as described below. If no synapse model
+synapsedict) or as a dictionary. If no synapse model
 is specified the default model ``"static_synapse"`` will be used.
-Available keys in the synapse dictionary are ``"model"``, ``"weight"``,
+Available keys in the synapse dictionary are ``"synapse_model"``, ``"weight"``,
 ``"delay"``, ``"receptor_type"`` and parameters specific to the chosen
 synapse model. All parameters are optional and if not specified will use
-the default values determined by the current synapse model. ``"model"``
+the default values determined by the current synapse model. ``"synapse_model"``
 determines the synapse type, taken from pre-defined synapse types in
 NEST or manually specified synapses created via ``CopyModel()``. All
 other parameters can be scalars or distributions. In the case of scalar
 parameters, all keys take doubles except for ``"receptor_type"`` which
 has to be initialised with an integer. Distributed parameters are
-initialised with yet another dictionary specifying the distribution
-(``"distribution"``, such as ``"normal"``) and distribution-specific
-paramters (such as ``"mu"`` and ``"sigma"``).
+initialised with a Parameter with distribution-specific
+arguments (such as ``"mean"`` and ``"std"``).
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~
@@ -578,4 +565,3 @@ References
 
 .. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.
    9(3):90–95.
-

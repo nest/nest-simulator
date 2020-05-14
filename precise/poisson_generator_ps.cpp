@@ -30,6 +30,9 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
@@ -61,16 +64,16 @@ nest::poisson_generator_ps::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
+nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::dead_time, dead_time_ );
+  updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
 
   if ( rate_ < 0.0 )
   {

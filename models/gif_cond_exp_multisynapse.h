@@ -46,16 +46,15 @@ namespace nest
 
 extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-Name: gif_cond_exp_multisynapse - Conductance-based generalized
-integrate-and-fire neuron model with multiple synaptic time constants
-according to Mensi et al. (2012) and Pozzorini et al. (2015).
+Short description
++++++++++++++++++
 
-Description:
+Conductance-based generalized integrate-and-fire neuron with multiple synaptic time constants
+
+Description
++++++++++++
 
 gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) and Pozzorini et al. (2015), with
@@ -65,61 +64,64 @@ This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the
 differential equation:
 
-@f[
-C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots - \eta_n(t)
- + I(t)
-@f]
+.. math::
 
-where each \f$ eta_i \f$ is a spike-triggered current (stc), and the neuron model can
-have arbitrary number of them.
-Dynamic of each \f$ eta_i \f$ is described by:
-@f[
-\tau_{\eta_i}*d{\eta_i}/dt = -\eta_i
-@f]
+ C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+    - \eta_n(t) + I(t)
+
+where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
+model can have arbitrary number of them.
+Dynamic of each :math`\eta_i` is described by:
+
+.. math::
+
+ \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
-@f[
-\eta_i = \eta_i + q_{\eta_i}  \text{ (in case of spike emission).}
-@f]
+.. math::
+
+ \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
 Neuron produces spikes STOCHASTICALLY according to a point process with the
 firing intensity:
 
-@f[
- \lambda(t) = \lambda_0 * \exp[ (V(t)-V_T(t)) / \Delta_V ]
-@f]
+.. math::
 
-where \f$ V_T(t) \f$ is a time-dependent firing threshold:
+ \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
 
-@f[
-V_T(t) = V_{T_{star}} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
-@f]
+where :math:`V_T(t)` is a time-dependent firing threshold:
 
-where gamma_i is a kernel of spike-frequency adaptation (sfa), and the neuron
-model can have arbitrary number of them.
-Dynamic of each \f$ gamma_i \f$ is described by:
+.. math::
 
-@f[
-\tau_{\gamma_i}*d{\gamma_i}/dt = -\gamma_i
-@f]
+ V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
+
+where :math:` \gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
+neuron model can have arbitrary number of them.
+Dynamic of each :math`\gamma_i` is described by:
+
+.. math::
+
+\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
-@f[
- \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
-@f]
+.. math::
 
-Note that in the current implementation of the model (as described in [1] and
-[2]) the values of \f$ eta_i \f$ and \f$ gamma_i \f$ are affected immediately
+ \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
+
+
+Note that in the current implementation of the model (as described in [1]_ and
+[2]_) the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
 after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
 which fits the model using experimental data, requires a different set of
-\f$ eta_i \f$ and  \f$ gamma_i \f$. It applies the jump of \f$ eta_i  \f$ and
+\:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`eta_i`  and
 \f$ gamma_i \f$ after the refractory period. One can easily convert between
-\f$ q_eta/gamma \f$ of these two approaches:
-\f$ q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta )) /f$
-The same formula applies for /f$ q_gamma /f$.
+:math:`q_eta/gamma` of these two approaches:
+:math:`q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))`
+The same formula applies for :math:`q_gamma`.
 
 On the postsynapic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
@@ -128,11 +130,11 @@ port number has to match the respective "receptor_type" in the connectors.
 
 The shape of synaptic conductance is exponential.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 =========   ======   ======================================================
 **Membrane Parameters**
 ---------------------------------------------------------------------------
@@ -175,31 +177,8 @@ The following parameters can be set in the status dictionary.
                         numerical instabilities
 ==============  ======  ======================================================
 
-\endverbatim
-
-
-Example:
-
-    neuron = nest.Create('gif_cond_exp_multisynapse',
-                         params={'E_rev': [0.0, -85.0],
-                                 'tau_syn': [4.0, 8.0]})
-
-    spike = nest.Create('spike_generator', params={'spike_times':
-                                                   np.array([10.0])})
-
-    delays = [1., 30.]
-    w = [1., 5.]
-    for syn in range(2):
-        nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                              'receptor_type': 1 + syn,
-                                              'weight': w[syn],
-                                              'delay': delays[syn]})
-    nest.Simulate(100.)
-
-
-References:
-
-\verbatim embed:rst
+References
+++++++++++
 
 .. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
        Parameter extraction and classification of three cortical neuron types
@@ -210,17 +189,24 @@ References:
        Automated high-throughput characterization of single neurons by means of
        simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
        DOI: https://doi.org/10.1371/journal.pcbi.1004275
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: March 2016, Setareh
+Receives
+++++++++
 
-SeeAlso: pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse,
-gif_psc_exp_multisynapse
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse
+
+EndUserDocs */
+
 class gif_cond_exp_multisynapse : public Archiving_Node
 {
 
@@ -272,7 +258,6 @@ private:
    */
   struct Parameters_
   {
-
     double g_L_;
     double E_L_;
     double V_reset_;
@@ -316,8 +301,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -334,7 +319,6 @@ private:
    */
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -363,7 +347,7 @@ private:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
 
   }; // State_
 
@@ -390,10 +374,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
   };
@@ -508,10 +491,10 @@ gif_cond_exp_multisynapse::get_status( DictionaryDatum& d ) const
 inline void
 gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

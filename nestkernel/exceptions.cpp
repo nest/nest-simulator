@@ -132,8 +132,7 @@ nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, "
-                                           "e.g., a subnet or device.";
+         "but the node with id " << id_ << " is not a node without proxies, e.g., a device.";
   return out.str();
 }
 
@@ -272,12 +271,6 @@ nest::DistributionError::message() const
 }
 
 std::string
-nest::SubnetExpected::message() const
-{
-  return std::string();
-}
-
-std::string
 nest::SimulationError::message() const
 {
   return std::string(
@@ -404,6 +397,32 @@ nest::NumericalInstability::message() const
   std::ostringstream msg;
   msg << "NEST detected a numerical instability while "
       << "updating " << model_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::UnmatchedSteps::message() const
+{
+  std::ostringstream msg;
+  msg << "Steps for backend device don't match NEST steps: "
+      << "steps expected: " << total_steps_ << " "
+      << "steps executed: " << current_step_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::BackendPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be prepare()'d multiple times.";
+  return msg.str();
+}
+
+std::string
+nest::BackendNotPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
   return msg.str();
 }
 

@@ -34,7 +34,7 @@ multimeter and writing data to file.
 
 import nest
 import numpy
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -67,24 +67,24 @@ print("iaf_cond_alpha recordables: {0}".format(
 # expects a model type and, optionally, the desired number of nodes and a
 # dictionary of parameters to overwrite the default values of the model.
 #
-# * For the neuron, the rise time of the excitatory synaptic alpha function
-#   in ms ``tau_syn_ex`` and the reset potential of the membrane in mV ``V_reset``
-#   are specified.
-# * For the multimeter, the time interval for recording in ms ``interval`` and a
-#   selection of measures to record (the membrane voltage in mV ``V_m`` and the
-#   excitatory ``g_ex`` and inhibitoy ``g_in`` synaptic conductances in nS) are set.
+#  * For the neuron, the rise time of the excitatory synaptic alpha function
+#    (`tau_syn_ex`, in ms) and the reset potential of the membrane
+#    (`V_reset`, in mV) are specified.
+#  * For the ``multimeter``, the time interval for recording (`interval`, in
+#    ms) and the measures to record (membrane potential `V_m` in mV and
+#    excitatory and inhibitoy synaptic conductances `g_ex` and`g_in` in nS)
+#    are set.
 #
 #  In addition, more parameters can be modified for writing to file:
 #
-#  - ``withgid`` is set to True to record the global id of the observed node(s).
-#    (default: False).
-#  - ``to_file`` indicates whether to write the recordings to file and is set
-#    to True.
-#  - ``label`` specifies an arbitrary label for the device. It is used instead of
-#    the name of the model in the output file name.
+#  - `record_to` indicates where to put recorded data. All possible values are
+#    available by inspecting the keys of the `recording_backends` dictionary
+#    obtained from ``GetKernelStatus()``.
+#  - `label` specifies an arbitrary label for the device. If writing to files,
+#    it used in the file name instead of the model name.
 #
-# * For the spike generators, the spike times in ms ``spike_times`` are given
-#   explicitly.
+#  * For the spike generators, the spike times in ms (`spike_times`) are given
+#    explicitly.
 
 n = nest.Create("iaf_cond_alpha",
                 params={"tau_syn_ex": 1.0, "V_reset": -70.0})
@@ -92,8 +92,7 @@ n = nest.Create("iaf_cond_alpha",
 m = nest.Create("multimeter",
                 params={"interval": 0.1,
                         "record_from": ["V_m", "g_ex", "g_in"],
-                        "withgid": True,
-                        "to_file": True,
+                        "record_to": "ascii",
                         "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",
@@ -118,29 +117,31 @@ nest.Connect(m, n)
 nest.Simulate(100.)
 
 ###############################################################################
-# After the simulation, the recordings are obtained from the multimeter via the
-# key ``events`` of the status dictionary accessed by ``GetStatus``. ``times``
-# indicates the recording times stored for each data point. They are recorded
-# if the parameter ``withtime`` of the multimeter is set to True which is the
-# default case.
+# After the simulation, the recordings are obtained from the file the
+# multimeter wrote to, accessed with the `filenames` property of the
+# multimeter. After three header rows, the data is formatted in columns. The
+# first column is the ID of the sender node. The second column is the ID time
+# of the recording, in ms. Subsequent rows are values of properties specified
+# in the `record_from` property of the multimeter.
 
-events = nest.GetStatus(m)[0]["events"]
-t = events["times"]
+data = numpy.loadtxt(m.filenames[0], skiprows=3)
+sender, t, v_m, g_in, g_ex = data.T
 
 ###############################################################################
 # Finally, the time courses of the membrane voltage and the synaptic
 # conductance are displayed.
 
-pylab.clf()
+plt.clf()
 
-pylab.subplot(211)
-pylab.plot(t, events["V_m"])
-pylab.axis([0, 100, -75, -53])
-pylab.ylabel("membrane potential (mV)")
+plt.subplot(211)
+plt.plot(t, v_m)
+plt.axis([0, 100, -75, -53])
+plt.ylabel("membrane potential (mV)")
 
-pylab.subplot(212)
-pylab.plot(t, events["g_ex"], t, events["g_in"])
-pylab.axis([0, 100, 0, 45])
-pylab.xlabel("time (ms)")
-pylab.ylabel("synaptic conductance (nS)")
-pylab.legend(("g_exc", "g_inh"))
+plt.subplot(212)
+plt.plot(t, g_ex, t, g_in)
+plt.axis([0, 100, 0, 45])
+plt.xlabel("time (ms)")
+plt.ylabel("synaptic conductance (nS)")
+plt.legend(("g_exc", "g_inh"))
+plt.show()

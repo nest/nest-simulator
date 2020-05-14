@@ -38,7 +38,7 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "lockptrdatum.h"
+#include "sharedptrdatum.h"
 
 using namespace nest;
 
@@ -184,7 +184,7 @@ mynest::pif_psc_alpha::pif_psc_alpha( const pif_psc_alpha& n )
 void
 mynest::pif_psc_alpha::init_state_( const Node& proto )
 {
-  const pif_psc_alpha& pr = downcast< pif_psc_alpha >( proto );
+  const auto& pr = downcast< pif_psc_alpha >( proto );
   S_ = pr.S_;
 }
 
@@ -241,8 +241,9 @@ mynest::pif_psc_alpha::update( Time const& slice_origin, const long from_step, c
     }
     else
     {
+      // count down refractory time
       --S_.refr_count;
-    } // count down refractory time
+    }
 
     // update synaptic currents
     S_.I_syn = V_.P21 * S_.dI_syn + V_.P22 * S_.I_syn;

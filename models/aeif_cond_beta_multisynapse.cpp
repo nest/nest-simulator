@@ -28,6 +28,8 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "beta_normalization_factor.h"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -218,16 +220,16 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
+aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_peak, V_peak_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::V_reset, V_reset_ );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_peak, V_peak_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
   const size_t old_n_receptors = n_receptors();
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
@@ -267,14 +269,14 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  updateValue< double >( d, names::a, a );
-  updateValue< double >( d, names::b, b );
-  updateValue< double >( d, names::Delta_T, Delta_T );
-  updateValue< double >( d, names::tau_w, tau_w );
+  updateValueParam< double >( d, names::a, a, node );
+  updateValueParam< double >( d, names::b, b, node );
+  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
+  updateValueParam< double >( d, names::tau_w, tau_w, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
 
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -349,10 +351,10 @@ aeif_cond_beta_multisynapse::State_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
+aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::w, y_[ W ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::w, y_[ W ], node );
 }
 
 aeif_cond_beta_multisynapse::Buffers_::Buffers_( aeif_cond_beta_multisynapse& n )
@@ -470,34 +472,8 @@ aeif_cond_beta_multisynapse::calibrate()
 
   for ( size_t i = 0; i < P_.n_receptors(); ++i )
   {
-    // the denominator (denom1) that appears in the expression of the peak time
-    // is computed here to check that it is != 0
-    // another denominator denom2 appears in the expression of the
-    // normalization factor g0
-    // Both denom1 and denom2 are null if tau_decay = tau_rise, but they
-    // can also be null if tau_decay and tau_rise are not equal but very
-    // close to each other, due to the numerical precision limits.
-    // In such case the beta function reduces to the alpha function,
-    // and the normalization factor for the alpha function should be used.
-    double denom1 = P_.tau_decay[ i ] - P_.tau_rise[ i ];
-    double denom2 = 0;
-    if ( denom1 != 0 )
-    {
-      // peak time
-      const double t_p =
-        P_.tau_decay[ i ] * P_.tau_rise[ i ] * std::log( P_.tau_decay[ i ] / P_.tau_rise[ i ] ) / denom1;
-      // another denominator is computed here to check that it is != 0
-      denom2 = std::exp( -t_p / P_.tau_decay[ i ] ) - std::exp( -t_p / P_.tau_rise[ i ] );
-    }
-    if ( denom2 == 0 ) // if rise time == decay time use alpha function
-    {                  // use normalization for alpha function in this case
-      V_.g0_[ i ] = 1.0 * numerics::e / P_.tau_decay[ i ];
-    }
-    else // if rise time != decay time use beta function
-    {
-      V_.g0_[ i ] // normalization factor for conductance
-        = ( 1. / P_.tau_rise[ i ] - 1. / P_.tau_decay[ i ] ) / denom2;
-    }
+    // normalization factor for conductance
+    V_.g0_[ i ] = beta_normalization_factor( P_.tau_rise[ i ], P_.tau_decay[ i ] );
   }
 
   // set the right threshold depending on Delta_T
@@ -674,9 +650,9 @@ void
 aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

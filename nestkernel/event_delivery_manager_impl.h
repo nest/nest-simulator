@@ -67,8 +67,8 @@ inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag )
 {
   const thread tid = source.get_thread();
-  const index source_gid = source.get_gid();
-  e.set_sender_gid( source_gid );
+  const index source_node_id = source.get_node_id();
+  e.set_sender_node_id( source_node_id );
   if ( source.has_proxies() )
   {
     local_spike_counter_[ tid ] += e.get_multiplicity();
@@ -84,7 +84,7 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
     {
       send_remote( tid, e, lag );
     }
-    kernel().connection_manager.send_to_devices( tid, source_gid, e );
+    kernel().connection_manager.send_to_devices( tid, source_node_id, e );
   }
   else
   {
@@ -96,7 +96,7 @@ template <>
 inline void
 EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag )
 {
-  e.set_sender_gid( source.get_gid() );
+  e.set_sender_node_id( source.get_node_id() );
   send_local_( source, e, lag );
 }
 
@@ -104,12 +104,14 @@ inline void
 EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
+
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       spike_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
@@ -121,12 +123,14 @@ inline void
 EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
+  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
+
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
@@ -138,8 +142,8 @@ inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
-  const index source_gid = source.get_gid();
-  const index lid = kernel().vp_manager.gid_to_lid( source_gid );
+  const index source_node_id = source.get_node_id();
+  const index lid = kernel().vp_manager.node_id_to_lid( source_node_id );
 
   if ( source.has_proxies() )
   {
@@ -160,7 +164,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
         e >> it;
       }
     }
-    kernel().connection_manager.send_to_devices( tid, source_gid, e );
+    kernel().connection_manager.send_to_devices( tid, source_node_id, e );
   }
   else
   {

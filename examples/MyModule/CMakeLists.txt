@@ -18,6 +18,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required( VERSION 2.8.12 )
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+include( ProcessDependencies )
 
 # This CMakeLists.txt is configured to build your external module for NEST. For
 # illustrative reasons this module is called 'my' (change SHORT_NAME to your
@@ -37,13 +39,25 @@ set( SHORT_NAME my )
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )
 
-# 2) Add all your sources here
+# 2) Add all your sources here and specify dependencies, e.g., link libraries
 set( MODULE_SOURCES
-    mymodule.h mymodule.cpp
-    pif_psc_alpha.cpp pif_psc_alpha.h
-    drop_odd_spike_connection.h
-    step_pattern_builder.h step_pattern_builder.cpp
-    )
+     mymodule.h mymodule.cpp
+     pif_psc_alpha.cpp pif_psc_alpha.h
+     drop_odd_spike_connection.h
+     step_pattern_builder.h step_pattern_builder.cpp
+     recording_backend_socket.h recording_backend_socket.cpp
+   )
+
+check_have_sfml_audio()
+if ( HAVE_SFML_AUDIO )
+  list( APPEND MODULE_SOURCES   
+        recording_backend_soundclick.h recording_backend_soundclick.cpp
+      )
+  set( USER_LINK_LIBRARIES sfml-audio )
+  add_definitions( -DHAVE_SFML_AUDIO )
+else ()
+  message( "-- Skip build of recording backend >SoundClick<. sfml-audio is not installed." )
+endif ()
 
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
@@ -200,13 +214,11 @@ execute_process(
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
-# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*, if not set explicitly.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
-  set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}/nest" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
-  set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
-  set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
-endif ()
+# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*
+set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
+set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
 
 include( GNUInstallDirs )
 
@@ -249,11 +261,21 @@ add_custom_target( dist
     COMMENT "Creating a source distribution from ${MODULE_NAME}..."
     )
 
+# check the user link libraries whether installed or not
+foreach( LINKLIB ${USER_LINK_LIBRARIES} )
+  find_library( LIB_${LINKLIB} ${LINKLIB} )
+  if( NOT LIB_${LINKLIB} )
+    message(FATAL_ERROR "ERROR: " ${LINKLIB} " library not found")
+  else()  
+    message( "-- " ${LINKLIB} " library found")
+  endif()
+endforeach()
 
 if ( BUILD_SHARED_LIBS )
   # When building shared libraries, also create a module for loading at runtime
   # with the `Install` command.
   add_library( ${MODULE_NAME}_module MODULE ${MODULE_SOURCES} )
+  target_link_libraries(${MODULE_NAME}_module ${USER_LINK_LIBRARIES})
   set_target_properties( ${MODULE_NAME}_module
       PROPERTIES
       COMPILE_FLAGS "${NEST_CXXFLAGS} -DLTX_MODULE"
@@ -261,7 +283,7 @@ if ( BUILD_SHARED_LIBS )
       PREFIX ""
       OUTPUT_NAME ${MODULE_NAME} )
   install( TARGETS ${MODULE_NAME}_module
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
       )
 endif ()
 
@@ -279,15 +301,14 @@ set_target_properties( ${MODULE_NAME}_lib
     OUTPUT_NAME ${MODULE_NAME} )
 
 # Install library, header and sli init files.
-install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR} )
+install( TARGETS ${MODULE_NAME}_lib DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest )
 install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${MODULE_NAME} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help --- based on doc/CMakeLists.txt
 # Install only if Py >= 2.7.8 and NEST was installed with help
-if ( ( NOT CMAKE_CROSSCOMPILING ) 
-     AND PYTHON_EXECUTABLE 
-     AND ( ${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7" )
+if ( ( NOT CMAKE_CROSSCOMPILING )
+     AND PYTHON_EXECUTABLE
      AND ( IS_DIRECTORY ${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DOCDIR}/help )
    )
 
@@ -300,14 +321,14 @@ if ( ( NOT CMAKE_CROSSCOMPILING )
          WORKING_DIRECTORY \"${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
          )"
       )
-  
+
     # Copy the local doc/help directory to the global installation
     # directory for documentation.
     install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
       DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
       OPTIONAL
       )
-  
+
     # Update the global help index to include all help files in
     # the global installation directory for documentation.
     install( CODE
@@ -331,6 +352,7 @@ message( "C++ compiler flags   : ${CMAKE_CXX_FLAGS}" )
 message( "NEST compiler flags  : ${NEST_CXXFLAGS}" )
 message( "NEST include dirs    : ${NEST_INCLUDES}" )
 message( "NEST libraries flags : ${NEST_LIBS}" )
+message( "User link libraries  : ${USER_LINK_LIBRARIES}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )
@@ -339,7 +361,7 @@ message( "  make" )
 message( "  make install" )
 message( "" )
 message( "The library file lib${MODULE_NAME}.so will be installed to" )
-message( "  ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "  ${CMAKE_INSTALL_FULL_LIBDIR}/nest/" )
 message( "Help files will be installed to" )
 message( "  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}" )
 message( "" )
@@ -348,10 +370,11 @@ message( "  (${MODULE_NAME}) Install        (in SLI)" )
 message( "  nest.Install('${MODULE_NAME}')  (in PyNEST)" )
 message( "" )
 
-if( NOT "${CMAKE_INSTALL_PREFIX}" EQUAL "${NEST_INSTALL_PREFIX}" )
+if( NOT "${CMAKE_INSTALL_PREFIX}" STREQUAL "${NEST_INSTALL_PREFIX}" )
   message( "The module will be installed into a non-default location!" )
   message( "Make sure to set the environment variables:" )
-  message( "  export NEST_MODULE_PATH=${CMAKE_INSTALL_FULL_LIBDIR}:$NEST_MODULE_PATH" )
+  message( "  export LD_LIBRARY_PATH=${CMAKE_INSTALL_FULL_LIBDIR}/nest:$LD_LIBRARY_PATH" )
+  message( "Note that on the Mac, the variable LD_LIBRARY_PATH is called DYLD_LIBRARY_PATH." )
   message( "  export SLI_PATH=${CMAKE_INSTALL_FULL_DATADIR}/sli:$SLI_PATH" )
   message( "" )
 endif ()

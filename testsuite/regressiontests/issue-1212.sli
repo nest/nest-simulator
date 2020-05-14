@@ -49,9 +49,9 @@ M_ERROR setverbosity
 
   sg source_parrot Connect
 
-  [source_parrot] [target_parrot]
+  source_parrot target_parrot
   << /rule /one_to_one >>
-  << /model /bernoulli_synapse_wr
+  << /synapse_model /bernoulli_synapse_wr
      /p_transmit 0.0
      /weight 1.0 >>
   Connect

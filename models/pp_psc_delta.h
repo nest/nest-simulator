@@ -38,15 +38,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup psc
+/* BeginUserDocs: neuron, point process, current-based
 
-Name: pp_psc_delta - Point process neuron with leaky integration of
-                     delta-shaped PSCs.
+Short description
++++++++++++++++++
 
-Description:
+Point process neuron with leaky integration of delta-shaped PSCs
+
+Description
++++++++++++
 
 pp_psc_delta is an implementation of a leaky integrator, where the potential
 jumps on each spike arrival. It produces spike stochastically, and supports
@@ -60,11 +60,14 @@ true will reset the membrane potential after each spike.
 The transfer function can be chosen to be linear, exponential or a sum of
 both by adjusting three parameters:
 
-@f[  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ], @f]
+.. math::
 
-where the effective potential \f$ V' = V_m - E_{sfa} \f$ and \f$ E_{sfa} \f$
+  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ],
+
+where the effective potential :math:`V' = V_m - E_{sfa}` and :math:`E_{sfa}`
 is called the adaptive threshold. Here Rect means rectifier:
-\f$ Rect(x) = {x \text{ if } x>=0, 0 \text{ else}} \f$ (this is necessary because
+:math:`Rect(x) = {x \text{ if } x>=0, 0 \text{ else}}` (this is necessary
+because
 negative rates are not possible).
 
 By setting c_3 = 0, c_2 can be used as an offset spike rate for an otherwise
@@ -73,7 +76,7 @@ linear rate model.
 The dead time enables to include refractoriness. If dead time is 0, the
 number of spikes in one time step might exceed one and is drawn from the
 Poisson distribution accordingly. Otherwise, the probability for a spike
-is given by \f$ 1 - \exp(-rate*h) \f$, where h is the simulation time step. If
+is given by :math:`1 - \exp(-rate*h)`, where h is the simulation time step. If
 dead_time is smaller than the simulation resolution (time step), it is
 internally set to the resolution.
 
@@ -90,7 +93,7 @@ Here this is implemented by subtracting the value of the adaptive threshold
 E_sfa from the membrane potential V_m before passing the potential to the
 transfer function, see also above. E_sfa jumps by q_sfa when the neuron
 fires a spike, and decays exponentially with the time constant tau_sfa
-after (see [2] or [3]). Thus, the E_sfa corresponds to the convolution of the
+after (see [2]_ or [3]_). Thus, the E_sfa corresponds to the convolution of the
 neuron's spike train with an exponential kernel.
 This adaptation kernel may also be chosen as the sum of n exponential
 kernels. To use this feature, q_sfa and tau_sfa have to be given as a list
@@ -105,24 +108,24 @@ is True, and all adaptation terms (q_sfa) are 0, then it will reset
 it a renewal process model (where "rate" above is its hazard function,
 also known as conditional intensity).
 
-pp_psc_delta may also be called a spike-response model with escape-noise [6]
+pp_psc_delta may also be called a spike-response model with escape-noise [6]_
 (for vanishing, non-random dead_time). If c_1>0 and c_2==0, the rate is a
 convolution of the inputs with exponential filters -- which is a model known
-as a Hawkes point process (see [4]). If instead c_1==0, then pp_psc_delta is
+as a Hawkes point process (see [4]_). If instead c_1==0, then pp_psc_delta is
 a point process generalized linear model (with the canonical link function,
-and exponential input filters) (see [5,6]).
+and exponential input filters) (see [5,6]_).
 
 This model has been adapted from iaf_psc_delta. The default parameters are
-set to the mean values given in [2], which have been matched to spike-train
+set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and conciously.
 
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =================  ======= ===================================================
  V_m               mV      Membrane potential
  C_m               pF      Capacitance of the membrane
@@ -143,11 +146,11 @@ The following parameters can be set in the status dictionary.
  c_3               1/mV    Coefficient of exponential non-linearity of
                            transfer function
 =================  ======= ===================================================
-\endverbatim
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
        processes and applications to neural modeling. Journal of
        Computational Neuroscience 28(2):267-284
@@ -171,17 +174,25 @@ References:
 .. [6] Gerstner W, Kistler WM, Naud R, Paninski L (2014). Neuronal Dynamics:
        From single neurons to networks and models of cognition.
        Cambridge University Press
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
 
-Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
+SpikeEvent
 
-SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
-iaf_psc_delta_ps
-*/
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
+
+EndUserDocs */
+
 class pp_psc_delta : public Archiving_Node
 {
 
@@ -229,7 +240,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double tau_m_;
 
@@ -275,8 +285,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -301,7 +311,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -432,10 +442,10 @@ pp_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 pp_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

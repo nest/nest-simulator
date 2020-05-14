@@ -115,14 +115,15 @@ refractory period. Default: false.
 
 Remarks:
 
-This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_detector, the
-property "precise_times" of the spike_detector has to be set to true in
-order to record the offsets in addition to the on-grid spike times.
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset).
 
 The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
 
 References:
 

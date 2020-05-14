@@ -44,32 +44,38 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: rate_neuron_opn - Base class for rate model with output noise.
+Short description
++++++++++++++++++
 
-Description:
+Base class for rate model with output noise
+
+Description
++++++++++++
 
 Base class for rate model with output noise of the form
-@f[
-\tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
+
+.. math::
+
+ \tau dX_i(t) / dt = - X_i(t) + \mu + \phi( \sum w_{ij} \cdot
                      \psi( X_j(t-d_{ij}) + \sqrt{\tau} \cdot
                      \sigma \cdot \xi_j(t) ) )
-@f]
+
 or
-@f[
-\tau dX_i(t) / dt = - X_i(t) + \mu
+
+.. math::
+
+ \tau dX_i(t) / dt = - X_i(t) + \mu
                      + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                      \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) \\
                      + \sqrt{\tau} \cdot \sigma \cdot \xi_j(t) ) ) \\
                      + \text{mult_coupling_in}( X_i(t) ) \cdot \\
                      \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) \\
                      + \sqrt{\tau} \cdot \sigma \cdot \xi_j(t) ) )
-@f]
 
-Here \f$ xi_j(t) \f$ denotes a Gaussian white noise.
+
+Here :math:`xi_j(t)` denotes a Gaussian white noise.
 
 This template class needs to be instantiated with a class
 containing the following functions:
@@ -83,19 +89,21 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
        DOI:  https://doi.org./10.3389/fninf.2017.00034
-\endverbatim
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
+See also
+++++++++
 
-SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
- */
+lin_rate, tanh_rate, threshold_lin_rate
+
+EndUserDocs  */
+
 template < class TNonlinearities >
 class rate_neuron_opn : public Archiving_Node
 {
@@ -113,6 +121,7 @@ public:
    */
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -160,7 +169,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Time constant in ms. */
     double tau_;
 
@@ -183,7 +191,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -206,7 +214,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -357,9 +365,9 @@ inline void
 rate_neuron_opn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -371,7 +379,7 @@ rate_neuron_opn< TNonlinearities >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

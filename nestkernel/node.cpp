@@ -29,7 +29,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -40,11 +39,10 @@ namespace nest
 {
 
 Node::Node()
-  : gid_( 0 )
-  , lid_( 0 )
+  : deprecation_warning()
+  , node_id_( 0 )
   , thread_lid_( invalid_index )
   , model_id_( -1 )
-  , parent_( 0 )
   , thread_( 0 )
   , vp_( invalid_thread_ )
   , frozen_( false )
@@ -54,11 +52,10 @@ Node::Node()
 }
 
 Node::Node( const Node& n )
-  : gid_( 0 )
-  , lid_( 0 )
+  : deprecation_warning( n.deprecation_warning )
+  , node_id_( 0 )
   , thread_lid_( n.thread_lid_ )
   , model_id_( n.model_id_ )
-  , parent_( n.parent_ )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
@@ -81,6 +78,11 @@ Node::init_state()
 }
 
 void
+Node::init_state_( Node const& )
+{
+}
+
+void
 Node::init_buffers()
 {
   if ( buffers_initialized_ )
@@ -91,6 +93,23 @@ Node::init_buffers()
   init_buffers_();
 
   buffers_initialized_ = true;
+}
+
+void
+Node::init_buffers_()
+{
+}
+
+void
+Node::set_initialized()
+{
+  set_initialized_();
+  initialized_ = true;
+}
+
+void
+Node::set_initialized_()
+{
 }
 
 std::string
@@ -113,12 +132,6 @@ Node::get_model_() const
   }
 
   return *kernel().model_manager.get_model( model_id_ );
-}
-
-bool
-Node::is_local() const
-{
-  return not is_proxy();
 }
 
 DictionaryDatum
@@ -144,50 +157,31 @@ Node::get_status_base()
 {
   DictionaryDatum dict = get_status_dict_();
 
-  assert( dict.valid() );
-
   // add information available for all nodes
-  ( *dict )[ names::local ] = is_local();
+  ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
+  ( *dict )[ names::global_id ] = get_node_id();
+  ( *dict )[ names::vp ] = get_vp();
+  ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
 
   // add information available only for local nodes
-  if ( is_local() )
+  if ( not is_proxy() )
   {
-    ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
+    ( *dict )[ names::thread_local_id ] = get_thread_lid();
     ( *dict )[ names::thread ] = get_thread();
-    ( *dict )[ names::vp ] = get_vp();
-    if ( parent_ )
-    {
-      ( *dict )[ names::parent ] = parent_->get_gid();
-
-      // LIDs are only sensible for nodes with parents.
-      // Add 1 as we count lids internally from 0, but from
-      // 1 in the user interface.
-      ( *dict )[ names::local_id ] = get_lid() + 1;
-    }
   }
-
-  ( *dict )[ names::thread_local_id ] = get_thread_lid();
-  ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
-
-  // This is overwritten with a corresponding value in the
-  // base classes for stimulating and recording devices, and
-  // in other special node classes
-  ( *dict )[ names::element_type ] = LiteralDatum( names::neuron );
 
   // now call the child class' hook
   get_status( dict );
 
-  assert( dict.valid() );
   return dict;
 }
 
 void
 Node::set_status_base( const DictionaryDatum& dict )
 {
-  assert( dict.valid() );
   try
   {
     set_status( dict );
@@ -195,7 +189,7 @@ Node::set_status_base( const DictionaryDatum& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
+      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
@@ -468,12 +462,6 @@ void
 Node::event_hook( DSCurrentEvent& e )
 {
   e.get_receiver().handle( e );
-}
-
-bool
-Node::is_subnet() const
-{
-  return false;
 }
 
 } // namespace

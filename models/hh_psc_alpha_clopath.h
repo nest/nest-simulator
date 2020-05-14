@@ -57,16 +57,15 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_clopath_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup hh
-@ingroup psc
-@ingroup clopath_n
+/* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, Clopath plasticity
 
-Name: hh_psc_alpha_clopath - Hodgkin-Huxley neuron model with support for the
-Clopath synapse.
+Short description
++++++++++++++++++
 
-Description:
+Hodgkin-Huxley neuron model with support for Clopath plasticity
+
+Description
++++++++++++
 
 hh_psc_alpha_clopath is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
@@ -83,10 +82,11 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 =========== ======  ===================================================
 **Dynamic state variables**
 -----------------------------------------------------------------------
@@ -129,17 +129,16 @@ delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
 U_ref_squared real    Reference value for u_bar_bar_^2.
 ============= ======= =======================================================
 
-\endverbatim
-
 
 Problems/Todo:
 
 better spike detection
 initial wavelet/spike at simulation onset
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
        populations, plasticity. New York: Cambridge university press.
 .. [2] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
@@ -159,17 +158,25 @@ References:
        Hodgkin-Huxley neuron on ModelDB:
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
        =%2fmodeldb_package%2fstdp_cc.mod
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
-        (adapted from hh_psc_alpha by Schrader)
+SpikeEvent
 
-SeeAlso: hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
-*/
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
+
+EndUserDocs */
+
 class hh_psc_alpha_clopath : public Clopath_Archiving_Node
 {
 
@@ -239,8 +246,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -253,7 +260,6 @@ public:
    */
   struct State_
   {
-
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -286,7 +292,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -314,10 +320,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -423,9 +428,9 @@ inline void
 hh_psc_alpha_clopath::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

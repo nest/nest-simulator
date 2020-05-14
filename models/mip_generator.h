@@ -35,41 +35,24 @@
 
 namespace nest
 {
-//! class mip_generator
-/*! Class mip_generator generates spike trains as described
-    in the MIP model.
-*/
 
+/* BeginUserDocs: device, generator
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+Short description
++++++++++++++++++
 
-Name: mip_generator - create spike trains as described by the MIP model.
+create spike trains as described by the MIP model
 
-Description:
+Description
++++++++++++
 
 The mip_generator generates correlated spike trains using an Multiple
-Interaction Process (MIP) as described in [1]. Underlying principle is a
+Interaction Process (MIP) as described in [1]_. Underlying principle is a
 Poisson mother process with rate r, the spikes of which are copied into the
 child processes with a certain probability p. Every node the mip_generator is
 connected to receives a distinct child process as input, whose rate is p*r.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
-
-
-Parameters:
-
-The following parameters appear in the element's status dictionary:
-
-\verbatim embed:rst
-============  ======== ================================================
- rate         spikes/s Mean firing rate of the mother process
- p_copy       real     Copy probability
- mother_rng   rng      Random number generator of mother process
- mother_seed  integer  Seed of RNG of mother process
-============  ======== ================================================
-\endverbatim
 
 Remarks:
 
@@ -86,25 +69,39 @@ IMPORTANT: The mother_seed of mpi_generator must be different from any
            seeds used for the global or thread-specific RNGs set in
            the kernel.
 
-@todo Better handling of private random number generator, see #143.
+TODO: Better handling of private random number generator, see #143.
       Most important: If RNG is changed in prototype by SetDefaults,
       then this is
 
-Sends: SpikeEvent
+Parameters
+++++++++++
 
-References:
+The following parameters appear in the element's status dictionary:
 
-\verbatim embed:rst
+============  ======== ================================================
+ rate         spikes/s Mean firing rate of the mother process
+ p_copy       real     Copy probability
+ mother_rng   rng      Random number generator of mother process
+ mother_seed  integer  Seed of RNG of mother process
+============  ======== ================================================
+
+Sends
++++++
+
+SpikeEvent
+
+References
+++++++++++
+
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
        ensembles and the response of simple model neurons. Neural Computation
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
- \endverbatim
 
-Author: May 2006, Helias
+EndUserDocs */
 
-SeeAlso: Device
-
+/*! Class mip_generator generates spike trains as described
+    in the MIP model.
 */
 class mip_generator : public DeviceNode
 {
@@ -128,6 +125,12 @@ public:
   has_proxies() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   /**
@@ -160,8 +163,7 @@ private:
    * Store independent parameters of the model.
    * Mother RNG is a parameter since it can be changed. Not entirely in
    * keeping with persistence rules, since it changes state during
-   * updates. But okay in the sense that it thus is not reset on
-   * ResetNetwork. Should go once we have proper global RNG scheme.
+   * updates. Should go once we have proper global RNG scheme.
    */
   struct Parameters_
   {
@@ -173,8 +175,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -221,7 +223,7 @@ inline void
 mip_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

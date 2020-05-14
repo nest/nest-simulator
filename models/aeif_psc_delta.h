@@ -57,16 +57,15 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup psc
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, current-based
 
-Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
-neuron model according to Brette and Gerstner (2005) with delta synapse.
+Short description
++++++++++++++++++
 
-Description:
+Current-based adaptive exponential integrate-and-fire neuron model with delta synapse
+
+Description
++++++++++++
 
 aeif_psc_delta is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic currents
@@ -77,24 +76,29 @@ solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 
-@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e @f]
+.. math::
+
+ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e
 
 and
 
-@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+.. math::
 
-@f[ I(t) = J \sum_k \delta(t - t^k). @f]
+ \tau_w * dw/dt= a(V-E_L) -W
+
+.. math::
+
+ I(t) = J \sum_k \delta(t - t^k).
 
 Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
 the value of J after a spike.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-
-\verbatim embed:rst
 
 ======== ======= =======================================
 **Dynamic state variables**
@@ -133,25 +137,32 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
 
-Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-References:
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-\endverbatim
 
-SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
-*/
+See also
+++++++++
+
+iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
+
+EndUserDocs */
+
 class aeif_psc_delta : public Archiving_Node
 {
 
@@ -226,8 +237,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -266,7 +277,7 @@ public:
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -292,10 +303,9 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -404,10 +414,10 @@ aeif_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 aeif_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

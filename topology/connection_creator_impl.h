@@ -39,43 +39,36 @@ namespace nest
 {
 template < int D >
 void
-ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::connect( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   switch ( type_ )
   {
-  case Target_driven:
+  case Pairwise_bernoulli_on_source:
 
-    target_driven_connect_( source, target );
+    pairwise_bernoulli_on_source_( source, source_nc, target, target_nc );
     break;
 
-  case Convergent:
+  case Fixed_indegree:
 
-    convergent_connect_( source, target );
+    fixed_indegree_( source, source_nc, target, target_nc );
     break;
 
-  case Divergent:
+  case Fixed_outdegree:
 
-    divergent_connect_( source, target );
+    fixed_outdegree_( source, source_nc, target, target_nc );
     break;
 
-  case Source_driven:
+  case Pairwise_bernoulli_on_target:
 
-    source_driven_connect_( source, target );
+    pairwise_bernoulli_on_target_( source, source_nc, target, target_nc );
     break;
 
   default:
     throw BadProperty( "Unknown connection type." );
   }
-}
-
-template < int D >
-void
-ConnectionCreator::get_parameters_( const Position< D >& pos, librandom::RngPtr rng, double& weight, double& delay )
-{
-  // keeping this function temporarily until all connection variants are cleaned
-  // up
-  weight = weight_->value( pos, rng );
-  delay = delay_->value( pos, rng );
 }
 
 template < typename Iterator, int D >
@@ -89,19 +82,30 @@ ConnectionCreator::connect_to_target_( Iterator from,
 {
   librandom::RngPtr rng = get_vp_rng( tgt_thread );
 
-  const bool without_kernel = not kernel_.valid();
+  // We create a source pos vector here that can be updated with the
+  // source position. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
+  std::vector< double > source_pos( D );
+  const std::vector< double > target_pos = tgt_pos.get_vector();
+
+  const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
-    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) )
+    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_node_id() ) )
     {
       continue;
     }
+    iter->first.get_vector( source_pos );
 
-    if ( without_kernel or rng->drand() < kernel_->value( source.compute_displacement( tgt_pos, iter->first ), rng ) )
+    if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source ) )
     {
-      const Position< D > disp = source.compute_displacement( tgt_pos, iter->first );
-      connect_(
-        iter->second, tgt_ptr, tgt_thread, weight_->value( disp, rng ), delay_->value( disp, rng ), synapse_model_ );
+      kernel().connection_manager.connect( iter->second,
+        tgt_ptr,
+        tgt_thread,
+        synapse_model_,
+        dummy_param_dicts_[ tgt_thread ],
+        delay_->value( rng, source_pos, target_pos, source ),
+        weight_->value( rng, source_pos, target_pos, source ) );
     }
   }
 }
@@ -173,82 +177,88 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 
 template < int D >
 void
-ConnectionCreator::target_driven_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
-  // Target driven connect
+  // Connect using pairwise Bernoulli drawing source nodes (target driven)
   // For each local target node:
   //  1. Apply Mask to source layer
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
-  }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
-  }
-
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
-  if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
-    pool.define( new MaskedLayer< D >( source, source_filter_, mask_, true, allow_oversized_ ) );
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
   }
   else
   {
-    pool.define( source.get_global_positions_vector( source_filter_ ) );
+    pool.define( source.get_global_positions_vector( source_nc ) );
   }
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
-
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+    try
     {
-      Node* const tgt = kernel().node_manager.get_node( ( *tgt_it )->get_gid(), thread_id );
-      const thread target_thread = tgt->get_thread();
+      NodeCollection::const_iterator target_begin = target_nc->begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      // check whether the target is on our thread
-      if ( thread_id != target_thread )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        continue;
-      }
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
-      if ( target_filter_.select_model() && ( tgt->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
+        if ( not tgt->is_proxy() )
+        {
+          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-      const Position< D > target_pos = target.get_position( tgt->get_subnet_index() );
-
-      if ( mask_.valid() )
-      {
-        connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
-      }
-      else
-      {
-        connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
-      }
-    } // for target_begin
-  }   // omp parallel
+          if ( mask_.get() )
+          {
+            connect_to_target_(
+              pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
+          }
+          else
+          {
+            connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+          }
+        }
+      } // for target_begin
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( thread_id ) =
+        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 
 template < int D >
 void
-ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
-  // Source driven connect is actually implemented as target driven,
+  // Connecting using pairwise Bernoulli drawing target nodes (source driven)
+  // It is actually implemented as pairwise Bernoulli on source nodes,
   // but with displacements computed in the target layer. The Mask has been
   // reversed so that it can be applied to the source instead of the target.
   // For each local target node:
@@ -256,255 +266,159 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source, Layer< D >& targe
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
+  PoolWrapper_< D > pool;
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
-  }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
-  }
-
-  // protect against connecting to devices without proxies
-  // we need to do this before creating the first connection to leave
-  // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-  {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
-  }
-
-  if ( mask_.valid() )
-  {
-
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
-    MaskedLayer< D > masked_layer( source, source_filter_, mask_, true, allow_oversized_, target );
-
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
-    {
-
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
-
-      // If there is a kernel, we create connections conditionally,
-      // otherwise all sources within the mask are created. Test moved
-      // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
-
-        for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( target_pos );
-              iter != masked_layer.end();
-              ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
-            double w, d;
-            get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
-          }
-        }
-      }
-      else
-      {
-
-        // no kernel
-
-        for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( target_pos );
-              iter != masked_layer.end();
-              ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-          double w, d;
-          get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
-        }
-      }
-    }
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
   }
   else
   {
-    // no mask
+    pool.define( source.get_global_positions_vector( source_nc ) );
+  }
 
-    std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_filter_ );
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection( "Topology Connect with pairwise_bernoulli to devices are not possible." );
+  }
+
+// sharing specs on next line commented out because gcc 4.2 cannot handle them
+#pragma omp parallel // default(none) shared(source, target, masked_layer,
+                     // target_begin, target_end)
+  {
+    const int thread_id = kernel().vp_manager.get_thread_id();
+    try
     {
+      NodeCollection::const_iterator target_begin = target_nc->local_begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        continue;
-      }
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
+        assert( not tgt->is_proxy() );
 
-      // If there is a kernel, we create connections conditionally,
-      // otherwise all sources within the mask are created. Test moved
-      // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
+        const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-        for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
-              iter != positions->end();
-              ++iter )
+        if ( mask_.get() )
         {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          if ( rng->drand() < kernel_->value( target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
-            double w, d;
-            get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
-          }
+          // We do the same as in the target driven case, except that we calculate displacements in the target layer.
+          // We therefore send in target as last parameter.
+          connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, target );
         }
-      }
-      else
-      {
-
-        for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
-              iter != positions->end();
-              ++iter )
+        else
         {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          double w, d;
-          get_parameters_( target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+          // We do the same as in the target driven case, except that we calculate displacements in the target layer.
+          // We therefore send in target as last parameter.
+          connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
         }
-      }
+
+      } // end for
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at the end of the catch block.
+      exceptions_raised_.at( thread_id ) =
+        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+  // check if any exceptions have been raised
+  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
     }
   }
 }
 
 template < int D >
 void
-ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::fixed_indegree_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
     return;
   }
 
-  // Convergent connections (fixed fan in)
+  // fixed_indegree connections (fixed fan in)
   //
   // For each local target node:
   // 1. Apply Mask to source layer
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
 
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
+  {
+    throw IllegalConnection( "Topology Connect with fixed_indegree to devices are not possible." );
+  }
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
-  }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
-  }
+  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_end = target_nc->end();
 
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
+    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+
+    assert( not tgt->is_proxy() );
   }
 
-  if ( mask_.valid() )
+  if ( mask_.get() )
   {
-    MaskedLayer< D > masked_source( source, source_filter_, mask_, true, allow_oversized_ );
+    MaskedLayer< D > masked_source( source, mask_, allow_oversized_, source_nc );
+    const auto masked_source_end = masked_source.end();
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+    std::vector< std::pair< Position< D >, index > > positions;
+
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
+      index target_id = ( *tgt_it ).node_id;
+      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
+      thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-      // Get (position,GID) pairs for sources inside mask
-      const Position< D > anchor = target.get_position( ( *tgt_it )->get_subnet_index() );
-      std::vector< std::pair< Position< D >, index > > positions;
-      for ( typename Ntree< D, index >::masked_iterator iter = masked_source.begin( anchor );
-            iter != masked_source.end();
-            ++iter )
-      {
-        positions.push_back( *iter );
-      }
+      // We create a source pos vector here that can be updated with the
+      // source position. This is done to avoid creating and destroying
+      // unnecessarily many vectors.
+      std::vector< double > source_pos_vector( D );
+      const std::vector< double > target_pos_vector = target_pos.get_vector();
+
+      // Get (position,node ID) pairs for sources inside mask
+      positions.resize( std::distance( masked_source.begin( target_pos ), masked_source_end ) );
+      std::copy( masked_source.begin( target_pos ), masked_source_end, positions.begin() );
 
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
+      if ( kernel_.get() )
       {
 
         std::vector< double > probabilities;
+        probabilities.reserve( positions.size() );
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions.begin();
               iter != positions.end();
               ++iter )
         {
-
-          probabilities.push_back( kernel_->value( source.compute_displacement( target_pos, iter->first ), rng ) );
+          iter->first.get_vector( source_pos_vector );
+          probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
         }
 
         if ( positions.empty()
@@ -539,10 +453,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             --i;
             continue;
           }
-          double w, d;
-          get_parameters_( source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
+          positions[ random_id ].first.get_vector( source_pos_vector );
+          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
+          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -572,11 +488,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             --i;
             continue;
           }
+          positions[ random_id ].first.get_vector( source_pos_vector );
           index source_id = positions[ random_id ].second;
-          double w, d;
-          get_parameters_( source.compute_displacement( target_pos, positions[ random_id ].first ), rng, w, d );
+          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
+          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -586,21 +504,19 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
   {
     // no mask
 
-    // Get (position,GID) pairs for all nodes in source layer
-    std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_filter_ );
+    // Get (position,node ID) pairs for all nodes in source layer
+    std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_nc );
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
-
-      if ( target_filter_.select_model() && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
+      index target_id = ( *tgt_it ).node_id;
+      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+      thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos = target.get_position( ( *tgt_it )->get_subnet_index() );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+      std::vector< double > source_pos_vector( D );
+      const std::vector< double > target_pos_vector = target_pos.get_vector();
 
       if ( ( positions->size() == 0 )
         or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
@@ -614,17 +530,19 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using the Vose class.
-      if ( kernel_.valid() )
+      if ( kernel_.get() )
       {
 
         std::vector< double > probabilities;
+        probabilities.reserve( positions->size() );
 
         // Collect probabilities for the sources
         for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
               iter != positions->end();
               ++iter )
         {
-          probabilities.push_back( kernel_->value( source.compute_displacement( target_pos, iter->first ), rng ) );
+          iter->first.get_vector( source_pos_vector );
+          probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
         }
 
         // A Vose object draws random integers with a non-uniform
@@ -652,11 +570,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             continue;
           }
 
-          Position< D > source_pos = ( *positions )[ random_id ].first;
-          double w, d;
-          get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
+          ( *positions )[ random_id ].first.get_vector( source_pos_vector );
+          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
+          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -686,11 +605,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             continue;
           }
 
-          Position< D > source_pos = ( *positions )[ random_id ].first;
-          double w, d;
-          get_parameters_( source.compute_displacement( target_pos, source_pos ), rng, w, d );
+          ( *positions )[ random_id ].first.get_vector( source_pos_vector );
+          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
+          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
           is_selected[ random_id ] = true;
         }
       }
@@ -701,7 +621,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
 template < int D >
 void
-ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::fixed_outdegree_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
 {
   if ( number_of_connections_ < 1 )
   {
@@ -711,82 +634,75 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
+
+  // We only need to check the first in the NodeCollection
+  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  if ( not first_in_tgt->has_proxies() )
   {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
-  }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
+    throw IllegalConnection( "Topology pairwise_bernoulli to devices are not possible." );
   }
 
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin; tgt_it != target_end; ++tgt_it )
+  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_end = target_nc->end();
+
+  for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
+    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+
+    assert( not tgt->is_proxy() );
   }
 
-  // Divergent connections (fixed fan out)
+  // Fixed_outdegree connections (fixed fan out)
   //
   // For each (global) source: (All connections made on all mpi procs)
   // 1. Apply mask to global targets
   // 2. If using kernel: Compute connection probability for each global target
   // 3. Draw connections to make using global rng
 
-  MaskedLayer< D > masked_target( target, target_filter_, mask_, true, allow_oversized_ );
+  MaskedLayer< D > masked_target( target, mask_, allow_oversized_, target_nc );
+  const auto masked_target_end = masked_target.end();
 
-  std::vector< std::pair< Position< D >, index > >* sources = source.get_global_positions_vector( source_filter_ );
+  // We create a target positions vector here that can be updated with the
+  // position and node ID pairs. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
+  std::vector< std::pair< Position< D >, index > > target_pos_node_id_pairs;
+  std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs =
+    *source.get_global_positions_vector( source_nc );
 
-  for ( typename std::vector< std::pair< Position< D >, index > >::iterator src_it = sources->begin();
-        src_it != sources->end();
-        ++src_it )
+  for ( const auto& source_pos_node_id_pair : source_pos_node_id_pairs )
   {
+    const Position< D > source_pos = source_pos_node_id_pair.first;
+    const index source_id = source_pos_node_id_pair.second;
+    const std::vector< double > source_pos_vector = source_pos.get_vector();
 
-    Position< D > source_pos = src_it->first;
-    index source_id = src_it->second;
-    std::vector< index > targets;
-    std::vector< Position< D > > displacements;
+    // We create a target pos vector here that can be updated with the
+    // target position. This is done to avoid creating and destroying
+    // unnecessarily many vectors.
+    std::vector< double > target_pos_vector( D );
     std::vector< double > probabilities;
 
     // Find potential targets and probabilities
+    librandom::RngPtr rng = get_global_rng();
+    target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
+    std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
-    for ( typename Ntree< D, index >::masked_iterator tgt_it = masked_target.begin( source_pos );
-          tgt_it != masked_target.end();
-          ++tgt_it )
+    probabilities.reserve( target_pos_node_id_pairs.size() );
+    if ( kernel_.get() )
     {
-
-      if ( ( not allow_autapses_ ) and ( source_id == tgt_it->second ) )
+      for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
       {
-        continue;
-      }
-
-      Position< D > target_displ = target.compute_displacement( source_pos, tgt_it->first );
-      librandom::RngPtr rng = get_global_rng();
-
-      targets.push_back( tgt_it->second );
-      displacements.push_back( target_displ );
-
-      if ( kernel_.valid() )
-      {
-        probabilities.push_back( kernel_->value( target_displ, rng ) );
-      }
-      else
-      {
-        probabilities.push_back( 1.0 );
+        // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
+        target_pos_node_id_pair.first.get_vector( target_pos_vector );
+        probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
       }
     }
+    else
+    {
+      probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
+    }
 
-    if ( targets.empty() or ( ( not allow_multapses_ ) and ( targets.size() < number_of_connections_ ) ) )
+    if ( target_pos_node_id_pairs.empty()
+      or ( ( not allow_multapses_ ) and ( target_pos_node_id_pairs.size() < number_of_connections_ ) ) )
     {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
@@ -798,7 +714,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 
     // If multapses are not allowed, we must keep track of which
     // targets have been selected already.
-    std::vector< bool > is_selected( targets.size() );
+    std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
@@ -809,29 +725,31 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         --i;
         continue;
       }
-      is_selected[ random_id ] = true;
-      Position< D > target_displ = displacements[ random_id ];
-      index target_id = targets[ random_id ];
+      index target_id = target_pos_node_id_pairs[ random_id ].second;
+      if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+      {
+        --i;
+        continue;
+      }
 
-      double w, d;
-      get_parameters_( target_displ, get_global_rng(), w, d );
+      is_selected[ random_id ] = true;
+
+      target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
+      const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
+      const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
 
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
       // to desynchronized global rngs.
-      if ( not kernel().node_manager.is_local_gid( target_id ) )
+      if ( not kernel().node_manager.is_local_node_id( target_id ) )
       {
         continue;
       }
 
-      Node* target_ptr = kernel().node_manager.get_node( target_id );
-      kernel().connection_manager.connect( source_id,
-        target_ptr,
-        target_ptr->get_thread(),
-        synapse_model_,
-        dummy_param_dicts_[ target_ptr->get_thread() ],
-        d,
-        w );
+      Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
+      thread target_thread = target_ptr->get_thread();
+      kernel().connection_manager.connect(
+        source_id, target_ptr, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
     }
   }
 }

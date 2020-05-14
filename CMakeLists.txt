@@ -17,7 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-cmake_minimum_required( VERSION 3.1 )
+# Version range from minimum required (3.12 for macOS OpenMP)
+# up to newest version tested, see https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
+cmake_minimum_required( VERSION 3.12...3.16 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -41,7 +43,8 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
-set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
+set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
+set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -53,6 +56,7 @@ set( with-readline ON CACHE STRING "Find a readline library. To set a specific r
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
+set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -88,22 +92,11 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 include( GNUInstallDirs )
 
 ################################################################################
-#################        Do not install into /usr/local        #################
-################################################################################
-
-get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
-# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()
-
-################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
 
 # needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+if ( ${with-python} STREQUAL "ON" )
   find_program( NOSETESTS NAMES nosetests )
 endif ()
 
@@ -157,7 +150,10 @@ nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
+nest_process_with_sionlib()
+nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -201,9 +197,7 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       PYTHON="${PYTHON}"
-      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
@@ -211,12 +205,18 @@ if ( HAVE_PYTHON )
 else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
+
+# N.B. to ensure "make install" is always run before "make installcheck", we
+# would ideally like to add:
+#   add_dependencies( installcheck install )
+# However, an issue in CMake at time of writing (May 2020, see
+# https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
+# so.
 
 ################################################################################
 ##################        Define Subdirectories here          ##################
@@ -273,6 +273,11 @@ if ( with-defines )
     set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
   endforeach ()
 endif ()
+# add sionlib defines
+foreach ( def ${SIONLIB_DEFINES} )
+    set( ALL_CFLAGS "${ALL_CFLAGS} ${def}" )
+    set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
+endforeach ()
 
 # all libraries
 set( ALL_LIBS
@@ -288,7 +293,10 @@ set( ALL_LIBS
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
-  "${MPI_CXX_LIBRARIES}" )
+  "${MPI_CXX_LIBRARIES}"
+  "${SIONLIB_LIBRARIES}"
+  "${BOOST_LIBRARIES}" )
+
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()
@@ -302,13 +310,15 @@ set( ALL_INCLUDES_tmp
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}" )
+  "${MPI_CXX_INCLUDE_PATH}"
+  "${BOOST_INCLUDE_DIR}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )
     set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
   endif ()
 endforeach ()
+set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
 
 if ( HAVE_LIBNEUROSIM )
   set( ALL_LIBS "-lconngen ${ALL_LIBS}" )
@@ -332,11 +342,6 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/pynest/do_tests.py.in"
     "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/topology/setup.py.in"
-    "${PROJECT_BINARY_DIR}/topology/setup.py" @ONLY
 )
 
 configure_file(

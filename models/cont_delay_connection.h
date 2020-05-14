@@ -23,6 +23,7 @@
 #ifndef CONT_DELAY_CONNECTION_H
 #define CONT_DELAY_CONNECTION_H
 
+
 // C++ includes:
 #include <cmath>
 
@@ -32,40 +33,21 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup cont_delay
+/* BeginUserDocs: synapse, continuous delay
 
-Name: cont_delay_synapse - Synapse type for continuous delays
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for continuous delays
+
+Description
++++++++++++
 
 cont_delay_synapse relaxes the condition that NEST only implements delays
 which are an integer multiple of the time step h. A continuous delay is
 decomposed into an integer part (delay_) and a double (delay_offset_) so
 that the actual delay is given by  delay_*h - delay_offset_. This can be
 combined with off-grid spike times.
-
-Example:
-
-    SLI
-
-    0 << /resolution 1.0 >> SetStatus
-
-    /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
-
-    def
-    /n  /iaf_psc_delta_ps Create def
-    /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
-    def
-
-    /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
-    sg n /cont_delay_synapse Connect
-    n sd Connect
-
-    10 Simulate
-
-    sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
 Remarks:
 
@@ -74,12 +56,6 @@ using cont_delay_connection. To set non-grid delays, you must either
 
 1) set the delay as synapse default, as in the example above
 2) set the delay for each synapse after the connections have been created,
-   e.g.,
-
-    sg n 100. 1.0 /cont_delay_synapse Connect
-    << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
-       { << /delay 1.7 >> SetStatus }
-    forall
 
 Alternative 1) is much more efficient, but all synapses then will have the
                same delay.
@@ -87,15 +63,18 @@ Alternative 2) is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
-Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
-           DoubleDataEvent
+Transmits
++++++++++
 
-FirstVersion: June 2007
+SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
 
-Author: Abigail Morrison
+See also
+++++++++
 
-SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_ps
-*/
+static_synapse, iaf_psc_alpha_ps
+
+EndUserDocs */
+
 template < typename targetidentifierT >
 class ContDelayConnection : public Connection< targetidentifierT >
 {

@@ -92,6 +92,8 @@ makes the detection of threshold crossing more difficult [1].
 Support for different time constants may be added in the future,
 see issue #921.
 
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
 
 References:
 [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
@@ -150,6 +152,17 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  /**
+   * Based on the current state, compute the value of the membrane potential
+   * after taking a timestep of length ``t_step``, and use it to compute the
+   * signed distance to spike threshold at that time. The internal state is not
+   * actually updated (method is defined const).
+   *
+   * @param   double time step
+   * @returns difference between updated membrane potential and threshold
+   */
+  double threshold_distance( double t_step ) const;
 
 private:
   /** @name Interface functions
@@ -214,13 +227,6 @@ private:
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
 
   /**
-   * Localize threshold crossing by bisectioning.
-   * @param   double length of interval since previous event
-   * @returns time from previous event to threshold crossing
-   */
-  double bisectioning_( const double dt ) const;
-
-  /**
    * Retrospective spike detection by state space analysis.
    * The state space spanning the non-spiking region is bound by the following
    * system of inequalities:
@@ -280,8 +286,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;   //!< Store current values in dictionary
-    double set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -303,7 +309,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double delta_EL );
+    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -336,9 +342,9 @@ private:
   {
     double h_ms_;            //!< Time resolution [ms]
     long refractory_steps_;  //!< Refractory time in steps
-    double expm1_tau_m_;     //!< exp(-h/tau_m) - 1
-    double expm1_tau_ex_;    //!< exp(-h/tau_ex) - 1
-    double expm1_tau_in_;    //!< exp(-h/tau_in) - 1
+    double exp_tau_m_;       //!< exp(-h/tau_m)
+    double exp_tau_ex_;      //!< exp(-h/tau_ex)
+    double exp_tau_in_;      //!< exp(-h/tau_in)
     double P20_;             //!< Progagator matrix element, 2nd row
     double P21_in_;          //!< Progagator matrix element, 2nd row
     double P21_ex_;          //!< Progagator matrix element, 2nd row
@@ -346,8 +352,6 @@ private:
     double I_syn_ex_before_; //!< I_syn_ex_ at beginning of ministep
     double I_syn_in_before_; //!< I_syn_in_ at beginning of ministep
     double y2_before_;       //!< y2_ at beginning of ministep
-    double bisection_step_;  //!< if missed spike is detected,
-                             //!< calculate time to emit spike
 
     /**
      * Pre-computed constants for inequality V < g(h, I_e)
@@ -473,10 +477,10 @@ iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
 inline void
 iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;           // temporary copy in case of errors
-  double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );   // throws if BadProperty
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

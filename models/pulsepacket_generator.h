@@ -40,29 +40,21 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: pulsepacket_generator - Generate sequence of Gaussian pulse packets.
+Short description
++++++++++++++++++
 
-Description:
+Generate sequence of Gaussian pulse packets
+
+Description
++++++++++++
 
 The pulsepacket_generator produces a spike train contains Gaussian pulse
 packets centered about given  times.  A Gaussian pulse packet is
 a given number of spikes with normal distributed random displacements
 from the center time of the pulse.
 It resembles the output of synfire groups of neurons.
-
-Parameters:
-
-\verbatim embed:rst
-============  ======= =======================================================
- pulse_times  ms      Times of the centers of pulses
- activity     integer Number of spikes per pulse
- sdev         ms      Standard deviation of spike times in each pulse
-============  ======= =======================================================
-\endverbatim
 
 Remarks:
 
@@ -73,10 +65,27 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Sends: SpikeEvent
+Parameters
+++++++++++
 
-SeeAlso: spike_generator, StimulatingDevice
-*/
+============  ======= =======================================================
+ pulse_times  ms      Times of the centers of pulses
+ activity     integer Number of spikes per pulse
+ sdev         ms      Standard deviation of spike times in each pulse
+============  ======= =======================================================
+
+Transmits
++++++++++
+
+SpikeEvent
+
+See also
+++++++++
+
+spike_generator
+
+EndUserDocs */
+
 class pulsepacket_generator : public Node
 {
 
@@ -90,6 +99,12 @@ public:
   has_proxies() const
   {
     return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -111,7 +126,6 @@ private:
 
   struct Parameters_
   {
-
     std::vector< double > pulse_times_; //!< times of pulses
     long a_;                            //!< number of pulses in a packet
     double sdev_;                       //!< standard deviation of the packet
@@ -127,7 +141,7 @@ private:
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */
-    void set( const DictionaryDatum&, pulsepacket_generator& );
+    void set( const DictionaryDatum&, pulsepacket_generator&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -189,8 +203,8 @@ pulsepacket_generator::get_status( DictionaryDatum& d ) const
 inline void
 pulsepacket_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, *this );  // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, *this, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

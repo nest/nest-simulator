@@ -1,3 +1,7 @@
+.keep-us-sustainable {
+   background-color: #272525;
+}
+
 t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
     color: #f63;
 }
@@ -10,13 +14,9 @@ p {
     max-width: 950px;
 }
 
-.wy-side-nav-search>a, .wy-side-nav-search .wy-dropdown>a {
-   content: url(../../_static/img/nest_logo.png);
-}
-
 .wy-side-nav-search {
-	background: linear-gradient(45deg, #fff, #eee);
-	color: #888;
+    background: linear-gradient(45deg, #fff, #eee);
+    color: #888;
     border-bottom: 1px solid #e1e4e5;
 }
 
@@ -25,14 +25,14 @@ p {
 }
 
 .wy-nav-side {
-	background: linear-gradient(90deg, #fff, #eee);
-	color: #888;
-	border-right: 1px solid #e1e4e5;
+   background: linear-gradient(90deg, #fff, #eee);
+   color: #888;
+   border-right: 1px solid #e1e4e5;
 }
 
 .wy-menu-vertical a,
 .wy-menu-vertical a:visited {
-	color: #444;
+   color: #444;
 }
 
 .wy-menu-vertical a:hover {
@@ -40,13 +40,13 @@ p {
 }
 
 .wy-menu-vertical header, .wy-menu-vertical p.caption {
-	background-color: #c1c1c1;
+    background-color: #c1c1c1;
     color: #6f6f6f;
     border-top: 1px solid #aaa;
 }
 
 .wy-menu-vertical li.current a {
-	color: #888;
+    color: #888;
 }
 
 .wy-nav-top {
@@ -81,16 +81,19 @@ video {
 a:visited {
     color: #f63;
 }
+
 a {
     color: #f63;
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;
 }
+
 a:hover {
     color: #f63;
     text-decoration: underline;
 }
+
 code.descclassname {
     display: none;
 }
@@ -98,6 +101,7 @@ code.descclassname {
 .rst-content dl:not(.docutils) dt  em[class^='property']{
      display:none;
 }
+
 .rst-content pre.literal-block, .rst-content div[class^='highlight'] pre, .rst-content .linenodiv pre {
     line-height: 1.3em;
 }
@@ -139,6 +143,8 @@ code.descclassname {
 .rst-content .admonition {
     background: #e0e0e0;
 
+}
+
 /* override table width restrictions */
 @media screen and (min-width: 767px) {
 
@@ -149,5 +155,149 @@ code.descclassname {
    }
 
    .wy-table-responsive {
-      overflow: visible !important;
+      overflow: scroll;
+      word-wrap: break-word;
    }
+
+}
+
+/*html body div.wy-table-responsive {
+  margin-bottom: 0;
+}
+
+html body div.wy-table-responsive .footnote td {
+  padding-top: 1px;
+  padding-bottom: 4px;
+}*/
+
+.maroon {
+    color: maroon;
+}
+
+.red {
+    color: red;
+}
+
+.magenta {
+    color: magenta;
+}
+
+.pink {
+    color: pink;
+}
+
+.orange {
+    color: #f63;
+}
+
+.darkgreen {
+    color: #004f00;
+}
+
+.green {
+    color: green;
+}
+
+.teal {
+    color: teal;
+}
+
+.cyan {
+    color: cyan;
+}
+
+.aqua {
+    color: aqua;
+}
+
+.blue {
+    color: blue;
+}
+
+.navy {
+    color: navy;
+}
+
+.purple {
+    color: purple;
+}
+
+.under {
+    text-decoration: underline;
+}
+
+.over {
+    text-decoration: overline;
+}
+
+.blink {
+    text-decoration: blink;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
+@media screen and (min-width: 1270px)  {
+    /* Pop out the in-page links to the right instead of the lef */
+    /*div.wy-side-scroll li.toctree-l1.current > ul {
+     */
+   div[class^='contents'] {
+     position: fixed;
+     margin-left: 0px;
+     overflow-y: auto;
+     padding-left: 15px;
+     border-left: 1px solid #e1e4e5;
+         border-left-color: #e1e4e5;
+         border-left-style: solid;
+         border-left-width: 1px;
+     border-right: 1px, #e0e0e0, solid;
+         border-right-width: 1px;
+         border-right-color: #e0e0e0;
+         border-right-style: solid;
+     height: 100%;
+     width: 250px;
+     top: 0px;
+     left: 1250px;
+     padding-right: 10px;
+     background: linear-gradient(90deg, #fcfcfc, rgba(0, 0, 0, 0));
+     padding-top: 70px;
+    }
+    }
+    .rst-content .section ul p {
+        margin-bottom: 0px;
+    }
+}
+
+ /*   div.wy-side-scroll li.toctree-l1.current a {
+        border-right: none;
+    }
+
+    div.wy-side-scroll li.toctree-l1.current ul {
+        max-width: 400px;
+    }
+
+    div.wy-side-scroll li.toctree-l1.current ul, li.toctree-l1.current li, li.toctree-l1.current a {
+        background-color: transparent !important;
+    }
+
+    /* All items should now be visible regardless of expandy state */
+    /*div.wy-side-scroll li.toctree-l1.current ul {
+      display: block !important;
+    }
+
+    /* hide the expandy buttons */
+   /* div.wy-side-scroll li.toctree-l1.current span.toctree-expand {
+        display: none !important;
+    }
+
+    /* Make the padding correct */
+    /*div.wy-side-scroll li.toctree-l2 li.toctree-l3 > a {
+      padding: .4045em 4.045em !important;
+    }
+
+    div.wy-side-scroll li.toctree-l4 > a {
+      padding: .4045em 5.663em !important;
+  }
+} */
+

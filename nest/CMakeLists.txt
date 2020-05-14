@@ -55,10 +55,11 @@ endif ()
 
 target_link_libraries( nest
     nestutil nestkernel random sli_lib sli_readline
-    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
+    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_link_libraries( nest_lib
-    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
+    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} 
+    OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
     ${PROJECT_BINARY_DIR}/nest
@@ -69,6 +70,7 @@ target_include_directories( nest PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
     )
+
 
 target_compile_definitions( nest PRIVATE
     -D_BUILD_NEST_CLI
@@ -85,6 +87,7 @@ target_include_directories( nest_lib PRIVATE
     ${PYTHON_INCLUDE_DIRS}
     )
 
+
 if ( HAVE_PYTHON )
   target_compile_definitions( nest_lib PRIVATE
       -D_IS_PYNEST
@@ -92,8 +95,8 @@ if ( HAVE_PYTHON )
 endif ()
 
 install( TARGETS nest nest_lib
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 

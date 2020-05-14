@@ -25,12 +25,10 @@ Functions to plot voltage traces.
 
 import nest
 import numpy
-import pylab
 
 __all__ = [
     'from_device',
     'from_file',
-    'show',
 ]
 
 
@@ -50,7 +48,9 @@ def from_file(fname, title=None, grayscale=False):
     ------
     ValueError
     """
-    if nest.hl_api.is_iterable(fname):
+    import matplotlib.pyplot as plt
+
+    if isinstance(fname, (list, tuple)):
         data = None
         for f in fname:
             if data is None:
@@ -68,12 +68,12 @@ def from_file(fname, title=None, grayscale=False):
     if len(data.shape) == 1:
         print("INFO: only found 1 column in the file. \
             Assuming that only one neuron was recorded.")
-        plotid = pylab.plot(data, line_style)
-        pylab.xlabel("Time (steps of length interval)")
+        plotid = plt.plot(data, line_style)
+        plt.xlabel("Time (steps of length interval)")
 
     elif data.shape[1] == 2:
         print("INFO: found 2 columns in the file. Assuming \
-            them to be gid, pot.")
+            them to be node ID, pot.")
 
         plotid = []
         data_dict = {}
@@ -85,11 +85,11 @@ def from_file(fname, title=None, grayscale=False):
 
         for d in data_dict:
             plotid.append(
-                pylab.plot(data_dict[d], line_style, label="Neuron %i" % d)
+                plt.plot(data_dict[d], line_style, label="Neuron %i" % d)
             )
 
-        pylab.xlabel("Time (steps of length interval)")
-        pylab.legend()
+        plt.xlabel("Time (steps of length interval)")
+        plt.legend()
 
     elif data.shape[1] == 3:
         plotid = []
@@ -106,11 +106,11 @@ def from_file(fname, title=None, grayscale=False):
 
         for d in data_dict:
             plotid.append(
-                pylab.plot(t, data_dict[d], line_style, label="Neuron %i" % d)
+                plt.plot(t, data_dict[d], line_style, label="Neuron %i" % d)
             )
 
-        pylab.xlabel("Time (ms)")
-        pylab.legend()
+        plt.xlabel("Time (ms)")
+        plt.legend()
 
     else:
         raise ValueError("Inappropriate data shape %i!" % data.shape)
@@ -118,9 +118,9 @@ def from_file(fname, title=None, grayscale=False):
     if not title:
         title = "Membrane potential from file '%s'" % fname
 
-    pylab.title(title)
-    pylab.ylabel("Membrane potential (mV)")
-    pylab.draw()
+    plt.title(title)
+    plt.ylabel("Membrane potential (mV)")
+    plt.draw()
 
     return plotid
 
@@ -148,27 +148,28 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
     nest.kernel.NESTError
         Description
     """
+    import matplotlib.pyplot as plt
 
     if len(detec) > 1:
         raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
-    type_id = nest.GetDefaults(nest.GetStatus(detec, 'model')[0], 'type_id')
-    if type_id.name not in ('voltmeter', 'multimeter'):
+    type_id = nest.GetDefaults(detec.get('model'), 'type_id')
+    if type_id not in ('voltmeter', 'multimeter'):
         raise nest.kernel.NESTError("Please provide a voltmeter or a \
             multimeter measuring V_m.")
-    elif type_id.name == 'multimeter':
-        if "V_m" not in nest.GetStatus(detec, "record_from")[0]:
+    elif type_id == 'multimeter':
+        if "V_m" not in detec.get("record_from"):
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring V_m.")
-        elif (not nest.GetStatus(detec, "to_memory")[0] and
-              len(nest.GetStatus(detec, "record_from")[0]) > 1):
+        elif (not detec.get("record_to") == "memory" and
+              len(detec.get("record_from")) > 1):
             raise nest.kernel.NESTError("Please provide a multimeter \
                 measuring only V_m or record to memory!")
 
-    if nest.GetStatus(detec, "to_memory")[0]:
+    if detec.get("record_to") == "memory":
 
         timefactor = 1.0
-        if not nest.GetStatus(detec)[0]['time_in_steps']:
+        if not detec.get('time_in_steps'):
             if timeunit == "s":
                 timefactor = 1000.0
             else:
@@ -177,8 +178,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         times, voltages = _from_memory(detec)
 
         if not len(times):
-            raise nest.kernel.NESTError("No events recorded! Make sure that \
-                withtime and withgid are set to True.")
+            raise nest.NESTError("No events recorded!")
 
         if neurons is None:
             neurons = voltages.keys()
@@ -194,34 +194,34 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
             try:
                 plotids.append(
-                    pylab.plot(time_values, voltages[neuron],
-                               line_style, label="Neuron %i" % neuron)
+                    plt.plot(time_values, voltages[neuron],
+                             line_style, label="Neuron %i" % neuron)
                 )
             except KeyError:
                 print("INFO: Wrong ID: {0}".format(neuron))
 
         if not title:
             title = "Membrane potential"
-        pylab.title(title)
+        plt.title(title)
 
-        pylab.ylabel("Membrane potential (mV)")
+        plt.ylabel("Membrane potential (mV)")
 
         if nest.GetStatus(detec)[0]['time_in_steps']:
-            pylab.xlabel("Steps")
+            plt.xlabel("Steps")
         else:
-            pylab.xlabel("Time (%s)" % timeunit)
+            plt.xlabel("Time (%s)" % timeunit)
 
-        pylab.legend(loc="best")
-        pylab.draw()
+        plt.legend(loc="best")
+        plt.draw()
 
         return plotids
 
-    elif nest.GetStatus(detec, "to_file")[0]:
-        fname = nest.GetStatus(detec, "filenames")[0]
+    elif detec.get("record_to") == "ascii":
+        fname = detec.get("filenames")
         return from_file(fname, title, grayscale)
     else:
-        raise nest.kernel.NESTError("Provided devices neither records to \
-            file, nor to memory.")
+        raise nest.kernel.NESTError("Provided devices neither record to \
+            ascii file, nor to memory.")
 
 
 def _from_memory(detec):
@@ -232,7 +232,7 @@ def _from_memory(detec):
     """
     import array
 
-    ev = nest.GetStatus(detec, 'events')[0]
+    ev = detec.get('events')
     potentials = ev['V_m']
     senders = ev['senders']
 
@@ -250,10 +250,9 @@ def _from_memory(detec):
             t[currentsender].append(float(times[s]))
     else:
         # reconstruct the time vector, if not stored explicitly
-        detec_status = nest.GetStatus(detec)[0]
-        origin = detec_status['origin']
-        start = detec_status['start']
-        interval = detec_status['interval']
+        origin = detec.get('origin')
+        start = detec.get('start')
+        interval = detec.get('interval')
         senders_uniq = numpy.unique(senders)
         num_intvls = len(senders) / len(senders_uniq)
         times_s = origin + start + interval + \
@@ -266,13 +265,3 @@ def _from_memory(detec):
             v[currentsender].append(float(potentials[s]))
 
     return t, v
-
-
-def show():
-    """Call pylab.show() to show all figures and enter the GUI main loop.
-    Python will block until all figure windows are closed again.
-    You should call this function only once at the end of a script.
-
-    See also: http://matplotlib.sourceforge.net/faq/howto_faq.html#use-show
-    """
-    pylab.show()

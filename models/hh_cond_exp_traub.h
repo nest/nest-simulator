@@ -55,48 +55,49 @@ namespace nest
  */
 extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup hh
-@ingroup cond
+/* BeginUserDocs: neuron, Hodgkin-Huxley, conductance-based
 
-Name: hh_cond_exp_traub - Hodgkin-Huxley model for Brette et al (2007) review
+Short description
++++++++++++++++++
 
-Description:
+Hodgkin-Huxley model for Brette et al (2007) review
+
+Description
++++++++++++
 
 hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
 
-This model was specifically developed for a major review of simulators [1],
-based on a model of hippocampal pyramidal cells by Traub and Miles[2].
-The key differences between the current model and the model in [2] are:
+This model was specifically developed for a major review of simulators [1]_,
+based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.
+The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
 - This model includes only I_Na and I_K, with simpler I_K dynamics than
-  in [2], so it has only three instead of eight gating variables;
+  in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
 
 This model is primarily provided as reference implementation for hh_coba
 example of the Brette et al (2007) review. Default parameter values are chosen
-to match those used with NEST 1.9.10 when preparing data for [1]. Code for all
-simulators covered is available from ModelDB [3].
+to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
+simulators covered is available from ModelDB [3]_.
 
 Note:
 In this model, a spike is emitted if
 
-@f[ V_m >= V_T + 30 mV and V_m has fallen during the current time step @f]
+ :math:`V_m >= V_T + 30` mV and `V_m` has fallen during the current time step
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
-\f$ t_ref = 2 ms \f$ in [2].
+Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
+:math:`t_ref = 2` ms in [2]_.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 =========== ======  =========================================================
 V_m          mV     Membrane potential
 V_T          mV     Voltage offset that controls dynamics. For default
@@ -118,28 +119,34 @@ E_K          mV     Potassium reversal potential
 g_K          nS     Potassium peak conductance
 I_e          pA     External input current
 =========== ======  =========================================================
-\endverbatim
 
+References
++++++++++++
 
-References:
-
-\verbatim embed:rst
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience
        23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
 .. [2] Traub RD and Miles R (1991). Neuronal networks of the hippocampus.
        Cambridge University Press, Cambridge UK.
 .. [3] http://modeldb.yale.edu/83319
-\envverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: Schrader
+Receives
+++++++++
 
-SeeAlso: hh_psc_alpha
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+hh_psc_alpha
+
+EndUserDocs */
+
 class hh_cond_exp_traub : public Archiving_Node
 {
 
@@ -216,8 +223,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -228,7 +235,6 @@ public:
    */
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -251,7 +257,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -290,10 +296,9 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -381,10 +386,10 @@ hh_cond_exp_traub::get_status( DictionaryDatum& d ) const
 inline void
 hh_cond_exp_traub::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

@@ -37,16 +37,16 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: volume_transmitter - Node used in combination with neuromodulated synaptic
-plasticity. It collects all spikes emitted by the population of neurons
-connected to the volume transmitter and transmits the signal to a user-specific
-subset of synapses.
+Short description
++++++++++++++++++
 
-Description:
+Node used in combination with neuromodulated synaptic plasticity
+
+Description
++++++++++++
+
 The volume transmitter is used in combination with neuromodulated
 synaptic plasticty, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
@@ -64,40 +64,37 @@ intervals of a manifold of the minimal synaptic delay. In order to
 insure the link between the neuromodulatory synapses and the volume
 transmitter, the volume transmitter is passed as a parameter when a
 neuromodulatory synapse is defined. The implementation is based on the
-framework presented in [1].
+framework presented in [1]_.
 
-Examples:
-    /volume_transmitter Create /vol Set
-    /iaf_psc_alpha Create /pre_neuron Set
-    /iaf_psc_alpha Create /post_neuron Set
-    /iaf_psc_alpha Create /neuromod_neuron Set
-    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-    neuromod_neuron vol Connect
-    pre_neuron post_neuron /stdp_dopamine_synapse Connect
+Parameters
+++++++++++
 
-Parameters:
 - deliver_interval - time interval given in d_min time steps, in which
                      the volume signal is delivered from the volume
                      transmitter to the assigned synapses
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
+
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
        neural circuit simulations with distributed computing of
        neuromodulated plasticity. Frontiers in Computattional Neuroscience,
        4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
-\endverbatim
 
-Author: Wiebke Potjans, Abigail Morrison
 
-Remarks: major changes to update function after code revision in Apr 2013 (SK)
+Receives
+++++++++
 
-Receives: SpikeEvent
+SpikeEvent
 
-SeeAlso: stdp_dopamine_synapse
+See also
+++++++++
 
-*/
+stdp_dopamine_synapse
+
+EndUserDocs */
+
 class ConnectorBase;
 
 class volume_transmitter : public Archiving_Node
@@ -112,10 +109,17 @@ public:
   {
     return false;
   }
+
   bool
   local_receiver() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::other;
   }
 
   /**
@@ -159,7 +163,7 @@ private:
   {
     Parameters_();
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 
@@ -193,15 +197,13 @@ volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   Archiving_Node::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::other );
 }
 
 inline void
 volume_transmitter::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

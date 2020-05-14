@@ -44,20 +44,28 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: rate_transformer_node - Rate neuron that sums up incoming rates
-                and applies a nonlinearity specified via the template.
+Short description
++++++++++++++++++
 
-Description:
+Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
+
+Description
++++++++++++
+
+Base class for rate transformer model of the form
+
+.. math::
+
+   X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
 
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
-the summed up incoming connections (True, default value) or to each input
-individually (False).
+the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
@@ -72,21 +80,24 @@ Remarks:
   are handled as usual.
 - Delays are honored on incoming and outgoing connections.
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Receives
+++++++++
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Parameters:
+Sends
++++++
 
-Only the parameter
-- linear_summation
-and the parameters from the class Nonlinearities can be set in the
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Parameters
+++++++++++
+
+Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
+EndUserDocs */
 
-FirstVersion: November 2017
-*/
 template < class TNonlinearities >
 class rate_transformer_node : public Archiving_Node
 {
@@ -108,6 +119,7 @@ public:
 
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -163,7 +175,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -184,7 +196,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -298,9 +310,9 @@ inline void
 rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
@@ -312,7 +324,7 @@ rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

@@ -145,7 +145,7 @@ before_install:
          # Upgrade pip and setuptools
          if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ]; then
            pyenv install --list
-           pyenv global 3.6.7
+           pyenv global 3.6.10
          fi
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
            brew --version
@@ -168,8 +168,10 @@ before_install:
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
          # the build summary.
-         pip install --user cython scipy matplotlib terminaltables nose junitparser
-         pip install --user numpy==1.16.5
+         pip install cython scipy matplotlib terminaltables junitparser
+         pip install numpy==1.16.5
+         pip install nose     # separate line, might fail
+         pip list
      fi
 
 install:

@@ -143,7 +143,6 @@ before_install:
          cd $HOME/build
          echo $PATH
 
-         # Upgrade pip and setuptools
          if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ]; then
            pyenv install --list
            pyenv global 3.6.10
@@ -160,12 +159,13 @@ before_install:
            brew unlink gcc
            brew install gcc@8
            brew link gcc@8
-           brew list
-           brew leaves
-           brew cask list
+           # brew list
+           # brew leaves
+           # brew cask list
          fi
 
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+           # Upgrade pip and setuptools
            pip install --upgrade pip setuptools
            pip install nose
          else

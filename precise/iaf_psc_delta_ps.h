@@ -122,6 +122,9 @@ The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
+For details about exact subthreshold integration, please see
+``doc/model_details/exact-integration.ipynb``.
+
 References:
 
 [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear

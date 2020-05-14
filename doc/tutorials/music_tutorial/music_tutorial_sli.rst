@@ -16,56 +16,58 @@ the scope of this tutorial. The code follows the same structure as the
 other examples, and should be straightforward to follow. But we will
 give a few pointers for how to connect things with MUSIC.
 
+The SLI version of the sending process file from
+:doc:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, *sender.sli*, is outlined
+below. Comments are prefixed with a “%”.
+
 ::
 
-    % create 2 neurons, get list of IDs. 
-    /iaf_neuron [2] LayoutNetwork /neuron_out_net Set
-    /neuron_out neuron_out_net GetGlobalNodes def
+    % create 2 neurons, get NodeCollection representing IDs.
+    /NUM_NEURONS 2 def
+    /iaf_psc_alpha NUM_NEURONS Create /neuron_out Set
 
-    % create output proxy. We use only one, so we use plain Create.
+    % create output proxy.
     /music_event_out_proxy << /port_name (p_out) >> Create /music_out Set
 
     % connect the neurons to the proxy, and give them a separate channel each
-    neuron_out {
-        /i Set /n Set
-        n music_out << /music_channel i >> Connect
-    } forallindexed
+    [NUM_NEURONS] Range
+    {
+        /index Set
+        neuron_out [index] Take music_out << /rule /one_to_one >> << /music_channel index 1 sub >> Connect
+    } forall
 
     1000.0 Simulate
 
-Comments are prefixed with a “%”. On line 2-3 we create two
-:math:`\texttt{iaf\_neuron}` in a subnet (nodes in SLI are organized in
-a tree-like fashion), save the subnet ID in
-:math:`\texttt{neuron\_out\_net}` then get an array of the neuron IDs in
-the subnet and save in :math:`\texttt{neuron\_out}`.
+On line 2-3 we create two `iaf_psc_alpha` in a NodeCollection and save it in `neuron_out`.
 
-What is the difference between :math:`\texttt{Set}` on line 2 and
-:math:`\texttt{def}` on line 3? Just the order of the arguments: with
-:math:`\texttt{Set}` you first give the object, then the name you want
-to associate with it. With :math:`\texttt{put}` you give the name first,
+The difference between ``def`` on line 2 and
+``Set`` on line 3 is the order of the arguments: with
+``Set`` you first give the object, then the name you want
+to associate with it. With ``def`` you give the name first,
 then the object.  Both are used extensively so you need to be aware
 of them.
 
 On line 6 we create a MUSIC output proxy with port name
-:math:`\texttt{p\_out}`. Dictionaries are bracketed with “<<” and “>>”,
+`p_out`. Dictionaries are bracketed with “<<” and “>>”,
 and strings are bracketed with parenthesis.
 
-On lines 9-12 we iterate over all neurons with index and store the index
-in “i” and the neuron ID in “n”. Then connect each one to the output
-proxy with its own music channel. Note that here we use
-:math:`\texttt{Set}` to assign the neuron ID and sequence on the stack
-to variables. We’d have to rotate the top stack elements if we wanted to
-use :math:`\texttt{put}`.
+On lines 9-13 we iterate over the range of all neurons and store the index
+in `index`. Then we connect each neuron in the NodeCollection to the output
+proxy with its own music channel. To get the individual node we use ``Take``.
+Note that we use ``Set`` to assign the index on the stack
+to a variable. We’d have to rotate the top stack elements if we wanted to
+use ``def``.
+
+For the receiving SLI file, *receiver.sli*, we have:
 
 ::
 
-    % create 2 neurons, get list of IDs.
-    /music_event_in_proxy [2] LayoutNetwork /music_in_net Set
-    music_in_net GetGlobalNodes /music_in Set
+    % Create 2 MUSIC nodes, get NodeCollection representing IDs.
+    /NUM_NODES 2 def
+    /music_event_in_proxy NUM_NODES Create /music_in Set
 
-    % 2 parrot neurons.
-    /parrot_neuron [2] LayoutNetwork /parrot_in_net Set
-    parrot_in_net GetGlobalNodes /parrot_in Set
+    % Create 2 parrot neurons.
+    /parrot_neuron NUM_NODES Create /parrot_in Set
 
     % Create spike detector
     /spike_detector Create /sdetector Set
@@ -74,35 +76,51 @@ use :math:`\texttt{put}`.
     >> SetStatus
 
     % set port name and channel for all music input proxies.
-    music_in {
-        /i Set /m Set
-        m << /port_name (p_in) /music_channel i >> SetStatus
-    } forallindexed
+    music_in
+    {
+      /music_node Set
+      /channel music_node 1 sub def
+      music_node << /port_name (p_in) /music_channel channel >> SetStatus
+    } forall
 
     % set acceptable latency
     (p_in) 2.0 SetAcceptableLatency
 
     % connect music proxies to parrots, one to one
-    music_in {
-        /i Set /m Set
-        m parrot_in i get 1.0 2.0 Connect
-    } forallindexed
+    music_in parrot_in << /rule /one_to_one >> << /delay 2.0 >> Connect
 
-    parrot_in [sdetector]  Connect
+    parrot_in sdetector Connect
 
     1000.0 Simulate
 
 SLI, like PyNEST, has a specific function for setting the acceptable
-latency, as we do on line 23. In lines 26-29 we do one-on-one
-connections between the input proxies and the parrot neurons, and set
-the desired delay. We iterate over all music proxies, and for each proxy
-we get the corresponding element in the :math:`\texttt{parrot\_in}`
-array, then connect them with weight 1.0 and delay 2.0. You must give
-both parameters even though only the delay matters.
+latency, as we do on line 23. In line 26 we do a one-to-one
+connection between the input proxies and the parrot neurons, and set
+the desired delay.
+
+For the MUSIC configuration file, we now need to use `binary=nest` to make it
+run with nest, and pass the correct files as arguments:
+
+.. code-block:: sh
+
+        [from]
+            binary=nest
+            np=2
+            args=send.sli
+
+        [to]
+            binary=nest
+            np=2
+            args=receive.sli
+
+        from.p_out -> to.p_in [2]
 
 For more information on using SLI, the browser based help we mentioned
-in the introduciton is quite helpful, but the best resource is the set
+in the introduction is quite helpful, but the best resource is the set
 of example models in the NEST source code distribution. That will show
 you many useful idioms and typical ways to accomplish common tasks.
 
+.. note::
 
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.

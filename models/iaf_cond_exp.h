@@ -56,15 +56,15 @@ namespace nest
  */
 extern "C" int iaf_cond_exp_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-Name: iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron
-                     model.
+Short description
++++++++++++++++++
 
-Description:
+Simple conductance based leaky integrate-and-fire neuron model
+
+Description
++++++++++++
 
 iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
@@ -72,10 +72,11 @@ of conductance modelled by an exponential function. The exponential function
 is normalised such that an event of weight 1.0 results in a peak conductance of
 1 nS.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 =========== ======  =======================================================
  V_m        mV      Membrane potential
  E_L        mV      Leak reversal potential
@@ -90,26 +91,33 @@ The following parameters can be set in the status dictionary.
  tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
  I_e        pA      Constant input current
 =========== ======  =======================================================
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-References:
+Receives
+++++++++
 
-\verbatim embed:rst
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+References
+++++++++++
+
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
        16:159-175.
        DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-\endverbatim
 
-Author: Sven Schrader
+See also
+++++++++
 
-SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
-*/
+iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
+
+EndUserDocs*/
+
 class iaf_cond_exp : public Archiving_Node
 {
 

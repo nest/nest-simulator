@@ -41,21 +41,21 @@ stages:
 
 jobs:
   include:
-    - stage: Staticcheck
-      python: 3.6.10
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
-    - stage: MPI-Threading-GSL-Python
-      python: 3.6.10
-      env: xTHREADING=1 xMPI=1 xSIONLIB=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB
-    - stage: MPI-Threading-GSL-Python
-      python: 3.6.10
-      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
-    - stage: MPI-Threading-GSL-Python
-      python: 3.6.10
-      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
-    - stage: MPI-Threading-GSL-Python
-      python: 3.6.10
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Only Python
+#    - stage: Staticcheck
+#      python: 3.6.10
+#      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
+#    - stage: MPI-Threading-GSL-Python
+#      python: 3.6.10
+#      env: xTHREADING=1 xMPI=1 xSIONLIB=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB
+#    - stage: MPI-Threading-GSL-Python
+#      python: 3.6.10
+#      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
+#    - stage: MPI-Threading-GSL-Python
+#      python: 3.6.10
+#      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
+#    - stage: MPI-Threading-GSL-Python
+#      python: 3.6.10
+#      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Only Python
 #    - stage: Python-Full-build-Clang7-OsX
 #      python: 3.6.10
 #      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
@@ -165,9 +165,13 @@ before_install:
            brew cask list
          fi
 
-         # updating pip breaks on osx
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then
            pip install --upgrade pip setuptools
+           pip install nose
+         else
+           # updating pip breaks on osx, must install man-page free nose
+           wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl  
+           pip install nose-1.3.7noman-py3-none-any.whl
          fi
         
          # Installing additional packages using pip as they only have
@@ -176,7 +180,6 @@ before_install:
          # the build summary.
          pip install cython scipy matplotlib terminaltables junitparser
          pip install numpy==1.16.5
-         pip -vvv install nose     # separate line, might fail
          pip list
      fi
 

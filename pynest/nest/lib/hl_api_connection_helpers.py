@@ -32,7 +32,6 @@ from .hl_api_types import Mask, Parameter
 
 __all__ = [
     '_connect_layers_needed',
-    '_connect_nonunique',
     '_connect_spatial',
     '_process_conn_spec',
     '_process_spatial_projections',
@@ -55,7 +54,7 @@ def _process_conn_spec(conn_spec):
         raise TypeError("conn_spec must be a string or dict")
 
 
-def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
+def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arrays):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
     if syn_spec is None:
         return syn_spec
@@ -72,10 +71,12 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength):
                 if len(value.shape) == 1:
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
-                            raise kernel.NESTError(
-                                "'" + key + "' has to be an array of "
-                                "dimension " + str(prelength) + ", a "
-                                "scalar or a dictionary.")
+                            if connect_np_arrays:
+                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
+                                                       str(prelength) + ".")
+                            else:
+                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
+                                                       str(prelength) + ", a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
@@ -233,9 +234,3 @@ def _connect_spatial(pre, post, projections):
     projections = fixdict(projections)
     sps(projections)
     sr('ConnectLayers')
-
-
-def _connect_nonunique(syn_spec):
-    """Connect with the SLI function `Connect_nonunique`, using synapse specifications in `syn_spec`."""
-    sps({} if syn_spec is None else syn_spec)
-    sli_run('Connect_nonunique')

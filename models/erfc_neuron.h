@@ -28,14 +28,17 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup binary
 
-Name: erfc_neuron - Binary stochastic neuron with complementary error
-function as activation function.
+/* BeginUserDocs: neuron, binary
 
-Description:
+Short description
++++++++++++++++++
+
+Binary stochastic neuron with complementary error function as
+activation function
+
+Description
++++++++++++
 
 The erfc_neuron is an implementation of a binary neuron that
 is irregularly updated at Poisson time points. At each update
@@ -45,56 +48,54 @@ the probability of the neuron to be in the active (1) state.
 
 The gain function g used here is
 
-@f[ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)). @f]
+.. math::
+
+ g(h) = 0.5 * erfc (( h - \theta ) / ( \sqrt( 2. ) * \sigma)).
 
 This corresponds to a McCulloch-Pitts neuron receiving additional
-Gaussian noise with mean 0 and standard deviation sigma.
-The time constant tau_m is defined as the mean of the
-inter-update-interval that is drawn from an exponential
-distribution with this parameter. Using this neuron to reproduce
-simulations with asynchronous update (similar to [1,2]), the time
-constant needs to be chosen as tau_m = dt*N, where dt is the simulation time
-step and N the number of neurons in the original simulation with
-asynchronous update. This ensures that a neuron is updated on
-average every tau_m ms. Since in the original papers [1,2] neurons
-are coupled with zero delay, this implementation follows that
-definition. It uses the update scheme described in [3] to
-maintain causality: The incoming events in time step t_i are
-taken into account at the beginning of the time step to calculate
-the gain function and to decide upon a transition.  In order to
-obtain delayed coupling with delay d, the user has to specify the
-delay d+h upon connection, where h is the simulation time step.
+Gaussian noise with mean 0 and standard deviation sigma.  The time
+constant tau_m is defined as the mean of the inter-update-interval
+that is drawn from an exponential distribution with this
+parameter. Using this neuron to reproduce simulations with
+asynchronous update (similar to [1,2]_), the time constant needs to be
+chosen as tau_m = dt*N, where dt is the simulation time step and N the
+number of neurons in the original simulation with asynchronous
+update. This ensures that a neuron is updated on average every tau_m
+ms. Since in the original papers [1,2]_ neurons are coupled with zero
+delay, this implementation follows that definition. It uses the update
+scheme described in [3]_ to maintain causality: The incoming events in
+time step t_i are taken into account at the beginning of the time step
+to calculate the gain function and to decide upon a transition.  In
+order to obtain delayed coupling with delay d, the user has to specify
+the delay d+h upon connection, where h is the simulation time step.
 
 Remarks:
 
-This neuron has a special use for spike events to convey the
-binary state of the neuron to the target. The neuron model
-only sends a spike if a transition of its state occurs. If the
-state makes an up-transition it sends a spike with multiplicity 2,
-if a down transition occurs, it sends a spike with multiplicity 1.
-The decoding scheme relies on the feature that spikes with multiplicity
-larger 1 are delivered consecutively, also in a parallel setting.
-The creation of double connections between binary neurons will
-destroy the decoding scheme, as this effectively duplicates
-every event. Using random connection routines it is therefore
-advisable to set the property 'allow_multapses' to false.
-The neuron accepts several sources of currents, e.g. from a
-noise_generator.
+This neuron has a special use for spike events to convey the binary
+state of the neuron to the target. The neuron model only sends a spike
+if a transition of its state occurs. If the state makes an
+up-transition it sends a spike with multiplicity 2, if a down
+transition occurs, it sends a spike with multiplicity 1.  The decoding
+scheme relies on the feature that spikes with multiplicity larger 1
+are delivered consecutively, also in a parallel setting.  The creation
+of double connections between binary neurons will destroy the decoding
+scheme, as this effectively duplicates every event. Using random
+connection routines it is therefore advisable to set the property
+'allow_multapses' to false.  The neuron accepts several sources of
+currents, e.g. from a noise_generator.
 
+Parameters
+++++++++++
 
-Parameters:
-
-\verbatim embed:rst
 ======  ======  =========================================================
  tau_m  ms      Membrane time constant (mean inter-update-interval)
  theta  mV      threshold for sigmoidal activation function
  sigma  mV      1/sqrt(2pi) x inverse of maximal slope
 ======  ======  =========================================================
-\endverbatim
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
        neural networks. PRE 50(4) p. 3171
        DOI: https://doi.org/10.1103/PhysRevE.50.3171
@@ -105,18 +106,24 @@ References:
        neuronal simulations. In: Lectures in Supercomputational Neuroscience,
        p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
        (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, PotentialRequest
+SpikeEvent
 
-FirstVersion: May 2016
+Receives
+++++++++
 
-Authors: Jakob Jordan, Tobias Kuehn
+SpikeEvent, PotentialRequest
 
-SeeAlso: mcculloch_pitts_neuron, ginzburg_neuron
-*/
+See also
+++++++++
+
+mcculloch_pitts_neuron, ginzburg_neuron
+
+EndUserDocs */
+
 class gainfunction_erfc
 {
 private:

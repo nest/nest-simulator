@@ -1,12 +1,20 @@
 Connect two NEST simulations using MUSIC
-======================================================
+========================================
+
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`
 from :doc:`the introduction to this tutorial <music_tutorial_1>`.
 
 We need a sending process, a receiving process and a MUSIC
-configuration file:
+configuration file.
+
+To try out the example, save the following sending process code in a Python file
+called *send.py*.
 
 
 .. code-block:: python
@@ -17,16 +25,15 @@ configuration file:
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    neurons = nest.Create('iaf_psc_alpha', 2, [{'I_e': 400.0}, {'I_e': 405.0}])
+    neurons = nest.Create('iaf_psc_alpha', 2, {'I_e': [400.0, 405.0]})
 
-    music_out = nest.Create('music_event_out_proxy', 1,
-        params = {'port_name':'p_out'})
+    music_out = nest.Create('music_event_out_proxy', 1, {'port_name':'p_out'})
 
-    for i, n in enumerate(neurons):
-        nest.Connect([n], music_out, "one_to_one",{'music_channel': i})
+    for i, neuron in enumerate(neurons):
+        nest.Connect(neuron, music_out, "one_to_one", {'music_channel': i})
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"record_to": "ascii", "label": "send"})
+    sdetector.set(record_to="ascii", label="send")
 
     nest.Connect(neurons, sdetector)
 
@@ -37,13 +44,13 @@ and set a useful kernel parameter. On line 6, we create two simple
 intergrate-and-fire neuron models, one with a current input of 400mA,
 and one with 405mA, just so they will respond differently. If you use
 ipython to work interactively, you can check their current status
-dictionary with ``nest.GetStatus(neurons)``. The definitive
-documentation for NEST nodes is the header file, in this case
+dictionary with ``neurons.get()``. The definitive
+documentation for NEST models is the header file, in this case
 ``models/iaf_psc_alpha.h`` in the NEST source.
 
 We create a single ``music_event_out_proxy`` for our
 output on line 8, and set the port name. We loop over all the neurons on
-lines 11-20 and connect them to the proxy one by one, each one with a
+lines 10-11 and connect them to the proxy one by one, each one with a
 different output channel. As we saw earlier, each MUSIC port can have
 any number of channels. Since the proxy is a device, it ignores any
 weight or delay settings here.
@@ -53,6 +60,8 @@ have done directly in the ``Create`` call) and connect the
 neurons to the spike detector so we can see what we’re sending. Then we
 simulate for one second.
 
+For the receiving process script, *receive.py* we do:
+
 .. code-block:: python
     :linenos:
 
@@ -61,18 +70,16 @@ simulate for one second.
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
 
-    music_in = nest.Create("music_event_in_proxy", 2,
-        params = {'port_name': 'p_in'})
+    music_in = nest.Create("music_event_in_proxy", 2, {'port_name': 'p_in'})
 
-    for i, n in enumerate(music_in):
-        nest.SetStatus([n], {'music_channel': i})
+    music_in.music_channel = [c for c in range(len(music_in))]
 
     nest.SetAcceptableLatency('p_in', 2.0)
 
     parrots = nest.Create("parrot_neuron", 2)
 
     sdetector = nest.Create("spike_detector")
-    nest.SetStatus(sdetector, {"record_to": ["ascii"], "label": "receive"})
+    sdetector.set(record_to="ascii", label="receive")
 
     nest.Connect(music_in, parrots, 'one_to_one', {"weight":1.0, "delay": 2.0})
     nest.Connect(parrots, sdetector)
@@ -81,33 +88,36 @@ simulate for one second.
 
 The receiving process follows the same logic, but is just a little more
 involved. We create two ``music_event_in_proxy`` — one
-per channel — on lines 6-7 and set the input port name. As we discussed
+per channel — on line 6 and set the input port name. As we discussed
 above, a NEST node can accept many inputs but only emit one stream of
 data, so we need one input proxy per channel to be able to distinguish
-the channels from each other. On lines 9-10 we set the input channel for
+the channels from each other. On line 8 we set the input channel for
 each input proxy.
 
-:doc:`The SetAcceptableLatency command <music_tutorial_setlatency>` on line 12 sets the
+:doc:`The SetAcceptableLatency command <music_tutorial_setlatency>` on line 10 sets the
 maximum time, in milliseconds, that MUSIC is allowed to delay delivery of spikes
 transmitted through the named port. This should never be more than the
 *minimum* of the delays from the input proxies to their targets; that’s
-the 2.0 ms we set on line 20 in our case.
+the 2.0 ms we set on line 10 in our case.
 
-On line 14 we create a set of :doc:`parrot neurons <music_tutorial_parrot>`.
-They simply repeat the input they’re given. On lines 16-18 we create and
+On line 12 we create a set of :doc:`parrot neurons <music_tutorial_parrot>`.
+They simply repeat the input they’re given. On lines 14-15 we create and
 configure a spike detector to save our inputs. We connect the input proxies
-one-to-one with the parrot neurons on line 20, then the parrot neurons to
-the spike detector on line 21. We will discuss the reasons for this in a moment.
+one-to-one with the parrot neurons on line 17, then the parrot neurons to
+the spike detector on line 18. We will discuss the reasons for this in a moment.
 Finally we simulate for one second.
+
+Lastly, we have the MUSIC configuration file *python.music*:
 
 .. code-block:: sh
 
-      binary=./send.py
-      np=2
+      [from]
+          binary=./send.py
+          np=2
 
       [to]
-      binary=./receive.py
-      np=2
+          binary=./receive.py
+          np=2
 
       from.p_out -> to.p_in [2]
 
@@ -156,7 +166,7 @@ We run the files together, and sort the output numerically
 look at the beginning of the two files side by side:
 
 
-.. code-block:: sh
+.. code-block::
 
     send.spikes                receive.spikes
 
@@ -171,7 +181,7 @@ look at the beginning of the two files side by side:
 
 As expected, the received spikes are two milliseconds later than the
 sent spikes. The delay parameter for the connection from the input
-proxies to the parrot neurons in ``receive.py`` on line 20
+proxies to the parrot neurons in ``receive.py`` on line 10
 accounts for the delay.
 
 Also — and it may be obvious in a simple model like this — the neuron
@@ -197,13 +207,13 @@ below:
     import nest
 
     mcip = nest.Create('music_cont_in_proxy')
-    nest.SetStatus(mcip, {'port_name' : 'contdata'})
+    mcip.port_name = 'contdata'
 
     time = 0
     while time < 1000:
         nest.Simulate (10)
-        data = nest.GetStatus (mcip, 'data')
-        print data
+        data = mcip.get('data')
+        print(data)
         time += 10
 
 The start mirrors our earlier receiving example: you create a continuous
@@ -234,4 +244,3 @@ did in our earlier python example. This is far more effective, and the
 outside process is not limited to the generators implemented in NEST but
 can create any kind of spiking input. In the next section we will take a
 look at how to do this.
-

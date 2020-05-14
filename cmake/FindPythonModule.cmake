@@ -35,11 +35,11 @@ function(find_python_module module)
       ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     if(NOT _${module}_status)
-      set(HAVE_${module_upper} ON CACHE INTERNAL "cmake sucks")
+      set(HAVE_${module_upper} ON CACHE INTERNAL "")
       set(PY_${module_upper} ${_${module}_location} CACHE STRING
 	"Location of Python module ${module}")
     else()
-      set(HAVE_${module_upper} OFF CACHE INTERNAL "cmake sucks")
+      set(HAVE_${module_upper} OFF CACHE INTERNAL "")
     endif()
 
   endif(NOT PY_${module_upper})

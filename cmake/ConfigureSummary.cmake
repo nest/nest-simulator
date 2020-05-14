@@ -152,6 +152,12 @@ function( NEST_PRINT_CONFIG_SUMMARY )
     message( "Use Boost           : No" )
   endif ()
 
+  if ( HAVE_RECORDINGBACKEND_ARBOR  )
+    message( "Use recording backend Arbor   : Yes" )
+  else ()
+    message( "Use recording backend Arbor   : No" )
+  endif ()
+
   if ( with-libraries )
     message( "Additional libraries:" )
     foreach ( lib ${with-libraries} )

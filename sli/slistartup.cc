@@ -241,6 +241,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , ismpi_name( "is_mpi" )
   , have_gsl_name( "have_gsl" )
   , have_music_name( "have_music" )
+  , have_recordingbackend_arbor_name( "have_recordingbackend_arbor" )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
   , ndebug_name( "ndebug" )
@@ -252,6 +253,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcode_skipped_no_threading_name( "skipped_no_threading" )
   , exitcode_skipped_no_gsl_name( "skipped_no_gsl" )
   , exitcode_skipped_no_music_name( "skipped_no_music" )
+  , exitcode_skipped_no_recordingbackend_arbor_name( "skipped_no_recordingbackend_arbor" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -465,6 +467,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_music_name, Token( new BoolDatum( false ) ) );
 #endif
 
+#ifdef HAVE_RECORDINGBACKEND_ARBOR
+  statusdict->insert( have_recordingbackend_arbor_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_recordingbackend_arbor_name, Token( new BoolDatum( false ) ) );
+#endif
+
 #ifdef HAVE_LIBNEUROSIM
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( true ) ) );
 #else
@@ -511,6 +519,8 @@ SLIStartup::init( SLIInterpreter* i )
   exitcodes->insert( exitcode_skipped_no_threading_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_THREADING ) ) );
   exitcodes->insert( exitcode_skipped_no_gsl_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_GSL ) ) );
   exitcodes->insert( exitcode_skipped_no_music_name, Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MUSIC ) ) );
+  exitcodes->insert( exitcode_skipped_no_recordingbackend_arbor_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_RECORDINGBACKEND_ARBOR ) ) );
   exitcodes->insert( exitcode_scripterror_name, Token( new IntegerDatum( EXITCODE_SCRIPTERROR ) ) );
   exitcodes->insert( exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
   exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( EXITCODE_USERABORT ) ) );

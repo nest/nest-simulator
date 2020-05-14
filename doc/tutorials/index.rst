@@ -17,6 +17,7 @@ Tutorials
 
    music_tutorial/music_tutorial_1
    music_tutorial/music_tutorial_2
+   music_tutorial/music_tutorial_sli
    music_tutorial/music_tutorial_3
    music_tutorial/music_tutorial_4
    music_tutorial/music_tutorial_tips

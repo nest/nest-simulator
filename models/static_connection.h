@@ -29,28 +29,32 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup static
+/* BeginUserDocs: synapse, static
 
-Name: static_synapse - Synapse type for static connections.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for static connections
+
+Description
++++++++++++
 
 static_synapse does not support any kind of plasticity. It simply stores
 the parameters target, weight, delay and receiver port for each connection.
 
-FirstVersion: October 2005
+Transmits
++++++++++
 
-Author: Jochen Martin Eppler, Moritz Helias
-
-Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
 DoubleDataEvent, DataLoggingRequest
 
-Remarks: Refactored for new connection system design, March 2007
+See also
+++++++++
 
-SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
-*/
+tsodyks_synapse, stdp_synapse
+
+EndUserDocs */
+
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {

@@ -32,16 +32,17 @@ import sys
 import os
 import re
 import pip
+
 import subprocess
 
-from shutil import copytree, ignore_patterns, rmtree
+from shutil import copytree, ignore_patterns
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
+# add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 doc_path = os.path.abspath(os.path.dirname(__file__))
@@ -195,6 +196,16 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
+from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+
+
+def config_inited_handler(app, config):
+    ExtractUserDocs(
+        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
+        outdir="userdocs/"
+    )
+
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -211,8 +222,12 @@ nitpick_ignore = [('py:class', 'None'),
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
-    app.add_javascript("js/copybutton.js")
-    app.add_javascript("js/custom.js")
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -267,31 +282,6 @@ texinfo_documents = [
 
 # -- Options for readthedocs ----------------------------------------------
 
-models_with_documentation = (
-    "models/multimeter",
-    "models/spike_detector",
-    "models/weight_recorder",
-    "nestkernel/recording_backend_ascii",
-    "nestkernel/recording_backend_memory",
-    "nestkernel/recording_backend_screen",
-    "nestkernel/recording_backend_sionlib",
-)
-
-pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
-for model in models_with_documentation:
-    with open("../%s.h" % model) as f:
-        match = re.search(pattern, f.read())
-        if match:
-            rst_dir = "from_cpp/"
-            if not os.path.exists(rst_dir):
-                os.mkdir(rst_dir)
-            rst_fname = rst_dir + os.path.basename(model) + ".rst"
-            rst_file = open(rst_fname, "w")
-            rst_file.write(match.group(1))
-            rst_file.close()
-            print("Wrote model documentation for model " + model)
-        else:
-            print("No documentation found for model " + model)
 
 # -- Copy documentation for Microcircuit Model ----------------------------
 

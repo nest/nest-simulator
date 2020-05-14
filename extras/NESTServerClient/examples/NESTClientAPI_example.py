@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# simple_network_api.py
+# NESTClientAPI_example.py
 #
 # This file is part of NEST.
 #

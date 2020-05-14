@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# simple_network.py
+# NESTClientExec_example.py
 #
 # This file is part of NEST.
 #
@@ -19,21 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from NESTServerClient import NESTClientExec
 
-# Reset kernel
-nest.ResetKernel()
 
-# Create nodes
-pg = nest.Create("poisson_generator", params={"rate": 6500.})
-neurons = nest.Create("iaf_psc_alpha", 100)
-sd = nest.Create("spike_detector")
+# Access to client interface for NEST Server
+nexec = NESTClientExec()
 
-# Connect nodes
-nest.Connect(pg, neurons, syn_spec={"weight": 10.})
-nest.Connect(neurons, sd)
-
-# Simulate
-nest.Simulate(1000.0)
-
-# Get events
-n_events = sd.get("n_events")
+response = nexec.from_file('./NESTClientExec_script.py', 'n_events')
+n_events = response['data']
+print('Number of events:', n_events)

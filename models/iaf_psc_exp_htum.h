@@ -69,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]_. A flow chart can be found in [3].
+[2]_. A flow chart can be found in [3]_.
 
 Remarks:
 

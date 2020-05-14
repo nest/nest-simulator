@@ -25,6 +25,7 @@ Functions for model handling
 
 from ..ll_api import *
 from .hl_api_helper import *
+from .hl_api_types import to_json
 
 __all__ = [
     'ConnectionRules',

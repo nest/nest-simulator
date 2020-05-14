@@ -28,6 +28,7 @@
 #include <cmath>
 
 // Includes from libnestutil:
+#include "beta_normalization_factor.h"
 #include "dict_util.h"
 
 // Includes from nestkernel:
@@ -706,34 +707,7 @@ nest::ht_neuron::init_buffers_()
 double
 nest::ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak )
 {
-  /* The solution to the beta function ODE obtained by the solver is
-   *
-   *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
-   *
-   * with a = 1/tau_1, b = 1/tau_2, a != b. The maximum of this function is at
-   *
-   *   t* = 1/(a-b) ln a/b
-   *
-   * We want to scale the function so that
-   *
-   *   max g == g(t*) == g_peak
-   *
-   * We thus need to set
-   *
-   *   c = g_peak * ( a - b ) / ( e^(-b t*) - e^(-a t*) )
-   *
-   * See Rotter & Diesmann, Biol Cybern 81:381 (1999) and Roth and van Rossum,
-   * Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
-   * MIT Press, 2010.
-   */
-
-  const double t_peak = ( tau_2 * tau_1 ) * std::log( tau_2 / tau_1 ) / ( tau_2 - tau_1 );
-
-  const double prefactor = ( 1 / tau_1 ) - ( 1 / tau_2 );
-
-  const double peak_value = ( std::exp( -t_peak / tau_2 ) - std::exp( -t_peak / tau_1 ) );
-
-  return g_peak * prefactor / peak_value;
+  return g_peak * beta_normalization_factor( tau_1, tau_2 );
 }
 
 void

@@ -285,13 +285,13 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
-   * @param sind local subnet index of node
-   * @returns position of node identified by Subnet local index value.
+   * @param sind index of node
+   * @returns position of node.
    */
   virtual Position< D > get_position( index sind ) const = 0;
 
   /**
-   * @param sind local subnet index of node
+   * @param sind index of node
    * @returns position of node as std::vector
    */
   std::vector< double > get_position_vector( const index sind ) const;

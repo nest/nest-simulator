@@ -47,7 +47,7 @@
 
    This example shows how to
 
-      - organize subpopulations in subnets
+      - create populations
       - instrument a network with injection and recording devices
       - record data to files
       - define own functions

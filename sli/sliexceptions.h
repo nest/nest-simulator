@@ -82,7 +82,7 @@ public:
    * @code
    * catch(IllegalOperation &e)
    * {
-   *   i->error("ChangeSubnet","Target node must be a subnet.");
+   *   i->error("SetStatus","Nodes must be a NodeCollection or SynapseCollection.");
    *   i->raiseerror(e.what());
    *   return;
    * }

@@ -45,7 +45,7 @@ skip_if_not_threaded
 [1 2 3] % check for 1, 2, 3 processes
 {
 
-  /N 20 def          % number of neurons in each subnet
+  /N 20 def          % number of neurons in each population
   /K 5 def           % number of connections per neuron
 
   ResetKernel
@@ -68,7 +68,7 @@ skip_if_not_threaded
   /syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
   /conn_dict << /rule /fixed_outdegree /outdegree K >> def
 
-  net1 net2 conn_dict syn_dict Connect % connects source to target subnet
+  net1 net2 conn_dict syn_dict Connect % connects source to target
 
   /Warr_all 0 array def % creates empty weight array
   net1 % loop over all source neurons

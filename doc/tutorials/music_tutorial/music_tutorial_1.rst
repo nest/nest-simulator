@@ -1,11 +1,16 @@
 Introduction to the MUSIC Interface
-=====================================
+===================================
 
 The `MUSIC interface <http://software.incf.org/software/music>`_, a
 standard by the INCF, allows the transmission of data between applications
 at runtime. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization and
 with custom applications that also use the MUSIC interface.
+
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
 
 Setup of System
 -----------------
@@ -14,8 +19,8 @@ and NEST is configured properly.
 
 Please install MUSIC using the instructions on `the MUSIC website <https://github.com/INCF/MUSIC>`_.
 
-In the install of NEST, you need to add the following configuration option to
-your cmake.
+In the installation of NEST, you need to add the following configuration option to
+your CMake.
 
 .. code-block:: sh
 
@@ -24,7 +29,7 @@ your cmake.
     make install
 
 A Quick Introduction to NEST and MUSIC
----------------------------------------
+--------------------------------------
 
 In this tutorial, we will show you how to use the MUSIC library together
 with NEST. We will cover how to use the library from PyNEST and from the
@@ -47,10 +52,8 @@ constructs.
 While the focus here is on MUSIC, we need to know a few things about how
 NEST works in order to understand how MUSIC interacts with it.
 
-Go straight to part 1 of tutorial - connect 2 simulations using PyNEST
-
 The Basics of NEST
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 A NEST network consists of three types of elements: neurons, devices,
 and connections between them.
@@ -58,7 +61,7 @@ and connections between them.
 Neurons are the basic building blocks, and in NEST they are generally
 spiking point neuron models. Devices are supporting units that for
 instance generate inputs to neurons or record data from them. The
-Poisson spike generator, the spike detector recording device and the
+Poisson spike generator, the spike detector recording device, and the
 MUSIC input and output proxies are all devices. Neurons and devices are
 collectively called nodes, and are connected using connections.
 
@@ -163,7 +166,7 @@ from a port, then sends the appropriate channel inputs to each input
 proxy. These proxies each connect to the recipient neurons as above.
 
 Publication
--------------
+-----------
 
 Djurfeldt M. et al. 2010. Run-time interoperability between neuronal
 network simulators based on the music framework. Neuroinformatics.

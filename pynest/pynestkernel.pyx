@@ -210,7 +210,7 @@ cdef class NESTEngine(object):
 
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
-            # Convert back from utf8 char* to utf8 str in both python2 & 3
+            # Convert back from utf8 char* to utf8 str
             argv.extend(str(argvi.decode()) for argvi in argv_chars[:argc])
         finally:
             free(argv_chars)
@@ -247,6 +247,117 @@ cdef class NESTEngine(object):
 
         return ret
 
+    def take_array_index(self, node_collection, array):
+        if self.pEngine is NULL:
+            raise NESTErrors.PyNESTError("engine uninitialized")
+
+        if not (isinstance(node_collection, SLIDatum) and (<SLIDatum> node_collection).dtype == SLI_TYPE_NODECOLLECTION.decode()):
+            raise TypeError('node_collection must be a NodeCollection, got {}'.format(type(node_collection)))
+        if not isinstance(array, numpy.ndarray):
+            raise TypeError('array must be a 1-dimensional NumPy array of ints or bools, got {}'.format(type(array)))
+        if not array.ndim == 1:
+            raise TypeError('array must be a 1-dimensional NumPy array, got {}-dimensional NumPy array'.format(array.ndim))
+
+        # Get pointers to the first element in the Numpy array
+        cdef long[:] array_long_mv
+        cdef long* array_long_ptr
+
+        cdef cbool[:] array_bool_mv
+        cdef cbool* array_bool_ptr
+
+        cdef Datum* nc_datum = python_object_to_datum(node_collection)
+
+        try:
+            if array.dtype == numpy.bool:
+                # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
+                array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
+                array_bool_ptr = &array_bool_mv[0]
+                new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
+                return sli_datum_to_object(new_nc_datum)
+            elif numpy.issubdtype(array.dtype, numpy.integer):
+                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+                array_long_ptr = &array_long_mv[0]
+                new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
+                return sli_datum_to_object(new_nc_datum)
+            else:
+                raise TypeError('array must be a NumPy array of ints or bools, got {}'.format(array.dtype))
+        except RuntimeError as e:
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls('take_array_index', '') from None
+
+    def connect_arrays(self, sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
+        """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
+        if self.pEngine is NULL:
+            raise NESTErrors.PyNESTError("engine uninitialized")
+        if not HAVE_NUMPY:
+            raise NESTErrors.PyNESTError("NumPy is not available")
+
+        if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
+            raise TypeError('sources must be a 1-dimensional NumPy array of integers')
+        if not (isinstance(targets, numpy.ndarray) and targets.ndim == 1) or not numpy.issubdtype(targets.dtype, numpy.integer):
+            raise TypeError('targets must be a 1-dimensional NumPy array of integers')
+        if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim == 1):
+            raise TypeError('weights must be a 1-dimensional NumPy array')
+        if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+            raise TypeError('delays must be a 1-dimensional NumPy array')
+        if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
+                                              numpy.issubdtype(syn_param_keys.dtype, numpy.string_)):
+            raise TypeError('syn_param_keys must be a 1-dimensional NumPy array of strings')
+        if syn_param_values is not None and not ((isinstance(syn_param_values, numpy.ndarray) and syn_param_values.ndim == 2)):
+            raise TypeError('syn_param_values must be a 2-dimensional NumPy array')
+
+        if not len(sources) == len(targets):
+            raise ValueError('Sources and targets must be arrays of the same length.')
+        if weights is not None:
+            if not len(sources) == len(weights):
+                raise ValueError('weights must be an array of the same length as sources and targets.')
+        if delays is not None:
+            if not len(sources) == len(delays):
+                raise ValueError('delays must be an array of the same length as sources and targets.')
+        if syn_param_values is not None:
+            if not len(syn_param_keys) == syn_param_values.shape[0]:
+                raise ValueError('syn_param_values must be a matrix with one array per key in syn_param_keys.')
+            if not len(sources) == syn_param_values.shape[1]:
+                raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
+
+        # Get pointers to the first element in each NumPy array
+        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
+        cdef long* sources_ptr = &sources_mv[0]
+
+        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.long)
+        cdef long* targets_ptr = &targets_mv[0]
+
+        cdef double[::1] weights_mv
+        cdef double* weights_ptr = NULL
+        if weights is not None:
+            weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
+            weights_ptr = &weights_mv[0]
+
+        cdef double[::1] delays_mv
+        cdef double* delays_ptr = NULL
+        if delays is not None:
+            delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
+            delays_ptr = &delays_mv[0]
+
+        # Storing parameter keys in a vector of strings
+        cdef vector[string] param_keys_ptr
+        if syn_param_keys is not None:
+            for i, key in enumerate(syn_param_keys):
+                param_keys_ptr.push_back(key)
+
+        cdef double[:, ::1] param_values_mv
+        cdef double* param_values_ptr = NULL
+        if syn_param_values is not None:
+            param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
+            param_values_ptr = &param_values_mv[0][0]
+
+        cdef string syn_model_string = synapse_model.encode('UTF-8')
+
+        try:
+            connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+        except RuntimeError as e:
+            exceptionCls = getattr(NESTErrors, str(e))
+            raise exceptionCls('connect_arrays', '') from None
 
 cdef inline Datum* python_object_to_datum(obj) except NULL:
 

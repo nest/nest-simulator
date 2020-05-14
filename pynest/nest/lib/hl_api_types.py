@@ -30,6 +30,7 @@ from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
 
 import numpy
+import json
 
 try:
     import pandas
@@ -38,11 +39,13 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    'SynapseCollection',
     'CreateParameter',
-    'NodeCollection',
     'Mask',
+    'NodeCollection',
     'Parameter',
+    'serializable',
+    'SynapseCollection',
+    'to_json',
 ]
 
 
@@ -133,15 +136,13 @@ class NodeCollectionIterator(object):
         self._increment += 1
         return val
 
-    next = __next__  # Python2.x
-
 
 class NodeCollection(object):
     """
     Class for `NodeCollection`.
 
     `NodeCollection` represents the nodes of a network. The class supports
-    iteration, concatination, indexing, slicing, membership, length, convertion to and
+    iteration, concatenation, indexing, slicing, membership, length, conversion to and
     from lists, test for membership, and test for equality. By using the
     membership functions :py:func:`get()` and :py:func:`set()`, you can get and set desired
     parameters.
@@ -208,18 +209,55 @@ class NodeCollection(object):
             if key.start is None:
                 start = 1
             else:
-                start = key.start + 1 if key.start >= 0 else key.start
+                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
+                if start > self.__len__():
+                    raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = key.stop if key.stop >= 0 else key.stop
+                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                if abs(stop) > self.__len__():
+                    raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
+            if step < 1:
+                raise IndexError('slicing step for NodeCollection must be strictly positive')
 
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
+            if abs(key + (key >= 0)) > self.__len__():
+                raise IndexError('index value outside of the NodeCollection')
             return sli_func('Take', self._datum, [key + (key >= 0)])
+        elif isinstance(key, (list, tuple)):
+            if len(key) == 0:
+                return NodeCollection([])
+            # Must check if elements are bool first, because bool inherits from int
+            if all(isinstance(x, bool) for x in key):
+                if len(key) != len(self):
+                    raise IndexError('Bool index array must be the same length as NodeCollection')
+                np_key = numpy.array(key, dtype=numpy.bool)
+            # Checking that elements are not instances of bool too, because bool inherits from int
+            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+                np_key = numpy.array(key, dtype=numpy.uint64)
+                if len(numpy.unique(np_key)) != len(np_key):
+                    raise ValueError('All node IDs in a NodeCollection have to be unique')
+            else:
+                raise TypeError('Indices must be integers or bools')
+            return take_array_index(self._datum, np_key)
+        elif isinstance(key, numpy.ndarray):
+            if len(key) == 0:
+                return NodeCollection([])
+            if len(key.shape) != 1:
+                raise TypeError('NumPy indices must one-dimensional')
+            is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
+            if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
+                raise TypeError('NumPy indices must be an array of integers or bools')
+            if is_booltype and len(key) != len(self):
+                raise IndexError('Bool index array must be the same length as NodeCollection')
+            if not is_booltype and len(numpy.unique(key)) != len(key):
+                raise ValueError('All node IDs in a NodeCollection have to be unique')
+            return take_array_index(self._datum, key)
         else:
-            raise IndexError('only integers and slices are valid indices')
+            raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
@@ -438,8 +476,6 @@ class SynapseCollectionIterator(object):
 
     def __next__(self):
         return SynapseCollection(next(self._iter))
-
-    next = __next__  # Python2.x
 
 
 class SynapseCollection(object):
@@ -880,3 +916,51 @@ class Parameter(object):
                 if len(pos) != len(positions[0]):
                     raise ValueError('All positions must have the same number of dimensions')
             return sli_func('Apply', self._datum, {'source': spatial_nc, 'targets': positions})
+
+
+def serializable(data):
+    """Make data serializable for JSON.
+
+    Parameters
+    ----------
+    data : any
+
+    Returns
+    -------
+    data_serialized : str, int, float, list, dict
+        Data can be encoded to JSON
+    """
+
+    if isinstance(data, (numpy.ndarray, NodeCollection)):
+        return data.tolist()
+    if isinstance(data, SynapseCollection):
+        # Get full information from SynapseCollection
+        return serializable(data.get())
+    if isinstance(data, kernel.SLILiteral):
+        # Get name of SLILiteral.
+        return data.name
+    if isinstance(data, (list, tuple)):
+        return [serializable(d) for d in data]
+    if isinstance(data, dict):
+        return dict([(key, serializable(value)) for key, value in data.items()])
+    return data
+
+
+def to_json(data, **kwargs):
+    """Serialize data to JSON.
+
+    Parameters
+    ----------
+    data : any
+    kwargs : keyword argument pairs
+        Named arguments of parameters for `json.dumps` function.
+
+    Returns
+    -------
+    data_json : str
+        JSON format of the data
+    """
+
+    data_serialized = serializable(data)
+    data_json = json.dumps(data_serialized, **kwargs)
+    return data_json

@@ -29,11 +29,11 @@ The helpindex is built during installation in a separate step.
 """
 
 import os
+import html
 import io
 import re
 import sys
 import textwrap
-import cgi
 
 from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
@@ -132,7 +132,7 @@ for fname in allfiles:
                     line = name_line_0 + ' ' + name_line_1
                 line = textwrap.dedent(line).strip()
                 # Tricks for the blanks
-                line = cgi.escape(line)
+                line = html.escape(line)
                 line = re.sub('^(\s)*- ', ' &bull; ', line)
                 line = re.sub('^(\s)*@note', ' &bull; ', line)
                 alllines.append(line)

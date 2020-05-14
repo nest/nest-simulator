@@ -39,35 +39,38 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginUserDocs: device, detector
 
-Name: correlation_detector - Device for evaluating cross correlation between
-                             two spike sources
+Short description
++++++++++++++++++
 
-Description:
+Device for evaluating cross correlation between two spike sources
+
+Description
++++++++++++
 
 The correlation_detector device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-\f$ \delta_\tau \f$. The result can be obtained via GetStatus under the key
+:math:`\delta_\tau`. The result can be obtained via GetStatus under the key
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors the
 Kahan summation algorithm is used when calculating the weighted histogram.
 (http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
-Both are arrays of \f$ 2*\tau_{max}/\delta_\tau+1 \f$ values containing the
+Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:
 
-Let \f$ t_{1,i}\f$ be the spike times of source 1,
-\f$ t_{2,j} \f$ the spike times of source 2.
+Let :math:`t_{1,i}` be the spike times of source 1,
+:math:`t_{2,j}` the spike times of source 2.
 histogram[n] then contains the sum of products of the weight
-\f$ w_{1,i}*w_{2,j}, \f$ count_histogram[n] contains 1 summed over all events
-with\f$ t_{2,j}-t_{1,i} \f$ in
+:math:`w_{1,i}*w_{2,j}`, count_histogram[n] contains 1 summed over all events
+with :math:`t_{2,j}-t_{1,i}` in
 
-   @f[ n*\delta_\tau - \tau_{max} - \delta_\tau/2 @f]
-   @f[ n*\delta_\tau - \tau_{max} + \delta_\tau/2 @f]
+.. math::
+
+    n*\delta_\tau - \tau_{max} - \delta_\tau/2
+    n*\delta_\tau - \tau_{max} + \delta_\tau/2
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
@@ -79,11 +82,10 @@ receptor_port of the incoming connection: All incoming connections with
 receptor_port = 0 will be pooled as the spike source 1, the ones with
 receptor_port = 1 will be used as spike source 2.
 
-Parameters:
+Parameters
+++++++++++
 
-\verbatim embed:rst
-==================== ========
-====================================================
+==================== ======== ==================================================
 Tstart               real     Time when to start counting events. This time
 should
                               be set to at least start + tau_max in order to
@@ -116,9 +118,7 @@ histogram_correction list of  read-only - Correction factors for kahan summation
                      integers algoritm
 n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
-==================== ========
-====================================================
-\endverbatim
+==================== ======== ==================================================
 
 Remarks:
 
@@ -146,33 +146,18 @@ See Auto- and crosscorrelation functions for spike
 trains[cross_check_mip_corrdet.py]
 in pynest/examples.
 
-     SLI
+Receives
+++++++++
 
-     /s1 /spike_generator Create def
-     /s2 /spike_generator Create def
-     s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-     s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-     /cd /correlation_detector Create def
-     cd << /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-     s1 cd << /receptor_type 0 >> Connect
-     s2 cd << /receptor_type 1 >> Connect
-     10 Simulate
-     cd [/n_events] get ==   --> [# 5 7 #]
-     cd [/histogram] get ==  --> [. 0 3 3 1 4 3 2 6 1 2 2 .]
-     cd << /reset true >> SetStatus
-     cd [/histogram] get ==  --> [. 0 0 0 0 0 0 0 0 0 0 0 .]
+SpikeEvent
 
-Receives: SpikeEvent
+See also
+++++++++
 
-Author: Moritz Helias
-        Jakob Jordan (implemented Kahan summation algorithm) 2013/02/18
+spike_detector
 
-FirstVersion: 2007/5/21
+EndUserDocs */
 
-SeeAlso: spike_detector, Device, PseudoRecordingDevice
-
-Availability: NEST
-*/
 class correlation_detector : public Node
 {
 

@@ -29,6 +29,7 @@ import webbrowser
 
 from ..ll_api import *
 from .hl_api_helper import *
+from .hl_api_types import to_json
 import nest
 
 __all__ = [
@@ -86,11 +87,6 @@ def helpdesk():
     Use the system default browser.
 
     """
-
-    if sys.version_info < (2, 7, 8):
-        print("The NEST helpdesk is only available with Python 2.7.8 or "
-              "later. \n")
-        return
 
     if 'NEST_DOC_DIR' not in os.environ:
         print(

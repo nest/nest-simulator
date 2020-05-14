@@ -38,10 +38,15 @@
 #include "dictutils.h"
 #include "name.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: device, recorder
+
+Short description
++++++++++++++++++
 
 Sampling continuous quantities from neurons
-###########################################
+
+Description
++++++++++++
 
 Most sampling use cases are covered by the ``multimeter``, which
 allows to record analog values from neurons. Models which have such
@@ -105,7 +110,7 @@ fail if carried out in the wrong direction, i.e., trying to connect the
    ``record_from`` property is already set to record the variable ``V_m``
    from the neurons it is connected to.
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {
@@ -256,6 +261,18 @@ nest::multimeter::calibrate_time( const TimeConverter& tc )
   P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
   P_.offset_ = tc.from_old_tics( P_.offset_.get_tics() );
 }
+
+
+//
+// Declaration of voltmeter subclass
+//
+
+class voltmeter : public multimeter
+{
+public:
+  voltmeter();
+  voltmeter( const voltmeter& );
+};
 
 } // namespace nest
 

@@ -29,7 +29,9 @@
 #include "drop_odd_spike_connection.h"
 #include "pif_psc_alpha.h"
 #include "step_pattern_builder.h"
+#ifdef HAVE_SFML_AUDIO
 #include "recording_backend_soundclick.h"
+#endif
 #include "recording_backend_socket.h"
 
 // Includes from nestkernel:

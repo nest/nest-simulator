@@ -58,6 +58,6 @@ CGConnect (SOURCES, TARGETS, CG, [PARAMETER_MAP, [MODEL]])
 
 Connect neurons from SOURCES to neurons from TARGETS using
 connectivity specified by the connection generator CG. SOURCES and
-TARGETS are either both lists containing 1 subnet, or lists of
-node IDs. PARAMETER_MAP is a dictionary mapping names of values such as
-weight and delay to value set positions. MODEL is the synapse model.
+TARGETS are both NodeCollections representing the node IDs. PARAMETER_MAP
+is a dictionary mapping names of values such as weight and delay to
+value set positions. MODEL is the synapse model.

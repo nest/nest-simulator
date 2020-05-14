@@ -98,6 +98,8 @@ receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [4]_.
 
+Conversion from PSC to PSP:
+
 The time course of the postsynaptic potential ``v`` is computed as
 :math:`v(t)=(i*h)(t)`
 with the exponential postsynaptic current

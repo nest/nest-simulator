@@ -20,10 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import array
+import importlib
 import inspect
 import io
-import numpy as np
-import os
 import sys
 
 import nest
@@ -45,6 +44,23 @@ app = Flask(__name__)
 CORS(app)
 
 
+def import_modules(modules):
+    blacklist_modules = [
+        'sys',
+        'os',
+    ]
+    locals = {
+        'list': list,
+        'nest': nest,
+        'print': print,
+        'set': set,
+    }
+    modules_approved = filter(lambda module: module[1] not in blacklist_modules, modules.items())
+    for (mvar, module) in list(modules_approved):
+        locals.update({mvar: importlib.import_module(module)})
+    return locals
+
+
 @app.route('/exec', methods=['GET', 'POST'])
 @cross_origin()
 def route_exec():
@@ -55,13 +71,7 @@ def route_exec():
         try:
             source = kwargs.get('source', '')
             globals = {'__builtins__': None}
-            locals = {
-              'list': list,
-              'nest': nest,
-              'np': np,
-              'print': print,
-              'set': set,
-            }
+            locals = import_modules(kwargs.get('modules', {}))
             exec(source, globals, locals)
             response = {}
             if 'return' in kwargs:

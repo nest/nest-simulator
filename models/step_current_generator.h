@@ -39,60 +39,54 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: step_current_generator - provides a piecewise constant DC input current
+Short description
++++++++++++++++++
 
-Description:
+provides a piecewise constant DC input current
+
+Description
++++++++++++
 
 The dc_generator provides a piecewise constant DC input to the
 connected node(s).  The amplitude of the current is changed at the
 specified times. The unit of the current is pA.
 
-Parameters:
-
-The following parameters can be set in the status dictionary:
-
-\verbatim embed:rst
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
-\endverbatim
-
-  If false, times will be rounded to the nearest step if they are
-  less than tic/2 from the step, otherwise NEST reports an error.
-  If true,  times are rounded to the nearest step if within tic/2
-  from the step, otherwise they are rounded up to the *end* of the
-  step.
-
-Note:
+If *allow_offgrid_spikes* is set false, times will be rounded to the
+nearest step if they are less than tic/2 from the step, otherwise NEST
+reports an error. If true, times are rounded to the nearest step if
+within tic/2 from the step, otherwise they are rounded up to the *end*
+of the step.
 
 Times of amplitude changes must be strictly increasing after conversion
 to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for current changes
 which typically would not fall onto simulation time steps.
 
-Examples:
+Parameters
+++++++++++
 
-The current can be altered in the following way:
+The following parameters can be set in the status dictionary:
 
-    /step_current_generator Create /sc Set
-    sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
 
-    The amplitude of the DC will be 0.0 pA in the time interval [0, 0.2),
-    2.0 pA in the interval [0.2, 0.5) and 4.0 from then on.
+Sends
++++++
 
-Sends: CurrentEvent
+CurrentEvent
 
-Author: Jochen Martin Eppler, Jens Kremkow
+See also
+++++++++
 
-SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
-StimulatingDevice
-*/
+ac_generator, dc_generator, step_current_generator
+
+EndUserDocs */
+
 class step_current_generator : public DeviceNode
 {
 

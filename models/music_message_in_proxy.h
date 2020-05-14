@@ -51,14 +51,15 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup music
+/* BeginUserDocs: device, MUSIC
 
-Name: music_message_in_proxy - A device which receives message strings from
-                              MUSIC.
+Short description
++++++++++++++++++
 
-Description:
+A device which receives message strings from MUSIC
+
+Description
++++++++++++
 
 A music_message_in_proxy can be used to receive message strings from
 remote MUSIC applications in NEST.
@@ -68,11 +69,15 @@ applications. The music_message_in_proxy represents an input port to
 which MUSIC can connect a message source. The music_message_in_proxy
 can queried using GetStatus to retrieve the messages.
 
-Parameters:
+To clear the data array, the parameter *n_messages* can be set to 0.
+
+This model is only available if NEST was compiled with MUSIC.
+
+Parameters
+++++++++++
 
 The following properties are available in the status dictionary:
 
-\verbatim embed:rst
 ============ ======= =========================================================
  port_name   string  The name of the MUSIC input port to listen to (default:
                      message_in)
@@ -85,27 +90,14 @@ The following properties are available in the status dictionary:
  published   boolean A bool indicating if the port has been already published
                      with MUSIC
 ============ ======= =========================================================
-\endverbatim
 
-The parameter port_name can be set using SetStatus. The field n_messages
-can be set to 0 to clear the data arrays.
+See also
+++++++++
 
-Examples:
+music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
 
-    /music_message_in_proxy Create /mmip Set
-    10 Simulate
-    mmip GetStatus /data get /messages get 0 get /command Set
-    (Executing command ') command join ('.) join =
-    command cvx exec
+EndUserDocs */
 
-Author: Jochen Martin Eppler
-
-FirstVersion: July 2010
-
-Availability: Only when compiled with MUSIC
-
-SeeAlso: music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
-*/
 class MsgHandler : public MUSIC::MessageHandler
 {
   ArrayDatum messages;                 //!< The buffer for incoming message

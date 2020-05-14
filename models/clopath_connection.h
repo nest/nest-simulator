@@ -40,17 +40,18 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
-@ingroup clopath_s
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
 
-Name: clopath_synapse - Synapse type for voltage-based STDP after Clopath.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for voltage-based STDP after Clopath
+
+Description
++++++++++++
 
 clopath_synapse is a connector to create Clopath synapses as defined
-in [1]. In contrast to usual STDP, the change of the synaptic weight does
+in [1]_. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 
@@ -59,25 +60,27 @@ synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are aeif_psc_delta_clopath and
 hh_psc_alpha_clopath.
 
-Parameters:
+Parameters
+++++++++++
 
-\verbatim embed:rst
 =======  ======  ==========================================================
 tau_x    ms      Time constant of the trace of the presynaptic spike train
 Wmax     real    Maximum allowed weight
 Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
-\endverbatim
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
 depression (LTD) are stored in in the neuron models that are compatible with the
 Clopath synapse.
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Clopath et al. (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
        Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
@@ -86,11 +89,14 @@ References:
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566
-\endverbatim
-Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
-SeeAlso: stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
-*/
+See also
+++++++++
+
+stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
+
+EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >

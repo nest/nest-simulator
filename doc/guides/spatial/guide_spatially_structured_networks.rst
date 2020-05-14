@@ -1523,7 +1523,7 @@ Manual. The basic steps required to get started are:
 
       cmake -Dwith-nest=${NEST_INSTALL_PREFIX}/bin/nest-config ../mm_src
 
-4. MyModule will be installed below ``${NEST_INSTALL_PREFIX}``. This
+4. MyModule will be installed under ``${NEST_INSTALL_PREFIX}``. This
    ensures that NEST will be able to find the module and initializing SLI
    files for the module. You should not use the ``-DCMAKE_INSTALL_PREFIX``
    to select a different installation destination. If you do, you must make

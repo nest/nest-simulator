@@ -110,10 +110,10 @@ and
 The ``PSP`` is considered as the maximum of ``v``, i.e., it is
 computed by setting the derivative of ``v(t)`` to zero.
 The expression for the time point at which ``v`` reaches its maximum
-can be found in Eq. 5 of [1]_.
+can be found in Eq. 5 of [5]_.
 
 The amplitude of the postsynaptic current ``J`` corresponds to the
-synaptic weight ``PSC`` [5]_.
+synaptic weight ``PSC``.
 
 Parameters
 ++++++++++

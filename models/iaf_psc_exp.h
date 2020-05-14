@@ -99,7 +99,7 @@ kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [4]_.
 
 The time course of the postsynaptic potential ``v`` is computed as
-:math: `v(t)=(i*h)(t)`
+:math:`v(t)=(i*h)(t)`
 with the exponential postsynaptic current
 :math:`i(t)=J\mathrm{e}^{-t/\tau_\mathrm{syn}}\Theta (t)`,
 the voltage impulse response

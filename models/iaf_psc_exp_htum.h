@@ -35,20 +35,21 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
+/* BeginUserDocs: neuron, integrate-and-fire
 
-Name: iaf_psc_exp_htum - Leaky integrate-and-fire neuron model with exponential
-                         PSCs.
+Short description
++++++++++++++++++
 
-Description:
+Leaky integrate-and-fire neuron model with exponential PSCs
+
+Description
++++++++++++
 
 iaf_psc_exp_htum is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1], and first
-described in [2]. The postsynaptic currents have an infinitely short rise time.
+with exponential shaped postsynaptic currents (PSCs) according to [1]_.
+The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
-refractory time separately, as required by [1].
+refractory time separately, as required by [1]_.
 
 The threshold crossing is followed by an absolute refractory period
 (t_ref_abs) during which the membrane potential is clamped to the resting
@@ -59,7 +60,7 @@ larger or equal to the absolute refractory time. If equal, the
 refractoriness of the model if equivalent to the other models of NEST.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [3]. The neuron dynamics is solved on the time
+Integration scheme [2]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -68,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[3]. A flow chart can be found in [4].
+[2]_. A flow chart can be found in [3].
 
 Remarks:
 
@@ -85,11 +86,17 @@ optimization levels. A future version of iaf_psc_exp_htum will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+will numerically behave as if tau_m is equal to tau_syn_ex or
+tau_syn_in, respectively, to avoid numerical instabilities.
+For details, please see IAF_neurons_singularity.ipynb in
+the NEST source code (docs/model_details).
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 ===========  ====== ========================================================
  E_L          mV     Resting membrane potenial
  C_m          pF     Capacity of the membrane
@@ -104,19 +111,10 @@ The following parameters can be set in the status dictionary.
  I_e          pA     Constant input current
  t_spike      ms     Point in time of last spike
 ===========  ====== ========================================================
-\endverbatim
 
-Remarks:
+References
+++++++++++
 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in
-the NEST source code (docs/model_details).
-
-References:
-
-\verbatim embed:rst
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. The Journal of Neuroscience,
        20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
@@ -131,16 +129,19 @@ References:
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-FirstVersion: March 2006
+Receives
+++++++++
 
-Author: Moritz Helias
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+EndUserDocs */
+
 class iaf_psc_exp_htum : public Archiving_Node
 {
 

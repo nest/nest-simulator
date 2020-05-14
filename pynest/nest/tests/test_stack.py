@@ -58,7 +58,8 @@ class StackTestCase(unittest.TestCase):
 
         try:
             self.assertRaises(nest.kernel.NESTError, check_leave_on_stack)
-        except:  # Ensure that debug is reset if we get an error.
+        except:  # noqa
+            # Ensure that debug is reset if we get an error.
             nest.ll_api.set_debug(debug)
             raise
         nest.ll_api.set_debug(debug)

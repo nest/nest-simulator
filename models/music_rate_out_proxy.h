@@ -41,12 +41,16 @@
 #include "nest_types.h"
 #include "node.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: device, rate, MUSIC
 
-Name: music_rate_out_proxy - Device to forward rates to remote applications
-                              using MUSIC.
+Short description
++++++++++++++++++
 
-Description:
+Device to forward rates to remote applications using MUSIC
+
+Description
++++++++++++
+
 A music_rate_out_proxy is used to send rates to a remote application that
 also uses MUSIC.
 
@@ -56,7 +60,9 @@ events is determined during connection setup by using the parameter
 music_channel of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
-Parameters:
+Parameters
+++++++++++
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC output_port to forward events to
@@ -67,17 +73,21 @@ published      - A bool indicating if the port has been already published
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
+Examples
+++++++++
+
 /iaf_psc_alpha Create /n Set
 /music_rate_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect
 
-Author: Philipp Weidel, Jakob Jordan
-FirstVersion: June 2019
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_rate_in_proxy, music_cont_out_proxy
-*/
+See also
+++++++++
+
+music_rate_in_proxy, music_cont_out_proxy
+
+EndUserDocs */
 
 namespace nest
 {

@@ -39,17 +39,22 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: gauss_rate - rate model with Gaussian gain function
+Short description
++++++++++++++++++
 
-Description:
+Rate neuron model with Gaussian gain function
+
+Description
++++++++++++
 
 gauss_rate is an implementation of a nonlinear rate model with input
-function
-@f[ input(h) = g * \exp( -( h - \mu )^2 / ( 2 * \sigma^2 ) ) @f].
+
+.. math::
+
+   input(h) = g * \exp( -( x - \mu )^2 / ( 2 * \sigma^2 ) )
+
 It either models a rate neuron with input noise (see rate_neuron_ipn)
 or a rate transformer (see rate_transformer_node).
 Input transformation can either be applied to individual inputs
@@ -63,14 +68,13 @@ Nonlinear rate neurons can be created by typing
 nest.Create('gauss_rate_ipn'). Nonlinear rate transformers can be
 created by typing nest.Create('rate_transformer_gauss').
 
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 
-\verbatim embed:rst
 =================  ======= ==============================================
  rate              real    Rate (unitless)
  tau               ms      Time constant of rate dynamics
@@ -82,7 +86,6 @@ transformers.
  linear_summation  boolean Specifies type of non-linearity (see above)
  rectify_output    boolean Switch to restrict rate to values >= 0
 =================  ======= ==============================================
-\endverbatim
 
 Note:
 
@@ -92,9 +95,9 @@ then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
        M. (2017). Integration of continuous-time dynamics in a spiking neural
        network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -104,17 +107,25 @@ References:
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Sends
++++++
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
+See also
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+rate_connection_instantaneous, rate_connection_delayed
+
+EndUserDocs */
+
 class nonlinearities_gauss_rate
 {
 private:

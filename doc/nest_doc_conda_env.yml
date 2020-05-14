@@ -49,3 +49,4 @@ dependencies:
   - pip:
     - pynest
     - sphinx-tabs
+    - tqdm

@@ -37,38 +37,47 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: threshold_lin_rate - rate model with threshold-linear gain function
+Short description
++++++++++++++++++
 
-Description:
+Rate model with threshold-linear gain function
 
-threshold_lin_rate is an implementation of a nonlinear rate model with input
-function \f$ input(h) = min( max( g * ( h - \theta ), 0 ), \alpha ) \f$.
-It either models a rate neuron with input noise (see rate_neuron_ipn),
-a rate neuron with output noise (see rate_neuron_opn) or a rate
-transformer (see rate_transformer_node). Input transformation can
-either be applied to individual inputs or to the sum of all inputs.
+Description
++++++++++++
 
-The model supports connections to other rate models with either zero or
-non-zero delay, and uses the secondary_event concept introduced with
-the gap-junction framework.
+threshold_lin_rate is an implementation of a nonlinear rate model with
+input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+\alpha )`.  It either models a rate neuron with input noise (see
+rate_neuron_ipn), a rate neuron with output noise (see
+rate_neuron_opn) or a rate transformer (see
+rate_transformer_node). Input transformation can either be applied to
+individual inputs or to the sum of all inputs.
 
-Nonlinear rate neurons can be created by typing
-nest.Create('threshold_lin_rate_ipn') or
-nest.Create('threshold_lin_rate_opn') for input noise or output noise,
-respectively. Nonlinear rate transformers can be created by typing
-nest.Create('rate_transformer_threshold_lin').
+The model supports connections to other rate models with either zero
+or non-zero delay, and uses the secondary_event concept introduced
+with the gap-junction framework.
 
-Parameters:
+The boolean parameter linear_summation determines whether the input
+from different presynaptic neurons is first summed linearly and then
+transformed by a nonlinearity (true), or if the input from individual
+presynaptic neurons is first nonlinearly transformed and then summed
+up (false). Default is true.
+
+Nonlinear rate neuron instances can be obtained by creating models of
+type ``threshold_lin_rate_ipn`` for input noise or of type
+``threshold_lin_rate_opn`` output noise. Nonlinear rate transformers
+can be obtained by creating models of type
+``rate_transformer_threshold_lin``.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 
-\verbatim embed:rst
 ==================  ======= ==============================================
  rate               real    Rate (unitless)
  tau                ms      Time constant of rate dynamics
@@ -80,18 +89,10 @@ transformers.
  linear_summation   boolean Specifies type of non-linearity (see above)
  rectify_output     boolean Switch to restrict rate to values >= 0
 ==================  ======= ==============================================
-\endverbatim
 
-Note:
-The boolean parameter linear_summation determines whether the
-input from different presynaptic neurons is first summed linearly and
-then transformed by a nonlinearity (true), or if the input from
-individual presynaptic neurons is first nonlinearly transformed and
-then summed up (false). Default is true.
+References
+++++++++++
 
-References:
-
-\verbatim embed:rst
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -100,16 +101,24 @@ References:
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Sends
++++++
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+See also
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
+
+EndUserDocs */
 
 class nonlinearities_threshold_lin_rate
 {

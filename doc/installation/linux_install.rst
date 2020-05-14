@@ -47,19 +47,17 @@ The following are the basic steps to compile and install NEST from source code:
 
 * Configure NEST.
 
-  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`
+  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`.
 
 .. code-block:: sh
 
    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
 
-.. note::
-    If you want to use Python 3, add the configuration option
-    ``cmake -Dwith-python=3 -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>``
-
 .. note::  ``/install/path`` should be an absolute path
 
+.. note::
 
+   Python bindings are enabled by default. Add the configuration option ``-Dwith-python=OFF`` to disable them.
 
 * Compile and install NEST:
 
@@ -111,7 +109,7 @@ What gets installed where
 By default, everything will be installed to the subdirectories ``/install/path/{bin,lib,share}``, where ``/install/path`` is the install path given to ``cmake``:
 
 - Executables ``/install/path/bin``
-- Dynamic libraries ``/install/path/lib/``
+- Dynamic libraries ``/install/path/lib/nest``
 - SLI libraries ``/install/path/share/nest/sli``
 - Documentation ``/install/path/share/doc/nest``
 - Examples ``/install/path/share/doc/nest/examples``

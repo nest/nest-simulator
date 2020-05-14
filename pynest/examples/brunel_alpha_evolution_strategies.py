@@ -75,7 +75,6 @@ Authors
 Jakob Jordan
 """
 
-from __future__ import print_function
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np

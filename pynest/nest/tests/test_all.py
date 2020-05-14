@@ -22,8 +22,6 @@
 import unittest
 import nest
 
-from . import compatibility
-
 from . import test_aeif_lsodar
 from . import test_connect_all_patterns
 from . import test_connect_all_to_all

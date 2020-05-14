@@ -56,6 +56,8 @@ This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
 "receptor_type" in the connectors.
 
+For converting from PSC to PSP, please refer to the :doc:`iaf_psc_exp <iaf_psc_exp>` documentation.
+
 Sends
 +++++
 

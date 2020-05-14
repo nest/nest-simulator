@@ -113,7 +113,7 @@ The time course of the postsynaptic potential ``v`` is computed as
     can be found in Eq. 5 of [1]_.
 
     The amplitude of the postsynaptic current ``J`` corresponds to the
-    synaptic weight ``PSC``.
+    synaptic weight ``PSC`` [5]_.
 
 Parameters
 ++++++++++
@@ -151,6 +151,11 @@ References
 .. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
        metastable state driven by colored noise. Physical Review E 92:052119
        DOI: https://doi.org/10.1103/PhysRevE.92.052119
+.. [5] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010)
+       A general and efficient method for incorporating precise spike times
+       in globally time-driven simulations.
+       Front. Neuroinform. 4:113.
+       DOI: https://doi.org/10.3389/fninf.2010.00113
 
 Sends
 +++++

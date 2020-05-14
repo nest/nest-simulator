@@ -60,6 +60,7 @@ CPackSourceConfig.cmake
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
+doc/userdocs/
 doc/pynestkernel_mock.py
 doc/userdocs
 lib/sli/rcsinfo.sli

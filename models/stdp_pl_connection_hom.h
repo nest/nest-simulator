@@ -32,22 +32,22 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_pl_synapse_hom - Synapse type for spike-timing dependent
-plasticity with power law implementation using homogeneous parameters, i.e.
-all synapses have the same parameters.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity with power law
+
+Description
++++++++++++
 
 stdp_pl_synapse is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]).
+dependent plasticity using homoegeneous parameters (as defined in [1]_).
 
+Parameters
+++++++++++
 
-Parameters:
-\verbatim embed:rst
 =========  ======  ====================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -56,29 +56,31 @@ Parameters:
                    alpha*lambda)
  mu        real    Weight dependence exponent, potentiation
 =========  ======  ====================================================
-\endverbatim
 
 Remarks:
 
 The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
        plasticity in balanced random netrks. Neural Computation,
        19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-FirstVersion: May 2007
+SpikeEvent
 
-Author: Abigail Morrison
+See also
+++++++++
 
-SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
-*/
+stdp_synapse, tsodyks_synapse, static_synapse
+
+EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.

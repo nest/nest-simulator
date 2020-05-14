@@ -444,10 +444,6 @@ def show_help_with_pager(hlpobj, pager=None):
         pager to use, False if you want to display help using print().
     """
 
-    if sys.version_info < (2, 7, 8):
-        print("NEST help is only available with Python 2.7.8 or later.\n")
-        return
-
     if 'NEST_INSTALL_DIR' not in os.environ:
         print(
             'NEST help needs to know where NEST is installed.'

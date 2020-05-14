@@ -38,13 +38,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
+/* BeginUserDocs: device, detector
 
-Name: spin_detector - Device for detecting binary states in neurons.
+Short description
++++++++++++++++++
 
-Description:
+Device for detecting binary states in neurons
+
+Description
++++++++++++
 
 The spin_detector is a recording device. It is used to decode and
 record binary states from spiking activity from a single neuron, or
@@ -75,10 +77,12 @@ be recorded, are recorded.
 
 states are not necessarily written to file in chronological order.
 
-Receives: SpikeEvent
+Receives
+++++++++
 
-SeeAlso: spike_detector, Device, RecordingDevice
-*/
+SpikeEvent
+
+EndUserDocs */
 
 /**
  * Spin detector class.
@@ -88,7 +92,6 @@ SeeAlso: spike_detector, Device, RecordingDevice
  * stores them via its RecordingDevice.
  *
  */
-
 class spin_detector : public RecordingDevice
 {
 

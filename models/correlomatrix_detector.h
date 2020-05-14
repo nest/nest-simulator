@@ -38,14 +38,16 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup detector
 
-Name: correlomatrix_detector - Device for measuring the covariance matrix
-from several inputs
+/* BeginUserDocs: device, detector
 
-Description:
+Short description
++++++++++++++++++
+
+Device for measuring the covariance matrix from several inputs
+
+Description
++++++++++++
 
 The correlomatrix_detector is a recording device. It is used to
 record spikes from several pools of spike inputs and calculates the
@@ -53,7 +55,7 @@ covariance matrix of inter-spike intervals (raw auto and cross correlation)
 binned to bins of duration delta_tau. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
 the covariance matrix
-  \f$  C(t) = C^T(-t) \f$.
+ :math:` C(t) = C^T(-t)`.
 The result can be obtained via GetStatus under the key /count_covariance.
 In parallel it records a weighted histogram, where the connection weight are
 used to weight every count, which is available under the key /covariance.
@@ -77,9 +79,29 @@ The correlomatrix_detector has a variable number of inputs which can be set
 via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
-Parameters:
+Remarks:
 
-\verbatim embed:rst
+This recorder does not record to file, screen or memory in the usual
+sense.
+
+@note Correlomatrix detectors IGNORE any connection delays.
+
+@note Correlomatrix detector breaks with the persistence scheme as
+ follows: the internal buffers for storing spikes are part
+ of State_, but are initialized by init_buffers_().
+
+ @todo The correlation detector could be made more efficient as follows
+ (HEP 2008-07-01):
+ - incoming_ is vector of two deques
+ - let handle() push_back() entries in incoming_ and do nothing else
+ - keep index to last "old spike" in each incoming_; cannot
+   be iterator since that may change
+ - update() deletes all entries before now-tau_max, sorts the new
+   entries, then registers new entries in histogram
+
+Parameters
+++++++++++
+
 ================ ========= ====================================================
 Tstart           real      Time when to start counting events. This time should
                            be set to at least start + tau_max in order to avoid
@@ -109,56 +131,19 @@ count_covariance 3D        matrix of read-only -raw, auto/cross correlation
 n_events         list of   number of events from all sources
                  integers
 ================ ========= ====================================================
-\endverbatim
 
-Remarks:
-This recorder does not record to file, screen or memory in the usual
-sense.
+Receives
+++++++++
 
-@note Correlomatrix detectors IGNORE any connection delays.
+SpikeEvent
 
-@note Correlomatrix detector breaks with the persistence scheme as
- follows: the internal buffers for storing spikes are part
- of State_, but are initialized by init_buffers_().
+See also
+++++++++
 
- @todo The correlation detector could be made more efficient as follows
- (HEP 2008-07-01):
- - incoming_ is vector of two deques
- - let handle() push_back() entries in incoming_ and do nothing else
- - keep index to last "old spike" in each incoming_; cannot
-   be iterator since that may change
- - update() deletes all entries before now-tau_max, sorts the new
-   entries, then registers new entries in histogram
+correlation_detector, spike_detector
 
-Example:
+EndUserDocs */
 
-    /s1 /spike_generator Create def
-    /s2 /spike_generator Create def
-    s1 << /spike_times [ 1.0 1.5 2.7 4.0 5.1 ] >> SetStatus
-    s2 << /spike_times [ 0.9 1.8 2.1 2.3 3.5 3.8 4.9 ] >> SetStatus
-    /cm /correlomatrix_detector Create def
-    cm << /N_channels 2 /delta_tau 0.5 /tau_max 2.5 >> SetStatus
-    s1 cm << /receptor_type 0 >> Connect
-    s2 cm << /receptor_type 1 >> Connect
-    10 Simulate
-    cm [/n_events] get ==   --> [# 5 7 #]
-    cm [/count_covariance] get ==  --> [[<# 5 1 2 2 0 2 #> <# 3 4 1 3 3 0 #>]
-                                        [<# 3 2 6 1 2 2 #> <# 9 3 4 6 1 2 #>]]
-    cm << /N_channels 2 >> SetStatus
-    cm [/count_covariance] get ==  --> [[<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]
-                                        [<# 0 0 0 0 0 0 #> <# 0 0 0 0 0 0 #>]]
-
-Receives: SpikeEvent
-
-Author: Dmytro Grytskyy
-       Jakob Jordan
-
-FirstVersion: 2013/02/27
-
-SeeAlso: correlation_detector, spike_detector, Device, PseudoRecordingDevice
-
-Availability: NEST
-*/
 class correlomatrix_detector : public Node
 {
 

@@ -33,30 +33,30 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_facetshw_synapse_hom - Synapse type for spike-timing dependent
-                                  plasticity using homogeneous parameters,
-                                  i.e. all synapses have the same parameters.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity using homogenous parameters
+
+Description
++++++++++++
 
 stdp_facetshw_synapse is a connector to create synapses with spike-timing
-dependent plasticity (as defined in [1]).
+dependent plasticity (as defined in [1]_).
 This connector is a modified version of stdp_synapse.
 It includes constraints of the hardware developed in the FACETS (BrainScaleS)
 project [2,3], as e.g. 4-bit weight resolution, sequential updates of groups
 of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
-details see [3].
+details see [3]_.
 The modified spike pairing scheme requires the calculation of tau_minus_
 within this synapse and not at the neuron site via Kplus_ like in
 stdp_connection_hom.
 
-Parameters:
+Parameters
+++++++++++
 
-\verbatim embed:rst
 ======================= =========== ===========================================
 **Common properties**
 -------------------------------------------------------------------------------
@@ -79,9 +79,9 @@ Parameters:
                         integers
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
-                                    function eval_function_ and [4]
-                                    (configbit[0]=e_cc, ..[1]=e_ca,
-                                    ..[2]=e_ac, ..[3]=e_aa).
+                                    function eval_function_ and [4]_
+                                    (configbit[0]=e_cc, ..[1]_=e_ca,
+                                    ..[2]_=e_ac, ..[3]=e_aa).
                                     Depending on these two sets of
                                     configuration bits weights are updated
                                     according LUTs (out of three: (1,0),
@@ -96,7 +96,6 @@ Parameters:
                                     always reset) is allowed.
 ======================= =========== ===========================================
 
-
 ============  ======= =====================================================
 **Individual properties**
 ---------------------------------------------------------------------------
@@ -109,7 +108,6 @@ Parameters:
  synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
-\endverbatim
 
 Remarks:
 
@@ -122,11 +120,14 @@ first presynaptic activity at a synapse.
 
 Common properties can only be set on the synapse model using SetDefaults.
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
        synaptic plasticity based on spike-timing. Biological Cybernetics,
        98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
@@ -140,16 +141,17 @@ References:
        neuromorphic hardware. Frontiers in Neuroscience 6(90).
        DOI: https://doi.org/10.3389/fnins.2012.00090
 .. [4] Friedmann, S. in preparation
-\endverbatim
 
-FirstVersion: July 2011
+See also
+++++++++
 
-Author: Thomas Pfeil (TP), Moritz Helias, Abigail Morrison
+stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
 
-SeeAlso: stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
-*/
+EndUserDocs */
+
 // template class forward declaration required by common properties friend
 // definition
+
 template < typename targetidentifierT >
 class STDPFACETSHWConnectionHom;
 

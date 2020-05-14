@@ -195,6 +195,23 @@ public:
   static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
+   * Create a NodeCollection from a single node ID. Results in a primitive.
+   *
+   * @param node_id Node ID from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const index node_id );
+
+  /**
+   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   *
+   * @param node_ids Array of node IDs from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const std::vector< index >& node_ids );
+
+  /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
    * kernel.
    *
@@ -324,7 +341,7 @@ public:
   virtual long find( const index ) const = 0;
 
 private:
-  unsigned long fingerprint_; //!< Unique identity of the kernel that created the //!< NodeCollection
+  unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
   static NodeCollectionPTR create_( const std::vector< index >& );
 };

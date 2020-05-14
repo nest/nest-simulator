@@ -53,13 +53,13 @@ class NESTClientAPI(object):
         return method
 
 
-def filter_modules(lines):
+def modules(lines):
     import_lines = filter(lambda line: line.startswith('import'), lines)
-    modules = {}
+    modules_dict = {}
     for import_line in import_lines:
         import_list = import_line[:-1].split(' ')
-        modules[import_list[-1]] = import_list[1]
-        return modules
+        modules_dict[import_list[-1]] = import_list[1]
+        return modules_dict
 
 
 def clean_code(lines):
@@ -78,7 +78,7 @@ class NESTClientExec(object):
         params = {
             'source': clean_code(lines),
             'return': return_vars,
-            'modules': filter_modules(lines)
+            'modules': modules(lines)
         }
         print('Execute script code of {}'.format(filename))
         print('Modules:', params['modules'])

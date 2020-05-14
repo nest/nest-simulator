@@ -61,6 +61,7 @@ jobs:
       env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
     - stage: Python-Full-build-Clang7-OsX
       language: cpp
+      python: 3.6.10
       env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
     - stage: Python-Full-build-Clang7-OsX
       os: osx
@@ -161,16 +162,14 @@ before_install:
            brew leaves
            brew cask list
          fi
-         if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-           pip install --upgrade pip setuptools
-         fi
+         pip install --upgrade pip setuptools
 
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
          # the build summary.
-         pip install cython scipy matplotlib terminaltables nose junitparser
-         pip install numpy==1.16.5
+         pip install --user cython scipy matplotlib terminaltables nose junitparser
+         pip install --user numpy==1.16.5
      fi
 
 install:
@@ -182,7 +181,9 @@ install:
          python --version
          which pip
          pip list
-         if [ "$TRAVIS_OS_NAME" = "linux" ]; then which nosetests; nosetests --version; nosetests --plugins; fi
+         which nosetests
+         nosetests --version
+         nosetests --plugins
          which cmake
          cmake --version
          echo ${CC}

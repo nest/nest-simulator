@@ -61,6 +61,7 @@ doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
 doc/pynestkernel_mock.py
+doc/userdocs
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 

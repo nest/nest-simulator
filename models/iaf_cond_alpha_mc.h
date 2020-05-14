@@ -61,16 +61,16 @@ namespace nest
 extern "C" int iaf_cond_alpha_mc_dynamics( double, const double*, double*, void* );
 
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+
+Short description
++++++++++++++++++
+
+Multi-compartment conductance-based leaky integrate-and-fire neuron model
 
 
-Name: iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky
-                          integrate-and-fire neuron model.
-
-Description:
+Description
++++++++++++
 
 THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET
 FULLY TESTED. USE AT YOUR OWN PERIL!
@@ -83,17 +83,19 @@ NEST.
 The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
 passive conductances as follows
-@f[
-C_{m.s} d/dt V_{m.s} = \ldots - g_{sp} ( V_{m.s} - V_{m.p} ) \\
 
-C_{m.p} d/dt V_{m.p} = \ldots - g_{sp} ( V_{m.p} - V_{m.s} )
-    - g_{pd} ( V_{m.p} - V_{m.d} ) \\
+.. math::
 
-C_{m.d} d/dt V_{m.d} = \ldots \qquad - g_{pd} ( V_{m.d} - V_{m.p} )
-@f]
+ C_{m.s} d/dt V_{m.s} = \ldots - g_{sp} ( V_{m.s} - V_{m.p} ) \\
+
+ C_{m.p} d/dt V_{m.p} = \ldots - g_{sp} ( V_{m.p} - V_{m.s} )
+     - g_{pd} ( V_{m.p} - V_{m.d} ) \\
+
+ C_{m.d} d/dt V_{m.d} = \ldots \qquad - g_{pd} ( V_{m.d} - V_{m.p} )
+
 A spike is fired when the somatic membrane potential exceeds threshold,
-\f$ V_{m.s} >= V_{th} \f$. After a spike, somatic membrane potential is
-clamped to a reset potential, \f$ V_{m.s} == V_{reset} \f$, for the refractory
+:math:`V_{m.s} >= V_{th}`. After a spike, somatic membrane potential is
+clamped to a reset potential, :math:` V_{m.s} == V_{reset}`, for the refractory
 period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
@@ -108,15 +110,13 @@ the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment iaf_cond_alpha model, all
 synaptic weights must be positive numbers!
 
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma", "proximal", and "distal", respectively. In the list below,
 these parameters are marked with an asterisk.
-
-\verbatim embed:rst
 
 ============ ======= ==========================================================
  V_m*        mV      Membrane potential
@@ -134,27 +134,21 @@ these parameters are marked with an asterisk.
  V_th        mV      Spike threshold in mV
  V_reset     mV      Reset potential of the membrane
 ============ ======= ==========================================================
-\endverbatim
 
-Example:
-See pynest/examples/mc_neuron.py.
+Sends
++++++
 
-Remarks:
+SpikeEvent
 
-This is a prototype for illustration which has undergone only limited
-testing. Details of the implementation and user-interface will likely
-change. USE AT YOUR OWN PERIL!
+Receives
+++++++++
 
-@note All parameters that occur for both compartments
-and dendrite are stored as C arrays, with index 0 being soma.
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Sends: SpikeEvent
+References
+++++++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References:
-
-\verbatim embed:rst
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
@@ -165,13 +159,15 @@ References:
        cells.  Proceedings of the National Academy of Science USA,
        88(24):11569-11573.
        DOI: https://doi.org/10.1073/pnas.88.24.11569
-\endverbatim
 
-Author: Plesser
 
-SeeAlso: iaf_cond_alpha
+See also
+++++++++
 
-*/
+iaf_cond_alpha
+
+EndUserDocs */
+
 class iaf_cond_alpha_mc : public Archiving_Node
 {
 
@@ -579,6 +575,6 @@ iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-
 #endif // HAVE_GSL
+
 #endif // IAF_COND_ALPHA_MC_H

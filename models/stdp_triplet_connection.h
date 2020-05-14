@@ -30,81 +30,81 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
-                             plasticity (triplets).
+Short description
++++++++++++++++++
 
-Description:
+Synapse type with spike-timing dependent plasticity (triplets)
+
+Description
++++++++++++
 
 stdp_triplet_synapse is a connection with spike time dependent
-plasticity accounting for spike triplet effects (as defined in [1]).
+plasticity accounting for spike triplet effects (as defined in [1]_).
 
-STDP examples:
-    pair-based   Aplus_triplet = Aminus_triplet = 0.0
-    triplet      Aplus_triplet = Aminus_triplet = 1.0
+Notes:
+- Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
+  Kplus and Kplus_triplet and decay with time-constants tau_plus and
+  tau_plus_triplet, respectively.
+- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the post-synaptic
+  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
+  tau_minus and tau_minus_triplet, respectively. These two time-constants
+  can be set as properties of the postsynaptic neuron.
+- This version implements the 'all-to-all' spike interaction of [1]_. The
+  'nearest-spike' interaction of [1]_ can currently not be implemented
+  without changing the postsynaptic archiving-node (clip the traces to a
+  maximum of 1).
 
-Parameters:
-\verbatim embed:rst
+Parameters
+++++++++++
+
 =================  ======  ===========================================
  tau_plus          real    Time constant of short presynaptic trace
-                           (tau_plus of [1])
+                           (tau_plus of [1]_)
  tau_plus_triplet  real    Time constant of long presynaptic trace
-                           (tau_x of [1])
+                           (tau_x of [1]_)
  Aplus             real    Weight of pair potentiation rule
-                           (A_plus_2 of [1])
+                           (A_plus_2 of [1]_)
  Aplus_triplet     real    Weight of triplet potentiation rule
-                           (A_plus_3 of [1])
+                           (A_plus_3 of [1]_)
  Aminus            real    Weight of pair depression rule
-                           (A_minus_2 of [1])
+                           (A_minus_2 of [1]_)
  Aminus_triplet    real    Weight of triplet depression rule
-                           (A_minus_3 of [1])
+                           (A_minus_3 of [1]_)
  Wmax              real    Maximum allowed weight
 =================  ======  ===========================================
 
 =============== ======  ===========================================
 **States**
 -------------------------------------------------------------------
- Kplus          real    Pre-synaptic trace (r_1 of [1])
- Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1])
+ Kplus          real    Pre-synaptic trace (r_1 of [1]_)
+ Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1]_)
 =============== ======  ===========================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
        of spike timing-dependent plasticity.  The Journal of Neuroscience
        26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
-\endverbatim
 
-Notes:
-- Presynaptic traces r_1 and r_2 of [1] are stored in the connection as
-  Kplus and Kplus_triplet and decay with time-constants tau_plus and
-  tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1] are acquired from the post-synaptic
-  neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-  tau_minus and tau_minus_triplet, respectively. These two time-constants
-  can be set as properties of the postsynaptic neuron.
-- This version implements the 'all-to-all' spike interaction of [1]. The
-  'nearest-spike' interaction of [1] can currently not be implemented
-  without changing the postsynaptic archiving-node (clip the traces to a
-  maximum of 1).
+See also
+++++++++
 
-FirstVersion: Nov 2007
+stdp_triplet_synapse_hpc, stdp_synapse, static_synapse
 
-Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
-Adapted by: Philipp Weidel
+EndUserDocs */
 
-SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
-*/
 // connections are templates of target identifier type
 // (used for pointer / target index addressing)
 // derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPTripletConnection : public Connection< targetidentifierT >
 {
@@ -287,7 +287,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   t_lastspike_ = t_spike;
 }
 
-// Defaults come from reference [1] data fitting and table 3.
+// Defaults come from reference [1]_ data fitting and table 3.
 template < typename targetidentifierT >
 STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   : ConnectionBase()

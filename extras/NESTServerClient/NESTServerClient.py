@@ -53,6 +53,19 @@ class NESTClientAPI(object):
         return method
 
 
+def filter_modules(lines):
+    import_lines = filter(lambda line: line.startswith('import'), lines)
+    modules = {}
+    for import_line in import_lines:
+        import_list = import_line[:-1].split(' ')
+        modules[import_list[-1]] = import_list[1]
+        return modules
+
+
+def clean_code(lines):
+    return ''.join(filter(lambda line: not line.startswith('import'), lines))
+
+
 class NESTClientExec(object):
 
     def __init__(self, host='localhost', port=5000):
@@ -62,14 +75,16 @@ class NESTClientExec(object):
     def from_file(self, filename, return_vars=None):
         with open(filename, 'r') as f:
             lines = f.readlines()
-        params = {'source': ''.join(lines), 'return': return_vars}
+        params = {
+            'source': clean_code(lines),
+            'return': return_vars,
+            'modules': filter_modules(lines)
+        }
         print('Execute script code of {}'.format(filename))
+        print('Modules:', params['modules'])
         print('Return variables: {}'.format(return_vars))
         print(20*'-')
         print(params['source'])
         print(20*'-')
-        return self.exec(params)
-
-    def exec(self, params={'source': ''}):
         response = requests.post(self.url, json=params, headers=self.headers)
         return encode(response)

@@ -159,9 +159,6 @@ before_install:
            brew unlink gcc
            brew install gcc@8
            brew link gcc@8
-           # brew list
-           # brew leaves
-           # brew cask list
          fi
 
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then

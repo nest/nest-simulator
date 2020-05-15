@@ -100,7 +100,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         nrn_model = 'pp_cond_exp_mc_urbanczik'
         nrn_params = {
             't_ref': 3.0,        # refractory period
-            'g_sp': 600.0,       # somato-proximal coupling conductance
+            'g_sp': 600.0,       # somato-dendritic coupling conductance
             'soma': {
                 'V_m': -70.0,    # initial value of V_m
                 'C_m': 300.0,    # capacitance of membrane
@@ -111,7 +111,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
                 'tau_syn_ex': 3.0,  # time constant of exc conductance
                 'tau_syn_in': 3.0,  # time constant of inh conductance
             },
-            'proximal': {
+            'dendritic': {
                 'V_m': -70.0,    # initial value of V_m
                 'C_m': 300.0,    # capacitance of membrane
                 'E_L': -70.0,    # resting potential
@@ -133,11 +133,11 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         init_w = 100.0
         syn_params = {
             'synapse_model': 'urbanczik_synapse_wr',
-            'receptor_type': syns['proximal_exc'],
+            'receptor_type': syns['dendritic_exc'],
             'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
             'eta': 0.75,         # learning rate
             'weight': init_w,
-            'Wmax': 4.5*nrn_params['proximal']['C_m'],
+            'Wmax': 4.5*nrn_params['dendritic']['C_m'],
             'delay': resolution,
         }
 
@@ -225,11 +225,11 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         h = (15.0*beta / (1.0 + np.exp(-beta*(theta - V_w_star)) / k))
 
         # compute alpha response kernel
-        tau_s = nrn_params['proximal']['tau_syn_ex']
-        g_L_prox = nrn_params['proximal']['g_L']
-        C_m_prox = nrn_params['proximal']['C_m']
+        tau_s = nrn_params['dendritic']['tau_syn_ex']
+        g_L_prox = nrn_params['dendritic']['g_L']
+        C_m_prox = nrn_params['dendritic']['C_m']
         tau_L = C_m_prox / g_L_prox
-        E_L_prox = nrn_params['proximal']['E_L']
+        E_L_prox = nrn_params['dendritic']['E_L']
         t0 = 1.2
         alpha_response = (np.heaviside(t - t0, 0.5)*tau_s*(np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
                           (g_L_prox*(tau_L - tau_s)))

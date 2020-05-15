@@ -86,7 +86,7 @@ private:
   enum Compartments_
   {
     SOMA = 0,
-    PROX,
+    DEND,
     NCOMP
   };
 
@@ -122,7 +122,7 @@ pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
 in [1]. It is capable of connecting to a Urbanczik synapse.
 
-The model has two compartments: soma and proximal dendrite, labeled as s and p, respectively.
+The model has two compartments: soma and dendrite, labeled as s and p, respectively.
 There is one excitatory and one inhibitory conductance-based synapse onto each compartment.
 Each compartment can also receive current input from a current generator, and an external
 (rheobase) current can be set for each compartment.
@@ -137,7 +137,7 @@ Parameters:
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
-are called "soma" and "proximal", respectively. In the list below,
+are called "soma" and "dendritic", respectively. In the list below,
 these parameters are marked with an asterisk.
 
 \verbatim embed:rst
@@ -152,8 +152,8 @@ these parameters are marked with an asterisk.
  tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
  tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
  I_e*        pA      Constant input current
- g_sp        nS      Coupling between soma and proximal dendrite
- g_ps        nS      Coupling between proximal dendrite and soma
+ g_sp        nS      Coupling between soma and dendrite
+ g_ps        nS      Coupling between dendrite and soma
  t_ref       ms      Duration of refractory period
 ============ ======= ==========================================================
 \endverbatim
@@ -226,7 +226,7 @@ private:
   enum Compartments_
   {
     SOMA = 0,
-    PROX,
+    DEND,
     NCOMP
   };
 
@@ -244,8 +244,8 @@ private:
   {
     SOMA_EXC = MIN_SPIKE_RECEPTOR,
     SOMA_INH,
-    PROX_EXC,
-    PROX_INH,
+    DEND_EXC,
+    DEND_INH,
     SUP_SPIKE_RECEPTOR
   };
 
@@ -264,7 +264,7 @@ private:
   enum CurrentSynapseTypes
   {
     I_SOMA = MIN_CURR_RECEPTOR,
-    I_PROX,
+    I_DEND,
     SUP_CURR_RECEPTOR
   };
 
@@ -564,9 +564,9 @@ pp_cond_exp_mc_urbanczik::get_status( DictionaryDatum& d ) const
   ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
   ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
 
-  ( *receptor_dict_ )[ names::proximal_exc ] = PROX_EXC;
-  ( *receptor_dict_ )[ names::proximal_inh ] = PROX_INH;
-  ( *receptor_dict_ )[ names::proximal_curr ] = I_PROX;
+  ( *receptor_dict_ )[ names::dendritic_exc ] = DEND_EXC;
+  ( *receptor_dict_ )[ names::dendritic_inh ] = DEND_INH;
+  ( *receptor_dict_ )[ names::dendritic_curr ] = I_DEND;
 
   ( *d )[ names::receptor_types ] = receptor_dict_;
 }

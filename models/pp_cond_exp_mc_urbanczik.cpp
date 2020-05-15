@@ -84,11 +84,11 @@ RecordablesMap< pp_cond_exp_mc_urbanczik >::create()
   insert_( Name( "g_in.s" ),
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::G_INH, pp_cond_exp_mc_urbanczik::SOMA > );
   insert_( Name( "V_m.p" ),
-    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::V_M, pp_cond_exp_mc_urbanczik::PROX > );
+    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::V_M, pp_cond_exp_mc_urbanczik::DEND > );
   insert_( Name( "I_ex.p" ),
-    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_EXC, pp_cond_exp_mc_urbanczik::PROX > );
+    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_EXC, pp_cond_exp_mc_urbanczik::DEND > );
   insert_( Name( "I_in.p" ),
-    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_INH, pp_cond_exp_mc_urbanczik::PROX > );
+    &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_INH, pp_cond_exp_mc_urbanczik::DEND > );
 }
 }
 
@@ -194,7 +194,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
   urbanczik_params.theta = -55.0;
   // conductances between compartments
   urbanczik_params.g_conn[ SOMA ] = 600.0; // nS, soma-dendrite
-  urbanczik_params.g_conn[ PROX ] = 0.0;   // nS, dendrite-soma
+  urbanczik_params.g_conn[ DEND ] = 0.0;   // nS, dendrite-soma
 
   // soma parameters
   urbanczik_params.g_L[ SOMA ] = 30.0;  // nS
@@ -206,15 +206,15 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
   urbanczik_params.tau_syn_in[ SOMA ] = 3.0;
   I_e[ SOMA ] = 0.0; // pA
 
-  // proximal parameters
-  urbanczik_params.g_L[ PROX ] = 30.0;
-  urbanczik_params.C_m[ PROX ] = 300.0; // pF
-  E_ex[ PROX ] = 0.0;                   // mV
-  E_in[ PROX ] = 0.0;                   // mV
-  urbanczik_params.E_L[ PROX ] = -70.0; // mV
-  urbanczik_params.tau_syn_ex[ PROX ] = 3.0;
-  urbanczik_params.tau_syn_in[ PROX ] = 3.0;
-  I_e[ PROX ] = 0.0; // pA
+  // dendritic parameters
+  urbanczik_params.g_L[ DEND ] = 30.0;
+  urbanczik_params.C_m[ DEND ] = 300.0; // pF
+  E_ex[ DEND ] = 0.0;                   // mV
+  E_in[ DEND ] = 0.0;                   // mV
+  urbanczik_params.E_L[ DEND ] = -70.0; // mV
+  urbanczik_params.tau_syn_ex[ DEND ] = 3.0;
+  urbanczik_params.tau_syn_in[ DEND ] = 3.0;
+  I_e[ DEND ] = 0.0; // pA
 }
 
 nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
@@ -336,7 +336,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::theta, urbanczik_params.theta );
 
   def< double >( d, names::g_sp, urbanczik_params.g_conn[ SOMA ] );
-  def< double >( d, names::g_ps, urbanczik_params.g_conn[ PROX ] );
+  def< double >( d, names::g_ps, urbanczik_params.g_conn[ DEND ] );
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -367,7 +367,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::theta, urbanczik_params.theta );
 
   updateValue< double >( d, Name( names::g_sp ), urbanczik_params.g_conn[ SOMA ] );
-  updateValue< double >( d, Name( names::g_ps ), urbanczik_params.g_conn[ PROX ] );
+  updateValue< double >( d, Name( names::g_ps ), urbanczik_params.g_conn[ DEND ] );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -460,7 +460,7 @@ nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
   // set up table of compartment names
   // comp_names_.resize(NCOMP); --- Fixed size, see comment on definition
   comp_names_[ SOMA ] = Name( "soma" );
-  comp_names_[ PROX ] = Name( "proximal" );
+  comp_names_[ DEND ] = Name( "dendritic" );
   Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 
@@ -688,7 +688,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 
     // Store dendritic membrane potential for Urbanczik-Senn plasticity
     write_urbanczik_history(
-      Time::step( origin.get_steps() + lag + 1 ), S_.y_[ S_.idx( PROX, State_::V_M ) ], n_spikes, PROX );
+      Time::step( origin.get_steps() + lag + 1 ), S_.y_[ S_.idx( DEND, State_::V_M ) ], n_spikes, DEND );
 
     // set new input currents
     for ( size_t n = 0; n < NCOMP; ++n )

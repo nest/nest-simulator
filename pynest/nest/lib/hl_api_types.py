@@ -136,8 +136,6 @@ class NodeCollectionIterator(object):
         self._increment += 1
         return val
 
-    next = __next__  # Python2.x
-
 
 class NodeCollection(object):
     """
@@ -229,8 +227,37 @@ class NodeCollection(object):
             if abs(key + (key >= 0)) > self.__len__():
                 raise IndexError('index value outside of the NodeCollection')
             return sli_func('Take', self._datum, [key + (key >= 0)])
+        elif isinstance(key, (list, tuple)):
+            if len(key) == 0:
+                return NodeCollection([])
+            # Must check if elements are bool first, because bool inherits from int
+            if all(isinstance(x, bool) for x in key):
+                if len(key) != len(self):
+                    raise IndexError('Bool index array must be the same length as NodeCollection')
+                np_key = numpy.array(key, dtype=numpy.bool)
+            # Checking that elements are not instances of bool too, because bool inherits from int
+            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+                np_key = numpy.array(key, dtype=numpy.uint64)
+                if len(numpy.unique(np_key)) != len(np_key):
+                    raise ValueError('All node IDs in a NodeCollection have to be unique')
+            else:
+                raise TypeError('Indices must be integers or bools')
+            return take_array_index(self._datum, np_key)
+        elif isinstance(key, numpy.ndarray):
+            if len(key) == 0:
+                return NodeCollection([])
+            if len(key.shape) != 1:
+                raise TypeError('NumPy indices must one-dimensional')
+            is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
+            if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
+                raise TypeError('NumPy indices must be an array of integers or bools')
+            if is_booltype and len(key) != len(self):
+                raise IndexError('Bool index array must be the same length as NodeCollection')
+            if not is_booltype and len(numpy.unique(key)) != len(key):
+                raise ValueError('All node IDs in a NodeCollection have to be unique')
+            return take_array_index(self._datum, key)
         else:
-            raise IndexError('only integers and slices are valid indices')
+            raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
@@ -449,8 +476,6 @@ class SynapseCollectionIterator(object):
 
     def __next__(self):
         return SynapseCollection(next(self._iter))
-
-    next = __next__  # Python2.x
 
 
 class SynapseCollection(object):

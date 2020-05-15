@@ -33,56 +33,63 @@
 
 namespace nest
 {
-//! class mip_generator
-/*! Class mip_generator generates spike trains as described
-    in the MIP model.
-*/
 
+/* BeginUserDocs: device, generator
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+Short description
++++++++++++++++++
 
-Name: mip_generator - create spike trains as described by the MIP model.
+create spike trains as described by the MIP model
 
-Description:
+Description
++++++++++++
 
 The mip_generator generates correlated spike trains using an Multiple
-Interaction Process (MIP) as described in [1]. Underlying principle is a
+Interaction Process (MIP) as described in [1]_. Underlying principle is a
 Poisson parent process with rate r, the spikes of which are copied into the
 child processes with a certain probability p. Every node the mip_generator is
 connected to receives a distinct child process as input, whose rate is p*r.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
+Remarks:
 
-Parameters:
+The MIP generator may emit more than one spike through a child process
+during a single time step, especially at high rates.  If this happens,
+the generator does not actually send out n spikes.  Instead, it emits
+a single spike with n-fold synaptic weight for the sake of efficiency.
+Furthermore, note that as with the Poisson generator, different threads
+have their own copy of a MIP generator. By using the same mother_seed
+it is ensured that the mother process is identical for each of the
+generators.
+
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
-\verbatim embed:rst
 ============  ======== ================================================
  rate         spikes/s Mean firing rate of the parent process
  p_copy       real     Copy probability
 ============  ======== ================================================
-\endverbatim
 
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Kuhn A, Aertsen A, Rotter S (2003). Higher-order statistics of input
        ensembles and the response of simple model neurons. Neural Computation
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
- \endverbatim
 
-Author: May 2006, Helias; April 2020, Plesser
+EndUserDocs */
 
-SeeAlso: Device
-
+/*! Class mip_generator generates spike trains as described
+    in the MIP model.
 */
 class mip_generator : public DeviceNode
 {

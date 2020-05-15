@@ -38,15 +38,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
-                                   multiple ports.
+Short description
++++++++++++++++++
 
-Description:
+Leaky integrate-and-fire neuron model with multiple ports
+
+Description
++++++++++++
 
 iaf_psc_alpha_multisynapse is a direct extension of iaf_psc_alpha.
 On the postsynapic side, there can be arbitrarily many synaptic
@@ -56,15 +56,23 @@ This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
 "receptor_type" in the connectors.
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author:  Schrader, adapted from iaf_psc_alpha
+Receives
+++++++++
 
-SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
-iaf_psc_exp_multisynapse
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_exp_multisynapse
+
+EndUserDocs */
+
 class iaf_psc_alpha_multisynapse : public Archiving_Node
 {
 

@@ -38,16 +38,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: spike_generator - A device which generates spikes from an array with
-                        spike-times.
+Short description
++++++++++++++++++
 
-Synopsis: spike_generator Create -> node_id
+A device which generates spikes from an array with spike-times
 
-Description:
+Description
++++++++++++
 
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
@@ -147,26 +146,11 @@ onto the grid will be handled as follows for different option settings:
 110,
          not shifted, since it is in the future anyways
 
+Parameters
+++++++++++
 
-Example:
-
-    spike_generator
-      << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
-    SetStatus
-
-    Instructs the spike generator to generate an event with weight 5.0
-    at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
-    the device-timer origin.
-
-    spike_generator << /spike_weights [] >> SetStatus
-
-    Instructs the spike generator to generate events at 1.0, 2.0, and
-    3.0 milliseconds, and use the weight of the connection.
-
-Parameters:
 The following properties can be set in the status dictionary.
 
-\verbatim embed:rst
 ===================== ============= ==========================================
  origin               ms            Time origin for device timer
  start                ms            Earliest possible time stamp of a spike to
@@ -182,14 +166,14 @@ The following properties can be set in the status dictionary.
  allow_offgrid_times  boolean       see above
  shift_now_spikes     boolean       see above
 ===================== ============= ==========================================
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Author: Gewaltig, Diesmann, Eppler
+SpikeEvent
 
-SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
-*/
+EndUserDocs */
+
 class spike_generator : public DeviceNode
 {
 

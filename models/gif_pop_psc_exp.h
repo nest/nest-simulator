@@ -38,23 +38,27 @@ namespace nest
 
 class Network;
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-Name: gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
-with exponential postsynaptic currents and adaptation
+Short description
++++++++++++++++++
 
-Description:
+Population of generalized integrate-and-fire neurons with exponential
+postsynaptic currents and adaptation
+
+
+Description
++++++++++++
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described in [1].
+described in [1]_.
 
 The single neuron model is defined by the hazard function
 
-@f[ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ] @f]
+.. math::
+
+ lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
 
 After each spike the membrane potential V_m is reset to V_reset. Spike
 frequency
@@ -76,7 +80,7 @@ communication effort is reduced in simulations.
 
 This model uses a new algorithm to directly simulate the population activity
 (sum of all spikes) of the population of neurons, without explicitly
-representing each single neuron (see [1]). The computational cost is largely
+representing each single neuron (see [1]_). The computational cost is largely
 independent of the number N of neurons represented. The algorithm used
 here is fundamentally different from and likely much faster than the one
 used in the previously added population model pp_pop_psc_delta.
@@ -86,11 +90,12 @@ neuron in each population. An approximation of random connectivity can be
 implemented by connecting populations through a spike_dilutor.
 
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== ============= =====================================================
  V_reset    mV            Membrane potential is reset to this value after
                           a spike
@@ -121,25 +126,34 @@ gif_pop_psc_exp  gif_psc_exp  relation
 tau_m            g_L          \f$ tau_m = C_m / g_L \f$
 N                ---          use N gif_psc_exp
 =============== ============  =============================
-\endverbatim
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
        columns: From spiking neurons to interacting neural populations of
        finite size. PLoS Computational Biology.
        https://doi.org/10.1371/journal.pcbi.1005507
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
 
-Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
+SpikeEvent
 
-SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
-*/
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+gif_psc_exp, pp_pop_psc_delta, spike_dilutor
+
+EndUserDocs */
+
 class gif_pop_psc_exp : public Node
 {
 

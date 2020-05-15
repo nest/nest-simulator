@@ -56,27 +56,27 @@ namespace nest
  */
 extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-Name: iaf_cond_beta - Simple conductance based leaky integrate-and-fire neuron
-                      model.
+Short description
++++++++++++++++++
 
-Description:
+Simple conductance based leaky integrate-and-fire neuron model
+
+Description
++++++++++++
 
 iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an beta function. The beta function
 is normalised such that an event of weight 1.0 results in a peak current of
-1 nS at t = tau_rise_[ex|in].
+1 nS at `t = tau_rise_[ex|in]`.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ============= ====== =========================================================
  V_m          mV      Membrane potential
  E_L          mV      Leak reversal potential
@@ -93,11 +93,17 @@ The following parameters can be set in the status dictionary.
  tau_decay_in ms      Rise time of the inhibitory synaptic beta function
  I_e          pA      Constant input current
 ============= ====== =========================================================
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
+
+SpikeEvent
+
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Remarks:
 
@@ -108,9 +114,8 @@ Remarks:
         inputs to the two synapses by the sign of the synaptic weight.
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
-References:
-
-\verbatim embed:rst
+References
+++++++++++
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
@@ -132,13 +137,15 @@ References:
 .. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
-\endverbatim
 
-Author: Daniel Naoumenko (modified iaf_cond_alpha by Schrader, Plesser)
 
-SeeAlso: iaf_cond_exp, iaf_cond_alpha, iaf_cond_alpha_mc
+See also
+++++++++
 
-*/
+iaf_cond_exp, iaf_cond_alpha, iaf_cond_alpha_mc
+
+EndUserDocs */
+
 class iaf_cond_beta : public Archiving_Node
 {
 

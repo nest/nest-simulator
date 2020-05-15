@@ -39,26 +39,35 @@ __all__ = [
     'app'
 ]
 
+# Blacklist of modules according to Bandit (https://bandit.readthedocs.io).
+_blacklist_modules = [
+    'commands',
+    'dsa',
+    'jinja2',
+    'mako',
+    'os',
+    'paramiko',
+    'popen2',
+    'requests',
+    'rsa',
+    'socket',
+    'ssl',
+    'subprocess',
+    'sys',
+]
+
+_blacklist_builtins = [
+    'copyright',
+    'eval',
+    'exec',
+    'input',
+    'quit',
+    'open',
+]
+
 
 app = Flask(__name__)
 CORS(app)
-
-
-def import_modules(modules):
-    blacklist_modules = [
-        'sys',
-        'os',
-    ]
-    locals = {
-        'list': list,
-        'nest': nest,
-        'print': print,
-        'set': set,
-    }
-    modules_approved = filter(lambda module: module[1] not in blacklist_modules, modules.items())
-    for (mvar, module) in list(modules_approved):
-        locals.update({mvar: importlib.import_module(module)})
-    return locals
 
 
 @app.route('/exec', methods=['GET', 'POST'])
@@ -66,28 +75,29 @@ def import_modules(modules):
 def route_exec():
     """ Route to execute script in Python.
     """
-    args, kwargs = get_arguments(request)
-    with Capturing() as stdout:
-        try:
-            source = kwargs.get('source', '')
-            globals = {'__builtins__': None}
-            locals = import_modules(kwargs.get('modules', {}))
-            exec(source, globals, locals)
-            response = {}
-            if 'return' in kwargs:
-                if isinstance(kwargs['return'], list):
-                    data = {}
-                    for variable in kwargs['return']:
-                        data[variable] = locals.get(variable, None)
-                else:
-                    data = locals.get(kwargs['return'], None)
-                response['data'] = nest.hl_api.serializable(data)
-            response['stdout'] = '\n'.join(stdout)
-            return jsonify(response)
-        except nest.kernel.NESTError as e:
-            abort(Response(getattr(e, 'errormessage'), 400))
-        except Exception as e:
-            abort(Response(str(e), 400))
+    try:
+        args, kwargs = get_arguments(request)
+        source = kwargs.get('source', '')
+        source_cleaned = clean_code(source)
+        globals = {'__builtins__': get_builtins()}
+        locals = get_modules(source)
+        response = {}
+        with Capturing() as stdout:
+            exec(source_cleaned, globals, locals)
+        response['stdout'] = '\n'.join(stdout)
+        if 'return' in kwargs:
+            if isinstance(kwargs['return'], list):
+                data = {}
+                for variable in kwargs['return']:
+                    data[variable] = locals.get(variable, None)
+            else:
+                data = locals.get(kwargs['return'], None)
+            response['data'] = nest.hl_api.serializable(data)
+        return jsonify(response)
+    except nest.kernel.NESTError as e:
+        abort(Response(getattr(e, 'errormessage'), 400))
+    except Exception as e:
+        abort(Response(str(e), 400))
 
 
 # --------------------------
@@ -135,6 +145,12 @@ class Capturing(list):
         sys.stdout = self._stdout
 
 
+def clean_code(source):
+    codes = source.split('\n')
+    code_cleaned = filter(lambda code: not (code.startswith('import') or code.startswith('from')), codes)
+    return '\n'.join(code_cleaned)
+
+
 def get_arguments(request):
     """ Get arguments from the request.
     """
@@ -158,6 +174,24 @@ def get_arguments(request):
         else:
             kwargs = request.args.to_dict()
     return list(args), kwargs
+
+
+def get_builtins():
+    builtins = {}
+    builtins_dict = importlib.import_module('builtins').__dict__
+    for builtin in builtins_dict.keys():
+        if not (builtin.startswith('__') or builtin in _blacklist_builtins):
+            builtins.update({builtin: builtins_dict[builtin]})
+    return builtins
+
+
+def get_modules(source):
+    modules = {}
+    for line in source.split('\n'):
+        code = line.split(' ')
+        if code[0] == 'import' and code[1] not in _blacklist_modules:
+            modules.update({code[-1]: importlib.import_module(code[1])})
+    return modules
 
 
 def get_or_error(func):

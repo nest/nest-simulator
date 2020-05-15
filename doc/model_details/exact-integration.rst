@@ -38,14 +38,14 @@ Here the solution is given by :math:`f(t)=e^{at}`.
 
 Solving a non-homogeneous linear differential equation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When you add another function :math:`g` to the right hand side of our linear differential equation:
+When you add another function :math:`g` to the right hand side of our linear differential equation,
 
 .. math::
     \frac{df}{dt}=af+g
 
-(this is now a non-homogeneous differential equation) things (can) become more complicated.
+this is now a non-homogeneous differential equation. Things (can) become more complicated.
 
-Solving it with variation of contants
+Solving it with variation of constants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This kind of differential equation is usually solved with "variation of constants" which gives us the following solution:
@@ -58,7 +58,7 @@ This is obviously not a particularly handy solution since calculating the integr
 Solving it with exact integration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With exact integration these costly computations can be avoided. 
+With exact integration, these costly computations can be avoided. 
 
 Restrictions to :math:`g`
 ------------------------
@@ -189,9 +189,9 @@ And the update is performed `here <https://github.com/nest/nest-simulator/blob/b
 
 
 
-References:
-~~~~~~~~~~~
+References
+~~~~~~~~~~
 
 .. [1] RotterV S & Diesmann M (1999) Exact simulation of time-invariant linear
     systems with applications to neuronal modeling. Biologial Cybernetics
-    81:381-402; which you will find `here <http://dx.doi.org/10.1007/s004220050570>`_
+    81:381-402. DOI: https://doi.org/10.1007/s004220050570

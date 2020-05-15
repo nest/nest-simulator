@@ -39,7 +39,7 @@ template < typename DistributionT >
 class RandomDistribution;
 
 // Type definitions
-using RngPtr = std::shared_ptr< BaseRandomGenerator >;
+using RngPtr = BaseRandomGenerator*;
 
 using uniform_int_distribution = RandomDistribution< std::uniform_int_distribution< unsigned long > >;
 using uniform_real_distribution = RandomDistribution< std::uniform_real_distribution<> >;
@@ -257,7 +257,7 @@ public:
   inline RngPtr
   create( std::initializer_list< std::uint32_t > seed_initializer ) const override
   {
-    return std::make_shared< RandomGenerator< RandomEngineT > >( seed_initializer );
+    return new RandomGenerator< RandomEngineT >( seed_initializer );
   }
 };
 
@@ -288,7 +288,7 @@ public:
    *
    * @param g Pointer to the RNG wrapper.
    */
-  inline result_type operator()( std::shared_ptr< BaseRandomGenerator > g )
+  inline result_type operator()( RngPtr g )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );
@@ -304,7 +304,7 @@ public:
    * @param g Pointer to the RNG wrapper.
    * @param params Distribution parameter set to use.
    */
-  inline result_type operator()( std::shared_ptr< BaseRandomGenerator > g, param_type& params )
+  inline result_type operator()( RngPtr g, param_type& params )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );

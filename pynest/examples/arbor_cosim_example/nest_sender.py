@@ -14,6 +14,11 @@ print("Getting nest")
 import nest
 
 
+STATUS_DICT = nest.ll_api.sli_func("statusdict")
+if (not STATUS_DICT["have_recordingbackend_arbor"]):
+    print("Recording backend Arbor available. Exit testscript!")
+    sys.exit(1)
+
 nest.set_communicator(comm)
 nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 

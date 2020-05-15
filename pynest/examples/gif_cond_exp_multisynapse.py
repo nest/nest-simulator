@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# nest_script.py
+# gif_cond_exp_multisynapse.py
 #
 # This file is part of NEST.
 #
@@ -21,28 +20,24 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Music example
---------------
 
-This example runs 2 NEST instances and one receiver instance. Neurons on
-the NEST instances are observed by the music_cont_out_proxy and their
-values are forwarded through MUSIC to the receiver.
-
-Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-and cannot be enabled at the same time.
+gif_cond_exp_multisynapse
++++++++++++++++++++++++++
 
 """
-import nest
-import music
-import numpy
 
-proxy = nest.Create('music_cont_out_proxy', 1)
-proxy.port_name = 'out'
-proxy.set(record_from=["V_m"], interval=0.1)
+neuron = nest.Create('gif_cond_exp_multisynapse',
+                     params={'E_rev': [0.0, -85.0],
+                             'tau_syn': [4.0, 8.0]})
 
-neuron_grp = nest.Create('iaf_cond_exp', 2)
-proxy.targets = neuron_grp
-neuron_grp[0].I_e = 300.
-neuron_grp[1].I_e = 600.
+spike = nest.Create('spike_generator', params={'spike_times':
+                                               np.array([10.0])})
 
-nest.Simulate(200)
+delays = [1., 30.]
+w = [1., 5.]
+for syn in range(2):
+    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                          'receptor_type': 1 + syn,
+                                          'weight': w[syn],
+                                          'delay': delays[syn]})
+nest.Simulate(100.)

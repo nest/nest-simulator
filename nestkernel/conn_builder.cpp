@@ -146,7 +146,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     {
       throw BadProperty(
         "In order to use structural plasticity, both a pre and post synaptic "
-        "element must be specified" );
+        "element must be specified." );
     }
 
     use_pre_synaptic_element_ = false;
@@ -239,7 +239,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   {
     throw KernelException(
       "InvalidNodeCollection: "
-      "sources and targets must be valid NodeCollections" );
+      "sources and targets must be valid NodeCollections." );
   }
 }
 
@@ -1386,7 +1386,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
     {
       throw BadProperty(
         "Total number of connections cannot exceed product "
-        "of source and targer population sizes." );
+        "of source and target population sizes." );
     }
   }
 
@@ -1831,7 +1831,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   // Check that both pre and post synaptic element are provided
   if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
   {
-    throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing" );
+    throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }
 }
 
@@ -1866,7 +1866,7 @@ nest::SPBuilder::connect_()
 {
   throw NotImplemented(
     "Connection without structural plasticity is not possible for this "
-    "connection builder" );
+    "connection builder." );
 }
 
 /**
@@ -1879,7 +1879,7 @@ nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets 
 {
   throw NotImplemented(
     "Connection without structural plasticity is not possible for this "
-    "connection builder" );
+    "connection builder." );
 }
 
 void
@@ -1889,8 +1889,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
   // make sure that target and source population have the same size
   if ( sources.size() != targets.size() )
   {
-    LOG( M_ERROR, "Connect", "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
+    throw DimensionMismatch( "Source and Target population must be of the same size." );
   }
 
 #pragma omp parallel

@@ -102,16 +102,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
         self.assertRaisesRegex(
             nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
 
-    def test_UnexpectedEvent(self):
-        """Unexpected Event"""
-
-        nest.ResetKernel()
-        n = nest.Create('iaf_psc_alpha')
-        sd = nest.Create('spike_detector')
-
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "UnexpectedEvent", nest.Connect, sd, n)
-
 
 def suite():
 

@@ -1268,7 +1268,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       return CONNECT;
     }
 
-    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment" );
+    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment." );
   }
 
   return NO_CONNECTION;

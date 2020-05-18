@@ -37,10 +37,6 @@ import pip
 
 import subprocess
 
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
-from mock import Mock as MagicMock
-
 from subprocess import check_output, CalledProcessError
 
 source_suffix = ['.rst']
@@ -102,8 +98,6 @@ extensions = [
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
-
-subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
@@ -205,8 +199,9 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="from_cpp/"
+        outdir="userdocs/"
     )
+
 
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
@@ -224,21 +219,12 @@ nitpick_ignore = [('py:class', 'None'),
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_stylesheet('css/pygments.css')
-    app.add_javascript("js/copybutton.js")
-    app.add_javascript("js/custom.js")
-    app.add_javascript("js/copybutton.js")
-    app.add_config_value('recommonmark_config', {
-        'auto_toc_tree_section': 'Contents',
-        'enable_inline_math': True,
-        'enable_auto_doc_ref': True,
-        'enable_eval_rst': True
-    }, True)
-    app.add_transform(AutoStructify)
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
 
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect('config-inited', config_inited_handler)
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -292,29 +278,3 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-
-models_with_documentation = (
-    "models/multimeter",
-    "models/spike_detector",
-    "models/weight_recorder",
-    "nestkernel/recording_backend_ascii",
-    "nestkernel/recording_backend_memory",
-    "nestkernel/recording_backend_screen",
-    "nestkernel/recording_backend_sionlib",
-)
-
-pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
-for model in models_with_documentation:
-    with open("../%s.h" % model) as f:
-        match = re.search(pattern, f.read())
-        if match:
-            rst_dir = "from_cpp/"
-            if not os.path.exists(rst_dir):
-                os.mkdir(rst_dir)
-            rst_fname = rst_dir + os.path.basename(model) + ".rst"
-            rst_file = open(rst_fname, "w")
-            rst_file.write(match.group(1))
-            rst_file.close()
-            print("Wrote model documentation for model " + model)
-        else:
-            print("No documentation found for model " + model)

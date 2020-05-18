@@ -88,11 +88,6 @@ def helpdesk():
 
     """
 
-    if sys.version_info < (2, 7, 8):
-        print("The NEST helpdesk is only available with Python 2.7.8 or "
-              "later. \n")
-        return
-
     if 'NEST_DOC_DIR' not in os.environ:
         print(
             'NEST help needs to know where NEST is installed.'

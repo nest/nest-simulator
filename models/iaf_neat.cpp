@@ -234,6 +234,8 @@ nest::iaf_neat::init_buffers_()
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
   Archiving_Node::clear_history();
+  m_cond_w->init();
+  m_syn->init();
 }
 
 void
@@ -242,6 +244,73 @@ nest::iaf_neat::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
+  const double dt = h;
+
+  // Tests added here //////////////////////////////////////////////////////////
+  /*
+  Tree structure for testing
+  */
+  m_c_tree.init();
+
+  // variables needed for manual computations below
+  const double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
+  const double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
+
+  /*
+  Test 1: matrix inversion
+  */
+  std::cout << std::endl;
+  std::cout << "--- Testing matrix inversion ---" << std::endl;
+  // input current
+  std::vector< double > i_in{.1, .2};
+  // matrix
+  double a00 = ca0/dt + gl0/2. + gc1/2.;
+  double a01 = -gc1/2.;
+  double a10 = -gc1/2.;
+  double a11 = ca1/dt + gl1/2. + gc1/2.;
+  // vector
+  double b0 = ca0/dt * el0 - gl0 * (el0/2. - el0) + gc1 * (el0 - el1)/2. + i_in[0];
+  double b1 = ca1/dt * el1 - gl1 * (el1/2. - el1) + gc1 * (el1 - el0)/2. + i_in[1];
+  // hand-crafted solution
+  double det = a00 * a11 - a10 * a01;
+  double v0 = (b0 * a11 - b1 * a01) / det;
+  double v1 = (b1 * a00 - b0 * a10) / det;
+  // compartment tree solution
+  m_c_tree.construct_matrix(i_in);
+  m_c_tree.solve_matrix();
+  std::vector< double > v_sol = m_c_tree.get_voltage();
+  // print test result
+  std::cout << "v_sol_manual = (" << v0 << ", " << v1 << ")" << std::endl;
+  std::cout << "v_sol_comptr = (" << v_sol[0] << ", " << v_sol[1] << ")" << std::endl;
+
+  /*
+  Test 2: attenuation
+  */
+  std::cout << std::endl;
+  std::cout << "--- Testing attenuation simulation ---" << std::endl;
+  // attenuation 1->0
+  m_c_tree.init();
+  v0 = el0; v1 = el1;
+  i_in[0] = 0., i_in[1] = 0.2;
+  for(int ii = 0; ii < 10000; ii++){
+    m_c_tree.construct_matrix(i_in);
+    m_c_tree.solve_matrix();
+
+  }
+  v_sol = m_c_tree.get_voltage();
+  std::cout << "attenuation 1->0 manual = " << gc1 / (gl0 + gc1) << std::endl;
+  std::cout << "attenuation 1->0 comptr = " << (v_sol[0] - el0) / (v_sol[1] - el1) << std::endl;
+  // attenuation 0->1
+  m_c_tree.init();
+  i_in[0] = 0.15, i_in[1] = 0.;
+  for(int ii = 0; ii < 10000; ii++){
+    m_c_tree.construct_matrix(i_in);
+    m_c_tree.solve_matrix();
+  }
+  v_sol = m_c_tree.get_voltage();
+  std::cout << "attenuation 0->1 manual = " << gc1 / (gl1 + gc1) << std::endl;
+  std::cout << "attenuation 0->1 comptr = " << (v_sol[1] - el1) / (v_sol[0] - el0) << std::endl;
+  //////////////////////////////////////////////////////////////////////////////
 
 
   V_.P33_ = std::exp( -h / P_.tau_m_ );
@@ -280,41 +349,70 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
+  double g_syn = 0., f_v = 0.;
+  // for new synapses
+  std::pair< double, double > gf_syn(0., 0.);
+  std::vector< double > v_vals{0.};
+
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.r_ == 0 )
-    {
+
+    /*
+    First model
+    */
+    // // advance the synapse
+    // m_cond_w->update( lag );
+    // // compute synaptic input
+    // g_syn = m_cond_w->get_cond();
+    // f_v = m_v_dep->f(get_V_m_());
+    // // integration step
+    // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + g_syn * f_v) + V_.P33_ * S_.y3_;
+
+    /*
+    Second model
+    */
+    m_syn->update( lag );
+    // compute synaptic input
+    v_vals[0] = get_V_m_();
+    gf_syn = m_syn->f_numstep(v_vals);
+
+    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
+
+
+
+    // if ( S_.r_ == 0 )
+    // {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
+      // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
-      // if we have accumulated spikes from refractory period,
-      // add and reset accumulator
-      if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
-      {
-        S_.y3_ += S_.refr_spikes_buffer_;
-        S_.refr_spikes_buffer_ = 0.0;
-      }
+    //   // if we have accumulated spikes from refractory period,
+    //   // add and reset accumulator
+    //   if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+    //   {
+    //     S_.y3_ += S_.refr_spikes_buffer_;
+    //     S_.refr_spikes_buffer_ = 0.0;
+    //   }
 
-      // lower bound of membrane potential
-      S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
-    }
-    else // neuron is absolute refractory
-    {
-      // read spikes from buffer and accumulate them, discounting
-      // for decay until end of refractory period
-      if ( P_.with_refr_input_ )
-      {
-        S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
-      }
-      else
-      {
-        // clear buffer entry, ignore spike
-        B_.spikes_.get_value( lag );
-      }
+    //   // lower bound of membrane potential
+    //   S_.y3_ = ( S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_ );
+    // }
+    // else // neuron is absolute refractory
+    // {
+    //   // read spikes from buffer and accumulate them, discounting
+    //   // for decay until end of refractory period
+    //   if ( P_.with_refr_input_ )
+    //   {
+    //     S_.refr_spikes_buffer_ += B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+    //   }
+    //   else
+    //   {
+    //     // clear buffer entry, ignore spike
+    //     B_.spikes_.get_value( lag );
+    //   }
 
-      --S_.r_;
-    }
+    //   --S_.r_;
+    // }
 
     // threshold crossing
     if ( S_.y3_ >= P_.V_th_ )
@@ -345,9 +443,18 @@ nest::iaf_neat::handle( SpikeEvent& e )
   // EX: We must compute the arrival time of the incoming spike
   //     explicity, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
-  //     is clumsy and should be improved.
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  // //     is clumsy and should be improved.
+  // B_.spikes_.add_value(
+  //   e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+
+  /*
+  First model
+  */
+  // m_cond_w->handle(e);
+  /*
+  Second model
+  */
+  m_syn->handle(e);
 }
 
 void

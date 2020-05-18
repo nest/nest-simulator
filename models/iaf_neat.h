@@ -31,6 +31,9 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
+#include "synapses_neat.h"
+#include "compartment_tree_neat.h"
+
 namespace nest
 {
 
@@ -82,6 +85,14 @@ private:
   void calibrate();
 
   void update( Time const&, const long, const long );
+
+  // synapses consist of ConductanceWindow and voltagedependence
+  ConductanceWindow* m_cond_w = new ExpCond();
+  VoltageDependence* m_v_dep = new DrivingForce(0.0);
+  AMPASyn* m_syn = new AMPASyn(0);
+
+  // initialize a compartment tree
+  CompTree m_c_tree;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_neat >;
@@ -278,6 +289,25 @@ iaf_neat::set_status( const DictionaryDatum& d )
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
   State_ stmp = S_;                            // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+
+  // read tree structure and properties for dendritic compartments
+  if ( d->known( "compartments" ) )
+  {
+    const DictionaryDatum compartments = getValue< DictionaryDatum >( d, "compartments" );
+    for ( auto compartments_it = compartments->begin(); compartments_it != compartments->end(); ++compartments_it )
+    {
+      DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( compartments_it->second.datum() );
+      const long idx = getValue< long >( *dd, "index" );
+      const long parent = getValue< long >( *dd, "parent" );
+      const std::vector< long > children = getValue< std::vector< long > >( *dd, "children" );
+      const double ca = getValue< double >( *dd, "ca" );
+      const double gc = getValue< double >( *dd, "gc" );
+      const double gl = getValue< double >( *dd, "gl" );
+      const double el = getValue< double >( *dd, "el" );
+
+      m_c_tree.add_node(idx, parent, children, ca, gc, gl, el);
+    }
+  }
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

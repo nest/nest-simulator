@@ -289,4 +289,4 @@ source = r'../pynest/examples/Potjans_2014'
 destination = r'examples'
 
 if os.path.exists(destination) and os.path.isdir(destination):
-    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py', '*.rst'), dirs_exist_ok=True)
+    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py'), dirs_exist_ok=True)

@@ -1,0 +1,9 @@
+ResetKernel
+
+/iaf_neat 1 << /E_L -90.0 >> Create /n Set
+n << /compartments
+<< /0 << /index 0 /parent -1 /children [1] /ca 1.0 /gc 0.1 /gl 0.1 /el -70.0 >>
+   /1 << /index 1 /parent 0 /children [] /ca 0.1 /gc 0.1 /gl 0.01 /el -70.0 >> >>
+  >> SetStatus
+
+1 Simulate

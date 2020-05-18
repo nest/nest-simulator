@@ -3,7 +3,7 @@
 
 // compartment node functions //////////////////////////////////////////////////
 nest::CompNode::CompNode(
-            int node_index, int parent_index, std::vector< int > child_indices,
+            long node_index, long parent_index, std::vector< long > child_indices,
             double ca, double gc,
             double gl, double el){
     // tree structure
@@ -41,7 +41,7 @@ inline double nest::CompNode::calc_v(double v_in){
 
 // compartment tree functions //////////////////////////////////////////////////
 void nest::CompTree::add_node(
-                int node_index, int parent_index, std::vector< int > child_indices,
+                long node_index, long parent_index, std::vector< long > child_indices,
                 double ca, double gc,
                 double gl, double el){
     /*
@@ -109,7 +109,7 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
     for(int ii = 0; ii < int(m_nodes.size()); ii++){
         // renaming for brevity
         int p_ind = m_nodes[ii].m_parent_index;
-        std::vector< int > *c_inds = &m_nodes[ii].m_child_indices;
+        std::vector< long > *c_inds = &m_nodes[ii].m_child_indices;
 
         // matrix diagonal element
         m_nodes[ii].m_gg = m_nodes[ii].m_ca / dt +
@@ -117,7 +117,7 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
         if(p_ind >= 0){
             m_nodes[ii].m_gg += m_nodes[ii].m_gc / 2.;
         }
-        for(std::vector< int >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
+        for(std::vector< long >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
             m_nodes[ii].m_gg += m_nodes[*jj].m_gc / 2.;
         }
         // matrix off diagonal element
@@ -130,7 +130,7 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
         if(p_ind >= 0){
             m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[p_ind].m_v) / 2.;
         }
-        for(std::vector< int >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
+        for(std::vector< long >::iterator jj = c_inds->begin(); jj != c_inds->end(); jj++){
             m_nodes[ii].m_ff -= m_nodes[ii].m_gc * (m_nodes[ii].m_v - m_nodes[*jj].m_v) / 2.;
         }
     } // for
@@ -175,7 +175,7 @@ void nest::CompTree::solve_matrix_upsweep(CompNode& node, double vv){
     // compute node voltage
     vv = node.calc_v(vv);
     // move on to child nodes
-    for(std::vector< int >:: iterator ii = node.m_child_indices.begin();
+    for(std::vector< long >:: iterator ii = node.m_child_indices.begin();
         ii != node.m_child_indices.end(); ii++){
         if(*ii != -1)
             solve_matrix_upsweep(m_nodes[*ii], vv);

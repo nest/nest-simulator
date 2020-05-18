@@ -290,6 +290,25 @@ iaf_neat::set_status( const DictionaryDatum& d )
   State_ stmp = S_;                            // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
+  // read tree structure and properties for dendritic compartments
+  if ( d->known( "compartments" ) )
+  {
+    const DictionaryDatum compartments = getValue< DictionaryDatum >( d, "compartments" );
+    for ( auto compartments_it = compartments->begin(); compartments_it != compartments->end(); ++compartments_it )
+    {
+      DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( compartments_it->second.datum() );
+      const long idx = getValue< long >( *dd, "index" );
+      const long parent = getValue< long >( *dd, "parent" );
+      const std::vector< long > children = getValue< std::vector< long > >( *dd, "children" );
+      const double ca = getValue< double >( *dd, "ca" );
+      const double gc = getValue< double >( *dd, "gc" );
+      const double gl = getValue< double >( *dd, "gl" );
+      const double el = getValue< double >( *dd, "el" );
+
+      m_c_tree.add_node(idx, parent, children, ca, gc, gl, el);
+    }
+  }
+
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally

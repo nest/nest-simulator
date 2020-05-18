@@ -130,7 +130,7 @@ Parameters
 +------------------------+------------------------------------------------+
 
 ============================ =================================================
-Instant_unblock_NMDA         Instantaneous NMDA unblocking (default: false)
+instant_unblock_NMDA         Instantaneous NMDA unblocking (default: false)
 {E_rev,g_peak}_{h,T,NaP,KNa} Reversal potential and peak conductance for
                              intrinsic currents
 equilibrate                  If given and true, time-dependent activation

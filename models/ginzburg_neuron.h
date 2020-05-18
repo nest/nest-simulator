@@ -89,12 +89,12 @@ Parameters
 ++++++++++
 
 ====== ============= ===========================================================
- tau_m  ms           Membrane time constant (mean inter-update-interval)
- theta  mV           Threshold for sigmoidal activation function
- c_1    probability/ Linear gain factor
-        mV
- c_2    probability  Prefactor of sigmoidal gain
- c_3    1/mV         Slope factor of sigmoidal gain
+tau_m  ms            Membrane time constant (mean inter-update-interval)
+theta  mV            Threshold for sigmoidal activation function
+c_1    probability/  Linear gain factor
+       mV
+c_2    probability   Prefactor of sigmoidal gain
+c_3    1/mV          Slope factor of sigmoidal gain
 ====== ============= ===========================================================
 
 References

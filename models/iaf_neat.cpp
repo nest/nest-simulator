@@ -234,8 +234,6 @@ nest::iaf_neat::init_buffers_()
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
   Archiving_Node::clear_history();
-  m_cond_w->init();
-  m_syn->init();
 }
 
 void
@@ -250,6 +248,8 @@ nest::iaf_neat::calibrate()
   /*
   Tree structure for testing
   */
+
+  add_synapse();
 
   // variables needed for manual computations below
   const double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
@@ -280,7 +280,7 @@ nest::iaf_neat::calibrate()
   double v0 = (b0 * a11 - b1 * a01) / det;
   double v1 = (b1 * a00 - b0 * a10) / det;
   // compartment tree solution
-  m_c_tree.construct_matrix(i_in);
+  m_c_tree.construct_matrix(i_in, 0);
   m_c_tree.solve_matrix();
   std::vector< double > v_sol = m_c_tree.get_voltage();
   // print test result
@@ -297,7 +297,7 @@ nest::iaf_neat::calibrate()
   v0 = el0; v1 = el1;
   i_in[0] = 0., i_in[1] = 0.2;
   for(int ii = 0; ii < 10000; ii++){
-    m_c_tree.construct_matrix(i_in);
+    m_c_tree.construct_matrix(i_in, 0);
     m_c_tree.solve_matrix();
 
   }
@@ -308,7 +308,7 @@ nest::iaf_neat::calibrate()
   m_c_tree.init();
   i_in[0] = 0.15, i_in[1] = 0.;
   for(int ii = 0; ii < 10000; ii++){
-    m_c_tree.construct_matrix(i_in);
+    m_c_tree.construct_matrix(i_in, 0);
     m_c_tree.solve_matrix();
   }
   v_sol = m_c_tree.get_voltage();
@@ -376,12 +376,12 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     /*
     Second model
     */
-    m_syn->update( lag );
+    // m_syn->update( lag );
     // compute synaptic input
-    v_vals[0] = get_V_m_();
-    gf_syn = m_syn->f_numstep(v_vals);
+    // v_vals[0] = get_V_m_();
+    // gf_syn = m_syn->f_numstep(v_vals);
 
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
+    // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
 
 
 
@@ -442,23 +442,19 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
 void
 nest::iaf_neat::handle( SpikeEvent& e )
 {
+  // copied and adapted from aeif_cond_alpha_multisynapse
+  if ( e.get_weight() < 0 )
+  {
+    throw BadProperty(
+      "Synaptic weights for conductance-based multisynapse models "
+      "must be positive." );
+  }
   assert( e.get_delay_steps() > 0 );
+  std::cout << "!!! n rport: " << e.get_rport() << std::endl;
+  std::cout << "!!! n syn_receptors: " << syn_receptors.size() << std::endl;
+  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= syn_receptors.size() ) );
 
-  // EX: We must compute the arrival time of the incoming spike
-  //     explicity, since it depends on delay and offset within
-  //     the update cycle.  The way it is done here works, but
-  // //     is clumsy and should be improved.
-  // B_.spikes_.add_value(
-  //   e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
-
-  /*
-  First model
-  */
-  // m_cond_w->handle(e);
-  /*
-  Second model
-  */
-  m_syn->handle(e);
+  syn_receptors[ e.get_rport() - 1 ]->handle(e);
 }
 
 void

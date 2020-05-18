@@ -15,6 +15,7 @@
 
 
 #include "nest_time.h"
+#include "synapses_neat.h"
 
 namespace nest{
 
@@ -40,6 +41,8 @@ public:
     // std::vector< long > m_child_indices;
     CompNode* m_parent;
     std::vector< CompNode > m_children;
+
+    std::vector< std::shared_ptr< Synapse > > m_syns;
     // voltage variable
     double m_v = 0.;
     // electrical parameters
@@ -58,9 +61,12 @@ public:
             double gl, double el);
     ~CompNode(){};
     // initialization
-    void setSimConstants();
-    void reset();
-    // for convolution
+    void init();
+    void add_synapse(std::shared_ptr< Synapse > syn);
+    // matrix construction
+    void construct_matrix_element();
+    void add_synapse_contribution(const long lag);
+    // maxtrix inversion
     inline void gather_input(IODat in);
     inline IODat io();
     inline double calc_v(double v_in);
@@ -101,16 +107,15 @@ public:
     void add_node(long node_index, long parent_index,
                  double ca, double gc,
                  double gl, double el);
-    CompNode* find_node(long node_index);
-    CompNode* find_node(long node_index, CompNode* node);
     void init();
 
     // getters and setters
+    CompNode* find_node(long node_index);
+    CompNode* find_node(long node_index, CompNode* node);
     std::vector< double > get_voltage();
 
     // construct the numerical integration matrix and vector
-    void construct_matrix(std::vector< double > i_in);
-    void add_synapse_contribution(int comp_ind, std::pair< double, double > gf_syn);
+    void construct_matrix(std::vector< double > i_in, const long lag);
     // solve the matrix equation for next timestep voltage
     void solve_matrix();
 

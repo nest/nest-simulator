@@ -118,45 +118,30 @@ double nest::NMDA::df_dv(double v){
 
 
 // functions for synapse integration ///////////////////////////////////////////
-nest::Synapse::Synapse(int comp_ind){
-  m_comp_ind = comp_ind;
+nest::Synapse::Synapse(){
   // base voltage dependence for current based synapse with exponentially shaped
   // PCS's
   m_v_dep = new VoltageDependence();
   m_cond_w = new ExpCond();
-
-  // VoltageDependence* v_dep = new VoltageDependence();
-  // ConductanceWindow* cond_w = new ExpCond();
-
-  // m_v_dep.push_back(v_dep);
-  // m_cond_w.push_back(cond_w);
 };
 
 void nest::Synapse::handle(SpikeEvent& e){
-  // for(std::vector< ConductanceWindow* >::iterator cond_w_it = m_cond_w.begin();
-  //     cond_w_it != m_cond_w.end(); cond_w_it++){
-  //   (*cond_w_it)->handle(e);
-  // }
   m_cond_w->handle(e);
 };
 
 void nest::Synapse::update(const long lag){
-  // for(std::vector< ConductanceWindow* >::iterator cond_w_it = m_cond_w.begin();
-  //     cond_w_it != m_cond_w.end(); cond_w_it++){
-  //   (*cond_w_it)->update(lag);
-  // }
   m_cond_w->update(lag);
 };
 
-std::pair< double, double > nest::Synapse::f_numstep(std::vector< double >& v_comp){
+std::pair< double, double > nest::Synapse::f_numstep(double v_comp){
   // double g_val = 0., i_val = 0.;
   // std::pair< double, double > g_aux(0., 0.);
   // double f_aux = 0., df_dv_aux = 0.;
   // for(int ii = 0; ii < int(m_v_dep.size()); ii++){
   //   // get conductances and voltage dependent factors from synapse
   //   g_aux     = m_cond_w[ii]->get_cond_pair();
-  //   f_aux     = -m_v_dep[ii]->f(v_comp[m_comp_ind]);
-  //   df_dv_aux = -m_v_dep[ii]->df_dv(v_comp[m_comp_ind]);
+  //   f_aux     = -m_v_dep[ii]->f(v_comp);
+  //   df_dv_aux = -m_v_dep[ii]->df_dv(v_comp);
   //   // consturct values for integration step
   //   g_val += g_aux.first * df_dv_aux / 2.;
   //   i_val += (g_aux.first + g_aux.second) / 2. * f_aux - g_aux.first * df_dv_aux / 2.;
@@ -164,62 +149,43 @@ std::pair< double, double > nest::Synapse::f_numstep(std::vector< double >& v_co
   double g_val = 0., i_val = 0.;
   // get conductances and voltage dependent factors from synapse
   std::pair< double, double > g_aux = m_cond_w->get_cond_pair();
-  double f_aux     = -m_v_dep->f(v_comp[m_comp_ind]);
-  double df_dv_aux = -m_v_dep->df_dv(v_comp[m_comp_ind]);
+  double f_aux     = -m_v_dep->f(v_comp);
+  double df_dv_aux = -m_v_dep->df_dv(v_comp);
   // consturct values for integration step
   g_val += g_aux.first * df_dv_aux / 2.;
   i_val += (g_aux.first + g_aux.second) / 2. * f_aux - \
-           g_aux.first * df_dv_aux * v_comp[m_comp_ind] / 2.;
+           g_aux.first * df_dv_aux * v_comp / 2.;
 
   return std::make_pair(g_val, i_val);
 };
 
 // default AMPA synapse
-nest::AMPASyn::AMPASyn(int comp_ind) : Synapse(comp_ind){
-  m_comp_ind = comp_ind;
-
+nest::AMPASyn::AMPASyn() : Synapse(){
   m_v_dep = new DrivingForce(0.);
   m_cond_w = new Exp2Cond(.2, 3.);
-
-  // VoltageDependence* m_v_dep = new DrivingForce(0.);
-  // ConductanceWindow* m_cond_w = new Exp2Cond(.2, 3.);
-
-  // m_v_dep.push_back(v_dep);
-  // m_cond_w.push_back(cond_w);
 };
 
 // default GABA synapse
-nest::GABASyn::GABASyn(int comp_ind) : Synapse(comp_ind){
-  m_comp_ind = comp_ind;
-
+nest::GABASyn::GABASyn() : Synapse(){
   m_v_dep = new DrivingForce(-80.);
   m_cond_w = new Exp2Cond(.2, 10.);
-
-  // VoltageDependence* v_dep = new DrivingForce(-80.);
-  // ConductanceWindow* cond_w = new Exp2Cond(.2, 10.);
-
-  // m_v_dep.push_back(v_dep);
-  // m_cond_w.push_back(cond_w);
 };
 
 // default NMDA synapse
-nest::NMDASyn::NMDASyn(int comp_ind) : Synapse(comp_ind){
-  m_comp_ind = comp_ind;
-
+nest::NMDASyn::NMDASyn() : Synapse(){
   m_v_dep = new NMDA(0.);
   m_cond_w = new Exp2Cond(.2, 43.);
 };
 
 // default AMPA+NMDA synapse
-nest::AMPA_NMDASyn::AMPA_NMDASyn(int comp_ind) : Synapse(comp_ind){
-  AMPA_NMDASyn(comp_ind, 2.); // default nmda ratio of 2
+nest::AMPA_NMDASyn::AMPA_NMDASyn() : Synapse(){
+  AMPA_NMDASyn(2.); // default nmda ratio of 2
 };
-nest::AMPA_NMDASyn::AMPA_NMDASyn(int comp_ind, double nmda_ratio) : Synapse(comp_ind){
-  m_comp_ind = comp_ind;
+nest::AMPA_NMDASyn::AMPA_NMDASyn( double nmda_ratio) : Synapse(){
   m_nmda_ratio = nmda_ratio;
 
-  m_ampa = new AMPASyn(comp_ind);
-  m_nmda = new NMDASyn(comp_ind);
+  m_ampa = new AMPASyn();
+  m_nmda = new NMDASyn();
 };
 
 void nest::AMPA_NMDASyn::handle(SpikeEvent& e){
@@ -233,7 +199,7 @@ void nest::AMPA_NMDASyn::update(const long lag){
   m_nmda->update(lag);
 };
 
-std::pair< double, double > nest::AMPA_NMDASyn::f_numstep(std::vector< double >& v_comp){
+std::pair< double, double > nest::AMPA_NMDASyn::f_numstep(double v_comp){
   std::pair< double, double > gf_1 = m_ampa->f_numstep(v_comp);
   std::pair< double, double > gf_2 = m_nmda->f_numstep(v_comp);
 

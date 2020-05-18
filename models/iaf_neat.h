@@ -31,8 +31,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "synapses_neat.h"
 #include "compartment_tree_neat.h"
+// #include "synapses_neat.h"
 
 namespace nest
 {
@@ -79,6 +79,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void add_synapse();
+
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
@@ -86,13 +88,10 @@ private:
 
   void update( Time const&, const long, const long );
 
-  // synapses consist of ConductanceWindow and voltagedependence
-  ConductanceWindow* m_cond_w = new ExpCond();
-  VoltageDependence* m_v_dep = new DrivingForce(0.0);
-  AMPASyn* m_syn = new AMPASyn(0);
-
-  // initialize a compartment tree
+  // Compartment tree
   CompTree m_c_tree;
+  // Synapse pointer vector
+  std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_neat >;
@@ -317,6 +316,19 @@ iaf_neat::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+}
+
+inline void
+iaf_neat::add_synapse(){
+  long node_index = 0;
+
+  // Should add a synapse
+  std::shared_ptr< Synapse > syn(new AMPASyn());
+
+  syn_receptors.push_back(syn);
+
+  CompNode* node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn);
 }
 
 } // namespace

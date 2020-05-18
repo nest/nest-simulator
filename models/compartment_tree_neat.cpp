@@ -14,6 +14,55 @@ nest::CompNode::CompNode(
     m_gl = gl; m_el = el;
 };
 
+void nest::CompNode::init(){
+    m_v = m_el;
+
+    // initialize synapse, spike buffers
+    for(std::vector< std::shared_ptr< Synapse > >::iterator syn_it = m_syns.begin();
+        syn_it != m_syns.end(); syn_it++){
+        (*syn_it)->init();
+    }
+}
+
+// for matrix construction
+void nest::CompNode::construct_matrix_element(){
+    double dt = Time::get_resolution().get_ms();
+
+    // matrix diagonal element
+    m_gg = m_ca / dt + m_gl / 2.;
+    if(m_parent != NULL){
+        m_gg += m_gc / 2.;
+        // matrix off diagonal element
+        m_hh = -m_gc / 2.;
+    }
+    for(std::vector< CompNode >::iterator child_it = m_children.begin();
+        child_it != m_children.end(); child_it++){
+        m_gg += (*child_it).m_gc / 2.;
+    }
+    // right hand side
+    m_ff += m_ca / dt * m_v -m_gl * (m_v / 2. - m_el);
+    if(m_parent != NULL){
+        m_ff -= m_gc * (m_v - m_parent->m_v) / 2.;
+    }
+    for(std::vector< CompNode >::iterator child_it = m_children.begin();
+        child_it != m_children.end(); child_it++){
+        m_ff -= m_gc * (m_v - (*child_it).m_v) / 2.;
+    }
+}
+void nest::CompNode::add_synapse_contribution(const long lag){
+    std::pair< double, double > gf_syn(0., 0.);
+
+    for(std::vector< std::shared_ptr< Synapse > >::iterator syn_it = m_syns.begin();
+        syn_it != m_syns.end(); syn_it++){
+
+        (*syn_it)->update(lag);
+        gf_syn = (*syn_it)->f_numstep(m_v);
+
+        m_gg += gf_syn.first;
+        m_ff += gf_syn.second;
+    }
+}
+
 // functions for matrix inversion
 inline void nest::CompNode::gather_input(IODat in){
     m_xx += in.g_val; m_yy += in.f_val;
@@ -105,11 +154,12 @@ void nest::CompTree::init(){
     set_nodes();
     set_leafs();
 
-    // initialize compartment voltages at their respective el
+    // initialize the nodes
     for(std::vector< CompNode* >::iterator node_it = m_nodes.begin();
         node_it != m_nodes.end(); node_it++){
-        (*node_it)->m_v = (*node_it)->m_el;
+        (*node_it)->init();
     }
+
 }
 void nest::CompTree::set_nodes(){
     m_nodes.clear();
@@ -144,9 +194,8 @@ std::vector< double > nest::CompTree::get_voltage(){
 }
 
 // construct the matrix equation to be solved
-void nest::CompTree::construct_matrix(std::vector< double > i_in){
+void nest::CompTree::construct_matrix(std::vector< double > i_in, const long lag){
     assert(i_in.size() == m_nodes.size());
-    double dt = Time::get_resolution().get_ms();
 
     // temporary implementation of current input
     for(long ii=0; ii != long(i_in.size()); ii++){
@@ -156,37 +205,11 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in){
     // TODO avoid recomputing unnessecary terms every time-step
     for(std::vector< CompNode* >::iterator node_it = m_nodes.begin();
         node_it != m_nodes.end(); node_it++){
-        // renaming for brevity
-        CompNode* node = *node_it;
-        CompNode* parent = node->m_parent;
+        (*node_it)->construct_matrix_element();
+        (*node_it)->add_synapse_contribution(lag);
+    }
 
-        // matrix diagonal element
-        node->m_gg = node->m_ca / dt + node->m_gl / 2.;
-        if(parent != NULL){
-            node->m_gg += node->m_gc / 2.;
-            // matrix off diagonal element
-            node->m_hh = -node->m_gc / 2.;
-        }
-        for(std::vector< CompNode >::iterator child_it = node->m_children.begin();
-            child_it != node->m_children.end(); child_it++){
-            node->m_gg += (*child_it).m_gc / 2.;
-        }
-        // right hand side
-        node->m_ff += node->m_ca / dt * node->m_v -
-                      node->m_gl * (node->m_v / 2. - node->m_el);
-        if(parent != NULL){
-            node->m_ff -= node->m_gc * (node->m_v - parent->m_v) / 2.;
-        }
-        for(std::vector< CompNode >::iterator child_it = node->m_children.begin();
-            child_it != node->m_children.end(); child_it++){
-            node->m_ff -= node->m_gc * (node->m_v - (*child_it).m_v) / 2.;
-        }
-    } // for
 };
-void nest::CompTree::add_synapse_contribution(int comp_ind, std::pair< double, double > gf_syn){
-  m_nodes[comp_ind]->m_gg += gf_syn.first;
-  m_nodes[comp_ind]->m_ff += gf_syn.second;
-}
 
 // solve matrix with O(n) algorithm
 void nest::CompTree::solve_matrix(){

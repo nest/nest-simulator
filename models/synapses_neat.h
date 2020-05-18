@@ -16,16 +16,6 @@ namespace nest
 {
 
 
-template <typename T,typename U>
-std::pair<T,U> operator+(const std::pair<T,U> & l, const std::pair<T,U> & r) {
-  /*
-  + operator for pairs, as per
-  https://stackoverflow.com/questions/21956119/add-stdpair-with-operator
-  */
-  return {l.first+r.first,l.second+r.second};
-}
-
-
 // conductance windows /////////////////////////////////////////////////////////
 class ConductanceWindow{
 protected:
@@ -145,19 +135,14 @@ base class implements a current based synapse with exponential conductance
 window of 5 ms
 */
 protected:
-  // compartment index of the synapse
-  int m_comp_ind;
   // conductance windows and voltage dependencies used in synapse
   ConductanceWindow* m_cond_w;
   VoltageDependence* m_v_dep;
 
 public:
   // constructor, destructor
-  Synapse(int comp_ind);
+  Synapse();
   ~Synapse(){};
-
-  // getters
-  int getCompInd(){return m_comp_ind;};
 
   virtual void init(){m_cond_w->init();};
   // update functions
@@ -165,7 +150,7 @@ public:
   virtual void handle(SpikeEvent& e);
 
   // for numerical integration
-  virtual std::pair< double, double > f_numstep(std::vector< double >& v_comp);
+  virtual std::pair< double, double > f_numstep(double v_comp);
 };
 
 /*
@@ -175,21 +160,21 @@ and an AMPA+NMDA synapse
 class AMPASyn : public Synapse{
 public:
   // constructor, destructor
-  AMPASyn(int comp_ind);
+  AMPASyn();
   ~AMPASyn(){};
 };
 
 class GABASyn : public Synapse{
 public:
   // constructor, destructor
-  GABASyn(int comp_ind);
+  GABASyn();
   ~GABASyn(){};
 };
 
 class NMDASyn : public Synapse{
 public:
   // constructor, destructor
-  NMDASyn(int comp_ind);
+  NMDASyn();
   ~NMDASyn(){};
 };
 class AMPA_NMDASyn : public Synapse{
@@ -199,8 +184,8 @@ private:
   NMDASyn* m_nmda;
 public:
   // constructor, destructor
-  AMPA_NMDASyn(int comp_ind);
-  AMPA_NMDASyn(int comp_ind, double nmda_ratio);
+  AMPA_NMDASyn();
+  AMPA_NMDASyn(double nmda_ratio);
   ~AMPA_NMDASyn(){};
 
   void init() override {m_ampa->init(); m_nmda->init();};
@@ -209,7 +194,7 @@ public:
   void handle(SpikeEvent& e) override;
 
   // for numerical integration
-  std::pair< double, double > f_numstep(std::vector< double >& v_comp) override;
+  std::pair< double, double > f_numstep(double v_comp) override;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

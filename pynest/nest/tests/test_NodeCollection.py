@@ -625,6 +625,62 @@ class TestNodeCollection(unittest.TestCase):
         """
         nest.Create('iaf_psc_delta', params={})
 
+    def test_array_indexing(self):
+        """NodeCollection array indexing"""
+        n = nest.Create('iaf_psc_alpha', 10)
+        cases = [[1, 2],
+                 [2, 5],
+                 [0, 2, 5, 7, 9],
+                 (5, 2),
+                 []
+                 ]
+        fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection
+                      ([2, 5.5], TypeError),  # Not all indices are ints
+                      ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
+                      ([2, 2], ValueError),  # Non-unique elements
+                      ]
+        if HAVE_NUMPY:
+            cases += [np.array(c) for c in cases]
+            fail_cases += [(np.array(c), e) for c, e in fail_cases]
+        for case in cases:
+            print(type(case), case)
+            ref = [i + 1 for i in case]
+            ref.sort()
+            sliced = n[case]
+            self.assertEqual(sliced.tolist(), ref)
+        for case, err in fail_cases:
+            print(type(case), case)
+            with self.assertRaises(err):
+                sliced = n[case]
+
+    def test_array_indexing_bools(self):
+        """NodeCollection array indexing with bools"""
+        n = nest.Create('iaf_psc_alpha', 5)
+        cases = [[True for _ in range(len(n))],
+                 [False for _ in range(len(n))],
+                 [True, False, True, False, True],
+                 ]
+        fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
+                      ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
+                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
+                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
+                      ]
+        if HAVE_NUMPY:
+            cases += [np.array(c) for c in cases]
+            # Cutting off fail_cases before cases that mix bools and ints,
+            # because converting them to NumPy arrays converts bools to ints.
+            fail_cases += [(np.array(c), e) for c, e in fail_cases[:-2]]
+        for case in cases:
+            print(type(case), case)
+            ref = [i for i, b in zip(range(1, 11), case) if b]
+            sliced = n[case]
+            self.assertEqual(sliced.tolist(), ref)
+        for case, err in fail_cases:
+            print(type(case), case)
+            with self.assertRaises(err):
+                sliced = n[case]
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeCollection, 'test')

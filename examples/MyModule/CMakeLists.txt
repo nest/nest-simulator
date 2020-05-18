@@ -307,9 +307,8 @@ install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help --- based on doc/CMakeLists.txt
 # Install only if Py >= 2.7.8 and NEST was installed with help
-if ( ( NOT CMAKE_CROSSCOMPILING ) 
-     AND PYTHON_EXECUTABLE 
-     AND ( ${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7" )
+if ( ( NOT CMAKE_CROSSCOMPILING )
+     AND PYTHON_EXECUTABLE
      AND ( IS_DIRECTORY ${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DOCDIR}/help )
    )
 
@@ -322,14 +321,14 @@ if ( ( NOT CMAKE_CROSSCOMPILING )
          WORKING_DIRECTORY \"${NEST_INSTALL_PREFIX}/${NEST_INSTALL_DATADIR}/help_generator\"
          )"
       )
-  
+
     # Copy the local doc/help directory to the global installation
     # directory for documentation.
     install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
       DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
       OPTIONAL
       )
-  
+
     # Update the global help index to include all help files in
     # the global installation directory for documentation.
     install( CODE

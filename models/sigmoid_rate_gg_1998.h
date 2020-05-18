@@ -35,17 +35,19 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: sigmoid_rate_gg_1998 - rate model with sigmoidal gain function
-as defined in [1].
+Short description
++++++++++++++++++
 
-Description:
+rate model with sigmoidal gain function
+
+Description
++++++++++++
 
 sigmoid_rate_gg_1998 is an implementation of a nonlinear rate model with
-input function \f$ input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 ) \f$.
+input function as in [1]_ :math:`input(h) = ( g * h )^4 / ( .1^4 + ( g * h )^4 )`.
+
 It either models a rate neuron with input noise (see rate_neuron_ipn)
 or a rate transformer (see rate_transformer_node).
 Input transformation can either be applied to individual inputs
@@ -60,13 +62,13 @@ nest.Create('sigmoid_rate_gg_1998_ipn'). Nonlinear rate transformers can be
 created by typing nest.Create('rate_transformer_sigmoid_rate_gg_1998').
 
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
 
-\verbatim embed:rst
 ==================  ======= ==============================================
  rate               real    Rate (unitless)
  tau                ms      Time constant of rate dynamics
@@ -76,9 +78,9 @@ transformers.
  linear_summation   boolean Specifies type of non-linearity (see above)
  rectify_output     boolean Switch to restrict rate to values >= 0
 ==================  ======= ==============================================
-\endverbatim
 
--Note:
+
+Note:
 
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and
@@ -86,9 +88,9 @@ then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Gancarz G, Grossberg S (1998). A neural model of the saccade generator
        in the reticular formation. Neural Networks, 11(7):1159–1174.
        DOI: https://doi.org/10.1016/S0893-6080(98)00096-3
@@ -100,17 +102,26 @@ References:
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi/org/10.3389/fninf.2015.00022
-\endverbatim
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+Sends
++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
+See also
+++++++++
 
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+rate_connection_instantaneous, rate_connection_delayed
+
+EndUserDocs */
+
 class nonlinearities_sigmoid_rate_gg_1998
 {
 private:

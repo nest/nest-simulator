@@ -79,6 +79,21 @@ nest::RandomManager::finalize()
 void
 nest::RandomManager::reset_rngs_()
 {
+  // Delete existing RNGs.
+  delete rank_synced_rng_;
+
+  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
+  {
+    for ( auto rng : rng_vec )
+    {
+      delete rng;
+    }
+  };
+
+  delete_rngs( vp_synced_rngs_ );
+  delete_rngs( vp_specific_rngs_ );
+
+  // Create new RNGs of the currently used RNG type.
   rank_synced_rng_ = rng_types_[ current_rng_type_ ]->create( { base_seed_, RANK_SYNCED_SEEDER_ } );
 
   vp_synced_rngs_.resize( kernel().vp_manager.get_num_threads() );

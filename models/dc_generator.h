@@ -38,49 +38,46 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
 
-Name: dc_generator - provides DC input current
+/* BeginUserDocs: device, generator
 
-Description: The DC-Generator provides a constant DC Input
-to the connected node. The unit of the current is pA.
+Short description
++++++++++++++++++
 
-Parameters:
+provides direct current (DC) input
+
+Description
++++++++++++
+
+The dc_generator provides a constant DC input to the connected
+node. The unit of the current is pA.
+
+The dc_generator is rather inefficient, since it needs to send the
+same current information on each time step. If you only need a
+constant bias current into a neuron, you could instead directly set
+the property *I_e*, which is available in many neuron models.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
 ========== ======  =============================
  amplitude pA      Amplitude of current
 ========== ======  =============================
-\endverbatim
 
+Sends
++++++
 
-Examples:
+CurrentEvent
 
-    SLI
+See also
+++++++++
 
-    The dc current can be altered in the following way:
-    /dc_generator Create /dc_gen Set  % Creates a dc_generator, which is a node
-    dc_gen GetStatus info             % View properties (amplitude is 0)
-    dc_gen << /amplitude 1500. >> SetStatus
-    dc_gen GetStatus info             % amplitude is now 1500.0
+ac_generator, noise_generator, step_current_generator
 
-Remarks:
+EndUserDocs */
 
-The dc_generator is rather inefficient, since it needs to
-send the same current information on each time step. If you
-only need a constant bias current into a neuron, you should
-set it directly in the neuron, e.g., dc_generator.
-
-Sends: CurrentEvent
-
-Author: docu by Sirko Straube
-
-SeeAlso: Device, StimulatingDevice
-*/
 class dc_generator : public DeviceNode
 {
 

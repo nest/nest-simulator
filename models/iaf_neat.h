@@ -299,13 +299,12 @@ iaf_neat::set_status( const DictionaryDatum& d )
       DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( compartments_it->second.datum() );
       const long idx = getValue< long >( *dd, "index" );
       const long parent = getValue< long >( *dd, "parent" );
-      const std::vector< long > children = getValue< std::vector< long > >( *dd, "children" );
       const double ca = getValue< double >( *dd, "ca" );
       const double gc = getValue< double >( *dd, "gc" );
       const double gl = getValue< double >( *dd, "gl" );
       const double el = getValue< double >( *dd, "el" );
 
-      m_c_tree.add_node(idx, parent, children, ca, gc, gl, el);
+      m_c_tree.add_node(idx, parent, ca, gc, gl, el);
     }
   }
 

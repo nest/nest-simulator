@@ -250,11 +250,15 @@ nest::iaf_neat::calibrate()
   /*
   Tree structure for testing
   */
-  m_c_tree.init();
 
   // variables needed for manual computations below
   const double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
   const double ca1 = .1, gc1 = .1, gl1 = .01, el1 = -70.;
+
+  m_c_tree.add_node(0, -1, ca0, gc0, gl0, el0);
+  m_c_tree.add_node(1, 0, ca1, gc1, gl1, el1);
+  m_c_tree.init();
+  m_c_tree.print_tree();
 
   /*
   Test 1: matrix inversion

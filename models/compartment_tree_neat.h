@@ -36,10 +36,10 @@ private:
 public:
     // tree structure indices
     long m_index;
-    long m_parent_index; // negative value means node is root
-    std::vector< long > m_child_indices;
-    // associated location
-    int m_loc_index;
+    // long m_parent_index; // negative value means node is root
+    // std::vector< long > m_child_indices;
+    CompNode* m_parent;
+    std::vector< CompNode > m_children;
     // voltage variable
     double m_v = 0.;
     // electrical parameters
@@ -53,7 +53,7 @@ public:
     int m_n_passed = 0.;
 
     // constructor, destructor
-    CompNode(long node_index, long parent_index, std::vector< long > child_indices,
+    CompNode(long node_index, CompNode* parent,
             double ca, double gc,
             double gl, double el);
     ~CompNode(){};
@@ -72,11 +72,10 @@ private:
     /*
     structural data containers for the compartment model
     */
-    // std::vector of all nodes (first node should be root)
-    std::vector< CompNode > m_nodes;
-
     // root node
-    CompNode* m_root;
+    CompNode m_root = CompNode(0, NULL, 1., 0., 1., 0.);
+    // convenience std::vector of pointers to all nodes, depth first iteration
+    std::vector< CompNode* > m_nodes;
     // std::vector of pointers to nodes that are leafs
     std::vector< CompNode* > m_leafs;
 
@@ -86,11 +85,12 @@ private:
     //recursion function
     void solve_matrix_downsweep(CompNode* node_ptr,
                                 std::vector< CompNode* >::iterator leaf_it);
-    void solve_matrix_upsweep(CompNode& node, double vv);
+    void solve_matrix_upsweep(CompNode* node, double vv);
 
     // set functions for initialization
+    void set_nodes();
+    void set_nodes(CompNode* node);
     void set_leafs();
-    void set_root();
 
 public:
     // constructor, destructor
@@ -98,9 +98,11 @@ public:
     ~CompTree(){};
 
     // initialization functions for tree structure
-    void add_node(long node_index, long parent_index, std::vector< long > child_indices,
+    void add_node(long node_index, long parent_index,
                  double ca, double gc,
                  double gl, double el);
+    CompNode* find_node(long node_index);
+    CompNode* find_node(long node_index, CompNode* node);
     void init();
 
     // getters and setters

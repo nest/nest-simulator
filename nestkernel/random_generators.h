@@ -30,6 +30,9 @@
 #include <utility>
 #include <type_traits>
 
+// libnestutil includes:
+#include "randutils.hpp"
+
 namespace nest
 {
 
@@ -49,6 +52,7 @@ using lognormal_distribution = RandomDistribution< std::lognormal_distribution<>
 using binomial_distribution = RandomDistribution< std::binomial_distribution< unsigned long > >;
 using gamma_distribution = RandomDistribution< std::gamma_distribution<> >;
 using exponential_distribution = RandomDistribution< std::exponential_distribution<> >;
+
 
 /**
  * @brief Base class for RNG engine wrappers.
@@ -123,7 +127,9 @@ public:
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
-    std::seed_seq sseq( seed );
+	// Melissa O'Neill's seed sequence generator which provides better distributed seeds
+	// than std::seed_seq; see https://www.pcg-random.org/posts/developing-a-seed_seq-alternative.html
+    randutils::seed_seq_fe128 sseq( seed );
     rng_.seed( sseq );
   }
 

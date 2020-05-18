@@ -28,6 +28,7 @@ set( nestutil_sources
     logging.h
     numerics.h numerics.cpp
     propagator_stability.h propagator_stability.cpp
+    randutils.hpp
     sort.h
     stopwatch.h stopwatch.cpp
     string_utils.h

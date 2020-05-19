@@ -35,10 +35,9 @@ private:
     double m_dt;
 
 public:
-    // tree structure indices
+    // node_index
     long m_index;
-    // long m_parent_index; // negative value means node is root
-    // std::vector< long > m_child_indices;
+    // tree structure indices
     CompNode* m_parent;
     std::vector< CompNode > m_children;
 

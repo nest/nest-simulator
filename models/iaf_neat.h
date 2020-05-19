@@ -79,7 +79,8 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  void add_synapse();
+  void add_synapses();
+  void test();
 
 private:
   void init_state_( const Node& proto );
@@ -211,7 +212,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.y3_;
   }
 
   // ----------------------------------------------------------------
@@ -316,19 +317,6 @@ iaf_neat::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-}
-
-inline void
-iaf_neat::add_synapse(){
-  long node_index = 0;
-
-  // Should add a synapse
-  std::shared_ptr< Synapse > syn(new AMPASyn());
-
-  syn_receptors.push_back(syn);
-
-  CompNode* node = m_c_tree.find_node(node_index);
-  node->m_syns.push_back(syn);
 }
 
 } // namespace

@@ -236,11 +236,48 @@ nest::iaf_neat::init_buffers_()
   Archiving_Node::clear_history();
 }
 
-void
-nest::iaf_neat::calibrate()
-{
-  B_.logger_.init();
 
+inline void
+iaf_neat::add_synapses(){
+  long node_index = 0;
+  CompNode* node;
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn1(new AMPASyn());
+
+  syn_receptors.push_back(syn1);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn1);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn2(new GABASyn());
+
+  syn_receptors.push_back(syn2);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn2);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn3(new NMDASyn());
+
+  syn_receptors.push_back(syn3);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn3);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn4(new AMPA_NMDASyn(3.));
+
+  syn_receptors.push_back(syn4);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn4);
+}
+
+
+void
+nest::iaf_neat::test(){
   const double h = Time::get_resolution().get_ms();
   const double dt = h;
 
@@ -248,8 +285,6 @@ nest::iaf_neat::calibrate()
   /*
   Tree structure for testing
   */
-
-  add_synapse();
 
   // variables needed for manual computations below
   const double ca0 = 1., gc0 = .1, gl0 = .1, el0 = -70.;
@@ -288,7 +323,7 @@ nest::iaf_neat::calibrate()
   std::cout << "v_sol_comptr = (" << v_sol[0] << ", " << v_sol[1] << ")" << std::endl;
 
   /*
-  Test 2: attenuation
+  Test 2: attenuation integration
   */
   std::cout << std::endl;
   std::cout << "--- Testing attenuation simulation ---" << std::endl;
@@ -314,8 +349,54 @@ nest::iaf_neat::calibrate()
   v_sol = m_c_tree.get_voltage();
   std::cout << "attenuation 0->1 manual = " << gc1 / (gl1 + gc1) << std::endl;
   std::cout << "attenuation 0->1 comptr = " << (v_sol[1] - el1) / (v_sol[0] - el0) << std::endl;
-  //////////////////////////////////////////////////////////////////////////////
 
+
+  /*
+  Test 3: synapses voltage dependence
+  */
+  add_synapses();
+  m_c_tree.init();
+  double fv0, fv2;
+  std::cout << std::endl;
+  std::cout << "--- Testing synapses ---" << std::endl;
+  // voltage dependence AMPA synapse
+  fv0 = syn_receptors[0]->f(0);
+  std::cout << ">>> AMPA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[0]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (manual = " << 40. <<") mV" << std::endl;
+  // // voltage dependence GABA synapse
+  fv0 = syn_receptors[1]->f(-80.);
+  std::cout << ">>> GABA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[1]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (manual = " << -40. <<") mV" << std::endl;
+  // voltage dependence NMDA synapse
+  fv0 = syn_receptors[2]->f(0.);
+  std::cout << ">>> NMDA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[2]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (!= " << 40. <<") mV" << std::endl;
+  // voltage dependence AMPA+NMDA synapse
+  fv0 = syn_receptors[3]->f(0.);
+  std::cout << ">>> NMDA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[3]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (!= " << 40. <<") mV" << std::endl;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
+
+void
+nest::iaf_neat::calibrate()
+{
+  B_.logger_.init();
+
+  const double h = Time::get_resolution().get_ms();
+
+  test();
+
+  m_c_tree.init();
 
   V_.P33_ = std::exp( -h / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
@@ -381,9 +462,14 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // v_vals[0] = get_V_m_();
     // gf_syn = m_syn->f_numstep(v_vals);
 
+     /*
+    Third model
+    */
+    m_c_tree.construct_matrix(lag);
+    m_c_tree.solve_matrix();
+    S_.y3_ = m_c_tree.get_node_voltage(0);
+
     // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
-
-
 
     // if ( S_.r_ == 0 )
     // {
@@ -450,11 +536,9 @@ nest::iaf_neat::handle( SpikeEvent& e )
       "must be positive." );
   }
   assert( e.get_delay_steps() > 0 );
-  std::cout << "!!! n rport: " << e.get_rport() << std::endl;
-  std::cout << "!!! n syn_receptors: " << syn_receptors.size() << std::endl;
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= syn_receptors.size() ) );
+  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_receptors.size() ) );
 
-  syn_receptors[ e.get_rport() - 1 ]->handle(e);
+  syn_receptors[ e.get_rport() ]->handle(e);
 }
 
 void

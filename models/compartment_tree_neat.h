@@ -113,8 +113,10 @@ public:
     CompNode* find_node(long node_index);
     CompNode* find_node(long node_index, CompNode* node);
     std::vector< double > get_voltage();
+    double get_node_voltage(long node_index);
 
     // construct the numerical integration matrix and vector
+    void construct_matrix(const long lag);
     void construct_matrix(std::vector< double > i_in, const long lag);
     // solve the matrix equation for next timestep voltage
     void solve_matrix();

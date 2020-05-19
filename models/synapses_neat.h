@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <math.h>
 #include <time.h>
+#include <memory>
 
 #include "ring_buffer.h"
 
@@ -136,8 +137,8 @@ window of 5 ms
 */
 protected:
   // conductance windows and voltage dependencies used in synapse
-  ConductanceWindow* m_cond_w;
-  VoltageDependence* m_v_dep;
+  std::unique_ptr< ConductanceWindow > m_cond_w;
+  std::unique_ptr< VoltageDependence > m_v_dep;
 
 public:
   // constructor, destructor
@@ -151,6 +152,9 @@ public:
 
   // for numerical integration
   virtual std::pair< double, double > f_numstep(double v_comp);
+
+  // other functions
+  virtual double f(double v){return m_v_dep->f(v);};
 };
 
 /*
@@ -179,9 +183,9 @@ public:
 };
 class AMPA_NMDASyn : public Synapse{
 private:
-  int m_nmda_ratio;
-  AMPASyn* m_ampa;
-  NMDASyn* m_nmda;
+  double m_nmda_ratio;
+  std::unique_ptr< AMPASyn > m_ampa;
+  std::unique_ptr< NMDASyn > m_nmda;
 public:
   // constructor, destructor
   AMPA_NMDASyn();
@@ -195,6 +199,9 @@ public:
 
   // for numerical integration
   std::pair< double, double > f_numstep(double v_comp) override;
+
+  // other functions
+  double f(double v) override;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

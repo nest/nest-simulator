@@ -40,7 +40,7 @@ void nest::CompNode::construct_matrix_element(){
         m_gg += (*child_it).m_gc / 2.;
     }
     // right hand side
-    m_ff += m_ca / dt * m_v -m_gl * (m_v / 2. - m_el);
+    m_ff += m_ca / dt * m_v - m_gl * (m_v / 2. - m_el);
     if(m_parent != NULL){
         m_ff -= m_gc * (m_v - m_parent->m_v) / 2.;
     }
@@ -192,8 +192,17 @@ std::vector< double > nest::CompTree::get_voltage(){
     }
     return v_comp;
 }
+// getters and setters
+double nest::CompTree::get_node_voltage(long node_index){
+    CompNode* node = find_node(node_index);
+    return node->m_v;
+}
 
 // construct the matrix equation to be solved
+void nest::CompTree::construct_matrix(const long lag){
+    std::vector< double > i_in((int)m_nodes.size(), 0.);
+    construct_matrix(i_in, lag);
+}
 void nest::CompTree::construct_matrix(std::vector< double > i_in, const long lag){
     assert(i_in.size() == m_nodes.size());
 
@@ -254,7 +263,6 @@ void nest::CompTree::solve_matrix_upsweep(CompNode* node, double vv){
 
 void nest::CompTree::print_tree(){
     // loop over all nodes
-    std::cout << "--- Root " << m_root.m_index << std::endl;
     std::printf(">>> Tree with %d compartments <<<\n", int(m_nodes.size()));
     for(int ii=0; ii<int(m_nodes.size()); ii++){
         CompNode* node = m_nodes[ii];

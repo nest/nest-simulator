@@ -9,8 +9,10 @@ n_neat = nest.Create('iaf_neat')
 m = nest.Create('multimeter', 1, {'record_from': ['V_m']})
 m_neat = nest.Create('multimeter', 1, {'record_from': ['V_m']})
 
-nest.Connect(sg, n)
-nest.Connect(sg, n_neat)
+nest.CopyModel("static_synapse", "excitatory", {"weight":1., "delay":0.5})
+
+nest.Connect(sg, n, syn_spec="excitatory")
+nest.Connect(sg, n_neat, syn_spec="excitatory")
 
 nest.Connect(m, n)
 nest.Connect(m_neat, n_neat)
@@ -23,4 +25,4 @@ events_neat = nest.GetStatus(m_neat, 'events')[0]
 plt.plot(events['times'], events['V_m'], label='iaf_psc_delta')
 plt.plot(events_neat['times'], events_neat['V_m'], label='iaf_neat')
 plt.legend()
-# plt.show()
+plt.show()

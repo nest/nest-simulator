@@ -5,18 +5,21 @@ NEST 3.0: What's new?
    :local:
    :depth: 2
 
+Introduction
+------------
 
 NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
 perform operations that were not possible in previous versions.
 
+.. admonition:: Python 3
+
+   With NEST 3.0, we no longer support Python 2. Running the code snippets throughout this guide requires a freshly
+   started instance of Python (and sometimes pyplot from matplotlib). Check out our :doc:`Installation instructions <../../installation/linux_install>` for more
+   information on the dependencies.
+
 .. seealso::
 
-  See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
-
-.. note::
-
-  Running the code snippets throughout this guide requires a freshly started instance of Python with NEST
-  (and sometimes pyplot from matplotlib) imported.
+   See our :doc:`nest2_to_nest3_detailed_transition_guide` to see a full list of functions that have changed.
 
 What's new?
 -----------
@@ -29,14 +32,9 @@ New functionality for node handles (neurons and devices)
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.
 
+In most use cases, you will not need to make any changes to your scripts in NEST 3.0, unless you have used **topology** or **subnets**.
 
-.. note::
-
-   In **many use cases**, you will not need to make any changes to your scripts in NEST 3.0, unless you have used
-   topology or subnets.
-
-
-NodeCollection supports the following functionality
+NodeCollection supports the following functionality:
 
 -  :ref:`Indexing <indexing>`
 -  :ref:`Iteration <iterating>`
@@ -338,6 +336,39 @@ or a ``nest.Parameter``
 Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
 will point out which parameters can be set and which are read-only.
 
+.. _connect_arrays:
+
+New functionality for connecting arrays of node IDs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While you should aim to use NodeCollections to create connections whenever possible,
+there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
+In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
+to be passed to the ``Connect()`` function, especially if there are thousands or millions of
+pairs to connect.
+
+To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.
+This variant of ``Connect()`` will create connections in a one-to-one fashion.
+
+::
+
+   nest.Create('iaf_psc_alpha', 10)
+   # Node IDs in the arrays must address existing nodes, but may occur multiple times.
+   sources = np.array([1, 5, 7, 5], dtype=np.uint64)
+   targets = np.array([2, 2, 4, 4], dtype=np.uint64)
+   syn_spec = {'synapse_model': 'static_synapse'}
+   nest.Connect(sources, targets, syn_spec=syn_spec)
+
+The synapse model has to be specified. You can also specify weights, delays, and receptor type
+for each connection as arrays. All arrays have to have lengths equal to those of ``sources`` and ``targets``.
+
+::
+
+   weights = np.array([0.5, 0.5, 2., 2.])
+   delays = np.array([1., 1., 2., 2.])
+   syn_spec = {'weight': weights, 'delay': delays, 'synapse_model': 'static_synapse'}
+   nest.Connect(sources, targets, syn_spec=syn_spec)
+
 
 .. _SynapseCollection:
 
@@ -598,7 +629,7 @@ distribution.
     ax[0].set_ylabel('V_m');
 
 
-.. image:: ../_static/img/NEST3_13_0.png
+.. image:: ../../_static/img/NEST3_13_0.png
 
 
 .. _spatial_ex:
@@ -632,8 +663,8 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
     grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
     nest.PlotLayer(grid_nodes);
 
-  .. image:: ../_static/img/NEST3_23_0.png
-
+.. image:: ../../_static/img/NEST3_23_0.png
+  :width: 500px
 
 .. code-block:: ipython
 
@@ -642,8 +673,8 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
                                                          num_dimensions=2))
     nest.PlotLayer(free_nodes);
 
-.. image:: ../_static/img/NEST3_24_0.png
-
+.. image:: ../../_static/img/NEST3_24_0.png
+  :width: 500px
 
 After you have created your spatially distributed nodes, you can use `spatial` property to set
 node or connection parameters.
@@ -702,7 +733,7 @@ node or connection parameters.
     ax.set_xlabel('Node position on x-axis')
     ax.set_ylabel('V_m');
 
-  .. image:: ../_static/img/NEST3_25_0.png
+  .. image:: ../../_static/img/NEST3_25_0.png
 
   NEST provides some functions to help create distributions based on for
   example the distance between two neurons.
@@ -784,7 +815,7 @@ parameter:
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
 
-.. image:: ../_static/img/NEST3_34_0.png
+.. image:: ../../_static/img/NEST3_34_0.png
 
 
 
@@ -836,7 +867,7 @@ given as argument.
 
 
 
-.. image:: ../_static/img/NEST3_27_0.png
+.. image:: ../../_static/img/NEST3_27_0.png
 
 .. _logic:
 
@@ -928,7 +959,7 @@ statement. Three arguments are required:
 
 
 
-.. image:: ../_static/img/NEST3_26_0.png
+.. image:: ../../_static/img/NEST3_26_0.png
 
 
 .. _combine_ex:
@@ -980,8 +1011,6 @@ Using parameters makes it easy to set node properties
 
 What's changed?
 ---------------
-
-With NEST 3.0, we no longer support Python 2, which reached its end of life on January 1, 2020.
 
 .. _param_changes:
 
@@ -1265,7 +1294,7 @@ modular infrastructure for handling recordings: each modality is now
 taken care of by a specific recording backend and each recorder can
 use one of them to handle its data.
 
-NEST 3.0 supports the same recording backends for all modalities 
+NEST 3.0 supports the same recording backends for all modalities
 as in NEST 2.x. If compiled with support for `SIONlib
 <http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
 writing binary files in parallel becomes available. This is especially
@@ -1280,7 +1309,7 @@ more of the flags `to_file`, `to_memory`, or `to_screen` to *True*.
 
 In NEST 3.0, the individual flags are gone, and the `record_to`
 property now expects the name of the backend you want to use. Recording to
-multiple modalities from a single device is no longer possible. 
+multiple modalities from a single device is no longer possible.
 Individual devices have to be created and configured if this
 functionality is needed.
 
@@ -1334,7 +1363,7 @@ backend.
 
 All details about the new infrastructure can be found in the guide on
 :doc:`recording from simulations <recording_from_simulations>`.
-  
+
 
 What's removed?
 ---------------

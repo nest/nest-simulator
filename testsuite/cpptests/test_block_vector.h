@@ -32,7 +32,31 @@
 // Includes from libnestutil:
 #include "block_vector.h"
 
-BOOST_AUTO_TEST_SUITE( test_seque )
+/**
+ * Fixture filling a BlockVector and a vector with linearly increasing values.
+ */
+struct bv_vec_reference_fixture
+{
+  bv_vec_reference_fixture()
+    : N( block_vector.get_max_block_size() + 10 )
+  {
+    for ( int i = 0; i < N; ++i )
+    {
+      block_vector.push_back( i );
+      reference.push_back( i );
+    }
+  }
+
+  ~bv_vec_reference_fixture()
+  {
+  }
+
+  BlockVector< int > block_vector;
+  std::vector< int > reference;
+  int N;
+};
+
+BOOST_AUTO_TEST_SUITE( test_blockvector )
 
 BOOST_AUTO_TEST_CASE( test_size )
 {
@@ -98,27 +122,27 @@ BOOST_AUTO_TEST_CASE( test_erase )
     block_vector.push_back( i );
   }
 
-  auto seque_mid = block_vector;
-  seque_mid.erase( seque_mid.begin() + 2, seque_mid.begin() + 8 );
-  BOOST_REQUIRE( seque_mid.size() == 4 );
-  BOOST_REQUIRE( seque_mid[ 0 ] == 0 );
-  BOOST_REQUIRE( seque_mid[ 1 ] == 1 );
-  BOOST_REQUIRE( seque_mid[ 2 ] == 8 );
-  BOOST_REQUIRE( seque_mid[ 3 ] == 9 );
+  auto bv_mid = block_vector;
+  bv_mid.erase( bv_mid.begin() + 2, bv_mid.begin() + 8 );
+  BOOST_REQUIRE( bv_mid.size() == 4 );
+  BOOST_REQUIRE( bv_mid[ 0 ] == 0 );
+  BOOST_REQUIRE( bv_mid[ 1 ] == 1 );
+  BOOST_REQUIRE( bv_mid[ 2 ] == 8 );
+  BOOST_REQUIRE( bv_mid[ 3 ] == 9 );
 
-  auto seque_front = block_vector;
-  seque_front.erase( seque_front.begin(), seque_front.begin() + 7 );
-  BOOST_REQUIRE( seque_front.size() == 3 );
-  BOOST_REQUIRE( seque_front[ 0 ] == 7 );
-  BOOST_REQUIRE( seque_front[ 1 ] == 8 );
-  BOOST_REQUIRE( seque_front[ 2 ] == 9 );
+  auto bv_front = block_vector;
+  bv_front.erase( bv_front.begin(), bv_front.begin() + 7 );
+  BOOST_REQUIRE( bv_front.size() == 3 );
+  BOOST_REQUIRE( bv_front[ 0 ] == 7 );
+  BOOST_REQUIRE( bv_front[ 1 ] == 8 );
+  BOOST_REQUIRE( bv_front[ 2 ] == 9 );
 
-  auto seque_back = block_vector;
-  seque_back.erase( seque_back.begin() + 3, seque_back.end() );
-  BOOST_REQUIRE( seque_back.size() == 3 );
-  BOOST_REQUIRE( seque_back[ 0 ] == 0 );
-  BOOST_REQUIRE( seque_back[ 1 ] == 1 );
-  BOOST_REQUIRE( seque_back[ 2 ] == 2 );
+  auto bv_back = block_vector;
+  bv_back.erase( bv_back.begin() + 3, bv_back.end() );
+  BOOST_REQUIRE( bv_back.size() == 3 );
+  BOOST_REQUIRE( bv_back[ 0 ] == 0 );
+  BOOST_REQUIRE( bv_back[ 1 ] == 1 );
+  BOOST_REQUIRE( bv_back[ 2 ] == 2 );
 }
 
 BOOST_AUTO_TEST_CASE( test_begin )
@@ -209,10 +233,10 @@ BOOST_AUTO_TEST_CASE( test_iterator_dereference )
   BOOST_REQUIRE( *( block_vector.begin() ) == block_vector[ 0 ] );
 
   // Using operator->
-  BlockVector< std::vector< int > > nested_seque;
+  BlockVector< std::vector< int > > nested_bv;
   std::vector< int > tmp = { 42 };
-  nested_seque.push_back( tmp );
-  BOOST_REQUIRE( nested_seque.begin()->size() == 1 );
+  nested_bv.push_back( tmp );
+  BOOST_REQUIRE( nested_bv.begin()->size() == 1 );
 }
 
 BOOST_AUTO_TEST_CASE( test_iterator_assign )
@@ -250,16 +274,145 @@ BOOST_AUTO_TEST_CASE( test_iterator_compare )
   }
   BOOST_REQUIRE( block_vector.begin() < block_vector.end() );
 
-  auto it_a = block_vector.begin();
-  auto it_b = block_vector.begin();
-  BOOST_REQUIRE( it_a == it_b );
+  // Test comparison with iterator shifted one step, shifted to the end of
+  // the block, and shifted to the next block.
+  std::vector< int > it_shifts = { 1, block_vector.get_max_block_size() - 1, N - 1 };
+  for ( auto& shift : it_shifts )
+  {
+    auto it_a = block_vector.begin();
+    auto it_b = block_vector.begin();
+    BOOST_REQUIRE( it_a == it_b );
+    BOOST_REQUIRE( not( it_a != it_b ) );
 
-  ++it_b;
-  BOOST_REQUIRE( it_a != it_b );
-  BOOST_REQUIRE( it_a < it_b );
-  BOOST_REQUIRE( not( it_b < it_a ) );
+    it_b += shift;
+
+    BOOST_REQUIRE( it_a != it_b );
+    BOOST_REQUIRE( it_a < it_b );
+    BOOST_REQUIRE( it_a <= it_b );
+    BOOST_REQUIRE( it_b > it_a );
+    BOOST_REQUIRE( it_b >= it_a );
+
+    BOOST_REQUIRE( not( it_a == it_b ) );
+    BOOST_REQUIRE( not( it_b < it_a ) );
+    BOOST_REQUIRE( not( it_b <= it_a ) );
+    BOOST_REQUIRE( not( it_a > it_b ) );
+    BOOST_REQUIRE( not( it_a >= it_b ) );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_pp, bv_vec_reference_fixture )
+{
+  // operator++()
+  auto bvi = block_vector.begin();
+  for ( auto& ref : reference )
+  {
+    BOOST_REQUIRE( *bvi == ref );
+    ++bvi;
+  }
+  BOOST_REQUIRE( bvi == block_vector.end() );
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_p, bv_vec_reference_fixture )
+{
+  // operator+()
+  for ( int i = 0; i < N; ++i )
+  {
+    auto bvi = block_vector.begin();
+    auto ref_it = reference.begin();
+    auto new_bvi = bvi + i;
+    auto new_ref_it = ref_it + i;
+    BOOST_REQUIRE( *new_bvi == *new_ref_it );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_p_eq, bv_vec_reference_fixture )
+{
+  // operator+=()
+  for ( int i = 0; i < N; ++i )
+  {
+    auto bvi = block_vector.begin();
+    auto bvi_last = block_vector.end() - 1;
+    auto ref_it = reference.begin();
+    auto ref_it_last = reference.end() - 1;
+    bvi += i;
+    ref_it += i;
+    BOOST_REQUIRE( *bvi == *ref_it );
+    bvi_last += -i;
+    ref_it_last += -i;
+    BOOST_REQUIRE( *bvi_last == *ref_it_last );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_m_eq, bv_vec_reference_fixture )
+{
+  // operator-=()
+  for ( int i = 1; i < N - 1; ++i )
+  {
+    auto bvi = block_vector.end();
+    auto bvi_first = block_vector.begin();
+    auto ref_it = reference.end();
+    auto ref_it_first = reference.begin();
+    bvi -= i;
+    ref_it -= i;
+    BOOST_REQUIRE( *bvi == *ref_it );
+    bvi_first -= -( i - 1 );
+    ref_it_first -= -( i - 1 );
+    BOOST_REQUIRE( *bvi_first == *ref_it_first );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_m, bv_vec_reference_fixture )
+{
+  // operator-()
+  for ( int i = 1; i < N - 1; ++i )
+  {
+    auto bvi = block_vector.end();
+    auto ref_it = reference.end();
+    auto new_bvi = bvi - i;
+    auto new_ref_it = ref_it - i;
+    BOOST_REQUIRE( *new_bvi == *new_ref_it );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_mm, bv_vec_reference_fixture )
+{
+  // operator--()
+  auto bvi = block_vector.end() - 1;
+  for ( auto ref_it = reference.end() - 1; ref_it >= reference.begin(); --ref_it, --bvi )
+  {
+    BOOST_REQUIRE( *bvi == *ref_it );
+  }
+  BOOST_REQUIRE( bvi == block_vector.begin() - 1 );
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_eq, bv_vec_reference_fixture )
+{
+  // operator==()
+  auto bvi_pp = block_vector.begin() + 1;
+  auto bvi_copy = block_vector.begin();
+  auto bvi_mm = block_vector.begin() - 1;
+  for ( auto bvi = block_vector.begin(); bvi != block_vector.end(); ++bvi, ++bvi_copy, ++bvi_mm, ++bvi_pp )
+  {
+    BOOST_REQUIRE( bvi == bvi_copy );
+    BOOST_REQUIRE( not( bvi == bvi_pp ) );
+    BOOST_REQUIRE( not( bvi == bvi_mm ) );
+  }
+}
+
+BOOST_FIXTURE_TEST_CASE( test_operator_neq, bv_vec_reference_fixture )
+{
+  // operator!=()
+  auto bvi_pp = block_vector.begin() + 1;
+  auto bvi_copy = block_vector.begin();
+  auto bvi_mm = block_vector.begin() - 1;
+  for ( auto bvi = block_vector.begin(); bvi != block_vector.end(); ++bvi, ++bvi_copy, ++bvi_mm, ++bvi_pp )
+  {
+    BOOST_REQUIRE( not( bvi != bvi_copy ) );
+    BOOST_REQUIRE( bvi != bvi_pp );
+    BOOST_REQUIRE( bvi != bvi_mm );
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-#endif /* TEST_SORT_H */
+#endif /* TEST_BLOCK_VECTOR_H */

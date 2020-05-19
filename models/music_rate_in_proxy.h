@@ -42,11 +42,16 @@
 // Includes from sli:
 #include "arraydatum.h"
 
-/*BeginDocumentation
+/* BeginUserDocs: device, rate, MUSIC
 
-Name: music_rate_in_proxy - A device which receives rate data from MUSIC.
+Short description
++++++++++++++++++
 
-Description:
+A device which receives rate data from MUSIC
+
+Description
++++++++++++
+
 A music_rate_in_proxy can be used to receive rate data from
 remote MUSIC applications in NEST.
 
@@ -55,7 +60,9 @@ The music_rate_in_proxy represents a complete port to which MUSIC can
 connect and send data. The music_rate_in_proxy can be queried using
 GetStatus to retrieve the messages.
 
-Parameters:
+Parameters
+++++++++++
+
 The following properties are available in the status dictionary:
 
 port_name      - The name of the MUSIC input port to listen to (default:
@@ -67,17 +74,21 @@ published      - A bool indicating if the port has been already published
 
 The parameter port_name can be set using SetStatus.
 
-Examples:
+Examples
+++++++++
+
 /music_rate_in_proxy Create /mcip Set
 10 Simulate
 mcip GetStatus /data get /gaze_directions Set
 
-Author: Philipp Weidel, Jakob Jordan
-FirstVersion: June 2019
 Availability: Only when compiled with MUSIC
 
-SeeAlso: music_rate_out_proxy, music_cont_in_proxy
-*/
+See also
+++++++++
+
+music_rate_out_proxy, music_cont_in_proxy
+
+EndUserDocs*/
 
 namespace nest
 {

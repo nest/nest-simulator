@@ -57,14 +57,15 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup hh
-@ingroup psc
+/* BeginUserDocs: neuron, Hodgkin-Huxley, current-based
 
-Name: hh_psc_alpha - Hodgkin-Huxley neuron model.
+Short description
++++++++++++++++++
 
-Description:
+Hodgkin-Huxley neuron model
+
+Description
++++++++++++
 
 hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
@@ -80,10 +81,11 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 ========  ======  ============================================================
 V_m       mV      Membrane potential
 E_L       mV      Leak reversal potential
@@ -100,16 +102,16 @@ Inact_h   real    Inactivation variable h
 Act_n     real    Activation variable n
 I_e       pA      External input current
 ========  ======  ============================================================
-\endverbatim
 
 Problems/Todo:
 
 better spike detection
 initial wavelet/spike at simulation onset
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
+
 .. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
        populations, plasticity. New York: Cambridge University Press
 .. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
@@ -119,16 +121,24 @@ References:
        membrane current and its application to conduction and excitation in
        nerve. The Journal of Physiology 117.
        DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Authors: Schrader
+Receives
+++++++++
 
-SeeAlso: hh_cond_exp_traub
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+hh_cond_exp_traub
+
+EndUserDocs */
+
 class hh_psc_alpha : public Archiving_Node
 {
 

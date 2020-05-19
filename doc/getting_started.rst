@@ -1,4 +1,4 @@
-Getting Started
+Getting started
 ===============
 
 Have you already :doc:`installed NEST <installation/index>`?
@@ -16,7 +16,7 @@ exploring PyNEST, trying to learn a new functionality or debugging a
 routine.
 
 How does it work?
--------------------
+-----------------
 
 Let's start with a basic script to simulate a simple neural network.
 

@@ -88,8 +88,6 @@ nest::KernelManager::initialize()
     m->initialize();
   }
 
-  fingerprint_ = std::clock();
-
   ++fingerprint_;
 
   initialized_ = true;

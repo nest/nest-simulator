@@ -9,7 +9,7 @@ Here you can find how to build complex, layered networks in NEST.
   This module is removed in NEST 3.0, and all functionality of topology
   is now in the main ``nest`` module.
 
-  See the :doc:`guide to NEST 3.0 <../from_nest2_to_nest3>` for more information.
+  See the :doc:`../nest2_to_nest3/nest2_to_nest3_detailed_transition_guide` for more information.
 
 * If you've never used spatially-structured networks before,  we recommend you
   check out our :doc:`PyNEST tutorial on the topic <../../tutorials/pynest_tutorial/part_4_spatially_structured_networks>`

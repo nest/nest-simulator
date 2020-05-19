@@ -170,6 +170,8 @@ public:
     AbstractLayerPTR target_layer,
     const Token& syn_model ) = 0;
 
+  void set_node_collection( NodeCollectionPTR );
+
 protected:
   /**
    * The NodeCollection to which the layer belongs
@@ -509,6 +511,12 @@ protected:
   std::shared_ptr< Ntree< D, index > > ntree_;
   MaskDatum mask_;
 };
+
+inline void
+AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
+{
+  node_collection_ = node_collection;
+}
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,

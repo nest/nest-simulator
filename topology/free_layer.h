@@ -180,30 +180,30 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
-    if ( d->known( names::extent ) )
+  }
+  if ( d->known( names::extent ) )
+  {
+    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+
+    Position< D > center = ( max_point + this->lower_left_ ) / 2;
+    auto lower_left_point = this->lower_left_; // save lower-left-most point
+    this->lower_left_ = center - this->extent_ / 2;
+
+    // check if all points are inside the specified layer extent
+    auto upper_right_limit = center + this->extent_ / 2;
+    for ( int d = 0; d < D; ++d )
     {
-      this->extent_ = getValue< std::vector< double > >( d, names::extent );
-
-      Position< D > center = ( max_point + this->lower_left_ ) / 2;
-      auto lower_left_point = this->lower_left_; // save lower-left-most point
-      this->lower_left_ = center - this->extent_ / 2;
-
-      // check if all points are inside the specified layer extent
-      auto upper_right_limit = center + this->extent_ / 2;
-      for ( int d = 0; d < D; ++d )
+      if ( lower_left_point[ d ] < this->lower_left_[ d ] or max_point[ d ] > upper_right_limit[ d ] )
       {
-        if ( lower_left_point[ d ] < this->lower_left_[ d ] or max_point[ d ] > upper_right_limit[ d ] )
-        {
-          throw BadProperty( "Node position outside of layer" );
-        }
+        throw BadProperty( "Node position outside of layer" );
       }
     }
-    else
-    {
-      this->extent_ = max_point - this->lower_left_;
-      this->extent_ += epsilon * 2;
-      this->lower_left_ -= epsilon;
-    }
+  }
+  else
+  {
+    this->extent_ = max_point - this->lower_left_;
+    this->extent_ += epsilon * 2;
+    this->lower_left_ -= epsilon;
   }
 }
 

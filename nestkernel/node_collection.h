@@ -69,6 +69,8 @@ public:
   virtual void set_first_node_id( index ) = 0;
   virtual index get_first_node_id() const = 0;
   virtual std::string get_type() const = 0;
+
+  virtual void slice( size_t, size_t, size_t, NodeCollectionPTR ) = 0;
 };
 
 class NodeIDTriple

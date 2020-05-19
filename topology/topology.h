@@ -39,6 +39,7 @@
 
 // Includes from topology:
 #include "layer.h"
+#include "free_layer.h"
 #include "mask.h"
 
 
@@ -89,8 +90,10 @@ public:
     return first_node_id_;
   }
 
+  void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
+
 private:
-  const AbstractLayerPTR layer_; //!< layer object
+  AbstractLayerPTR layer_; //!< layer object
   index first_node_id_;
 };
 

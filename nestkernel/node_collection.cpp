@@ -24,6 +24,7 @@
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
+#include "topology.h"
 
 
 // C++ includes:
@@ -387,14 +388,22 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
     throw KernelException( "InvalidNodeCollection" );
   }
 
+  NodeCollectionPTR sliced_nc;
   if ( step == 1 )
   {
-    return NodeCollectionPTR( new NodeCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
+    sliced_nc =
+      NodeCollectionPTR( new NodeCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
   }
   else
   {
-    return NodeCollectionPTR( new NodeCollectionComposite( *this, start, stop, step ) );
+    sliced_nc = NodeCollectionPTR( new NodeCollectionComposite( *this, start, stop, step ) );
   }
+  if ( metadata_ )
+  {
+    metadata_->slice( start, stop, step, sliced_nc );
+  }
+
+  return sliced_nc;
 }
 
 void

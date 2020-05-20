@@ -77,7 +77,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 
    make html
 
-3. Preview files. They are then located in ``./docs/_build/html``:
+3. Preview files. They are then located in ``./_build/html``:
 
 .. code-block:: bash
 

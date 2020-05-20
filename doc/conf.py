@@ -30,19 +30,19 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
 import re
-
 import pip
 
 import subprocess
 
+from shutil import copytree, ignore_patterns
 from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
+# add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 doc_path = os.path.abspath(os.path.dirname(__file__))
@@ -53,6 +53,7 @@ sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
+
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -98,6 +99,8 @@ extensions = [
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
+
+subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
@@ -278,3 +281,12 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
+
+
+# -- Copy documentation for Microcircuit Model ----------------------------
+
+source = r'../pynest/examples/Potjans_2014'
+destination = r'examples'
+
+if os.path.exists(destination) and os.path.isdir(destination):
+    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py', '*.rst'), dirs_exist_ok=True)

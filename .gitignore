@@ -62,7 +62,8 @@ doc/fulldoc.conf
 doc/normaldoc.conf
 doc/userdocs/
 doc/pynestkernel_mock.py
-doc/userdocs
+doc/from_cpp/
+doc/microcircuit/
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 

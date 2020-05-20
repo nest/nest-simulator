@@ -32,10 +32,11 @@ import sys
 import os
 import re
 import pip
-
 import subprocess
 
-from shutil import copytree, ignore_patterns
+from pathlib import Path, PurePosixPath
+from shutil import copy, copyfile
+
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -282,11 +283,17 @@ texinfo_documents = [
 
 # -- Options for readthedocs ----------------------------------------------
 
-
 # -- Copy documentation for Microcircuit Model ----------------------------
 
-source = r'../pynest/examples/Potjans_2014'
-destination = r'examples'
+source = Path("../pynest/examples/Potjans_2014")
+destination = Path("examples")
 
-if os.path.exists(destination) and os.path.isdir(destination):
-    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py', '*.rst'), dirs_exist_ok=True)
+# copy all *.png with the right subfolder from source to destiination
+for f in source.rglob('*.png'):
+    # ff - files with subfolder
+    ff = destination / Path(*f.parts[4:])
+    # fp - only the path, without file name
+    fp = destination / Path(*f.parts[4:]).parent
+    if not fp.exists():
+        Path(fp).mkdir(parents=True, exist_ok=True)
+    copyfile(f, ff)

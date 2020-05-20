@@ -16,6 +16,7 @@ The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommend
 
 The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages.
 
+For efficient sorting algorithms the Boost library <https://www.boost.org/> is used. Since this is an essential factor for the communication of spikes, some simulations are significantly faster when NEST is compile with Boost.
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
 - `Python 3.5 or higher <http://www.python.org>`_

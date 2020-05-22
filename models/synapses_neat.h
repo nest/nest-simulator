@@ -1,3 +1,6 @@
+#ifndef SYNAPSES_NEAT_H
+#define SYNAPSES_NEAT_H
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,6 +14,7 @@
 #include <time.h>
 #include <memory>
 
+#include "event.h"
 #include "ring_buffer.h"
 
 namespace nest
@@ -28,7 +32,7 @@ protected:
   RingBuffer m_b_spikes;
 
 public:
-  virtual void init(){};
+  virtual void init( const double dt ){};
   virtual void reset(){};
 
   virtual void set_params(){};
@@ -55,7 +59,7 @@ public:
     ExpCond(double tau);
     ~ExpCond(){};
 
-    void init() override;
+    void init( const double dt ) override;
     void reset() override {m_g = 0.0; m_g0 = 0.; };
 
     void set_params(double tau) override;
@@ -78,7 +82,7 @@ public:
     Exp2Cond(double tau_r, double tau_d);
     ~Exp2Cond(){};
 
-    void init() override;
+    void init( const double dt ) override;
     void reset() override {m_g = 0.; m_g0 = 0.; m_p_r = 0.; m_p_d = 0.;};
 
     void set_params(double tau_r, double tau_d) override;
@@ -145,7 +149,7 @@ public:
   Synapse();
   ~Synapse(){};
 
-  virtual void init(){m_cond_w->init();};
+  virtual void init( const double dt ){ m_cond_w->init( dt ); };
   // update functions
   virtual void update(const long lag);
   virtual void handle(SpikeEvent& e);
@@ -192,7 +196,7 @@ public:
   AMPA_NMDASyn(double nmda_ratio);
   ~AMPA_NMDASyn(){};
 
-  void init() override {m_ampa->init(); m_nmda->init();};
+  void init( const double dt ) override { m_ampa->init( dt ); m_nmda->init( dt ); };
   // update functions
   void update(const long lag) override;
   void handle(SpikeEvent& e) override;
@@ -206,3 +210,5 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 } // namespace
+
+#endif /* #ifndef SYNAPSES_NEAT_H */

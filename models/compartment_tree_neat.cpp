@@ -14,13 +14,13 @@ nest::CompNode::CompNode(
     m_gl = gl; m_el = el;
 };
 
-void nest::CompNode::init(){
+void nest::CompNode::init( const double dt ){
     m_v = m_el;
 
     // initialize synapse, spike buffers
     for(std::vector< std::shared_ptr< Synapse > >::iterator syn_it = m_syns.begin();
         syn_it != m_syns.end(); syn_it++){
-        (*syn_it)->init();
+        (*syn_it)->init( dt );
     }
 }
 
@@ -148,8 +148,8 @@ nest::CompNode* nest::CompTree::find_node(long node_index, CompNode* node){
 };
 
 // initialization functions
-void nest::CompTree::init(){
-    m_dt = Time::get_resolution().get_ms();
+void nest::CompTree::init( const double dt ){
+    m_dt = dt;
 
     set_nodes();
     set_leafs();
@@ -157,7 +157,7 @@ void nest::CompTree::init(){
     // initialize the nodes
     for(std::vector< CompNode* >::iterator node_it = m_nodes.begin();
         node_it != m_nodes.end(); node_it++){
-        (*node_it)->init();
+        (*node_it)->init( dt );
     }
 
 }

@@ -25,6 +25,7 @@ Functions to get information on NEST.
 
 import sys
 import os
+import textwrap
 import webbrowser
 
 from ..ll_api import *
@@ -89,9 +90,11 @@ def helpdesk():
     """
 
     if 'NEST_DOC_DIR' not in os.environ:
-        print(
-            'NEST help needs to know where NEST is installed.'
-            'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
+        text = textwrap.dedent("""\
+            NEST help needs to know where NEST is installed.
+            Please source nest_vars.sh or define NEST_DOC_DIR manually
+        """)
+        print(text)
         return
 
     helpfile = os.path.join(os.environ['NEST_DOC_DIR'], 'help',
@@ -139,19 +142,18 @@ def help(obj=None, pager=None, return_text=False):
             show_help_with_pager(hlpobj, pager)
 
     else:
-        print("Type 'nest.helpdesk()' to access the online documentation "
-              "in a browser.")
-        print("Type 'nest.help(object)' to get help on a NEST object or "
-              "command.\n")
-        print("Type 'nest.Models()' to see a list of available models "
-              "in NEST.")
-        print("Type 'nest.authors()' for information about the makers "
-              "of NEST.")
-        print("Type 'nest.sysinfo()' to see details on the system "
-              "configuration.")
-        print("Type 'nest.version()' for information about the NEST "
-              "version.\n")
-        print("For more information visit https://www.nest-simulator.org.")
+        text = textwrap.dedent("""\
+            Type 'nest.helpdesk()' to access the online documentation in a browser.
+            Type 'nest.help(object)' to get help on a NEST object or command.
+
+            Type 'nest.Models()' to see a list of available models in NEST.
+            Type 'nest.authors()' for information about the makers of NEST.
+            Type 'nest.sysinfo()' to see details on the system configuration.
+            Type 'nest.version()' for information about the NEST version.
+
+            For more information visit https://www.nest-simulator.org.
+        """)
+        print(text)
 
 
 @check_stack
@@ -310,8 +312,7 @@ def SetStatus(nodes, params, val=None):
 
     if isinstance(params, (list, tuple)) and len(nodes) != len(params):
         raise TypeError(
-            "status dict must be a dict, or a list of dicts of length "
-            "len(nodes)")
+            "status dict must be a dict, or a list of dicts of length len(nodes)")
 
     if isinstance(nodes, nest.SynapseCollection):
         params = broadcast(params, len(nodes), (dict,), "params")

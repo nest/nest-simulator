@@ -257,11 +257,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     sps(post)
 
     if not isinstance(pre, NodeCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
     if not isinstance(post, NodeCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, postsynaptic nodes must be a NodeCollection")
 
     # In some cases we must connect with ConnectLayers instead.
     if _connect_layers_needed(processed_conn_spec, processed_syn_spec):

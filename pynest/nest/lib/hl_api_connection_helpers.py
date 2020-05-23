@@ -69,7 +69,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
         return kernel.SLILiteral(syn_spec)
     elif isinstance(syn_spec, dict):
         for key, value in syn_spec.items():
-            # if value is a list, it is converted to a np array
+            # if value is a list, it is converted to a numpy array
             if isinstance(value, (list, tuple)):
                 value = np.asarray(value)
 
@@ -268,19 +268,19 @@ def _check_input_nodes(pre, post, conn_spec):
     if not isinstance(pre, NodeCollection):
         # skip uniqueness check for data_connect compatible `conn_spec`
         if conn_spec != 'one_to_one' and len(set(pre)) == len(pre):
-            pre = NodeCollection(np.array(pre, dtype=int))
+            pre = NodeCollection(pre)
         else:
             pre_is_nc = False
 
     if not isinstance(post, NodeCollection):
         # skip uniqueness check for data_connect compatible `conn_spec`
         if conn_spec != 'one_to_one' and len(set(post)) == len(post):
-            post = NodeCollection(np.array(post, dtype=int))
+            post = NodeCollection(post)
         else:
             post_is_nc = False
 
     if not pre_is_nc or not post_is_nc:
-        assert len(pre) == len(post), "If `pre` and `post` contain non-unique IDs, then " \
+        assert len(pre) == len(post), "If `pre` or `post` contain non-unique IDs, then " \
                                       "they must have the same length."
 
         # convert them to arrays

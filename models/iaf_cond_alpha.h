@@ -56,27 +56,28 @@ namespace nest
  */
 extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
 
-Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
-                       model.
+Short description
++++++++++++++++++
 
-Description:
+Simple conductance based leaky integrate-and-fire neuron model
+
+Description
++++++++++++
 
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an alpha function. The alpha function
 is normalised such that an event of weight 1.0 results in a peak current of 1 nS
-at \f$ t = tau_{syn} \f$.
+at :math:`t = tau_{syn}`.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
+
 =========== ======= ===========================================================
  V_m        mV      Membrane potential
  E_L        mV      Leak reversal potential
@@ -91,11 +92,17 @@ The following parameters can be set in the status dictionary.
  tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
  I_e        pA      Constant input current
 =========== ======= ===========================================================
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
+
+SpikeEvent
+
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Remarks:
 
@@ -106,9 +113,10 @@ Remarks:
         inputs to the two synapses by the sign of the synaptic weight.
         It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,
@@ -123,13 +131,14 @@ References:
        the fluctuation- driven regime. Journal of Neuroscience,
        24(10):2345-2356
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
-\endverbatim
 
-Author: Schrader, Plesser
+See also
+++++++++
 
-SeeAlso: iaf_cond_exp, iaf_cond_alpha_mc
+iaf_cond_exp, iaf_cond_alpha_mc
 
-*/
+EndUserDocs */
+
 class iaf_cond_alpha : public Archiving_Node
 {
 

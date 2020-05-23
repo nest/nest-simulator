@@ -30,6 +30,7 @@
 
 namespace nest
 {
+
 multimeter::multimeter()
   : RecordingDevice()
   , P_()
@@ -222,6 +223,26 @@ RecordingDevice::Type
 multimeter::get_type() const
 {
   return RecordingDevice::MULTIMETER;
+}
+
+
+//
+// Definition of voltmeter subclass
+//
+
+voltmeter::voltmeter()
+  : multimeter()
+{
+  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
+  ArrayDatum ad;
+  ad.push_back( LiteralDatum( names::V_m.toString() ) );
+  ( *vmdict )[ names::record_from ] = ad;
+  set_status( vmdict );
+}
+
+voltmeter::voltmeter( const voltmeter& n )
+  : multimeter( n )
+{
 }
 
 } // namespace nest

@@ -210,7 +210,7 @@ cdef class NESTEngine(object):
 
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
-            # Convert back from utf8 char* to utf8 str in both python2 & 3
+            # Convert back from utf8 char* to utf8 str
             argv.extend(str(argvi.decode()) for argvi in argv_chars[:argc])
         finally:
             free(argv_chars)

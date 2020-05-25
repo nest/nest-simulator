@@ -33,6 +33,7 @@ Download NEST source code
 
 .. _download_livemedia:
 
+
 Download the NEST live media for virtual machines
 --------------------------------------------------
 
@@ -44,9 +45,6 @@ After downloading the virtual machine, check out the :doc:`install instructions 
 
   `Checksum 2.20.1 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.1.ova.sha512sum>`_
 
-* `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
-
-  `Checksum 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova.sha512sum>`_
 
 Previous releases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,6 +53,10 @@ We continuously aim to improve NEST, implement features, and fix bugs with every
 thus, we encourage our users to use the **most recent version of NEST**.
 
 **Older Versions of Live Media**
+
+* `NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
+
+  `Checksum 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova.sha512sum>`_
 
 - `NEST Live Media 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova>`_
 
@@ -71,7 +73,6 @@ thus, we encourage our users to use the **most recent version of NEST**.
 - `Download 2.12.0 <https://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova>`_ (OVA, 3.2G)
 
    `Checksum 2.12.0 <https://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova.sha512sum>`_
-
 
 -  `Download 2.10.0 <https://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova>`_
    (OVA, ~3.7G)

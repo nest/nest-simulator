@@ -184,7 +184,7 @@ Multi-processing
 
 **Please do not use multi-processing with NEST!**
 
-NEST internally parallelizes network construction and maintains internal data structures in this process. Running several
+NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. Running several
 ``ConnectLayers()`` calls simultaneously will lead to unpredictable results.
 
 .. _distributed_computing:
@@ -318,3 +318,9 @@ virtual process (*spike_detector-6-0.gdf*, *spike_detector-6-1.gdf*,
 the three data directories shows that they all contain the same spikes,
 which means that the simulation results are indeed the same
 independently of the details of parallelization.
+
+References
+----------
+
+.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing Neuronal Network Models in Massively Parallel
+       Environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030

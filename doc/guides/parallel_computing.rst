@@ -322,5 +322,5 @@ independently of the details of parallelization.
 References
 ----------
 
-.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing Neuronal Network Models in Massively
-       Parallel Environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030
+.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing neuronal network models in massively
+       parallel environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030

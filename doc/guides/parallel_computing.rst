@@ -184,8 +184,8 @@ Multiprocessing
 
 **Please do not use Python's multiprocessing package with NEST!**
 
-NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. Running several
-``ConnectLayers()`` calls simultaneously can lead to unpredictable results.
+NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. Running
+several ``ConnectLayers()`` calls simultaneously can lead to unpredictable results.
 
 .. _distributed_computing:
 
@@ -322,5 +322,5 @@ independently of the details of parallelization.
 References
 ----------
 
-.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing Neuronal Network Models in Massively Parallel
-       Environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030
+.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing Neuronal Network Models in Massively
+       Parallel Environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030

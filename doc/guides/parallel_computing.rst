@@ -179,6 +179,14 @@ on your machine.
  can yield 20-30% improvement in simulation speed. Finding the optimal thread number for a
  specific situation might require a bit of experimenting.
 
+Multi-processing
+----------------
+
+**Please do not use multi-processing with NEST!**
+
+NEST internally parallelizes network construction and maintains internal data structures in this process. Running several
+``ConnectLayers()`` calls simultaneously will lead to unpredictable results.
+
 .. _distributed_computing:
 
 Using distributed computing

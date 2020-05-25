@@ -40,7 +40,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         src = nest.Create('iaf_psc_alpha', 3)
         tgt = nest.Create('iaf_psc_delta', 3)
 
-        # weight has to be a list with dimenstion (n_sources x 1) when one_to_one is used
+        # weight has to be a list with dimension (n_sources x 1) when one_to_one is used
         ref_weights = [1.2, -3.5, 0.4]
 
         conn_dict = {'rule': 'one_to_one'}
@@ -58,7 +58,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         src = nest.Create('iaf_psc_alpha', 3)
         tgt = nest.Create('iaf_psc_delta', 2)
 
-        # weight has to be a list of lists with dimenstion (n_target x n_sources) when all_to_all is used
+        # weight has to be a list of lists with dimension (n_target x n_sources) when all_to_all is used
         ref_weights = [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]
 
         conn_dict = {'rule': 'all_to_all'}
@@ -79,7 +79,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         src = nest.Create('iaf_psc_alpha', 5)
         tgt = nest.Create('iaf_psc_delta', 3)
 
-        # weight has to be a list of lists with dimenstion (n_target x indegree) when fixed_indegree is used
+        # weight has to be a list of lists with dimension (n_target x indegree) when fixed_indegree is used
         ref_weights = [[1.2, -3.5], [0.4, -0.2], [0.6, 2.2]]
 
         conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
@@ -100,7 +100,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         src = nest.Create('iaf_psc_alpha', 2)
         tgt = nest.Create('iaf_psc_delta', 5)
 
-        # weight has to be a list of lists with dimenstion (n_source x outegree) when fixed_outdegree is used
+        # weight has to be a list of lists with dimension (n_source x outegree) when fixed_outdegree is used
         ref_weights = [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]
 
         conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
@@ -122,7 +122,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         tgt = nest.Create('iaf_psc_delta', 4)
         conn_dict = {'rule': 'fixed_total_number', 'N': 4}
 
-        # weight has to be a list with dimenstion (n_conns x 1) when fixed_total_number is used
+        # weight has to be a list with dimension (n_conns x 1) when fixed_total_number is used
         ref_weights = [1.2, -3.5, 0.4, -0.2]
 
         syn_dict = {'weight': ref_weights}

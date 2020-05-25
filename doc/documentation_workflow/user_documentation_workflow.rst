@@ -81,7 +81,7 @@ Using Sphinx, you can build documentation locally and preview it offline:
 
 .. code-block:: bash
 
-   cd _build/html
+   cd ./_build/html
    browser filename.html
 
 Editing and creating pages

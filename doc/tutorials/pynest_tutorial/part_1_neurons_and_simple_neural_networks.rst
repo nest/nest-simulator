@@ -119,7 +119,7 @@ or return a ``NodeCollectoin`` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
-After having imported NEST and also the Pylab interface to Matplotlib [4]_,
+After having imported NEST and Matplotlib [4]_,
 which we will use to display the results, we can start creating nodes.
 As a first example, we will create a neuron of type
 ``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
@@ -129,7 +129,7 @@ a variable called ``neuron``.
 
 ::
 
-    import pylab
+    import matplotlib.pyplot as plt
     import nest
     neuron = nest.Create("iaf_psc_alpha")
 
@@ -183,7 +183,7 @@ aware that NEST is type sensitive - if a particular property is of type
 will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
 
-Another way of setting and getting parameters is to ask the NodeCollection 
+Another way of setting and getting parameters is to ask the NodeCollection
 directly
 
 ::
@@ -275,7 +275,7 @@ the multimeter.
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain a dictionary with status parameters for the ``multimeter``. 
+In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
 This dictionary contains an entry named ``events`` which holds the
 recorded data. It is itself a dictionary with the entries ``V_m`` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
@@ -286,17 +286,17 @@ understanding of its structure, and then in the next step extract the
 dictionary ``events``, and so on.
 
 Now we are ready to display the data in a figure. To this end, we make
-use of ``pylab``.
+use of ``matplotlib`` and the ``pyplot`` module.
 
 ::
 
-    import pylab
-    pylab.figure(1)
-    pylab.plot(ts, Vms)
+    import matplotlib.pyplot as plt
+    plt.figure(1)
+    plt.plot(ts, Vms)
 
 The second line opens a figure (with the number 1), and the third line
 actually produces the plot. You can’t see it yet because we have not
-used ``pylab.show()``. Before we do that, we proceed analogously to
+used ``plt.show()``. Before we do that, we proceed analogously to
 obtain and display the spikes from the spike detector.
 
 ::
@@ -304,9 +304,9 @@ obtain and display the spikes from the spike detector.
     dSD = spikedetector.get("events")
     evs = dSD["senders"]
     ts = dSD["times"]
-    pylab.figure(2)
-    pylab.plot(ts, evs, ".")
-    pylab.show()
+    plt.figure(2)
+    plt.plot(ts, evs, ".")
+    plt.show()
 
 Here we extract the events more concisely by sending the parameter name to ``get``.
 This extracts the dictionary element
@@ -345,13 +345,13 @@ lines.
 
 ::
 
-    pylab.figure(2)
+    plt.figure(2)
     Vms1 = dmm["events"]["V_m"][::2] # start at index 0: till the end: each second entry
     ts1 = dmm["events"]["times"][::2]
-    pylab.plot(ts1, Vms1)
+    plt.plot(ts1, Vms1)
     Vms2 = dmm["events"]["V_m"][1::2] # start at index 1: till the end: each second entry
     ts2 = dmm["events"]["times"][1::2]
-    pylab.plot(ts2, Vms2)
+    plt.plot(ts2, Vms2)
 
 Additional information can be found at
 http://docs.scipy.org/doc/numpy-1.10.0/reference/arrays.indexing.html.
@@ -438,7 +438,6 @@ a constant input current, and add a second neuron.
 
 ::
 
-    import pylab
     import nest
     neuron1 = nest.Create("iaf_psc_alpha")
     neuron1.set(I_e=376.0)

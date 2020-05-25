@@ -151,6 +151,18 @@ NodeCollection::create( const index node_id )
 }
 
 NodeCollectionPTR
+NodeCollection::create( const std::vector< index >& node_ids_vector )
+{
+  if ( node_ids_vector.size() == 0 )
+  {
+    return NodeCollection::create_();
+  }
+  auto node_ids = node_ids_vector; // Create a copy to be able to sort
+  std::sort( node_ids.begin(), node_ids.end() );
+  return NodeCollection::create_( node_ids );
+}
+
+NodeCollectionPTR
 NodeCollection::create_()
 {
   return NodeCollectionPTR( new NodeCollectionPrimitive( 0, 0, invalid_index ) );

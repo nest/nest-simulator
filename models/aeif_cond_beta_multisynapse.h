@@ -56,23 +56,22 @@ namespace nest
  */
 extern "C" int aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup cond
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
-Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
-                                     integrate-and-fire neuron model according
-                                     to Brette and Gerstner (2005) with
-                                     multiple synaptic rise time and decay
-                                     time constants, and synaptic conductance
-                                     modeled by a beta function.
+Short description
++++++++++++++++++
 
-Description:
+Conductance based adaptive exponential integrate-and-fire neuron model
+
+Description
++++++++++++
 
 aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
-integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+integrate-and-fire neuron model, according to Brette and Gerstner (2005) with
+multiple synaptic rise time and decay time constants, and synaptic conductance
+modeled by a beta function.
+
+It allows an arbitrary number of synaptic
 rise time and decay time constants. Synaptic conductance is modeled by a
 beta function, as described by A. Roth and M.C.W. van Rossum
 in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
@@ -85,27 +84,34 @@ are automatically assigned in the range from 1 to n_receptors.
 During connection, the ports are selected with the property "receptor_type".
 
 The membrane potential is given by the following differential equation:
-@f[
+
+.. math::
+
  C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
  + I_{syn_{tot}}(V, t) - w + I_e
-@f]
+
 
 where:
 
-@f[ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) , @f]
+.. math::
+
+ I_{syn_{tot}}(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
 the synapse i is excitatory or inhibitory depending on the value of
-\f$ E_{rev,i} \f$
+:math:`E_{rev,i}`
 and the differential equation for the spike-adaptation current w is:
 
-@f[ \tau_w * dw/dt = a(V - E_L) - w @f]
+.. math::
+
+ \tau_w * dw/dt = a(V - E_L) - w
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 
-Parameters:
+Parameters
+++++++++++
+
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ======== ======= =======================================
 **Dynamic state variables:**
 --------------------------------------------------------
@@ -149,51 +155,24 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
 
-Examples:
+Sends
++++++
 
-    import nest
-    import numpy as np
+SpikeEvent
 
-    neuron = nest.Create('aeif_cond_beta_multisynapse')
-    nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
-    nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
-                            'tau_decay':[50.0,20.0,20.0,20.0],
-                            'tau_rise':[10.0,10.0,1.0,1.0]})
+Receives
+++++++++
 
-    spike = nest.Create('spike_generator', params = {'spike_times':
-                                                    np.array([10.0])})
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-    voltmeter = nest.Create('voltmeter')
+See also
+++++++++
 
-    delays=[1.0, 300.0, 500.0, 700.0]
-    w=[1.0, 1.0, 1.0, 1.0]
-    for syn in range(4):
-        nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                              'receptor_type': 1 + syn,
-                                              'weight': w[syn],
-                                              'delay': delays[syn]})
+aeif_cond_alpha_multisynapse
 
-    nest.Connect(voltmeter, neuron)
+EndUserDocs */
 
-    nest.Simulate(1000.0)
-    dmm = nest.GetStatus(voltmeter)[0]
-    Vms = dmm["events"]["V_m"]
-    ts = dmm["events"]["times"]
-    import pylab
-    pylab.figure(2)
-    pylab.plot(ts, Vms)
-    pylab.show()
-
-Sends: SpikeEvent
-
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-
-Author: Bruno Golosio 07/10/2016
-
-SeeAlso: aeif_cond_alpha_multisynapse
-*/
 class aeif_cond_beta_multisynapse : public Archiving_Node
 {
 

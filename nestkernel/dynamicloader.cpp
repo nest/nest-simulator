@@ -272,24 +272,9 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
   int dl_error = lt_dlinit();
 
-  if ( not dl_error )
+  if ( dl_error )
   {
-    const char* path = getenv( "NEST_MODULE_PATH" );
-    if ( path != NULL )
-    {
-      LOG( M_DEBUG, "DynamicLoaderModule::init", "Setting module path to" );
-      LOG( M_DEBUG, "DynamicLoaderModule::init", path );
-
-      dl_error = lt_dlsetsearchpath( path );
-      if ( dl_error )
-      {
-        LOG( M_ERROR, "DynamicLoaderModule::init", "Could not set dynamic module path." );
-      }
-    }
-  }
-  else
-  {
-    LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be avaiable." );
+    LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be available." );
   }
 }
 

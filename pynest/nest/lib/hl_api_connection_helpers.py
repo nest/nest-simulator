@@ -72,10 +72,11 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
                             if connect_np_arrays:
-                                raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)}.")
+                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
+                                                       str(prelength) + ".")
                             else:
-                                raise kernel.NESTError(f"'{key}' has to be an array of dimension {str(prelength)},"
-                                                       " a scalar or a dictionary.")
+                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
+                                                       str(prelength) + ", a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
@@ -84,6 +85,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                                 "'" + key + "' has to be an array of "
                                 "dimension " + str(conn_spec['N']) + ", a "
                                 "scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value
                     else:
                         raise kernel.NESTError(
                             "'" + key + "' has the wrong type. "

@@ -103,10 +103,11 @@ Act_n     real    Activation variable n
 I_e       pA      External input current
 ========  ======  ============================================================
 
-Problems/Todo:
+Problems/Todo
++++++++++++++
 
-better spike detection
-initial wavelet/spike at simulation onset
+- better spike detection
+- initial wavelet/spike at simulation onset
 
 References
 ++++++++++

@@ -67,7 +67,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]_.  A flow chart can be found in [2].
+[1]_.  A flow chart can be found in [2]_.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step

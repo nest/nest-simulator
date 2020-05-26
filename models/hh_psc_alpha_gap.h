@@ -84,7 +84,7 @@ it is considered a spike.
 
 3. Gap Junctions
 Gap Junctions are implemented by a gap current of the form
-\f$ g_ij( V_i - V_j) \f$.
+:math:`g_{ij}( V_i - V_j)`.
 
 Parameters
 ++++++++++

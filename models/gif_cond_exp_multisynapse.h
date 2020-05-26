@@ -66,8 +66,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
-    - \eta_n(t) + I(t)
+ C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
@@ -75,7 +74,7 @@ Dynamic of each :math`\eta_i` is described by:
 
 .. math::
 
- \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+ \tau_{\eta_i}*d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -89,7 +88,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 * \exp(V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -97,13 +96,13 @@ where :math:`V_T(t)` is a time-dependent firing threshold:
 
  V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
 
-where :math:` \gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
+where :math:`\gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
 neuron model can have arbitrary number of them.
 Dynamic of each :math`\gamma_i` is described by:
 
 .. math::
 
-\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+ \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -117,11 +116,11 @@ Note that in the current implementation of the model (as described in [1]_ and
 [2]_) the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
 after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
 which fits the model using experimental data, requires a different set of
-\:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`eta_i`  and
-\f$ gamma_i \f$ after the refractory period. One can easily convert between
-:math:`q_eta/gamma` of these two approaches:
-:math:`q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))`
-The same formula applies for :math:`q_gamma`.
+:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
+:math:`\gamma_i` after the refractory period. One can easily convert between
+:math:`q_{\eta/\gamma}` of these two approaches:
+:math:`q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))`
+The same formula applies for :math:`q_\gamma`.
 
 On the postsynapic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached

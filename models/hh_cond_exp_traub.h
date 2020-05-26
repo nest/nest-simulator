@@ -84,7 +84,7 @@ to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
 Note:
-In this model, a spike is emitted if :math:`V_m >= V_T + 30` mV and :math:`V_m`
+In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
 has fallen during the current time step.
 
 To avoid that this leads to multiple spikes during the falling flank of a

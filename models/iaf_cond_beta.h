@@ -70,7 +70,7 @@ iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by a beta function. The beta function
 is normalised such that an event of weight 1.0 results in a peak current of
-1 nS at `t = \tau_{rise_[ex|in]}`.
+1 nS at `t = \tau_{rise\_[ex|in]}`.
 
 .. note::
    Per 2009-04-17, this class has been revised to our newest

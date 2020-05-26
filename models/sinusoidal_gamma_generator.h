@@ -163,7 +163,7 @@ EndUserDocs */
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *
- * .. todo ::
+ * .. todo::
  *    This implementation assumes that outgoing connections are all made from
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.

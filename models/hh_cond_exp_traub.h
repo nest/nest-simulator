@@ -89,7 +89,7 @@ has fallen during the current time step.
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used  :math:`t_{ref} = 3` ms [2, p 118], while we used
+Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
 :math:`t_{ref} = 2` ms in [2]_.
 
 Parameters

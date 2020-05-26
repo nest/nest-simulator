@@ -288,7 +288,7 @@ texinfo_documents = [
 source = Path("../pynest/examples/Potjans_2014")
 destination = Path("examples")
 
-# copy all *.png with the right subfolder from source to destiination
+# copy all *.png with the right subfolder from source to destination
 for f in source.rglob('*.png'):
     # ff - files with subfolder
     ff = destination / Path(*f.parts[4:])

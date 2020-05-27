@@ -34,6 +34,7 @@ from flask_cors import CORS, cross_origin
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
+from RestrictedPython import compile_restricted, safe_globals
 
 __all__ = [
     'app'
@@ -56,18 +57,14 @@ _blacklist_modules = [
     'sys',
 ]
 
-_blacklist_builtins = [
-    'copyright',
-    'eval',
-    'exec',
-    'input',
-    'quit',
-    'open',
-]
-
 
 app = Flask(__name__)
 CORS(app)
+
+
+@app.route('/', methods=['GET'])
+def index():
+  return jsonify({'nest': nest.version()})
 
 
 @app.route('/exec', methods=['GET', 'POST'])
@@ -77,14 +74,12 @@ def route_exec():
     """
     try:
         args, kwargs = get_arguments(request)
-        source = kwargs.get('source', '')
-        source_cleaned = clean_code(source)
-        globals = {'__builtins__': get_builtins()}
-        locals = get_modules(source)
-        response = {}
+        source_code = kwargs.get('source', '')
+        source_cleaned = clean_code(source_code)
+        byte_code = compile_restricted(source_cleaned, '<inline>', 'exec')
+        locals = get_modules(source_code)
         with Capturing() as stdout:
-            exec(source_cleaned, globals, locals)
-        response['stdout'] = '\n'.join(stdout)
+            exec(byte_code, safe_globals, locals)
         if 'return' in kwargs:
             if isinstance(kwargs['return'], list):
                 data = {}
@@ -92,7 +87,10 @@ def route_exec():
                     data[variable] = locals.get(variable, None)
             else:
                 data = locals.get(kwargs['return'], None)
-            response['data'] = nest.hl_api.serializable(data)
+        response = {
+            'data': nest.hl_api.serializable(data),
+            'stdout': '\n'.join(stdout),
+        }
         return jsonify(response)
     except nest.kernel.NESTError as e:
         abort(Response(getattr(e, 'errormessage'), 400))
@@ -176,17 +174,8 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_builtins():
-    builtins = {}
-    builtins_dict = importlib.import_module('builtins').__dict__
-    for builtin in builtins_dict.keys():
-        if not (builtin.startswith('__') or builtin in _blacklist_builtins):
-            builtins.update({builtin: builtins_dict[builtin]})
-    return builtins
-
-
 def get_modules(source):
-    modules = {}
+    modules = {'nest': nest}
     for line in source.split('\n'):
         code = line.split(' ')
         if code[0] == 'import' and code[1] not in _blacklist_modules:
@@ -199,9 +188,9 @@ def get_or_error(func):
     """
     def func_wrapper(call, *args, **kwargs):
         try:
-            return func(call,  *args, **kwargs)
+            return func(call, *args, **kwargs)
         except nest.kernel.NESTError as e:
-            abort(Response(getattr(e, 'errormessage'), 409))
+            abort(Response(getattr(e, 'errormessage'), 400))
         except Exception as e:
             abort(Response(str(e), 400))
     return func_wrapper

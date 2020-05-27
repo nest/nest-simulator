@@ -98,6 +98,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } distance_a_gfunction;
 
+  class Distance_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_afunction;
+
   class ConnectLayers_g_g_DFunction : public SLIFunction
   {
   public:

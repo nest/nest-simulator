@@ -230,6 +230,8 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "Distance_a_g", &distance_a_gfunction );
 
+  i->createcommand( "Distance_a", &distance_afunction );
+
   i->createcommand( "CreateMask_D", &createmask_Dfunction );
 
   i->createcommand( "Inside_a_M", &inside_a_Mfunction );
@@ -506,6 +508,20 @@ TopologyModule::Distance_a_gFunction::execute( SLIInterpreter* i ) const
   Token result = distance( layer, point );
 
   i->OStack.pop( 2 );
+  i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
+TopologyModule::Distance_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const ArrayDatum conns = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+
+  Token result = distance( conns );
+
+  i->OStack.pop( 1 );
   i->OStack.push( result );
   i->EStack.pop();
 }

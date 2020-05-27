@@ -97,10 +97,12 @@ private:
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
 NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( NodeCollectionPTR layer_nc );
+std::vector< double > get_position( const index node_id );
 ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 std::vector< double > distance( NodeCollectionPTR layer_nc, const ArrayDatum point );
+std::vector< double > distance( const ArrayDatum conns );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );

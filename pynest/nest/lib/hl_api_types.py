@@ -579,6 +579,11 @@ class SynapseCollection(object):
         return result
 
     def __getattr__(self, attr):
+        if attr == 'distance':
+            dist = sli_func('Distance', self._datum)
+            super().__setattr__(attr, dist)
+            return self.distance
+        
         return self.get(attr)
 
     def __setattr__(self, attr, value):

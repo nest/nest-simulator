@@ -71,6 +71,8 @@ public:
   virtual std::string get_type() const = 0;
 
   virtual void slice( size_t, size_t, size_t, NodeCollectionPTR ) = 0;
+
+  virtual bool operator==( const NodeCollectionMetadataPTR ) const = 0;
 };
 
 class NodeIDTriple
@@ -730,14 +732,16 @@ inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
 inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
-
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
-    and metadata_ == rhs_ptr->metadata_;
+  const bool eq_metadata = ( not metadata_ and not rhs_ptr->metadata_ )
+    or ( metadata_ and rhs_ptr->metadata_ and *metadata_ == rhs_ptr->metadata_ );
+  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 {
-  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
+  const bool eq_metadata =
+    ( not metadata_ and not rhs.metadata_ ) or ( metadata_ and rhs.metadata_ and *metadata_ == rhs.metadata_ );
+  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and eq_metadata;
 }
 
 inline NodeCollectionPrimitive::const_iterator

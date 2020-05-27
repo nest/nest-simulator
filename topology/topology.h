@@ -92,6 +92,21 @@ public:
 
   void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
 
+  bool operator==( const NodeCollectionMetadataPTR rhs ) const
+  {
+    const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
+    if ( rhs_layer_metadata == nullptr )
+    {
+      return false;
+    }
+    // Compare status dictionaries of this layer and rhs layer
+    DictionaryDatum dict( new Dictionary() );
+    DictionaryDatum rhs_dict( new Dictionary() );
+    get_status( dict );
+    rhs_layer_metadata->get_status( rhs_dict );
+    return *dict == *rhs_dict;
+  }
+
 private:
   AbstractLayerPTR layer_; //!< layer object
   index first_node_id_;

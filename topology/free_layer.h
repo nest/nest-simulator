@@ -117,18 +117,30 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const Token& tkn = d->lookup( names::positions );
     if ( tkn.is_a< TokenArray >() )
     {
+      // If the positions are created from a layer sliced with step, we need to take that into consideration.
+      // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
+      // the number of positions must include the "skipped" nodes as well.
+      size_t step = 1;
+      if ( d->known( names::step ) )
+      {
+        step = getValue< long >( d->lookup( names::step ) );
+      }
       TokenArray pos = getValue< TokenArray >( tkn );
-      if ( this->node_collection_->size() != pos.size() )
+      const auto num_nodes = this->node_collection_->size();
+      // Number of positions, excluding the skipped nodes
+      const auto stepped_pos_size = std::floor( pos.size() / ( float ) step ) + ( pos.size() % step > 0 );
+
+      if ( num_nodes != stepped_pos_size )
       {
         std::stringstream expected;
         std::stringstream got;
-        expected << "position array with length " << this->node_collection_->size();
-        got << "position array with length" << pos.size();
+        expected << "position array with length " << num_nodes;
+        got << "position array with length" << stepped_pos_size;
         throw TypeMismatch( expected.str(), got.str() );
       }
 
       positions_.clear();
-      positions_.reserve( this->node_collection_->size() );
+      positions_.reserve( num_nodes );
 
       for ( Token* it = pos.begin(); it != pos.end(); ++it )
       {

@@ -62,9 +62,11 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   // Slice positions with start/stop/step
   TokenArray new_positions;
   // std::vector< std::vector< double > > new_positions;
-  for ( size_t lid = start; lid < stop; lid += step )
+
+  for ( size_t lid = start; lid < stop; ++lid )
   {
-    new_positions.push_back( layer_->get_position_vector( lid ) );
+    const auto pos = layer_->get_position_vector( lid );
+    new_positions.push_back( pos );
   }
 
   // Create new free layer with sliced positions
@@ -89,6 +91,7 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   DictionaryDatum layer_dict = new Dictionary();
   layer_->get_status( layer_dict );
   ( *layer_dict )[ names::positions ] = ArrayDatum( new_positions );
+  ( *layer_dict )[ names::step ] = step;
   layer_local->set_status( layer_dict );
 }
 

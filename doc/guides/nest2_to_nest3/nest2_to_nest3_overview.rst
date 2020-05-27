@@ -541,6 +541,21 @@ Setting and getting attributes directly
 
     If you use a list to set the parameter, the list needs to be the same length
     as the SynapseCollection.
+    
+    For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
+    the source, target pair by calling `distance` on your SynapseCollection
+    
+    >>>  synColl.distance
+         (0.47140452079103173,
+          0.33333333333333337,
+          0.4714045207910317,
+          0.33333333333333337,
+          3.925231146709438e-17,
+          0.33333333333333326,
+          0.4714045207910317,
+          0.33333333333333326,
+          0.47140452079103157)
+         
 
 .. _conn_s_t_iterator:
 
@@ -1140,8 +1155,8 @@ a value based on the nodes' position on the x-axis:
 ::
 
     snodes = nest.Create('iaf_psc_alpha', 10
-                        positions=nest.spatial.free(
-                            nest.random.uniform(min=-10., max=10.), num_dimensions=2))
+                         positions=nest.spatial.free(
+                             nest.random.uniform(min=-10., max=10.), num_dimensions=2))
     snodes.set('V_m', -60. + nest.spatial.pos.x)
 
 
@@ -1280,6 +1295,27 @@ probability and delay, and random weights from a normal distribution:
   |     tp.ConnectLayers(l, l, conn_dict)                            |                                                                     |
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
+
+Retrieving distance information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you have a SynapseCollection with connections from a spatially distributed network, you can retrieve the
+*distance* between the source and target pairs by calling ``.distance`` on the SynapseCollection
+
+  ::
+  
+    s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 1]))
+    t_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 3]))
+    nest.Connect(s_nodes, t_nodes)
+    
+    conns = nest.GetConnections()
+    dist = conns.distance
+
+``.distance`` will be a tuple the length of your SynapseCollection, where ``dist[indx]`` will be the distance
+between the source, target pair at *indx*.
+
+Calling ``.distance`` on a SynapseCollection where the connections are not part of a spatial network also
+works, you will receive a tuple of `0.0`. If your source, target pairs are mixed so that one in the pair has
+spatial information and the other does not, you will get an error.
 
 Improved infrastructure for handling recordings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

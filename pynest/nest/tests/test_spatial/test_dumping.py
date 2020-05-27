@@ -49,7 +49,8 @@ class DumpingTestCase(unittest.TestCase):
         nest.DumpLayerNodes(l, filename)
 
         npa = np.genfromtxt(filename)
-        reference = np.array([[n.get('global_id')] + list(nest.GetPosition(n)) for n in l])
+        nodes = [l[i] for i in range(len(l))]
+        reference = np.array([[n.get('global_id')] + list(nest.GetPosition(n)) for n in nodes])
         self.assertTrue(np.allclose(npa, reference))
         os.remove(filename)
 

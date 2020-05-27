@@ -120,8 +120,16 @@ get_position( const index node_id )
   }
 
   NodeCollectionPTR nc = node->get_nc();
-  AbstractLayerPTR spatial_nc = get_layer( nc );
   NodeCollectionMetadataPTR meta = nc->get_metadata();
+
+  if ( not meta )
+  {
+    // We return 0.0 if node_id is not spatially distributed
+    std::vector < double > positions = {0.0};
+    return positions;
+  }
+
+  AbstractLayerPTR spatial_nc = get_layer( nc );
   index first_node_id = meta->get_first_node_id();
 
   auto pos_vec = spatial_nc->get_position_vector( node_id - first_node_id );
@@ -340,12 +348,21 @@ distance( const ArrayDatum conns )
     Node* trgt_node = kernel().node_manager.get_node_or_proxy( trgt );
 
     NodeCollectionPTR trgt_nc = trgt_node->get_nc();
-    AbstractLayerPTR spatial_trgt_nc = get_layer( trgt_nc );
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
-    index first_trgt_node_id = meta->get_first_node_id();
 
-    double disp = spatial_trgt_nc->compute_distance( src_position, trgt - first_trgt_node_id );
-    result.push_back( disp );
+    // distance is zero if source, target is not spatially distributed
+    double dist = 0.0;
+
+    if ( meta )
+    {
+      AbstractLayerPTR spatial_trgt_nc = get_layer( trgt_nc );
+      NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
+      index first_trgt_node_id = meta->get_first_node_id();
+
+      dist = spatial_trgt_nc->compute_distance( src_position, trgt - first_trgt_node_id );
+    }
+
+    result.push_back( dist );
   }
   return result;
 }

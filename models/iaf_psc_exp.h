@@ -98,24 +98,9 @@ receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [4]_.
 
-Conversion from PSC to PSP:
-
-The time course of the postsynaptic potential ``v`` is computed as
-:math:`v(t)=(i*h)(t)`
-with the exponential postsynaptic current
-:math:`i(t)=J\mathrm{e}^{-t/\tau_\mathrm{syn}}\Theta (t)`,
-the voltage impulse response
-:math:`h(t)=\frac{1}{\tau_\mathrm{m}}\mathrm{e}^{-t/\tau_\mathrm{m}}\Theta (t)`,
-and
-:math:`\Theta(t)=1` if :math:`t\leq 0` and zero otherwise.
-
-The ``PSP`` is considered as the maximum of ``v``, i.e., it is
-computed by setting the derivative of ``v(t)`` to zero.
-The expression for the time point at which ``v`` reaches its maximum
-can be found in Eq. 5 of [5]_.
-
-The amplitude of the postsynaptic current ``J`` corresponds to the
-synaptic weight ``PSC``.
+For conversion between postsynaptic potentials (PSPs) and PSCs,
+please refer to the ``postsynaptic_potential_to_current`` function in
+:doc:`helpers.py <../auto_examples/Potjans_2014/helpers>`.
 
 Parameters
 ++++++++++

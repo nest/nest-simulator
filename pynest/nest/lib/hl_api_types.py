@@ -457,7 +457,7 @@ class NodeCollection(object):
         return index
 
     def __array__(self, dtype=None):
-        ''' Numpy compatibility function '''
+        """Convert the NodeCollection to a NumPy array."""
         return numpy.array(self.tolist(), dtype=dtype)
 
     def __getattr__(self, attr):

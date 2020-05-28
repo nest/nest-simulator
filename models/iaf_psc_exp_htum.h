@@ -93,7 +93,9 @@ For details, you can check out the `IAF neurons singularity
 <https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
 notebook in the NEST source code.
 
-For converting from PSC to PSP, please refer to the :doc:`iaf_psc_exp <iaf_psc_exp>` documentation.
+For conversion between postsynaptic potentials (PSPs) and PSCs,
+please refer to the ``postsynaptic_potential_to_current`` function in
+:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
 
 Parameters
 ++++++++++

@@ -101,7 +101,7 @@ tau_syn_ex. For an example application, see [4]_.
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
-:doc:`helpers.py <../auto_examples/Potjans_2014/helpers>`.
+:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
 
 Parameters
 ++++++++++

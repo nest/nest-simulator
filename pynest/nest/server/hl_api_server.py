@@ -80,6 +80,9 @@ def route_exec():
         locals = get_modules(source_code)
         with Capturing() as stdout:
             exec(byte_code, safe_globals, locals)
+        response = {
+            'stdout': '\n'.join(stdout),
+        }
         if 'return' in kwargs:
             if isinstance(kwargs['return'], list):
                 data = {}
@@ -87,10 +90,7 @@ def route_exec():
                     data[variable] = locals.get(variable, None)
             else:
                 data = locals.get(kwargs['return'], None)
-        response = {
-            'data': nest.hl_api.serializable(data),
-            'stdout': '\n'.join(stdout),
-        }
+            response['data'] = nest.hl_api.serializable(data)
         return jsonify(response)
     except nest.kernel.NESTError as e:
         abort(Response(getattr(e, 'errormessage'), 400))

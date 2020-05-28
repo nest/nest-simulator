@@ -125,7 +125,7 @@ get_position( const index node_id )
   if ( not meta )
   {
     // We return 0.0 if node_id is not spatially distributed
-    std::vector < double > positions = {0.0};
+    std::vector< double > positions = { 0.0 };
     return positions;
   }
 

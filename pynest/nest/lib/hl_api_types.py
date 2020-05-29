@@ -279,10 +279,6 @@ class NodeCollection(object):
     def __len__(self):
         return sli_func('size', self._datum)
 
-    def __int__(self):
-        # this will automatically raise an error if len is not 1
-        return int(self.get('global_id'))
-
     def __str__(self):
         return sli_func('pcvs', self._datum)
 
@@ -457,7 +453,7 @@ class NodeCollection(object):
         return index
 
     def __array__(self, dtype=None):
-        """Convert the NodeCollection to a NumPy array."""
+        """ Convert the NodeCollection to a NumPy array. """
         return numpy.array(self.tolist(), dtype=dtype)
 
     def __getattr__(self, attr):
@@ -467,7 +463,10 @@ class NodeCollection(object):
             super().__setattr__(attr, val)
             return self.spatial
 
-        # numpy compatibility check
+        # Numpy compatibility check:
+        # raises AttributeError to tell numpy that interfaces other than
+        # __array__ are not available (otherwise get_parameters would be
+        # queried, KeyError would be raised, and all would crash)
         if attr.startswith('__array_'):
             raise AttributeError
 

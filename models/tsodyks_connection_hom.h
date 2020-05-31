@@ -88,7 +88,7 @@ Parameters
 ++++++++++
 
 ========  ======  ======================================================
- U        real    Maximum probability of release [0,1]
+ U        real    Parameter determining the increase in u with each spike [0,1]
  tau_psc  ms      Time constant of synaptic current
  tau_fac  ms      Time constant for facilitation
  tau_rec  ms      Time constant for depression

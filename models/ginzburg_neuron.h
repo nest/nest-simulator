@@ -45,13 +45,13 @@ point the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
-The gain function g used here is :math:`g(h) = c1*h + c2 * 0.5*(1 +
-\tanh(c3*(h-\theta)))` (output clipped to [0,1]). This allows to
-obtain affin-linear (c1!=0, c2!=0, c3=0) or sigmoidal (c1=0,
-c2=1, c3!=0) shaped gain functions.  The latter choice
+The gain function g used here is :math:`g(h) = c_1*h + c_2 * 0.5*(1 +
+\tanh(c_3*(h-\theta)))` (output clipped to [0,1]). This allows to
+obtain affine-linear (:math:`c_1\neq0, c_2\neq0, c_3=0`) or sigmoidal (:math:`c_1=0,
+c_2=1, c_3\neq0`) shaped gain functions. The latter choice
 corresponds to the definition in [1]_, giving the name to this
 neuron model.
-The choice c1=0, c2=1, c3=beta/2 corresponds to the Glauber
+The choice :math:`c_1=0, c_2=1, c_3=\beta/2` corresponds to the Glauber
 dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
 The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
@@ -89,12 +89,12 @@ Parameters
 ++++++++++
 
 ====== ============= ===========================================================
- tau_m  ms           Membrane time constant (mean inter-update-interval)
- theta  mV           Threshold for sigmoidal activation function
- c1     probability/ Linear gain factor
-        mV
- c2     probability  Prefactor of sigmoidal gain
- c3     1/mV         Slope factor of sigmoidal gain
+tau_m  ms            Membrane time constant (mean inter-update-interval)
+theta  mV            Threshold for sigmoidal activation function
+c_1    probability/  Linear gain factor
+       mV
+c_2    probability   Prefactor of sigmoidal gain
+c_3    1/mV          Slope factor of sigmoidal gain
 ====== ============= ===========================================================
 
 References

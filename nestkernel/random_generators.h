@@ -127,8 +127,8 @@ public:
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
-	// Melissa O'Neill's seed sequence generator which provides better distributed seeds
-	// than std::seed_seq; see https://www.pcg-random.org/posts/developing-a-seed_seq-alternative.html
+    // Melissa O'Neill's seed sequence generator which provides better distributed seeds
+    // than std::seed_seq; see https://www.pcg-random.org/posts/developing-a-seed_seq-alternative.html
     randutils::seed_seq_fe128 sseq( seed );
     rng_.seed( sseq );
   }

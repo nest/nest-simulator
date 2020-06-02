@@ -62,13 +62,13 @@ skip_if_without_gsl
 % 141.7 ms
 
 % Revised reference data obtained by running model with NEST3
-290  /t1_neuron1  Set
-602  /t2_neuron1  Set
-967  /t3_neuron1  Set
-1394 /t4_neuron1  Set
+274  /t1_neuron1  Set
+571  /t2_neuron1  Set
+988  /t3_neuron1  Set
+1400 /t4_neuron1  Set
 
-167  /t1_neuron2  Set
-461  /t2_neuron2  Set
+165  /t1_neuron2  Set
+438  /t2_neuron2  Set
 
 /:run_test
 {

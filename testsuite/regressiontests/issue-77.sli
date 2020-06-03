@@ -103,13 +103,11 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 1.0 ]
-                                               /gsl_error_tol 1e-3 >>
+   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 2.0 ] >>
                                   /receptor_type 1 >>
    /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ]
                                               /tau_rise [ 1.0 ]
-                                              /tau_decay [ 1.0 ]
-                                              /gsl_error_tol 1e-3 >>
+                                              /tau_decay [ 2.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>

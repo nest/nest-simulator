@@ -926,7 +926,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
       // Getting regular connections, if they exist.
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections != NULL )
+      if ( connections != nullptr )
       {
         const size_t num_connections_in_thread = connections->size();
         for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )

@@ -924,6 +924,7 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       std::vector< index > target_device_node_ids;
       split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
 
+      // Getting regular connections, if they exist.
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
       if ( connections != NULL )
       {
@@ -946,11 +947,11 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
           0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }
 
+      // Getting connections to devices.
       for ( std::vector< index >::const_iterator t_node_id = target_device_node_ids.begin();
             t_node_id != target_device_node_ids.end();
             ++t_node_id )
       {
-        // Then, we get connections to devices.
         target_table_devices_.get_connections_to_devices_( 0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }
 

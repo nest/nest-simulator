@@ -934,16 +934,16 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
           connections->get_connection_with_specified_targets(
             source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
         }
+      }
 
-        for ( std::vector< index >::const_iterator t_node_id = target_neuron_node_ids.begin();
-              t_node_id != target_neuron_node_ids.end();
-              ++t_node_id )
-        {
-          // target_table_devices_ contains connections both to and from
-          // devices. First we get connections from devices.
-          target_table_devices_.get_connections_from_devices_(
-            0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
-        }
+      // Getting connections from devices.
+      for ( std::vector< index >::const_iterator t_node_id = target_neuron_node_ids.begin();
+            t_node_id != target_neuron_node_ids.end();
+            ++t_node_id )
+      {
+        // target_table_devices_ contains connections both to and from devices
+        target_table_devices_.get_connections_from_devices_(
+          0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }
 
       for ( std::vector< index >::const_iterator t_node_id = target_device_node_ids.begin();

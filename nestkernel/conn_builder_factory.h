@@ -50,7 +50,7 @@ public:
   {
   }
   virtual ConnBuilder*
-  create( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& ) const = 0;
+  create( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& ) const = 0;
 };
 
 /**
@@ -67,7 +67,7 @@ public:
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec ) const
+    const std::vector<DictionaryDatum>& syn_spec ) const
   {
     return new ConnBuilderType( sources, targets, conn_spec, syn_spec );
   }

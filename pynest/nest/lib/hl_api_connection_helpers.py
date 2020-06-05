@@ -138,6 +138,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
         return syn_spec
+    elif isinstance(syn_spec, list):
+        return syn_spec
     else:
         raise TypeError("syn_spec must be a string or dict")
 

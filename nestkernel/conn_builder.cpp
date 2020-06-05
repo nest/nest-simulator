@@ -51,7 +51,7 @@
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : sources_( sources )
   , targets_( targets )
   , allow_autapses_( true )
@@ -59,9 +59,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
-  , weight_( 0 )
-  , delay_( 0 )
   , param_dicts_()
   , dummy_param_dicts_()
   , parameters_requiring_skipping_()
@@ -74,84 +71,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
-  if ( not syn_spec->known( names::synapse_model ) )
-  {
-    throw BadProperty( "Synapse spec must contain synapse model." );
-  }
-  const std::string syn_name = ( *syn_spec )[ names::synapse_model ];
-  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
-
-  synapse_model_id_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
-
-  // We need to make sure that Connect can process all synapse parameters
-  // specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id_, 0 );
-  synapse_model.check_synapse_params( syn_spec );
-
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_ );
-
-  // All synapse models have the possibility to set the delay (see
-  // SynIdDelay), but some have homogeneous weights, hence it should
-  // be possible to set the delay without the weight.
-  default_weight_ = not syn_spec->known( names::weight );
-
-  default_delay_ = not syn_spec->known( names::delay );
-
-  // If neither weight nor delay are given in the dict, we handle this
-  // separately. Important for hom_w synapses, on which weight cannot
-  // be set. However, we use default weight and delay for _all_ types
-  // of synapses.
-  default_weight_and_delay_ = ( default_weight_ and default_delay_ );
-
-#ifdef HAVE_MUSIC
-  // We allow music_channel as alias for receptor_type during
-  // connection setup
-  ( *syn_defaults )[ names::music_channel ] = 0;
-#endif
-
-  if ( not default_weight_and_delay_ )
-  {
-    weight_ = syn_spec->known( names::weight )
-      ? ConnParameter::create( ( *syn_spec )[ names::weight ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    register_parameters_requiring_skipping_( *weight_ );
-    delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
-  }
-  else if ( default_weight_ )
-  {
-    delay_ = syn_spec->known( names::delay )
-      ? ConnParameter::create( ( *syn_spec )[ names::delay ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
-  }
-  register_parameters_requiring_skipping_( *delay_ );
-
-  // Structural plasticity parameters
-  // Check if both pre and post synaptic element are provided
-  if ( syn_spec->known( names::pre_synaptic_element ) and syn_spec->known( names::post_synaptic_element ) )
-  {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
-
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else
-  {
-    if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
-    {
-      throw BadProperty(
-        "In order to use structural plasticity, both a pre and post synaptic "
-        "element must be specified" );
-    }
-
-    use_pre_synaptic_element_ = false;
-    use_post_synaptic_element_ = false;
-  }
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -166,46 +85,143 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_set.insert( names::num_connections );
   skip_set.insert( names::synapse_model );
 
-  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+  default_weight_.resize(syn_spec.size());
+  default_delay_.resize(syn_spec.size());
+  default_weight_and_delay_.resize(syn_spec.size());
+  weight_.resize(syn_spec.size());
+  delay_.resize(syn_spec.size());
+  synapse_params_.resize(syn_spec.size());
+  synapse_model_id_.resize( syn_spec.size() );
+  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+  param_dicts_.resize( syn_spec.size() );
+
+  int indx = 0;
+  for ( auto syn_params = syn_spec.begin(); syn_params < syn_spec.end(); ++syn_params, ++indx )
   {
-    const Name param_name = default_it->first;
-    if ( skip_set.find( param_name ) != skip_set.end() )
+    if ( not ( *syn_params )->known( names::synapse_model ) )
     {
-      continue; // weight, delay or not-settable parameter
+      throw BadProperty( "Synapse spec must contain synapse model." );
+    }
+    const std::string syn_name = ( **syn_params )[ names::synapse_model ];
+    if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+    {
+      throw UnknownSynapseType( syn_name );
     }
 
-    if ( syn_spec->known( param_name ) )
+    index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+    synapse_model_id_[ indx ] = synapse_model_id;
+
+    // We need to make sure that Connect can process all synapse parameters
+    // specified.
+    const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id, 0 );
+    synapse_model.check_synapse_params( *syn_params );
+
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+
+    // All synapse models have the possibility to set the delay (see
+    // SynIdDelay), but some have homogeneous weights, hence it should
+    // be possible to set the delay without the weight.
+    default_weight_[ indx ] = not ( *syn_params )->known( names::weight );
+
+    default_delay_[ indx ] = not ( *syn_params )->known( names::delay );
+
+    // If neither weight nor delay are given in the dict, we handle this
+    // separately. Important for hom_w synapses, on which weight cannot
+    // be set. However, we use default weight and delay for _all_ types
+    // of synapses.
+    default_weight_and_delay_[ indx ] = ( default_weight_[ indx ] and default_delay_[ indx ] );
+
+#ifdef HAVE_MUSIC
+    // We allow music_channel as alias for receptor_type during
+    // connection setup
+    ( *syn_defaults )[ names::music_channel ] = 0;
+#endif
+
+    if ( not default_weight_and_delay_[ indx ] )
     {
-      synapse_params_[ param_name ] =
-        ConnParameter::create( ( *syn_spec )[ param_name ], kernel().vp_manager.get_num_threads() );
-      register_parameters_requiring_skipping_( *synapse_params_[ param_name ] );
+      weight_[ indx ] = ( *syn_params )->known( names::weight )
+        ? ConnParameter::create( ( **syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
+        : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
+      register_parameters_requiring_skipping_( *weight_[ indx ] );
+      delay_[ indx ] = ( *syn_params )->known( names::delay )
+        ? ConnParameter::create( ( **syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
+        : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
     }
-  }
-
-  // Now create dictionary with dummy values that we will use
-  // to pass settings to the synapses created. We create it here
-  // once to avoid re-creating the object over and over again.
-  if ( synapse_params_.size() > 0 )
-  {
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    else if ( default_weight_[ indx ] )
     {
-      param_dicts_.push_back( new Dictionary() );
+      delay_[ indx ] = ( *syn_params )->known( names::delay )
+        ? ConnParameter::create( ( **syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
+        : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    }
+    register_parameters_requiring_skipping_( *delay_[ indx ] );
 
-      ConnParameterMap::const_iterator it = synapse_params_.begin();
-      for ( ; it != synapse_params_.end(); ++it )
+    for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+    {
+      const Name param_name = default_it->first;
+      if ( skip_set.find( param_name ) != skip_set.end() )
       {
-        if ( it->first == names::receptor_type or it->first == names::music_channel
-          or it->first == names::synapse_label )
+        continue; // weight, delay or not-settable parameter
+      }
+
+      if ( ( *syn_params )->known( param_name ) )
+      {
+        synapse_params_[ indx ][ param_name ] =
+          ConnParameter::create( ( **syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
+        register_parameters_requiring_skipping_( *synapse_params_[ indx ][ param_name ] );
+      }
+    }
+
+    // Now create dictionary with dummy values that we will use
+    // to pass settings to the synapses created. We create it here
+    // once to avoid re-creating the object over and over again.
+    if ( synapse_params_[ indx ].size() > 0 )
+    {
+      //std::vector< DictionaryDatum > param_dictionary = {new Dictionary()};
+      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+      {
+
+        param_dicts_[ indx ].push_back( new Dictionary() );//param_dictionary );
+
+        ConnParameterMap::const_iterator it = synapse_params_[ indx ].begin();
+        for ( ; it != synapse_params_[ indx ].end(); ++it )
         {
-          ( *param_dicts_[ tid ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
-        }
-        else
-        {
-          ( *param_dicts_[ tid ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
+          if ( it->first == names::receptor_type or it->first == names::music_channel
+            or it->first == names::synapse_label )
+          {
+            ( *param_dicts_[ indx ][ tid ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+          }
+          else
+          {
+            ( *param_dicts_[ indx ][ tid ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
+          }
         }
       }
     }
   }
+
+  // Structural plasticity parameters
+  // Check if both pre and post synaptic element are provided
+  if ( syn_spec[0]->known( names::pre_synaptic_element ) and syn_spec[0]->known( names::post_synaptic_element ) )
+  {
+    pre_synaptic_element_name_ = getValue< std::string >( syn_spec[0], names::pre_synaptic_element );
+    post_synaptic_element_name_ = getValue< std::string >( syn_spec[0], names::post_synaptic_element );
+
+    use_pre_synaptic_element_ = true;
+    use_post_synaptic_element_ = true;
+  }
+  else
+  {
+    if ( syn_spec[0]->known( names::pre_synaptic_element ) or syn_spec[0]->known( names::post_synaptic_element ) )
+    {
+      throw BadProperty(
+        "In order to use structural plasticity, both a pre and post synaptic "
+        "element must be specified" );
+    }
+
+    use_pre_synaptic_element_ = false;
+    use_post_synaptic_element_ = false;
+  }
+
 
   // Create dummy dictionaries, one per thread
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
@@ -218,20 +234,15 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // to check if all parameters support symmetric connections
   if ( make_symmetric_ )
   {
-    if ( weight_ )
-    {
-      weight_->reset();
-    }
+    reset_weights_();
+    reset_delays_();
 
-    if ( delay_ )
+    for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
     {
-      delay_->reset();
-    }
-
-    ConnParameterMap::const_iterator it = synapse_params_.begin();
-    for ( ; it != synapse_params_.end(); ++it )
-    {
-      it->second->reset();
+      for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+      {
+        it_params->second->reset();
+      }
     }
   }
 
@@ -245,13 +256,22 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
 nest::ConnBuilder::~ConnBuilder()
 {
-  delete weight_;
-  delete delay_;
-
-  std::map< Name, ConnParameter* >::iterator it = synapse_params_.begin();
-  for ( ; it != synapse_params_.end(); ++it )
+  for ( auto weight = weight_.begin(); weight < weight_.end(); ++weight )
   {
-    delete it->second;
+    delete *weight;
+  }
+
+  for ( auto delay = delay_.begin(); delay < delay_.end(); ++delay )
+  {
+    delete *delay;
+  }
+
+  for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
+  {
+    for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+    {
+      delete it_params->second;
+    }
   }
 }
 
@@ -317,14 +337,17 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_id_ )
-    and not( is_symmetric() or make_symmetric_ ) )
+  for ( auto syn_model = synapse_model_id_.begin(); syn_model < synapse_model_id_.end(); ++syn_model )
   {
-    throw BadProperty(
-      "Connections with this synapse model can only be created as "
-      "one-to-one connections with \"make_symmetric\" set to true "
-      "or as all-to-all connections with equal source and target "
-      "populations and default or scalar parameters." );
+    if ( kernel().model_manager.connector_requires_symmetric( *syn_model )
+      and not( is_symmetric() or make_symmetric_ ) )
+    {
+      throw BadProperty(
+        "Connections with this synapse model can only be created as "
+        "one-to-one connections with \"make_symmetric\" set to true "
+        "or as all-to-all connections with equal source and target "
+        "populations and default or scalar parameters." );
+    }
   }
 
   if ( make_symmetric_ and not supports_symmetric() )
@@ -348,20 +371,15 @@ nest::ConnBuilder::connect()
     if ( make_symmetric_ and not creates_symmetric_connections_ )
     {
       // call reset on all parameters
-      if ( weight_ )
-      {
-        weight_->reset();
-      }
+      reset_weights_();
+      reset_delays_();
 
-      if ( delay_ )
+      for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
       {
-        delay_->reset();
-      }
-
-      ConnParameterMap::const_iterator it = synapse_params_.begin();
-      for ( ; it != synapse_params_.end(); ++it )
-      {
-        it->second->reset();
+        for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+        {
+          it_params->second->reset();
+        }
       }
 
       std::swap( sources_, targets_ );
@@ -414,110 +432,120 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
       " without proxies (usually devices)." );
   }
 
-  if ( param_dicts_.empty() ) // indicates we have no synapse params
+  for ( unsigned int indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    if ( default_weight_and_delay_ )
+    if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
     {
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_, dummy_param_dicts_[ target_thread ] );
-    }
-    else if ( default_weight_ )
-    {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_,
-        dummy_param_dicts_[ target_thread ],
-        delay_->value_double( target_thread, rng, snode_id, &target ) );
-    }
-    else if ( default_delay_ )
-    {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_,
-        dummy_param_dicts_[ target_thread ],
-        numerics::nan,
-        weight_->value_double( target_thread, rng, snode_id, &target ) );
-    }
-    else
-    {
-      double delay = delay_->value_double( target_thread, rng, snode_id, &target );
-      double weight = weight_->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_, dummy_param_dicts_[ target_thread ], delay, weight );
-    }
-  }
-  else
-  {
-    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
-
-    ConnParameterMap::const_iterator it = synapse_params_.begin();
-    for ( ; it != synapse_params_.end(); ++it )
-    {
-      if ( it->first == names::receptor_type or it->first == names::music_channel or it->first == names::synapse_label )
+      if ( default_weight_and_delay_[ indx ] )
       {
-        try
-        {
-          // change value of dictionary entry without allocating new datum
-          IntegerDatum* id =
-            static_cast< IntegerDatum* >( ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-          ( *id ) = it->second->value_int( target_thread, rng, snode_id, &target );
-        }
-        catch ( KernelException& e )
-        {
-          if ( it->first == names::receptor_type )
-          {
-            throw BadProperty( "Receptor type must be of type integer." );
-          }
-          else if ( it->first == names::music_channel )
-          {
-            throw BadProperty( "Music channel type must be of type integer." );
-          }
-          else if ( it->first == names::synapse_label )
-          {
-            throw BadProperty( "Synapse label must be of type integer." );
-          }
-        }
+        kernel().connection_manager.connect(
+          snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
+      }
+      else if ( default_weight_[ indx ] )
+      {
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          dummy_param_dicts_[ target_thread ],
+          delay_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      }
+      else if ( default_delay_[ indx ] )
+      {
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          dummy_param_dicts_[ target_thread ],
+          numerics::nan,
+          weight_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
       }
       else
       {
-        // change value of dictionary entry without allocating new datum
-        DoubleDatum* dd = static_cast< DoubleDatum* >( ( ( *param_dicts_[ target_thread ] )[ it->first ] ).datum() );
-        ( *dd ) = it->second->value_double( target_thread, rng, snode_id, &target );
+        double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        kernel().connection_manager.connect(
+          snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ], delay, weight );
       }
-    }
-
-    if ( default_weight_and_delay_ )
-    {
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_, param_dicts_[ target_thread ] );
-    }
-    else if ( default_weight_ )
-    {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_,
-        param_dicts_[ target_thread ],
-        delay_->value_double( target_thread, rng, snode_id, &target ) );
-    }
-    else if ( default_delay_ )
-    {
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_,
-        param_dicts_[ target_thread ],
-        numerics::nan,
-        weight_->value_double( target_thread, rng, snode_id, &target ) );
     }
     else
     {
-      double delay = delay_->value_double( target_thread, rng, snode_id, &target );
-      double weight = weight_->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_, param_dicts_[ target_thread ], delay, weight );
+      assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
+
+      ConnParameterMap::const_iterator it = synapse_params_[ indx ].begin();
+      for ( ; it != synapse_params_[ indx ].end(); ++it )
+      {
+        if ( it->first == names::receptor_type or it->first == names::music_channel or it->first == names::synapse_label )
+        {
+          try
+          {
+            //std::cerr << "receptor 2:";
+            // change value of dictionary entry without allocating new datum
+            IntegerDatum* id =
+              static_cast< IntegerDatum* >( ( ( *param_dicts_[ indx ][ target_thread ]  )[ it->first ] ).datum() );
+
+            //std::cerr << " target thread " << target_thread << " " << ( *param_dicts_[ target_thread ][ indx ]  )[ it->first ] << "\n";
+
+            ( *id ) = it->second->value_int( target_thread, rng, snode_id, &target );
+
+            //std::cerr << " target thread " << target_thread << " index " << indx << " " << ( *param_dicts_[ target_thread ] )[ it->first ] << "\n";
+            //std::cerr << ( *id ).get() << "\n";
+          }
+          catch ( KernelException& e )
+          {
+            if ( it->first == names::receptor_type )
+            {
+              throw BadProperty( "Receptor type must be of type integer." );
+            }
+            else if ( it->first == names::music_channel )
+            {
+              throw BadProperty( "Music channel type must be of type integer." );
+            }
+            else if ( it->first == names::synapse_label )
+            {
+              throw BadProperty( "Synapse label must be of type integer." );
+            }
+          }
+        }
+        else
+        {
+          // change value of dictionary entry without allocating new datum
+          DoubleDatum* dd = static_cast< DoubleDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ it->first ] ).datum() );
+          ( *dd ) = it->second->value_double( target_thread, rng, snode_id, &target );
+        }
+      }
+
+      if ( default_weight_and_delay_[ indx ] )
+      {
+        kernel().connection_manager.connect(
+          snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ] );
+      }
+      else if ( default_weight_[ indx ] )
+      {
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          param_dicts_[ indx ][ target_thread ],
+          delay_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      }
+      else if ( default_delay_[ indx ] )
+      {
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          param_dicts_[ indx ][ target_thread ],
+          numerics::nan,
+          weight_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+      }
+      else
+      {
+        double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        kernel().connection_manager.connect(
+          snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ], delay, weight );
+      }
     }
   }
 }
@@ -551,20 +579,29 @@ nest::ConnBuilder::all_parameters_scalar_() const
 {
   bool all_scalar = true;
 
-  if ( weight_ )
+  for( auto weight = weight_.begin(); weight < weight_.end(); ++weight )
   {
-    all_scalar = all_scalar and weight_->is_scalar();
+    if ( *weight )
+    {
+      all_scalar = all_scalar and ( *weight )->is_scalar();
+    }
   }
 
-  if ( delay_ )
+  for( auto delay = delay_.begin(); delay < delay_.end(); ++delay )
   {
-    all_scalar = all_scalar and delay_->is_scalar();
+    if ( *delay )
+    {
+      all_scalar = all_scalar and ( *delay )->is_scalar();
+    }
   }
 
-  ConnParameterMap::const_iterator it = synapse_params_.begin();
-  for ( ; it != synapse_params_.end(); ++it )
+  for( auto syn_params = synapse_params_.begin(); syn_params < synapse_params_.end(); ++syn_params )
   {
-    all_scalar = all_scalar and it->second->is_scalar();
+    ConnParameterMap::const_iterator it = syn_params->begin();
+    for ( ; it != syn_params->end(); ++it )
+    {
+      all_scalar = all_scalar and it->second->is_scalar();
+    }
   }
 
   return all_scalar;
@@ -577,10 +614,34 @@ nest::ConnBuilder::loop_over_targets_() const
     or parameters_requiring_skipping_.size() > 0;
 }
 
+void
+nest::ConnBuilder::reset_weights_()
+{
+  for ( auto it = weight_.begin(); it < weight_.end(); ++it )
+  {
+    if ( *it )
+    {
+      ( *it )->reset();
+    }
+  }
+}
+
+void
+nest::ConnBuilder::reset_delays_()
+{
+  for ( auto it = delay_.begin(); it < delay_.end(); ++it )
+  {
+    if ( *it )
+    {
+      ( *it )->reset();
+    }
+  }
+}
+
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // make sure that target and source population have the same size
@@ -1070,7 +1131,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // check for potential errors
@@ -1238,7 +1299,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // check for potential errors
@@ -1371,7 +1432,7 @@ nest::FixedOutDegreeBuilder::connect_()
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , N_( ( *conn_spec )[ names::N ] )
 {
@@ -1553,7 +1614,7 @@ nest::FixedTotalNumberBuilder::connect_()
 nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
@@ -1669,7 +1730,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
@@ -1825,7 +1886,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector<DictionaryDatum>& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided

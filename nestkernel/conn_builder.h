@@ -80,19 +80,19 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
   virtual ~ConnBuilder();
 
   index
   get_synapse_model() const
   {
-    return synapse_model_id_;
+    return synapse_model_id_[0];
   }
 
   bool
   get_default_delay() const
   {
-    return default_delay_;
+    return default_delay_[0];
   }
 
   void set_pre_synaptic_element_name( const std::string& name );
@@ -199,26 +199,26 @@ protected:
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
-  index synapse_model_id_;
+  std::vector< index > synapse_model_id_;
 
   //! indicate that weight and delay should not be set per synapse
-  bool default_weight_and_delay_;
+  std::vector< bool > default_weight_and_delay_;
 
   //! indicate that weight should not be set per synapse
-  bool default_weight_;
+  std::vector< bool > default_weight_;
 
   //! indicate that delay should not be set per synapse
-  bool default_delay_;
+  std::vector< bool > default_delay_;
 
   // null-pointer indicates that default be used
-  ConnParameter* weight_;
-  ConnParameter* delay_;
+  std::vector< ConnParameter* > weight_;
+  std::vector< ConnParameter* > delay_;
 
   //! all other parameters, mapping name to value representation
-  ConnParameterMap synapse_params_;
+  std::vector< ConnParameterMap > synapse_params_;
 
   //! dictionaries to pass to connect function, one per thread
-  std::vector< DictionaryDatum > param_dicts_;
+  std::vector< std::vector< DictionaryDatum > > param_dicts_;
 
   //! empty dictionary to pass to connect function, one per thread so that the all threads do not
   //! create and use the same dictionary as this leads to performance issues.
@@ -233,6 +233,9 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
+  void reset_weights_();
+  void reset_delays_();
+
 protected:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
@@ -244,7 +247,7 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec );
+    const std::vector<DictionaryDatum>& syn_spec );
 
   bool
   supports_symmetric() const
@@ -271,7 +274,7 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec )
+    const std::vector<DictionaryDatum>& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
@@ -302,7 +305,7 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
 
 protected:
   void connect_();
@@ -315,7 +318,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
 
 protected:
   void connect_();
@@ -327,7 +330,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
 
 protected:
   void connect_();
@@ -339,7 +342,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
 
 protected:
   void connect_();
@@ -352,7 +355,7 @@ private:
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
-  SymmetricBernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  SymmetricBernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
 
   bool
   supports_symmetric() const
@@ -373,7 +376,7 @@ public:
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec );
+    const std::vector<DictionaryDatum>& syn_spec );
 
   std::string
   get_pre_synaptic_element_name() const

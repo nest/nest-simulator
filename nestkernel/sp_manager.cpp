@@ -154,8 +154,9 @@ SPManager::set_status( const DictionaryDatum& d )
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
+    std::vector< DictionaryDatum > syn_params = { syn_spec };
     // We use a ConnBuilder with dummy values to check the synapse parameters
-    SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, syn_spec );
+    SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, syn_params );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
@@ -279,6 +280,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
+  std::vector< DictionaryDatum > syn_spec_vec = {syn_spec};
+
   if ( not conn_spec->known( names::rule ) )
   {
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
@@ -298,7 +301,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
       std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
       if ( ( *i )->get_synapse_model() == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
       {
-        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec_vec );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
         cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
       }
@@ -306,7 +309,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   else
   {
-    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec_vec );
   }
   assert( cb != 0 );
 

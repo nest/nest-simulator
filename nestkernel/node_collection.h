@@ -729,7 +729,7 @@ inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
+  return rhs_ptr and first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
     and metadata_ == rhs_ptr->metadata_;
 }
 
@@ -827,7 +827,7 @@ inline bool NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
 
-  if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }

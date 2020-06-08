@@ -99,7 +99,7 @@ Traub and Miles used :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
 
 Post-synaptic currents
 Incoming spike events induce a post-synaptic change of conductance modelled by a
-beta function as outlined in [4]_ [5]_. The beta function is normalised such that an
+beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
 where xx is ex or in.
 

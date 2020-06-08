@@ -70,7 +70,7 @@ iaf_cond_exp_sfa_rr is an implementation of a spiking neuron using integrate-and
 synapses, with additional spike-frequency adaptation and relative refractory mechanisms as described in [2]_, page 166.
 
 Incoming spike events induce a post-synaptic change of conductance modelled by an exponential function. The exponential
-function is normalised such that an event of weight 1.0 results in a peak current of 1 nS.
+function is normalized such that an event of weight 1.0 results in a peak current of 1 nS.
 
 Outgoing spike events induce a change of the adaptation and relative refractory conductances by q_sfa and q_rr,
 respectively. Otherwise these conductances decay exponentially with time constants tau_sfa and tau_rr, respectively.

@@ -82,9 +82,12 @@ class TestNodeCollection(unittest.TestCase):
 
             # incorporation to bigger array
             arr = np.zeros(2*n_neurons, dtype=int)
-            arr[2:12] = nc
 
-            self.assertEqual(arr[2:12].tolist(), nc.tolist())
+            start = 2
+
+            arr[start:start + n_neurons] = nc
+
+            self.assertTrue(np.array_equal(arr[start:start + n_neurons], nc.tolist()))
 
     def test_equal(self):
         """Equality of NodeCollections"""

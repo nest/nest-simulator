@@ -105,8 +105,8 @@ Interested in contributing?
 Related projects
 ################
 
-- `NESTML <https://github.com/nest/nestml>` - a domain specific language to describe neuron models in NEST
-- `NEST Desktop <https://github.com/babsey/nest-desktop>` - an interactive desktop application for NEST simulator
+- `NESTML <https://github.com/nest/nestml>`_ - a domain specific language to describe neuron models in NEST
+- `NEST Desktop <https://github.com/babsey/nest-desktop>`_ - an interactive desktop application for NEST simulator
 
 The  `NeuralEnsemble <http://neuralensemble.org/>`_ is a community-based initiative to promote and co-ordinate open-source software development in neuroscience.
 They host numerous software including

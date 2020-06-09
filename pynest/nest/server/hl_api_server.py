@@ -19,7 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import array
 import importlib
 import inspect
 import io
@@ -121,7 +120,8 @@ def route_api_call(call):
     """ Route to call function in NEST.
     """
     args, kwargs = get_arguments(request)
-    response = api_client(call, *args, **kwargs)
+    call = getattr(nest, call)
+    response = api_client(call, args, kwargs)
     return jsonify(response)
 
 
@@ -186,9 +186,9 @@ def get_modules(source):
 def get_or_error(func):
     """ Wrapper to get data and status.
     """
-    def func_wrapper(call, *args, **kwargs):
+    def func_wrapper(call, args, kwargs):
         try:
-            return func(call, *args, **kwargs)
+            return func(call, args, kwargs)
         except nest.kernel.NESTError as e:
             abort(Response(getattr(e, 'errormessage'), 400))
         except Exception as e:
@@ -229,18 +229,21 @@ def serialize(call, args, kwargs):
 
 
 @get_or_error
-def api_client(call, *args, **kwargs):
+def api_client(call, args, kwargs):
     """ API Client to call function in NEST.
     """
-    call = getattr(nest, call)
     if callable(call):
-        if kwargs.get('inspect', None) == 'getdoc':
-            response = inspect.getdoc(call)
-        elif kwargs.get('inspect', None) == 'getsource':
-            response = inspect.getsource(call)
+        if 'inspect' in kwargs:
+            response = {
+                'data': getattr(inspect, kwargs['inspect'])(call)
+            }
         else:
             args, kwargs = serialize(call, args, kwargs)
             response = call(*args, **kwargs)
     else:
         response = call
     return nest.hl_api.serializable(response)
+
+
+if __name__ == "__main__":
+    app.run()

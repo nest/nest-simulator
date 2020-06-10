@@ -258,10 +258,6 @@ class NodeCollection(object):
         else:
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
-    def __array__(self, dtype=None):
-        ''' Numpy compatibility function '''
-        return numpy.array(self.tolist(), dtype=dtype)
-
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
 

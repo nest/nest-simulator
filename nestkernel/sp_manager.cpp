@@ -280,7 +280,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  std::vector< DictionaryDatum > syn_spec_vec = {syn_spec};
+  std::vector< DictionaryDatum > syn_spec_vec = { syn_spec };
 
   if ( not conn_spec->known( names::rule ) )
   {

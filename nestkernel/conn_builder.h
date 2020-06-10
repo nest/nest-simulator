@@ -80,19 +80,19 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
   virtual ~ConnBuilder();
 
   index
   get_synapse_model() const
   {
-    return synapse_model_id_[0];
+    return synapse_model_id_[ 0 ];
   }
 
   bool
   get_default_delay() const
   {
-    return default_delay_[0];
+    return default_delay_[ 0 ];
   }
 
   void set_pre_synaptic_element_name( const std::string& name );
@@ -247,7 +247,7 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector<DictionaryDatum>& syn_spec );
+    const std::vector< DictionaryDatum >& syn_spec );
 
   bool
   supports_symmetric() const
@@ -274,7 +274,7 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector<DictionaryDatum>& syn_spec )
+    const std::vector< DictionaryDatum >& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
@@ -305,7 +305,10 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  FixedInDegreeBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_();
@@ -318,7 +321,10 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  FixedOutDegreeBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_();
@@ -330,7 +336,10 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  FixedTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_();
@@ -342,7 +351,10 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  BernoulliBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_();
@@ -355,7 +367,10 @@ private:
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
-  SymmetricBernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector<DictionaryDatum>& );
+  SymmetricBernoulliBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
   bool
   supports_symmetric() const
@@ -376,7 +391,7 @@ public:
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector<DictionaryDatum>& syn_spec );
+    const std::vector< DictionaryDatum >& syn_spec );
 
   std::string
   get_pre_synaptic_element_name() const

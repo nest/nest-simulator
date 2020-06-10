@@ -335,7 +335,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
 {
   const size_t rule_id = connruledict_->lookup( name );
   return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
@@ -354,7 +354,7 @@ void
 nest::ConnectionManager::connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
 {
   conn_spec->clear_access_flags();
 

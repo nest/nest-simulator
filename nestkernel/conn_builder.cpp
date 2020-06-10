@@ -51,7 +51,7 @@
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : sources_( sources )
   , targets_( targets )
   , allow_autapses_( true )
@@ -85,12 +85,12 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_set.insert( names::num_connections );
   skip_set.insert( names::synapse_model );
 
-  default_weight_.resize(syn_spec.size());
-  default_delay_.resize(syn_spec.size());
-  default_weight_and_delay_.resize(syn_spec.size());
-  weight_.resize(syn_spec.size());
-  delay_.resize(syn_spec.size());
-  synapse_params_.resize(syn_spec.size());
+  default_weight_.resize( syn_spec.size() );
+  default_delay_.resize( syn_spec.size() );
+  default_weight_and_delay_.resize( syn_spec.size() );
+  weight_.resize( syn_spec.size() );
+  delay_.resize( syn_spec.size() );
+  synapse_params_.resize( syn_spec.size() );
   synapse_model_id_.resize( syn_spec.size() );
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
   param_dicts_.resize( syn_spec.size() );
@@ -98,7 +98,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   int indx = 0;
   for ( auto syn_params = syn_spec.begin(); syn_params < syn_spec.end(); ++syn_params, ++indx )
   {
-    if ( not ( *syn_params )->known( names::synapse_model ) )
+    if ( not( *syn_params )->known( names::synapse_model ) )
     {
       throw BadProperty( "Synapse spec must contain synapse model." );
     }
@@ -121,9 +121,9 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     // All synapse models have the possibility to set the delay (see
     // SynIdDelay), but some have homogeneous weights, hence it should
     // be possible to set the delay without the weight.
-    default_weight_[ indx ] = not ( *syn_params )->known( names::weight );
+    default_weight_[ indx ] = not( *syn_params )->known( names::weight );
 
-    default_delay_[ indx ] = not ( *syn_params )->known( names::delay );
+    default_delay_[ indx ] = not( *syn_params )->known( names::delay );
 
     // If neither weight nor delay are given in the dict, we handle this
     // separately. Important for hom_w synapses, on which weight cannot
@@ -155,7 +155,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     }
     register_parameters_requiring_skipping_( *delay_[ indx ] );
 
-    for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+    for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
+          ++default_it )
     {
       const Name param_name = default_it->first;
       if ( skip_set.find( param_name ) != skip_set.end() )
@@ -176,11 +177,11 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     // once to avoid re-creating the object over and over again.
     if ( synapse_params_[ indx ].size() > 0 )
     {
-      //std::vector< DictionaryDatum > param_dictionary = {new Dictionary()};
+      // std::vector< DictionaryDatum > param_dictionary = {new Dictionary()};
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
 
-        param_dicts_[ indx ].push_back( new Dictionary() );//param_dictionary );
+        param_dicts_[ indx ].push_back( new Dictionary() ); // param_dictionary );
 
         ConnParameterMap::const_iterator it = synapse_params_[ indx ].begin();
         for ( ; it != synapse_params_[ indx ].end(); ++it )
@@ -201,17 +202,17 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
-  if ( syn_spec[0]->known( names::pre_synaptic_element ) and syn_spec[0]->known( names::post_synaptic_element ) )
+  if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) and syn_spec[ 0 ]->known( names::post_synaptic_element ) )
   {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_spec[0], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_spec[0], names::post_synaptic_element );
+    pre_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::pre_synaptic_element );
+    post_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::post_synaptic_element );
 
     use_pre_synaptic_element_ = true;
     use_post_synaptic_element_ = true;
   }
   else
   {
-    if ( syn_spec[0]->known( names::pre_synaptic_element ) or syn_spec[0]->known( names::post_synaptic_element ) )
+    if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) or syn_spec[ 0 ]->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
         "In order to use structural plasticity, both a pre and post synaptic "
@@ -464,8 +465,13 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
       {
         double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
         double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        kernel().connection_manager.connect(
-          snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ], delay, weight );
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          dummy_param_dicts_[ target_thread ],
+          delay,
+          weight );
       }
     }
     else
@@ -475,21 +481,24 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
       ConnParameterMap::const_iterator it = synapse_params_[ indx ].begin();
       for ( ; it != synapse_params_[ indx ].end(); ++it )
       {
-        if ( it->first == names::receptor_type or it->first == names::music_channel or it->first == names::synapse_label )
+        if ( it->first == names::receptor_type or it->first == names::music_channel
+          or it->first == names::synapse_label )
         {
           try
           {
-            //std::cerr << "receptor 2:";
+            // std::cerr << "receptor 2:";
             // change value of dictionary entry without allocating new datum
             IntegerDatum* id =
-              static_cast< IntegerDatum* >( ( ( *param_dicts_[ indx ][ target_thread ]  )[ it->first ] ).datum() );
+              static_cast< IntegerDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ it->first ] ).datum() );
 
-            //std::cerr << " target thread " << target_thread << " " << ( *param_dicts_[ target_thread ][ indx ]  )[ it->first ] << "\n";
+            // std::cerr << " target thread " << target_thread << " " << ( *param_dicts_[ target_thread ][ indx ]  )[
+            // it->first ] << "\n";
 
             ( *id ) = it->second->value_int( target_thread, rng, snode_id, &target );
 
-            //std::cerr << " target thread " << target_thread << " index " << indx << " " << ( *param_dicts_[ target_thread ] )[ it->first ] << "\n";
-            //std::cerr << ( *id ).get() << "\n";
+            // std::cerr << " target thread " << target_thread << " index " << indx << " " << ( *param_dicts_[
+            // target_thread ] )[ it->first ] << "\n";
+            // std::cerr << ( *id ).get() << "\n";
           }
           catch ( KernelException& e )
           {
@@ -510,7 +519,8 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         else
         {
           // change value of dictionary entry without allocating new datum
-          DoubleDatum* dd = static_cast< DoubleDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ it->first ] ).datum() );
+          DoubleDatum* dd =
+            static_cast< DoubleDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ it->first ] ).datum() );
           ( *dd ) = it->second->value_double( target_thread, rng, snode_id, &target );
         }
       }
@@ -543,8 +553,13 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
       {
         double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
         double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        kernel().connection_manager.connect(
-          snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ], delay, weight );
+        kernel().connection_manager.connect( snode_id,
+          &target,
+          target_thread,
+          synapse_model_id_[ indx ],
+          param_dicts_[ indx ][ target_thread ],
+          delay,
+          weight );
       }
     }
   }
@@ -579,7 +594,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
 {
   bool all_scalar = true;
 
-  for( auto weight = weight_.begin(); weight < weight_.end(); ++weight )
+  for ( auto weight = weight_.begin(); weight < weight_.end(); ++weight )
   {
     if ( *weight )
     {
@@ -587,7 +602,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
     }
   }
 
-  for( auto delay = delay_.begin(); delay < delay_.end(); ++delay )
+  for ( auto delay = delay_.begin(); delay < delay_.end(); ++delay )
   {
     if ( *delay )
     {
@@ -595,7 +610,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
     }
   }
 
-  for( auto syn_params = synapse_params_.begin(); syn_params < synapse_params_.end(); ++syn_params )
+  for ( auto syn_params = synapse_params_.begin(); syn_params < synapse_params_.end(); ++syn_params )
   {
     ConnParameterMap::const_iterator it = syn_params->begin();
     for ( ; it != syn_params->end(); ++it )
@@ -641,7 +656,7 @@ nest::ConnBuilder::reset_delays_()
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // make sure that target and source population have the same size
@@ -1131,7 +1146,7 @@ nest::AllToAllBuilder::sp_disconnect_()
 nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // check for potential errors
@@ -1299,7 +1314,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // check for potential errors
@@ -1432,7 +1447,7 @@ nest::FixedOutDegreeBuilder::connect_()
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , N_( ( *conn_spec )[ names::N ] )
 {
@@ -1614,7 +1629,7 @@ nest::FixedTotalNumberBuilder::connect_()
 nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
@@ -1730,7 +1745,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
@@ -1886,7 +1901,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector<DictionaryDatum>& syn_spec )
+  const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided

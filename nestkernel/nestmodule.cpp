@@ -767,8 +767,8 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   std::vector< DictionaryDatum > synapse_params = { synapse_params_dict };
 
-  //ArrayDatum synapse_params;
-  //synapse_params.push_back(synapse_params_dict);
+  // ArrayDatum synapse_params;
+  // synapse_params.push_back(synapse_params_dict);
 
   // dictionary access checking is handled by connect
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
@@ -788,7 +788,7 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
   std::vector< DictionaryDatum > synapse_params;
 
-  for (auto syn_param = synapse_params_arr.begin(); syn_param < synapse_params_arr.end(); ++syn_param)
+  for ( auto syn_param = synapse_params_arr.begin(); syn_param < synapse_params_arr.end(); ++syn_param )
   {
     synapse_params.push_back( getValue< DictionaryDatum >( *syn_param ) );
   }

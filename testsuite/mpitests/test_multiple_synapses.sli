@@ -66,27 +66,29 @@
       sm append /weight_delay_syn Set
   } forall
   
-  weight_delay_syn dup ==
+  weight_delay_syn
 }
 {  
   /results Set
   /cumulative_res_list [] def
   
-  /ref_list [] def
+  % Create a reference list with the values we expect (values taken from syn_spec list above).
+  /reference_list [] def
   [4 2 mul] Range
   {
     /indx Set
     indx 2 mod 0 eq
     {
-      ref_list [4. 3. /static_synapse] join /ref_list Set
+      reference_list [4. 3. /static_synapse] join /reference_list Set
     }
     {
-      ref_list [-3. 1. /static_synapse] join /ref_list Set 
+      reference_list [-3. 1. /static_synapse] join /reference_list Set 
     } ifelse
   } forall
   
-  /ref_list ref_list [4] [2. 1. /stdp_synapse] LayoutArray Flatten append Flatten def
+  /reference_list reference_list [4] [2. 1. /stdp_synapse] LayoutArray Flatten append Flatten def
 
+  % Go through results from different processes and append them to eachother.
   results 0 get
   {
     /mpi_res Set
@@ -97,9 +99,11 @@
     } forall
   } forall
 
-  % we have 4 times 3 connections and 3 elements (weight, delay, synapse_model) we have extracted.
+  % check that length of the cumulative result list from the different processes have right length,
+  % we have 4 times 3 connections and 3 elements extracted (weight, delay, synapse_model).
   cumulative_res_list length 4 3 mul 3 mul eq
-  cumulative_res_list ref_list eq and
   
+  % Also check that the cumulative result list contains all variables we expect.
+  cumulative_res_list reference_list eq and
 }
 distributed_collect_assert_or_die

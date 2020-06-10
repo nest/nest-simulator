@@ -56,12 +56,13 @@ CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
 
+#Generated during Doxygen build
 CMakeDoxyfile.in
 CMakeDoxygenDefaults.cmake
+
+#CTestTestfiles
 CTestTestfile.cmake
 doc/CTestTestfile.cmake
-doc/examples/microcircuit.png
-doc/examples/reference_data/
 examples/CTestTestfile.cmake
 extras/CTestTestfile.cmake
 extras/ConnPlotter/CTestTestfile.cmake
@@ -85,7 +86,6 @@ testsuite/selftests/CTestTestfile.cmake
 testsuite/unittests/CTestTestfile.cmake
 topology/CTestTestfile.cmake
 
-
 # generated files
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf
@@ -94,6 +94,8 @@ doc/userdocs/
 doc/pynestkernel_mock.py
 doc/from_cpp/
 doc/microcircuit/
+doc/examples/microcircuit.png
+doc/examples/reference_data/
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 

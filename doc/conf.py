@@ -285,18 +285,6 @@ texinfo_documents = [
 
 # -- Copy documentation for Microcircuit Model ----------------------------
 
-# source = Path("../pynest/examples/Potjans_2014")
-# destination = Path("examples")
-#
-# # copy all *.png with the right subfolder from source to destiination
-# for f in source.rglob('*.png'):
-#     # ff - files with subfolder
-#     ff = destination / Path(*f.parts[4:])
-#     # fp - only the path, without file name
-#     fp = destination / Path(*f.parts[4:]).parent
-#     if not fp.exists():
-#         Path(fp).mkdir(parents=True, exist_ok=True)
-#     copyfile(f, ff)
 
 def copytreeglob(source, target, glob='*.png'):
     '''
@@ -321,4 +309,6 @@ def copytreeglob(source, target, glob='*.png'):
             targetpath.mkdir(parents=True)
         assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
         copyfile(source/relativename, target/relativename)
+
+
 copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')

@@ -56,6 +56,36 @@ CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
 
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+CTestTestfile.cmake
+doc/CTestTestfile.cmake
+doc/examples/microcircuit.png
+doc/examples/reference_data/
+examples/CTestTestfile.cmake
+extras/CTestTestfile.cmake
+extras/ConnPlotter/CTestTestfile.cmake
+lib/CTestTestfile.cmake
+libnestutil/CTestTestfile.cmake
+librandom/CTestTestfile.cmake
+models/CTestTestfile.cmake
+nest/CTestTestfile.cmake
+nestkernel/CTestTestfile.cmake
+precise/CTestTestfile.cmake
+pynest/CTestTestfile.cmake
+sli/CTestTestfile.cmake
+testsuite/CTestTestfile.cmake
+testsuite/cpptests/CTestTestfile.cmake
+testsuite/mpi_selftests/fail/CTestTestfile.cmake
+testsuite/mpi_selftests/pass/CTestTestfile.cmake
+testsuite/mpitests/CTestTestfile.cmake
+testsuite/musictests/CTestTestfile.cmake
+testsuite/regressiontests/CTestTestfile.cmake
+testsuite/selftests/CTestTestfile.cmake
+testsuite/unittests/CTestTestfile.cmake
+topology/CTestTestfile.cmake
+
+
 # generated files
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf

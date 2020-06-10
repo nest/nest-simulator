@@ -1,0 +1,105 @@
+/*
+ *  test_multiple_synapses.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/** @BeginDocumentation
+    Name: testsuite::test_multiple_synapses - Test that Connect with list of synapse dictionaries use the 
+                                              correct values when connecting
+
+    Synopsis: (test_multiple_synapses) run -> - 
+
+    Description:
+    test_multiple_synapses.sli checks that when Connect is given a list of synapse dictionaries, the given
+    values are used when we have more than one process.
+    
+    Author: Stine Brekke Vennemo
+    FirstVersion: June 2020
+*/
+
+(unittest) run
+/unittest using
+
+
+[1 2 4 8]
+{
+  /src /iaf_psc_alpha 4 Create def
+  /trgt /iaf_psc_alpha 4 Create def
+  
+  src trgt
+    << /rule /one_to_one >>
+    [<< /weight -3. >> << /synapse_model /stdp_synapse /weight 2. >> << /weight 4 /delay 3. >> ]
+    Connect
+  
+  /weight_delay_syn [] def
+  << >> GetConnections /conns Set
+  conns GetStatus
+  {
+    dup
+    dup
+    
+    /weight get /w Set
+    /delay get /d Set
+    /synapse_model get /sm Set
+    
+    weight_delay_syn
+      w append
+      d append
+      sm append /weight_delay_syn Set
+  } forall
+  
+  weight_delay_syn dup ==
+}
+{  
+  /results Set
+  /cumulative_res_list [] def
+  
+  /ref_list [] def
+  [4 2 mul] Range
+  {
+    /indx Set
+    indx 2 mod 0 eq
+    {
+      ref_list [4. 3. /static_synapse] join /ref_list Set
+    }
+    {
+      ref_list [-3. 1. /static_synapse] join /ref_list Set 
+    } ifelse
+  } forall
+  
+  /ref_list ref_list [4] [2. 1. /stdp_synapse] LayoutArray Flatten append Flatten def
+
+  results 0 get
+  {
+    /mpi_res Set
+    
+    mpi_res
+    {
+      cumulative_res_list exch append /cumulative_res_list Set
+    } forall
+  } forall
+
+  % we have 4 times 3 connections and 3 elements (weight, delay, synapse_model) we have extracted.
+  cumulative_res_list length 4 3 mul 3 mul eq
+  cumulative_res_list ref_list eq and
+  
+}
+distributed_collect_assert_or_die

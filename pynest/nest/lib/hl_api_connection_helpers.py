@@ -91,6 +91,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
                                 "'" + key + "' has to be an array of "
                                 "dimension " + str(conn_spec['N']) + ", a "
                                 "scalar or a dictionary.")
+                        else:
+                            syn_spec[key] = value
                     else:
                         raise kernel.NESTError(
                             "'" + key + "' has the wrong type. "

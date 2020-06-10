@@ -29,6 +29,7 @@ import numpy as np
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_types import Mask, NodeCollection, Parameter
+from .hl_api_exceptions import NESTErrors
 
 __all__ = [
     '_connect_layers_needed',
@@ -286,8 +287,14 @@ def _check_input_nodes(pre, post, conn_spec):
                                       "they must have the same length."
 
         # convert them to arrays
-        pre = np.array(pre, dtype=int)
-        post = np.array(post, dtype=int)
+        if not pre_is_nc and not isinstance(pre[0], (int, np.integer)):
+            raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
+
+        if not post_is_nc and not isinstance(post[0], (int, np.integer)):
+            raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
+
+        pre = np.asarray(pre, dtype=int)
+        post = np.asarray(post, dtype=int)
 
         # check dimension
         if not (pre.ndim == 1 and post.ndim == 1):

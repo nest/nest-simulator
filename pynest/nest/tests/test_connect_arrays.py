@@ -20,8 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import nest
 import numpy as np
+
+import nest
+from nest.lib.hl_api_exceptions import NESTErrors
 
 nest.set_verbosity('M_WARNING')
 
@@ -212,36 +214,9 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(n)
         syn_model = 'static_synapse'
 
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
-                     conn_spec="one_to_one")
-
-        conns = nest.GetConnections()
-
-        for s, t, w, d, c in zip(sources, targets, weights, delays, conns):
-            self.assertEqual(c.source, s)
-            self.assertEqual(c.target, t)
-            self.assertEqual(c.weight, w)
-            self.assertEqual(c.delay, d)
-
-    def test_connect_arrays_wrong_arraytype(self):
-        """Automatically convert arrays with wrong array type"""
-        n = 10
-        nest.Create('iaf_psc_alpha', n)
-        sources = list(range(1, n+1))
-        targets = np.arange(1, n+1, dtype=np.double)
-        weights = 1.
-        delays = 1.
-        syn_model = 'static_synapse'
-
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
-
-        conns = nest.GetConnections()
-
-        self.assertEqual(len(conns), n*n)
-
-        for c in conns:
-            self.assertTrue(np.isclose(c.weight, weights))
-            self.assertTrue(np.isclose(c.delay, delays))
+        with self.assertRaises(NESTErrors.ArgumentType):
+            nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
+                         conn_spec="one_to_one")
 
     def test_connect_arrays_unknown_nodes(self):
         """Raises exception when connecting NumPy arrays with unknown nodes"""

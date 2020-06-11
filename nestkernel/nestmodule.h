@@ -274,11 +274,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } getnodes_D_bfunction;
 
-  class AddCompartment_llldddd_Function : public SLIFunction
+  class AddCompartment_lllD_Function : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } add_compartment_llldddd_function;
+  } add_compartment_lllD_function;
 
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {

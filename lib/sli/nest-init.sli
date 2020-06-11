@@ -730,8 +730,7 @@ def
 def
 
 /AddCompartment trie
-  % [/integertype /integertype /integertype /doubletype /doubletype /doubletype /doubletype] /AddCompartment_llldddd load addtotrie
-  [/integertype /integertype /integertype] /AddCompartment_llldddd load addtotrie
+  [/integertype /integertype /integertype /dictionarytype] /AddCompartment_lllD load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

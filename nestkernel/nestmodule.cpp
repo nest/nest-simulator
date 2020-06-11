@@ -736,21 +736,17 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::AddCompartment_llldddd_Function::execute( SLIInterpreter* i ) const
+NestModule::AddCompartment_lllD_Function::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 4 );
 
-  const size_t node_id = getValue< long >( i->OStack.pick( 0 ) );
-  const size_t compartment_idx = getValue< long >( i->OStack.pick( 1 ) );
-  const size_t parent_compartment_idx = getValue< long >( i->OStack.pick( 2 ) );
-  // const double C_m = getValue< double >( i->OStack.pick( 3 ) );
-  // const double g_c = getValue< double >( i->OStack.pick( 4 ) );
-  // const double g_L = getValue< double >( i->OStack.pick( 5 ) );
-  // const double E_L = getValue< double >( i->OStack.pick( 6 ) );
-  // add_compartment( node_id, compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
-  add_compartment( node_id, compartment_idx, parent_compartment_idx, 1.0, 0.1, 0.1, -70.0 );
+  const DictionaryDatum compartment_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const long parent_compartment_idx = getValue< long >( i->OStack.pick( 1 ) );
+  const long compartment_idx = getValue< long >( i->OStack.pick( 2 ) );
+  const index node_id = getValue< long >( i->OStack.pick( 3 ) );
+  add_compartment( node_id, compartment_idx, parent_compartment_idx, compartment_params );
 
-  i->OStack.pop( 3 );
+  i->OStack.pop( 4 );
   i->EStack.pop();
 }
 
@@ -1970,7 +1966,7 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
-  i->createcommand( "AddCompartment_llldddd", &add_compartment_llldddd_function );
+  i->createcommand( "AddCompartment_lllD", &add_compartment_lllD_function );
 
   i->createcommand( "mul_P_P", &mul_P_Pfunction );
   i->createcommand( "div_P_P", &div_P_Pfunction );

@@ -729,6 +729,11 @@ def
   [/literaltype /integertype /dictionarytype] /Create_l_i_D load addtotrie
 def
 
+/AddCompartment trie
+  % [/integertype /integertype /integertype /doubletype /doubletype /doubletype /doubletype] /AddCompartment_llldddd load addtotrie
+  [/integertype /integertype /integertype] /AddCompartment_llldddd load addtotrie
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %     Model handling

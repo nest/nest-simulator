@@ -236,7 +236,13 @@ nest::iaf_neat::init_buffers_()
   Archiving_Node::clear_history();
 }
 
-inline void
+void
+iaf_neat::add_compartment( const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L )
+{
+  m_c_tree.add_node( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
+}
+
+void
 iaf_neat::add_synapses(){
   long node_index = 0;
   CompNode* node;

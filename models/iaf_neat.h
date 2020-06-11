@@ -79,9 +79,6 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  void add_synapses();
-  void test();
-
 private:
   void init_state_( const Node& proto );
   void init_buffers_();

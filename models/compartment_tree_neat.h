@@ -60,7 +60,7 @@ public:
             double gl, double el);
     ~CompNode(){};
     // initialization
-    void init();
+    void init( const double dt );
     void add_synapse(std::shared_ptr< Synapse > syn);
     // matrix construction
     void construct_matrix_element();
@@ -106,7 +106,7 @@ public:
     void add_node(long node_index, long parent_index,
                  double ca, double gc,
                  double gl, double el);
-    void init();
+    void init( const double dt );
 
     // getters and setters
     CompNode* find_node(long node_index);

@@ -187,8 +187,8 @@ def GetLocalNodeCollection(nc):
     sr("LocalOnly")
     return spp()
 
-def AddCompartment(node_id, compartment_idx, parent_compartment_idx, compartment_params):
-    sps(node_id)
+def AddCompartment(node, compartment_idx, parent_compartment_idx, compartment_params):
+    sps(node)
     sps(compartment_idx)
     sps(parent_compartment_idx)
     sps(compartment_params)

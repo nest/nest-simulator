@@ -729,8 +729,36 @@ def
   [/literaltype /integertype /dictionarytype] /Create_l_i_D load addtotrie
 def
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     Adding compartments to neat nodes
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/AddCompartment_gllD
+{
+    /compartment_params Set
+    /parent_compartment_idx Set
+    /compartment_idx Set
+    /node Set
+
+    node size 1 neq
+    {
+	(NodeCollection must contain exactly one element) M_ERROR message
+	/AddCompartment /ArgumentError raiseerror
+    } if
+    node 0 get_g_i /node_id Set
+
+    node_id
+    compartment_idx
+    parent_compartment_idx
+    compartment_params
+    AddCompartment_lllD
+} def
+
 /AddCompartment trie
   [/integertype /integertype /integertype /dictionarytype] /AddCompartment_lllD load addtotrie
+  [/nodecollectiontype /integertype /integertype /dictionarytype] /AddCompartment_gllD load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

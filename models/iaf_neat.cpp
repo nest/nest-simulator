@@ -236,10 +236,94 @@ nest::iaf_neat::init_buffers_()
   Archiving_Node::clear_history();
 }
 
+inline void
+iaf_neat::add_synapses(){
+  long node_index = 0;
+  CompNode* node;
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn1(new AMPASyn());
+
+  syn_receptors.push_back(syn1);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn1);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn2(new GABASyn());
+  syn_receptors.push_back(syn2);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn2);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn3(new NMDASyn());
+
+  syn_receptors.push_back(syn3);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn3);
+
+  // add a synapse
+  std::shared_ptr< Synapse > syn4(new AMPA_NMDASyn(3.));
+  syn_receptors.push_back(syn4);
+
+  node = m_c_tree.find_node(node_index);
+  node->m_syns.push_back(syn4);
+}
+
+
+void
+nest::iaf_neat::test(){
+  const double h = Time::get_resolution().get_ms();
+  const double dt = h;
+
+  // Tests added here //////////////////////////////////////////////////////////
+  /*
+  Tree structure for testing
+  */
+
+  /*
+  Test 3: synapses voltage dependence
+  */
+  add_synapses();
+  m_c_tree.init( dt );
+  double fv0, fv2;
+  std::cout << std::endl;
+  std::cout << "--- Testing synapses ---" << std::endl;
+ // voltage dependence AMPA synapse
+  fv0 = syn_receptors[0]->f(0);
+  std::cout << ">>> AMPA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[0]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (manual = " << 40. <<") mV" << std::endl;
+  // // voltage dependence GABA synapse
+  fv0 = syn_receptors[1]->f(-80.);
+  std::cout << ">>> GABA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[1]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (manual = " << -40. <<") mV" << std::endl;
+  // voltage dependence NMDA synapse
+  fv0 = syn_receptors[2]->f(0.);
+  std::cout << ">>> NMDA synapse" << std::endl;
+ std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[2]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (!= " << 40. <<") mV" << std::endl;
+  // voltage dependence AMPA+NMDA synapse
+  fv0 = syn_receptors[3]->f(0.);
+  std::cout << ">>> NMDA synapse" << std::endl;
+  std::cout << "f(e_rev) = " << fv0 << " mV" << std::endl;
+  fv2 = syn_receptors[3]->f(-40.);
+  std::cout << "f(v=-40) = " << fv2 << " (!= " << 40. <<") mV" << std::endl;
+  //////////////////////////////////////////////////////////////////////////////
+}
+
 
 void
 nest::iaf_neat::calibrate()
 {
+  test();
+
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();

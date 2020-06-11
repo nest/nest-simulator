@@ -1,0 +1,6 @@
+ResetKernel
+
+/iaf_neat Create /n Set
+% 0 0 0 1.0 0.1 0.1 -70.0 AddCompartment
+0 0 1 AddCompartment
+0 1 1 AddCompartment

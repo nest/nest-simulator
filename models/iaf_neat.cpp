@@ -66,14 +66,11 @@ RecordablesMap< iaf_neat > iaf_neat::recordablesMap_;
  * ---------------------------------------------------------------- */
 
 nest::iaf_neat::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                  // ms
-  , c_m_( 250.0 )                                   // pF
-  , t_ref_( 2.0 )                                   // ms
-  , E_L_( -70.0 )                                   // mV
+  : t_ref_( 10.0 )                                   // ms
   , I_e_( 0.0 )                                     // pA
-  , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
-  , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
-  , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
+  , V_th_( -55.0 )                           // mV, rel to E_L_
+  , V_reset_( -85.0 )                        // mV, rel to E_L_
+  , F_pot_( 10.0 )
   , with_refr_input_( false )
 {
 }
@@ -93,13 +90,9 @@ nest::iaf_neat::State_::State_()
 void
 nest::iaf_neat::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, E_L_ ); // Resting potential
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ ); // threshold value
-  def< double >( d, names::V_reset, V_reset_ + E_L_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
+  def< double >( d, names::V_th, V_th_ ); // threshold value
+  def< double >( d, names::V_reset, V_reset_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
 }
@@ -107,82 +100,41 @@ nest::iaf_neat::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_neat::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to
-  // E_L_
-  const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
-  const double delta_EL = E_L_ - ELold;
-
-  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
-  {
-    V_reset_ -= E_L_;
-  }
-  else
-  {
-    V_reset_ -= delta_EL;
-  }
-
-  if ( updateValueParam< double >( d, names::V_th, V_th_, node ) )
-  {
-    V_th_ -= E_L_;
-  }
-  else
-  {
-    V_th_ -= delta_EL;
-  }
-
-  if ( updateValueParam< double >( d, names::V_min, V_min_, node ) )
-  {
-    V_min_ -= E_L_;
-  }
-  else
-  {
-    V_min_ -= delta_EL;
-  }
-
+  updateValueParam< double >( d, names::V_th, V_th_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
   }
-  if ( c_m_ <= 0 )
-  {
-    throw BadProperty( "Capacitance must be >0." );
-  }
   if ( t_ref_ < 0 )
   {
     throw BadProperty( "Refractory time must not be negative." );
   }
-  if ( tau_m_ <= 0 )
-  {
-    throw BadProperty( "Membrane time constant must be > 0." );
-  }
 
   updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 
-  return delta_EL;
+  return 0.;
 }
 
 void
 nest::iaf_neat::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, y3_); // Membrane potential
 }
 
 void
 nest::iaf_neat::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
-  {
-    y3_ -= p.E_L_;
-  }
-  else
-  {
-    y3_ -= delta_EL;
-  }
+  // if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
+  // {
+  //   y3_ -= p.E_L_;
+  // }
+  // else
+  // {
+  //   y3_ -= delta_EL;
+  // }
 }
 
 nest::iaf_neat::Buffers_::Buffers_( iaf_neat& n )
@@ -245,9 +197,6 @@ nest::iaf_neat::calibrate()
   const double h = Time::get_resolution().get_ms();
 
   m_c_tree.init( h );
-
-  V_.P33_ = std::exp( -h / P_.tau_m_ );
-  V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
 
   // t_ref_ specifies the length of the absolute refractory period as

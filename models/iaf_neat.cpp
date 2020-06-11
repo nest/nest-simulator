@@ -45,20 +45,15 @@
 namespace nest
 {
 
-/* ----------------------------------------------------------------
- * Recordables map
- * ---------------------------------------------------------------- */
-
-RecordablesMap< iaf_neat > iaf_neat::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< iaf_neat >::create()
+DynamicRecordablesMap< iaf_neat >::create( iaf_neat& host)
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_neat::get_V_m_ );
+  // insert_( names::V_m, &iaf_neat::get_V_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -157,7 +152,7 @@ nest::iaf_neat::iaf_neat()
   , S_()
   , B_( *this )
 {
-  recordablesMap_.create();
+  recordablesMap_.create( *this );
 }
 
 nest::iaf_neat::iaf_neat( const iaf_neat& n )
@@ -192,6 +187,10 @@ void
 iaf_neat::add_compartment( const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L )
 {
   m_c_tree.add_node( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
+
+  // to enable recording the voltage of the current compartment
+  recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
+                          DataAccessFunctor< iaf_neat >( *this, compartment_idx ) );
 }
 
 void

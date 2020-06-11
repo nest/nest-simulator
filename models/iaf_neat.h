@@ -95,10 +95,13 @@ private:
   // Synapse pointer vector
   std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
+  // To record variables with DataAccessFunctor
+  double get_state_element( size_t elem){return m_c_tree.get_node_voltage(elem);}
+
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_neat >;
-  // friend class DynamicRecordablesMap< iaf_neat >;
-  friend class UniversalDataLogger< iaf_neat >;
+  friend class DataAccessFunctor< iaf_neat >;
+  friend class DynamicRecordablesMap< iaf_neat >;
+  friend class DynamicUniversalDataLogger< iaf_neat >;
 
   // ----------------------------------------------------------------
 
@@ -180,7 +183,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_neat > logger_;
+    DynamicUniversalDataLogger< iaf_neat > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -221,8 +224,9 @@ private:
   Buffers_ B_;
   /** @} */
 
+
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_neat > recordablesMap_;
+  DynamicRecordablesMap< iaf_neat > recordablesMap_;
 };
 
 

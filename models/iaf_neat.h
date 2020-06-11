@@ -243,11 +243,11 @@ nest::iaf_neat::send_test_event( Node& target, rport receptor_type, synindex, bo
 inline port
 iaf_neat::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
+  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_receptors.size() ) ) )
   {
-    throw UnknownReceptorType( receptor_type, get_name() );
+    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
-  return 0;
+  return receptor_type;
 }
 
 inline port

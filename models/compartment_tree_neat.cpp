@@ -62,6 +62,19 @@ void nest::CompNode::add_synapse_contribution(const long lag){
         m_ff += gf_syn.second;
     }
 }
+void nest::CompNode::add_channel_contribution(){
+    std::pair< double, double > gf_chan(0., 0.);
+
+    for(std::vector< std::shared_ptr< IonChannel > >::iterator chan_it = m_chans.begin();
+        chan_it != m_chans.end(); chan_it++){
+
+        (*chan_it)->update();
+        gf_chan = (*chan_it)->f_numstep(m_v);
+
+        m_gg += gf_chan.first;
+        m_ff += gf_chan.second;
+    }
+}
 
 // functions for matrix inversion
 inline void nest::CompNode::gather_input(IODat in){
@@ -112,6 +125,9 @@ void nest::CompTree::add_node(
         parent->m_children.push_back(*node);
     } else {
         m_root = *node;
+
+        std::shared_ptr< IonChannel > chan(new FakePotassium());
+        m_root.m_chans.push_back(chan);
     }
 };
 
@@ -216,6 +232,7 @@ void nest::CompTree::construct_matrix(std::vector< double > i_in, const long lag
         node_it != m_nodes.end(); node_it++){
         (*node_it)->construct_matrix_element();
         (*node_it)->add_synapse_contribution(lag);
+        (*node_it)->add_channel_contribution();
     }
 
 };

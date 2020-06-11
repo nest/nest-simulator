@@ -53,13 +53,13 @@ RecordablesMap< iaf_neat > iaf_neat::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-template <>
-void
-RecordablesMap< iaf_neat >::create()
-{
-  // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_neat::get_V_m_ );
-}
+// template <>
+// void
+// RecordablesMap< iaf_neat >::create()
+// {
+//   // use standard names whereever you can for consistency!
+//   insert_( names::V_m, &iaf_neat::get_V_m_ );
+// }
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -315,7 +315,6 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     */
     m_c_tree.construct_matrix(lag);
     m_c_tree.solve_matrix();
-    S_.y3_ = m_c_tree.get_node_voltage(0);
 
     // S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ + -(gf_syn.first + gf_syn.second * v_vals[0]) ) + V_.P33_ * S_.y3_;
 
@@ -353,10 +352,9 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // }
 
     // threshold crossing
-    if ( S_.y3_ >= P_.V_th_ )
+    if ( m_c_tree.get_node_voltage(0) >= P_.V_th_ )
     {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y3_ = P_.V_reset_;
+      m_c_tree.find_node(0)->m_chans[0]->add_spike();
 
       // EX: must compute spike time
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );

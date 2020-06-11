@@ -16,6 +16,7 @@
 
 #include "nest_time.h"
 #include "synapses_neat.h"
+#include "ionchannels_neat.h"
 
 namespace nest{
 
@@ -40,8 +41,10 @@ public:
     // tree structure indices
     CompNode* m_parent;
     std::vector< CompNode > m_children;
-
+    // vector for synapses
     std::vector< std::shared_ptr< Synapse > > m_syns;
+    // vector for ion channels
+    std::vector< std::shared_ptr< IonChannel > > m_chans;
     // voltage variable
     double m_v = 0.;
     // electrical parameters
@@ -65,6 +68,7 @@ public:
     // matrix construction
     void construct_matrix_element();
     void add_synapse_contribution(const long lag);
+    void add_channel_contribution();
     // maxtrix inversion
     inline void gather_input(IODat in);
     inline IODat io();

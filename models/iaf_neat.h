@@ -92,7 +92,8 @@ private:
   std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_neat >;
+  // friend class RecordablesMap< iaf_neat >;
+  friend class DynamicRecordablesMap< iaf_neat >;
   friend class UniversalDataLogger< iaf_neat >;
 
   // ----------------------------------------------------------------
@@ -102,31 +103,20 @@ private:
    */
   struct Parameters_
   {
-    /** Membrane time constant in ms. */
-    double tau_m_;
-
-    /** Membrane capacitance in pF. */
-    double c_m_;
-
     /** Refractory period in ms. */
     double t_ref_;
-
-    /** Resting potential in mV. */
-    double E_L_;
 
     /** External DC current */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real threshold is (E_L_+V_th_). */
+    /** Threshold */
     double V_th_;
-
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real lower bound is (V_min_+V_th_). */
-    double V_min_;
 
     /** reset value of the membrane potential */
     double V_reset_;
+
+    /** strength of fake potassium compared to somatic leack */
+    double F_pot_;
 
     bool with_refr_input_; //!< spikes arriving during refractory period are
                            //!< counted

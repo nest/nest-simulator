@@ -126,6 +126,12 @@ get_node_status( const index node_id )
 }
 
 void
+add_compartment( const index node_id, const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L )
+{
+  kernel().node_manager.add_compartment( node_id, compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
+}
+
+void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();

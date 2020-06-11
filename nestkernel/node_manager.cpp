@@ -30,6 +30,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "archiving_node.h"
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"
@@ -806,4 +807,19 @@ void
 NodeManager::set_status( const DictionaryDatum& d )
 {
 }
+
+void
+NodeManager::add_compartment( const index node_id, const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L )
+{
+  std::cout << "here " << node_id << " " << compartment_idx << " " << parent_compartment_idx << std::endl;
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    Archiving_Node* node = static_cast< Archiving_Node* > ( local_nodes_[ tid ].get_node_by_node_id( node_id ) );
+    if ( node != 0 )
+    {
+      ( *node ).add_compartment( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
+    }
+  }
+}
+
 }

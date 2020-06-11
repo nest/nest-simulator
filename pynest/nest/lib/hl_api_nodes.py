@@ -33,6 +33,7 @@ from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
+    'AddCompartment',
     'Create',
     'GetLocalNodeCollection',
     'GetNodes',
@@ -185,3 +186,6 @@ def GetLocalNodeCollection(nc):
     sps(nc)
     sr("LocalOnly")
     return spp()
+
+def AddCompartment(node_id, compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L):
+    print('yes')

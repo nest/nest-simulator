@@ -750,6 +750,21 @@ NestModule::AddCompartment_lllD_Function::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::AddReceptor_lls_Function::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  const std::string type = getValue< std::string >( i->OStack.pick( 0 ) );
+  const long compartment_idx = getValue< long >( i->OStack.pick( 1 ) );
+  const index node_id = getValue< long >( i->OStack.pick( 2 ) );
+  const size_t syn_idx = add_receptor( node_id, compartment_idx, type);
+
+  i->OStack.pop( 3 );
+  i->OStack.push( syn_idx );
+  i->EStack.pop();
+}
+
 // Disconnect for nodecollection nodecollection conn_spec syn_spec
 void
 NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
@@ -1967,6 +1982,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
   i->createcommand( "AddCompartment_lllD", &add_compartment_lllD_function );
+  i->createcommand( "AddReceptor_lls", &add_receptor_lls_function );
 
   i->createcommand( "mul_P_P", &mul_P_Pfunction );
   i->createcommand( "div_P_P", &div_P_Pfunction );

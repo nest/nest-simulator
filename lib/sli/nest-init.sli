@@ -763,6 +763,36 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+%     Adding receptors to neat models
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/AddReceptor_gls
+{
+    /type Set
+    /compartment_idx Set
+    /node Set
+
+    node size 1 neq
+    {
+	(NodeCollection must contain exactly one element) M_ERROR message
+	/AddReceptor /ArgumentError raiseerror
+    } if
+    node 0 get_g_i /node_id Set
+
+    node_id
+    compartment_idx
+    type
+    AddReceptor_lls
+} def
+
+/AddReceptor trie
+  [/integertype /integertype /stringtype] /AddReceptor_lls load addtotrie
+  [/nodecollectiontype /integertype /stringtype] /AddReceptor_gls load addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 %     Model handling
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

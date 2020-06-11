@@ -198,6 +198,34 @@ iaf_neat::add_compartment( const long compartment_idx, const long parent_compart
                           DataAccessFunctor< iaf_neat >( *this, compartment_idx ) );
 }
 
+size_t
+iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
+{
+  std::shared_ptr< Synapse > syn;
+  if ( type == "AMPA" )
+  {
+    syn = std::shared_ptr< Synapse >( new AMPASyn() );
+  }
+  else if ( type == "GABA" )
+  {
+    syn = std::shared_ptr< Synapse >( new GABASyn() );
+  }
+  else if ( type == "NMDA" )
+  {
+    syn = std::shared_ptr< Synapse >( new NMDASyn() );
+  }
+  else
+  {
+    assert( false );
+  }
+
+  const size_t syn_idx = syn_receptors.size();
+  syn_receptors.push_back( syn );
+  CompNode* node = m_c_tree.find_node( compartment_idx );
+  node->m_syns.push_back( syn );
+  return syn_idx;
+}
+
 void
 iaf_neat::add_synapses(){
   long node_index = 0;
@@ -284,7 +312,7 @@ nest::iaf_neat::test(){
 void
 nest::iaf_neat::calibrate()
 {
-  test();
+  // test();
 
   B_.logger_.init();
 

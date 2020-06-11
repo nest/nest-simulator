@@ -80,6 +80,8 @@ public:
   void set_status( const DictionaryDatum& );
 
   void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
+  size_t add_receptor( const long compartment_idx, const std::string& type ) override;
+
   void add_synapses();
   void test();
 

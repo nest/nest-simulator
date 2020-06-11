@@ -45,6 +45,7 @@ _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
     'AddCompartment',
+    'AddReceptor',
     'CGConnect',
     'CGParse',
     'CGSelectImplementation',

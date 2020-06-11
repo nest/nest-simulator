@@ -184,9 +184,10 @@ nest::iaf_neat::init_buffers_()
 }
 
 void
-iaf_neat::add_compartment( const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L )
+iaf_neat::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
-  m_c_tree.add_node( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
+  std::cout << "bla " << compartment_idx << " " << parent_compartment_idx << std::endl;
+  m_c_tree.add_node( compartment_idx, parent_compartment_idx, 1.0, 1.0, 1.0, -70.0 );
 
   // to enable recording the voltage of the current compartment
   recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),

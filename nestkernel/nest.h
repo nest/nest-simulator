@@ -112,7 +112,7 @@ NodeCollectionPTR create( const Name& model_name, const index n );
 
 NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
-void add_compartment( const index node_id, const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L );
+void add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params );
 
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

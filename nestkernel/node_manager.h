@@ -235,7 +235,7 @@ public:
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
-  void add_compartment( const index node_id, const size_t compartment_idx, const size_t parent_compartment_idx, const double C_m, const double g_c, const double g_L, const double E_L );
+  void add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params );
 
 private:
   /**

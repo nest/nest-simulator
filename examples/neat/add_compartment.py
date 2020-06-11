@@ -22,5 +22,5 @@ den_params = {
 }
 
 n_neat = nest.Create('iaf_neat')
-nest.AddCompartment(1, 0, 0)
-nest.AddCompartment(1, 1, 0)
+nest.AddCompartment(1, 0, -1, soma_params)
+# nest.AddCompartment(1, 1, 0)

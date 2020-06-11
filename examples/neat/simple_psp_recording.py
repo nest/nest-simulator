@@ -1,5 +1,5 @@
 import nest
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

@@ -53,13 +53,13 @@ RecordablesMap< iaf_neat > iaf_neat::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-// template <>
-// void
-// RecordablesMap< iaf_neat >::create()
-// {
-//   // use standard names whereever you can for consistency!
-//   insert_( names::V_m, &iaf_neat::get_V_m_ );
-// }
+template <>
+void
+RecordablesMap< iaf_neat >::create()
+{
+  // use standard names whereever you can for consistency!
+  insert_( names::V_m, &iaf_neat::get_V_m_ );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -196,7 +196,14 @@ nest::iaf_neat::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
+  CompNode* root = m_c_tree.find_node(0);
+  std::shared_ptr< IonChannel > chan(new FakePotassium(P_.t_ref_, P_.V_reset_,
+                                                       P_.F_pot_ * root->m_gl));
+  root->m_chans.push_back(chan);
+
+
   m_c_tree.init( h );
+
 
 
   // t_ref_ specifies the length of the absolute refractory period as

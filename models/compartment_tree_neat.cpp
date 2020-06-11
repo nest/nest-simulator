@@ -125,9 +125,6 @@ void nest::CompTree::add_node(
         parent->m_children.push_back(*node);
     } else {
         m_root = *node;
-
-        std::shared_ptr< IonChannel > chan(new FakePotassium());
-        m_root.m_chans.push_back(chan);
     }
 };
 

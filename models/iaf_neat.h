@@ -92,8 +92,8 @@ private:
   std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
   // The next two classes need to be friends to access the State_ class/member
-  // friend class RecordablesMap< iaf_neat >;
-  friend class DynamicRecordablesMap< iaf_neat >;
+  friend class RecordablesMap< iaf_neat >;
+  // friend class DynamicRecordablesMap< iaf_neat >;
   friend class UniversalDataLogger< iaf_neat >;
 
   // ----------------------------------------------------------------

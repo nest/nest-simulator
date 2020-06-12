@@ -147,7 +147,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_trg * indegree * len(syn_spec), len(conns))
 
         ref_trgt = trgt.tolist() + trgt.tolist()
-        ref_sm = ['static_synapse'] * num_trg * indegree + ['stdp_synapse'] * num_trg * indegree + ['stdp_synapse'] * num_trg * indegree
+        ref_sm = (['static_synapse'] * num_trg * indegree +
+                  ['stdp_synapse'] * num_trg * indegree +
+                  ['stdp_synapse'] * num_trg * indegree)
 
         self.assertEqual(ref_trgt.sort(), conns.target.sort())
         self.assertEqual(ref_sm.sort(), conns.synapse_model.sort())

@@ -86,6 +86,10 @@ public:
   index
   get_synapse_model() const
   {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException("Can only retrieve synapse model when one synapse per connection is used.");
+    }
     return synapse_model_id_[ 0 ];
   }
 

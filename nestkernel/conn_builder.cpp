@@ -202,6 +202,11 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
+  // Currently only possible with structural plasticity with single element syn_spec
+  if ( syn_spec.size() > 1 )
+  {
+    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+  }
   if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) and syn_spec[ 0 ]->known( names::post_synaptic_element ) )
   {
     pre_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::pre_synaptic_element );

@@ -32,25 +32,61 @@
 #include "universal_data_logger.h"
 
 #include "compartment_tree_neat.h"
-// #include "synapses_neat.h"
+#include "synapses_neat.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation TODO FIX
-@ingroup Neurons
-@ingroup iaf
+/* BeginUserDocs: neuron
 
-Name: iaf_neat - Leaky integrate-and-fire neuron model.
+Short description
++++++++++++++++++
 
-Sends: SpikeEvent
+A neuron model with user-defined structure and AMPA, GABA or NMDA
+receptors.
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Description
++++++++++++
 
-Author:  September 1999, Diesmann, Gewaltig
+iaf_neat is an implementation of a leaky-integrator neuron. Users can
+define the structure of the neuron, i.e., soma and dendritic tree by
+adding compartments. Each compartment can be assigned receptors,
+currently modeled by AMPA, GABA or NMDA dynamics. <add info about
+spiking/refractory implementation><add info about recording>
 
-SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_neat_ps
-*/
+Usage
++++++
+<add info about adding compartsments, receptors>
+<add info about recording>
+<add info about currents>
+
+Parameters
+++++++++++
+
+<add info about setting compartment, receptor parameters>
+
+Sends
++++++
+
+SpikeEvent
+
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+References
+++++++++++
+
+<add reference?>
+
+See also
+++++++++
+
+There's nothing like it. ^^
+
+EndUserDocs*/
+
 class iaf_neat : public Archiving_Node
 {
 
@@ -58,11 +94,6 @@ public:
   iaf_neat();
   iaf_neat( const iaf_neat& );
 
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
   using Node::handle;
   using Node::handles_test_event;
 
@@ -82,9 +113,6 @@ public:
   void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
   size_t add_receptor( const long compartment_idx, const std::string& type ) override;
 
-  void add_synapses();
-  void test();
-
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
@@ -92,83 +120,17 @@ private:
 
   void update( Time const&, const long, const long );
 
-  // Compartment tree
   CompTree m_c_tree;
-  // Synapse pointer vector
+
   std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
   // To record variables with DataAccessFunctor
   double get_state_element( size_t elem){return m_c_tree.get_node_voltage(elem);}
 
-  // The next two classes need to be friends to access the State_ class/member
+  // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< iaf_neat >;
   friend class DynamicRecordablesMap< iaf_neat >;
   friend class DynamicUniversalDataLogger< iaf_neat >;
-
-  // ----------------------------------------------------------------
-
-  /**
-   * Independent parameters of the model.
-   */
-  struct Parameters_
-  {
-    /** Refractory period in ms. */
-    double t_ref_;
-
-    /** External DC current */
-    double I_e_;
-
-    /** Threshold */
-    double V_th_;
-
-    /** reset value of the membrane potential */
-    double V_reset_;
-
-    /** strength of fake potassium compared to somatic leack */
-    double F_pot_;
-
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
-
-    Parameters_(); //!< Sets default parameter values
-
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-
-    /** Set values from dictionary.
-     * @returns Change in reversal potential E_L, to be passed to State_::set()
-     */
-    double set( const DictionaryDatum&, Node* node );
-  };
-
-  // ----------------------------------------------------------------
-
-  /**
-   * State variables of the model.
-   */
-  struct State_
-  {
-    double y0_;
-    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double y3_;
-
-    int r_; //!< Number of refractory steps remaining
-
-    /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
-    double refr_spikes_buffer_;
-
-    State_(); //!< Default initialization
-
-    void get( DictionaryDatum&, const Parameters_& ) const;
-
-    /** Set values from dictionary.
-     * @param dictionary to take data from
-     * @param current parameters
-     * @param Change in reversal potential E_L specified by this dict
-     */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
-  };
 
   // ----------------------------------------------------------------
 
@@ -181,35 +143,11 @@ private:
     Buffers_( const Buffers_&, iaf_neat& );
 
     /** buffers and summs up incoming spikes/currents */
-    RingBuffer spikes_;
     RingBuffer currents_;
 
     //! Logger for all analog data
     DynamicUniversalDataLogger< iaf_neat > logger_;
   };
-
-  // ----------------------------------------------------------------
-
-  /**
-   * Internal variables of the model.
-   */
-  struct Variables_
-  {
-
-    double P30_;
-    double P33_;
-
-    int RefractoryCounts_;
-  };
-
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out the real membrane potential
-  double
-  get_V_m_() const
-  {
-    return S_.y3_;
-  }
 
   // ----------------------------------------------------------------
 
@@ -220,12 +158,8 @@ private:
    * @note The order of definitions is important for speed.
    * @{
    */
-  Parameters_ P_;
-  State_ S_;
-  Variables_ V_;
   Buffers_ B_;
   /** @} */
-
 
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< iaf_neat > recordablesMap_;
@@ -273,8 +207,6 @@ iaf_neat::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 inline void
 iaf_neat::get_status( DictionaryDatum& d ) const
 {
-  P_.get( d );
-  S_.get( d, P_ );
   Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -282,38 +214,7 @@ iaf_neat::get_status( DictionaryDatum& d ) const
 inline void
 iaf_neat::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
-
-  // read tree structure and properties for dendritic compartments
-  if ( d->known( "compartments" ) )
-  {
-    const DictionaryDatum compartments = getValue< DictionaryDatum >( d, "compartments" );
-    for ( auto compartments_it = compartments->begin(); compartments_it != compartments->end(); ++compartments_it )
-    {
-      DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( compartments_it->second.datum() );
-      const long idx = getValue< long >( *dd, "index" );
-      const long parent = getValue< long >( *dd, "parent" );
-      const double ca = getValue< double >( *dd, "ca" );
-      const double gc = getValue< double >( *dd, "gc" );
-      const double gl = getValue< double >( *dd, "gl" );
-      const double el = getValue< double >( *dd, "el" );
-
-      m_c_tree.add_node(idx, parent, ca, gc, gl, el);
-    }
-  }
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
   Archiving_Node::set_status( d );
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
 }
 
 } // namespace

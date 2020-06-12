@@ -127,6 +127,10 @@ iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
   {
     syn = std::shared_ptr< Synapse >( new NMDASyn() );
   }
+  else if ( type == "AMPA+NMDA" )
+  {
+    syn = std::shared_ptr< Synapse >( new AMPA_NMDASyn() );
+  }
   else
   {
     assert( false );

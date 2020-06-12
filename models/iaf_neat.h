@@ -63,6 +63,12 @@ Usage
 Parameters
 ++++++++++
 
+The following parameters can be set in the status dictionary.
+
+=========== ======= ===========================================================
+ V_th       mV      Spike threshold
+=========== ======= ===========================================================
+
 <add info about setting compartment, receptor parameters>
 
 Sends
@@ -163,6 +169,8 @@ private:
 
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< iaf_neat > recordablesMap_;
+
+  double V_th_;
 };
 
 
@@ -207,6 +215,7 @@ iaf_neat::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 inline void
 iaf_neat::get_status( DictionaryDatum& d ) const
 {
+  def< double >( d, names::V_th, V_th_ );
   Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -214,6 +223,7 @@ iaf_neat::get_status( DictionaryDatum& d ) const
 inline void
 iaf_neat::set_status( const DictionaryDatum& d )
 {
+  updateValue< double >( d, names::V_th, V_th_ );
   Archiving_Node::set_status( d );
 }
 

@@ -76,8 +76,6 @@ void nest::CompNode::add_channel_contribution(){
         (*chan_it)->update();
         gf_chan = (*chan_it)->f_numstep(m_v);
 
-        std::cout << "Fake pot: " << gf_chan.first << " -- " << gf_chan.second << std::endl;
-
         m_gg += gf_chan.first;
         m_ff += gf_chan.second;
     }

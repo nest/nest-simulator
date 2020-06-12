@@ -71,6 +71,7 @@ set( models_sources
     iaf_neat.h iaf_neat.cpp
     synapses_neat.h synapses_neat.cpp
     compartment_tree_neat.h compartment_tree_neat.cpp
+    ionchannels_neat.h ionchannels_neat.cpp
     izhikevich.h izhikevich.cpp
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp

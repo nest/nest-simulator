@@ -115,6 +115,7 @@ public:
     // getters and setters
     CompNode* find_node(long node_index);
     CompNode* find_node(long node_index, CompNode* node);
+    CompNode* get_root(){return &m_root;};
     std::vector< double > get_voltage();
     double get_node_voltage(long node_index);
 

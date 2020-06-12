@@ -31,7 +31,8 @@ struct IODat{
 class CompNode{
 private:
     // aggragators for numberical integrations
-    double m_xx = 0., m_yy = 0.;
+    double m_xx;
+    double m_yy;
     // time step
     double m_dt;
 
@@ -46,50 +47,81 @@ public:
     // vector for ion channels
     std::vector< std::shared_ptr< IonChannel > > m_chans;
     // voltage variable
-    double m_v = 0.;
+    double m_v;
     // electrical parameters
     double m_ca; // compartment capacitance [uF]
     double m_gc; // coupling conductance with parent (meaningless if root) [uS]
     double m_gl; // leak conductance of compartment [uS]
     double m_el; // leak current reversal potential [mV]
     // for numerical integration
-    double m_ff = 0., m_gg = 0., m_hh = 0.;
+    double m_ff;
+    double m_gg;
+    double m_hh;
     // passage counter
-    int m_n_passed = 0.;
+    int m_n_passed;
 
     // constructor, destructor
-    CompNode(long node_index, CompNode* parent,
-            double ca, double gc,
-            double gl, double el);
+    CompNode(const long node_index, CompNode* parent,
+	     const double ca, const double gc,
+	     const double gl, const double el);
     ~CompNode(){};
+
     // initialization
     void init( const double dt );
-    void add_synapse(std::shared_ptr< Synapse > syn);
+
     // matrix construction
     void construct_matrix_element();
-    void add_synapse_contribution(const long lag);
+    void add_synapse_contribution( const long lag );
     void add_channel_contribution();
+
     // maxtrix inversion
-    inline void gather_input(IODat in);
+    inline void gather_input( const IODat in );
     inline IODat io();
-    inline double calc_v(double v_in);
+    inline double calc_v( const double v_in );
 };
 
+inline void nest::CompNode::gather_input( const IODat in)
+{
+    m_xx += in.g_val; m_yy += in.f_val;
+};
+
+inline nest::IODat nest::CompNode::io()
+{
+    IODat out;
+
+    // include inputs from child nodes
+    m_gg -= m_xx;
+    m_ff -= m_yy;
+
+    // output values
+    out.g_val = m_hh * m_hh / m_gg;
+    out.f_val = m_ff * m_hh / m_gg;
+
+    return out;
+};
+
+inline double nest::CompNode::calc_v( const double v_in )
+{
+    // reset recursion variables
+    m_xx = 0.0; m_yy = 0.0;
+
+    // compute voltage
+    m_v = (m_ff - v_in * m_hh) / m_gg;
+
+    return m_v;
+};
 
 class CompTree{
 private:
     /*
     structural data containers for the compartment model
     */
-    // root node
-    CompNode m_root = CompNode(0, NULL, 1., 0., 1., 0.);
-    // convenience std::vector of pointers to all nodes, depth first iteration
+    CompNode* m_root;
     std::vector< CompNode* > m_nodes;
-    // std::vector of pointers to nodes that are leafs
     std::vector< CompNode* > m_leafs;
 
     // timestep for simulation [ms]
-    double m_dt = 0.1;
+    double m_dt;
 
     //recursion function
     void solve_matrix_downsweep(CompNode* node_ptr,
@@ -98,35 +130,35 @@ private:
 
     // set functions for initialization
     void set_nodes();
-    void set_nodes(CompNode* node);
+    void set_nodes( CompNode* node );
     void set_leafs();
 
 public:
     // constructor, destructor
-    CompTree(){};
+    CompTree();
     ~CompTree(){};
 
     // initialization functions for tree structure
-    void add_node(long node_index, long parent_index,
-                 double ca, double gc,
-                 double gl, double el);
+    void add_node( const long node_index, const long parent_index,
+		   const double ca, const double gc,
+		   const double gl, const double el);
     void init( const double dt );
 
     // getters and setters
-    CompNode* find_node(long node_index);
-    CompNode* find_node(long node_index, CompNode* node);
-    CompNode* get_root(){return &m_root;};
-    std::vector< double > get_voltage();
-    double get_node_voltage(long node_index);
+    CompNode* find_node( const long node_index );
+    CompNode* find_node( const long node_index, CompNode* node );
+    CompNode* get_root(){ return m_root; };
+    std::vector< double > get_voltage() const;
+    double get_node_voltage( const long node_index );
 
     // construct the numerical integration matrix and vector
-    void construct_matrix(const long lag);
-    void construct_matrix(std::vector< double > i_in, const long lag);
+    void construct_matrix( const long lag );
+    void construct_matrix( const std::vector< double >& i_in, const long lag );
     // solve the matrix equation for next timestep voltage
     void solve_matrix();
 
     // print functions
-    void print_tree();
+    void print_tree() const;
 };
 
 

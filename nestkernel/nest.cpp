@@ -131,6 +131,12 @@ add_compartment( const index node_id, const long compartment_idx, const long par
   kernel().node_manager.add_compartment( node_id, compartment_idx, parent_compartment_idx, compartment_params );
 }
 
+size_t
+add_receptor( const index node_id, const long compartment_idx, const std::string& type )
+{
+  return kernel().node_manager.add_receptor( node_id, compartment_idx, type );
+}
+
 void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {

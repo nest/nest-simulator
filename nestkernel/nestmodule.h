@@ -280,6 +280,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } add_compartment_lllD_function;
 
+  class AddReceptor_lls_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } add_receptor_lls_function;
+
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
   public:

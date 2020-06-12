@@ -813,12 +813,27 @@ NodeManager::add_compartment( const index node_id, const long compartment_idx, c
 {
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    Archiving_Node* node = static_cast< Archiving_Node* > ( local_nodes_[ tid ].get_node_by_node_id( node_id ) );
+    Node* node = local_nodes_[ tid ].get_node_by_node_id( node_id );
     if ( node != 0 )
     {
       ( *node ).add_compartment( compartment_idx, parent_compartment_idx, compartment_params );
     }
   }
+}
+
+size_t
+NodeManager::add_receptor( const index node_id, const long compartment_idx, const std::string& type )
+{
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    Node* node = local_nodes_[ tid ].get_node_by_node_id( node_id );
+    if ( node != 0 )
+    {
+      return ( *node ).add_receptor( compartment_idx, type );
+    }
+  }
+
+  return 0;
 }
 
 }

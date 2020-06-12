@@ -200,8 +200,6 @@ public:
    */
   double get_tau_Ca() const;
 
-  virtual void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ){ assert( false ); };
-
 protected:
   /**
    * \fn void set_spiketime(Time const & t_sp, double offset)

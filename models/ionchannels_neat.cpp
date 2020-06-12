@@ -25,7 +25,6 @@ void nest::FakeChannel::set_params(double tau_r, double tau_d, double e_r, doubl
 void nest::FakeChannel::add_spike(){
     m_g_r += m_g_step * m_norm;
     m_g_d += m_g_step * m_norm;
-    std::cout << "spike added with amp =" << m_g_step * m_norm << std::endl;
 };
 
 

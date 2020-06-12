@@ -69,6 +69,7 @@ nest::iaf_neat::Buffers_::Buffers_( const Buffers_&, iaf_neat& n )
 nest::iaf_neat::iaf_neat()
   : Archiving_Node()
   , B_( *this )
+  , V_th_( -55.0 )
 {
   recordablesMap_.create( *this );
 }
@@ -76,6 +77,7 @@ nest::iaf_neat::iaf_neat()
 nest::iaf_neat::iaf_neat( const iaf_neat& n )
   : Archiving_Node( n )
   , B_( n.B_, *this )
+  , V_th_( n.V_th_ )
 {
 }
 
@@ -171,37 +173,24 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  double g_syn = 0., f_v = 0.;
-  // for new synapses
-  std::pair< double, double > gf_syn(0., 0.);
-  std::vector< double > v_vals{0.};
-
-  const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
   {
-     /*
-    Third model
-    */
-    double v_0 = m_c_tree.get_root()->m_v;
+    const double v_0_prev = m_c_tree.get_root()->m_v;
 
     m_c_tree.construct_matrix(lag);
     m_c_tree.solve_matrix();
 
     // threshold crossing
-    if ( m_c_tree.get_root()->m_v >= P_.V_th_ && v_0 < P_.V_th_)
+    if ( m_c_tree.get_root()->m_v >= V_th_ && v_0_prev < V_th_ )
     {
       m_c_tree.get_root()->m_chans[0]->add_spike();
       m_c_tree.get_root()->m_chans[1]->add_spike();
 
-      // EX: must compute spike time
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-    //   // EX: must compute spike time
-    //   set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-
-    //   SpikeEvent se;
-    //   kernel().event_delivery_manager.send( *this, se, lag );
-    // }
+      SpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, lag );
+    }
 
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );

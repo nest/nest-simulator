@@ -88,7 +88,7 @@ public:
   {
     if ( synapse_model_id_.size() > 1 )
     {
-      throw KernelException("Can only retrieve synapse model when one synapse per connection is used.");
+      throw KernelException( "Can only retrieve synapse model when one synapse per connection is used." );
     }
     return synapse_model_id_[ 0 ];
   }
@@ -221,7 +221,7 @@ private:
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
 
-  //! dictionaries to pass to connect function, one per thread
+  //! dictionaries to pass to connect function, one per thread for every syn_spec
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
 
   //! empty dictionary to pass to connect function, one per thread so that the all threads do not
@@ -237,6 +237,9 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
+  /**
+   * Resets weight and delay pointers
+   */
   void reset_weights_();
   void reset_delays_();
 

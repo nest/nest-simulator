@@ -203,12 +203,13 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   // Currently only possible with structural plasticity with single element syn_spec
-  if ( syn_spec.size() > 1 )
-  {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
-  }
   if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) and syn_spec[ 0 ]->known( names::post_synaptic_element ) )
   {
+    if ( syn_spec.size() > 1 )
+    {
+      throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+    }
+
     pre_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::pre_synaptic_element );
     post_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::post_synaptic_element );
 
@@ -491,19 +492,11 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         {
           try
           {
-            // std::cerr << "receptor 2:";
             // change value of dictionary entry without allocating new datum
             IntegerDatum* id =
               static_cast< IntegerDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ it->first ] ).datum() );
 
-            // std::cerr << " target thread " << target_thread << " " << ( *param_dicts_[ target_thread ][ indx ]  )[
-            // it->first ] << "\n";
-
             ( *id ) = it->second->value_int( target_thread, rng, snode_id, &target );
-
-            // std::cerr << " target thread " << target_thread << " index " << indx << " " << ( *param_dicts_[
-            // target_thread ] )[ it->first ] << "\n";
-            // std::cerr << ( *id ).get() << "\n";
           }
           catch ( KernelException& e )
           {

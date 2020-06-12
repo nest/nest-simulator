@@ -75,7 +75,7 @@ void nest::Exp2Cond::update( const long lag ){
   m_g0 = m_g;
   m_g = m_g_r + m_g_d;
   // add spikes
-  double s_val = m_b_spikes.get_value(lag);
+  double s_val = m_b_spikes.get_value(lag) * m_norm;
   m_g_r -= m_norm * s_val;
   m_g_d += m_norm * s_val;
 };

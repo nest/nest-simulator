@@ -22,6 +22,11 @@ void nest::CompNode::init( const double dt ){
         syn_it != m_syns.end(); syn_it++){
         (*syn_it)->init( dt );
     }
+    // initialize synapse, spike buffers
+    for(std::vector< std::shared_ptr< IonChannel > >::iterator chan_it = m_chans.begin();
+        chan_it != m_chans.end(); chan_it++){
+        (*chan_it)->init( dt );
+    }
 }
 
 // for matrix construction
@@ -70,6 +75,8 @@ void nest::CompNode::add_channel_contribution(){
 
         (*chan_it)->update();
         gf_chan = (*chan_it)->f_numstep(m_v);
+
+        std::cout << "Fake pot: " << gf_chan.first << " -- " << gf_chan.second << std::endl;
 
         m_gg += gf_chan.first;
         m_ff += gf_chan.second;

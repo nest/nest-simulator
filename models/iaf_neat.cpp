@@ -146,10 +146,13 @@ nest::iaf_neat::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  // CompNode* root = m_c_tree.find_node(0);
-  // std::shared_ptr< IonChannel > chan(new FakePotassium(P_.t_ref_, P_.V_reset_,
-  //                                                      P_.F_pot_ * root->m_gl));
-  // root->m_chans.push_back(chan);
+  CompNode* root = m_c_tree.get_root();
+
+  std::shared_ptr< IonChannel > chan1(new FakePotassium(15. * root->m_gl));
+  root->m_chans.push_back(chan1);
+
+  std::shared_ptr< IonChannel > chan2(new FakeSodium(30. * root->m_gl));
+  root->m_chans.push_back(chan2);
 
   m_c_tree.init( h );
 }
@@ -175,13 +178,19 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
      /*
     Third model
     */
+    double v_0 = m_c_tree.get_root()->m_v;
+
     m_c_tree.construct_matrix(lag);
     m_c_tree.solve_matrix();
 
     // threshold crossing
-    // if ( m_c_tree.get_node_voltage(0) >= P_.V_th_ )
-    // {
-    //   m_c_tree.find_node(0)->m_chans[0]->add_spike();
+    if ( m_c_tree.get_root()->m_v >= P_.V_th_ && v_0 < P_.V_th_)
+    {
+      m_c_tree.get_root()->m_chans[0]->add_spike();
+      m_c_tree.get_root()->m_chans[1]->add_spike();
+
+      // EX: must compute spike time
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
     //   // EX: must compute spike time
     //   set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );

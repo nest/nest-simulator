@@ -28,7 +28,7 @@ nest.set_verbosity('M_WARNING')
 
 
 class TestConnectArrays(unittest.TestCase):
-    
+
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
 
     def setUp(self):

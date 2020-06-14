@@ -28,7 +28,7 @@ import numpy
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
-from .hl_api_connection_helpers import (_check_input_nodes, _connect_layers_needed,
+from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
 from .hl_api_nodes import Create
@@ -202,7 +202,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_mgnt`
     """
-    data_connect, pre, post = _check_input_nodes(pre, post, conn_spec)
+    data_connect, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)

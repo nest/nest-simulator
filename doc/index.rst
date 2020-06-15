@@ -115,5 +115,7 @@ Performance Computing and Data Storage in Norway and its predecessors.
 
 .. image:: _static/img/HBP.png
   :width: 45 %
+  :target: https://www.humanbrainproject.eu/
 .. image:: _static/img/EBRAINS.png
   :width: 45 %
+  :target: https://ebrains.eu/

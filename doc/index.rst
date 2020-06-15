@@ -119,6 +119,9 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 Acknowledgements
 ################
 
+This project has received funding from the European Union’s Horizon 2020 Framework Programme for Research and
+Innovation under Specific Grant Agreement No. 945539 (Human Brain Project SGA3).
+
 The authors gratefully acknowledge the received support and funding from the European Union 6th and 7th Framework
 Program under grant agreement no. 15879 (FACETS), the European Union 7th Framework Program under grant agreement no.
 269921 (BrainScaleS), the European Union 7th Framework Programme ([FP7/2007-2013]) under grant agreement no. 604102

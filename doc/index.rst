@@ -134,3 +134,8 @@ German federal and state governments, the Priority Program (SPP 2041 "Computatio
 Forschungsgemeinschaft [S.J. van Albada: AL 2041/1-1], the Helmholtz young investigator's group VH-NG-1028 "Theory of
 multi-scale neuronal networks", and compute time provided by UNINETT Sigma2 - the National Infrastructure for High
 Performance Computing and Data Storage in Norway and its predecessors.
+
+.. image:: _static/img/HBP.png
+  :width: 45 %
+.. image:: _static/img/EBRAINS.png
+  :width: 45 %

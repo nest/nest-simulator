@@ -113,3 +113,7 @@ Forschungsgemeinschaft [S.J. van Albada: AL 2041/1-1], the Helmholtz young inves
 multi-scale neuronal networks", and compute time provided by UNINETT Sigma2 - the National Infrastructure for High
 Performance Computing and Data Storage in Norway and its predecessors.
 
+.. image:: _static/img/HBP.png
+  :width: 45 %
+.. image:: _static/img/EBRAINS.png
+  :width: 45 %

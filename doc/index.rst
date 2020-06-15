@@ -136,8 +136,8 @@ multi-scale neuronal networks", and compute time provided by UNINETT Sigma2 - th
 Performance Computing and Data Storage in Norway and its predecessors.
 
 .. image:: _static/img/HBP.png
-  :width: 45 %
+  :width: 55 %
   :target: https://www.humanbrainproject.eu/
 .. image:: _static/img/EBRAINS.svg
-  :width: 30 %
+  :width: 25 %
   :target: https://ebrains.eu/

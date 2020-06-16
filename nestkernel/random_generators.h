@@ -133,7 +133,6 @@ public:
     rng_.seed( sseq );
   }
 
-  // TODO: Can we use templates with override here?
   inline unsigned long operator()( std::uniform_int_distribution< unsigned long >& d ) override
   {
     return d( rng_ );

@@ -31,6 +31,11 @@
 #include "random_generators.h"
 #include "vp_manager_impl.h"
 
+// Includes from libnestutil:
+#include "Random123/conventional/Engine.hpp"
+#include "Random123/philox.h"
+#include "Random123/threefry.h"
+
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
 
@@ -57,6 +62,14 @@ nest::RandomManager::initialize()
 {
   register_rng_type< std::mt19937 >( "mt19937" );
   register_rng_type< std::mt19937_64 >( "mt19937_64" );
+  register_rng_type< r123::Engine< r123::Philox4x32 > >( "Philox_32" );
+#if R123_USE_PHILOX_64BIT
+  register_rng_type< r123::Engine< r123::Philox4x64 > >( "Philox_64" );
+#endif
+  register_rng_type< r123::Engine< r123::Threefry4x32 > >( "Threefry_32" );
+#if R123_USE_64BIT
+  register_rng_type< r123::Engine< r123::Threefry4x64 > >( "Threefry_64" );
+#endif
 
   current_rng_type_ = DEFAULT_RNG_TYPE_;
   base_seed_ = DEFAULT_BASE_SEED_;

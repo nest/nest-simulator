@@ -513,9 +513,9 @@ def model_deprecation_warning(model):
 
     if model in _deprecation_warning:
         if not _deprecation_warning[model]['deprecation_issued']:
-            text = """The {0} model is deprecated and will be removed in a future version of NEST, use {1} instead.
-            """.format(model, _deprecation_warning[model]['replacement'])
-            text = get_wrapped_text(text)
+            text = \
+                "The {0} model is deprecated and will be removed in a future version of NEST, use {1} instead.".format(
+                    model, _deprecation_warning[model]['replacement'])
             show_deprecation_warning(model, text=text)
 
 

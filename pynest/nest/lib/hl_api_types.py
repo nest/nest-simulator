@@ -708,8 +708,7 @@ class SynapseCollection(object):
 
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
             params = kwargs

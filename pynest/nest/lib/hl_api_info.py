@@ -311,8 +311,7 @@ def SetStatus(nodes, params, val=None):
             params = {params: val}
 
     if isinstance(params, (list, tuple)) and len(nodes) != len(params):
-        raise TypeError(
-            "status dict must be a dict, or a list of dicts of length len(nodes)")
+        raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(len(nodes)))
 
     if isinstance(nodes, nest.SynapseCollection):
         params = broadcast(params, len(nodes), (dict,), "params")

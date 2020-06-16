@@ -95,7 +95,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                         if value.shape[0] != postlength or value.shape[1] != prelength:
 
                             raise kernel.NESTError(
-                                "'{}' has to be an array of dimension {}x{} ".format(key, postlength, prelength) + 
+                                "'{}' has to be an array of dimension {}x{} ".format(key, postlength, prelength) +
                                 "(n_target x n_sources), a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value.flatten()
@@ -137,8 +137,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
             raise ValueError(
-                "'{}' is not allowed in conn_spec when".format(key) +
-                " connecting with mask or kernel")
+                "'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
 
     projections = {}
     projections.update(conn_spec)
@@ -147,23 +146,17 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if syn_spec is not None:
         for key in syn_spec.keys():
             if key not in allowed_syn_spec_keys:
-                raise ValueError(
-                    "'{}' is not allowed in syn_spec when ".format(key) +
-                    "connecting with mask or kernel".format(key))
+                raise ValueError("'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
         projections.update(syn_spec)
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
-            raise ValueError(
-                "'use_on_source' can only be set when using " +
-                "pairwise_bernoulli")
+            raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
         projections['connection_type'] = 'pairwise_bernoulli_on_source'
         projections['number_of_connections'] = projections.pop('indegree')
     elif conn_spec['rule'] == 'fixed_outdegree':
         if 'use_on_source' in conn_spec:
-            raise ValueError(
-                "'use_on_source' can only be set when using " +
-                "pairwise_bernoulli")
+            raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
         projections['connection_type'] = 'pairwise_bernoulli_on_target'
         projections['number_of_connections'] = projections.pop('outdegree')
     elif conn_spec['rule'] == 'pairwise_bernoulli':
@@ -176,9 +169,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
             if 'use_on_source' in projections:
                 projections.pop('use_on_source')
     else:
-        raise kernel.NESTError("When using kernel or mask, the only possible "
-                               "connection rules are 'pairwise_bernoulli', "
-                               "'fixed_indegree', or 'fixed_outdegree'")
+        raise kernel.NESTError("When using kernel or mask, the only possible connection rules are "
+                               "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'")
     projections.pop('rule')
     return projections
 

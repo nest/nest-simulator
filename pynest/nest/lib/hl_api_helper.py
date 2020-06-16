@@ -31,9 +31,9 @@ import textwrap
 import subprocess
 import os
 import re
+import shlex
 import sys
 import numpy
-import json
 
 from string import Template
 
@@ -489,7 +489,8 @@ def show_help_with_pager(hlpobj, pager=None):
         return
 
     try:
-        subprocess.check_call([pager, objf])
+        pagerl = shlex.split(pager)
+        subprocess.check_call(pagerl + [objf])
     except (OSError, IOError, subprocess.CalledProcessError):
         print('Displaying help with pager "{}" failed. '
               'Please define a working parser in file .nestrc '
@@ -497,7 +498,7 @@ def show_help_with_pager(hlpobj, pager=None):
 
 
 def model_deprecation_warning(model):
-    """Checks whether the model is to be removed in a future verstion of NEST.
+    """Checks whether the model is to be removed in a future version of NEST.
     If so, a deprecation warning is issued.
 
     Parameters

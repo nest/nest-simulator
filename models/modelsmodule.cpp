@@ -71,6 +71,7 @@
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
+#include "pp_cond_exp_mc_urbanczik.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
@@ -102,7 +103,6 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
-#include "voltmeter.h"
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
@@ -135,6 +135,7 @@
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
+#include "urbanczik_connection.h"
 #include "vogels_sprekeler_connection.h"
 
 // Includes from nestkernel:
@@ -280,6 +281,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >( "aeif_cond_beta_multisynapse" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
   kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
+  kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
 #endif
 
 #ifdef HAVE_MUSIC
@@ -314,6 +316,8 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< TsodyksConnection >( "tsodyks_synapse" );
   register_connection_model< TsodyksConnectionHom >( "tsodyks_synapse_hom" );
   register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
+  register_connection_model< UrbanczikConnection >(
+    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
   register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models

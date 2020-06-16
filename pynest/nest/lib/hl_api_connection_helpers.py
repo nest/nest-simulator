@@ -72,30 +72,31 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
                             if connect_np_arrays:
-                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
-                                                       str(prelength) + ".")
+                                raise kernel.NESTError(
+                                    "'{}' has to be an array of dimension {}.".format(key, prelength))
                             else:
-                                raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
-                                                       str(prelength) + ", a scalar or a dictionary.")
+                                raise kernel.NESTError(
+                                    "'{}' has to be an array of dimension {}, a scalar or a dictionary.".format(
+                                        key, prelength))
                         else:
                             syn_spec[key] = value
                     elif rule == 'fixed_total_number':
                         if ('N' in conn_spec and value.shape[0] != conn_spec['N']):
                             raise kernel.NESTError(
-                                "'" + key + "' has to be an array of dimension " + str(conn_spec['N']) +
-                                ", a scalar or a dictionary.")
+                                "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
+                                    key, conn_spec['N']))
                     else:
                         raise kernel.NESTError(
-                            "'" + key + "' has the wrong type. One-dimensional parameter arrays can "
-                            "only be used in conjunction with rule 'one_to_one' or 'fixed_total_number'.")
+                            "'{}' has the wrong type. One-dimensional parameter arrays can only ".format(key) +
+                            "be used in conjunction with rule 'one_to_one' or 'fixed_total_number'.")
 
                 elif len(value.shape) == 2:
                     if rule == 'all_to_all':
                         if value.shape[0] != postlength or value.shape[1] != prelength:
 
                             raise kernel.NESTError(
-                                "'" + key + "' has to be an array of dimension " + str(postlength) +
-                                "x" + str(prelength) + " (n_target x n_sources), a scalar or a dictionary.")
+                                "'{}' has to be an array of dimension {}x{} ".format(key, postlength, prelength) + 
+                                "(n_target x n_sources), a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value.flatten()
                     elif rule == 'fixed_indegree':
@@ -103,8 +104,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                         if value.shape[0] != postlength or \
                                 value.shape[1] != indegree:
                             raise kernel.NESTError(
-                                "'" + key + "' has to be an array of dimension " + str(postlength) +
-                                "x" + str(indegree) + " (n_target x indegree), a scalar or a dictionary.")
+                                "'{}' has to be an array of dimension {}x{} ".format(key, postlength, indegree) +
+                                "(n_target x indegree), a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value.flatten()
                     elif rule == 'fixed_outdegree':
@@ -112,15 +113,14 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                         if value.shape[0] != prelength or \
                                 value.shape[1] != outdegree:
                             raise kernel.NESTError(
-                                "'" + key + "' has to be an array of dimension " + str(prelength) +
-                                "x" + str(outdegree) + " (n_sources x outdegree), a scalar or a dictionary.")
+                                "'{}' has to be an array of dimension {}x{} ".format(key, prelength, outdegree) +
+                                "(n_sources x outdegree), a scalar or a dictionary.")
                         else:
                             syn_spec[key] = value.flatten()
                     else:
                         raise kernel.NESTError(
-                            "'" + key + "' has the wrong type. Two-dimensional parameter arrays can "
-                            "only be used in conjunction with rules 'all_to_all', 'fixed_indegree' or "
-                            "'fixed_outdegree'.")
+                            "'{}' has the wrong type. Two-dimensional parameter arrays can only be ".format(key) +
+                            "used in conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'.")
         return syn_spec
     else:
         raise TypeError("syn_spec must be a string or dict")

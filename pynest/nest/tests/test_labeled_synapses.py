@@ -63,6 +63,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'clopath_synapse_hpc'
         ]
 
+        self.urbanczik_connections = [
+            'urbanczik_synapse',
+            'urbanczik_synapse_lbl',
+            'urbanczik_synapse_hpc'
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
@@ -76,11 +82,18 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         if syn_model in self.siegert_connections:
             neurons = nest.Create("siegert_neuron", 5)
 
-        # in case of the clopath stdp synapse use the a supported model instead
+        # in case of the clopath synapse use a supported model instead
         if syn_model in self.clopath_connections:
             neurons = nest.Create("hh_psc_alpha_clopath", 5)
 
-        return neurons
+        r_type = 0
+        # in case of the urbanczik synapse use a supported model instead
+        if syn_model in self.urbanczik_connections:
+            neurons = nest.Create("pp_cond_exp_mc_urbanczik", 5)
+            syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
+            r_type = syns["soma_exc"]
+
+        return neurons, r_type
 
     def test_SetLabelToSynapseOnConnect(self):
         """Set a label to a labeled synapse on connect."""
@@ -88,14 +101,14 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "synapse_label": 123})
+                         {"synapse_model": syn, "synapse_label": 123, "receptor_type": r_type})
             c = nest.GetConnections(a, a)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -107,14 +120,14 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # set no label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn})
+                         {"synapse_model": syn, "receptor_type": r_type})
             c = nest.GetConnections(a, a)
             # still unlabeled
             self.assertTrue(
@@ -133,7 +146,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -141,7 +154,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # set a label during SetDefaults
             nest.SetDefaults(syn, {'synapse_label': 123})
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn})
+                         {"synapse_model": syn, "receptor_type": r_type})
             c = nest.GetConnections(a, a)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -153,7 +166,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -165,10 +178,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             if syn in self.siegert_connections:
                 synapse_type = "diffusion_connection"
             nest.Connect(a, a, {"rule": "one_to_one"},
-                         {"synapse_model": synapse_type})
+                         {"synapse_model": synapse_type, "receptor_type": r_type})
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "synapse_label": 123})
+                         {"synapse_model": syn, "synapse_label": 123, "receptor_type": r_type})
             c = nest.GetConnections(a, a, synapse_label=123)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -179,7 +192,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         labeled_synapse_models = [s for s in nest.Models(
             mtype='synapses') if not s.endswith("_lbl")]
         for syn in labeled_synapse_models:
-            a = self.default_network(syn)
+            a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
@@ -196,7 +209,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # plain connection
             nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn})
+                         {"synapse_model": syn, "receptor_type": r_type})
             # try set on SetStatus
             c = nest.GetConnections(a, a)
 

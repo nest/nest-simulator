@@ -85,6 +85,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, connect_np_arr
                             raise kernel.NESTError(
                                 "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
                                     key, conn_spec['N']))
+                        else:
+                            syn_spec[key] = value
                     else:
                         raise kernel.NESTError(
                             "'{}' has the wrong type. One-dimensional parameter arrays can only ".format(key) +

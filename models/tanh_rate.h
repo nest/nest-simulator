@@ -75,8 +75,9 @@ transformers.
  sigma              real    Noise parameter
  g                  real    Gain parameter
  theta              real    Threshold
+ rectify_rate       real    Rectfying rate
  linear_summation   boolean Specifies type of non-linearity (see above)
- rectify_output     boolean Switch to restrict rate to values >= 0
+ rectify_output     boolean Switch to restrict rate to values >= rectify_rate
 ==================  ======= ==============================================
 
 Note:

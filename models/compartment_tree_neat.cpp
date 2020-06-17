@@ -175,11 +175,11 @@ nest::CompNode* nest::CompTree::find_node( const long node_index, CompNode* node
     {
         if( child_it->m_index == node_index )
 	{
+            found = 1;
             r_node = &( *child_it );
         }
 	else
 	{
-            found = 1;
             r_node = find_node( node_index, &(*child_it) );
         }
         ++child_it;

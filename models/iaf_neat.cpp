@@ -140,8 +140,10 @@ iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
 
   const size_t syn_idx = syn_receptors.size();
   syn_receptors.push_back( syn );
+
   CompNode* node = m_c_tree.find_node( compartment_idx );
   node->m_syns.push_back( syn );
+
   return syn_idx;
 }
 
@@ -176,6 +178,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     const double v_0_prev = m_c_tree.get_root()->m_v;
+
 
     m_c_tree.construct_matrix(lag);
     m_c_tree.solve_matrix();

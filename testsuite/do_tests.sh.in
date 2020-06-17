@@ -468,7 +468,8 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo "  Using nosetests."
         echo
 
-        PYNEST_TEST_DIR="$(QUIET_PYNEST=1 python -c 'import nest; print(nest.__path__[0])')/tests"
+
+        PYNEST_TEST_DIR="$(PYNEST_QUIET=1 @PYTHON@ -c 'import nest; print(nest.__path__[0])')/tests"
         @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${PYNEST_TEST_DIR}" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 

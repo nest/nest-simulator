@@ -450,7 +450,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
 
     else
         echo
-        echo "  Not running pynest tests because nosetests is missing."
+        echo "  Not running PyNEST tests because nosetests is not available."
         echo
     fi
 

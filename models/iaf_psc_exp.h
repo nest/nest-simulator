@@ -155,7 +155,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 See also
 ++++++++
 
-iaf_psc_exp_ps
+iaf_cond_exp, iaf_psc_exp_ps
 
 EndUserDocs */
 

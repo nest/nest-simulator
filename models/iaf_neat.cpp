@@ -179,8 +179,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
   {
     const double v_0_prev = m_c_tree.get_root()->m_v;
 
-
-    m_c_tree.construct_matrix(lag);
+    m_c_tree.construct_matrix( lag );
     m_c_tree.solve_matrix();
 
     // threshold crossing

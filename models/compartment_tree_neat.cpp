@@ -70,7 +70,7 @@ void nest::CompNode::construct_matrix_element()
 
     for( auto child_it = m_children.begin(); child_it != m_children.end(); ++child_it )
     {
-        m_ff -= m_gc * (m_v - (*child_it).m_v) / 2.;
+        m_ff -= (*child_it).m_gc * (m_v - (*child_it).m_v) / 2.;
     }
 }
 
@@ -159,7 +159,7 @@ nest::CompNode* nest::CompTree::find_node( const long node_index )
     }
     else
     {
-        r_node = find_node( node_index, m_root );
+        r_node = find_node( node_index, m_root, 0 );
     }
 
     if( !r_node )
@@ -220,6 +220,8 @@ void nest::CompTree::init( const double dt ){
     {
         ( *node_it )->init( dt );
     }
+
+    print_tree();
 
 }
 void nest::CompTree::set_nodes()
@@ -295,6 +297,7 @@ void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const 
         (*node_it)->add_channel_contribution();
     }
 
+
 };
 
 // solve matrix with O(n) algorithm
@@ -307,6 +310,9 @@ void nest::CompTree::solve_matrix()
 
     // do up sweep to set voltages
     solve_matrix_upsweep(m_root, 0.0);
+
+    CompNode* node0 = find_node(0);
+    CompNode* node1 = find_node(1);
 };
 
 void nest::CompTree::solve_matrix_downsweep( CompNode* node,
@@ -355,15 +361,21 @@ void nest::CompTree::solve_matrix_upsweep( CompNode* node, double vv )
 void nest::CompTree::print_tree() const
 {
     // loop over all nodes
-    std::printf(">>> Tree with %d compartments <<<\n", int(m_nodes.size()));
+    std::printf(">>> NEAST tree with %d compartments <<<\n", int(m_nodes.size()));
     for(int ii=0; ii<int(m_nodes.size()); ++ii){
         CompNode* node = m_nodes[ii];
-        std::cout << "Node " << node->m_index << ", ";
+        std::cout << "    Compartment " << node->m_index << ": ";
+        std::cout << "C_m = " << node->m_ca << " nF, ";
+        std::cout << "g_L = " << node->m_gl << " uS, ";
+        std::cout << "e_L = " << node->m_el << " mV, ";
         if(node->m_parent != nullptr)
-            std::cout << "Parent node: " << node->m_parent->m_index << ", ";
+        {
+            std::cout << "Parent " << node->m_parent->m_index << " --> ";
+            std::cout << "g_c = " << node->m_gc << " uS, ";
         // std::cout << "Child nodes: " << vec2string(node.m_child_indices) << ", ";
         // std::cout << "Location indices: " << vec2string(node.m_loc_indices) << " ";
         // std::cout << "(new: " << vec2string(node.m_newloc_indices) << ")" << endl;
+        }
         std::cout << std::endl;
     }
     std::cout << std::endl;

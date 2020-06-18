@@ -60,8 +60,8 @@ The command for running the script with two MPI processes is:
 
    mpirun -n 2 python run_microcircuit.py
 
-Note on parameters
-##################
+External drive and initial conditions
+#####################################
 
 By default, the simulation uses external Poissonian input to excite all neuronal populations of the microcircuit, i.e., ``poisson_input': True`` in ``network_params.py``.
 If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated direct current (DC) input.

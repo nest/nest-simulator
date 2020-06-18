@@ -55,11 +55,11 @@ def _process_conn_spec(conn_spec):
         raise TypeError("conn_spec must be a string or dict")
 
 
-def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
+def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_arrays):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
     if syn_spec is None:
-        # for data_connect, return "static_synapse" by default
-        if data_connect:
+        # for use_connect_arrays, return "static_synapse" by default
+        if use_connect_arrays:
             return {"synapse_model": "static_synapse"}
 
         return syn_spec
@@ -78,7 +78,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
                 if len(value.shape) == 1:
                     if rule == 'one_to_one':
                         if value.shape[0] != prelength:
-                            if data_connect:
+                            if use_connect_arrays:
                                 raise kernel.NESTError("'" + key + "' has to be an array of dimension " +
                                                        str(prelength) + ".")
                             else:
@@ -145,8 +145,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, data_connect):
                             "'all_to_all', 'fixed_indegree' or "
                             "'fixed_outdegree'.")
 
-        # check that "synapse_model" is there for data_connect
-        if data_connect and "synapse_model" not in syn_spec:
+        # check that "synapse_model" is there for use_connect_arrays
+        if use_connect_arrays and "synapse_model" not in syn_spec:
             syn_spec["synapse_model"] = "static_synapse"
 
         return syn_spec
@@ -254,36 +254,37 @@ def _process_input_nodes(pre, post, conn_spec):
     """
     Check the properties of `pre` and `post` nodes:
 
-    * If `conn_spec` is "one_to_one", skip uniqueness check for better speed
-      and use data_connect.
+    * If `conn_spec` is 'one_to_one', no uniqueness check is performed; the
+      "regular" one-to-one connect is used if both inputs are NodeCollection,
+      "connect_arrays" is used otherwise.
     * If both `pre` and `post` are NodeCollections or can be converted to
-      NodeCollections (i.e. contain unique IDs), then proceed to "normal"
+      NodeCollections (i.e. contain unique IDs), then proceed to "regular"
       connect (potentially after conversion to NodeCollection).
     * If both `pre` and `post` are arrays and contain non-unique items, then
-      we proceed to "data_connect".
+      we proceed to "connect_arrays".
     * If at least one of them has non-unique items and they have different
       sizes, then raise an error.
     """
     use_connect_arrays = False
 
-    # check for "one_to_one" conn_spec
+    # check for 'one_to_one' conn_spec
     one_to_one_cspec = (conn_spec == 'one_to_one')
 
     if isinstance(conn_spec, dict):
-        one_to_one_cspec = (conn_spec.get('rule', 'all_to_all') == "one_to_one")
+        one_to_one_cspec = (conn_spec.get('rule', 'all_to_all') == 'one_to_one')
 
     # check and convert input types
     pre_is_nc, post_is_nc = True, True
 
     if not isinstance(pre, NodeCollection):
-        # skip uniqueness check for data_connect compatible `conn_spec`
+        # skip uniqueness check for connect_arrays compatible `conn_spec`
         if not one_to_one_cspec and len(set(pre)) == len(pre):
             pre = NodeCollection(pre)
         else:
             pre_is_nc = False
 
     if not isinstance(post, NodeCollection):
-        # skip uniqueness check for data_connect compatible `conn_spec`
+        # skip uniqueness check for connect_arrays compatible `conn_spec`
         if not one_to_one_cspec and len(set(post)) == len(post):
             post = NodeCollection(post)
         else:

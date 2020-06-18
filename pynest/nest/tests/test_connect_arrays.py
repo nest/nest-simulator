@@ -134,7 +134,7 @@ class TestConnectArrays(unittest.TestCase):
         """Connecting NumPy arrays without specifying delays"""
         n = 10
         nest.Create('iaf_psc_alpha', n)
-        sources = [i for i in range(1, n + 1)]
+        sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
         weights = np.ones(n)
 
@@ -146,6 +146,22 @@ class TestConnectArrays(unittest.TestCase):
             self.assertEqual(c.source, s)
             self.assertEqual(c.target, t)
             self.assertEqual(c.weight, w)
+
+    def test_connect_array_list(self):
+        """Connecting NumPy array and list"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = list(range(1, n + 1))
+        targets = self.non_unique
+        weights = np.ones(n)
+
+        nest.Connect(sources, targets, conn_spec='one_to_one')
+
+        conns = nest.GetConnections()
+
+        for s, t, c in zip(sources, targets, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
 
     def test_connect_arrays_no_weights(self):
         """Connecting NumPy arrays without specifying weights"""

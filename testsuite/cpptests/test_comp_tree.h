@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( test_matrix_inversion )
 
   m_c_tree.add_node( 0, -1, ca0, gc0, gl0, el0 );
   m_c_tree.add_node( 1, 0, ca1, gc1, gl1, el1 );
-  m_c_tree.init( dt );
+  m_c_tree.init();
 
   // input current
   std::vector< double > i_in{ 0.1, 0.2 };
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE( test_matrix_inversion3 )
   m_c_tree.add_node( 0, -1, ca0, gc0, gl0, el0 );
   m_c_tree.add_node( 1, 0,  ca1, gc1, gl1, el1 );
   m_c_tree.add_node( 2, 0,  ca2, gc2, gl2, el2 );
-  m_c_tree.init( dt );
+  m_c_tree.init();
 
   // input current
   std::vector< double > i_in{ 0.1, 0.2, 0.3 };
@@ -121,11 +121,6 @@ BOOST_AUTO_TEST_CASE( test_matrix_inversion3 )
 
 BOOST_AUTO_TEST_CASE( test_attenuation_integration )
 {
-  const double dt = Time::get_resolution().get_ms();
-  // const double dt = 1.;
-  // const double ca0 = 1.0, gc0 = 0.1, gl0 = 0.10, el0 = -70.0;
-  // const double ca1 = 0.1, gc1 = 0.1, gl1 = 0.01, el1 = -70.0;
-
   const double ca0 = 0.10, gc0 = 0.00, gl0 = 0.010, el0 = -70.0;
   const double ca1 = 0.01, gc1 = 0.01, gl1 = 0.001, el1 = -70.0;
 
@@ -133,12 +128,12 @@ BOOST_AUTO_TEST_CASE( test_attenuation_integration )
 
   m_c_tree.add_node( 0, -1, ca0, gc0, gl0, el0 );
   m_c_tree.add_node( 1, 0, ca1, gc1, gl1, el1 );
-  m_c_tree.init( dt );
+  m_c_tree.init();
 
   std::vector< double > i_in = std::vector< double >( 2 );
 
   // attenuation 1->0
-  m_c_tree.init( dt );
+  m_c_tree.init();
   i_in[0] = 0., i_in[1] = 0.001;
   for(int ii = 0; ii < 10000; ii++){
     m_c_tree.construct_matrix(i_in, 0);
@@ -147,25 +142,18 @@ BOOST_AUTO_TEST_CASE( test_attenuation_integration )
   }
   std::vector< double > v_sol = m_c_tree.get_voltage();
 
-  std::cout << "v0 = " << v_sol[0] << ", v1 = " << v_sol[1] << std::endl;
-  std::cout << "att 1->0 simulation = " << (v_sol[0] - el0) / (v_sol[1] - el1) << std::endl;
-  std::cout << "att 1->0 analytical = " << gc1 / (gl0 + gc1) << std::endl;
-
   BOOST_CHECK_CLOSE( gc1 / (gl0 + gc1), (v_sol[0] - el0) / (v_sol[1] - el1), 0.00000001 );
 
-  // // attenuation 0->1
-  // m_c_tree.init( dt );
-  // i_in[0] = 0.15, i_in[1] = 0.;
-  // for(int ii = 0; ii < 10000; ii++){
-  //   m_c_tree.construct_matrix(i_in, 0);
-  //   m_c_tree.solve_matrix();
-  // }
-  // v_sol = m_c_tree.get_voltage();
+  // attenuation 0->1
+  m_c_tree.init();
+  i_in[0] = 0.15, i_in[1] = 0.;
+  for(int ii = 0; ii < 10000; ii++){
+    m_c_tree.construct_matrix(i_in, 0);
+    m_c_tree.solve_matrix();
+  }
+  v_sol = m_c_tree.get_voltage();
 
-  // std::cout << "att 0->1 simulation = " << (v_sol[1] - el1) / (v_sol[0] - el0) << std::endl;
-  // std::cout << "att 0->1 analytical = " << gc1 / (gl1 + gc1) << std::endl;
-
-  // BOOST_CHECK_CLOSE( gc1 / (gl1 + gc1), (v_sol[1] - el1) / (v_sol[0] - el0), 0.00000001 );
+  BOOST_CHECK_CLOSE( gc1 / (gl1 + gc1), (v_sol[1] - el1) / (v_sol[0] - el0), 0.00000001 );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

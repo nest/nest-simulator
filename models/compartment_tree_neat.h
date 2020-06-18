@@ -67,7 +67,7 @@ public:
     ~CompNode(){};
 
     // initialization
-    void init( const double dt );
+    void init();
 
     // matrix construction
     void construct_matrix_element();
@@ -142,7 +142,7 @@ public:
     void add_node( const long node_index, const long parent_index,
 		   const double ca, const double gc,
 		   const double gl, const double el);
-    void init( const double dt );
+    void init();
 
     // getters and setters
     CompNode* find_node( const long node_index );

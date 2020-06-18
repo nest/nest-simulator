@@ -152,17 +152,15 @@ nest::iaf_neat::calibrate()
 {
   B_.logger_.init();
 
-  const double h = Time::get_resolution().get_ms();
-
   CompNode* root = m_c_tree.get_root();
 
   std::shared_ptr< IonChannel > chan1(new FakePotassium(15. * root->m_gl));
   root->m_chans.push_back(chan1);
 
-  std::shared_ptr< IonChannel > chan2(new FakeSodium(30. * root->m_gl));
+  std::shared_ptr< IonChannel > chan2(new FakeSodium(40. * root->m_gl));
   root->m_chans.push_back(chan2);
 
-  m_c_tree.init( h );
+  m_c_tree.init();
 }
 
 /* ----------------------------------------------------------------

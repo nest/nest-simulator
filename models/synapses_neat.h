@@ -16,6 +16,7 @@
 
 #include "event.h"
 #include "ring_buffer.h"
+#include "nest_time.h"
 
 namespace nest
 {
@@ -32,7 +33,7 @@ protected:
   RingBuffer m_b_spikes;
 
 public:
-  virtual void init( const double dt ){};
+  virtual void init(){};
   virtual void reset(){};
 
   virtual void set_params(){};
@@ -44,7 +45,6 @@ public:
   void handle(SpikeEvent& e);
 
   double get_cond(){return m_g;};
-  std::pair< double, double > get_cond_pair(){return std::make_pair(m_g0, m_g);};
 };
 
 class ExpCond: public ConductanceWindow{
@@ -59,7 +59,7 @@ public:
     ExpCond(double tau);
     ~ExpCond(){};
 
-    void init( const double dt ) override;
+    void init() override;
     void reset() override {m_g = 0.0; m_g0 = 0.; };
 
     void set_params(double tau) override;
@@ -82,7 +82,7 @@ public:
     Exp2Cond(double tau_r, double tau_d);
     ~Exp2Cond(){};
 
-    void init( const double dt ) override;
+    void init() override;
     void reset() override {m_g = 0.; m_g0 = 0.; m_p_r = 0.; m_p_d = 0.;};
 
     void set_params(double tau_r, double tau_d) override;
@@ -115,9 +115,9 @@ class DrivingForce: public VoltageDependence{
 Overwrites base class to implement a conductance based synaspes
 */
 public:
-    DrivingForce(double e_r) : VoltageDependence(e_r){};
-    double f(double v) override;
-    double df_dv(double v) override;
+    DrivingForce( double e_r ) : VoltageDependence( e_r ){};
+    double f( double v ) override;
+    double df_dv( double v ) override;
 };
 
 class NMDA: public VoltageDependence{
@@ -125,9 +125,9 @@ class NMDA: public VoltageDependence{
 Overwrites base class to implement an NMDA synaspes
 */
 public:
-    NMDA(double e_r) : VoltageDependence(e_r){};
-    double f(double v) override;
-    double df_dv(double v) override;
+    NMDA( double e_r ) : VoltageDependence( e_r ){};
+    double f( double v ) override;
+    double df_dv( double v ) override;
 
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,16 +149,16 @@ public:
   Synapse();
   ~Synapse(){};
 
-  virtual void init( const double dt ){ m_cond_w->init( dt ); };
+  virtual void init(){ m_cond_w->init(); };
   // update functions
-  virtual void update(const long lag);
-  virtual void handle(SpikeEvent& e);
+  virtual void update( const long lag );
+  virtual void handle( SpikeEvent& e );
 
   // for numerical integration
-  virtual std::pair< double, double > f_numstep(double v_comp);
+  virtual std::pair< double, double > f_numstep( double v_comp );
 
   // other functions
-  virtual double f(double v){return m_v_dep->f(v);};
+  virtual double f( double v ){ return m_v_dep->f( v ); };
 };
 
 /*
@@ -193,19 +193,19 @@ private:
 public:
   // constructor, destructor
   AMPA_NMDASyn();
-  AMPA_NMDASyn(double nmda_ratio);
+  AMPA_NMDASyn( double nmda_ratio );
   ~AMPA_NMDASyn(){};
 
-  void init( const double dt ) override { m_ampa->init( dt ); m_nmda->init( dt ); };
+  void init() override { m_ampa->init(); m_nmda->init(); };
   // update functions
-  void update(const long lag) override;
-  void handle(SpikeEvent& e) override;
+  void update( const long lag ) override;
+  void handle( SpikeEvent& e ) override;
 
   // for numerical integration
-  std::pair< double, double > f_numstep(double v_comp) override;
+  std::pair< double, double > f_numstep( double v_comp ) override;
 
   // other functions
-  double f(double v) override;
+  double f( double v ) override;
 };
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -25,18 +25,18 @@ nest::CompNode::CompNode( const long node_index, CompNode* parent,
   m_chans.resize( 0 );
 };
 
-void nest::CompNode::init( const double dt )
+void nest::CompNode::init()
 {
     m_v = m_el;
 
     for( auto  syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
     {
-        (*syn_it)->init( dt );
+        (*syn_it)->init();
     }
 
     for( auto chan_it = m_chans.begin(); chan_it != m_chans.end(); ++chan_it )
     {
-        (*chan_it)->init( dt );
+        (*chan_it)->init();
     }
 }
 
@@ -209,21 +209,18 @@ nest::CompNode* nest::CompTree::find_node( const long node_index, CompNode* node
 };
 
 // initialization functions
-void nest::CompTree::init( const double dt ){
-    m_dt = dt;
-
+void nest::CompTree::init()
+{
     set_nodes();
     set_leafs();
 
     // initialize the nodes
     for( auto node_it = m_nodes.begin(); node_it != m_nodes.end(); ++node_it )
     {
-        ( *node_it )->init( dt );
+        ( *node_it )->init();
     }
-
-    print_tree();
-
 }
+
 void nest::CompTree::set_nodes()
 {
     m_nodes.clear();
@@ -296,8 +293,6 @@ void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const 
         (*node_it)->add_synapse_contribution(lag);
         (*node_it)->add_channel_contribution();
     }
-
-
 };
 
 // solve matrix with O(n) algorithm
@@ -310,9 +305,6 @@ void nest::CompTree::solve_matrix()
 
     // do up sweep to set voltages
     solve_matrix_upsweep(m_root, 0.0);
-
-    CompNode* node0 = find_node(0);
-    CompNode* node1 = find_node(1);
 };
 
 void nest::CompTree::solve_matrix_downsweep( CompNode* node,

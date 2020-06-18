@@ -220,7 +220,8 @@ nest::iaf_neat::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  CompNode* node = m_c_tree.find_node( e.get_rport() );
+  node->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

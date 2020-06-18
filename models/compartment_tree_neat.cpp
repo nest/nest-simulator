@@ -38,6 +38,9 @@ void nest::CompNode::init()
     {
         (*chan_it)->init();
     }
+
+    // initialize the buffer
+    m_currents.clear();
 }
 
 // for matrix construction
@@ -74,6 +77,11 @@ void nest::CompNode::construct_matrix_element()
     }
 }
 
+void nest::CompNode::add_input_current( const long lag )
+{
+    m_ff += m_currents.get_value( lag );
+}
+
 void nest::CompNode::add_synapse_contribution( const long lag )
 {
     std::pair< double, double > gf_syn(0., 0.);
@@ -106,7 +114,7 @@ void nest::CompNode::add_channel_contribution()
 // compartment tree functions //////////////////////////////////////////////////
 
 nest::CompTree::CompTree()
-  : m_root( nullptr )
+  : m_root( 0, nullptr, 1., 1., 1., 1. )
   , m_dt( 0.1 )
 {
   m_nodes.resize( 0 );
@@ -141,8 +149,10 @@ void nest::CompTree::add_node( const long node_index, const long parent_index,
     }
     else
     {
-        m_root = node;
+        m_root = *node;
     }
+
+    m_node_indices.push_back(node_index);
 };
 
 /*
@@ -153,13 +163,13 @@ nest::CompNode* nest::CompTree::find_node( const long node_index )
 {
     nest::CompNode* r_node = nullptr;
 
-    if( node_index == m_root->m_index )
+    if( node_index == m_root.m_index )
     {
-        r_node = m_root;
+        r_node = &m_root;
     }
     else
     {
-        r_node = find_node( node_index, m_root, 0 );
+        r_node = find_node( node_index, &m_root, 0 );
     }
 
     if( !r_node )
@@ -224,19 +234,25 @@ void nest::CompTree::init()
 void nest::CompTree::set_nodes()
 {
     m_nodes.clear();
-    set_nodes(m_root);
-}
+    // set_nodes(&m_root);
 
-void nest::CompTree::set_nodes( CompNode* node )
-{
-    m_nodes.push_back(node);
-
-    for( auto child_it = node->m_children.begin();
-        child_it != node->m_children.end(); ++child_it )
+    for( auto node_idx_it = m_node_indices.begin(); node_idx_it != m_node_indices.end(); ++node_idx_it )
     {
-        set_nodes( &(*child_it) );
+        m_nodes.push_back( find_node( *node_idx_it ) );
     }
+
 }
+
+// void nest::CompTree::set_nodes( CompNode* node )
+// {
+//     m_nodes.push_back(node);
+
+//     for( auto child_it = node->m_children.begin();
+//         child_it != node->m_children.end(); ++child_it )
+//     {
+//         set_nodes( &(*child_it) );
+//     }
+// }
 
 void nest::CompTree::set_leafs()
 {
@@ -290,6 +306,7 @@ void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const 
     for( auto node_it = m_nodes.begin(); node_it != m_nodes.end(); ++node_it )
     {
         (*node_it)->construct_matrix_element();
+        (*node_it)->add_input_current( lag );
         (*node_it)->add_synapse_contribution(lag);
         (*node_it)->add_channel_contribution();
     }
@@ -304,7 +321,7 @@ void nest::CompTree::solve_matrix()
     solve_matrix_downsweep(m_leafs[0], leaf_it);
 
     // do up sweep to set voltages
-    solve_matrix_upsweep(m_root, 0.0);
+    solve_matrix_upsweep(&m_root, 0.0);
 };
 
 void nest::CompTree::solve_matrix_downsweep( CompNode* node,
@@ -354,7 +371,8 @@ void nest::CompTree::print_tree() const
 {
     // loop over all nodes
     std::printf(">>> NEAST tree with %d compartments <<<\n", int(m_nodes.size()));
-    for(int ii=0; ii<int(m_nodes.size()); ++ii){
+    for(int ii=0; ii<int(m_nodes.size()); ++ii)
+    {
         CompNode* node = m_nodes[ii];
         std::cout << "    Compartment " << node->m_index << ": ";
         std::cout << "C_m = " << node->m_ca << " nF, ";
@@ -370,6 +388,20 @@ void nest::CompTree::print_tree() const
         }
         std::cout << std::endl;
     }
+    // std::cout << "--- leafs ---" << std::endl;
+    // for(int ii=0; ii<int(m_leafs.size()); ++ii){
+    //     CompNode* node = m_leafs[ii];
+    //     std::cout << "    Compartment " << node->m_index << ": ";
+    //     std::cout << "C_m = " << node->m_ca << " nF, ";
+    //     std::cout << "g_L = " << node->m_gl << " uS, ";
+    //     std::cout << "e_L = " << node->m_el << " mV, ";
+    //     if(node->m_parent != nullptr)
+    //     {
+    //         std::cout << "Parent " << node->m_parent->m_index << " --> ";
+    //         std::cout << "g_c = " << node->m_gc << " uS, ";
+    //     }
+        // std::cout << std::endl;
+    // }
     std::cout << std::endl;
 };
 ////////////////////////////////////////////////////////////////////////////////

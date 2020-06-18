@@ -15,6 +15,7 @@
 
 
 #include "nest_time.h"
+#include "ring_buffer.h"
 #include "synapses_neat.h"
 #include "ionchannels_neat.h"
 
@@ -46,6 +47,8 @@ public:
     std::vector< std::shared_ptr< Synapse > > m_syns;
     // vector for ion channels
     std::vector< std::shared_ptr< IonChannel > > m_chans;
+    // buffer for currents
+    RingBuffer m_currents;
     // voltage variable
     double m_v;
     // electrical parameters
@@ -71,6 +74,7 @@ public:
 
     // matrix construction
     void construct_matrix_element();
+    void add_input_current( const long lag);
     void add_synapse_contribution( const long lag );
     void add_channel_contribution();
 
@@ -116,7 +120,8 @@ private:
     /*
     structural data containers for the compartment model
     */
-    CompNode* m_root;
+    CompNode m_root;
+    std::vector< long > m_node_indices;
     std::vector< CompNode* > m_nodes;
     std::vector< CompNode* > m_leafs;
 
@@ -148,7 +153,7 @@ public:
     CompNode* find_node( const long node_index );
     CompNode* find_node( const long node_index, CompNode* node );
     CompNode* find_node( const long node_index, CompNode* node, const long raise_flag );
-    CompNode* get_root(){ return m_root; };
+    CompNode* get_root(){ return &m_root; };
     std::vector< double > get_voltage() const;
     double get_node_voltage( const long node_index );
 

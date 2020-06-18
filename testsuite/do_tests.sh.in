@@ -103,6 +103,8 @@ fi
 
 mkdir "${TEST_OUTDIR}"
 
+PYTHON="${PYTHON:-python}"
+
 TMPDIR="${TMPDIR:-${TEST_OUTDIR}}"
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
 NEST_DATA_PATH="${TEST_TMPDIR}"

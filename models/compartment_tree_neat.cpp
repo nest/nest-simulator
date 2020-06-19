@@ -2,14 +2,15 @@
 
 
 // compartment node functions //////////////////////////////////////////////////
-nest::CompNode::CompNode( const long node_index, CompNode* parent,
+nest::CompNode::CompNode( const long node_index, const long parent_index,
 			  const double ca, const double gc,
 			  const double gl, const double el)
   : m_xx( 0.0 )
   , m_yy( 0.0 )
   , m_dt( 0.1 )
   , m_index( node_index )
-  , m_parent( parent )
+  , m_p_index( parent_index )
+  , m_parent( nullptr )
   , m_v( 0.0 )
   , m_ca( ca )
   , m_gc( gc )
@@ -114,7 +115,7 @@ void nest::CompNode::add_channel_contribution()
 // compartment tree functions //////////////////////////////////////////////////
 
 nest::CompTree::CompTree()
-  : m_root( 0, nullptr, 1., 1., 1., 1. )
+  : m_root( 0, -1, 1., 1., 1., 1. )
   , m_dt( 0.1 )
 {
   m_nodes.resize( 0 );
@@ -130,21 +131,22 @@ void nest::CompTree::add_node( const long node_index, const long parent_index,
 			       const double ca, const double gc,
 			       const double gl, const double el )
 {
-    CompNode* parent;
-    if( parent_index >= 0 ){
-        parent = find_node(parent_index);
-    }
-    else
-    {
-        parent = nullptr;
-    }
+    // CompNode* parent;
+    // if( parent_index >= 0 ){
+    //     parent = find_node(parent_index);
+    // }
+    // else
+    // {
+    //     parent = nullptr;
+    // }
 
-    CompNode* node = new CompNode( node_index, parent,
+    CompNode* node = new CompNode( node_index, parent_index,
 				   ca, gc,
 				   gl, el );
 
     if( parent_index >= 0 )
     {
+        CompNode* parent = find_node( parent_index );
         parent->m_children.push_back( *node );
     }
     else
@@ -153,6 +155,8 @@ void nest::CompTree::add_node( const long node_index, const long parent_index,
     }
 
     m_node_indices.push_back(node_index);
+
+  set_nodes();
 };
 
 /*
@@ -265,8 +269,11 @@ void nest::CompTree::init()
     // initialize the nodes
     for( auto node_it = m_nodes.begin(); node_it != m_nodes.end(); ++node_it )
     {
+        ( *node_it )->m_parent = find_node( ( *node_it )->m_p_index, &m_root, 0);
         ( *node_it )->init();
     }
+
+    print_tree();
 }
 
 void nest::CompTree::set_nodes()

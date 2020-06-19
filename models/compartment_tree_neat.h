@@ -40,6 +40,8 @@ private:
 public:
     // node_index
     long m_index;
+    // parent node index
+    long m_p_index;
     // tree structure indices
     CompNode* m_parent;
     std::vector< CompNode > m_children;
@@ -64,7 +66,7 @@ public:
     int m_n_passed;
 
     // constructor, destructor
-    CompNode(const long node_index, CompNode* parent,
+    CompNode(const long node_index, const long parent_index,
 	     const double ca, const double gc,
 	     const double gl, const double el);
     ~CompNode(){};

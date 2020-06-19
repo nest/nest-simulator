@@ -701,6 +701,36 @@ class TestNodeCollection(unittest.TestCase):
             with self.assertRaises(err):
                 sliced = n[case]
 
+    def test_empty_nc(self):
+        """Connection with empty NodeCollection raises error"""
+        empty = nest.NodeCollection([])
+        nodes = nest.Create('iaf_psc_alpha', 5)
+
+        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            nest.Connect(nodes, empty)
+
+        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            nest.Connect(empty, nodes)
+
+        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            nest.Connect(empty, empty)
+
+    def test_empty_nc_addition(self):
+        """Combine NodeCollection with empty NodeCollection and connect"""
+        n = 5
+
+        nodes_a = nest.NodeCollection([])
+        nodes_a += nest.Create('iaf_psc_alpha', n)
+        nest.Connect(nodes_a, nodes_a)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+
+        nest.ResetKernel()
+
+        nodes_b = nest.Create('iaf_psc_alpha', n)
+        nodes_b += nest.NodeCollection([])
+        nest.Connect(nodes_b, nodes_b)
+        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+
 
 def suite():
     suite = unittest.makeSuite(TestNodeCollection, 'test')

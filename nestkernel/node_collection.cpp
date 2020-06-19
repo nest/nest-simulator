@@ -294,6 +294,14 @@ NodeCollectionPrimitive::to_array() const
 
 NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionPrimitive( *this ) );
+  }
+  if ( empty() )
+  {
+    return NodeCollectionPTR( rhs );
+  }
   if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "Can only join NodeCollections with same metadata." );
@@ -400,11 +408,17 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
 void
 NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
-
-  out << "NodeCollection("
-      << "metadata=" << metadata << ", ";
-  print_primitive( out );
+  out << "NodeCollection(";
+  if ( empty() )
+  {
+    out << "<empty>";
+  }
+  else
+  {
+    std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
+    out << "metadata=" << metadata << ", ";
+    print_primitive( out );
+  }
   out << ")";
 }
 
@@ -550,6 +564,10 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
 
 NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionComposite( *this ) );
+  }
   if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join NodeCollections with the same metadata" );

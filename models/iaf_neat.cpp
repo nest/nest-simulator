@@ -93,7 +93,7 @@ nest::iaf_neat::init_state_( const Node& proto )
 void
 nest::iaf_neat::init_buffers_()
 {
-  B_.currents_.clear(); // includes resize
+  // B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
   Archiving_Node::clear_history();
 }

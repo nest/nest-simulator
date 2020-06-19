@@ -148,8 +148,8 @@ private:
     Buffers_( iaf_neat& );
     Buffers_( const Buffers_&, iaf_neat& );
 
-    /** buffers and summs up incoming spikes/currents */
-    RingBuffer currents_;
+    // buffers and summs up incoming spikes/currents
+    // RingBuffer currents_;
 
     //! Logger for all analog data
     DynamicUniversalDataLogger< iaf_neat > logger_;
@@ -195,11 +195,12 @@ iaf_neat::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 iaf_neat::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
+  // if find_node returns nullptr, raise the error
+  if ( !m_c_tree.find_node( long(receptor_type), m_c_tree.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return 0;
+  return receptor_type;
 }
 
 inline port

@@ -25,8 +25,9 @@ dend_params = {
 }
 
 sg = nest.Create('spike_generator', 1, {'spike_times': [1., 5., 6.,10., 50.]})
-sg2 = nest.Create('spike_generator', 2, {'spike_times': [15.,55., 60., 62., 70., 154., 160., 172., 178.]})
-sg3 = nest.Create('spike_generator', 3, {'spike_times': [150., 155., 160., 162., 170.]})
+sg2 = nest.Create('spike_generator', 1, {'spike_times': [15.,55., 60., 62., 70., 154., 160., 172., 178.]})
+sg3 = nest.Create('spike_generator', 1, {'spike_times': [150., 155., 160., 162., 170.]})
+
 
 n_neat = nest.Create('iaf_neat')
 nest.AddCompartment(n_neat, 0, -1, soma_params)
@@ -42,14 +43,18 @@ syn_idx_NMDA = nest.AddReceptor(n_neat, 2, "AMPA+NMDA")
 nest.Connect(sg, n_neat, syn_spec={
     'synapse_model': 'static_synapse', 'weight': .1, 'delay': 0.5, 'receptor_type': syn_idx_AMPA})
 nest.Connect(sg2, n_neat, syn_spec={
-    'synapse_model': 'static_synapse', 'weight': .1, 'delay': 0.5, 'receptor_type': syn_idx_NMDA})
+    'synapse_model': 'static_synapse', 'weight': .2, 'delay': 0.5, 'receptor_type': syn_idx_NMDA})
 nest.Connect(sg3, n_neat, syn_spec={
-    'synapse_model': 'static_synapse', 'weight': .1, 'delay': 0.5, 'receptor_type': syn_idx_GABA})
+    'synapse_model': 'static_synapse', 'weight': .3, 'delay': 0.5, 'receptor_type': syn_idx_GABA})
+
+# dcg = nest.Create('dc_generator', {'amplitude': 1.})
+# nest.Connect(dcg, n_neat, syn_spec={
+#     'synapse_model': 'static_synapse', 'weight': 1., 'delay': 0.1, 'receptor_type': 0})
 
 m_neat = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1', 'V_m_2'], 'interval': .1})
 nest.Connect(m_neat, n_neat)
 
-nest.Simulate(250.)
+nest.Simulate(1000.)
 
 events_neat = nest.GetStatus(m_neat, 'events')[0]
 

@@ -89,6 +89,8 @@ void nest::CompNode::add_synapse_contribution( const long lag )
 
     for( auto syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
     {
+
+
         (*syn_it)->update(lag);
         gf_syn = (*syn_it)->f_numstep(m_v);
 
@@ -131,15 +133,6 @@ void nest::CompTree::add_node( const long node_index, const long parent_index,
 			       const double ca, const double gc,
 			       const double gl, const double el )
 {
-    // CompNode* parent;
-    // if( parent_index >= 0 ){
-    //     parent = find_node(parent_index);
-    // }
-    // else
-    // {
-    //     parent = nullptr;
-    // }
-
     CompNode* node = new CompNode( node_index, parent_index,
 				   ca, gc,
 				   gl, el );
@@ -156,72 +149,8 @@ void nest::CompTree::add_node( const long node_index, const long parent_index,
 
     m_node_indices.push_back(node_index);
 
-  set_nodes();
+    set_nodes();
 };
-
-/*
-find a node with given index in the three structure. Returns null pointer if
-index is node found
-*/
-// nest::CompNode* nest::CompTree::find_node( const long node_index )
-// {
-//     nest::CompNode* r_node = nullptr;
-
-//     if( node_index == m_root.m_index )
-//     {
-//         r_node = &m_root;
-//     }
-//     else
-//     {
-//         r_node = find_node( node_index, &m_root, 0 );
-//     }
-
-//     if( !r_node )
-//     {
-//         std::ostringstream err_msg;
-//         err_msg << "(i) Node index " << node_index << " not in tree";
-//         throw BadProperty(err_msg.str());
-//     }
-
-//     return r_node;
-// }
-
-// nest::CompNode* nest::CompTree::find_node( const long node_index, CompNode* node)
-// {
-//     return find_node( node_index, node, 1 );
-// }
-
-// nest::CompNode* nest::CompTree::find_node( const long node_index, CompNode* node,
-//                                            const long raise_flag)
-// {
-//     CompNode* r_node = nullptr;
-//     auto child_it = node->m_children.begin();
-//     long found = 0;
-
-//     while( found != 1 && child_it != node->m_children.end() )
-//     {
-//         std::cout << "at node " << (*child_it).m_index << ", looking for " << node_index << std::endl;
-//         if( child_it->m_index == node_index )
-// 	{
-//             found = 1;
-//             r_node = &( *child_it );
-//         }
-// 	else
-// 	{
-//             r_node = find_node( node_index, &(*child_it), 0 );
-//         }
-//         ++child_it;
-//     }
-
-//     if( !r_node && raise_flag )
-//     {
-//         std::ostringstream err_msg;
-//         err_msg << "Node index " << node_index << " not in tree";
-//         throw BadProperty(err_msg.str());
-//     }
-
-//     return r_node;
-// };
 
 nest::CompNode* nest::CompTree::find_node( const long node_index ){
     return find_node( node_index, get_root() );
@@ -272,14 +201,11 @@ void nest::CompTree::init()
         ( *node_it )->m_parent = find_node( ( *node_it )->m_p_index, &m_root, 0);
         ( *node_it )->init();
     }
-
-    print_tree();
 }
 
 void nest::CompTree::set_nodes()
 {
     m_nodes.clear();
-    // set_nodes(&m_root);
 
     for( auto node_idx_it = m_node_indices.begin(); node_idx_it != m_node_indices.end(); ++node_idx_it )
     {
@@ -287,17 +213,6 @@ void nest::CompTree::set_nodes()
     }
 
 }
-
-// void nest::CompTree::set_nodes( CompNode* node )
-// {
-//     m_nodes.push_back(node);
-
-//     for( auto child_it = node->m_children.begin();
-//         child_it != node->m_children.end(); ++child_it )
-//     {
-//         set_nodes( &(*child_it) );
-//     }
-// }
 
 void nest::CompTree::set_leafs()
 {

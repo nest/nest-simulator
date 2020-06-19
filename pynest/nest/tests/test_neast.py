@@ -442,7 +442,7 @@ class NEASTTestCase(unittest.TestCase):
         self.test_inversion(dt=dt, model_name='1dend_2comp')
         self.test_inversion(dt=dt, model_name='tdend_4comp')
 
-    def test_no_inp_inversion(self, dt=0.1, model_name='2tdend_2comp'):
+    def test_no_inp_inversion(self, dt=0.1, model_name='2tdend_4comp'):
         """
         Test the matrix inversion corresponding to one integration step when
         leak potentials vary across the neuron.
@@ -596,6 +596,22 @@ class NEASTTestCase(unittest.TestCase):
         self.test_conductance_input(model_name='tdend_4comp')
         self.test_conductance_input(model_name='2tdend_4comp')
 
+
+def suite():
+
+    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
+    # using loadTestsFromTestCase instead.
+    suite = unittest.TestLoader().loadTestsFromTestCase(NEASTTestCase)
+    return unittest.TestSuite([suite])
+
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+
+
+if __name__ == "__main__":
+    run()
 
 # if __name__ == "__main__":
 #     ntc = NEASTTestCase()

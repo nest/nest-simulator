@@ -356,6 +356,15 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
+  if ( sources->empty() )
+  {
+    throw BadProperty( "Presynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( targets->empty() )
+  {
+    throw BadProperty( "Postsynaptic nodes cannot be an empty NodeCollection" );
+  }
+
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 

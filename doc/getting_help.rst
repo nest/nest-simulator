@@ -12,8 +12,9 @@ There exists NEST-related content and discussion in various other places like `t
 
 Finally, there are projects related to the NEST that are currently not contained in the `nest-simulator repository <https://github.com/nest/nest-simulator>`_, both `hosted by the NEST Initiative account <https://github.com/nest/>`_ (like NestML) and hosted by other users (like `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_) (TODO: Is there a complete list somewhere?). Of course, these have their own documentation.
 
-If the documentation is confusing somewhere (which, by definition, is the case when you were confused),
-please open a `Documentation improvement issue <https://github.com/nest/nest-simulator/issues/new?assignees=&labels=&template=documentation_improvement.md&title=>`_ on GitHub.
+If any of the documentation is unclear, please submit an
+`Issue <https://github.com/nest/nest-simulator/issues/new?assignees=&labels=&template=documentation_improvement.md&title=>`_ on
+GitHub and check out our :doc:`User documentation workflow <documentation_workflow/user_documentation_workflow>`.
 
 
 Have a specific question or problem with NEST?
@@ -104,4 +105,3 @@ manually into the browser. Please replace ``$PREFIX`` with the prefix
 you chose during the configuration of NEST. If you did not explicitly
 specify one, it is most likely set to ``/usr`` or ``/usr/local``
 depending on what system you use.
-

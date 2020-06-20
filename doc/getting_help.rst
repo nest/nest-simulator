@@ -7,10 +7,12 @@ The NEST documentation has grown organically over the years and can be confusing
 * A legacy user documentation built by a homegrown tool called ``help_generator``. It is accessible by calling ``nest.helpindex()``/``nest.help("term")`` in Python or (for the latest stable version of NEST) `online <https://www.nest-simulator.org/helpindex/>`_. (TODO while this page is still up, clicking on something now yields a redirect to RTD, which doesn't seem ideal to me). This documentation doesn't describe PyNEST or NEST models (TODO is the latter a bug or feature?), but *SLI* (TODO anything else?), a programming language used to interact with the NEST kernel. Today, most end-users use PyNEST instead of programming in SLI. There are **naming collisions** between SLI commands and PyNEST functions which might be confusing. For example, ``nest.help("GetStatus")`` does **not** return the documentation of the ``GetStatus`` function in the PyNEST API, but of an equivalent command in SLI.
 * The Doxygen developer documentation, which documents the program code of NEST for developers. It can be built according to `these <https://nest-simulator.readthedocs.io/en/latest/documentation_workflow/developer_documentation_workflow.html>`_ instructions. As the reference files of the ``help_generator`` documentation are also compiled from Doxygen comments, it contains most of the ``help_generator`` content as well. Of course, you should develop for NEST based on the latest development version.
   
-There exists NEST-related content and discussion in various other places like `the GitHub page <https://github.com/nest/nest-simulator/>`_, the `mailing list archive <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_, the `NEST developer space <https://nest.github.io/nest-simulator/>`_ and the
-`NEST Simulator <https://nest-simulator.org>`_ and `NEST Initiative <https://nest-initiative.org>`_ websites (TODO did I miss something?). The most sensible way to search through these is by using a search engine of your choice.
+Further NEST-related content and discussions can be found on our:
 
-Finally, there are projects related to the NEST that are currently not contained in the `nest-simulator repository <https://github.com/nest/nest-simulator>`_, both `hosted by the NEST Initiative account <https://github.com/nest/>`_ (like NestML) and hosted by other users (like `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_) (TODO: Is there a complete list somewhere?). Of course, these have their own documentation.
+* `GitHub page <https://github.com/nest/nest-simulator/>`_
+* `Mailing list archive <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_
+* `NEST Simulator website <https://nest-simulator.org>`_
+* `NEST Initiative webpage <https://nest-initiative.org>`_
 
 If any of the documentation is unclear, please submit an
 `Issue <https://github.com/nest/nest-simulator/issues/new?assignees=&labels=&template=documentation_improvement.md&title=>`_ on

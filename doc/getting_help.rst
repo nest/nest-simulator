@@ -22,7 +22,7 @@ Have a specific question or problem with NEST?
 
 * Check out the :doc:`troubleshooting section <troubleshooting>` for common issues.
 
-If your question is not on there (and you can't find the answer with Google), ask our :doc:`Mailing List <community>`.
+If your question is not on there and you can't find it using a search engine, ask our :doc:`Mailing List <community>`.
 
 Getting help on the command line interface
 ------------------------------------------

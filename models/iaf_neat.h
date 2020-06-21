@@ -25,10 +25,8 @@
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "compartment_tree_neat.h"
@@ -66,7 +64,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 =========== ======= ===========================================================
- V_th       mV      Spike threshold
+ V_th       mV      Spike threshold (default: -55.0mV)
 =========== ======= ===========================================================
 
 <add info about setting compartment, receptor parameters>
@@ -126,12 +124,7 @@ private:
 
   void update( Time const&, const long, const long );
 
-  CompTree m_c_tree;
-
-  std::vector< std::shared_ptr< Synapse > > syn_receptors;
-
-  // To record variables with DataAccessFunctor
-  double get_state_element( size_t elem){return m_c_tree.get_node_voltage(elem);}
+  double get_state_element( size_t elem ){ return m_c_tree_.get_node_voltage(elem); }
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< iaf_neat >;
@@ -140,35 +133,11 @@ private:
 
   // ----------------------------------------------------------------
 
-  /**
-   * Buffers of the model.
-   */
-  struct Buffers_
-  {
-    Buffers_( iaf_neat& );
-    Buffers_( const Buffers_&, iaf_neat& );
+  CompTree m_c_tree_;
+  std::vector< std::shared_ptr< Synapse > > syn_receptors_;
 
-    // buffers and summs up incoming spikes/currents
-    // RingBuffer currents_;
-
-    //! Logger for all analog data
-    DynamicUniversalDataLogger< iaf_neat > logger_;
-  };
-
-  // ----------------------------------------------------------------
-
-  /**
-   * @defgroup iaf_psc_alpha_data
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
-  Buffers_ B_;
-  /** @} */
-
-  //! Mapping of recordables names to access functions
   DynamicRecordablesMap< iaf_neat > recordablesMap_;
+  DynamicUniversalDataLogger< iaf_neat > logger_;
 
   double V_th_;
 };
@@ -185,7 +154,7 @@ nest::iaf_neat::send_test_event( Node& target, rport receptor_type, synindex, bo
 inline port
 iaf_neat::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_receptors.size() ) ) )
+  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_receptors_.size() ) ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -196,7 +165,7 @@ inline port
 iaf_neat::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   // if find_node returns nullptr, raise the error
-  if ( !m_c_tree.find_node( long(receptor_type), m_c_tree.get_root(), 0 ) )
+  if ( not m_c_tree_.find_node( static_cast< long>( receptor_type ), m_c_tree_.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -210,7 +179,7 @@ iaf_neat::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
+  return logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
 inline void

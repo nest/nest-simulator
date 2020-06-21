@@ -1,3 +1,6 @@
+#ifndef IONCHANNELS_NEAT_H
+#define IONCHANNELS_NEAT_H
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -68,3 +71,5 @@ public:
 };
 
 } // namespace
+
+#endif /* #ifndef IONCHANNELS_NEAT_H */

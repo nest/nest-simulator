@@ -182,7 +182,9 @@ class NodeCollection(object):
 
     _datum = None
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        if data is None:
+            data = []
         if isinstance(data, kernel.SLIDatum):
             if data.dtype != "nodecollectiontype":
                 raise TypeError("Need NodeCollection Datum.")

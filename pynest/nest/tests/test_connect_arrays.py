@@ -153,7 +153,6 @@ class TestConnectArrays(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = list(range(1, n + 1))
         targets = self.non_unique
-        weights = np.ones(n)
 
         nest.Connect(sources, targets, conn_spec='one_to_one')
 

@@ -75,15 +75,18 @@ def Create(model, n=1, params=None, positions=None):
     model_deprecation_warning(model)
 
     if positions is not None:
+        # We only accept positions as either a free object or a grid object.
         if not isinstance(positions, (nest.spatial.free, nest.spatial.grid)):
             raise TypeError('`positions` must be either a nest.spatial.free object or nest.spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, nest.spatial.free):
             layer_specs['positions'] = positions.pos
+            # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
                 layer_specs['n'] = n
         else:
+            # If positions is not a free object, it must be a grid object.
             if n > 1:
                 raise kernel.NESTError(
                     'Cannot specify number of nodes with grid positions')
@@ -92,15 +95,16 @@ def Create(model, n=1, params=None, positions=None):
                 layer_specs['center'] = positions.center
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
+        # For compatibility with SLI.
         if params is None:
             params = {}
         layer = sli_func('CreateLayerParams', layer_specs, params)
 
         return layer
 
-    params_contains_list = True
-    if isinstance(params, dict) and params:
-        params_contains_list = [is_iterable(v) or isinstance(v, Parameter)
+    # If any of the elements in the parameter dictionary is either an array-like object,
+    # or a NEST parameter, we create the nodes first, then set the status. If not,
+    # we can pass the parameter specification to SLI when the nodes are created.
     iterable_or_parameter_in_params = True
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())

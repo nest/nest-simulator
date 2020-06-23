@@ -101,10 +101,11 @@ def Create(model, n=1, params=None, positions=None):
     params_contains_list = True
     if isinstance(params, dict) and params:
         params_contains_list = [is_iterable(v) or isinstance(v, Parameter)
-                                for k, v in params.items()]
-        params_contains_list = max(params_contains_list)
+    iterable_or_parameter_in_params = True
+    if isinstance(params, dict) and params:  # if params is a dict and not empty
+        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
-    if not params_contains_list:
+    if not iterable_or_parameter_in_params:
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
     else:
@@ -115,7 +116,7 @@ def Create(model, n=1, params=None, positions=None):
 
     node_ids = spp()
 
-    if params is not None and params_contains_list:
+    if params is not None and iterable_or_parameter_in_params:
         try:
             SetStatus(node_ids, params)
         except:

@@ -68,7 +68,7 @@ If you are a Vim user and require support for SLI files, please refer to
 our :doc:`../contribute/templates_styleguides/vim_support_sli`.
 
 Supplying SLI scripts with parameters
--------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the ``--userargs=arg1:...`` command line switch, it is possible to
 supply a SLI script with parameters from the outside of NEST. A common

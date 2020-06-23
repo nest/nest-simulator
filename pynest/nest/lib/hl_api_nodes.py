@@ -54,11 +54,13 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict, list or Parameter, optional
+    params : dict or list, optional
         Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n or a :py:class:`.Parameter`. If omitted, the model's defaults are used.
+        dictionaries with size n, or a dictionary with lists of values with size n.
+        Values may be :py:class:`.Parameter` objects. If omitted,
+        the model's defaults are used.
     positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional
-        Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
+        Object describing spatial positions of the nodes. If omitted, the nodes have no spatial attachment.
 
     Returns
     -------
@@ -70,6 +72,8 @@ def Create(model, n=1, params=None, positions=None):
     NESTError
         If setting node parameters fail. However, the nodes will still have
         been created.
+    TypeError
+        If the positions object is of wrong type.
     """
 
     model_deprecation_warning(model)

@@ -108,7 +108,7 @@ public:
   }
 
 private:
-  AbstractLayerPTR layer_; //!< layer object
+  const AbstractLayerPTR layer_; //!< layer object
   index first_node_id_;
 };
 

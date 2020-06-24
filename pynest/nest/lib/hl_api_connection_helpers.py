@@ -163,12 +163,18 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if 'p' in conn_spec:
         projections['kernel'] = projections.pop('p')
     if syn_spec is not None:
-        for key in syn_spec.keys():
-            if key not in allowed_syn_spec_keys:
-                raise ValueError(
-                    "'{}' is not allowed in syn_spec when ".format(key) +
-                    "connecting with mask or kernel".format(key))
-        projections.update(syn_spec)
+        if not isinstance(syn_spec, list):
+            syn_spec = [syn_spec]
+        for syn_list in syn_spec:       
+            for key in syn_list.keys():
+                if key not in allowed_syn_spec_keys:
+                    raise ValueError(
+                        "'{}' is not allowed in syn_spec when ".format(key) +
+                        "connecting with mask or kernel".format(key))
+        if len(syn_spec) == 1:
+            projections.update(syn_spec[0])
+        else:
+            projections.update({'synapse_parameters': syn_spec})
 
     if conn_spec['rule'] == 'fixed_indegree':
         if 'use_on_source' in conn_spec:
@@ -219,6 +225,11 @@ def _connect_layers_needed(conn_spec, syn_spec):
         for key, item in syn_spec.items():
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
+    elif isinstance(syn_spec, list):
+        for syn_param in syn_spec:
+            for key, item in syn_param.items():
+                if isinstance(item, Parameter) and item.is_spatial():
+                    return True
     # If we get here, there is not need to use ConnectLayers.
     return False
 

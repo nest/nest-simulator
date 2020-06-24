@@ -41,6 +41,13 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        Find out more on the NeuroFedora site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.       
 
+   .. tab:: MacOS - Homebrew
+
+       Install homebrew on your mac (https://brew.sh/) and then install NEST via:
+
+       .. code-block:: bash
+
+           brew install nest
 
    .. tab:: Conda (Linux/macOS)
 

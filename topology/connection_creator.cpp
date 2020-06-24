@@ -110,10 +110,14 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       {
         DictionaryDatum* syn_param = dynamic_cast< DictionaryDatum* >( synapse_datum->datum() );
 
-        std::string syn_name = ( **syn_param )[ names::synapse_model ];
-        if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+        std::string syn_name;
+        if ( not( *syn_param )->known( names::synapse_model ) )
         {
           syn_name = "static_synapse";
+        }
+        else
+        {
+          std::string syn_name = ( **syn_param )[ names::synapse_model ];
         }
 
         if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
@@ -131,7 +135,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
         else
         {
           weight_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) );
-
         }
 
         if ( ( *syn_param )->known( names::delay ) )

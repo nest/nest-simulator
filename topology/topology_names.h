@@ -71,6 +71,7 @@ extern const Name radius;
 extern const Name rectangular;
 extern const Name shape;
 extern const Name spherical;
+extern const Name synapse_parameters;
 extern const Name upper_right;
 
 } // namespace names

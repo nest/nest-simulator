@@ -63,6 +63,7 @@ const Name radius( "radius" );
 const Name rectangular( "rectangular" );
 const Name shape( "shape" );
 const Name spherical( "spherical" );
+const Name synapse_parameters( "synapse_parameters" );
 const Name upper_right( "upper_right" );
 
 } // namespace names

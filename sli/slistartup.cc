@@ -341,8 +341,6 @@ SLIStartup::init( SLIInterpreter* i )
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "I could not find the startup file that" );
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", ( std::string( "should have been in " ) + slilibdir ).c_str() );
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Please re-build NEST and try again." );
-    i->message( SLIInterpreter::M_FATAL, "SLIStartup", "The file install.html in NEST's doc directory tells you how." );
-
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Bye." );
 
     // We cannot call i->terminate() here because the interpreter is not

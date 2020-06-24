@@ -24,7 +24,6 @@
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
 #include "mpi_manager_impl.h"
-#include "topology.h"
 
 
 // C++ includes:

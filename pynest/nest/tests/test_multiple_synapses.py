@@ -146,13 +146,125 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(num_trg * indegree * len(syn_spec), len(conns))
 
-        ref_trgt = trgt.tolist() + trgt.tolist()
+        ref_trgt = [t for t in trgt.tolist() for _ in range(indegree * len(syn_spec))]
         ref_sm = (['static_synapse'] * num_trg * indegree +
                   ['stdp_synapse'] * num_trg * indegree +
                   ['stdp_synapse'] * num_trg * indegree)
 
-        self.assertEqual(ref_trgt.sort(), conns.target.sort())
-        self.assertEqual(ref_sm.sort(), conns.synapse_model.sort())
+        self.assertEqual(sorted(ref_trgt), sorted(conns.target))
+        self.assertEqual(sorted(ref_sm), sorted(conns.synapse_model))
+
+    def test_MultipleSynapses_spatial_network(self):
+        """test list of synapses for spatial networks with fixed indegree"""
+        num_src = 11
+        num_trgt = 37
+        indegree = 3
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
+                     [{'weight': -3.},
+                      {'weight': nest.spatial_distributions.exponential(nest.spatial.distance), 'delay': 1.4}])
+
+        conns = nest.GetConnections()
+
+        self.assertEqual(num_trgt * indegree * 2, len(conns))
+
+        weights = conns.weight
+        self.assertEqual(sorted(weights)[:num_trgt*indegree], [-3]*num_trgt*indegree)
+
+    def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
+        """test list of synapses for spatial networks with fixed outdegree"""
+        num_src = 17
+        num_trgt = 23
+        outdegree = 4
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_outdegree', 'outdegree': outdegree},
+                     [{'weight': -3., 'synapse_model': 'stdp_synapse'},
+                      {'synapse_model': 'tsodyks_synapse'},
+                      {'weight': nest.spatial_distributions.exponential(nest.spatial.distance), 'delay': 1.4}])
+
+        conns = nest.GetConnections()
+
+        self.assertEqual(num_src * outdegree * 3, len(conns))
+
+        weights = conns.weight
+        self.assertEqual(sorted(weights)[:num_src*outdegree], [-3]*num_src*outdegree)
+
+        ref_synapse_model = (['stdp_synapse'] * num_src * outdegree +
+                             ['tsodyks_synapse'] * num_src * outdegree +
+                             ['static_synapse'] * num_src * outdegree)
+        self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
+
+    def test_MultipleSynapses_spatial_network_bernoulliSource(self):
+        """test list of synapses for 3D spatial networks with pairwice bernoulli on source"""
+        num_src = 7
+        num_trgt = 19
+        p = 0.6
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'pairwise_bernoulli', 'p': p},
+                     [{'delay': 1.7, 'weight': nest.spatial_distributions.gaussian(nest.spatial.distance)},
+                      {'synapse_model': 'tsodyks_synapse'},
+                      {'weight': -nest.spatial_distributions.gaussian(nest.spatial.distance), 'delay': 1.4}])
+
+        conns = nest.GetConnections()
+        num_conns = len(conns)
+
+        self.assertLess(num_src * num_trgt * p * 2, len(conns))
+
+        delays = [round(d, 1) for d in conns.delay]
+        ref_delays = [1.] * (num_conns // 3) + [1.4] * (num_conns // 3) + [1.7] * (num_conns // 3)
+
+        self.assertEqual(sorted(delays), ref_delays)
+
+        ref_synapse_model = (['tsodyks_synapse'] * (num_conns // 3) +
+                             ['static_synapse'] * (2 * num_conns // 3))
+        self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
+
+        for w in sorted(conns.weight)[:(num_conns // 3)]:
+            self.assertLess(w, 0)
+
+    def test_MultipleSynapses_spatial_network_bernoulliTarget(self):
+        """test list of synapses for 3D spatial networks with pairwice bernoulli on target"""
+        num_src = 57
+        num_trgt = 21
+        p = 0.3
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
+
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt,
+                     {'rule': 'pairwise_bernoulli', 'p': p, 'use_on_source': False},
+                     [{'delay': 1.7, 'weight': -1.4},
+                      {'delay': nest.spatial_distributions.gaussian(nest.spatial.distance), 'weight': 1.4}])
+
+        conns = nest.GetConnections()
+        num_conns = len(conns)
+
+        self.assertGreater(num_src * num_trgt * p * 3, len(conns))
+
+        delays = [round(d, 1) for d in sorted(conns.delay)[(num_conns // 2):]]
+        ref_delays = [1.7] * (num_conns // 2)
+
+        self.assertEqual(sorted(delays), ref_delays)
+
+        ref_weights = [-1.4] * (num_conns // 2) + [1.4] * (num_conns // 2)
+        self.assertEqual(sorted(conns.weight), ref_weights)
 
 
 def suite():

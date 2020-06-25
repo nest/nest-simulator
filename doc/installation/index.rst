@@ -59,6 +59,11 @@ compile NEST from source, see section** :ref:`advanced_install`.
              sudo apt source --build nest
 
        4. Install any missing dependencies, if ``apt`` tells you so.
+          In addition install:
+
+          ..  code-block:: bash
+
+              sudo apt install python3-all dh-python
 
        5. After installing the dependencies, enter ``sudo apt source --build nest`` again.
           When the build finished, look for lines like

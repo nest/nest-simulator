@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # do_tests.sh.in
 #
@@ -76,22 +76,6 @@ while test $# -gt 0 ; do
     shift
 done
 
-#
-# ask_results
-#
-ask_results ()
-{
-    echo "***"
-    echo "*** Please report the problem at"
-    echo "***     https://github.com/nest/nest-simulator/issues"
-    echo "***"
-    echo "*** To help us diagnose the problem, please attach the archived content"
-    echo "*** of these directories to the issue:"
-    echo "***     - '${TEST_OUTDIR}'"
-    echo "***     - '${TEST_TMPDIR}'"
-    echo "***"
-    echo
-}
 
 #
 # sed has different syntax for extended regular expressions
@@ -163,11 +147,6 @@ if test "$(uname -s)" = "Darwin"; then
     defaults write com.apple.CrashReporter DialogType server
 fi
 
-TEST_TOTAL=0
-TEST_PASSED=0
-TEST_SKIPPED=0
-TEST_FAILED=0
-
 echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_STRING@ testsuite log"
 echo >> "${TEST_LOGFILE}" "======================"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
@@ -185,7 +164,7 @@ echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
 echo '-------------------------------------------------------------'
 
-junit_open 'core.phase_1'
+junit_open '01_basic_tests'
 
 CODES_SUCCESS=' 0 Success'
 CODES_FAILURE=
@@ -211,7 +190,7 @@ echo
 echo "Phase 2: Testing SLI's unittest library"
 echo "---------------------------------------"
 
-junit_open 'core.phase_2'
+junit_open '02_selftests'
 
 # assert_or_die uses pass_or_die, so pass_or_die should be tested first.
 
@@ -291,7 +270,7 @@ echo
 echo "Phase 3: Running NEST unit tests"
 echo "--------------------------------"
 
-junit_open 'core.phase_3'
+junit_open '03_unittests'
 
 for test_ext in sli py ; do
       for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
@@ -305,7 +284,7 @@ echo
 echo "Phase 4: Running regression tests"
 echo "---------------------------------"
 
-junit_open 'core.phase_4'
+junit_open '04_regressiontests'
 
 for test_ext in sli py ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
@@ -319,7 +298,7 @@ echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
 if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
-    junit_open 'core.phase_5'
+    junit_open '05_mpitests'
 
     NEST_BINARY=nest_indirect
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
@@ -354,7 +333,7 @@ echo "-------------------------------------------"
 #echo "Phase 6: Running MUSIC tests"
 #echo "----------------------------"
 #if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
-#    junit_open 'core.phase_6'
+#    junit_open '06_music_tests'
 #
 #    BASEDIR="$PWD"
 #    tmpdir="$(mktemp -d)"
@@ -464,71 +443,17 @@ if test "x${TEST_PYNEST}" = xtrue ; then
 
     if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where="${TEST_OUTDIR}" >/dev/null 2>&1; then
 
-        echo
-        echo "  Using nosetests."
-        echo
-
-        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-file="${TEST_OUTDIR}/pynest_tests.xml" "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
+        @PYTHON@ @NOSETESTS@ -v \
+                   --with-xunit --xunit-testsuite-name="07_pynest_tests" --xunit-file="${TEST_OUTDIR}/07_pynest_tests.xml" \
+                   "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
-        PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
-        PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
-        PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
-
-        # check that PYNEST_TEST_FAILURES/PYNEST_TEST_ERRORS contain numbers
-        if test ${PYNEST_TEST_FAILURES} -eq ${PYNEST_TEST_FAILURES} 2>/dev/null ; then
-          # PYNEST_TEST_FAILURES is a valid number
-          :
-        else
-          PYNEST_TEST_FAILURES=0
-        fi
-        if test ${PYNEST_TEST_ERRORS} -eq ${PYNEST_TEST_ERRORS} 2>/dev/null ; then
-          # PYNEST_TEST_ERRORS is a valid number
-          :
-        else
-          PYNEST_TEST_ERRORS=0
-        fi
-        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
-          # PYNEST_TEST_SKIPPED is a valid number
-          :
-        else
-          PYNEST_TEST_SKIPPED=0
-        fi
-        PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
-        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
-
     else
-
         echo
-        echo "  Nosetests unavailable. Using fallback test harness."
-        echo "  Fewer tests will be excuted."
+        echo "  Not running PyNEST tests because nosetests is not available."
         echo
-
-        "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-
-        PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
-
-        rm -f "pynest_test_numbers.log"
-
     fi
 
-    echo
-    echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
-    echo "     Passed: ${PYNEST_TEST_PASSED}"
-    echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
-    echo "     Failed: ${PYNEST_TEST_FAILED}"
-
-    PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
-    PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
-
-    TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
-    TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))
-    TEST_SKIPPED=$(( $TEST_SKIPPED + $PYNEST_TEST_SKIPPED ))
-    TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
 else
     echo
     echo "Phase 7: Running PyNEST tests"
@@ -541,64 +466,20 @@ echo
 echo "Phase 8: Running C++ tests (experimental)"
 echo "-----------------------------------------"
 
-if command -v "${NEST_PATH}/run_all_cpptests" > /dev/null 2>&1; then
-  CPP_TEST_OUTPUT="$(${NEST_PATH}/run_all_cpptests 2>&1)"
-  # TODO:
-  # We should check the return code ($?) of run_all_cpptests here to see
-  # if a fatal crash occured. We cannot simply test $? != 0, since
-  # run_all_cpptests will return a non-zero code if tests fail.
-
-  # TODO:
-  # The regex for the total number seems fine according to
-  # https://www.boost.org/doc/libs/1_65_0/libs/test/doc/html/boost_test/test_output/log_formats/log_human_readable_format.html
-  # but does the check for failures work as it should?
-  # At some point, we should also count skipped tests.
-  CPP_TEST_TOTAL="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*Running ([0-9]+).*/\1/p')"
-  CPP_TEST_FAILED="$(echo "$CPP_TEST_OUTPUT" | sed -${EXTENDED_REGEX_PARAM} -n 's/.*([0-9]+) failure.*/\1/p')"
-
-  # replace empty strings by zero so arithmetic expressions below work
-  CPP_TEST_TOTAL=${CPP_TEST_TOTAL:-0}
-  CPP_TEST_FAILED=${CPP_TEST_FAILED:-0}
-  CPP_TEST_PASSED=$(( $CPP_TEST_TOTAL - $CPP_TEST_FAILED ))
-
-  TEST_TOTAL=$(( $TEST_TOTAL + $CPP_TEST_TOTAL ))
-  TEST_PASSED=$(( $TEST_PASSED + $CPP_TEST_PASSED ))
-  TEST_FAILED=$(( $TEST_FAILED + $CPP_TEST_FAILED ))
-
-  echo "  C++ tests : ${CPP_TEST_TOTAL}"
-  echo "     Passed : ${CPP_TEST_PASSED}"
-  echo "     Failed : ${CPP_TEST_FAILED}"
-
+if command -v run_all_cpptests > /dev/null 2>&1; then
+  CPP_TEST_OUTPUT=$( run_all_cpptests --logger=JUNIT,error,"${TEST_OUTDIR}/08_cpptests.xml":HRF,error,stdout 2>&1 )
+  echo "${CPP_TEST_OUTPUT}" | tail -2
 else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
 
-echo
-echo "NEST Testsuite Summary"
-echo "----------------------"
-echo "  NEST Executable: $(which nest)"
-echo "  SLI Executable : $(which sli)"
-echo "  Total number of tests: ${TEST_TOTAL}"
-echo "     Passed: ${TEST_PASSED}"
-echo "     Skipped: ${TEST_SKIPPED} ${PYNEST_TEST_SKIPPED_TEXT:-}"
-echo "     Failed: ${TEST_FAILED} ${PYNEST_TEST_FAILED_TEXT:-}"
-echo
-
-if test ${TEST_FAILED} -gt 0 ; then
-    echo "***"
-    echo "*** There were errors detected during the run of the NEST test suite!"
-    ask_results
-else
-    rm -rf "${TEST_TMPDIR}"
-fi
+# Use plain python here to collect results
+python "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
+TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
-if test "$(uname -s)" = "Darwin"; then
+if test "x${INFO_OS}" = xDarwin ; then
     defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
 fi
 
-if test ${TEST_FAILED} -gt 0 ; then
-    exit 1
-else
-    exit 0
-fi
+exit $TESTSUITE_RESULT

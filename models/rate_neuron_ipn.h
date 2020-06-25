@@ -178,6 +178,9 @@ private:
     /** Mean input.*/
     double mu_;
 
+    /** Minimum rate.*/
+    double rectify_rate_;
+
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
@@ -185,7 +188,8 @@ private:
     bool linear_summation_;
 
     /** Should the rate be rectified?.
-        True: If the rate is negative it is set to zero after each time step.
+        True: If the rate is smaller than rectify_rate it is set to rectify_rate
+              after each time step.
         False (default): No rectification.
     **/
     bool rectify_output_;

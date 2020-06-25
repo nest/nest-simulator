@@ -81,6 +81,9 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
            sudo dpkg --install nest-simulator-x.y.z~NUMBER~ubuntu20.04.1_amd64.deb
 
+      Where the package name is taken from the result of the previous step (`NUMBER`
+      and potentially the Ubuntu version might differ).
+
        7. Test the package:
 
        .. code-block:: bash

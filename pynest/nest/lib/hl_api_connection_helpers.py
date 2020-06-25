@@ -165,7 +165,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if syn_spec is not None:
         if not isinstance(syn_spec, list):
             syn_spec = [syn_spec]
-        for syn_list in syn_spec:       
+        for syn_list in syn_spec:
             for key in syn_list.keys():
                 if key not in allowed_syn_spec_keys:
                     raise ValueError(

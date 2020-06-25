@@ -62,12 +62,27 @@ compile NEST from source, see section** :ref:`advanced_install`.
        4. Install any missing dependencies, if ``apt`` tells you so.
 
        5. After installing the dependencies, enter ``sudo apt source --build nest`` again.
+       When the build finished, look for lines like
+       ```
+      dpkg-deb: building package 'nest-dbgsym' in '../nest-dbgsym_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb'.
+      dpkg-deb: building package 'nest' in '../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb'.
+      #dh binary
+       dpkg-genbuildinfo --build=binary
+       dpkg-genchanges --build=binary >../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.changes
+      ```
+      and note down the full package name. In the above example this would be 
+      `nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb`, where the
+       number `202001311135` and potentially the Ubuntu version number may
+      be different.
 
        6. Install the ready Debian package after the rebuild:
 
        ..  code-block:: bash
 
            sudo dpkg --install nest-simulator-x.y.z~NUMBER~ubuntu20.04.1_amd64.deb
+
+      Where the package name is taken from the result of the previous step (`NUMBER`
+      and potentially the Ubuntu version might differ).
 
        7. Test the package:
 
@@ -314,4 +329,3 @@ these instructions.**
 
     Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
     up-to-date with most recent version of NEST. We cannot support out-dated versions.
-

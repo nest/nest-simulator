@@ -192,9 +192,6 @@ def SetKernelStatus(params):
 
     Params dictionary
 
-    Parameters
-    ----------
-
     Some of the keywords in the kernel status dictionary are internally
     calculated, and cannot be defined by the user. These are flagged as
     `read only` in the parameter list. Use GetKernelStatus to access their

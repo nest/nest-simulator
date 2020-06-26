@@ -32,10 +32,11 @@ import nest
 class CreateTestCase(unittest.TestCase):
     """Creation tests"""
 
+    def setUp(self):
+        nest.ResetKernel()
+
     def test_ModelCreate(self):
         """Model Creation"""
-
-        nest.ResetKernel()
 
         for model in nest.Models(mtype='nodes'):
             node = nest.Create(model)
@@ -44,8 +45,6 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelCreateN(self):
         """Model Creation with N"""
 
-        nest.ResetKernel()
-
         num_nodes = 10
         for model in nest.Models(mtype='nodes'):
             nodes = nest.Create(model, num_nodes)
@@ -53,8 +52,6 @@ class CreateTestCase(unittest.TestCase):
 
     def test_ModelCreateNdict(self):
         """Model Creation with N and dict"""
-
-        nest.ResetKernel()
 
         num_nodes = 10
         voltage = 12.0
@@ -71,8 +68,6 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelDicts(self):
         """IAF Creation with N and dicts"""
 
-        nest.ResetKernel()
-
         num_nodes = 10
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
         n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
@@ -81,8 +76,6 @@ class CreateTestCase(unittest.TestCase):
 
     def test_CopyModel(self):
         """CopyModel"""
-
-        nest.ResetKernel()
 
         nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
         vm = nest.GetDefaults('new_neuron')['V_m']

@@ -117,8 +117,8 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
     if func_name in _deprecation_warning:
         if not _deprecation_warning[func_name]['deprecation_issued']:
             if text is None:
-                text = """{0} is deprecated and will be removed in a future version of NEST.
-                          Please use {1} instead!""".format(func_name, alt_func_name)
+                text = ("{0} is deprecated and will be removed in a future version of NEST.\n"
+                        "Please use {1} instead!").format(func_name, alt_func_name)
                 text = get_wrapped_text(text)
 
             warnings.warn('\n' + text)   # add LF so text starts on new line

@@ -59,11 +59,24 @@ class CreateTestCase(unittest.TestCase):
 
         self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            self.assertRaises(TypeError, nest.Create,
-                              'iaf_psc_alpha', 10, tuple())
-            self.assertTrue(issubclass(w[-1].category, UserWarning))
+    def test_erroneous_param_to_create(self):
+        """Erroneous param to Create raises exception"""
+        num_nodes = 3
+        nest_errors = nest.kernel.NESTErrors
+        params = [(tuple(), TypeError),
+                  ({'V_m': [-50]}, IndexError),
+                  ({'V_mm': num_nodes*[-50.]}, KeyError),
+                  ({'V_m': num_nodes*[-50]}, nest_errors.TypeMismatch),
+                  ({'V_m': -50, 'C_m': num_nodes*[20.]}, nest_errors.TypeMismatch),
+                  ]
+
+        for p, err in params:
+            print(p)
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter('always')
+                self.assertRaises(err, nest.Create, 'iaf_psc_alpha', num_nodes, p)
+                self.assertEqual(len(w), 1, 'warning was not issued')
+                self.assertTrue(issubclass(w[0].category, UserWarning))
 
     def test_ModelDicts(self):
         """IAF Creation with N and dicts"""

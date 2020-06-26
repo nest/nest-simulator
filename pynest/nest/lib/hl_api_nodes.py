@@ -85,8 +85,7 @@ def Create(model, n=1, params=None, positions=None):
                 layer_specs['n'] = n
         else:
             if n > 1:
-                raise kernel.NESTError(
-                    'Cannot specify number of nodes with grid positions')
+                raise kernel.NESTError('Cannot specify number of nodes with grid positions')
             layer_specs['shape'] = positions.shape
             if positions.center is not None:
                 layer_specs['center'] = positions.center

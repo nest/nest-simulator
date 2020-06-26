@@ -325,9 +325,8 @@ def broadcast(item, length, allowed_types, name="item"):
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
-        raise TypeError("'{0}' must be a single value, a list with " +
-                        "one element or a list with {1} elements.".format(
-                            name, length))
+        raise TypeError(
+            "'{0}' must be a single value, a list with one element or a list with {1} elements.".format(name, length))
     return item
 
 
@@ -621,8 +620,7 @@ def get_parameters_hierarchical_addressing(nc, params):
         if type(value_list) != tuple:
             value_list = (value_list,)
     else:
-        raise TypeError('First argument must be a string, specifying' +
-                        ' path into hierarchical dictionary')
+        raise TypeError('First argument must be a string, specifying path into hierarchical dictionary')
 
     result = restructure_data(value_list, None)
 

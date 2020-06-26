@@ -40,11 +40,9 @@
 
 
 [1 2 4 8]
-{
-  ResetKernel
-  
-  [-0.5 0.5 0.25] Range
-  { /x Set [0.5 -0.5 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
+{  
+  [-0.25 0.25 0.25] Range
+  { /x Set [0.25 -0.25 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
   /pos Set
   
   /layer_spec
@@ -53,34 +51,25 @@
     /elements /iaf_psc_alpha
   >> def
 
-  % There are 25 positions in positions vector, so 25 neurons per source and target
+  % There are 9 positions in positions vector, so 9 neurons per source and target
   /layer_src layer_spec CreateLayer def
   /layer_trg layer_spec CreateLayer def
 
-  
   layer_src layer_trg
-   <<
-     /connection_type /pairwise_bernoulli_on_target /number_of_connections 10 % 10 connections per target
-     /synapse_parameters
-       [<< /weight -3. >> << /synapse_model /stdp_synapse /weight 2. /delay 1.9 >> << /weight 3. /delay 1.3 >> ]
-   >>
-   ConnectLayers
+  <<
+    /connection_type /pairwise_bernoulli_on_target /number_of_connections 4 % 4 connections per target
+    /synapse_parameters
+      [<< /weight -3. >> << /synapse_model /stdp_synapse /weight 2. /delay 1.9 >> << /weight 3. /delay 1.3 >> ]
+  >>
+  ConnectLayers
   
   /weight_delay_syn [] def
   << >> GetConnections /conns Set  
   conns GetStatus
-  {
-    dup
-    dup
-    
-    /weight get /w Set
-    /delay get /d Set
-    /synapse_model get /sm Set
-    
-    weight_delay_syn
-      w append
-      d append
-      sm append /weight_delay_syn Set
+  {     
+    [[/weight /delay /synapse_model]] get /wdsm Set
+
+    weight_delay_syn wdsm append Flatten /weight_delay_syn Set
   } forall
   
   weight_delay_syn
@@ -91,7 +80,7 @@
   
   % Create a reference list with the values we expect (values taken from syn_spec list above).
   /reference_list [] def
-  [10 25 mul 2 mul] Range
+  [4 9 mul 2 mul] Range
   {
     /indx Set
     indx 2 mod 0 eq
@@ -99,17 +88,17 @@
       reference_list [3. 1.3 /static_synapse] join /reference_list Set
     }
     {
-      reference_list [-3. 1. /static_synapse] join /reference_list Set 
+      reference_list [-3. 1. /static_synapse] join /reference_list Set
     } ifelse
   } forall
   
-  /reference_list reference_list [10 25 mul] [2. 1.9 /stdp_synapse] LayoutArray Flatten append Flatten def
+  /reference_list reference_list [4 9 mul] [2. 1.9 /stdp_synapse] LayoutArray Flatten append Flatten def
 
   % Go through results from different processes and append them to eachother.
   results 0 get
   {
     /mpi_res Set
-    
+  
     mpi_res
     {
       cumulative_res_list exch append /cumulative_res_list Set
@@ -117,8 +106,8 @@
   } forall
 
   % check that length of the cumulative result list from the different processes have right length,
-  % we have 10 times 25 times 3 connections and 3 elements extracted (weight, delay, synapse_model).
-  cumulative_res_list length 10 25 mul 3 mul 3 mul eq
+  % we have 4 times 9 times 3 connections and 3 elements extracted (weight, delay, synapse_model).
+  cumulative_res_list length 4 9 mul 3 mul 3 mul eq
   
   % Also check that the cumulative result list contains all variables we expect.
   cumulative_res_list reference_list eq and

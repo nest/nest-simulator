@@ -71,8 +71,7 @@ g = nest.Create('sinusoidal_gamma_generator', n=num_nodes,
                         'amplitude': 5000.0,
                         'frequency': 10.0,
                         'phase': 0.0,
-                        'order': [2.0, 10.0]   # note the syntax for different order parameter of the two nodes
-                       })
+                        'order': [2.0, 10.0]})   # note the syntax for different order parameter of the two nodes
 
 m = nest.Create('multimeter', num_nodes, {'interval': 0.1, 'record_from': ['rate']})
 s = nest.Create('spike_detector', num_nodes)

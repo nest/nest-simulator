@@ -597,6 +597,48 @@ class NEASTTestCase(unittest.TestCase):
         self.test_conductance_input(model_name='2tdend_4comp')
 
 
+    def test_spike_transmission(self, dt=.01):
+        dt = 0.1
+
+        nest.ResetKernel()
+        nest.SetKernelStatus(dict(resolution=dt))
+
+        soma_params = {
+            'C_m': 1.0,
+            'g_c': 0.1,
+            'g_L': 0.1,
+            'E_L': -70.0,
+        }
+
+        n_neat_0 = nest.Create('iaf_neat')
+        nest.AddCompartment(n_neat_0, 0, -1, soma_params)
+
+        n_neat_1 = nest.Create('iaf_neat')
+        nest.AddCompartment(n_neat_1, 0, -1, soma_params)
+        syn_idx = nest.AddReceptor(n_neat_1, 0, "AMPA")
+
+        nest.Connect(n_neat_0, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1,
+                                                   'receptor_type': syn_idx})
+
+        dc = nest.Create('dc_generator', {'amplitude': 2.0})
+        nest.Connect(dc, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
+                                             'receptor_type': 0})
+
+        m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['V_m_0'], 'interval': dt})
+        nest.Connect(m_neat_0, n_neat_0)
+
+        m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['V_m_0'], 'interval': dt})
+        nest.Connect(m_neat_1, n_neat_1)
+
+        nest.Simulate(100.)
+
+        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
+        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+
+        self.assertTrue(np.any(events_neat_0['V_m_0'] != soma_params['E_L']))
+        self.assertTrue(np.any(events_neat_1['V_m_0'] != soma_params['E_L']))
+
+
 def suite():
 
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
@@ -644,5 +686,3 @@ if __name__ == "__main__":
     # ntc.test_conductance_input(model_name='2tdend_4comp')
 
     # ntc.test_all_conductance_input()
-
-#

@@ -69,7 +69,7 @@ class IF_curve():
     n_neurons = 100       # Number of neurons
     n_threads = 4         # Nubmer of threads to run the simulation
 
-    def __init__(self, model, params=False):
+    def __init__(self, model, params=None):
         self.model = model
         self.params = params
         self.build()
@@ -86,7 +86,7 @@ class IF_curve():
         #######################################################################
         # We create neurons and devices with specified parameters.
 
-        self.neuron = nest.Create(self.model, self.n_neurons, self.params if self.params else {})
+        self.neuron = nest.Create(self.model, self.n_neurons, self.params)
         self.noise = nest.Create('noise_generator')
         self.spike_detector = nest.Create('spike_detector')
 

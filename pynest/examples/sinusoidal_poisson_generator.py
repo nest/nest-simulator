@@ -58,14 +58,10 @@ nest.SetKernelStatus({'resolution': 0.01})
 
 num_nodes = 2
 g = nest.Create('sinusoidal_poisson_generator', n=num_nodes,
-                params=[{'rate': 10000.0,
-                         'amplitude': 5000.0,
-                         'frequency': 10.0,
-                         'phase': 0.0},
-                        {'rate': 0.0,
-                         'amplitude': 10000.0,
-                         'frequency': 5.0,
-                         'phase': 90.0}])
+                params={'rate': [10000.0, 0.0],
+                        'amplitude': [5000.0, 10000.0],
+                        'frequency': [10.0, 5.0],
+                        'phase': [0.0, 90.0]})
 
 m = nest.Create('multimeter', num_nodes, {'interval': 0.1, 'record_from': ['rate']})
 s = nest.Create('spike_detector', num_nodes)

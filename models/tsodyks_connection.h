@@ -101,7 +101,7 @@ The following parameters can be set in the status dictionary:
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
-========  ======  ======================================================
+========  ======  ========================================================
 
 References
 ++++++++++

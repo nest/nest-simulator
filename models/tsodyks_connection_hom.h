@@ -97,7 +97,7 @@ Parameters
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
-========  ======  ======================================================
+========  ======  ========================================================
 
 Remarks:
 

@@ -247,7 +247,7 @@ class StructralPlasticityExample:
 ####################################################################################
 # In order to save the amount of average calcium concentration in each
 # population through time we create the function ``record_ca``. Here we use
-# the retrieve the value of `Ca` for every neuron in the network and then
+# the value of `Ca` for every neuron in the network and then
 # store the average.
 
     def record_ca(self):

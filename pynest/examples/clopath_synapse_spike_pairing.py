@@ -115,14 +115,12 @@ for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     prrt_nrn = nest.Create("parrot_neuron", 1)
 
     # Create and connect spike generators
-    spike_gen_pre = nest.Create("spike_generator", 1,
-                                {"spike_times": s_t_pre})
+    spike_gen_pre = nest.Create("spike_generator", {"spike_times": s_t_pre})
 
     nest.Connect(spike_gen_pre, prrt_nrn,
                  syn_spec={"delay": resolution})
 
-    spike_gen_post = nest.Create("spike_generator", 1,
-                                 {"spike_times": s_t_post})
+    spike_gen_post = nest.Create("spike_generator", {"spike_times": s_t_post})
 
     nest.Connect(spike_gen_post, nrn, syn_spec={"delay": resolution, "weight": 80.0})
 

@@ -60,7 +60,8 @@ Parameters
 The following parameters can be set in the status dictionary:
 
 ========  ======  ========================================================
- U        real    Parameter determining the increase in u with each spike (U1) [0,1], default=0.5
+ U        real    Parameter determining the increase in u with each spike
+                  (U1) [0,1], default=0.5
  u        real    The probability of release (U_se) [0,1],
                   default=0.5
  x        real    Current scaling factor of the weight, default=U

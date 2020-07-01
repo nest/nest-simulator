@@ -518,7 +518,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        compare_list = [3, 1, 0, 15, 6]
+        compare_list = [3, 1, 0, 18, 6]
         conn = [get_conn_some.get('source')[3],
                 get_conn_some.get('target')[3],
                 get_conn_some.get('target_thread')[3],
@@ -535,7 +535,7 @@ class TestNodeCollection(unittest.TestCase):
                         conns['port'][i]]
                        for i in range(len(nest.GetConnections(n[0])))]
 
-        ref = [[1, 1, 0, 15, 0], [1, 2, 0, 15, 1], [1, 3, 0, 15, 2]]
+        ref = [[1, 1, 0, 18, 0], [1, 2, 0, 18, 1], [1, 3, 0, 18, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
 

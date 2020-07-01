@@ -264,17 +264,18 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 void
 DynamicLoaderModule::init( SLIInterpreter* i )
 {
-
   // bind functions to terminal names
   i->createcommand( "Install", &loadmodule_function );
 
-  // initialize ltdl library for loading dynamic modules
-
-  int dl_error = lt_dlinit();
-
-  if ( dl_error )
+  // the ld_* functions return 0 on success and an int > 0 on failure
+  if ( lt_dlinit() )
   {
     LOG( M_ERROR, "DynamicLoaderModule::init", "Could not initialize libltdl. No dynamic modules will be available." );
+  }
+
+  if ( lt_dladdsearchdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_LIBDIR ) )
+  {
+    LOG( M_ERROR, "DynamicLoaderModule::init", "Could not add dynamic module search directory." );
   }
 }
 

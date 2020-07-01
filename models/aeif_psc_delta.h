@@ -223,22 +223,21 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope faktor in ms.
-    double tau_w;   //!< adaptation time-constant in ms.
-    double a;       //!< Subthreshold adaptation in nS.
+    double Delta_T; //!< Slope factor in ms
+    double tau_w;   //!< Adaptation time-constant in ms
+    double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV.
-    double t_ref;   //!< Refractory period in ms.
-    double I_e;     //!< Intrinsic current in pA.
+    double V_th;    //!< Spike threshold in mV
+    double t_ref;   //!< Refractory period in ms
+    double I_e;     //!< Intrinsic current in pA
 
-    double gsl_error_tol;  //!< error bound for GSL integrator
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    double gsl_error_tol;  //!< Error bound for GSL integrator
+    bool with_refr_input_; //!< Spikes arriving during refractory period are counted
 
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:

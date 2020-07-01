@@ -1,26 +1,7 @@
 #!/bin/sh
 
-# NEST is installed here. When you relocate NEST, change this variable.
-export NEST_INSTALL_DIR="@CMAKE_INSTALL_PREFIX@"
+# Make PyNEST available by prepending its path to PYTHONPATH in a safe way.
+export PYTHONPATH="@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@${PYTHONPATH:+:$PYTHONPATH}"
 
-# NEST finds standard *.sli files $NEST_DATA_DIR/sli
-export NEST_DATA_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DATADIR@"
-
-# NEST finds help files $NEST_DOC_DIR/help
-export NEST_DOC_DIR="${NEST_INSTALL_DIR}/@CMAKE_INSTALL_DOCDIR@"
-
-# The path in which NEST dynamic libraries are found. Works also if $(DY)LD_LIBRARY_PATH is undefined.
-if [ "`uname`" = "Darwin" ]; then
-    export DYLD_LIBRARY_PATH="$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest"${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
-else
-    export LD_LIBRARY_PATH="$NEST_INSTALL_DIR/@CMAKE_INSTALL_LIBDIR@/nest"${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-fi
-
-# The path where the PyNEST bindings are installed.
-export NEST_PYTHON_PREFIX="${NEST_INSTALL_DIR}/@PYEXECDIR@"
-
-# Prepend NEST to PYTHONPATH. Works also if $PYTHONPATH is undefined.
-export PYTHONPATH="$NEST_PYTHON_PREFIX${PYTHONPATH:+:$PYTHONPATH}"
-
-# Make nest/sli/... executables visible.
-export PATH="${NEST_INSTALL_DIR}/bin:${PATH}"
+# Make NEST executables available by prepending their path to PATH.
+export PATH="@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@:${PATH}"

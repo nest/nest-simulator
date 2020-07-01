@@ -1521,14 +1521,16 @@ Manual. The basic steps required to get started are:
 
    .. code:: bash
 
-      cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../mm_src
+      cmake -Dwith-nest=${NEST_INSTALL_PREFIX}/bin/nest-config ../mm_src
 
-4. MyModule will then be installed to ``${NEST_INSTALL_DIR}``. This
-   ensures that NEST will be able to find initializing SLI files for the
-   module. You should not use the ``--prefix`` to select a different
-   installation destination. If you do, you must make sure to use
-   addpath in SLI before loading the module to ensure that NEST will
-   find the SLI initialization file for your module.
+4. MyModule will be installed under ``NEST_INSTALL_PREFIX``. This
+   ensures that NEST will be able to find the module and initializing SLI
+   files for the module. You should not use the ``-DCMAKE_INSTALL_PREFIX``
+   to select a different installation destination. If you do, you must make
+   sure to use ``addpath`` in SLI before loading the module to let NEST
+   find the SLI initialization file for your module. You also might have
+   to set ``LD_LIBRARY_PATH`` (on Linux) or ``DYLD_LIBRARY_PATH`` (on macOS)``
+   for the module itself to be found.
 
 5. Compile and install.
 

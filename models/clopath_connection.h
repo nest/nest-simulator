@@ -219,8 +219,8 @@ ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSy
   double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
-  std::deque< histentry_cl >::iterator start;
-  std::deque< histentry_cl >::iterator finish;
+  std::deque< histentry_extended >::iterator start;
+  std::deque< histentry_extended >::iterator finish;
 
   // For a new synapse, t_lastspike_ contains the point in time of the last
   // spike. So we initially read the

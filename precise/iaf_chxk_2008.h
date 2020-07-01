@@ -61,19 +61,35 @@ extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Conductance based leaky integrate-and-fire neuron model used in Casti et al 2008
+Conductance based leaky integrate-and-fire neuron model used in Casti et al. 2008
 
 Description
 +++++++++++
 
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses [1]_.  A spike is emitted when the membrane potential
+conductance-based synapses [1]_. A spike is emitted when the membrane potential
 is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
 follow alpha-function time courses as in the iaf_cond_alpha model.
+
+.. note::
+   In accordance with the original Fortran implementation of the model used
+   in [1]_, the activation time point for the AHP following a spike is
+   determined by linear interpolation within the time step during which the
+   threshold was crossed.
+
+   iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+   information, but they ignore precise spike times when handling synaptic
+   input.
+
+.. note::
+   In the original Fortran implementation underlying [1]_, all previous AHP
+   activation was discarded when a new spike occurred, leading to reduced AHP
+   currents in particular during periods of high spiking activity. Set
+   ``ahp_bug`` to ``true`` to obtain this behavior in the model.
 
 Parameters
 ++++++++++
@@ -97,21 +113,6 @@ The following parameters can be set in the status dictionary.
  ahp_bug  boolean Defaults to false. If true, behaves like original
                   model implementation
 ========  ======= ===========================================================
-
-Remarks
-+++++++
-
-- In accordance with the original Fortran implementation of the model used
-  in [1]_, the activation time point for the AHP following a spike is
-  determined by linear interpolation within the time step during which the
-  threshold was crossed.
-- iaf_chxk_2008 neurons therefore emit spikes with precise spike time
-  information, but they ignore precise spike times when handling synaptic
-  input.
-- In the original Fortran implementation underlying [1]_, all previous AHP
-  activation was discarded when a new spike occurred, leading to reduced AHP
-  currents in particular during periods of high spiking activity. Set
-  `ahp_bug` to `true` to obtain this behavior in the model.
 
 References
 ++++++++++

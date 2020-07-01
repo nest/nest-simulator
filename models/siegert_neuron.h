@@ -58,7 +58,7 @@ Description
 siegert_neuron is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
-synapses [2] and [3, their eq. 25]. The model can be used for a
+synapses [2]_ and [3]_ (their eq. 25). The model can be used for a
 mean-field analysis of spiking networks. A constant mean input can be
 provided to create neurons with a target rate, e.g. to model a constant
 external input.
@@ -82,7 +82,6 @@ The following parameters can be set in the status directory and are
 used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
 
-\verbatim embed:rst
 =========  ======  ================================================
  tau_m     ms      Membrane time constant
  tau_syn   ms      Time constant of postsynaptic currents

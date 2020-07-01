@@ -404,8 +404,9 @@ def Install(module_name):
 
     Notes
     -----
-    Dynamically linked modules are searched in the ``LD_LIBRARY_PATH``
-    (``DYLD_LIBRARY_PATH`` under OSX).
+    Dynamically linked modules are searched in the NEST library
+    directory (``<prefix>/lib/nest``) and in ``LD_LIBRARY_PATH`` (on
+    Linux) or ``DYLD_LIBRARY_PATH`` (on OSX).
 
     **Example**
     ::

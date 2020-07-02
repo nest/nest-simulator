@@ -75,10 +75,8 @@ times = vm.events['times']
 v_m_values = vm.events['V_m']
 
 plt.figure(1)
-plt.plot(times[numpy.where(senders == 1)],
-         v_m_values[numpy.where(senders == 1)], 'r-')
-plt.plot(times[numpy.where(senders == 2)],
-         v_m_values[numpy.where(senders == 2)], 'g-')
+plt.plot(times[numpy.where(senders == 1)], v_m_values[numpy.where(senders == 1)], 'r-')
+plt.plot(times[numpy.where(senders == 2)], v_m_values[numpy.where(senders == 2)], 'g-')
 plt.xlabel('time (ms)')
 plt.ylabel('membrane potential (mV)')
 plt.show()

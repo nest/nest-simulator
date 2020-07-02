@@ -330,6 +330,10 @@ class NodeCollection(object):
         --------
         set
         """
+
+        if self.empty():
+            return
+
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -396,6 +400,8 @@ class NodeCollection(object):
             If the specified parameter does not exist for the nodes.
         """
 
+        if self.empty():
+            return
         if kwargs and params is None:
             params = kwargs
         elif kwargs and params:

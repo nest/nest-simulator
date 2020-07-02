@@ -371,7 +371,7 @@ def GetStatus(nodes, keys=None, output=''):
         raise TypeError("The first input (nodes) must be NodeCollection or a SynapseCollection with connection handles")
 
     if len(nodes) == 0:
-        return nodes
+        return
 
     if keys is None:
         cmd = 'GetStatus'

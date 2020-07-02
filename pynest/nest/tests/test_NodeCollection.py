@@ -703,26 +703,36 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_empty_nc(self):
         """Connection with empty NodeCollection raises error"""
-        empty = nest.NodeCollection([])
+        empty_nc = nest.NodeCollection([])
         nodes = nest.Create('iaf_psc_alpha', 5)
 
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(nodes, empty)
+            nest.Connect(nodes, empty_nc)
 
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(empty, nodes)
+            nest.Connect(empty_nc, nodes)
 
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(empty, empty)
+            nest.Connect(empty_nc, empty_nc)
+
+        self.assertTrue(empty_nc.empty())
+        self.assertFalse(nodes.empty())
+        self.assertIsNone(empty_nc.get())
+        self.assertIsNone(empty_nc.set())  # Also checking that it does not raise an error
 
     def test_empty_nc_addition(self):
         """Combine NodeCollection with empty NodeCollection and connect"""
         n = 5
+        vm = -50.
 
         nodes_a = nest.NodeCollection([])
         nodes_a += nest.Create('iaf_psc_alpha', n)
         nest.Connect(nodes_a, nodes_a)
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertFalse(nodes_a.empty())
+        self.assertIsNotNone(nodes_a.get())
+        nodes_a.V_m = vm
+        self.assertEqual(nodes_a.V_m,  n*(vm,))
 
         nest.ResetKernel()
 
@@ -730,6 +740,10 @@ class TestNodeCollection(unittest.TestCase):
         nodes_b += nest.NodeCollection([])
         nest.Connect(nodes_b, nodes_b)
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertFalse(nodes_b.empty())
+        self.assertIsNotNone(nodes_b.get())
+        nodes_b.V_m = vm
+        self.assertEqual(nodes_b.V_m,  n*(vm,))
 
 
 def suite():

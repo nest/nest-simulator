@@ -22,19 +22,19 @@
 import numpy as np
 import nest
 import unittest
-from math import exp
 
 
 @nest.ll_api.check_stack
 class Tsodyks2ConnectionTest(unittest.TestCase):
     """
-    Hello, world!
+    Functional test for the "tsodyks2" synapse: compare NEST implementation to
+    a reference generated in the method reproduce_weight_drift(), for a
+    sequence of spike times coming from a Poisson generator.
     """
 
     def setUp(self):
         self.resolution = 0.1  # [ms]
         self.presynaptic_firing_rate = 20.0  # [Hz]
-        self.postsynaptic_firing_rate = 20.0  # [Hz]
         self.simulation_duration = 1E3  # [ms]
         self.hardcoded_trains_length = 15.  # [ms]
         self.synapse_parameters = {
@@ -52,9 +52,9 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         synapse_model = "tsodyks2_synapse_rec"
         self.synapse_parameters["synapse_model"] = synapse_model
 
-        pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
+        pre_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
-            pre_spikes, post_spikes,
+            pre_spikes,
             self.synapse_parameters["weight"])
 
         assert np.all(np.abs(np.array(weight_reproduced_independently) - np.array(weight_by_nest)) < 1E-12)
@@ -76,46 +76,16 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         presynaptic_neuron = neurons[0]
         postsynaptic_neuron = neurons[1]
 
-        generators = nest.Create(
+        presynaptic_generator = nest.Create(
             "poisson_generator",
-            2,
-            params=({"rate": self.presynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)},
-                    {"rate": self.postsynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
-        presynaptic_generator = generators[0]
-        postsynaptic_generator = generators[1]
-
-        # While the random sequences, fairly long, would supposedly
-        # reveal small differences in the weight change between NEST
-        # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
-        # test every possible combination of pre/post precedence, we
-        # append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12 13
-        # post:  2 3 4       8 9 10    12
-        (
-            hardcoded_pre_times,
-            hardcoded_post_times
-        ) = [
-            [
-                self.simulation_duration - self.hardcoded_trains_length + t
-                for t in train
-            ] for train in (
-                (1, 5, 6, 7, 9, 11, 12, 13),
-                (2, 3, 4, 8, 9, 10, 12)
-            )
-        ]
-
-        pre_spike_generator = nest.Create("spike_generator", 1, params={"spike_times" : hardcoded_pre_times})
-        post_spike_generator = nest.Create("spike_generator", 1, params={"spike_times" : hardcoded_post_times})
+            1,
+            params={"rate": self.presynaptic_firing_rate,
+                     "stop": (self.simulation_duration - self.hardcoded_trains_length)})
 
         # The detector is to save the randomly generated spike trains.
         spike_detector = nest.Create("spike_detector")
 
-        nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(postsynaptic_generator + post_spike_generator, presynaptic_neuron,
+        nest.Connect(presynaptic_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
         nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
                      syn_spec={"synapse_model": "static_synapse"})
@@ -130,23 +100,13 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 
         all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
 
         times = wr.get("events", "times")
         weights = wr.get("events", "weights")
 
-        # remove repeated times (e.g. times = [ ..., 42., 42., ...])
-        assert np.all(np.diff(times) >= 0)
-        repeat_idx = 2 + np.where(np.diff(times) == 0)[0]
-        idx = np.arange(len(times))
-        import pdb;pdb.set_trace()
-        times = [times[i] for i in set(idx) - set(repeat_idx)]
-        weights = [weights[i] for i in set(idx) - set(repeat_idx)]
-        import pdb;pdb.set_trace()
+        return (pre_spikes, weights)
 
-        return (pre_spikes, post_spikes, weights)
-
-    def reproduce_weight_drift(self, _pre_spikes, _post_spikes,
+    def reproduce_weight_drift(self, _pre_spikes,
                                _initial_weight):
         """
         Returns the total weight change of the synapse
@@ -158,7 +118,6 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         # These are defined just for convenience,
         # STDP is evaluated on exact times nonetheless
         pre_spikes_forced_to_grid = [int(t / self.resolution) for t in _pre_spikes]
-        post_spikes_forced_to_grid = [int(t / self.resolution) for t in _post_spikes]
 
         n_steps = 1 + int(np.ceil(self.simulation_duration / self.resolution))
         w_log = []
@@ -192,7 +151,6 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
                 t_lastspike = t_spike
 
         return w_log
-        #return w_log[1:]
 
 
 def suite():

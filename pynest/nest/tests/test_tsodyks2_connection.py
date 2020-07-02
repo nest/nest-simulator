@@ -1,0 +1,211 @@
+# -*- coding: utf-8 -*-
+#
+# test_tsodyks2_connection.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+import numpy as np
+import nest
+import unittest
+from math import exp
+
+
+@nest.ll_api.check_stack
+class Tsodyks2ConnectionTest(unittest.TestCase):
+    """
+    Hello, world!
+    """
+
+    def setUp(self):
+        self.resolution = 0.1  # [ms]
+        self.presynaptic_firing_rate = 20.0  # [Hz]
+        self.postsynaptic_firing_rate = 20.0  # [Hz]
+        self.simulation_duration = 1E3  # [ms]
+        self.hardcoded_trains_length = 15.  # [ms]
+        self.synapse_parameters = {
+            "receptor_type": 1,
+            "delay": self.resolution,
+            "U": 1.0,
+            "u": 1.0,
+            "x": 1.0,
+            "tau_rec": 100.,
+            "tau_fac": 0.,
+            "weight": 1.            # initial weight
+        }
+
+    def test_tsodyk2_synapse(self):
+        synapse_model = "tsodyks2_synapse_rec"
+        self.synapse_parameters["synapse_model"] = synapse_model
+
+        pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
+        weight_reproduced_independently = self.reproduce_weight_drift(
+            pre_spikes, post_spikes,
+            self.synapse_parameters["weight"])
+
+        assert np.all(np.abs(np.array(weight_reproduced_independently) - np.array(weight_by_nest)) < 1E-12)
+
+    def do_the_nest_simulation(self):
+        """
+        This function is where calls to NEST reside.
+        Returns the generated pre- and post spike sequences
+        and the resulting weight established by the tsodyks2 synapse.
+        """
+        nest.set_verbosity('M_WARNING')
+        nest.ResetKernel()
+        nest.SetKernelStatus({'resolution': self.resolution})
+
+        neurons = nest.Create(
+            "parrot_neuron",
+            2,
+            params={})
+        presynaptic_neuron = neurons[0]
+        postsynaptic_neuron = neurons[1]
+
+        generators = nest.Create(
+            "poisson_generator",
+            2,
+            params=({"rate": self.presynaptic_firing_rate,
+                     "stop": (self.simulation_duration - self.hardcoded_trains_length)},
+                    {"rate": self.postsynaptic_firing_rate,
+                     "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
+        presynaptic_generator = generators[0]
+        postsynaptic_generator = generators[1]
+
+        # While the random sequences, fairly long, would supposedly
+        # reveal small differences in the weight change between NEST
+        # and ours, some low-probability events (say, coinciding
+        # spikes) can well not have occured. To generate and
+        # test every possible combination of pre/post precedence, we
+        # append some hardcoded spike sequences:
+        # pre: 1       5 6 7   9    11 12 13
+        # post:  2 3 4       8 9 10    12
+        (
+            hardcoded_pre_times,
+            hardcoded_post_times
+        ) = [
+            [
+                self.simulation_duration - self.hardcoded_trains_length + t
+                for t in train
+            ] for train in (
+                (1, 5, 6, 7, 9, 11, 12, 13),
+                (2, 3, 4, 8, 9, 10, 12)
+            )
+        ]
+
+        pre_spike_generator = nest.Create("spike_generator", 1, params={"spike_times" : hardcoded_pre_times})
+        post_spike_generator = nest.Create("spike_generator", 1, params={"spike_times" : hardcoded_post_times})
+
+        # The detector is to save the randomly generated spike trains.
+        spike_detector = nest.Create("spike_detector")
+
+        nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
+                     syn_spec={"synapse_model": "static_synapse"})
+        nest.Connect(postsynaptic_generator + post_spike_generator, presynaptic_neuron,
+                     syn_spec={"synapse_model": "static_synapse"})
+        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
+                     syn_spec={"synapse_model": "static_synapse"})
+        # The synapse of interest itself
+        wr = nest.Create('weight_recorder', 1)
+        nest.CopyModel("tsodyks2_synapse", "tsodyks2_synapse_rec",
+                       {"weight_recorder": wr})
+        nest.Connect(presynaptic_neuron, postsynaptic_neuron,
+                     syn_spec=self.synapse_parameters)
+
+        nest.Simulate(self.simulation_duration)
+
+        all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
+        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
+
+        times = wr.get("events", "times")
+        weights = wr.get("events", "weights")
+
+        # remove repeated times (e.g. times = [ ..., 42., 42., ...])
+        assert np.all(np.diff(times) >= 0)
+        repeat_idx = 2 + np.where(np.diff(times) == 0)[0]
+        idx = np.arange(len(times))
+        import pdb;pdb.set_trace()
+        times = [times[i] for i in set(idx) - set(repeat_idx)]
+        weights = [weights[i] for i in set(idx) - set(repeat_idx)]
+        import pdb;pdb.set_trace()
+
+        return (pre_spikes, post_spikes, weights)
+
+    def reproduce_weight_drift(self, _pre_spikes, _post_spikes,
+                               _initial_weight):
+        """
+        Returns the total weight change of the synapse
+        computed outside of NEST.
+        The implementation imitates a step-based simulation: evolving time, we
+        trigger a weight update when the time equals one of the spike moments.
+        """
+
+        # These are defined just for convenience,
+        # STDP is evaluated on exact times nonetheless
+        pre_spikes_forced_to_grid = [int(t / self.resolution) for t in _pre_spikes]
+        post_spikes_forced_to_grid = [int(t / self.resolution) for t in _post_spikes]
+
+        n_steps = 1 + int(np.ceil(self.simulation_duration / self.resolution))
+        w_log = []
+
+        t_lastspike = 0.
+        A = 1.
+        w = _initial_weight
+        R_ = 1.
+        u_ = self.synapse_parameters["U"]
+        for time_in_simulation_steps in range(n_steps):
+            if time_in_simulation_steps in pre_spikes_forced_to_grid:
+                # A presynaptic spike occured now.
+
+                # Adjusting the current time to make it exact.
+                t_spike = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
+
+                # Evaluating the depression rule.
+                h = t_spike - t_lastspike
+                R_decay = np.exp( -h / self.synapse_parameters["tau_rec"] )
+                if self.synapse_parameters["tau_fac"] < 1E-10:
+                    u_decay = 0.
+                else:
+                    u_decay = np.exp(-h / self.synapse_parameters["tau_fac"] )
+
+                w = R_ * u_ * A
+                w_log.append(w)
+
+                R_ = 1. + ( R_ - R_ * u_ - 1. ) * R_decay
+                u_ = self.synapse_parameters["U"] + u_ * ( 1. - self.synapse_parameters["U"] ) * u_decay
+
+                t_lastspike = t_spike
+
+        return w_log
+        #return w_log[1:]
+
+
+def suite():
+    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
+    # using loadTestsFromTestCase instead.
+    suite = unittest.TestLoader().loadTestsFromTestCase(Tsodyks2ConnectionTest)
+    return unittest.TestSuite([suite])
+
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+
+
+if __name__ == "__main__":
+    run()

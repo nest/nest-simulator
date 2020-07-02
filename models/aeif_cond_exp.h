@@ -68,16 +68,15 @@ extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
  */
 extern "C" int aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup aeif
-@ingroup cond
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, conductance-based
 
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
-                      model according to Brette and Gerstner (2005).
+Short description
++++++++++++++++++
 
-Description:
+Conductance based exponential integrate-and-fire neuron model
+
+Description
++++++++++++
 
 aeif_cond_exp is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic
@@ -87,21 +86,25 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-@f[ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e @f]
+
+.. math::
+
+ C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+                                                     -g_i(t)(V-E_i)-w +I_e
 
 and
 
-@f[ \tau_w * dw/dt= a(V-E_L) -W @f]
+.. math::
+
+ \tau_w * dw/dt= a(V-E_L) -W
 
 Note that the spike detection threshold V_peak is automatically set to
-\f$ V_th+10 mV \f$ to avoid numerical instabilites that may result from
+:math:`V_th+10 mV` to avoid numerical instabilites that may result from
 setting V_peak too high.
 
 Parameters:
++++++++++++++
 The following parameters can be set in the status dictionary.
-
-\verbatim embed:rst
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -138,11 +141,11 @@ The following parameters can be set in the status dictionary.
 **Synaptic parameters**
 -------------------------------------------------------------------------------
  E_ex       mV      Excitatory reversal potential
- tau_syn_ex ms      Rise time of excitatory synaptic conductance (alpha
-                    function)
+ tau_syn_ex ms      Exponential decay time constant of excitatory synaptic
+                    conductance kernel
  E_in       mV      Inhibitory reversal potential
- tau_syn_in ms      Rise time of the inhibitory synaptic conductance
-                    (alpha function)
+ tau_syn_in ms      Exponential decay time constant of inhibitory synaptic
+                    conductance kernel
 =========== ======= ===========================================================
 
 ============= ======= =========================================================
@@ -152,24 +155,33 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
-Fardet on December 2016
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-\verbatim embed:rst
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+References
+++++++++++
+
 .. [1] Brette R and Gerstner W (2005). Adaptive Exponential
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-\endverbatim
 
-SeeAlso: iaf_cond_exp, aeif_cond_alpha
-*/
+
+See also
+++++++++
+
+iaf_cond_exp, aeif_cond_alpha
+
+EndUserDocs */
+
 class aeif_cond_exp : public Archiving_Node
 {
 
@@ -231,17 +243,17 @@ private:
     double E_ex;       //!< Excitatory reversal Potential in mV
     double E_in;       //!< Inhibitory reversal Potential in mV
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope faktor in ms.
-    double tau_w;      //!< adaptation time-constant in ms.
-    double a;          //!< Subthreshold adaptation in nS.
+    double Delta_T;    //!< Slope factor in ms
+    double tau_w;      //!< Adaptation time-constant in ms
+    double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV.
-    double t_ref;      //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
-    double I_e;        //!< Intrinsic current in pA.
+    double V_th;       //!< Spike threshold in mV
+    double t_ref;      //!< Refractory period in ms
+    double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
+    double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
+    double I_e;        //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 

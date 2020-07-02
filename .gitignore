@@ -60,7 +60,10 @@ CPackSourceConfig.cmake
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
+doc/models/
 doc/pynestkernel_mock.py
+doc/from_cpp/
+doc/microcircuit/
 lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 

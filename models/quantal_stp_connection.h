@@ -32,32 +32,34 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stp
+/* BeginUserDocs: synapse, short-term plasticity
 
-Name: quantal_stp_synapse - Probabilistic synapse model with short term
-plasticity.
+Short description
++++++++++++++++++
 
-Description:
+Probabilistic synapse model with short term plasticity
+
+Description
++++++++++++
 
 This synapse model implements synaptic short-term depression and
 short-term facilitation according to the quantal release model
-described by Fuhrmann et al. [1] and Loebel et al. [2].
+described by Fuhrmann et al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of
 the available release sites.  This fraction is binomialy
 distributed and the release probability per site is governed by the
 Fuhrmann et al. (2002) model. The solution of the differential
-equations is taken from Maass and Markram 2002 [3].
+equations is taken from Maass and Markram 2002 [3]_.
 
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
-\verbatim embed:rst
+
 ==========  ======= =========================================================
  U          real    Maximal fraction of available resources [0,1],
                     default=0.5
@@ -68,12 +70,10 @@ The following parameters can be set in the status dictionary:
  tau_rec    ms      Time constant for depression, default=800 ms
  tau_rec    ms      Time constant for facilitation, default=0 (off)
 ==========  ======= =========================================================
-\endverbatim
 
+References
+++++++++++
 
-References:
-
-\verbatim embed:rst
 .. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
        neurophysiology, 87(1):140-8.
@@ -85,16 +85,19 @@ References:
 .. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
        Neural Networks, 15(2):155-161.
        DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-FirstVersion: December 2013
+SpikeEvent
 
-Author: Marc-Oliver Gewaltig, based on tsodyks2_synapse
+See also
+++++++++
 
-SeeAlso: tsodyks2_synapse, synapsedict, stdp_synapse, static_synapse
-*/
+tsodyks2_synapse, stdp_synapse, static_synapse
+
+EndUserDocs */
+
 template < typename targetidentifierT >
 class Quantal_StpConnection : public Connection< targetidentifierT >
 {
@@ -200,7 +203,7 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // Compute release probability
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
 
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )

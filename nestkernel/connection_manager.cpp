@@ -94,7 +94,7 @@ nest::ConnectionManager::initialize()
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
 
-  have_connections_changed_.initialize( num_threads, true );
+  have_connections_changed_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
@@ -540,6 +540,14 @@ nest::ConnectionManager::connect_( Node& s,
 
   if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
     and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
+
+  if ( kernel().model_manager.connector_requires_urbanczik_archiving( syn_id )
+    and not r.supports_urbanczik_archiving() )
   {
     throw NotImplemented(
       "This synapse model is not supported by the neuron model of at least one "

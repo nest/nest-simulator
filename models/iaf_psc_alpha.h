@@ -35,14 +35,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-Name: iaf_psc_alpha - Leaky integrate-and-fire neuron model.
+Short description
++++++++++++++++++
 
-Description:
+Leaky integrate-and-fire neuron model
+
+Description
++++++++++++
 
 iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
@@ -52,7 +53,7 @@ The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [][1]. The neuron dynamics is solved on the time
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -61,7 +62,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1].  A flow chart can be found in [2].
+[1]_.  A flow chart can be found in [2]_.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
@@ -72,30 +73,36 @@ of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
-Remarks:
+.. note::
+   The present implementation uses individual variables for the
+   components of the state vector and the non-zero matrix elements of
+   the propagator.  Because the propagator is a lower triangular matrix
+   no full matrix multiplication needs to be carried out and the
+   computation can be done "in place" i.e. no temporary state vector
+   object is required.
 
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
-object is required.
+   The template support of recent C++ compilers enables a more succinct
+   formulation without loss of runtime performance already at minimal
+   optimization levels. A future version of iaf_psc_alpha will probably
+   address the problem of efficient usage of appropriate vector and
+   matrix objects.
 
-The template support of recent C++ compilers enables a more succinct
-formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_psc_alpha will probably
-address the problem of efficient usage of appropriate vector and
-matrix objects.
+.. note::
+   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+   will numerically behave as if tau_m is equal to tau_syn_ex or
+   tau_syn_in, respectively, to avoid numerical instabilities.
+   For details, please see
+   <https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
+   in the NEST source code (docs/model_details).
 
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 =========== ======  ==========================================================
  V_m        mV      Membrane potential
- E_L        mV      Resting membrane potenial
+ E_L        mV      Resting membrane potential
  C_m        pF      Capacity of the membrane
  tau_m      ms      Membrane time constant
  t_ref      ms      Duration of refractory period
@@ -106,18 +113,10 @@ The following parameters can be set in the status dictionary.
  I_e        pA      Constant input current
  V_min      mV      Absolute lower value for the membrane potenial
 =========== ======  ==========================================================
-\endverbatim
-Remarks:
 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in
-the NEST source code (docs/model_details).
+References
+++++++++++
 
-References:
-
-\verbatim embed:rst
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -130,18 +129,24 @@ References:
        subthreshold integration with continuous spike times in discrete time
        neural network simulations. Neural Computation, in press
        DOI: https://doi.org/10.1162/neco.2007.19.1.47
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-FirstVersion: September 1999
+Receives
+++++++++
 
-Author:  Diesmann, Gewaltig
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
-*/
+See also
+++++++++
+
+iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
+
+EndUserDocs */
+
 class iaf_psc_alpha : public Archiving_Node
 {
 

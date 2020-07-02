@@ -13,6 +13,11 @@ description <music_tutorial_3>` for explanation. Below we will only highlight th
 differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
+
 .. code-block:: python
     :linenos:
 
@@ -99,6 +104,6 @@ keyword we mentioned in the previous section is, unsurprisingly,
 C++.
 
 As the ``pymusic`` bindings are still quite new the
-documentation is still lagging behind. This quick introduction should
-nevertheless be enough for you to get going with the bindings. Feel free to ask our `Mailing List <https://www.nest-initiative.org/mailinglist/>`_  if you need further help.
-
+documentation is still lagging behind. This quick introduction should nevertheless be enough for you
+to get going with the bindings. Feel free to ask our `Mailing List <https://www.nest-initiative.org/mailinglist/>`_
+if you need further help.

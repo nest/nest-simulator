@@ -940,7 +940,6 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       // Getting connections from devices.
       for ( auto t_node_id : target_neuron_node_ids )
       {
-        // target_table_devices_ contains connections both to and from devices
         target_table_devices_.get_connections_from_devices_(
           0, t_node_id, tid, syn_id, synapse_label, conns_in_thread );
       }

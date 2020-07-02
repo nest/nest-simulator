@@ -454,6 +454,10 @@ class NodeCollection(object):
 
         return index
 
+    def empty(self):
+        """Returns whether the NodeCollection is empty."""
+        return self.__len__() == 0
+
     def __array__(self, dtype=None):
         """Convert the NodeCollection to a NumPy array."""
         return numpy.array(self.tolist(), dtype=dtype)

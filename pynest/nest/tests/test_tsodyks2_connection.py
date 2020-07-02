@@ -80,7 +80,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             "poisson_generator",
             1,
             params={"rate": self.presynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)})
+                    "stop": (self.simulation_duration - self.hardcoded_trains_length)})
 
         # The detector is to save the randomly generated spike trains.
         spike_detector = nest.Create("spike_detector")
@@ -136,17 +136,17 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 
                 # Evaluating the depression rule.
                 h = t_spike - t_lastspike
-                R_decay = np.exp( -h / self.synapse_parameters["tau_rec"] )
+                R_decay = np.exp(-h / self.synapse_parameters["tau_rec"])
                 if self.synapse_parameters["tau_fac"] < 1E-10:
                     u_decay = 0.
                 else:
-                    u_decay = np.exp(-h / self.synapse_parameters["tau_fac"] )
+                    u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
 
                 w = R_ * u_ * A
                 w_log.append(w)
 
-                R_ = 1. + ( R_ - R_ * u_ - 1. ) * R_decay
-                u_ = self.synapse_parameters["U"] + u_ * ( 1. - self.synapse_parameters["U"] ) * u_decay
+                R_ = 1. + (R_ - R_ * u_ - 1.) * R_decay
+                u_ = self.synapse_parameters["U"] + u_ * (1. - self.synapse_parameters["U"]) * u_decay
 
                 t_lastspike = t_spike
 

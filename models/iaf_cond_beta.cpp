@@ -263,8 +263,8 @@ nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_&, 
   updateValueParam< double >( d, names::V_m, y[ V_M ], node );
   updateValueParam< double >( d, names::g_ex, y[ G_EXC ], node );
   updateValueParam< double >( d, names::dg_ex, y[ DG_EXC ], node );
-  updateValueParam< double >( d, names::g_in, y[ G_INC ], node );
-  updateValueParam< double >( d, names::dg_in, y[ DG_INC ], node );
+  updateValueParam< double >( d, names::g_in, y[ G_INH ], node );
+  updateValueParam< double >( d, names::dg_in, y[ DG_INH ], node );
 }
 
 

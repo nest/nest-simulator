@@ -64,7 +64,7 @@ RecordablesMap< iaf_cond_alpha >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
-  insert_( names::g_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
+  insert_( names::fg_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha::get_r_ );
@@ -242,12 +242,20 @@ void
 nest::iaf_cond_alpha::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y[ V_M ] ); // Membrane potential
+  def< double >( d, names::g_ex, y[ G_EX ] );
+  def< double >( d, names::dg_ex, y[ DG_EX ] );
+  def< double >( d, names::g_in, y[ G_IN ] );
+  def< double >( d, names::dg_in, y[ DG_IN ] );
 }
 
 void
 nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y[ G_EX ], node );
+  updateValueParam< double >( d, names::dg_ex, y[ DG_EX ], node );
+  updateValueParam< double >( d, names::g_in, y[ G_IN ], node );
+  updateValueParam< double >( d, names::dg_in, y[ DG_IN ], node );
 }
 
 

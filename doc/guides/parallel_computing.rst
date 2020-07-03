@@ -182,10 +182,11 @@ on your machine.
 Multiprocessing
 ----------------
 
-**Please do not use Python's multiprocessing package with NEST!**
+**Using Python's ``multiprocessing`` package with NEST may lead to unpredictable results!**
 
 NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. Running
-several ``ConnectLayers()`` calls simultaneously can lead to unpredictable results.
+for example several ``Connect()`` calls simultaneously can interfere with the internal
+parallelization and will likely lead to unpredictable/wrong results.
 
 .. _distributed_computing:
 

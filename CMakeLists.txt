@@ -44,6 +44,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
+set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -73,9 +74,6 @@ set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [de
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
-
-set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
-set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
 
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'. [default standard]" )
 
@@ -152,6 +150,7 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -195,9 +194,7 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       PYTHON="${PYTHON}"
-      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
@@ -205,12 +202,18 @@ if ( HAVE_PYTHON )
 else ()
   add_custom_target( installcheck
     COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH=${CMAKE_INSTALL_FULL_BINDIR}
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
     WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
     COMMENT "Execute NEST's testsuite...."
   )
 endif ()
+
+# N.B. to ensure "make install" is always run before "make installcheck", we
+# would ideally like to add:
+#   add_dependencies( installcheck install )
+# However, an issue in CMake at time of writing (May 2020, see
+# https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
+# so.
 
 ################################################################################
 ##################        Define Subdirectories here          ##################

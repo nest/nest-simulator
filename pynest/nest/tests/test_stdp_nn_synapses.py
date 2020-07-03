@@ -145,7 +145,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
         nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(postsynaptic_generator + post_spike_generator, presynaptic_neuron,
+        nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
         nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
                      syn_spec={"synapse_model": "static_synapse"})

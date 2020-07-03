@@ -320,11 +320,11 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, neuron_state_[ V_M ] );    // Membrane potential
+  def< double >( d, names::V_m, neuron_state_[ V_M ] ); // Membrane potential
   def< double >( d, names::g_ex, neuron_state_[ G_EXC ] );
   def< double >( d, names::g_in, neuron_state_[ G_INH ] );
-  def< double >( d, names::E_sfa, sfa_ );                  // Adaptive threshold potential
-  def< double >( d, names::I_stc, stc_ );                  // Spike-triggered current
+  def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
+  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
 }
 
 void

@@ -73,9 +73,7 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
     assert ('structural_plasticity_update_interval' in all)
     assert (all['structural_plasticity_update_interval'] == 10000.)
 
-    sp_synapses = nest.GetKernelStatus(
-        'structural_plasticity_synapses'
-    )
+    sp_synapses = nest.GetKernelStatus('structural_plasticity_synapses')
     syn = sp_synapses['syn1']
     assert ('pre_synaptic_element' in syn)
     assert ('post_synaptic_element' in syn)

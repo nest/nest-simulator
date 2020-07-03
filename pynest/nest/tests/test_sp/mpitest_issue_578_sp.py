@@ -86,7 +86,7 @@ class TestIssue578():
 
         try:
             nest.Simulate(200 * 1000)
-        except:
+        except Exception:
             print(sys.exc_info()[0])
             self.fail("Exception during simulation")
 

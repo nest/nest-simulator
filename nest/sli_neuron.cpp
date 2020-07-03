@@ -127,13 +127,13 @@ nest::sli_neuron::calibrate()
 
   if ( not state_->known( names::calibrate ) )
   {
-    std::string msg = String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_gid() );
+    std::string msg = String::compose( "Node %1 has no /calibrate function in its status dictionary.", get_node_id() );
     throw BadProperty( msg );
   }
 
   if ( not state_->known( names::update ) )
   {
-    std::string msg = String::compose( "Node %1 has no /update function in its status dictionary", get_gid() );
+    std::string msg = String::compose( "Node %1 has no /update function in its status dictionary", get_node_id() );
     throw BadProperty( msg );
   }
 
@@ -156,7 +156,7 @@ nest::sli_neuron::update( Time const& origin, const long from, const long to )
 
   if ( state_->known( names::error ) )
   {
-    std::string msg = String::compose( "Node %1 still has its error state set.", get_gid() );
+    std::string msg = String::compose( "Node %1 still has its error state set.", get_node_id() );
     throw KernelException( msg );
   }
 
@@ -210,7 +210,7 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
     assert( state->known( names::global_id ) );
     index g_id = ( *state )[ names::global_id ];
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
-    std::string msg = String::compose( "Error in %1 with global id %2.", model, g_id );
+    std::string msg = String::compose( "Error in %1 with node ID %2.", model, g_id );
     throw KernelException( msg );
   }
 

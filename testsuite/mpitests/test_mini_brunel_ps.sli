@@ -128,23 +128,14 @@ def % brunel_setup
   brunel_setup
   /brunel using
     % set resolution and total/local number of threads
-    0
     <<
       /resolution  dt
       /total_num_virtual_procs total_num_virtual_procs
-    >> SetStatus
+    >> SetKernelStatus
 
-    /E_net /subnet Create def            % create subnet
-    E_net ChangeSubnet                   % enter subnet
-    /iaf_psc_alpha_canon NE Create       % create neurons in subnet
-    ;                                    % pop gids returned by Create
-    0 ChangeSubnet                       % return to full network
-
-    /I_net /subnet Create def            % create subnet
-    I_net ChangeSubnet                   % enter subnet
-    /iaf_psc_alpha_canon NI Create       % create neurons in subnet
-    ;                                    % pop gids returned by Create
-    0 ChangeSubnet                       % return to full network
+    /E_neurons /iaf_psc_alpha_canon NE Create def  % create excitatory neurons
+    /I_neurons /iaf_psc_alpha_canon NI Create def  % create inhibitory neurons
+    /allNeurons E_neurons I_neurons join def
 
     /expoisson /poisson_generator_ps Create def
     expoisson
@@ -159,17 +150,7 @@ def % brunel_setup
     >> SetStatus
 
     /exsd /spike_detector Create def
-    exsd
-    <<
-    /withtime true   % record time of spikes
-    /withgid true    % record which neuron spiked
-    /precise_times true
-    /time_in_steps true    
-    >> SetStatus
-
-    /E_neurons E_net GetGlobalNodes def
-    /I_neurons I_net GetGlobalNodes def
-    /allNeurons E_neurons I_neurons join def
+    exsd << /time_in_steps true >> SetStatus
 
     allNeurons
     {
@@ -190,16 +171,16 @@ def % brunel_setup
     /static_synapse /syn_ex << /weight JE >> CopyModel
     /static_synapse /syn_in << /weight JI >> CopyModel
 
-    [expoisson] E_neurons /all_to_all /syn_ex Connect
-    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    expoisson E_neurons stack /all_to_all /syn_ex Connect
+    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
 
-    [inpoisson] I_neurons /all_to_all /syn_ex Connect
-    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    inpoisson I_neurons /all_to_all /syn_ex Connect
+    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
     
-    E_neurons Nrec Take [exsd] Connect
+    E_neurons Nrec Take exsd Connect
     
     simtime Simulate
 
@@ -213,4 +194,3 @@ def % brunel_setup
 
 
 
-    

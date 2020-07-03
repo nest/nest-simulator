@@ -69,7 +69,7 @@ public:
     if ( target_ != 0 )
     {
       def< long >( d, names::rport, rport_ );
-      def< long >( d, names::target, target_->get_gid() );
+      def< long >( d, names::target, target_->get_node_id() );
     }
   }
 

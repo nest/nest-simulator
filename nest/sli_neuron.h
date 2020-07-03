@@ -72,7 +72,7 @@ If an error occurs during the evaluation of /calibrate or /update, the
 errorneous neuron is skipped and update proceeds to the next node
 until the time-slice is finished. After the time-slice is finished,
 simulation terminates with an additional error message that issues the
-global id of the errorneous node.
+node ID of the errorneous node.
 
 Errors are handled by the SLI standard errorhandler. In addition, the
 contents of the error dictionary is copied into the node's status

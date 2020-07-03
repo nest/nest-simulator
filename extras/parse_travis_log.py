@@ -419,12 +419,17 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     True or False.
     Total number of tests.
     Number of tests failed.
+    Number of tests skipped.
+    List of failed tests.
+    Time used to run tests.
     """
 
     in_installcheck_section = False
     in_results_section = False
     total_number_of_tests = None
     number_of_tests_failed = None
+    number_of_tests_skipped = None
+    failed_tests = []
     status_tests = None
     with open(log_filename) as fh:
         for line in fh:
@@ -432,15 +437,21 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                 in_installcheck_section = True
 
             if in_installcheck_section:
-                if line.strip() == "NEST Testsuite Summary":
+                if line.strip() == "NEST Testsuite Results":
                     in_results_section = True
 
                 if in_results_section:
-                    if "Total number of tests:" in line:
-                        total_number_of_tests = int(line.split(' ')[-1])
-                    if "Failed" in line:
-                        number_of_tests_failed = \
-                            [int(s) for s in line.split() if s.isdigit()][0]
+                    if line.startswith("Total"):
+                        parts = line.split()
+                        total_number_of_tests = int(parts[1])
+                        number_of_tests_skipped = int(parts[2])
+                        num_failures = int(parts[3])
+                        num_errors = int(parts[4])
+                        test_time = float(parts[5])
+                        number_of_tests_failed = num_failures + num_errors
+
+                    if line.strip().startswith('|'):
+                        failed_tests.append(line.strip()[2:])
 
                 if is_message(line, msg_testsuite_end_message):
                     if number_of_tests_failed == 0:
@@ -451,7 +462,8 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    return status_tests, total_number_of_tests, number_of_tests_failed
+    return (status_tests, total_number_of_tests, number_of_tests_failed,
+            number_of_tests_skipped, failed_tests, test_time)
 
 
 def convert_bool_value_to_status_string(value):
@@ -704,6 +716,25 @@ def errors_table(summary):
     return table.table + '\n'
 
 
+def report_failed_tests(failed_tests):
+    """Create a table of tests that have failed.
+
+    Parameters
+    ----------
+    List of failed tests.
+
+    Returns
+    -------
+    Formatted string, empty if no tests failed.
+    """
+
+    if failed_tests:
+        return ('\n\nFailed tests:' +
+                ''.join('\n  ' + ft for ft in failed_tests))
+    else:
+        return ''
+
+
 def printable_summary(list_of_changed_files,
                       status_cmake_configure,
                       status_make,
@@ -720,6 +751,9 @@ def printable_summary(list_of_changed_files,
                       number_of_warnings,
                       number_of_tests_total,
                       number_of_tests_failed,
+                      number_of_tests_skipped,
+                      failed_tests,
+                      test_time,
                       ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
@@ -750,6 +784,9 @@ def printable_summary(list_of_changed_files,
     number_of_warnings:      Number of warnings.
     number_of_tests_total:   Number of tests total.
     number_of_tests_failed:  Number of tests failed.
+    number_of_tests_skipped: Number of tests skipped.
+    failed_tests:            List of failed tests.
+    test_time:               Time required to run testsuite.
     exit_code:               Build exit code: 0 or 1.
 
     Returns
@@ -821,8 +858,12 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',
          convert_bool_value_to_status_string(status_tests) + '\n' +
-         '\nTotal number of tests : ' + str(number_of_tests_total) +
-         '\nNumber of tests failed: ' + str(number_of_tests_failed)],
+         '\nTestsuite runtime      : {:d}s'.format(int(test_time)) +
+         '\nTotal number of tests  : ' + str(number_of_tests_total) +
+         '\nNumber of tests skipped: ' + str(number_of_tests_skipped) +
+         '\nNumber of tests failed : ' + str(number_of_tests_failed) +
+         report_failed_tests(failed_tests)
+         ],
         ['Artifacts :', ''],
         ['Amazon S3 upload',
          convert_bool_value_to_yes_no_string(status_amazon_s3_upload)]
@@ -961,7 +1002,8 @@ if __name__ == '__main__':
                                              "MSGBLD0260")
 
     # Summarize the NEST test suite results.
-    status_tests, number_of_tests_total, number_of_tests_failed = \
+    (status_tests, number_of_tests_total, number_of_tests_failed,
+     number_of_tests_skipped, failed_tests, test_time) = \
         testsuite_results(log_filename, "MSGBLD0290", "MSGBLD0300")
 
     # Determine the build result to tell Travis CI whether the build was
@@ -1004,6 +1046,9 @@ if __name__ == '__main__':
                             number_of_warnings,
                             number_of_tests_total,
                             number_of_tests_failed,
+                            number_of_tests_skipped,
+                            failed_tests,
+                            test_time,
                             ignore_vera,
                             ignore_cppcheck,
                             ignore_format,

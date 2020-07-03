@@ -53,7 +53,7 @@ M_ERROR setverbosity
 
   10.0 Simulate
 
-  0 GetStatus /local_spike_counter get
+  GetKernelStatus /local_spike_counter get
   2 eq
 } assert_or_die
 

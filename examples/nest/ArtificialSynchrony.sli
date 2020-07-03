@@ -155,31 +155,20 @@ modeldict begin
 
   %set resolution and limits on delays
        % limits must be set BEFORE connecting any elements
-       0
        <<
          /resolution h                  % time steps in ms
          /tics_per_ms tics_per_ms       % low-level time resolution
          /off_grid_spiking true         % precise neuron model
          /rngs [myrng]                  % set rnd seed
          /overwrite_files true          % overwrite previous output
-       >> SetStatus
+       >> SetKernelStatus
 
-  sim 1 eq { /iaf_psc_alpha_ps nr Create pop }
-           { /iaf_psc_alpha nr Create pop } ifelse
-  /neurons 0 GetGlobalNodes def
+  sim 1 eq { /neurons /iaf_psc_alpha_canon nr Create def }
+           { /neurons /iaf_psc_alpha nr Create def } ifelse
 
   % connect neurons all to all
-  neurons {
-   /ii Set
-   neurons {
-        dup
-        /ii2 Set
-        ii
-        %   neq {                       % uncomment to  avoid self connections
-                    ii ii2 strength delay Connect
-        %   } if
-        } forall
-  } forall
+  /autapses_bool true def         % Change to false to avoid self connections
+  neurons neurons << /rule /all_to_all /allow_autapses autapses_bool >> << /weight strength /delay delay >> Connect
 
   /*                                    % uncomment to verify connections
   %% Readout if everything works
@@ -217,30 +206,20 @@ modeldict begin
   } forall
   (-DONE-) =
 
+  /record_to tofile { /ascii } { [] } ifelse def
+
   (Create voltmeter ) =only
   %% generate spike detectors and voltmeter for each neuron
-  % /spike_detector Create /detec Set   % spike detectors will generate enormous amount of data!
-  %  detec  << /to_file tofile /withgid true /interval 0.1 >> SetStatus
-  /voltmeter Create /volt Set
-
-
-
-  volt  << /to_file tofile              % write to file
-         /to_memory false               % not to memory
-         /withgid true                  % important to know which neuron
-         /withtime true
-%         /interval 1.0                 % record only every msec.
-      >> SetStatus
+  % spike detectors will generate enormous amounts of data!
+  % /spike_detector << /record_to record_to >> Create /detec Set
+  /voltmeter << /record_to record_to /interval 1.0 >> Create /volt Set
 
   sim 1 eq {volt  <<  /label (voltmeter-Canon-) strength cvs join >> SetStatus}
            {volt  <<  /label (voltmeter-Grid-) strength cvs join >> SetStatus} ifelse
   (-DONE-) =
 
-  neurons {
-   dup
-   %  detec 1.0 h Connect               % connect spike_detector
-   volt exch 1.0 h Connect              % connect voltmeter
-  } forall
+  % neurons detec 1.0 h Connect         % connect spike_detector
+  volt neurons 1.0 h Connect            % connect voltmeter
 
   10000 Simulate                        % simulate for 10s
 

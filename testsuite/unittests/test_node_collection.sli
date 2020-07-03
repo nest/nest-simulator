@@ -1,0 +1,1184 @@
+/*
+ *  test_node_collection.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_node_collection - test handling of node collections
+
+Synopsis: (test_node_collection) run
+
+
+Description:
+
+ This testscript checks that node collections work correctly from the SLI
+ level.
+
+Author:  November 2016, Plesser
+*/
+
+M_PROGRESS setverbosity
+
+(unittest) run
+/unittest using
+
+/skip_test { (SKIPPING) M_WARNING message ; } def
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (No node collection without nodes) M_PROGRESS message
+  ResetKernel
+
+  [ 1 2 3 ] cvnodecollection pop
+
+  end
+} fail_or_die
+
+pop  % remove argument to failing command above
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Create returns NodeCollection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create type /nodecollectiontype eq
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check length of NodeCollections from Create) M_PROGRESS message
+  ResetKernel
+
+  true
+  [ 1 2 10 100 ]
+  { dup
+    /iaf_psc_alpha exch Create
+    size eq
+    and
+  }
+  Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that NodeCollection can be converted to array) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  cva
+  [ 10 ] Range
+  eq
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check array can be converted to NodeCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create /dummy Set
+  /node_ids [ 10 ] Range def
+  node_ids cvnodecollection
+  cva
+  node_ids eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check intvector can be converted to NodeCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create /dummy Set
+  /node_ids [ 10 ] Range def
+  node_ids cv_iv cvnodecollection
+  cva
+  node_ids eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check unsorted array can be converted to NodeCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create /dummy Set
+  [ 5 3 4 7 ] cvnodecollection
+  cva
+  [ 3 4 5 7 ] eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check unsorted array can be converted to NodeCollection for existing neurons, multiple types) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create /dummy1 Set
+  /iaf_psc_exp 10 Create /dummy2 Set
+  [ 15 5 3 12 4 7 13 ] cvnodecollection
+  cva
+  [ 3 4 5 7 12 13 15 ] eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check contiguous join) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create
+  join
+  cva
+  [ n 2 mul ] Range eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check contiguous join with inverted order) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create
+  exch
+  join
+  cva
+  [ n 2 mul ] Range eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check non-contiguous join) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create pop
+  /iaf_psc_alpha n Create
+  join
+  cva
+  [  1 n ] Range
+  [ n 2 mul 1 add n 3 mul ] Range join
+  eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check inhomogeneous join) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_exp n Create
+  join
+  cva
+  [ n 2 mul ] Range
+  eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Illegal join with different metadata) M_PROGRESS message
+  ResetKernel
+
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha >> CreateLayer
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check create with multiple equal node IDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 1 2 2 ] cvnodecollection
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join primitives with overlapping node IDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 4 5 ] cvnodecollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join composites with overlapping node IDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  [ 4 5 11 12 ] cvnodecollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join primitive with composite with overlapping node IDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 4 5 11 12 ] cvnodecollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+{
+  << >> begin
+  (Check join composite with primitive with overlapping node IDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  [ 11 12 ] cvnodecollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check element access) M_PROGRESS message
+  ResetKernel
+
+  /nc
+    /iaf_psc_alpha 10 Create
+    /iaf_psc_exp 10 Create
+  join def
+
+  true [ 0 5 10 19 ] { dup 1 add exch nc exch get eq and } Fold
+  true [ -1 -20 ] { dup 21 add exch nc exch get eq and } Fold
+  and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check too large positive index fails) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  11 get
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check too large negative index fails) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  -11 get
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test iteration with forall) M_PROGRESS message
+  ResetKernel
+
+  /ok true def
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  {
+    dup /global_id get eq ok and /ok Set
+  }
+  forall
+  ok
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test iteration with Map) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  {
+    dup /global_id get eq
+  }
+  Map
+  true exch { and } Fold
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test slicing with Take, primitive) M_PROGRESS message
+  ResetKernel
+
+  /nc
+  /iaf_psc_alpha 20 Create
+  def
+
+  true
+  [ << /s 3 /e [ 1 2 3 ] >>
+    << /s -3 /e [ 18 19 20 ] >>
+    << /s [ 7 12 ] /e [ 7 8 9 10 11 12 ] >>
+    << /s [ -4 -2 ] /e [ 17 18 19 ] >>
+    << /s [ 1 20 7 ] /e [ 1 8 15 ] >>
+    << /s [ 1 20 70 ] /e [ 1 ] >>
+    << /s [ 5 20 5 ] /e [ 5 10 15 20 ] >>
+  ]
+  {
+    begin
+      nc s
+      Take
+      cva e eq and
+    end
+  }
+  Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test slicing with Take, composite) M_PROGRESS message
+  ResetKernel
+
+  /nc
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join def
+
+  true
+  [ << /s 3 /e [ 1 2 3 ] >>
+    << /s -3 /e [ 18 19 20 ] >>
+    << /s [ 7 12 ] /e [ 7 8 9 10 11 12 ] >>
+    << /s [ -4 -2 ] /e [ 17 18 19 ] >>
+    << /s [ 1 20 7 ] /e [ 1 8 15 ] >>
+    << /s [ 1 20 70 ] /e [ 1 ] >>
+    << /s [ 5 20 5 ] /e [ 5 10 15 20 ] >>
+  ]
+  {
+    begin
+      nc s Take
+      cva e eq and
+    end
+  }
+  Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (More complex Take example, checking result in various ways) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 15 Create pop
+  /iaf_psc_delta 30 Create
+  join
+  [1 20 2] Take /nc Set
+
+  /expected [1 3 5 7 9 26 28 30 32 34] def
+
+  nc cva expected eq      % loops at C++ level
+  nc { } Map expected eq  % loops at SLI level
+  nc size expected length eq
+
+  and and
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 1) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create 20 Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 2) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create -20 Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 3) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 30 ] Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with negative step) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 5 -1 ] Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select all) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  { pop true } Select
+  [ 10 ] Range eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select none) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  { 50 gt } Select
+  [ ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select some) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  { 2 mod 0 eq } Select
+  [ 2 4 6 8 10 ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Element membership) M_PROGRESS message
+  ResetKernel
+
+  /nc
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join def
+
+  nc 1 InCollection
+  nc 15 InCollection and
+  nc 20 InCollection and
+  nc 21 InCollection not and
+  nc 40 InCollection not and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (GetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  GetStatus
+  { /global_id get } Map
+  [ 20 ] Range eq
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join dup
+  << /V_m -100.0 >> SetStatus
+  GetStatus
+  true exch
+  { /V_m get -100.0 eq and } Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  dup
+  [ << /V_m -100. >> << /V_m -200. >> << /V_m -300. >> ] SetStatus
+  GetStatus
+  { /V_m get } Map
+  [ -100. -200. -300. ] eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts error) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  [ << /V_m -100. >> << /V_m -200. >> ] SetStatus
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Basic Connect test) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create dup Connect
+
+  end
+} pass_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check connect with sliced composite with step>1) M_PROGRESS message
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step ==
+  m_step m_step /all_to_all Connect
+
+  << >> GetConnections length
+  m_step size dup mul eq
+
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step m_step /one_to_one Connect
+
+  << >> GetConnections length
+  m_step size eq and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks NC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  n m Connect
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks NC validity, second arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  m n Connect
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetStatus checks NC validity) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create ;
+
+  n GetStatus
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that SetStatus checks NC validty) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create ;
+
+  n << /V_m -75. >> SetStatus
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that join checks NC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  n m join
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 2) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create -20 Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 3) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 30 ] Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with negative step) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 5 -1 ] Take
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Element membership) M_PROGRESS message
+  ResetKernel
+
+  /nc
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join def
+
+  nc 1 MemberQ
+  nc 15 MemberQ and
+  nc 40 MemberQ not and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (GetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  GetStatus
+  { /global_id get } Map
+  [ 20 ] Range eq
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join dup
+  << /V_m -100.0 >> SetStatus
+  GetStatus
+  true exch
+  { /V_m get -100.0 eq and } Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  dup
+  [ << /V_m -100. >> << /V_m -200. >> << /V_m -300. >> ] SetStatus
+  GetStatus
+  { /V_m get } Map
+  [ -100. -200. -300. ] eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts error) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  [ << /V_m -100. >> << /V_m -200. >> ] SetStatus
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Basic Connect test) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create dup Connect
+
+  end
+} pass_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks NC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  n m Connect
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks NC validity, second arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  m n Connect
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetStatus checks NC validity) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create ;
+
+  n GetStatus
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that SetStatus checks NC validty) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create ;
+
+  n << /V_m -75. >> SetStatus
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that join checks NC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  n m join
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that join checks NC validity, second arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  m n join
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetConnections works) M_PROGRESS message
+  ResetKernel
+
+  /a /iaf_psc_alpha 5 Create def
+  /e /iaf_psc_exp 5 Create def
+  /nc a e join def
+
+  nc nc Connect
+
+  << >> GetConnections length 100 eq
+  << /source a /target e >> GetConnections length 25 eq
+
+  and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetConnections checks NC validity, source) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  m m Connect
+  << /source n >> GetConnections
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetConnections checks NC validity, target) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+
+  ResetKernel
+
+  /m /iaf_psc_alpha 5 Create def
+
+  m m Connect
+  << /target n >> GetConnections
+
+  end
+} fail_or_die
+
+% remove arguments of failed command
+pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that stack is empty at end of test) M_PROGRESS message
+
+  count 0 eq
+  end
+} assert_or_die
+
+
+end % using

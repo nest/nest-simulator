@@ -41,7 +41,7 @@ M_ERROR setverbosity
 % this should be fine
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /spike_generator Create
   << /spike_times [0.2] /precise_times false >> SetStatus
 }
@@ -50,7 +50,7 @@ pass_or_die
 % this should fail 
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /spike_generator Create
   << /spike_times [0.1 0.123456789 0.22345567854] /precise_times false >> SetStatus
 }
@@ -59,7 +59,7 @@ fail_or_die
 % this should fail 
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /spike_generator Create
   << /spike_times [0.123456789] /precise_times false >> SetStatus
 }
@@ -68,7 +68,7 @@ fail_or_die
 % this should pass as precise_times is true 
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /spike_generator Create
   << /spike_times [0.123456789] /precise_times true >> SetStatus
 }

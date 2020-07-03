@@ -26,6 +26,9 @@
 #include "gslrandomgen.h"
 #include "random_datums.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -69,10 +72,10 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
+nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ );
-  updateValue< double >( d, names::p_copy, p_copy_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
+  updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "Rate must be non-negative." );

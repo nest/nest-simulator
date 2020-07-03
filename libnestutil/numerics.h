@@ -125,5 +125,10 @@ double dround( double );
  */
 double dtruncate( double );
 
+/**
+ * Returns true if n is integer up to rounding error.
+ * @return bool
+ */
+bool is_integer( double );
 
 #endif

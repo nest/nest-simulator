@@ -32,6 +32,8 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "beta_normalization_factor.h"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -207,26 +209,26 @@ nest::iaf_cond_beta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_reset, V_reset );
-  updateValue< double >( d, names::t_ref, t_ref );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_reset, V_reset, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::tau_rise_ex, tau_rise_ex );
-  updateValue< double >( d, names::tau_decay_ex, tau_decay_ex );
-  updateValue< double >( d, names::tau_rise_in, tau_rise_in );
-  updateValue< double >( d, names::tau_decay_in, tau_decay_in );
+  updateValueParam< double >( d, names::tau_rise_ex, tau_rise_ex, node );
+  updateValueParam< double >( d, names::tau_decay_ex, tau_decay_ex, node );
+  updateValueParam< double >( d, names::tau_rise_in, tau_rise_in, node );
+  updateValueParam< double >( d, names::tau_decay_in, tau_decay_in, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -252,9 +254,9 @@ nest::iaf_cond_beta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_beta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
 }
 
 
@@ -359,38 +361,7 @@ nest::iaf_cond_beta::init_buffers_()
 double
 nest::iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay )
 {
-  // Factor used to normalise the synaptic conductance such that
-  // incoming spike causes a peak conductance of 1 nS.
-  // The denominator (denom1) that appears in the expression of the peak time
-  // is computed here to check that it is != 0
-  // another denominator denom2 appears in the expression of the
-  // normalization factor g0
-  // Both denom1 and denom2 are null if tau_decay = tau_rise, but they
-  // can also be null if tau_decay and tau_rise are not equal but very
-  // close to each other, due to the numerical precision limits.
-  // In such case the beta function reduces to the alpha function,
-  // and the normalization factor for the alpha function should be used.
-  const double denom1 = tau_decay - tau_rise;
-  double denom2 = 0;
-  double normalisation_factor = 0;
-  if ( std::abs( denom1 ) > std::numeric_limits< double >::epsilon() )
-  {
-    // peak time
-    const double t_p = tau_decay * tau_rise * std::log( tau_decay / tau_rise ) / denom1;
-    // another denominator is computed here to check that it is != 0
-    denom2 = std::exp( -t_p / tau_decay ) - std::exp( -t_p / tau_rise );
-  }
-  if ( std::abs( denom2 ) < std::numeric_limits< double >::epsilon() )
-  {
-    // if rise time == decay time use alpha function
-    normalisation_factor = 1. * numerics::e / tau_decay;
-  }
-  else
-  {
-    // if rise time != decay time use beta function
-    normalisation_factor = ( 1. / tau_rise - 1. / tau_decay ) / denom2;
-  }
-  return normalisation_factor;
+  return nest::beta_normalization_factor( tau_rise, tau_decay );
 }
 
 void

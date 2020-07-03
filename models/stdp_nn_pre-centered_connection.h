@@ -39,19 +39,20 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_nn_pre-centered_synapse - Synapse type for spike-timing dependent
-plasticity with presynaptic-centered nearest-neighbour spike pairing
-scheme.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity with
+presynaptic-centered nearest-neighbour spike pairing scheme
+
+Description
++++++++++++
 
 stdp_nn_pre-centered_synapse is a connector to create synapses with spike
 time dependent plasticity with the presynaptic-centered nearest-neighbour
-spike pairing scheme, as described in [1].
+spike pairing scheme, as described in [1]_.
 
 Each presynaptic spike is taken into account in the STDP weight change rule
 with the nearest preceding postsynaptic one and the nearest succeeding
@@ -60,7 +61,7 @@ So, when a presynaptic spike occurs, it is accounted in the depression rule
 with the nearest preceding postsynaptic one; and when a postsynaptic spike
 occurs, it is accounted in the facilitation rule with all preceding
 presynaptic spikes that were not earlier than the previous postsynaptic
-spike. For a clear illustration of this scheme see fig. 7B in [2].
+spike. For a clear illustration of this scheme see fig. 7B in [2]_.
 
 The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
 + dendritic_delay), leading to zero delta_t, are discarded. In this case the
@@ -69,14 +70,15 @@ post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
-postsynaptic traces [2]. The presynaptic trace decays exponentially over
+postsynaptic traces [2]_. The presynaptic trace decays exponentially over
 time with the time constant tau_plus, increases by 1 on a pre-spike
 occurrence, and is reset to 0 on a post-spike occurrence. The postsynaptic
 trace (implemented on the postsynaptic neuron side) decays with the time
 constant tau_minus and increases to 1 on a post-spike occurrence.
 
-Parameters:
-\verbatim embed:rst
+Parameters
+++++++++++
+
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -87,32 +89,32 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
        Neural Comput. 15, 1511--1523
 
 .. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-\endverbatim
 
-FirstVersion: March 2006
+See also
+++++++++
 
-Author: Moritz Helias, Abigail Morrison
+stdp_synapse, stdp_nn_symm_synapse
 
-Adapted by: Philipp Weidel, Alex Serenko
-
-SeeAlso: stdp_synapse, stdp_nn_symm_synapse
-*/
+EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPNNPreCenteredConnection : public Connection< targetidentifierT >
 {
@@ -278,7 +280,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::send( Event& e, thread t, cons
   // depression due to the latest post-synaptic spike finish->t_
   // before the current pre-synaptic spike t_spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and triplet_Kminus here
+  double value_to_throw_away; // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
@@ -322,6 +324,7 @@ STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection(
   , mu_plus_( rhs.mu_plus_ )
   , mu_minus_( rhs.mu_minus_ )
   , Wmax_( rhs.Wmax_ )
+  , Kplus_( rhs.Kplus_ )
   , t_lastspike_( rhs.t_lastspike_ )
 {
 }

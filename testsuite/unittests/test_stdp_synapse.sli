@@ -44,7 +44,7 @@ Author: Kunkel, Nov 2010
 ResetKernel
  
 /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
-0 << /resolution resolution >> SetStatus %/tics_per_ms 10000.0 >> SetStatus
+<< /resolution resolution >> SetKernelStatus 
 
 
 %%% input parameters %%%
@@ -82,10 +82,6 @@ ResetKernel
 /parrot /parrot_neuron Create def
 /neuron /iaf_psc_alpha << /tau_minus tau_minus >> Create def
 
-/spike_detector << /to_file   false
-                   /to_memory true
-		   /precision 15
-                >> SetDefaults
 /sd_pre  /spike_detector Create def
 /sd_post /spike_detector Create def
 
@@ -94,10 +90,10 @@ ResetKernel
 
 /stdp_synapse << /alpha    alpha
                  /lambda   lambda
-		 /tau_plus tau_plus
-		 /mu_plus  mu_plus
-		 /mu_minus mu_minus
-		 /Wmax     w_max
+            		 /tau_plus tau_plus
+            		 /mu_plus  mu_plus
+            		 /mu_minus mu_minus
+            		 /Wmax     w_max
               >> SetDefaults
 
 pg_exc neuron w_exc delay Connect
@@ -114,15 +110,13 @@ neuron sd_post Connect
 
 10000.0 Simulate
 
-/pre_spikes  sd_pre  GetStatus /events get /times get cva { axonal_delay add } Map def
-/post_spikes sd_post GetStatus /events get /times get cva { backpr_delay add } Map def
+/pre_spikes  sd_pre  /events get /times get cva { axonal_delay add } Map def
+/post_spikes sd_post /events get /times get cva { backpr_delay add } Map def
 
-/final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get /weight get def
+/final_weight << /source parrot /target neuron >> GetConnections 0 get /weight get def
 
 
 %%% check final weight %%%
-
-cout 15 setprecision
 
 /K_plus    0.0 def
 /K_minus   0.0 def

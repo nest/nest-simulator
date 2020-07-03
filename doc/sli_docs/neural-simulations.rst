@@ -56,7 +56,7 @@ recording interval to 0.1 ms. The default is 1.0 ms.
 
 ::
 
-   SLI ] vm << /withtime true /to_screen true /interval 0.1 >> SetStatus
+   SLI ] vm << /record_to /screen /interval 0.1 >> SetStatus
 
 The double angled brackets ``<<`` and ``>>``\ delimit a dictionary
 definition which consists of successive ``/key value`` pairs.
@@ -122,18 +122,18 @@ milliseconds. Below, you see a transcript of the simulation:
    1   0.9 -70
    1   1   -70
    1   1.1 -70
-   1   1.2 -69.7612    
-   1   1.3 -69.5248    
-   1   1.4 -69.2907    
-   1   1.5 -69.0589    
+   1   1.2 -69.7612
+   1   1.3 -69.5248
+   1   1.4 -69.2907
+   1   1.5 -69.0589
 
    :
 
-   1   10.5    -55.3751    
-   1   10.6    -55.2818    
-   1   10.7    -55.1894    
+   1   10.5    -55.3751
+   1   10.6    -55.2818
+   1   10.7    -55.1894
    1   10.8    -55.098
-   1   10.9    -55.0075    
+   1   10.9    -55.0075
    1   11  -70
    1   11.1    -70
    1   11.2    -70
@@ -145,16 +145,16 @@ milliseconds. Below, you see a transcript of the simulation:
    1   12.8    -70
    1   12.9    -70
    1   13  -70
-   1   13.1    -69.7612    
-   1   13.2    -69.5248    
-   1   13.3    -69.2907    
-   1   13.4    -69.0589    
-   1   13.5    -68.8295    
-   1   13.6    -68.6023    
-   1   13.7    -68.3775    
-   1   13.8    -68.1548    
-   1   13.9    -67.9343    
-   1   14  -67.7161    
+   1   13.1    -69.7612
+   1   13.2    -69.5248
+   1   13.3    -69.2907
+   1   13.4    -69.0589
+   1   13.5    -68.8295
+   1   13.6    -68.6023
+   1   13.7    -68.3775
+   1   13.8    -68.1548
+   1   13.9    -67.9343
+   1   14  -67.7161
 
    Nov 10 08:57:51 Scheduler::resume [Info]:
        Simulation finished.
@@ -163,7 +163,7 @@ milliseconds. Below, you see a transcript of the simulation:
 
 After some initial messages from the simulation scheduler, we see the
 output from the voltmeter. The number in the left column represents the
-global ID (GID) of the model neuron and the center column the network
+node ID of the model neuron and the center column the network
 time in milliseconds. The right column contains the values of the
 membrane potential at that time. The potential is given in mV.
 
@@ -231,7 +231,7 @@ In the fist line, we create one integrate and fire neuron from the model
 The return value of ``Create`` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
-called the node’s *global id* (the network as a whole owns the global id
+called the node’s *node ID* (the network as a whole owns the node ID
 ``0``, therefore the ids of user-created nodes start with ``1``). Often,
 it is neccessary to have a large number of nodes of the same type. The
 command Create can also be used for this purpose. The following line of
@@ -252,12 +252,12 @@ layer we have created above:
 ::
 
    SLI ] 1 ShowStatus
-   --------------------------------------------------                                                                                
-   Name                     Type                Value                                                                                
-   --------------------------------------------------                                                                                
-   archiver_length          integertype         0                                                                                    
-   C_m                      doubletype          250                                                                                  
-   E_L                      doubletype          -70                                                                                  
+   --------------------------------------------------
+   Name                     Type                Value
+   --------------------------------------------------
+   archiver_length          integertype         0
+   C_m                      doubletype          250
+   E_L                      doubletype          -70
    frozen                   booltype            false
    global_id                integertype         1
    I_e                      doubletype          0
@@ -299,7 +299,7 @@ by the following command:
 
 ::
 
-   0 << /dict_miss_is_error false >> SetStatus
+   << /dict_miss_is_error false >> SetKernelStatus
 
 Then, NEST is very tolerant with respect to the property that you are
 trying to change: If it does not know the property, or if the property
@@ -463,25 +463,33 @@ Recording devices
 ~~~~~~~~~~~~~~~~~
 
 All devices which are used to observe the state of other network nodes
-are called recording devices. Examples are ``voltmeter`` and
+are called recording devices. Examples are ``multimeter`` and
 ``spike_detector``.
 
-Recording devices have properties which control the amount, the format,
-and the destination of their output. All recorders can either dump the
-recorded data to a file (property ``to_file``), print it to the screen
-(property ``to_screen``) or hold the data in memory (property
-``to_memory``). Data stored in memory can be retrieved after the
-simulation using ``GetStatus``.
+Recording devices have properties which control the amount, the
+format, and the destination of their output. The latter is done by
+setting their property ``record_to`` to the name of the recording
+backend to use. To dump recorded data to a file, set ``/ascii``, to
+print to the screen, use ``/screen`` and to hold the data in memory,
+set ``/memory``, which is also the default for all devices. Data
+stored in memory can be retrieved after the simulation using
+``GetStatus``. To get a list of all available recording backends, run
+
+::
+
+   SLI ] GetKernelStatus /recording_backends get keys ==
 
 Device models are also stored in the dictionary ``modeldict``. The most
 important devices are:
 
-Model name Description ``voltmeter`` Device to observe membrane
-potentials. ``multimeter`` Device to observe arbitrary analog
-quantities. ``spike_detector`` Device to observe spike times. Please
-note that the connection direction for analog recorders (all except
-``spike_detector`` in above list) is inverted with respect to other
-recorders.
+* ``voltmeter`` Device to observe membrane potentials.
+* ``multimeter`` Device to observe arbitrary analog quantities.
+* ``spike_detector`` Device to observe spike times.
+
+Please note that the connection direction for analog recorders (all
+except ``spike_detector`` in above list) is inverted with respect to
+other recorders, i.e. the recorder has to connected to the neurons in
+this case.
 
 Example 6
 ^^^^^^^^^

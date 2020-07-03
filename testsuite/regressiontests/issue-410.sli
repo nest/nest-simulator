@@ -46,50 +46,45 @@ skip_if_not_threaded
 
 /sim_weight_in_dopa_syn
 {
+  /threads Set
 
-dup /threads Set
-ResetKernel
-0 << /local_num_threads threads >> SetStatus
+  ResetKernel
+  << /local_num_threads threads >> SetKernelStatus
 
-/dc_generator 1 << /amplitude 1500.0 >> Create /stim1 Set
-/dc_generator 1 << /amplitude 1000.0 >> Create /stim2 Set
+  /dc_generator << /amplitude 1500.0 >> Create /stim1 Set
+  /dc_generator << /amplitude 1000.0 >> Create /stim2 Set
 
+  /iaf_psc_alpha      << /C_m 100.0 /tau_m 10.0 >>                 Create /neuron1 Set
+  /iaf_psc_alpha      << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0 >> Create /neuron2 Set
+  /iaf_cond_alpha 100 << /V_reset -70.0 /C_m 80.0 /V_th -60.0 >>   Create /dopa    Set
 
-/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
-/iaf_psc_alpha 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
+  /volume_transmitter Create /vt Set
 
-0 GetStatus /network_size get /dopa_first Set
-/iaf_cond_alpha 100 << /V_reset -70.0 /C_m 80.0 /V_th -60.0>> Create /dopa_last Set
-dopa_first dopa_last cvgidcollection /dopa Set
+  /stdp_dopamine_synapse /syn1
+                 << /Wmax 1000.0
+                  /Wmin 0.0
+                  /tau_plus 10.0
+                  /A_minus 0.05
+                  /A_plus 0.05
+                  /b 45.45
+                  /tau_c 1.0
+                  /tau_n 100.0
+                  /vt vt 0 get >> CopyModel
 
-/volume_transmitter 1 Create /vt Set
-
-/stdp_dopamine_synapse /syn1
-               << /Wmax 1000.0
-                /Wmin 0.0
-                /tau_plus 10.0
-                /A_minus 0.05
-                /A_plus 0.05
-                /b 45.45
-                /tau_c 1.0
-                /tau_n 100.0
-                /vt vt >> CopyModel
-
-stim1 neuron1 << /weight 10.0 /delay 1.0 >> Connect 
-[stim2] cvgidcollection dopa <</rule /all_to_all >> << /weight 10.0 /delay 1.0 >> Connect
-neuron1 neuron2 << /weight 500.0 /delay 1.0 >> /syn1 Connect
-dopa [vt] cvgidcollection Connect
-
-2000.0 Simulate
-
-%push return value
-<< /source [neuron1] /target [neuron2] >> GetConnections /conns Set
-conns size 0 gt {
-  0 get GetStatus /weight get
-}
-{
-  0.0
-} ifelse
+  stim1 neuron1    10.0 1.0       Connect
+  stim2 dopa       10.0 1.0       Connect
+  neuron1 neuron2 500.0 1.0 /syn1 Connect
+  dopa vt Connect
+  
+  2000.0 Simulate
+  
+  %push return value
+  << /source neuron1 /target neuron2 >> GetConnections /conns Set
+  conns size 0 gt {
+    0 get GetStatus /weight get
+  }{
+    0.0
+  } ifelse
 } def
 
 {

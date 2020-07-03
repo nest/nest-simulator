@@ -49,8 +49,7 @@ class RateNeuronTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
+        nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': False})
 
         # set up rate neuron and devices
         self.rate_neuron_ipn = nest.Create(
@@ -74,8 +73,10 @@ class RateNeuronTestCase(unittest.TestCase):
         # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
-        senders_opn = np.where(senders == self.rate_neuron_opn)[0]
+        senders_ipn = np.where(
+            senders == self.rate_neuron_ipn.get('global_id'))[0]
+        senders_opn = np.where(
+            senders == self.rate_neuron_opn.get('global_id'))[0]
 
         mean_rate_ipn = np.mean(events['rate'][senders_ipn])
         mean_rate_opn = np.mean(events['rate'][senders_opn])
@@ -96,8 +97,10 @@ class RateNeuronTestCase(unittest.TestCase):
         # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
-        senders_opn = np.where(senders == self.rate_neuron_opn)[0]
+        senders_ipn = np.where(
+            senders == self.rate_neuron_ipn.get('global_id'))[0]
+        senders_opn = np.where(
+            senders == self.rate_neuron_opn.get('global_id'))[0]
 
         noise_ipn = events['noise'][senders_ipn]
         std_noise_ipn = np.std(noise_ipn)
@@ -120,14 +123,14 @@ class RateNeuronTestCase(unittest.TestCase):
         # get variance of the rate
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
+        senders_ipn = np.where(
+            senders == self.rate_neuron_ipn.get('global_id'))[0]
 
         rate = events['rate'][senders_ipn]
         var_rate = np.var(rate)
 
         # expected variance
-        var_test = self.neuron_params[
-            'sigma']**2 / 2.
+        var_test = self.neuron_params['sigma']**2 / 2.
 
         # assert
         self.assertTrue(

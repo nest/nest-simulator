@@ -66,7 +66,7 @@ M_ERROR setverbosity
 1.0                         /delay Set          % in ms 
 65.0                        /weight Set         % in pA
 [-4 min_exponent -2] Range  /hlist Set
-1e-13                       /tolerance Set      % in mV
+1e-12                       /tolerance Set      % in mV
 
 %100.0                         /T     Set
 5.0                         /T     Set
@@ -86,7 +86,8 @@ M_ERROR setverbosity
   /V_th     1000.0      % spike threshold in mV
   /I_e      -530.0      % DC current in pA
   /tau_m      10.0      % membrane time constant in ms
-  /tau_syn     0.3      % PSC rise time in ms
+  /tau_syn_ex  0.3      % PSC rise time in ms
+  /tau_syn_in  0.3      % PSC rise time in ms
   /C_m       250.0      % membrane capacity in pF
 >> /params Set
 
@@ -104,8 +105,8 @@ M_ERROR setverbosity
 /psp 
  [/t]
  ( 
-  UnitStep(t)*weight * E/tau_syn * 1/C_m 
-    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+  UnitStep(t)*weight * E/tau_syn_ex * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn_ex))/(1/tau_syn_ex - 1/tau_m)^2 - t*exp(-t/tau_syn_ex)/(1/tau_syn_ex - 1/tau_m) ) 
  )
  Function
 def
@@ -145,7 +146,7 @@ def
 
 
  ResetKernel
- 0 << /tics_per_ms min_exponent neg dexp /resolution h  >> SetStatus
+ << /tics_per_ms min_exponent neg dexp /resolution h  >> SetKernelStatus
 
  /poisson_generator_ps Create /pg Set
  pg << /rate rate 1000.0 mul  >> SetStatus   % rate in Hz 
@@ -157,7 +158,6 @@ def
  n params SetStatus
 
  /spike_detector Create /sd Set
- sd << /precise_times true >> SetStatus
 
  pg pn  Connect
  pn sd  Connect
@@ -186,7 +186,7 @@ def
 {
  hlist
  {
-  /iaf_psc_alpha_canon AlignedImpact 
+  /iaf_psc_alpha_ps AlignedImpact 
  }
  Map 
 

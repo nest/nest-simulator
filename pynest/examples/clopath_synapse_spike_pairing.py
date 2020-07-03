@@ -39,7 +39,7 @@ References
 """
 
 import numpy as np
-import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
 import nest
 
 ##############################################################################
@@ -132,8 +132,8 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
 
     # Create Clopath connection with weight recorder
     nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
-                   {"weight_recorder": wr[0]})
-    syn_dict = {"model": "clopath_synapse_rec",
+                   {"weight_recorder": wr})
+    syn_dict = {"synapse_model": "clopath_synapse_rec",
                 "weight": init_w, "delay": resolution}
     nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
 
@@ -142,8 +142,7 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
     nest.Simulate(simulation_time)
 
     # Extract and save synaptic weights
-    w_events = nest.GetStatus(wr)[0]["events"]
-    weights = w_events["weights"]
+    weights = wr.get("events", "weights")
     syn_weights.append(weights[-1])
 
 syn_weights = np.array(syn_weights)
@@ -151,7 +150,7 @@ syn_weights = np.array(syn_weights)
 syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
 
 # Plot results
-fig1, axA = pl.subplots(1, sharex=False)
+fig1, axA = plt.subplots(1, sharex=False)
 axA.plot([10., 20., 30., 40., 50.], syn_weights[5:], color='b', lw=2.5, ls='-',
          label="pre-post pairing")
 axA.plot([10., 20., 30., 40., 50.], syn_weights[:5], color='g', lw=2.5, ls='-',
@@ -161,4 +160,4 @@ axA.set_xlabel("rho (Hz)")
 axA.legend()
 axA.set_title("synaptic weight")
 
-pl.show()
+plt.show()

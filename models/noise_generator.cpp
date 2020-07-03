@@ -23,6 +23,7 @@
 #include "noise_generator.h"
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "logging.h"
 #include "numerics.h"
 
@@ -135,15 +136,15 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
-  updateValue< double >( d, names::std_mod, std_mod_ );
-  updateValue< double >( d, names::frequency, freq_ );
-  updateValue< double >( d, names::phase, phi_deg_ );
+  updateValueParam< double >( d, names::mean, mean_, node );
+  updateValueParam< double >( d, names::std, std_, node );
+  updateValueParam< double >( d, names::std_mod, std_mod_, node );
+  updateValueParam< double >( d, names::frequency, freq_, node );
+  updateValueParam< double >( d, names::phase, phi_deg_, node );
   double dt;
-  if ( updateValue< double >( d, names::dt, dt ) )
+  if ( updateValueParam< double >( d, names::dt, dt, node ) )
   {
     dt_ = Time::ms( dt );
   }

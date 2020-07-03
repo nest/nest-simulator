@@ -43,10 +43,10 @@
 (unittest) run
 /unittest using
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution 0.1       % in ms
-     >> SetStatus
+     >> SetKernelStatus
   
  /dc_generator Create /dg Set
 

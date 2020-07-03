@@ -39,60 +39,54 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: step_current_generator - provides a piecewise constant DC input current
+Short description
++++++++++++++++++
 
-Description:
+provides a piecewise constant DC input current
+
+Description
++++++++++++
 
 The dc_generator provides a piecewise constant DC input to the
 connected node(s).  The amplitude of the current is changed at the
 specified times. The unit of the current is pA.
 
-Parameters:
-
-The following parameters can be set in the status dictionary:
-
-\verbatim embed:rst
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
-\endverbatim
-
-  If false, times will be rounded to the nearest step if they are
-  less than tic/2 from the step, otherwise NEST reports an error.
-  If true,  times are rounded to the nearest step if within tic/2
-  from the step, otherwise they are rounded up to the *end* of the
-  step.
-
-Note:
+If *allow_offgrid_spikes* is set false, times will be rounded to the
+nearest step if they are less than tic/2 from the step, otherwise NEST
+reports an error. If true, times are rounded to the nearest step if
+within tic/2 from the step, otherwise they are rounded up to the *end*
+of the step.
 
 Times of amplitude changes must be strictly increasing after conversion
 to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for current changes
 which typically would not fall onto simulation time steps.
 
-Examples:
+Parameters
+++++++++++
 
-The current can be altered in the following way:
+The following parameters can be set in the status dictionary:
 
-    /step_current_generator Create /sc Set
-    sc << /amplitude_times [0.2 0.5] /amplitude_values [2.0 4.0] >> SetStatus
+==================== ===============  ======================================
+ amplitude_times     list of ms       Times at which current changes
+ amplitude_values    list of pA       Amplitudes of step current current
+ allow_offgrid_times boolean          Default false
+==================== ===============  ======================================
 
-    The amplitude of the DC will be 0.0 pA in the time interval [0, 0.2),
-    2.0 pA in the interval [0.2, 0.5) and 4.0 from then on.
+Sends
++++++
 
-Sends: CurrentEvent
+CurrentEvent
 
-Author: Jochen Martin Eppler, Jens Kremkow
+See also
+++++++++
 
-SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
-StimulatingDevice
-*/
+ac_generator, dc_generator, step_current_generator
+
+EndUserDocs */
+
 class step_current_generator : public DeviceNode
 {
 
@@ -106,6 +100,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -117,13 +124,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );
@@ -155,7 +155,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_& );
+    void set( const DictionaryDatum&, Buffers_&, Node* );
 
     /**
      * Return time as Time object if valid, otherwise throw BadProperty
@@ -245,8 +245,8 @@ step_current_generator::get_status( DictionaryDatum& d ) const
 inline void
 step_current_generator::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, B_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;   // temporary copy in case of errors
+  ptmp.set( d, B_, this ); // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

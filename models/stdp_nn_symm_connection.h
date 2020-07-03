@@ -39,25 +39,26 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_nn_symm_synapse - Synapse type for spike-timing dependent
-plasticity with symmetric nearest-neighbour spike pairing scheme.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity with symmetric nearest-neighbour spike pairing scheme
+
+Description
++++++++++++
 
 stdp_nn_symm_synapse is a connector to create synapses with spike time
 dependent plasticity with the symmetric nearest-neighbour spike pairing
-scheme [1].
+scheme [1]_.
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
 one, and when a postsynaptic spike occurs, it is accounted in the
 facilitation rule with the nearest preceding presynaptic one (instead of
 pairing with all spikes, like in stdp_synapse). For a clear illustration of
-this scheme see fig. 7A in [2].
+this scheme see fig. 7A in [2]_.
 
 The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
 + dendritic_delay), leading to zero delta_t, are discarded. In this case the
@@ -66,14 +67,15 @@ post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
-postsynaptic traces [2]. The presynaptic trace decays exponentially over
+postsynaptic traces [2]_. The presynaptic trace decays exponentially over
 time with the time constant tau_plus and increases to 1 on a pre-spike
 occurrence. The postsynaptic trace (implemented on the postsynaptic neuron
 side) decays with the time constant tau_minus and increases to 1 on a
 post-spike occurrence.
 
-Parameters:
-\verbatim embed:rst
+Parameters
+++++++++++
+
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
                    (tau_minus defined in post-synaptic neuron)
@@ -84,29 +86,32 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Morrison A., Aertsen A., Diesmann M. (2007) Spike-timing dependent
        plasticity in balanced random networks, Neural Comput. 19:1437--1467
 
 .. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
-\endverbatim
 
-  FirstVersion: March 2006
-  Author: Moritz Helias, Abigail Morrison
-  Adapted by: Philipp Weidel, Alex Serenko
-  SeeAlso: stdp_synapse
-*/
+See also
+++++++++
+
+stdp_synapse
+
+EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPNNSymmConnection : public Connection< targetidentifierT >
 {
@@ -259,7 +264,7 @@ STDPNNSymmConnection< targetidentifierT >::send( Event& e, thread t, const Commo
 
   // depression due to the new pre-synaptic spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and triplet_Kminus here
+  double value_to_throw_away; // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 

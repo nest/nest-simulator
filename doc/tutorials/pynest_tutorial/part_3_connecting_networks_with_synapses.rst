@@ -4,7 +4,7 @@ Part 3: Connecting networks with synapses
 Introduction
 ------------
 
-In this handout we look at using synapse models to connect neurons.
+In this section we look at using synapse models to connect neurons.
 After you have worked through this material, you will know how to:
 
 -  set synapse model parameters before creation
@@ -18,7 +18,7 @@ sections of this primer:
 
 -  :doc:`Part 1: Neurons and simple neural
    networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>` 
+-  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 -  :doc:`Part 4: Topologically structured
    networks <part_4_topologically_structured_networks>`
 
@@ -85,7 +85,7 @@ connection routine.
 ::
 
     conn_dict = {"rule": "fixed_indegree", "indegree": K}
-    syn_dict = {"model": "stdp_synapse", "alpha": 1.0}
+    syn_dict = {"synapse_model": "stdp_synapse", "alpha": 1.0}
     nest.Connect(epop1, epop2, conn_dict, syn_dict)
 
 If no synapse model is given, connections are made using the model
@@ -97,48 +97,41 @@ Distributing synapse parameters
 The synapse parameters are specified in the synapse dictionary which is
 passed to the ``Connect``-function. If the parameter is set to a scalar
 all connections will be drawn using the same parameter. Parameters can
-be randomly distributed by assigning a dictionary to the parameter. The
-dictionary has to contain the key ``distribution`` setting the target
-distribution of the parameters (for example ``normal``). Optionally,
+be randomly distributed by passing a NEST Parameter object. The Parameter object
+can be combined to create a more complex parameter. Optionally,
 parameters associated with the distribution can be set (for example
-``mu``). Here we show an example where the parameters ``alpha`` and
+``mean``). Here we show an example where the parameters ``alpha`` and
 ``weight`` of the stdp synapse are uniformly distributed.
 
 ::
 
     alpha_min = 0.1
     alpha_max = 2.
-    w_min = 0.5 
+    w_min = 0.5
     w_max = 5.
 
-    syn_dict = {"model": "stdp_synapse", 
-                "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
-                "weight": {"distribution": "uniform", "low": w_min, "high": w_max},
+    syn_dict = {"synapse_model": "stdp_synapse",
+                "alpha": nest.random.uniform(min=alpha_min, max=alpha_max),
+                "weight": nest.random.uniform(min=w_min, max=w_max),
                 "delay": 1.0}
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:doc:`Connection Management <../../guides/connection-management>`, the most common
+:doc:`Connection Management<../../guides/connection_management>`, the most common
 ones are:
 
 +-------------------+------------------------+
 | Distributions     | Keys                   |
 +===================+========================+
-| ``normal``        | ``mu``, ``sigma``      |
+| ``normal``        | ``mean``, ``std``      |
 +-------------------+------------------------+
-| ``lognormal``     | ``mu``, ``sigma``      |
+| ``lognormal``     | ``mean``, ``std``      |
 +-------------------+------------------------+
-| ``uniform``       | ``low``, ``high``      |
+| ``uniform``       | ``min``, ``max``       |
 +-------------------+------------------------+
-| ``uniform_int``   | ``low``, ``high``      |
+| ``exponential``   | ``beta``               |
 +-------------------+------------------------+
-| ``binomial``      | ``n``, ``p``           |
-+-------------------+------------------------+
-| ``exponential``   | ``lambda``             |
-+-------------------+------------------------+
-| ``gamma``         | ``order``, ``scale``   |
-+-------------------+------------------------+
-| ``poisson``       | ``lambda``             |
+| ``gamma``         | ``kappa``, ``theta``   |
 +-------------------+------------------------+
 
 Querying the synapses
@@ -146,10 +139,10 @@ Querying the synapses
 
 The function
 ``GetConnections(source=None, target=None, synapse_model=None)`` returns
-a list of connection identifiers that match the given specifications.
+a `SynapseCollection` representing connection identifiers that match the given specifications.
 There are no mandatory arguments. If it is called without any arguments,
 it will return all the connections in the network. If ``source`` is
-specified, as a list of one or more nodes, the function will return all
+specified, as a NodeCollection of one or more nodes, the function will return all
 outgoing connections from that population:
 
 ::
@@ -157,13 +150,13 @@ outgoing connections from that population:
     nest.GetConnections(epop1)
 
 Similarly, we can find the incoming connections of a particular target
-population by specifying ``target`` as a list of one or more nodes:
+population by specifying ``target`` as a NodeCollection of one or more nodes:
 
 ::
 
     nest.GetConnections(target=epop2)
 
-will return all connections beween all neurons in the network and
+will return all connections between all neurons in the network and
 neurons in ``epop2``. Finally, the search can be restricted by
 specifying a given synapse model:
 
@@ -173,7 +166,7 @@ specifying a given synapse model:
 
 will return all the connections in the network which are of type
 ``stdp_synapse``. The last two cases are slower than the first case, as
-a full search of all connections has to be performed.The arguments
+a full search of all connections has to be performed. The arguments
 ``source``, ``target`` and ``synapse_model`` can be used individually,
 as above, or in any conjunction:
 
@@ -186,31 +179,31 @@ neurons in ``epop2`` of type ``stdp_synapse``. Note that all these
 querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
-Once we have the array of connections, we can extract data from it using
-``GetStatus()``. In the simplest case, this returns a list of
-dictionaries, containing the parameters and variables for each
-connection found by ``GetConnections``. However, usually we don’t want
-all the information from a synapse, but some specific part of it. For
-example, if we want to check we have connected the network as intended,
+Once we have the SynapseCollection of connections, we can extract data from it using
+``get()``. In the simplest case, this returns a dictionary of lists,
+containing the parameters and variables for each
+connection found by ``GetConnections``. However, usually we don't want
+all the information from a synapse, just some specific part of it. For
+example, if we want to check that we have connected the network as intended,
 we might want to examine only the parameter ``target`` of each
 connection. We can extract just this information by using the optional
-``keys`` argument of ``GetStatus()``:
+``keys`` argument of ``get()``:
 
 ::
 
     conns = nest.GetConnections(epop1, synapse_model="stdp_synapse")
-    targets = nest.GetStatus(conns, "target")
+    targets = conns.get("target")
 
-The variable ``targets`` is now list of all the ``target`` values of the
+The variable ``targets`` is now a list of all the ``target`` values of the
 connections found. If we are interested in more than one parameter,
 ``keys`` can be a list of keys as well:
 
 ::
 
     conns = nest.GetConnections(epop1, synapse_model="stdp_synapse")
-    conn_vals = nest.GetStatus(conns, ["target","weight"])
+    conn_vals = conns.get(["target","weight"])
 
-The variable ``conn_vals`` is now a list of lists, containing the
+The variable ``conn_vals`` is now a dictionary of lists, containing the
 ``target`` and ``weight`` values for each connection found.
 
 To get used to these methods of querying the synapses, it is recommended
@@ -267,11 +260,11 @@ location and make any necessary modifications:
 
 ::
 
-    dma = nest.GetStatus(ma, keys="events")[0]
-    Vma = dma["Vm"]
+    dma = ma.get("events")
+    Vma = dma["V_m"]
     amax = max(Vma)
-    dmb = nest.GetStatus(mb, keys="events")[0]
-    Vmb = dmb["Vm"]
+    dmb = mb.get("events")
+    Vmb = dmb["V_m"]
     bmax = max(Vmb)
     print(amax-bmax)
 
@@ -285,11 +278,11 @@ because your eye tends to drift over them:
 
 ::
 
-    dma = nest.GetStatus(multimeter1, keys="events")[0]
-    Vma = dma["Vm"]
+    dma = multimeter1.get("events")
+    Vma = dma["V_m"]
     amax = max(Vma)
-    dmb = nest.GetStatus(multimeter2, keys="events")[0]
-    Vmb = dmb["Vm"]
+    dmb = multimeter2.get("events")
+    Vmb = dmb["V_m"]
     bmax = max(Vma)
     print(amax-bmax)
 
@@ -298,8 +291,8 @@ The best way to avoid this is to define a function:
 ::
 
     def getMaxMemPot(Vdevice):
-        dm = nest.GetStatus(Vdevice, keys="events")[0]
-        return max(dm["Vm"])
+        dm = Vdevice.get("events")
+        return max(dm["V_m"])
 
 Such helper functions can usefully be stored in their own section,
 analogous to the parameters section. Now we can write down the
@@ -324,36 +317,23 @@ Subsequences and loops
 
 When preparing a simulation or collecting or analysing data, it commonly
 happens that we need to perform the same operation on each node (or a
-subset of nodes) in a population. As neurons receive ids at the time of
-creation, it is possible to use your knowledge of these ids explictly:
-
-::
-
-    Nrec = 50
-    neuronpop = nest.Create("iaf_psc_alpha", 200)
-    sd = nest.Create("spike_detector")
-    nest.Connect(range(1,N_rec+1),sd,"all_to_all")
-
-However, this is *not at all recommended!*. This is because as you
-develop your simulation, you may well add additional nodes - this means
-that your initially correct range boundaries are now incorrect, and this
-is an error that is hard to catch. To get a subsequence of nodes, use a
+subset of nodes) in a population. To get a subsequence of nodes, use a
 *slice* of the relevant population:
 
 ::
 
     nest.Connect(neuronpop[:Nrec],spikedetector,"all_to_all")
 
-An even worse thing is to use knowledge about neuron ids to set up
+One thing you should not do is to use your knowledge about neuron ids to set up
 loops:
 
 ::
 
     for n in range(1,len(neuronpop)+1):
-        nest.SetStatus([n], {"V_m": -67.0})
+        nest.SetStatus(NodeCollection([n]), {"V_m": -67.0})
 
-Not only is this error prone as in the previous example, the majority of
-PyNEST functions are expecting a list anyway. If you give them a list,
+Not only is this error prone, the majority of
+PyNEST functions are expecting a NodeCollection anyway. If you give them a NodeCollection,
 you are reducing the complexity of your main script (good) and pushing
 the loop down to the faster C++ kernel, where it will run more quickly
 (also good). Therefore, instead you should write:
@@ -361,6 +341,12 @@ the loop down to the faster C++ kernel, where it will run more quickly
 ::
 
     nest.SetStatus(neuronpop, {"V_m": -67.0})
+
+or, even better
+
+::
+
+    neuronpop.set(V_m=-67.0)
 
 :doc:`See Part 2 <part_2_populations_of_neurons>` for more examples on
 operations on multiple neurons, such as setting the status from a random
@@ -388,25 +374,25 @@ handout.
 Querying Synapses
 ~~~~~~~~~~~~~~~~~
 
--  ``GetConnections(neuron, synapse_model="None"))`` 
+-  ``GetConnections(neuron, synapse_model="None"))``
 
-   Return an array of connection identifiers.
+   Return a SynapseCollection of connection identifiers.
 
    Parameters:
 
-   -  ``source`` - list of source GIDs
-   -  ``target`` - list of target GIDs
+   -  ``source`` - NodeCollection of source node IDs
+   -  ``target`` - NodeCollection of target node IDs
    -  ``synapse_model`` - string with the synapse model
 
    If GetConnections is called without parameters, all connections in
-   the network are returned. If a list of source neurons is given, only
-   connections from these pre-synaptic neurons are returned. If a list
+   the network are returned. If a NodeCollection of source neurons is given, only
+   connections from these pre-synaptic neurons are returned. If a NodeCollection
    of target neurons is given, only connections to these post-synaptic
    neurons are returned. If a synapse model is given, only connections
    with this synapse type are returned. Any combination of source,
    target and synapse\_model parameters is permitted. Each connection id
-   is a 5-tuple or, if available, a NumPy array with the following five
-   entries: source-gid, target-gid, target-thread, synapse-id, port
+   is represented by the following five
+   entries: source-node_id, target-node_id, target-thread, synapse-id, port
 
    *Note:* Only connections with targets on the MPI process executing
    the command are returned.

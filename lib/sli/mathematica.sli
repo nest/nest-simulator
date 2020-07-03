@@ -691,22 +691,6 @@ end
 } bind def
 
 
-/Map_iter
-{
- % i p
- exch size
- % p i s
- [] exch reserve
- % p i a
- rollu exch
- % a i p
- {append} join
- % a i p
- forall
- % a
-} def
-
-
 % a p a
 % presently less general than the Mathematica version.
 % the level specification is restriced to [n], 130222 MD
@@ -747,7 +731,6 @@ end
 /Map trie
 [/arraytype /proceduretype] /Map_ load addtotrie
 [/arraytype /proceduretype /arraytype] /MapAtLevel load addtotrie
-[/iteratortype /proceduretype] /Map_iter load addtotrie
 [/stringtype /proceduretype] /Map_s load addtotrie
 def
 
@@ -970,26 +953,6 @@ References:
 /Range trie
 [/arraytype] /Range_ load addtotrie
 def
-
-/RangeIterator
-[/arraytype]
-{
- size 1 eq
- {
-  1 prepend 1 append RangeIterator_a
- }
- {
-  size 2 eq
-  {
-   1 append RangeIterator_a
-  }
-  {
-   RangeIterator_a
-  } ifelse
- } ifelse
-}
-def
-
 
 
 /** @BeginDocumentation
@@ -3386,7 +3349,7 @@ SeeAlso: Max, Sort, Mean, Variance
 {
    size 0 eq
    {  
-     /Max /RangeCheck raiseerror
+     /Min /RangeCheck raiseerror
    } if
    dup 0 get  % start value as sentinel
    exch 

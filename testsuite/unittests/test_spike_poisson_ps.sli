@@ -81,11 +81,10 @@ M_ERROR setverbosity
 
 ResetKernel
 
-0 << /resolution h >> SetStatus
+<< /resolution h >> SetKernelStatus
 
 
 /spike_detector Create /sd Set  
-sd  << /precise_times true >> SetStatus
  
 
 /poisson_generator_ps Create /pg Set

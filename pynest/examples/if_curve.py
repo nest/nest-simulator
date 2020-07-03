@@ -109,14 +109,12 @@ class IF_curve():
         # We adjust the parameters of the noise according to the current
         # values.
 
-        nest.SetStatus(self.noise, [{'mean': mean, 'std': std, 'start': 0.0,
-                                     'stop': 1000., 'origin': 0.}])
+        self.noise.set(mean=mean, std=std, start=0.0, stop=1000., origin=0.)
 
         # We simulate the network and calculate the rate.
 
         nest.Simulate(self.t_sim)
-        rate = nest.GetStatus(self.spike_detector, 'n_events')[0] * 1000.0 \
-            / (1. * self.n_neurons * self.t_sim)
+        rate = self.spike_detector.n_events * 1000. / (1. * self.n_neurons * self.t_sim)
         return rate
 
     def compute_transfer(self, i_mean=(400.0, 900.0, 50.0),
@@ -142,8 +140,7 @@ transfer.compute_transfer()
 # After the simulation is finished we store the data into a file for
 # later analysis.
 
-dat = shelve.open(model + '_transfer.dat')
-dat['I_mean'] = transfer.i_range
-dat['I_std'] = transfer.std_range
-dat['rate'] = transfer.rate
-dat.close()
+with shelve.open(model + '_transfer.dat') as dat:
+    dat['I_mean'] = transfer.i_range
+    dat['I_std'] = transfer.std_range
+    dat['rate'] = transfer.rate

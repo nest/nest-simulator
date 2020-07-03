@@ -86,7 +86,7 @@ M_ERROR setverbosity
   /tau_syn Set
 
   ResetKernel
-  0 << /dict_miss_is_error false >> SetStatus
+  << /dict_miss_is_error false >> SetKernelStatus
   /spike_generator Create /sg Set
   sg <<
      /origin 50.0            % in ms
@@ -107,7 +107,7 @@ M_ERROR setverbosity
    150.0 Simulate
 
    /V_max 0.0 def
-   vm GetStatus /events get /V_m get
+   vm /events get /V_m get
    {
      dup V_max gt { /V_max Set }{ pop } ifelse
    } forall
@@ -119,17 +119,17 @@ M_ERROR setverbosity
 modeldict /aeif_cond_alpha known
 {
   (Testing /aeif_cond_alpha) =
-  /ComputePSP << /model /aeif_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /aeif_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
 
   (Testing /aeif_cond_exp) =
-  /ComputePSP << /model /aeif_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /aeif_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
@@ -139,9 +139,9 @@ modeldict /aeif_cond_alpha known
 modeldict /iaf_cond_exp_sfa_rr  known
 {
   (Testing /iaf_cond_exp_sfa_rr ) =
-  /ComputePSP << /model /iaf_cond_exp_sfa_rr >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp_sfa_rr >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
@@ -152,9 +152,9 @@ modeldict /iaf_cond_exp_sfa_rr  known
 modeldict /hh_psc_alpha  known
 {
   (Testing /hh_psc_alpha) =
-  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /hh_psc_alpha >> SetOptions
+  /ComputePSP << /synapse_model /hh_psc_alpha >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die

@@ -132,8 +132,7 @@ nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, "
-                                           "e.g., a subnet or device.";
+         "but the node with id " << id_ << " is not a node without proxies, e.g., a device.";
   return out.str();
 }
 
@@ -208,17 +207,28 @@ nest::BadDelay::message() const
 std::string
 nest::UnexpectedEvent::message() const
 {
-  return "Node cannot handle received event.";
+  if ( msg_.empty() )
+  {
+    return std::string(
+      "Target node cannot handle input event.\n"
+      "    A common cause for this is an attempt to connect recording devices incorrectly.\n"
+      "    Note that detectors such as spike detectors must be connected as\n\n"
+      "        nest.Connect(neurons, spike_det)\n\n"
+      "    while meters such as voltmeters must be connected as\n\n"
+      "        nest.Connect(meter, neurons) " );
+  }
+  else
+  {
+    return "UnexpectedEvent: " + msg_;
+  }
 }
 
 std::string
 nest::UnsupportedEvent::message() const
 {
   return std::string(
-    "The current synapse type does not support the event type of the "
-    "sender.\n"
-    "       A common reason for this is a dynamic synapse between a "
-    "device and a neuron." );
+    "The current synapse type does not support the event type of the sender.\n"
+    "    A common cause for this is a plastic synapse between a device and a neuron." );
 }
 
 std::string
@@ -256,12 +266,6 @@ nest::DimensionMismatch::message() const
 
 std::string
 nest::DistributionError::message() const
-{
-  return std::string();
-}
-
-std::string
-nest::SubnetExpected::message() const
 {
   return std::string();
 }
@@ -393,6 +397,32 @@ nest::NumericalInstability::message() const
   std::ostringstream msg;
   msg << "NEST detected a numerical instability while "
       << "updating " << model_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::UnmatchedSteps::message() const
+{
+  std::ostringstream msg;
+  msg << "Steps for backend device don't match NEST steps: "
+      << "steps expected: " << total_steps_ << " "
+      << "steps executed: " << current_step_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::BackendPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be prepare()'d multiple times.";
+  return msg.str();
+}
+
+std::string
+nest::BackendNotPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
   return msg.str();
 }
 

@@ -35,22 +35,24 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
 
-Name: amat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model
-                      with exponential PSCs and adaptive threshold.
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-Description:
+Short description
++++++++++++++++++
+
+Non-resetting leaky integrate-and-fire neuron model with exponential
+PSCs and adaptive threshold
+
+Description
++++++++++++
 
 amat2_psc_exp is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
 The threshold is lifted when the neuron is fired and then decreases in a
-fixed time scale toward a fixed level [3].
+fixed time scale toward a fixed level [3]_.
 
 The threshold crossing is followed by a total refractory period
 during which the neuron is not allowed to fire, even if the membrane
@@ -58,7 +60,7 @@ potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -67,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]. A flow chart can be found in [2].
+[1]_. A flow chart can be found in [2]_.
 
 Remarks:
 
@@ -76,19 +78,22 @@ Remarks:
 - If identical parameters are used, and beta==0, then this model shall
   behave exactly as mat2_psc_exp.
 - The time constants in the model must fullfill the following conditions:
-  - \f$ \tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
-  - \f$ \tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}} \f$
-  - \f$ \tau_m != \tau_v \f$
+  - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+  - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
+  - :math:`\tau_m != \tau_v`
   This is required to avoid singularities in the numerics. This is a
   problem of implementation only, not a principal problem of the model.
 - Expect unstable numerics if time constants that are required to be
   different are very close.
+- :math:`\tau_m != \tau_{syn_{ex,in}}` is required by the current
+  implementation to avoid a degenerate case of the ODE describing the
+  model [1]_.  For very similar values, numerics will be unstable.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
 =========== ======= ===========================================================
  C_m        pF      Capacity of the membrane
  E_L        mV      Resting potential
@@ -108,9 +113,8 @@ The following parameters can be set in the status dictionary:
  beta       1/ms    Scaling coefficient for voltage-dependent threshold
                     component [3, eqs 16-17]
  omega      mV      Resting spike threshold (absolute value, not
-                    relative to E_L as in [3])
+                    relative to E_L as in [3]_)
 =========== ======= ===========================================================
-
 
 =========== ==== =======================================================
 **State variables that can be read out with the multimeter device**
@@ -118,17 +122,10 @@ The following parameters can be set in the status dictionary:
  V_m        mV   Non-resetting membrane potential
  V_th       mV   Two-timescale adaptive threshold
 =========== ==== =======================================================
-\endverbatim
 
-Remarks:
+References
+++++++++++
 
-\f$ \tau_m != \tau_{syn_{ex,in}} \f$ is required by the current implementation to
-avoid a degenerate case of the ODE describing the model [1].
-For very similar values, numerics will be unstable.
-
-References:
-
-\verbatim embed:rst
 .. [1] Rotter S, Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -145,17 +142,19 @@ References:
        for reproducing diverse firing patterns and predicting precise
        firing times. Frontiers in Computational Neuroscience, 5:42.
        DOI: https://doi.org/10.3389/fncom.2011.00042
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-FirstVersion: April 2013
+Receives
+++++++++
 
-Author: Thomas Heiberg & Hans E. Plesser (modified mat2_psc_exp model of
-Thomas Pfeil)
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+EndUserDocs */
+
 class amat2_psc_exp : public Archiving_Node
 {
 
@@ -201,7 +200,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double Tau_;
 
@@ -240,7 +238,7 @@ private:
     /** Resting threshold in mV
         (relative to resting potential).
         The real resting threshold is (E_L_+omega_).
-        Called omega in [3]. */
+        Called omega in [3]_. */
     double omega_;
 
     Parameters_(); //!< Sets default parameter values
@@ -250,7 +248,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& ); //!< Set values from dicitonary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -284,7 +282,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -449,10 +447,10 @@ amat2_psc_exp::get_status( DictionaryDatum& d ) const
 inline void
 amat2_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

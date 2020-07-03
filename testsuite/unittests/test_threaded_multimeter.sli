@@ -1,0 +1,84 @@
+/*
+ *  test_threaded_multimeter.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_threaded_multimeter - test support for multimeter
+    
+   Synopsis: (test_threaded_multimeter.sli) run -> dies if assertion fails
+    
+   Description:
+   Tests that multimeter works when we use threads.
+    
+   Author: Stine B. Vennemo
+   FirstVersion: June 2017
+   SeeAlso: test_treaded_spike_detector.sli
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+M_ERROR setverbosity
+
+/run_multimeter
+{
+  << >> begin
+    /n_threads Set
+
+    /N 10 def  % should not be divisible by thread number
+  
+    ResetKernel
+    GetKernelStatus /num_processes get 1 eq assert % distributed setting not covered
+    << /local_num_threads n_threads >> SetKernelStatus
+
+    % actual neurons
+    /nrns /iaf_psc_alpha N << /I_e 40. >> Create def
+    nrns { dup /global_id get 1 sub 30. N div mul -90. add 
+               /foo << >> def foo exch /V_m exch put foo SetStatus } forall
+
+    % multimeter
+    /ac /multimeter << /record_from [ /V_m ] /interval 1.0 >> Create def
+                       
+    ac nrns Connect
+
+    5. Simulate
+
+    % obtain data 
+    ac /events get dup /V_m get cva exch /senders get cva
+  end
+}
+def
+
+{
+  << >> begin
+ 1 run_multimeter /r1s Set /r1V Set
+ 3 run_multimeter /r3s Set /r3V Set
+
+ r1V Sort r3V Sort eq
+ r1s Sort r3s Sort eq
+ 
+  end
+} assert_or_die
+
+endusing

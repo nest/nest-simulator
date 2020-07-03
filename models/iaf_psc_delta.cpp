@@ -28,6 +28,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -104,15 +105,15 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -121,7 +122,7 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, V_th_ ) )
+  if ( updateValueParam< double >( d, names::V_th, V_th_, node ) )
   {
     V_th_ -= E_L_;
   }
@@ -130,7 +131,7 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
     V_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, V_min_ ) )
+  if ( updateValueParam< double >( d, names::V_min, V_min_, node ) )
   {
     V_min_ -= E_L_;
   }
@@ -139,10 +140,10 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
     V_min_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -160,7 +161,7 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  updateValue< bool >( d, names::refractory_input, with_refr_input_ );
+  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
 
   return delta_EL;
 }
@@ -172,9 +173,9 @@ nest::iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) con
 }
 
 void
-nest::iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
+  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
   {
     y3_ -= p.E_L_;
   }
@@ -308,8 +309,9 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
       }
       else
       {
+        // clear buffer entry, ignore spike
         B_.spikes_.get_value( lag );
-      } // clear buffer entry, ignore spike
+      }
 
       --S_.r_;
     }

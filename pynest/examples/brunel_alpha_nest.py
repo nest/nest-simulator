@@ -52,13 +52,13 @@ See Also
 # Import all necessary modules for simulation, analysis and plotting. Scipy
 # should be imported before nest.
 
-from scipy.optimize import fsolve
+import time
+import numpy as np
+import scipy.special as sp
 
 import nest
 import nest.raster_plot
 
-import time
-from numpy import exp
 
 ###############################################################################
 # Definition of functions used in this example. First, define the `Lambert W`
@@ -69,10 +69,8 @@ from numpy import exp
 
 
 def LambertWm1(x):
-    nest.ll_api.sli_push(x)
-    nest.ll_api.sli_run('LambertWm1')
-    y = nest.ll_api.sli_pop()
-    return y
+    # Using scipy to mimic the gsl_sf_lambert_Wm1 function.
+    return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
 def ComputePSPnorm(tauMem, CMem, tauSyn):
@@ -80,12 +78,13 @@ def ComputePSPnorm(tauMem, CMem, tauSyn):
     b = (1.0 / tauSyn - 1.0 / tauMem)
 
     # time of maximum
-    t_max = 1.0 / b * (-LambertWm1(-exp(-1.0 / a) / a) - 1.0 / a)
+    t_max = 1.0 / b * (-LambertWm1(-np.exp(-1.0 / a) / a) - 1.0 / a)
 
     # maximum of PSP for current of unit amplitude
-    return (exp(1.0) / (tauSyn * CMem * b) *
-            ((exp(-t_max / tauMem) - exp(-t_max / tauSyn)) / b -
-             t_max * exp(-t_max / tauSyn)))
+    return (np.exp(1.0) / (tauSyn * CMem * b) *
+            ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b -
+             t_max * np.exp(-t_max / tauSyn)))
+
 
 nest.ResetKernel()
 
@@ -157,7 +156,7 @@ J_in = -g * J_ex    # amplitude of inhibitory postsynaptic current
 # rate of the poisson generator which is multiplied by the in-degree CE and
 # converted to Hz by multiplication by 1000.
 
-nu_th = (theta * CMem) / (J_ex * CE * exp(1) * tauMem * tauSyn)
+nu_th = (theta * CMem) / (J_ex * CE * np.exp(1) * tauMem * tauSyn)
 nu_ex = eta * nu_th
 p_rate = 1000.0 * nu_ex * CE
 
@@ -196,22 +195,12 @@ ispikes = nest.Create("spike_detector")
 
 ###############################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory
-# spikes using ``SetStatus``, which expects a list of node handles and a list
-# of parameter dictionaries. Setting the variable ``to_file`` to `True` ensures
-# that the spikes will be recorded in a .gdf file starting with the string
-# assigned to label. Setting ``withtime`` and ``withgid`` to `True` ensures that
-# each spike is saved to file by stating the gid of the spiking neuron and
-# the spike time in one line.
+# spikes by sending parameter dictionaries to ``set``. Setting the property
+# `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
+# whose name starts with the string assigned to the property `label`.
 
-nest.SetStatus(espikes, [{"label": "brunel-py-ex",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
-
-nest.SetStatus(ispikes, [{"label": "brunel-py-in",
-                          "withtime": True,
-                          "withgid": True,
-                          "to_file": True}])
+espikes.set(label="brunel-py-ex", record_to="ascii")
+ispikes.set(label="brunel-py-in", record_to="ascii")
 
 print("Connecting devices")
 
@@ -295,8 +284,8 @@ endsimulate = time.time()
 # Reading out the total number of spikes received from the spike detector
 # connected to the excitatory population and the inhibitory population.
 
-events_ex = nest.GetStatus(espikes, "n_events")[0]
-events_in = nest.GetStatus(ispikes, "n_events")[0]
+events_ex = espikes.n_events
+events_in = ispikes.n_events
 
 ###############################################################################
 # Calculation of the average firing rate of the excitatory and the inhibitory
@@ -339,3 +328,4 @@ print("Simulation time   : %.2f s" % sim_time)
 # Plot a raster of the excitatory neurons and a histogram.
 
 nest.raster_plot.from_device(espikes, hist=True)
+nest.raster_plot.show()

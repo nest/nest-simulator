@@ -37,8 +37,8 @@ class TestSymmetricPairwiseBernoulli(TestParams):
     # specify connection pattern and specific params
     rule = 'symmetric_pairwise_bernoulli'
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p, 'multapses': True,
-                 'autapses': False, 'make_symmetric': True}
+    conn_dict = {'rule': rule, 'p': p, 'allow_multapses': True,
+                 'allow_autapses': False, 'make_symmetric': True}
     # Critical values and number of iterations of two level test
     stat_dict = {'alpha2': 0.05, 'n_runs': 20}
 
@@ -66,7 +66,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
-        conn_params['autapses'] = True
+        conn_params['allow_autapses'] = True
         N = 10
 
         # test that autapses are not permitted
@@ -80,7 +80,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
 
         # test that autapses were excluded
         conn_params['p'] = 1. - 1. / N
-        conn_params['autapses'] = False
+        conn_params['allow_autapses'] = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
@@ -88,7 +88,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
 
     def testMultapses(self):
         conn_params = self.conn_dict.copy()
-        conn_params['multapses'] = False
+        conn_params['allow_multapses'] = False
         N = 10
 
         # test that multapses must be permitted
@@ -100,16 +100,16 @@ class TestSymmetricPairwiseBernoulli(TestParams):
         # test that multapses can only arise from symmetric
         # connectivity
         conn_params['p'] = 1. - 1. / N
-        conn_params['multapses'] = True
+        conn_params['allow_multapses'] = True
         hf.nest.ResetKernel()
         pop = hf.nest.Create('iaf_psc_alpha', N)
         hf.nest.Connect(pop, pop, conn_params)
 
         conn_dict = collections.defaultdict(int)
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            conn_dict[key] += 1
-            self.assertTrue(conn_dict[key] <= 2)
+        conn = hf.nest.GetConnections()
+        for s_t_key in zip(conn.sources(), conn.targets()):
+            conn_dict[s_t_key] += 1
+            self.assertTrue(conn_dict[s_t_key] <= 2)
 
     def testMakeSymmetric(self):
         conn_params = self.conn_dict.copy()
@@ -129,13 +129,12 @@ class TestSymmetricPairwiseBernoulli(TestParams):
         hf.nest.Connect(pop, pop, conn_params)
 
         conns = set()
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            conns.add(key)
+        conn = hf.nest.GetConnections()
+        for s_t_key in zip(conn.sources(), conn.targets()):
+            conns.add(s_t_key)
 
-        for conn in hf.nest.GetConnections():
-            key = tuple(conn[:2])
-            self.assertTrue(key[::-1] in conns)
+        for s_t_key in zip(conn.sources(), conn.targets()):
+            self.assertTrue(s_t_key[::-1] in conns)
 
 
 def suite():

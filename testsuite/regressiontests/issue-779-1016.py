@@ -46,7 +46,7 @@ nestscript = mktemp(".sli")
 nestcmd = ["nest", "-d", "--verbosity=ALL", nestscript]
 
 with open(nestscript, "w") as f:
-    f.write("statusdict/argv :: ==")
+    f.write("statusdict/argv :: == M_FATAL setverbosity")
 
 raw_output = check_output(nestcmd, stderr=STDOUT)
 output = [x for x in decode(raw_output).split("\n") if x != ""]

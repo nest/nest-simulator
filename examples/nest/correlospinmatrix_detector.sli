@@ -33,7 +33,7 @@ modeldict begin
 /sg3 /spike_generator Create def
 
 /csd /correlospinmatrix_detector Create def
-/sd /spike_detector << /to_screen true >> Create def
+/sd /spike_detector << /record_to /screen >> Create def
 
 csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 
@@ -42,18 +42,18 @@ sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. e
 
 sg1 GetStatus info
 
-sg1 sd << /receptor_type 0 >> Connect
+sg1 sd << >> << /receptor_type 0 >> Connect
 
 % one final event needed so that last down transition will be detected
 sg3 << /spike_times [25.] >> SetStatus
 
 
-sg1 csd << /receptor_type 0 >> Connect
-sg2 csd << /receptor_type 1 >> Connect
-sg3 csd << /receptor_type 2 >> Connect
+sg1 csd << >> << /receptor_type 0 >> Connect
+sg2 csd << >> << /receptor_type 1 >> Connect
+sg3 csd << >> << /receptor_type 2 >> Connect
 
 100. Simulate
 
-csd GetStatus /count_covariance get ==
+csd GetStatus 0 get /count_covariance get ==
 
 modeldict end

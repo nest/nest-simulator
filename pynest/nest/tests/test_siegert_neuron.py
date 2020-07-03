@@ -56,8 +56,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
+        nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': False})
 
         # set up driven integrate-and-fire neuron
 
@@ -87,12 +86,11 @@ class SiegertNeuronTestCase(unittest.TestCase):
             'siegert_neuron', params=siegert_params)
 
         self.siegert_drive = nest.Create(
-            'siegert_neuron', 1,
-            params={'mean': self.rate_ex, 'theta': siegert_params['theta']})
+            'siegert_neuron', 1, params={'mean': self.rate_ex})
         J_mu_ex = neuron_status['tau_m'] * 1e-3 * self.J
         J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J ** 2
         syn_dict = {'drift_factor': J_mu_ex, 'diffusion_factor':
-                    J_sigma_ex, 'model': 'diffusion_connection'}
+                    J_sigma_ex, 'synapse_model': 'diffusion_connection'}
         nest.Connect(
             self.siegert_drive, self.siegert_neuron, syn_spec=syn_dict)
 
@@ -111,7 +109,8 @@ class SiegertNeuronTestCase(unittest.TestCase):
         # get rate prediction from siegert neuron
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
-        rate = events['rate'][np.where(senders == self.siegert_neuron)]
+        rate = events['rate'][np.where(
+            senders == self.siegert_neuron.get('global_id'))]
         rate_prediction = rate[-1]
 
         # get simulated rate of integrate-and-fire neuron

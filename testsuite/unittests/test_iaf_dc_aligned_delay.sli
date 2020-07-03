@@ -118,10 +118,10 @@ dc_delay max_delay gt
  
   ResetKernel
 
-  0 << 
+  << 
          /local_num_threads 1
          /resolution h
-       >> SetStatus
+       >> SetKernelStatus
 
 
   /iaf_psc_alpha Create /neuron Set
@@ -137,10 +137,10 @@ dc_delay max_delay gt
                        %      computation step size h.
 
   /voltmeter Create /vm Set
-  vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+  vm << /time_in_steps true /interval h >> SetStatus
 
   /spike_detector Create /sd Set 
-  sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
 
   dc_gen neuron 1.0 dc_delay Connect
                      %  ^

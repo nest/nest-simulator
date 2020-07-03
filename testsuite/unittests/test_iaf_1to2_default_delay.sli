@@ -75,10 +75,10 @@ M_INFO setverbosity
  /d Set /h Set
 
   ResetKernel
-      0 << 
+      << 
       /local_num_threads 1   
       /resolution h
-      >> SetStatus
+      >> SetKernelStatus
 
       /iaf_psc_alpha Create /neuron1 Set
       neuron1 << /I_e 1450.0 >> SetStatus
@@ -86,10 +86,10 @@ M_INFO setverbosity
       /iaf_psc_alpha Create /neuron2 Set
 
       /voltmeter Create /vm Set
-      vm << /withtime true /time_in_steps true /interval h >> SetStatus
+      vm << /time_in_steps true /interval h >> SetStatus
 
       /spike_detector Create /sd Set
-      sd << /withtime true /time_in_steps true >> SetStatus
+      sd << /time_in_steps true >> SetStatus
 
 
 % testing that  "/delay 1.0" is not needed here

@@ -26,6 +26,9 @@
 #include "gslrandomgen.h"
 #include "random_datums.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -60,9 +63,9 @@ nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
+nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::p_copy, p_copy_ );
+  updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 || p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );

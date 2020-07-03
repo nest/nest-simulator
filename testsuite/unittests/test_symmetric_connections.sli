@@ -51,10 +51,8 @@ M_ERROR setverbosity
 {
   ResetKernel
   
-  /iaf_psc_alpha 10 Create
-  
-  /set1 1 5 cvgidcollection def
-  /set2 6 10 cvgidcollection def
+  /set1 /iaf_psc_alpha 5 Create def
+  /set2 /iaf_psc_alpha 5 Create def
 } def
 
 % Check that make_symmetric flag cannot be used with other connection rules than one_to_one
@@ -87,8 +85,8 @@ fail_or_die
   setup
   set1 set2 << /rule /one_to_one /make_symmetric true >> /static_synapse Connect
 
-  << /source [1 5] Range >> GetConnections /fwd Set
-  << /source [6 10] Range >> GetConnections /bck Set
+  << /source set1 >> GetConnections /fwd Set
+  << /source set2 >> GetConnections /bck Set
   
   [ fwd bck ] 
   {
@@ -107,7 +105,7 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /weight << /distribution  /uniform >> >> 
   Connect
 }
@@ -118,7 +116,7 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /alpha << /distribution  /uniform >> >> 
   Connect
 }
@@ -131,14 +129,14 @@ fail_or_die
   set1 set2 
   << /rule /one_to_one 
      /make_symmetric true >> 
-  << /model /stdp_synapse 
+  << /synapse_model /stdp_synapse
      /weight <. 1.0 2.0 3.0 4.0 5.0 .>
      /delay <. 1.5 2.5 3.5 4.5 5.5 .>
      /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >> 
   Connect
 
-  << /source [1 5] Range >> GetConnections /fwd Set
-  << /source [6 10] Range >> GetConnections /bck Set
+  << /source set1 >> GetConnections /fwd Set
+  << /source set2 >> GetConnections /bck Set
   
   [ fwd bck ] 
   {
@@ -163,10 +161,8 @@ skip_if_without_gsl
 {
   ResetKernel
   
-  /hh_psc_alpha_gap 4 Create
-  
-  /set1 1 2 cvgidcollection def
-  /set2 3 4 cvgidcollection def
+  /set1 /hh_psc_alpha_gap 2 Create def
+  /set2 /hh_psc_alpha_gap 2 Create def
 } def
 
 % Check that connections that require_symmetric cannot be created without make_symmetric=true
@@ -206,7 +202,7 @@ fail_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >> 
+  << /synapse_model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >>
   Connect
 }
 fail_or_die
@@ -215,7 +211,7 @@ fail_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight << /distribution  /uniform >> >> 
+  << /synapse_model /gap_junction /weight << /distribution  /uniform >> >>
   Connect
 }
 fail_or_die
@@ -230,7 +226,7 @@ pass_or_die
   setup2
   set1 set1 
   << /rule /all_to_all /make_symmetric false >> 
-  << /model /gap_junction /weight 2.0 >> 
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 }
 pass_or_die

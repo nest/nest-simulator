@@ -23,8 +23,6 @@
 #ifndef AC_GENERATOR_H
 #define AC_GENERATOR_H
 
-// provides AC input current
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
@@ -33,58 +31,65 @@
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
+/* BeginUserDocs: device, generator
 
-namespace nest
-{
+Short description
++++++++++++++++++
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+Produce an alternating current (AC) input
 
-Name: ac_generator - provides AC input current
+Description
++++++++++++
 
-Description:
-
-This device produces an ac-current sent by a CurrentEvent. The
+This device produces an AC input sent by CurrentEvents. The
 current is given by
 
-       @f[ I(t) = offset + amplitude * \sin ( om * t + \phi ) @f]
+.. math::
+
+        I(t) = offset + amplitude * \sin ( om * t + \phi )
 
 where
-    @f[
+
+.. math::
+
     om  = 2 * \pi * frequency \\
     \phi = phase / 180 * \pi
-    @f]
 
-Parameters:
-\verbatim embed:rst
+Parameters
+++++++++++
+
 ==========   ======   ====================================
  amplitude   pA       Amplitude of sine current
  offset      pA       Constant amplitude offset
  frequency   Hz       Frequency
  phase       degree   Phase of sine current (0-360 deg)
 ==========   ======   ====================================
-\endverbatim
 
+Setting start and stop only windows the current as defined above. It does not shift
+the time axis. See :doc:`stimulating_the_network` for details.
 
-Setting start and stop (see StimulatingDevice) only windows the current
-as defined above. It does not shift the time axis.
-
-References:
-
-\verbatim embed:rst
+References
+++++++++++
 
 .. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
        invariant linear systems with applications to neuronal modeling,
        Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
-\endverbatim
 
-Sends: CurrentEvent
+Sends
++++++
 
-Author: Johan Hake, Spring 2003
+CurrentEvent
 
-SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
-*/
+See also
+++++++++
+
+dc_generator, noise_generator, step_current_generator
+
+EndUserDocs */
+
+namespace nest
+{
+
 class ac_generator : public DeviceNode
 {
 
@@ -98,6 +103,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -109,13 +127,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );
@@ -138,8 +149,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -239,7 +250,7 @@ inline void
 ac_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // State_ is read-only
 

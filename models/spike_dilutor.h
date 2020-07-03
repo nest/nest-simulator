@@ -34,13 +34,20 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: spike_dilutor - repeats incoming spikes with a certain probability.
+Short description
++++++++++++++++++
 
-Description:
+Repeat incoming spikes with a certain probability
+
+Device name
++++++++++++
+
+spike_dilutor
+
+Description
++++++++++++
 
 The device repeats incoming spikes with a certain probability.
 Targets will receive diffenrent spike trains.
@@ -50,23 +57,27 @@ Remarks:
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
-\verbatim embed:rst
 ======== ======  ================
  p_copy  real    Copy probability
 ======== ======  ================
- \endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Author: Adapted from mip_generator by Kunkel, Oct 2011
-ported to Nest 2.6 by: Setareh, April 2015
+SpikeEvent
 
-SeeAlso: mip_generator
-*/
+See also
+++++++++
+
+mip_generator
+
+EndUserDocs */
+
 class spike_dilutor : public DeviceNode
 {
 
@@ -83,6 +94,12 @@ public:
   local_receiver() const
   {
     return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   using Node::handles_test_event; // new
@@ -117,8 +134,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   struct Buffers_
@@ -165,7 +182,7 @@ inline void
 spike_dilutor::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

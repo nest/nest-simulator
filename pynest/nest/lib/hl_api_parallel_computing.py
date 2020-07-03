@@ -47,7 +47,7 @@ def Rank():
 
     Note
     ----
-    DO NOT USE Rank() TO EXECUTE ANY FUNCTION IMPORTED FROM THE nest
+    DO NOT USE `Rank()` TO EXECUTE ANY FUNCTION IMPORTED FROM THE `nest`
     MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
 
     This will lead to unpredictable behavior. Symptoms may be an
@@ -76,7 +76,7 @@ def NumProcesses():
 
 @check_stack
 def SetAcceptableLatency(port_name, latency):
-    """Set the acceptable latency (in ms) for a MUSIC port.
+    """Set the acceptable `latency` (in ms) for a MUSIC port.
 
     Parameters
     ----------

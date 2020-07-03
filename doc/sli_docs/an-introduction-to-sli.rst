@@ -25,7 +25,7 @@ at the command prompt. You should then see something like this:
 
    Problems or suggestions?
      Website     : https://www.nest-initiative.org
-     Mailing list: nest_user@nest-initiative.org
+     Mailing list: users@nest-simulator.org
 
    Type 'help' to get more information.
    Type 'quit' or CTRL-D to quit NEST.
@@ -55,6 +55,17 @@ to find out about NEST’s command-line parameters.
          --verbosity=DEBUG|STATUS|INFO|WARNING|ERROR|FATAL
                                show messages of this priority and above.
          --verbosity=QUIET     turn off all messages.
+
+SLI scripts
+-----------
+
+Scripts can be run by typing:
+::
+
+   <prefix>/bin/nest <file>
+
+If you are a Vim user and require support for SLI files, please refer to
+our :doc:`../contribute/templates_styleguides/vim_support_sli`.
 
 Supplying SLI scripts with parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

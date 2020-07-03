@@ -43,7 +43,7 @@
 % of connections in total. 
 [1 2 4]
 {
-  /nrns 1 /iaf_psc_alpha 4 Create cvgidcollection def
+  /nrns /iaf_psc_alpha 4 Create def
   
   nrns nrns << /rule /fixed_indegree /indegree 2 >> Connect
   

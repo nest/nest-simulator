@@ -124,6 +124,7 @@ Remarks:
                               M_DEBUG      = 5
                               M_STATUS     = 7
                               M_INFO       = 10
+                              M_PROGRESS   = 15
                               M_DEPRECATED = 18
                               M_WARNING    = 20
                               M_ERROR      = 30
@@ -143,6 +144,7 @@ systemdict begin %this is unnessessary, if misc_helpers.sli is called from sli-i
   /M_DEBUG      5 def
   /M_STATUS     7 def
   /M_INFO       10 def
+  /M_PROGRESS   15 def
   /M_DEPRECATED 18 def
   /M_WARNING    20 def
   /M_ERROR      30 def

@@ -52,11 +52,10 @@ skip_if_not_threaded
   /nodes total_vps 2 mul def  
 
   % set resolution and total/local number of threads
-  0
   <<
     /resolution  0.1
     /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /sinusoidal_gamma_generator
   << 
@@ -72,14 +71,11 @@ skip_if_not_threaded
     ;
     /sinusoidal_gamma_generator Create
   } Table def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread
-  pnet [sd] Connect
+  pnet { sd Connect } forall
   
   10. Simulate
 

@@ -32,6 +32,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -185,31 +186,31 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::V_th, V_th_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
 
-  updateValue< double >( d, names::E_sfa, E_sfa );
-  updateValue< double >( d, names::E_rr, E_rr );
-  updateValue< double >( d, names::q_sfa, q_sfa );
-  updateValue< double >( d, names::q_rr, q_rr );
-  updateValue< double >( d, names::tau_sfa, tau_sfa );
-  updateValue< double >( d, names::tau_rr, tau_rr );
+  updateValueParam< double >( d, names::E_sfa, E_sfa, node );
+  updateValueParam< double >( d, names::E_rr, E_rr, node );
+  updateValueParam< double >( d, names::q_sfa, q_sfa, node );
+  updateValueParam< double >( d, names::q_rr, q_rr, node );
+  updateValueParam< double >( d, names::tau_sfa, tau_sfa, node );
+  updateValueParam< double >( d, names::tau_rr, tau_rr, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -239,13 +240,13 @@ nest::iaf_cond_exp_sfa_rr::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
-  updateValue< double >( d, names::g_in, y_[ G_INH ] );
-  updateValue< double >( d, names::g_sfa, y_[ G_SFA ] );
-  updateValue< double >( d, names::g_rr, y_[ G_RR ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
+  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
+  updateValueParam< double >( d, names::g_sfa, y_[ G_SFA ], node );
+  updateValueParam< double >( d, names::g_rr, y_[ G_RR ], node );
 }
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
@@ -467,7 +468,7 @@ nest::iaf_cond_exp_sfa_rr::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // ensure conductance is positive
+  }
 }
 
 void
@@ -478,7 +479,6 @@ nest::iaf_cond_exp_sfa_rr::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

@@ -19,10 +19,10 @@
 
 set( precise_sources
     slice_ring_buffer.cpp slice_ring_buffer.h
+    iaf_chxk_2008.cpp iaf_chxk_2008.h 
     iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
+    iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.cpp
     iaf_psc_delta_ps.cpp iaf_psc_delta_ps.h
-    iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.h
-    iaf_psc_alpha_presc.cpp iaf_psc_alpha_presc.h
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     poisson_generator_ps.cpp poisson_generator_ps.h
@@ -44,8 +44,8 @@ target_include_directories( precise PRIVATE
     )
 
 install( TARGETS precise
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 

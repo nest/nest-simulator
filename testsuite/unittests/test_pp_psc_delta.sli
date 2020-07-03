@@ -128,7 +128,7 @@ SeeAlso: pp_psc_delta
     nrn sd Connect
     T Simulate
     
-    sd GetStatus /events get /times get /spikes Set
+    sd /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -196,7 +196,7 @@ SeeAlso: pp_psc_delta
     nrn sd Connect
     T Simulate
 
-    sd GetStatus /events get /times get /spikes Set
+    sd /events get /times get /spikes Set
 
 
     % rate_sim = size(spikes) / (T*1e-3)
@@ -292,7 +292,7 @@ SeeAlso: pp_psc_delta
     nrn sd Connect
     T Simulate
 
-    sd GetStatus /events get /times get /spikes Set
+    sd /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -424,8 +424,8 @@ SeeAlso: pp_psc_delta
     
     T Simulate
 
-    sd1 GetStatus /n_events get /n1 Set
-    sd2 GetStatus /n_events get /n2 Set
+    sd1 /n_events get /n1 Set
+    sd2 /n_events get /n2 Set
 
     n1 cvd n2 cvd div /ratio Set
     1.0 err sub ratio lt

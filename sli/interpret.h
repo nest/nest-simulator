@@ -111,7 +111,6 @@ public:
   Name irepeat_name;
   Name ifor_name;
   Name iforallarray_name;
-  Name iforalliter_name;
   Name iforallindexedarray_name;
   Name iforallindexedstring_name;
   Name iforallstring_name;
@@ -176,6 +175,7 @@ public:
   static const int M_INFO;
   static const int M_DEPRECATED; //!< Predefined error level for deprecation
                                  //!< warnings
+  static const int M_PROGRESS;   //!< Predefined error level for progress messages
   static const int M_WARNING;    //!< Predefined error level for warning messages
   static const int M_ERROR;      //!< Predefined error level for error messages
   static const int M_FATAL;      //!< Predefined error level for failure messages
@@ -188,6 +188,7 @@ private:
   static char const* const M_DEBUG_NAME;
   static char const* const M_STATUS_NAME;
   static char const* const M_INFO_NAME;
+  static char const* const M_PROGRESS_NAME;
   static char const* const M_DEPRECATED_NAME;
   static char const* const M_WARNING_NAME;
   static char const* const M_ERROR_NAME;
@@ -217,7 +218,6 @@ public:
   static SLIType Ostreamtype;
   static SLIType IntVectortype;
   static SLIType DoubleVectortype;
-  static SLIType Iteratortype;
 
   // SLIType default actions
   static DatatypeFunction datatypefunction;
@@ -237,7 +237,6 @@ public:
   static const IrepeatFunction irepeatfunction;
   static const IforFunction iforfunction;
   static const IforallarrayFunction iforallarrayfunction;
-  static const IforalliterFunction iforalliterfunction;
   static const IforallindexedarrayFunction iforallindexedarrayfunction;
   static const IforallindexedstringFunction iforallindexedstringfunction;
   static const IforallstringFunction iforallstringfunction;
@@ -784,8 +783,9 @@ public:
    *  there exist five predifined error levels:  \n
    *  SLIInterpreter::M_ALL=0,  display all messages \n
    *  SLIInterpreter::M_DEBUG=5,  display debugging messages and above \n
-   *  SLIInterpreter::M_DEBUG=7,  display status messages and above \n
+   *  SLIInterpreter::M_STATUS=7,  display status messages and above \n
    *  SLIInterpreter::M_INFO=10, display information messages and above \n
+   *  SLIInterpreter::M_PROGRESS=15, display test-related messages and above \n
    *  SLIInterpreter::M_DEPRECATED=18, display deprecation warnings and above \n
    *  SLIInterpreter::M_WARNING=20, display warning messages and above \n
    *  SLIInterpreter::M_ERROR=30, display error messages and above \n
@@ -807,8 +807,9 @@ public:
    *  there exist five predefined error levels:  \n
    * (SLIInterpreter::M_ALL=0, for use with verbosity(int) only, see there), \n
    *  SLIInterpreter::M_DEBUG=5, a debugging message \n
-   *  SLIInterpreter::M_DEBUG=7, a status message \n
+   *  SLIInterpreter::M_STATUS=7, a status message \n
    *  SLIInterpreter::M_INFO=10, an informational message \n
+   *  SLIInterpreter::M_PROGRESS=15, a test-related message \n
    *  SLIInterpreter::M_DEPRECATED=18, a deprecation warning \n
    *  SLIInterpreter::M_WARNING=20, a warning message \n
    *  SLIInterpreter::M_ERROR=30, an error message \n

@@ -40,7 +40,7 @@ M_INFO setverbosity
 
 
 {
-  /spike_detector << /withtime false >> Create 
+  /spike_detector Create 
 %  sd ShowStatus
   %10 Simulate
  % sd GetStatus

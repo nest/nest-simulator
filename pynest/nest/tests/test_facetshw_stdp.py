@@ -35,6 +35,8 @@ class FacetsTestCase(unittest.TestCase):
 
     def test_facetshw_stdp(self):
 
+        nest.ResetKernel()
+
         modelName = 'stdp_facetshw_synapse_hom'
 
         # homogeneous parameters for all synapses
@@ -74,7 +76,6 @@ class FacetsTestCase(unittest.TestCase):
                        'configbit_0': config_0,
                        'configbit_1': config_1,
                        'reset_pattern': reset_pattern,
-
                        'a_thresh_th': lut_th_causal,
                        'a_thresh_tl': lut_th_acausal}
 
@@ -95,7 +96,7 @@ class FacetsTestCase(unittest.TestCase):
         nest.Connect(stim, neuronA)
         nest.Connect(neuronA, neuronB, syn_spec={
             'weight': float(startWeight) / 15.0 * Wmax,
-            'delay': delay, 'model': modelName})
+            'delay': delay, 'synapse_model': modelName})
 
         nest.Simulate(50.0)
         weightTrace = []
@@ -103,13 +104,11 @@ class FacetsTestCase(unittest.TestCase):
             nest.Simulate(timeBetweenPairs)
 
             connections = nest.GetConnections(neuronA)
-            for i in range(len(connections)):
-                if (nest.GetStatus([connections[i]])[0]['synapse_model'] ==
-                        modelName):
-                    weightTrace.append(
-                        [run, nest.GetStatus([connections[i]])[0]['weight'],
-                         nest.GetStatus([connections[i]])[0]['a_causal'],
-                         nest.GetStatus([connections[i]])[0]['a_acausal']])
+            if (connections.get('synapse_model') == modelName):
+                weightTrace.append(
+                    [run, connections.get('weight'),
+                     connections.get('a_causal'),
+                     connections.get('a_acausal')])
 
         # analysis
         weightTrace = np.array(weightTrace)

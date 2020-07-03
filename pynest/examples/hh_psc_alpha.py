@@ -49,7 +49,7 @@ h = 0.1  # simulation step size in mS
 neuron = nest.Create('hh_psc_alpha')
 sd = nest.Create('spike_detector')
 
-nest.SetStatus(sd, {'to_memory': False})
+sd.record_to = 'memory'
 
 nest.Connect(neuron, sd, syn_spec={'weight': 1.0, 'delay': h})
 
@@ -58,13 +58,13 @@ n_data = int(dcto / float(dcstep))
 amplitudes = np.zeros(n_data)
 event_freqs = np.zeros(n_data)
 for i, amp in enumerate(range(dcfrom, dcto, dcstep)):
-    nest.SetStatus(neuron, {'I_e': float(amp)})
+    neuron.I_e = float(amp)
     print("Simulating with current I={} pA".format(amp))
     nest.Simulate(1000)  # one second warm-up time for equilibrium state
-    nest.SetStatus(sd, {'n_events': 0})  # then reset spike counts
+    sd.n_events = 0  # then reset spike counts
     nest.Simulate(simtime)  # another simulation call to record firing rate
 
-    n_events = nest.GetStatus(sd, keys={'n_events'})[0][0]
+    n_events = sd.n_events
     amplitudes[i] = amp
     event_freqs[i] = n_events / (simtime / 1000.)
 

@@ -690,7 +690,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
    Examples:
    modeldict /iaf_psc_alpha known -> true
    modeldict /parkinson_neuron known -> false
-   /iaf_psc_alpha_presc GetDefaults /Interpol_Order known -> true
+   /iaf_psc_alpha_ps GetDefaults /Interpol_Order known -> false
 
    Author: docu edited by Sirko Straube
 

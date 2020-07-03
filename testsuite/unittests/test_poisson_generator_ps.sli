@@ -54,10 +54,6 @@ pg sd2 Connect
 
 pg << /rate 100.0 /start 200.0 /stop 500.0 >> SetStatus
 
-sd1 << /precise_times true >> SetStatus
-sd2 << /precise_times true >> SetStatus
-
-
 
 1000 Simulate
 

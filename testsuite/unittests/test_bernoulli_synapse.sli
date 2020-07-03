@@ -54,7 +54,7 @@
 {
   /seed Set
   ResetKernel
-  0 << /rng_seeds [seed] >> SetStatus
+  << /rng_seeds [seed] >> SetKernelStatus
 
   % build
   /spike_generator Create /sg Set
@@ -67,20 +67,20 @@
 
   % connect spike_generator to presynaptic parrot neuron
   % via static synapse
-  [sg] [pre] << /rule /all_to_all >> << /model /static_synapse >> Connect
+  sg pre << /rule /all_to_all >> << /synapse_model /static_synapse >> Connect
 
   % connect presynaptic parrot neuron to postsynaptic parrot neuron 
   % via bernoulli_synapse with transmission probability p
-  [pre] [post] << /rule /all_to_all >> << /model /bernoulli_synapse /p_transmit p >> Connect
+  pre post << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit p >> Connect
 
   % connect parrot neuron to spike_detector
-  [post] [sd] Connect
+  post sd Connect
 
   % simulate for 1002 ms to allow all spikes to be recorded accordingly
   N_spikes 2. add Simulate
 
   % get number of spikes transmitted
-  sd GetStatus /events get /times get length /N_spikes_transmitted Set
+  sd /events get /times get length /N_spikes_transmitted Set
   
   % mean value of spikes to be received with transmission probability p
   /mean N_spikes p mul def
@@ -105,9 +105,9 @@ forall
 /parrot_neuron Create /post Set
 
 { 
-  [pre] [post] << /rule /all_to_all >> << /model /bernoulli_synapse /p_transmit -0.1 >> Connect
+  [pre] [post] << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit -0.1 >> Connect
 } fail_or_die
 
 { 
-  [pre] [post] << /rule /all_to_all >> << /model /bernoulli_synapse /p_transmit 1.1 >> Connect
+  [pre] [post] << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit 1.1 >> Connect
 } fail_or_die

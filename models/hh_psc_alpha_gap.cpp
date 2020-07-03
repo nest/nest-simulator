@@ -33,6 +33,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -242,22 +243,22 @@ nest::hh_psc_alpha_gap::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d )
+nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_Na, g_Na );
-  updateValue< double >( d, names::E_Na, E_Na );
-  updateValue< double >( d, names::g_Kv1, g_Kv1 );
-  updateValue< double >( d, names::g_Kv3, g_Kv3 );
-  updateValue< double >( d, names::E_K, E_K );
-  updateValue< double >( d, names::g_L, g_L );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_Na, g_Na, node );
+  updateValueParam< double >( d, names::E_Na, E_Na, node );
+  updateValueParam< double >( d, names::g_Kv1, g_Kv1, node );
+  updateValueParam< double >( d, names::g_Kv3, g_Kv3, node );
+  updateValueParam< double >( d, names::E_K, E_K, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -287,13 +288,13 @@ nest::hh_psc_alpha_gap::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d )
+nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::Act_m, y_[ HH_M ] );
-  updateValue< double >( d, names::Inact_h, y_[ HH_H ] );
-  updateValue< double >( d, names::Act_n, y_[ HH_N ] );
-  updateValue< double >( d, names::Inact_p, y_[ HH_P ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
+  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
+  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  updateValueParam< double >( d, names::Inact_p, y_[ HH_P ], node );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
@@ -633,7 +634,7 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
-  } // current input, keep negative weight
+  }
 }
 
 void
@@ -644,7 +645,6 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

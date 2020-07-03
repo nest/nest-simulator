@@ -1,0 +1,63 @@
+/*
+ *  ticket-516.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+/master_seed 1234567 def
+/sim_time 200 def
+
+/setup_network [/stringtype]
+{
+  M_ERROR setverbosity
+  ResetKernel
+
+  /conn_type Set
+
+  /n_vp GetKernelStatus /total_num_virtual_procs get def
+  (Number of virtual processes: ) n_vp cvs join =
+  (Rank: ) Rank cvs join =
+
+  << /grng_seed master_seed n_vp add
+     /rng_seeds [master_seed n_vp add 1 add
+                 master_seed n_vp 2 mul add] Range
+  >> SetKernelStatus
+
+  /layer << /shape [ 10 10 ] /edge_wrap false /elements /iaf_psc_delta >> CreateLayer def
+
+  /conn_spec << /connection_type conn_type
+                /mask << /circular << /radius 0.5 >> >>
+                /kernel 1.0
+                /weight << /uniform << /min 1.0 /max 1.5 >> >>
+                /delay 1.0
+             >> def
+  layer layer conn_spec ConnectLayers
+} def
+
+[6]
+{
+ (pairwise_bernoulli_on_source) setup_network
+ sim_time Simulate
+
+ (pairwise_bernoulli_on_target) setup_network
+ sim_time Simulate
+} distributed_pass_or_die

@@ -96,7 +96,7 @@ skip_if_without_gsl
 
 } pass_or_die
 
-% Third test: connect Multimeter with empty list, then simulate. Must not crash.
+% Third test: connect multimeter with empty list, then simulate. Must not crash.
 {
   ResetKernel
 

@@ -95,8 +95,8 @@ class ClippedRedrawContinuousRandomDev : public BaseRDV
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   ClippedRedrawContinuousRandomDev( RngPtr );
   ClippedRedrawContinuousRandomDev(); // threaded
@@ -199,8 +199,8 @@ class ClippedRedrawDiscreteRandomDev : public BaseRDV
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   ClippedRedrawDiscreteRandomDev( RngPtr );
   ClippedRedrawDiscreteRandomDev(); // threaded
@@ -337,8 +337,8 @@ class ClippedToBoundaryContinuousRandomDev : public BaseRDV
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   ClippedToBoundaryContinuousRandomDev( RngPtr );
   ClippedToBoundaryContinuousRandomDev(); // threaded
@@ -447,8 +447,8 @@ class ClippedToBoundaryDiscreteRandomDev : public BaseRDV
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   ClippedToBoundaryDiscreteRandomDev( RngPtr );
   ClippedToBoundaryDiscreteRandomDev(); // threaded

@@ -43,7 +43,9 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Homebrew (macOS)
 
-       Install homebrew on your mac (https://brew.sh/) and then install NEST via:
+       1. `Install Homebrew <https://brew.sh/>`_ on your Mac.
+
+       2. Install NEST via:
 
        .. code-block:: bash
 
@@ -272,4 +274,3 @@ these instructions.**
 
     Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
     up-to-date with most recent version of NEST. We cannot support out-dated versions.
-

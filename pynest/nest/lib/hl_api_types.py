@@ -331,7 +331,7 @@ class NodeCollection(object):
         set
         """
 
-        if self.empty():
+        if not self.__bool__():
             return
 
         # ------------------------- #
@@ -400,7 +400,7 @@ class NodeCollection(object):
             If the specified parameter does not exist for the nodes.
         """
 
-        if self.empty():
+        if not self.__bool__():
             return
         if kwargs and params is None:
             params = kwargs
@@ -460,9 +460,9 @@ class NodeCollection(object):
 
         return index
 
-    def empty(self):
-        """Returns whether the NodeCollection is empty."""
-        return self.__len__() == 0
+    def __bool__(self):
+        """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
+        return self.__len__() > 0
 
     def __array__(self, dtype=None):
         """Convert the NodeCollection to a NumPy array."""

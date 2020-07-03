@@ -715,8 +715,8 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
             nest.Connect(empty_nc, empty_nc)
 
-        self.assertTrue(empty_nc.empty())
-        self.assertFalse(nodes.empty())
+        self.assertFalse(bool(empty_nc))
+        self.assertTrue(bool(nodes))
         self.assertIsNone(empty_nc.get())
         self.assertIsNone(empty_nc.set())  # Also checking that it does not raise an error
 
@@ -729,10 +729,10 @@ class TestNodeCollection(unittest.TestCase):
         nodes_a += nest.Create('iaf_psc_alpha', n)
         nest.Connect(nodes_a, nodes_a)
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
-        self.assertFalse(nodes_a.empty())
+        self.assertTrue(bool(nodes_a))
         self.assertIsNotNone(nodes_a.get())
         nodes_a.V_m = vm
-        self.assertEqual(nodes_a.V_m,  n*(vm,))
+        self.assertEqual(nodes_a.V_m, n * (vm,))
 
         nest.ResetKernel()
 
@@ -740,10 +740,10 @@ class TestNodeCollection(unittest.TestCase):
         nodes_b += nest.NodeCollection([])
         nest.Connect(nodes_b, nodes_b)
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
-        self.assertFalse(nodes_b.empty())
+        self.assertTrue(bool(nodes_b))
         self.assertIsNotNone(nodes_b.get())
         nodes_b.V_m = vm
-        self.assertEqual(nodes_b.V_m,  n*(vm,))
+        self.assertEqual(nodes_b.V_m, n * (vm,))
 
 
 def suite():

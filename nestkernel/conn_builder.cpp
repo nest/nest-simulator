@@ -145,8 +145,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
-        "In order to use structural plasticity, both a pre and post synaptic "
-        "element must be specified." );
+        "In order to use structural plasticity, both a pre and post synaptic element must be specified." );
     }
 
     use_pre_synaptic_element_ = false;
@@ -237,9 +236,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   if ( not( sources_->valid() and targets_->valid() ) )
   {
-    throw KernelException(
-      "InvalidNodeCollection: "
-      "sources and targets must be valid NodeCollections." );
+    throw KernelException( "InvalidNodeCollection: sources and targets must be valid NodeCollections." );
   }
 }
 
@@ -336,9 +333,7 @@ nest::ConnBuilder::connect()
   {
     if ( make_symmetric_ )
     {
-      throw NotImplemented(
-        "Symmetric connections are not supported in combination with "
-        "structural plasticity." );
+      throw NotImplemented( "Symmetric connections are not supported in combination with structural plasticity." );
     }
     sp_connect_();
   }
@@ -409,9 +404,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
-    throw IllegalConnection(
-      "Cannot use this rule to connect to nodes"
-      " without proxies (usually devices)." );
+    throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
   }
 
   if ( param_dicts_.empty() ) // indicates we have no synapse params
@@ -1103,8 +1096,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
         LOG( M_WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
-          "have a non-empty "
-          "intersection, the connect algorithm will enter an infinite loop." );
+          "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
         return;
       }
 
@@ -1112,9 +1104,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
       {
         LOG( M_WARNING,
           "FixedInDegreeBuilder::connect",
-          "Multapses are prohibited and you request more than 90% "
-          "connectivity. "
-          "Expect long connecting times!" );
+          "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
     } // if (not allow_multapses_ )
 
@@ -1273,8 +1263,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
         LOG( M_WARNING,
           "FixedOutDegreeBuilder::connect",
           "Multapses and autapses prohibited. When the sources and the targets "
-          "have a non-empty "
-          "intersection, the connect algorithm will enter an infinite loop." );
+          "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
         return;
       }
 
@@ -1282,9 +1271,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
       {
         LOG( M_WARNING,
           "FixedOutDegreeBuilder::connect",
-          "Multapses are prohibited and you request more than 90% "
-          "connectivity. "
-          "Expect long connecting times!" );
+          "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
     }
 
@@ -1384,9 +1371,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   {
     if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
     {
-      throw BadProperty(
-        "Total number of connections cannot exceed product "
-        "of source and target population sizes." );
+      throw BadProperty( "Total number of connections cannot exceed product of source and target population sizes." );
     }
   }
 
@@ -1401,9 +1386,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   // a bitmap
   if ( not allow_multapses_ )
   {
-    throw NotImplemented(
-      "Connect doesn't support the suppression of multapses in the "
-      "FixedTotalNumber connector." );
+    throw NotImplemented( "Connect doesn't support the suppression of multapses in the FixedTotalNumber connector." );
   }
 }
 
@@ -1864,9 +1847,7 @@ nest::SPBuilder::sp_connect( const std::vector< index >& sources, const std::vec
 void
 nest::SPBuilder::connect_()
 {
-  throw NotImplemented(
-    "Connection without structural plasticity is not possible for this "
-    "connection builder." );
+  throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }
 
 /**
@@ -1877,9 +1858,7 @@ nest::SPBuilder::connect_()
 void
 nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets )
 {
-  throw NotImplemented(
-    "Connection without structural plasticity is not possible for this "
-    "connection builder." );
+  throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }
 
 void

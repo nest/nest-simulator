@@ -107,7 +107,7 @@ def Create(model, n=1, params=None, positions=None):
         return layer
 
     # If any of the elements in the parameter dictionary is either an array-like object,
-    # or a NEST parameter, we create the nodes first, then set the status. If not,
+    # or a NEST parameter, we create the nodes first, then set the given values. If not,
     # we can pass the parameter specification to SLI when the nodes are created.
     iterable_or_parameter_in_params = True
     if isinstance(params, dict) and params:  # if params is a dict and not empty

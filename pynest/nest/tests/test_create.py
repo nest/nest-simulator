@@ -71,7 +71,6 @@ class CreateTestCase(unittest.TestCase):
                   ]
 
         for p, err in params:
-            print(p)
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter('always')
                 self.assertRaises(err, nest.Create, 'iaf_psc_alpha', num_nodes, p)

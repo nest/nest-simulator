@@ -124,37 +124,49 @@ EndUserDocs */
 /**
  * AC Gamma Generator.
  * Generates AC-modulated inhomogeneous gamma process.
- * @todo The implementation is very quick and dirty and not tuned for
- * performance at all.
- * @note  The simulator works by calculating the hazard h(t) for each time step
- * and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
  *
- *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
- *                                                                  \Lambda(t))}
+ * .. todo::
+ *    The implementation is very quick and dirty and not tuned for
+ *    performance at all.
  *
- * with
- *   \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi )
- *   \Lambda(t) = a \int_{t_0}^t \lambda(s) ds
- * and the incomplete Gamma function \f$ Gamma(a,z) \f$; \f$ a \f$ is the order
- * of the gamma function and \f$t_0\f$ the time of the most recent spike.
+ * .. note::
+ *    The simulator works by calculating the hazard h(t) for each time step
+ *    and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
  *
- * @note This implementation includes an additional \f$ a \f$ factor in the
- * calculation of \f$\Lambda(t)\f$ and \f$h(t)\f$ in order to keep the mean rate
- * constant with varying \f$a\f$
+ *    .. math::
+ *       h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a, \Lambda(t))}
  *
- * @note Let \f$t_0\f$ be the time of the most recent spike. If stimulus
- parameters
- * are changed at
- *       \f$t_c > t_0\f$, then \f$\Lambda(t)\f$ is integrated piecewise for
- *       \f$t>t_c\f$ as
- *        \Lambda(t) = a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds
+ *     with
+ *
+ *     .. math::
+ *        \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi )
+ *        \Lambda(t) = a \int_{t_0}^t \lambda(s) ds
+ *
+ * and the incomplete Gamma function :math:`Gamma(a,z)`; :math:`a` is the order
+ * of the gamma function and :math:`t_0` the time of the most recent spike.
+ *
+ * .. note::
+ *    This implementation includes an additional :math:`a` factor in the
+ *    calculation of :math:`\Lambda(t)` and :math:`h(t)` in order to keep the mean rate
+ *    constant with varying :math:`a`.
+ *
+ * .. note::
+ *    Let :math:`t_0` be the time of the most recent spike. If stimulus parameters
+ *    are changed at :math:`t_c > t_0`, then :math:`\Lambda(t)` is integrated piecewise for
+ *    :math:`t>t_c` as
+ *
+ *    .. math::
+ *
+ *       \Lambda(t) &= a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                     &+ a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds
+ *
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *
- * @todo This implementation assumes that outgoing connections are all made from
- *       the same synapse type, see #737. Once #681 is fixed, we need to add a
-         check that his assumption holds.
+ * .. todo::
+ *    This implementation assumes that outgoing connections are all made from
+ *    the same synapse type, see #737. Once #681 is fixed, we need to add a
+ *    check that his assumption holds.
  */
 class sinusoidal_gamma_generator : public DeviceNode
 {

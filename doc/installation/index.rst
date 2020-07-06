@@ -152,7 +152,14 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
              conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
 
-          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
+          The syntax for this install follows the pattern:
+          ``nest-simulator=<version>=<build_string>``. Build strings can be
+          found by browsing the `conda forge file list
+          <https://anaconda.org/conda-forge/nest-simulator/files>`_ (note
+          there are multiple pages). For example, to install
+          `linux-64/nest-simulator-2.20.0-mpi_openmpi_py38hb43900d_0.tar.bz2``
+          on Linux with Python 3.8, you would use the version specifier
+          ``nest-simulator=2.20.0=mpi_openmpi_py38hb43900d_0``.
 
        2. Activate your environment:
 

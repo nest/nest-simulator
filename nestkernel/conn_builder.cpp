@@ -144,8 +144,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   {
     if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
     {
-      throw BadProperty(
-        "Structural plasticity requires both a pre and post synaptic element." );
+      throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
     }
 
     use_pre_synaptic_element_ = false;

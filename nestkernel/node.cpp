@@ -213,7 +213,7 @@ Node::send_test_event( Node&, rport, synindex, bool )
 {
   throw IllegalConnection(
     "Source node does not send output.\n"
-    "  Note that detectors must be connected as Connect(neuron, detector)." );
+    "  Note that recorders must be connected as Connect(neuron, recorder)." );
 }
 
 /**
@@ -333,7 +333,7 @@ Node::handles_test_event( DSSpikeEvent&, rport )
 port
 Node::handles_test_event( DSCurrentEvent&, rport )
 {
-  throw IllegalConnection( "The target node or synapse model does not support DC current input." );
+  throw IllegalConnection( "The target node or synapse model does not support DS current input." );
 }
 
 void

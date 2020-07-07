@@ -145,7 +145,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
     {
       throw BadProperty(
-        "In order to use structural plasticity, both a pre and post synaptic element must be specified." );
+        "Structural plasticity requires both a pre and post synaptic element." );
     }
 
     use_pre_synaptic_element_ = false;
@@ -1868,7 +1868,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
   // make sure that target and source population have the same size
   if ( sources.size() != targets.size() )
   {
-    throw DimensionMismatch( "Source and Target population must be of the same size." );
+    throw DimensionMismatch( "Source and target population must be of the same size." );
   }
 
 #pragma omp parallel

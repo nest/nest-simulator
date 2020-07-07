@@ -154,12 +154,18 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
           The syntax for this install follows the pattern:
           ``nest-simulator=<version>=<build_string>``. Build strings can be
-          found by browsing the `conda forge file list
+          found by listing the available versions with
+          ```
+          conda search -c conda-forge nest-simulator
+          ```
+          or by browsing the `conda forge file list
           <https://anaconda.org/conda-forge/nest-simulator/files>`_ (note
           there are multiple pages). For example, to install
-          `linux-64/nest-simulator-2.20.0-mpi_openmpi_py38hb43900d_0.tar.bz2``
-          on Linux with Python 3.8, you would use the version specifier
-          ``nest-simulator=2.20.0=mpi_openmpi_py38hb43900d_0``.
+          one of the 2.20.x versions with MPI support by OpenMPI you would use the version specifier
+          ``nest-simulator=2.20.*=*openmpi*``. The Python version dependency is automatically resolved
+          if you add ``python=3`` or ``python=3.8`` depending on how specific you are tied to a Python version.
+          Leaving the Python version and build identifyer open will make conda install the latest versions
+          compatible with all requested packages.
 
        2. Activate your environment:
 

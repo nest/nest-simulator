@@ -25,7 +25,6 @@ install/
 /libtool
 /nest/nest
 /nest/static_modules.h
-/pynest/do_tests.py
 /pynest/setup.py
 /reports/
 /sli/sli

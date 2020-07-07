@@ -337,11 +337,6 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/pynest/do_tests.py.in"
-    "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
     "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
 )

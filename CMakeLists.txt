@@ -188,25 +188,25 @@ message("-- NEST version: ${NEST_VERSION_STRING}")
 ##################         Enable Testing Targets             ##################
 ################################################################################
 enable_testing()
-set( TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log )
-file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
+set( TEST_OPTS "" )
 
 if ( HAVE_PYTHON )
-  add_custom_target( installcheck
-    COMMAND ${CMAKE_COMMAND} -E env
-      PYTHON="${PYTHON}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Execute NEST's testsuite...."
-  )
-else ()
-  add_custom_target( installcheck
-    COMMAND ${CMAKE_COMMAND} -E env
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Execute NEST's testsuite...."
-  )
+  set( TEST_OPTS "${TEST_OPTS};--with-python=${PYTHON}" )
 endif ()
+
+if ( HAVE_MUSIC )
+  set( TEST_OPTS "${TEST_OPTS};--with-music=${MUSIC_EXECUTABLE}" )
+endif ()
+
+add_custom_target( installcheck
+  COMMAND ${CMAKE_COMMAND} -E env
+    ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
+	--prefix=${CMAKE_INSTALL_PREFIX}
+	--report-dir="${PROJECT_BINARY_DIR}/reports"
+	${TEST_OPTS}
+  WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+  COMMENT "Executing NEST's testsuite..."
+)
 
 # N.B. to ensure "make install" is always run before "make installcheck", we
 # would ideally like to add:
@@ -339,11 +339,6 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/pynest/do_tests.py.in"
     "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
-    "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
 )
 
 configure_file(

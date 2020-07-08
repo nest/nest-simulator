@@ -109,10 +109,10 @@ Related projects
 - `NEST Desktop <https://github.com/babsey/nest-desktop>`_ - an interactive desktop application for NEST simulator
 
 The  `NeuralEnsemble <http://neuralensemble.org/>`_ is a community-based initiative to promote and co-ordinate open-source software development in neuroscience.
-They host numerous software including
+As well as:
 
-- `PyNN <http://neuralensemble.org/PyNN/>`_ - a simulator-independent language for building neuronal network models, and
-- `Elephant (Electrophysiology Analysis Toolkit) <http://neuralensemble.org/elephant/>`_ - a package for the analysis of neurophysiology data, using Neo data structures.
+- `PyNN <http://neuralensemble.org/PyNN/>`_ - a simulator-independent language for building neuronal network models
+- `Elephant <http://neuralensemble.org/elephant/>`_ - a package for the analysis of neurophysiological data, using Neo data structures
 
 License
 #######
@@ -122,5 +122,4 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 -  use NEST for your research,
 -  modify and improve NEST according to your needs,
 -  distribute NEST to others under the same license.
-
 

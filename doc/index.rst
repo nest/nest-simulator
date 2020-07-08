@@ -105,10 +105,11 @@ Interested in contributing?
 Related projects
 ################
 
-- `NESTML <https://github.com/nest/nestml>`_ - a domain specific language to describe neuron models in NEST
-- `NEST Desktop <https://github.com/babsey/nest-desktop>`_ - an interactive desktop application for NEST simulator
+You may be interested in the associated tooling of NEST Simulator:
 
-The  `NeuralEnsemble <http://neuralensemble.org/>`_ is a community-based initiative to promote and co-ordinate open-source software development in neuroscience.
+- `NESTML <https://nestml.readthedocs.io/en/latest/>`_ - a domain specific language to describe neuron models in NEST
+- `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_ - a web-based GUI application for NEST Simulator
+
 As well as:
 
 - `PyNN <http://neuralensemble.org/PyNN/>`_ - a simulator-independent language for building neuronal network models
@@ -122,4 +123,3 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 -  use NEST for your research,
 -  modify and improve NEST according to your needs,
 -  distribute NEST to others under the same license.
-

@@ -112,7 +112,7 @@ Many other extensions and open-source tools related to the NEST Simulator are av
 - `PyNN <http://neuralensemble.org/PyNN/>`_ - a simulator-independent language for building neuronal network models
 - `Elephant <http://neuralensemble.org/elephant/>`_ - a package for the analysis of neurophysiological data, using Neo data structures
 
-You can find more projects by the community for example by searching GitHub for the topics `"nest-simulator" <https://github.com/topics/nest-simulator>`_ or `"nest-module" <https://github.com/topics/nest-module/>`_.
+You can find more projects by the community, for example by searching GitHub for the topics `"nest-simulator" <https://github.com/topics/nest-simulator>`_ or `"nest-module" <https://github.com/topics/nest-module/>`_.
 
 License
 #######

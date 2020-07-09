@@ -931,7 +931,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         raise ImportError('Matplotlib could not be imported')
 
     if not isinstance(layer, NodeCollection):
-        raise TypeError("layer must be a NodeCollection.")
+        raise TypeError('layer must be a NodeCollection.')
 
     # get layer extent
     ext = layer.spatial['extent']
@@ -1056,7 +1056,7 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
     import matplotlib.pyplot as plt
 
     if not HAVE_MPL:
-        raise ImportError('Matplotlib could not be imported')
+        raise ImportError("Matplotlib could not be imported")
 
     if not isinstance(src_nrn, NodeCollection) or len(src_nrn) != 1:
         raise TypeError("src_nrn must be a single element NodeCollection.")

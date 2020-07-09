@@ -73,7 +73,7 @@ synapse.
 
 (1) Post-synaptic currents
 Incoming spike events induce a post-synaptic change of current modelled
-by an alpha function. The alpha function is normalised such that an event of
+by an alpha function. The alpha function is normalized such that an event of
 weight 1.0 results in a peak current of 1 pA.
 
 
@@ -130,10 +130,11 @@ U_ref_squared real    Reference value for u_bar_bar_^2.
 ============= ======= =======================================================
 
 
-Problems/Todo:
+Problems/Todo
++++++++++++++
 
-better spike detection
-initial wavelet/spike at simulation onset
+- better spike detection
+- initial wavelet/spike at simulation onset
 
 
 References

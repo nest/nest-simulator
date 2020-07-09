@@ -75,9 +75,6 @@ set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [de
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
 
-set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
-set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
-
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'. [default standard]" )
 
 ################################################################################

@@ -206,13 +206,14 @@ Node::wfr_update( Time const&, const long, const long )
 }
 
 /**
- * Default implementation of check_connection just throws UnexpectedEvent
+ * Default implementation of check_connection just throws IllegalConnection
  */
 port
 Node::send_test_event( Node&, rport, synindex, bool )
 {
-  throw UnexpectedEvent(
-    "Source node does not send output. Note that detectors need to be connected as Connect(neuron, detector)." );
+  throw IllegalConnection(
+    "Source node does not send output.\n"
+    "  Note that recorders must be connected as Connect(neuron, recorder)." );
 }
 
 /**
@@ -290,9 +291,7 @@ Node::handle( DataLoggingRequest& )
 port
 Node::handles_test_event( DataLoggingRequest&, rport )
 {
-  throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect "
-    "devices." );
+  throw IllegalConnection( "The target node or synapse model does not support data logging requests." );
 }
 
 void
@@ -322,23 +321,19 @@ Node::handle( DoubleDataEvent& )
 port
 Node::handles_test_event( DoubleDataEvent&, rport )
 {
-  throw IllegalConnection();
+  throw IllegalConnection( "The target node or synapse model does not support double data event." );
 }
 
 port
 Node::handles_test_event( DSSpikeEvent&, rport )
 {
-  throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect "
-    "devices." );
+  throw IllegalConnection( "The target node or synapse model does not support spike input." );
 }
 
 port
 Node::handles_test_event( DSCurrentEvent&, rport )
 {
-  throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect "
-    "devices." );
+  throw IllegalConnection( "The target node or synapse model does not support DS current input." );
 }
 
 void

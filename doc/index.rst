@@ -105,7 +105,7 @@ Interested in contributing?
 Related projects
 ################
 
-Many other extensions and open-source tools related to the NEST Simulator are available. In particular the following packages may be of interest: 
+Many extensions and open-source tools related to the NEST Simulator are available. In particular, the following packages may be of interest: 
 
 - `NESTML <https://nestml.readthedocs.io/en/latest/>`_ - a domain specific language to describe neuron models in NEST
 - `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_ - a web-based GUI application for NEST Simulator

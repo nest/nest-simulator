@@ -59,7 +59,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
 
 endif ()
 
-install( DIRECTORY conngen model_details
+install( DIRECTORY model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 install( FILES index.html doc_header.txt

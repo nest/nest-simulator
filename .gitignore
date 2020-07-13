@@ -60,7 +60,7 @@ CPackSourceConfig.cmake
 doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
-doc/userdocs/
+doc/models/
 doc/pynestkernel_mock.py
 doc/from_cpp/
 doc/microcircuit/

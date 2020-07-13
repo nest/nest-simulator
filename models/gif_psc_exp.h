@@ -286,19 +286,18 @@ private:
    */
   struct State_
   {
-    double I_stim_; //!< This is piecewise constant external current
-    double V_;      //!< This is the membrane potential
-    double sfa_;    //!< This is the change of the 'threshold' due to adaptation.
-    double stc_;    //!< Spike triggered current.
+    double I_stim_; //!< Piecewise constant external current
+    double V_;      //!< Membrane potential
+    double sfa_;    //!< Change of the 'threshold' due to adaptation.
+    double stc_;    //!< Spike triggered current
 
-    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
-    std::vector< double > stc_elems_; //!< Vector of spike triggered parameters.
+    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters
+    std::vector< double > stc_elems_; //!< Vector of spike triggered parameters
 
-    double I_syn_ex_; //!< postsynaptic current for exc.
-    double I_syn_in_; //!< postsynaptic current for inh.
+    double I_syn_ex_; //!< Postsynaptic current for exc
+    double I_syn_in_; //!< Postsynaptic current for inh
 
-    //!< absolute refractory counter (no membrane potential propagation)
-    unsigned int r_ref_;
+    unsigned int r_ref_; //!< Absolute refractory counter (no membrane potential propagation)
 
     State_(); //!< Default initialization
 

@@ -100,9 +100,9 @@ period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
 onto each compartment, with alpha-function time course. The alpha
-function is normalised such that an event of weight 1.0 results in a
-peak current of 1 nS at t = tau_syn. Each compartment can also receive
-current input from a current generator, and an external (rheobase)
+function is normalized such that an event of weight 1.0 results in a
+peak current of 1 nS at :math:`t = \tau_{syn}`. Each compartment can also
+receive current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through

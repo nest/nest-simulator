@@ -55,25 +55,29 @@ This device can be used to inject a Gaussian "white" noise current into a node.
 
 The current is not really white, but a piecewise constant current with Gaussian
 distributed amplitude. The current changes at intervals of dt. dt must be a
-multiple of the simulation step size, the default is 1.0ms,
-corresponding to a 1kHz cut-off.
+multiple of the simulation step size, the default is 1.0 ms,
+corresponding to a 1 kHz cut-off.
 Additionally a second sinusodial modulated term can be added to the standard
 deviation of the noise.
 
 The current generated is given by
 
-  I(t) = mean + std * N_j  \text{ for } t_0 + j dt <= t < t_0 + (j-1) dt
+.. math::
 
-where \f$ N_j \f$ are Gaussian random numbers with unit standard deviation and
-\f$ t_0 \f$ is the device onset time.
+  I(t) = mean + std * N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
+
+where :math:`N_j` are Gaussian random numbers with unit standard deviation and
+:math:`t_0` is the device onset time.
 If the modulation is added the current is given by
 
-  I(t) = mean + \sqrt(std^2 + std_{mod}^2 * \sin(\omega * t + phase)) * N_j \\
-                              \text{ for } t_0 + j dt <= t < t_0 + (j-1) dt
+.. math::
+
+   I(t) = mean + \sqrt(std^2 + std_{mod}^2 * \sin(\omega * t + phase)) * N_j \\
+                              \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see
-the noise_generator.ipynb notebook included in the NEST source code
-(docs/model_details).
+the ``noise_generator.ipynb`` notebook included in the NEST source code
+(``docs/model_details``).
 
 Remarks:
 - All targets receive different currents.
@@ -92,11 +96,11 @@ Remarks:
   \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
                              \text{where } x = exp(-dt/\tau_m)
 
-  for large :math:`t_j`. In the white noise limit, dt -> 0, one has
+  for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
 .. math::
 
-  \Sigma -> std / C_m * \sqrt(dt * \tau / 2).
+  \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
 
   To obtain comparable results for different values of dt, you must
   adapt std.

@@ -257,21 +257,17 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     sps(post)
 
     if not isinstance(pre, NodeCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
     if not isinstance(post, NodeCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, postsynaptic nodes must be a NodeCollection")
 
     # In some cases we must connect with ConnectLayers instead.
     if _connect_layers_needed(processed_conn_spec, processed_syn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
-            raise TypeError(
-                "Presynaptic NodeCollection must have spatial information")
+            raise TypeError("Presynaptic NodeCollection must have spatial information")
         if post.spatial is None:
-            raise TypeError(
-                "Presynaptic NodeCollection must have spatial information")
+            raise TypeError("Presynaptic NodeCollection must have spatial information")
 
         # Create the projection dictionary
         spatial_projections = _process_spatial_projections(
@@ -333,9 +329,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     sr("statusdict/have_libneurosim ::")
     if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGConnect is not available.")
+        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGConnect is not available.")
 
     if parameter_map is None:
         parameter_map = {}
@@ -364,9 +358,7 @@ def CGParse(xml_filename):
 
     sr("statusdict/have_libneurosim ::")
     if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGParse is not available.")
+        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGParse is not available.")
 
     sps(xml_filename)
     sr("CGParse")
@@ -395,8 +387,7 @@ def CGSelectImplementation(tag, library):
     sr("statusdict/have_libneurosim ::")
     if not spp():
         raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGSelectImplementation is not available.")
+            "NEST was not compiled with support for libneurosim: CGSelectImplementation is not available.")
 
     sps(tag)
     sps(library)

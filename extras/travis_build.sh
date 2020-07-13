@@ -52,12 +52,14 @@ if [ "$xPYTHON" = "1" ] ; then
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIB_DIR -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
    fi
    if [[ $OSTYPE = darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
+      PYPREFIX="/usr/local/Cellar/python@3.8/3.8.3_2/Frameworks/Python.framework/Versions/3.8"
+      CONFIGURE_PYTHON="\
+            -DPYTHON_LIBRARY=$PYPREFIX/lib/libpython3.8.dylib
+            -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.8"
    fi
+
    mkdir -p $HOME/.matplotlib
-   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
-   backend : svg
-EOF
+   echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi

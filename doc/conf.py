@@ -32,10 +32,11 @@ import sys
 import os
 import re
 import pip
-
 import subprocess
 
-from shutil import copytree, ignore_patterns
+from pathlib import Path
+from shutil import copyfile
+
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -202,7 +203,7 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="userdocs/"
+        outdir="models/"
     )
 
 
@@ -282,11 +283,32 @@ texinfo_documents = [
 
 # -- Options for readthedocs ----------------------------------------------
 
-
 # -- Copy documentation for Microcircuit Model ----------------------------
 
-source = r'../pynest/examples/Potjans_2014'
-destination = r'examples'
 
-if os.path.exists(destination) and os.path.isdir(destination):
-    copytree(source, destination, ignore=ignore_patterns('*.dat', '*.py', '*.rst'), dirs_exist_ok=True)
+def copytreeglob(source, target, glob='*.png'):
+    '''
+    Recursively copy all files selected by `glob` from `source` to `target` path,
+    recreating the sub-folder structure.
+    Parameters
+    ----------
+    source : path, str
+        source folder where to recursively search for glob
+    target : path, str
+        target folder where to recreate the tree of source files
+    glob : str
+        shell-glob specifying which files to copy
+    '''
+    source = Path(source)
+    target = Path(target)
+    for relativename in [x.relative_to(source) for x in source.rglob(glob)]:
+        # manually create directory, since shutil.copyfile() does not support
+        # the `dirs_exist_ok=True` below Python-3.8
+        targetpath = target/relativename.parents[0]
+        if not targetpath.exists():
+            targetpath.mkdir(parents=True)
+        assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
+        copyfile(source/relativename, target/relativename)
+
+
+copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')

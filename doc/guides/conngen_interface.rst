@@ -7,15 +7,34 @@ Connection Generator Interface. This allows to couple connection
 generating libraries to NEST without having to modify NEST itself.
 
 In contrast to the `built-in connection
-functions <connection-management.md>`__ and the Topology module, the
-Connection Generator Interface has a different way for specifying the
-connectivity:
+functions :doc:`Connection management <connection_management>` and the Topology
+module, the Connection Generator Interface has a different way for specifying
+the connectivity:
 
 1. pre- and postsynaptic neurons are created
 2. a Connection Generator object is created which specifies the
    connectivity pattern
 3. the Connection Generator is applied to the sets of source and target
    neurons using the ``CGConnect`` function.
+
+The API is part of the neurosim library hosted at INCF:
+
+  http://software.incf.org/software/libneurosim
+
+
+High-level Python API
+---------------------
+
+.. code-block:: python
+
+   CGConnect (SOURCES, TARGETS, CG, [PARAMETER_MAP, [MODEL]])
+
+Connect neurons from ``SOURCES`` to neurons from ``TARGETS`` using
+connectivity specified by the connection generator ``CG``. ``SOURCES`` and
+``TARGETS`` are both NodeCollections representing the node IDs. ``PARAMETER_MAP``
+is a dictionary mapping names of values such as weight and delay to
+value set positions. ``MODEL`` is the synapse model.
+
 
 Example in PyNEST using the Connection-Set Algebra
 --------------------------------------------------
@@ -41,6 +60,7 @@ connectivity.
    # Verify the connectivity
    conn = nest.GetConnections(sources)
    print((c['source'], c['target']) for c in nest.GetStatus(conn))
+
 
 Example in SLI using the Connection-Set Algebra
 -----------------------------------------------
@@ -72,3 +92,17 @@ We then create the Connection Generator from the serialization using
 
    % Verify the connectivity
    << /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
+
+
+References
+----------
+
+The interface was presented as a poster at the 4th INCF Congress of
+Neuroinformatics:
+
+.. [1] Jochen Eppler, Håkon Enger, Thomas Heiberg, Birgit Kriener, Hans
+       Plesser, Markus Diesmann and Mikael Djurfeldt (2011) "Evaluating the
+       Connection-Set Algebra for the neural simulator NEST", Conference
+       Abstract: 4th INCF Congress of Neuroinformatics, Front. Neuroinform.,
+       doi:10.3389/conf.fninf.2011.08.00085
+

@@ -110,7 +110,7 @@ cache:
 
 before_install:
    - export SOURCEDIR=$PWD
-   # select the right C++ compiler version (gcc6) -- note that update-alternatives is not available on MacOS
+   # select the right C++ compiler version (gcc8) -- note that update-alternatives is not available on MacOS
    - |
      if [ "$TRAVIS_OS_NAME" = "linux" ]; then
        ls -lh /usr/bin/g++*

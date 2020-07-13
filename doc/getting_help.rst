@@ -3,22 +3,24 @@ Getting help
 
 The NEST documentation has grown tremendously over the years. The following material exists:
 
+For NEST users:
 * `Read the Docs <https://nest-simulator.readthedocs.io/en/stable/>`_: This is the user 
   documentation of NEST. Besides providing a reference, it contains various NEST tutorials 
   and guides. Please make sure you select the documentation version appropriate for your 
   NEST version (as determined by ``nest.version()`` in Python). The "latest" version on 
   Read the Docs mirrors the latest version on GitHub.
-* `Doxygen <https://www.doxygen.nl/index.html>`_: This is the developer documentation of 
-  NEST. It can be built according to 
+* An in-program documentation that can be accessed by ``nest.helpindex()`` or 
+  ``nest.help("term")`` in Python. This documentation describes SLI, a programming language
+  used to interact with the NEST kernel, as well as NEST models. Beware: There are naming collisions between SLI
+  and PyNEST - for example, ``nest.help("GetStatus")`` returns the documentation of the SLI
+  command, not the PyNEST function.
+
+For NEST developers:
+* `Doxygen <https://www.doxygen.nl/index.html>`_-based developer documentation, which can be built according to 
   :doc:`these instructions <documentation_workflow/developer_documentation_workflow>`. As 
-  the reference files of the help generator documentation are also compiled from Doxygen 
-  comments, it contains most of the help generator content as well. Of course, you should 
+  the reference files of the ``help_generator`` documentation are also compiled from Doxygen 
+  comments, it contains most of the ``help_generator`` content as well. Of course, you should 
   develop for NEST based on the latest development version.
-* `Help generator <https://www.nest-simulator.org/helpindex/>`_: This homegrown tool buils 
-  legacy user user documentation that you can access by calling ``nest.helpindex()`` or 
-  ``nest.help("term")`` in Python. For the latest stable version of NEST, you can also find 
-  it `online <https://www.nest-simulator.org/helpindex/>`_. This documentation describes 
-  SLI, a programming language used to interact with the NEST kernel.
 * `Developer Space <https://nest.github.io/nest-simulator/>`_: This is a developer manual, 
   explaining the development infrastructure and workflow of NEST.
   
@@ -30,8 +32,8 @@ Further NEST-related content and discussions can be found on our:
 * `NEST Initiative webpage <https://nest-initiative.org>`_
 
 If any of the documentation is unclear, please submit an
-`Issue <https://github.com/nest/nest-simulator/issues/new?assignees=&labels=&template=documentation_improvement.md&title=>`_ on
-GitHub and check out our :doc:`User documentation workflow <documentation_workflow/user_documentation_workflow>`.
+`Issue <https://github.com/nest/nest-simulator/issues/new?assignees=&labels=&template=documentation_improvement.md&title=>`_
+or pull request on GitHub. Please check out our :doc:`User documentation workflow <documentation_workflow/user_documentation_workflow>`.
 
 
 Have a specific question or problem with NEST?
@@ -63,7 +65,7 @@ Getting help on the command line interface
        nest.FunctionOrClassName?
        
 
-* To access a specific C++ or SLI reference page for an object, command or parameter (TODO currently not models - are models objects?) (TODO also not true for at least some parameters - e.g. no tau_minus_triplet entry), you can use the command:
+* To access a specific ``help_generator`` reference page, you can use the command:
 
     .. code-block:: python
 
@@ -95,7 +97,7 @@ Model and Connection Information
     
        nest.ConnectionRules()
 
-A directory of NEST models, with their reference documentation, is available `here <https://nest-simulator.readthedocs.io/en/stable/models/index.html>`_. Currently, this documentation of models generally **doesn't** contain a full description of the status dictionary (containing parameters and other attributes TODO the relation between parameters and status should be explained. Can one get rid of one of these words in the documentation? It is another source of confusion) in tabular form. To get a complete status dictionary (TODO really? or only parameters?) with default values for a model, e.g. "iaf_psc_alpha", use:
+A directory of NEST models, with their reference documentation, is available `here <https://nest-simulator.readthedocs.io/en/stable/models/index.html>`_. Currently, this documentation of models generally **doesn't** contain a full description of the status dictionary in tabular form. To get a complete status dictionary (TODO really? or only parameters?) with default values for a model, e.g. "iaf_psc_alpha", use:
 
     .. code-block:: python
     

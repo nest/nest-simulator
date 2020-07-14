@@ -6,10 +6,9 @@ Since 2014 (`Djurfeldt et al.,
 Connection Generator Interface. This allows to couple connection
 generating libraries to NEST without having to modify NEST itself.
 
-In contrast to the `built-in connection
-functions :doc:`Connection management <connection_management>` and the Topology
-module, the Connection Generator Interface has a different way for specifying
-the connectivity:
+In contrast to the :doc:`Connection management <connection_management>` and
+Topology module's built-in connection functions, the Connection Generator
+Interface has a different way for specifying the connectivity:
 
 1. pre- and postsynaptic neurons are created
 2. a Connection Generator object is created which specifies the

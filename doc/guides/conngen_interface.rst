@@ -8,7 +8,7 @@ generating libraries to NEST without having to modify NEST itself.
 
 In contrast to the :doc:`Connection management <connection_management>` and
 Topology module's built-in connection functions, the Connection Generator
-Interface has a different way of specifying the connectivity:
+Interface has a different way of specifying connectivity:
 
 1. pre- and postsynaptic neurons are created
 2. a Connection Generator object is created which specifies the

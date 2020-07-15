@@ -48,7 +48,7 @@ fi
 if [ "$xPYTHON" = "1" ] ; then
    if [ "$TRAVIS_PYTHON_VERSION" = "3.6.10" ]; then
       PYTHON_LIB_DIR=`find /usr/lib/x86_64-linux-gnu -name "libpython3*.so"`
-      PYTHON_INCLUDE_DIR=`python3 -c "from sysconfig import get_paths; info = get_paths(); print(info['include'])"`
+      PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
       CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIB_DIR -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
    fi
    if [[ $OSTYPE = darwin* ]]; then

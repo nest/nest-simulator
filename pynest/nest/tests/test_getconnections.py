@@ -26,6 +26,8 @@ GetConnections
 import unittest
 import nest
 
+nest.set_verbosity('M_ERROR')
+
 
 @nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
@@ -67,6 +69,7 @@ class GetConnectionsTestCase(unittest.TestCase):
     def test_GetConnectionsTargetModels(self):
         """GetConnections iterating models for target"""
         for model in nest.Models():
+            nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:
                 other = nest.Create(model)
@@ -75,14 +78,19 @@ class GetConnectionsTestCase(unittest.TestCase):
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
-            conns = nest.GetConnections(alpha, other)
-            self.assertEqual(
-                len(conns), 1,
-                'Failed to get connection with target model {}'.format(model))
+            for get_conn_args in [{'source': alpha, 'target': other},
+                                  {'source': alpha},
+                                  {'target': other}]:
+                conns = nest.GetConnections(**get_conn_args)
+                self.assertEqual(
+                    len(conns), 1,
+                    'Failed to get connection with target model {} (specifying {})'.format(
+                        model, ', '.join(get_conn_args.keys())))
 
     def test_GetConnectionsSourceModels(self):
         """GetConnections iterating models for source"""
         for model in nest.Models():
+            nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:
                 other = nest.Create(model)
@@ -91,10 +99,14 @@ class GetConnectionsTestCase(unittest.TestCase):
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
-            conns = nest.GetConnections(other, alpha)
-            self.assertEqual(
-                len(conns), 1,
-                'Failed to get connection with source model {}'.format(model))
+            for get_conn_args in [{'source': other, 'target': alpha},
+                                  {'source': other},
+                                  {'target': alpha}]:
+                conns = nest.GetConnections(**get_conn_args)
+                self.assertEqual(
+                    len(conns), 1,
+                    'Failed to get connection with source model {} (specifying {})'.format(
+                        model, ', '.join(get_conn_args.keys())))
 
 
 def suite():

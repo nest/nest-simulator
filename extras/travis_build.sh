@@ -46,16 +46,21 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" = "3.6.10" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.10/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.10/include/python3.6m/"
-   fi
-   if [[ $OSTYPE = darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
-   fi
-   mkdir -p $HOME/.matplotlib
-   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
-   backend : svg
-EOF
+    if [ "$TRAVIS_PYTHON_VERSION" = "3.6.10" ]; then
+	PYPREFIX="/opt/python/3.6.10"
+	CONFIGURE_PYTHON="\
+            -DPYTHON_LIBRARY=$PYPREFIX/lib/libpython3.6m.so
+            -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.6m/"
+    fi
+    if [[ $OSTYPE = darwin* ]]; then
+	PYPREFIX="/usr/local/Cellar/python@3.8/3.8.3_2/Frameworks/Python.framework/Versions/3.8"
+	CONFIGURE_PYTHON="\
+            -DPYTHON_LIBRARY=$PYPREFIX/lib/libpython3.8.dylib
+            -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.8"
+    fi
+
+    mkdir -p $HOME/.matplotlib
+    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi

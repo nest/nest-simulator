@@ -1491,9 +1491,10 @@ information.
 Adding masks in a module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If using parameters to define a connection boundary is not efficient enough, or if you
-need more flexibility in defining the mask, you can write a custom mask in C++ and add
-it to NEST via an extension module. For more information on writing such modules, see the
+If using parameters to define a connection boundary is not efficient enough, or
+if you need more flexibility in defining the mask, you can add a custom mask,
+written in C++, and add it to NEST via an extension module. For more information
+on writing such modules, see the
 `NEST extension module repository <https://github.com/nest/nest-extension_module>`_.
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``

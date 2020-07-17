@@ -90,7 +90,7 @@ EXTENDED_REGEX_PARAM=r
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-TEST_BASEDIR="${NEST_DOC_DIR:-@CMAKE_INSTALL_FULL_DOCDIR@}"
+TEST_BASEDIR="$(sli -c 'statusdict/prgdocdir :: =only')"
 TEST_OUTDIR="${TEST_OUTDIR:-$( pwd )/reports}"
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"
@@ -104,7 +104,6 @@ fi
 mkdir "${TEST_OUTDIR}"
 
 PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
 
 TMPDIR="${TMPDIR:-${TEST_OUTDIR}}"
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
@@ -432,7 +431,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     echo "Phase 7: Running PyNEST tests."
     echo "------------------------------"
 
-    # If possible, we run using nosetests. To find out if nosetests work,
+    # If possible, we run using nosetests. To find out if nosetests works,
     # we proceed in two steps:
     # 1. Check if nosetests is available
     # 2. Check that nosetests supports --with-xunit by running nosetests.
@@ -442,12 +441,11 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     #    dummy directory to search for tests.
 
     if command -v @NOSETESTS@ >/dev/null 2>&1 && @PYTHON@ @NOSETESTS@ --with-xunit --xunit-file=/dev/null --where="${TEST_OUTDIR}" >/dev/null 2>&1; then
-
-        @PYTHON@ @NOSETESTS@ -v \
-                   --with-xunit --xunit-testsuite-name="07_pynest_tests" --xunit-file="${TEST_OUTDIR}/07_pynest_tests.xml" \
-                   "${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests" 2>&1 \
+	# Find the path to PyNEST without actually importing it
+	PYNEST_TEST_DIR="$(@PYTHON@ -c "import importlib; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
+	XUNIT_FILE="${TEST_OUTDIR}/07_pynest_tests.xml"
+        @PYTHON@ @NOSETESTS@ -v --with-xunit --xunit-testsuite-name="07_pynest_tests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
-
     else
         echo
         echo "  Not running PyNEST tests because nosetests is not available."

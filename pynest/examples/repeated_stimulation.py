@@ -46,7 +46,7 @@ relative to the ``origin``.
 
 import nest
 import nest.raster_plot
-
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, we set the parameters so the ``poisson_generator`` generates 1000
@@ -117,4 +117,4 @@ for n in range(num_trials):
 
 nest.raster_plot.from_device(sd, hist=True, hist_binwidth=100.,
                              title='Repeated stimulation by Poisson generator')
-nest.raster_plot.show()
+plt.show()

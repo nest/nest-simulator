@@ -455,10 +455,10 @@ EventDeliveryManager::reset_spike_register_( const thread tid )
     }
   }
 
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_spike_register_[ tid ].begin();
-        it < off_grid_spike_register_[ tid ].end();
-        ++it )
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
+    it < off_grid_spike_register_[ tid ].end();
+    ++it )
   {
     for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {
@@ -486,10 +486,10 @@ EventDeliveryManager::clean_spike_register_( const thread tid )
       iit->erase( new_end, iit->end() );
     }
   }
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
-          off_grid_spike_register_[ tid ].begin();
-        it < off_grid_spike_register_[ tid ].end();
-        ++it )
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
+    it < off_grid_spike_register_[ tid ].end();
+    ++it )
   {
     for ( std::vector< std::vector< OffGridTarget > >::iterator iit = it->begin(); iit < it->end(); ++iit )
     {

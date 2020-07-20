@@ -539,9 +539,8 @@ MPIManager::increase_buffer_size_spike_data( const std::vector< unsigned int >& 
 
   // Find the maximum spike count.
   // As expected by communicate_Allreduce_max_in_place(), max_spike_count_ is a vector of size == 1.
-  max_spike_count_[ 0 ] = *std::max_element(
-      send_buffer_spike_data_counts.begin(),
-      send_buffer_spike_data_counts.end() );
+  max_spike_count_[ 0 ] =
+    *std::max_element( send_buffer_spike_data_counts.begin(), send_buffer_spike_data_counts.end() );
   communicate_Allreduce_max_in_place( max_spike_count_ );
 
   // Multiply by number of MPI processes for full buffer size.

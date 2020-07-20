@@ -99,8 +99,8 @@ EventDeliveryManager::initialize()
       std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >() ) );
 
     off_grid_spike_register_[ tid ].resize( num_threads,
-      std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(),
-                                              std::vector< OffGridTarget >() ) );
+      std::vector< std::vector< OffGridTarget > >(
+        kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() ) );
   } // of omp parallel
 }
 
@@ -382,11 +382,13 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // done.
 #pragma omp barrier
     // Resize MPI buffers, if necessary and allowed.
-    if ( kernel().mpi_manager.adaptive_spike_buffers() and kernel().simulation_manager.get_clock().get_steps() % 1000 == 0 )
+    if ( kernel().mpi_manager.adaptive_spike_buffers()
+      and kernel().simulation_manager.get_clock().get_steps() % 1000 == 0 )
     {
 #pragma omp single
       {
-        buffer_size_spike_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_spike_data( send_buffer_spike_data_counts_ );
+        buffer_size_spike_data_has_changed_ =
+          kernel().mpi_manager.increase_buffer_size_spike_data( send_buffer_spike_data_counts_ );
       }
     }
     else
@@ -414,10 +416,10 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
   bool is_spike_register_empty = true;
 
   // First dimension: loop over writing thread
-  for (
-    typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it = spike_register.begin();
-    it != spike_register.end();
-    ++it )
+  for ( typename std::vector< std::vector< std::vector< std::vector< TargetT > > > >::iterator it =
+          spike_register.begin();
+        it != spike_register.end();
+        ++it )
   {
     // Second dimension: fixed reading thread
 
@@ -794,10 +796,10 @@ EventDeliveryManager::resize_spike_register_( const thread tid )
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< Target >() );
   }
 
-  for (
-    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = off_grid_spike_register_[ tid ].begin();
-    it != off_grid_spike_register_[ tid ].end();
-    ++it )
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+          off_grid_spike_register_[ tid ].begin();
+        it != off_grid_spike_register_[ tid ].end();
+        ++it )
   {
     it->resize( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >() );
   }

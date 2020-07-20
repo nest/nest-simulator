@@ -616,19 +616,15 @@ nest::SimulationManager::call_update_()
   os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
-  os << std::endl
-     << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+  os << std::endl << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
 #else
-  os << std::endl
-     << "Not using OpenMP";
+  os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
-  os << std::endl
-     << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+  os << std::endl << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
 #else
-  os << std::endl
-     << "Not using MPI";
+  os << std::endl << "Not using MPI";
 #endif
 
   LOG( M_INFO, "SimulationManager::start_updating_", os.str() );
@@ -723,8 +719,8 @@ nest::SimulationManager::update_()
   delay old_to_step;
 
 #ifdef HAVE_MPI
-  MPI_Pcontrol(2); // make sure profile data is reset
-  MPI_Pcontrol(1); // enable profiling
+  MPI_Pcontrol( 2 ); // make sure profile data is reset
+  MPI_Pcontrol( 1 ); // enable profiling
 #endif
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
@@ -742,7 +738,8 @@ nest::SimulationManager::update_()
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
         and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 ) )
+                kernel().sp_manager.get_structural_plasticity_update_interval() )
+          == 0 ) )
       {
         for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
               i != kernel().node_manager.get_local_nodes( tid ).end();
@@ -961,9 +958,9 @@ nest::SimulationManager::update_()
   } // of omp parallel
 
 #ifdef HAVE_MPI
-  MPI_Pcontrol(3); // generate verbose report
-//MPI_Pcontrol(4); // generate concise report
-  MPI_Pcontrol(0); // disable profiling
+  MPI_Pcontrol( 3 ); // generate verbose report
+                     // MPI_Pcontrol(4); // generate concise report
+  MPI_Pcontrol( 0 ); // disable profiling
 #endif
 
   // check if any exceptions have been raised

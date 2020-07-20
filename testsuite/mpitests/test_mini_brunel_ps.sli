@@ -149,7 +149,7 @@ def % brunel_setup
     /rate  p_rate
     >> SetStatus
 
-    /exsd /spike_detector Create def
+    /exsd /spike_recorder Create def
     exsd << /time_in_steps true >> SetStatus
 
     allNeurons

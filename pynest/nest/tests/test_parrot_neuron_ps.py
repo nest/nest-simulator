@@ -51,7 +51,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
                                   {"spike_times": [self.spike_time],
                                    'precise_times': True})
         self.parrot = nest.Create('parrot_neuron_ps')
-        self.spikes = nest.Create("spike_detector")
+        self.spikes = nest.Create("spike_recorder")
 
         # record source and parrot spikes
         nest.Connect(self.source, self.spikes)
@@ -94,7 +94,7 @@ class ParrotNeuronPSTestCase(unittest.TestCase):
         Check parrot_neuron correctly repeats multiple spikes
 
         The parrot_neuron receives two spikes in a single time step.
-        We check that both spikes are forwarded to the spike_detector.
+        We check that both spikes are forwarded to the spike_recorder.
         """
 
         # connect twice
@@ -153,7 +153,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', 2)
-        detect = nest.Create('spike_detector')
+        detect = nest.Create('spike_recorder')
 
         nest.Connect(source, parrots[:1], syn_spec={'delay': delay})
         nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
@@ -209,8 +209,8 @@ class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
         nest.Connect(pre_spikes, pre_parrot, syn_spec={"delay": delay})
         nest.Connect(post_spikes, post_parrot, syn_spec={"delay": delay})
 
-        # create spike detector
-        spikes = nest.Create("spike_detector")
+        # create spike recorder
+        spikes = nest.Create("spike_recorder")
         nest.Connect(pre_parrot, spikes)
         nest.Connect(post_parrot, spikes)
 

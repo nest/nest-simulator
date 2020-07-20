@@ -904,7 +904,7 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
   source_node_id target_node_id weight delay displacement[x,y,z]
 
   where displacement are up to three coordinates of the vector from the source
-  to the target node. If targets do not have positions (eg. spike detectors
+  to the target node. If targets do not have positions (eg. spike recorders
   outside any layer), NaN is written for each displacement coordinate.
 
   Remarks:

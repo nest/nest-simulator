@@ -233,8 +233,8 @@ class Main():
         delay = self._builder.get_object("delay").get_value()
         nest.Connect(stimulator, neuron, weight, delay)
 
-        sd = nest.Create("spike_detector")
-        nest.Connect(neuron, sd)
+        sr = nest.Create("spike_recorder")
+        nest.Connect(neuron, sr)
 
         vm = nest.Create("voltmeter", params={"interval": 0.1})
         nest.Connect(vm, neuron)
@@ -242,7 +242,7 @@ class Main():
         simtime = self._builder.get_object("simtime").get_value()
         nest.Simulate(simtime)
 
-        self.update_figure(nest.GetStatus(sd, "events"),
+        self.update_figure(nest.GetStatus(sr, "events"),
                            nest.GetStatus(vm, "events"))
 
     def on_delete_event(self, widget, event):

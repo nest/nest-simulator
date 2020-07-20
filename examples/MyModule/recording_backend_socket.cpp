@@ -55,9 +55,9 @@ nest::RecordingBackendSocket::finalize()
 void
 nest::RecordingBackendSocket::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
-  if ( device.get_type() != RecordingDevice::SPIKE_DETECTOR )
+  if ( device.get_type() != RecordingDevice::SPIKE_RECORDER )
   {
-    throw BadProperty( "Only spike detectors can record to recording backend 'socket'" );
+    throw BadProperty( "Only spike recorders can record to recording backend 'socket'" );
   }
 }
 
@@ -115,13 +115,13 @@ nest::RecordingBackendSocket::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  assert( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
+  assert( device.get_type() == RecordingDevice::SPIKE_RECORDER );
 
 #pragma omp critical
   {
     index sd_node_id = device.get_node_id();
     index node_node_id = event.get_sender_node_id();
-    std::string msg = String::compose( "spike_detector %1 got a spike by node %2", sd_node_id, node_node_id );
+    std::string msg = String::compose( "spike_recorder %1 got a spike by node %2", sd_node_id, node_node_id );
 
     // We explicitly ignore errors here by not evaluating the return
     // code of the sendto() function.

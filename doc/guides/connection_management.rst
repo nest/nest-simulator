@@ -86,7 +86,7 @@ One-to-one connections
 
     n = 10
     A = Create("iaf_psc_alpha", n)
-    B = Create("spike_detector", n)
+    B = Create("spike_recorder", n)
     Connect(A, B, 'one_to_one')
 
 This rule can also take two Global IDs A and B instead of integer lists.
@@ -251,7 +251,7 @@ Example:
 ::
 
     A = Create("iaf_psc_alpha", 2)
-    B = Create("spike_detector", 2)
+    B = Create("spike_recorder", 2)
     conn_dict = {'rule': 'one_to_one'}
     syn_dict = {'weight': [1.2, -3.5]}
     Connect(A, B, conn_dict, syn_dict)

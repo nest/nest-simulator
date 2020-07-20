@@ -617,7 +617,7 @@ nest.Connect(stim, nrn_layer, cdict_stim)
 # ----------------------------
 
 #{ conn10 #}
-rec = nest.Create('spike_detector',
+rec = nest.Create('spike_recorder',
                   positions=nest.spatial.grid(shape=[1, 1]))
 
 cdict_rec = {'rule': 'pairwise_bernoulli',
@@ -632,6 +632,6 @@ nest.Connect(nrn_layer, rec, cdict_rec)
 # ----------------------------
 
 #{ conn11 #}
-rec = nest.Create('spike_detector')
+rec = nest.Create('spike_recorder')
 nest.Connect(nrn_layer, rec)
 #{ end #}

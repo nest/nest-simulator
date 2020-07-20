@@ -27,8 +27,8 @@ Name: testsuite::test_spike_dilutor - test of spike_dilutor functionality
 Synopsis: (test_spike_dilutor) run -> count the average number of spikes repeated by the spike dilutor
 
 Description:
-100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike detectors.
-If the average number of spikes detected by spike detectors equals to 20 (with marginal error 3), the dilutor works fine.
+100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike recorders.
+If the average number of spikes detected by spike recorders equals to 20 (with marginal error 3), the dilutor works fine.
 
 Author: Hesam Setareh, April 2015
  */
@@ -62,16 +62,16 @@ ResetKernel
 /spike_dilutor Create /dilutor Set
 dilutor << /p_copy 0.2 >> SetStatus
 
-/spike_detector Create /sp_det0 Set
-/spike_detector Create /sp_det1 Set
-/spike_detector Create /sp_det2 Set
-/spike_detector Create /sp_det3 Set
-/spike_detector Create /sp_det4 Set
-/spike_detector Create /sp_det5 Set
-/spike_detector Create /sp_det6 Set
-/spike_detector Create /sp_det7 Set
-/spike_detector Create /sp_det8 Set
-/spike_detector Create /sp_det9 Set
+/spike_recorder Create /sp_det0 Set
+/spike_recorder Create /sp_det1 Set
+/spike_recorder Create /sp_det2 Set
+/spike_recorder Create /sp_det3 Set
+/spike_recorder Create /sp_det4 Set
+/spike_recorder Create /sp_det5 Set
+/spike_recorder Create /sp_det6 Set
+/spike_recorder Create /sp_det7 Set
+/spike_recorder Create /sp_det8 Set
+/spike_recorder Create /sp_det9 Set
 
 
 sg dilutor Connect

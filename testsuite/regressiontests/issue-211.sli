@@ -48,7 +48,7 @@ ResetKernel
 /n1 /iaf_psc_delta Create def
 /n2 /iaf_psc_delta Create def
 /n3 /iaf_psc_delta Create def
-/d4 /spike_detector Create def
+/d4 /spike_recorder Create def
 /g5 /spike_generator Create def
 /v6 /volume_transmitter Create def
 /stdp_dopamine_synapse << /vt v6 0 get >> SetDefaults

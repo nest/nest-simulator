@@ -129,8 +129,8 @@ ResetKernel
 /voltmeter Create /vm Set
 vm << /time_in_steps true /interval h >> SetStatus
 
-/spike_detector Create /sd Set
-sd << /time_in_steps true >> SetStatus
+/spike_recorder Create /sr Set
+sr << /time_in_steps true >> SetStatus
 
 /dc_generator Create /dc Set
 dc << /amplitude 1000.0 
@@ -138,7 +138,7 @@ dc << /amplitude 1000.0
 
 dc neuron 1.0 h Connect
 vm neuron 1.0 h Connect
-neuron sd 1.0 h Connect
+neuron sr 1.0 h Connect
 
 3 Simulate
 

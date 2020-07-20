@@ -170,7 +170,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         wr = nest.Create('weight_recorder')
 
         # for recording the spiking of the soma
-        sd_soma = nest.Create('spike_detector')
+        sd_soma = nest.Create('spike_recorder')
 
         '''
         create connections
@@ -210,7 +210,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         weights = data[0]['events']['weights']
         times = data[0]['events']['times']
 
-        # spike detector
+        # spike recorder
         data = nest.GetStatus(sd_soma)[0]['events']
         spike_times_soma = data['times']
 

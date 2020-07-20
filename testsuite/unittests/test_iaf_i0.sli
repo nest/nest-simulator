@@ -68,17 +68,17 @@ neuron << /I_e 1000.0 >> SetStatus
 /voltmeter Create /vm Set
 vm << /time_in_steps true /interval h >> SetStatus
 
-/spike_detector Create /sd Set
-sd << /time_in_steps true >> SetStatus
+/spike_recorder Create /sr Set
+sr << /time_in_steps true >> SetStatus
 
 
 vm neuron Connect
-neuron sd Connect
+neuron sr Connect
 
 6 Simulate
 
 {                                            % 1. argument, reference spikes
- sd [/events [/senders /times]] get cva      % array of recorded spikes
+ sr [/events [/senders /times]] get cva      % array of recorded spikes
   Transpose                                  % all recorded tuples
  eq                                          % compare
 
@@ -100,8 +100,8 @@ neuron sd Connect
 % Expected output of this program:
 % 
 % The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike detector. Both, voltmeter and spike 
-% detector are connected to the same neuron. 
+% the voltmeter and the spike recorder. Both, voltmeter and spike 
+% recorder are connected to the same neuron. 
 %
 % time (in steps)  voltage (in mV)
 [

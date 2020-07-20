@@ -83,7 +83,7 @@
 
 %%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Take spike detector, find total number of spikes registered,
+% Take spike recorder, find total number of spikes registered,
 % return average rate per neuron in Hz.
 % NOTE: If you are running with several MPI processes, this
 %       function only gives an approximation to the true rate.
@@ -134,17 +134,17 @@ def
   /E_stimulus stimulus Create def
   E_stimulus stimulus_params SetStatus
 
-  % one detector would in principle be enough,
+  % one recorder would in principle be enough,
   % but by recording the populations separately,
   % we save ourselves a lot of sorting work later
 
-  (Creating excitatory spike detector.) =
-  /E_detector detector Create def
-  E_detector detector_params SetStatus
+  (Creating excitatory spike recorder.) =
+  /E_recorder recorder Create def
+  E_recorder recorder_params SetStatus
 
-  (Creating inhibitory spike detector.) =
-  /I_detector detector Create def
-  I_detector detector_params SetStatus
+  (Creating inhibitory spike recorder.) =
+  /I_recorder recorder Create def
+  I_recorder recorder_params SetStatus
 
   % all neurons
   /allNeurons E_neurons I_neurons join def
@@ -158,7 +158,7 @@ def
   /Nsyn
     CE CI add  % internal synapses
     N mul
-    Nrec 2 mul % "synapses" to spike detectors
+    Nrec 2 mul % "synapses" to spike recorders
     add
     Nstim add  % "synapses" from poisson generator
   def
@@ -201,18 +201,18 @@ def
   Connect
 
 
-  % Spike detectors are connected to the first Nrec neurons in each
+  % Spike recorders are connected to the first Nrec neurons in each
   % population.  Since neurons are equal and connectivity is homogeneously
   % randomized, this is equivalent to picking Nrec neurons at random
   % from each population
 
-  (Connecting spike detectors.) =
+  (Connecting spike recorders.) =
 
   E_neurons Nrec Take     % pick the first Nrec neurons
-  E_detector Connect
+  E_recorder Connect
 
   I_neurons Nrec Take     % pick the first Nrec neurons
-  I_detector Connect
+  I_recorder Connect
 
   % read out time used for building
 
@@ -233,8 +233,8 @@ def
   (Simulation summary) =
   (Number of Neurons : ) =only N =
   (Number of Synapses: ) =only Nsyn =
-  (Excitatory rate   : ) =only E_detector ComputeRate =only ( Hz) =
-  (Inhibitory rate   : ) =only I_detector ComputeRate =only ( Hz) =
+  (Excitatory rate   : ) =only E_recorder ComputeRate =only ( Hz) =
+  (Inhibitory rate   : ) =only I_recorder ComputeRate =only ( Hz) =
   (Building time     : ) =only BuildCPUTime =only ( s) =
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
 } def

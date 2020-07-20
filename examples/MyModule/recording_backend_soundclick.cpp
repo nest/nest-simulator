@@ -53,9 +53,9 @@ nest::RecordingBackendSoundClick::finalize()
 void
 nest::RecordingBackendSoundClick::enroll( const RecordingDevice& device const DictionaryDatum& )
 {
-  if ( device.get_type() != RecordingDevice::SPIKE_DETECTOR )
+  if ( device.get_type() != RecordingDevice::SPIKE_RECORDER )
   {
-    throw BadProperty( "Only spike detectors can record to recording backend 'SoundClick'" );
+    throw BadProperty( "Only spike recorders can record to recording backend 'SoundClick'" );
   }
 }
 
@@ -115,7 +115,7 @@ nest::RecordingBackendSoundClick::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  assert( device.get_type() == RecordingDevice::SPIKE_DETECTOR );
+  assert( device.get_type() == RecordingDevice::SPIKE_RECORDER );
 
   // Calculate the time lag between real time (i.e., the stopwatch) and the
   // time of the spike event, and, if necessary, delay playing the sound.

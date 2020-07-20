@@ -86,17 +86,17 @@ forall
   /neuron /iaf_psc_delta << /I_e 500. >> Create def
   /parrot /parrot_neuron Create def
   /dummies /iaf_psc_delta 10 Create def
-  /detector /spike_detector Create def
+  /recorder /spike_recorder Create def
 
   neuron parrot Connect
   dummies dummies << /rule /all_to_all >> << >> Connect
-  parrot detector Connect
+  parrot recorder Connect
 
   20 Simulate
 
   << /target parrot >> GetConnections size 1 eq assert_or_die
   << /target parrot >> GetConnections 0 get cva 4 get 0 eq assert_or_die
-  detector GetStatus 0 get /n_events get 1 eq assert_or_die
+  recorder GetStatus 0 get /n_events get 1 eq assert_or_die
 
   neuron parrot Connect
 
@@ -123,6 +123,6 @@ forall
     << /target parrot >> GetConnections 1 get cva 4 get 101 eq assert_or_die
   }
   ifelse
-  detector GetStatus 0 get /n_events get 3 eq assert_or_die
+  recorder GetStatus 0 get /n_events get 3 eq assert_or_die
 }
 forall

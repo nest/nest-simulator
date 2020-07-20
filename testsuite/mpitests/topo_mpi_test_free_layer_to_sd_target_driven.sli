@@ -53,7 +53,7 @@ skip_if_not_threaded
   <<
     /positions [[0.0 0.0]]
     /edge_wrap false
-    /elements /spike_detector
+    /elements /spike_recorder
   >> def
 
   /layer_a layer_spec_a CreateLayer def

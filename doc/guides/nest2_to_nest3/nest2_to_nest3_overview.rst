@@ -295,8 +295,8 @@ To select fields at a deeper hierarchy level, use ``get(parameter_name, property
 this will return an array. You can also use ``get(parameter_name, [property_name_1, ..., property_name_n])``
 and get a dictionary with arrays.
 
->>>    sd = nest.Create('spike_detector')
->>>    sd.get('events', 'senders')
+>>>    sr = nest.Create('spike_recorder')
+>>>    sr.get('events', 'senders')
        array([], dtype=int64)
 
 Lastly, you can specify the output format (`pandas` and `JSON` for now). The

@@ -1298,9 +1298,9 @@ Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, one should not create a layer of recording devices to record from
-another NodeCollection with spatial extent. This is especially true for spike detectors. Instead,
-create a single spike detector and connect all neurons in the spatially
-distributed NodeCollection to that spike detector:
+another NodeCollection with spatial extent. This is especially true for spike recorders. Instead,
+create a single spike recorder and connect all neurons in the spatially
+distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}

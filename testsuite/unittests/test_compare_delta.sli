@@ -55,7 +55,7 @@ plain neuron_params SetStatus
 canon neuron_params SetStatus
 
 /spike_generator     Create /gen Set
-/spike_detector      Create /det Set
+/spike_recorder      Create /det Set
 
 
 gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 12.0 ] >> SetStatus

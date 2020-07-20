@@ -718,11 +718,6 @@ nest::SimulationManager::update_()
   bool done_all = true;
   delay old_to_step;
 
-#ifdef HAVE_MPI
-  MPI_Pcontrol( 2 ); // make sure profile data is reset
-  MPI_Pcontrol( 1 ); // enable profiling
-#endif
-
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
 #pragma omp parallel
@@ -956,12 +951,6 @@ nest::SimulationManager::update_()
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
   } // of omp parallel
-
-#ifdef HAVE_MPI
-  MPI_Pcontrol( 3 ); // generate verbose report
-                     // MPI_Pcontrol(4); // generate concise report
-  MPI_Pcontrol( 0 ); // disable profiling
-#endif
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )

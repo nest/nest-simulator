@@ -14,7 +14,7 @@
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Conda downloads](https://img.shields.io/conda/dn/conda-forge/nest-simulator?logo=conda-forge&logoColor=white&color=blue)](https://anaconda.org/conda-forge/nest-simulator)
 
-[![Ubuntu version](https://img.shields.io/badge/ubuntu-2.20.0%20(PPA)-lightblue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
+[![Ubuntu version](https://img.shields.io/badge/ubuntu-v2.20.0%20(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
 

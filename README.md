@@ -18,7 +18,7 @@
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
 
-[![Virtual applicance](https://img.shields.io/badge/VM-2.20.0-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
+[![Virtual applicance](https://img.shields.io/badge/VM-v2.20.0-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
 [![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest/2.20.0?label=docker&logo=docker)](https://hub.docker.com/r/nestsim/nest)
 [![Docker Image Size](https://img.shields.io/docker/image-size/nestsim/nest)](https://github.com/nest/nest-docker)
 [![Docker Pulls](https://img.shields.io/docker/pulls/nestsim/nest?label=pulls)](https://hub.docker.com/r/nestsim/nest)

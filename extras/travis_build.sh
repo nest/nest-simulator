@@ -53,7 +53,7 @@ if [ "$xPYTHON" = "1" ] ; then
             -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.6m/"
     fi
     if [[ $OSTYPE = darwin* ]]; then
-	PYPREFIX="/usr/local/Cellar/python@3.8/3.8.3_2/Frameworks/Python.framework/Versions/3.8"
+	PYPREFIX="/usr/local/Cellar/python@3.8/3.8.4/Frameworks/Python.framework/Versions/3.8"
 	CONFIGURE_PYTHON="\
             -DPYTHON_LIBRARY=$PYPREFIX/lib/libpython3.8.dylib
             -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.8"

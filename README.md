@@ -1,13 +1,33 @@
 # The Neural Simulation Tool - NEST
 
-[![Build Status](https://img.shields.io/travis/nest/nest-simulator/master.svg?logo=travis-ci&logoColor=white)](https://travis-ci.org/nest/nest-simulator)
+[![Build status](https://img.shields.io/travis/nest/nest-simulator/master.svg?logo=travis-ci&logoColor=white)](https://travis-ci.org/nest/nest-simulator)
+[![Documentation](https://img.shields.io/readthedocs/nest-simulator)](https://nest-simulator.org/documentation)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605514.svg)](https://doi.org/10.5281/zenodo.3605514)
-[![Latest Version](https://img.shields.io/github/release/nest/nest-simulator.svg?logo=github&color=brightgreen)](https://github.com/nest/nest-simulator/releases)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
-[![conda Version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
-[![Conda downloads](https://img.shields.io/conda/dn/conda-forge/nest-simulator?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
-[![NEST on Twitter](https://img.shields.io/twitter/follow/nest.svg?style=social&label=Follow)](https://twitter.com/nest)
+
+[![Latest release](https://img.shields.io/github/release/nest/nest-simulator.svg?color=brightgreen&label=latest%20release)](https://github.com/nest/nest-simulator/releases)
+[![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/y/nest/nest-simulator?color=%23ff6633)](https://github.com/nest/nest-simulator)
+[![GitHub All Releases](https://img.shields.io/github/downloads/nest/nest-simulator/total?logo=github)](https://github.com/nest/nest-simulator/releases)
+
+[![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
+[![Conda downloads](https://img.shields.io/conda/dn/conda-forge/nest-simulator?logo=conda-forge&logoColor=white&color=blue)](https://anaconda.org/conda-forge/nest-simulator)
+
+[![Debian version](https://img.shields.io/badge/ubuntu-2.20.0%20(PPA)-lightblue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
+
+[![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
+
+[![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
+
+[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest/2.20.0?label=docker&logo=docker)](https://hub.docker.com/r/nestsim/nest)
+[![Docker Image Size](https://img.shields.io/docker/image-size/nestsim/nest)](https://github.com/nest/nest-docker)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nestsim/nest?label=pulls)](https://hub.docker.com/r/nestsim/nest)
+
+[![Virtual applicance](https://img.shields.io/badge/VM-2.20.0-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
+
+[![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
+[![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact

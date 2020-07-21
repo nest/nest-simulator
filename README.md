@@ -1,7 +1,7 @@
 # The Neural Simulation Tool - NEST
 
 [![Build status](https://img.shields.io/travis/nest/nest-simulator/master.svg?logo=travis-ci&logoColor=white)](https://travis-ci.org/nest/nest-simulator)
-[![Documentation](https://img.shields.io/readthedocs/nest-simulator)](https://nest-simulator.org/documentation)
+[![Documentation](https://img.shields.io/readthedocs/nest-simulator?logo=readthedocs)](https://nest-simulator.org/documentation)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605514.svg)](https://doi.org/10.5281/zenodo.3605514)

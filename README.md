@@ -1,10 +1,13 @@
-# The Neural Simulation Tool - NEST 
+# The Neural Simulation Tool - NEST
 
-[![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
+[![Build Status](https://img.shields.io/travis/nest/nest-simulator/master.svg?logo=travis-ci&logoColor=white)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3605514.svg)](https://doi.org/10.5281/zenodo.3605514)
-[![Latest Version](https://img.shields.io/badge/latest%20version-2.20.0-brightgreen.svg)](https://github.com/nest/nest-simulator/releases/tag/v2.20.0)
+[![Latest Version](https://img.shields.io/github/release/nest/nest-simulator.svg?logo=github&color=brightgreen)](https://github.com/nest/nest-simulator/releases)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
+[![conda Version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
+[![Conda downloads](https://img.shields.io/conda/dn/conda-forge/nest-simulator?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
+[![NEST on Twitter](https://img.shields.io/twitter/follow/nest.svg?style=social&label=Follow)](https://twitter.com/nest)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact

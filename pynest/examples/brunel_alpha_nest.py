@@ -100,7 +100,7 @@ startbuild = time.time()
 # Assigning the simulation parameters to variables.
 
 dt = 0.1    # the resolution in ms
-simtime = 100.0  # Simulation time in ms
+simtime = 1000.0  # Simulation time in ms
 delay = 1.5    # synaptic delay in ms
 
 ###############################################################################

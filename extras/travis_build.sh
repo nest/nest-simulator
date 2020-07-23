@@ -47,7 +47,11 @@ fi
 
 if [ "$xPYTHON" = "1" ] ; then
    PYTHON_LIB_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('platstdlib'))"`
-   PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"` 
+   echo "-> Detected PYTHON_LIB_DIR=$PYTHON_LIB_DIR"
+   ls "$PYTHON_LIB_DIR"
+   PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+   echo "-> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+   ls "$PYTHON_INCLUDE_DIR"
    if [ "$TRAVIS_PYTHON_VERSION" = "3.8.2" ]; then
        #PYTHON_LIB_DIR=`find /usr/lib/x86_64-linux-gnu -name "libpython3*.so"`
       PYTHON_LIBRARY=`find $PYTHON_LIB_DIR -name "libpython3*.so"` 

@@ -51,18 +51,14 @@ if [ "$xPYTHON" = "1" ] ; then
    if [ "$TRAVIS_PYTHON_VERSION" = "3.8.2" ]; then
        #PYTHON_LIB_DIR=`find /usr/lib/x86_64-linux-gnu -name "libpython3*.so"`
       PYTHON_LIBRARY=`find $PYTHON_LIB_DIR -name "libpython3*.so"` 
-      CONFIGURE_PYTHON="\
-          -DPYTHON_LIBRARY=$PYTHON_LIBRARY
-          -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
    fi
    if [[ $OSTYPE = darwin* ]]; then
       #PYPREFIX="/usr/local/Cellar/python@3.8/3.8.3_2/Frameworks/Python.framework/Versions/3.8"
-      PYTHON_LIBRARY=`find $PYTHON_LIB_DIR -name "libpython3.8.dylib"` 
-      CONFIGURE_PYTHON="\
-            -DPYTHON_LIBRARY=$PYPREFIX/lib/libpython3.8.dylib
-            -DPYTHON_INCLUDE_DIR=$PYPREFIX/include/python3.8"
-   fi
-
+      PYTHON_LIBRARY=`find $PYTHON_LIB_DIR -name "libpython3.8.dylib"`
+   fi    
+   CONFIGURE_PYTHON="\
+       -DPYTHON_LIBRARY=$PYTHON_LIBRARY
+       -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
    mkdir -p $HOME/.matplotlib
    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else

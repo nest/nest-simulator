@@ -46,7 +46,8 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   PYTHON_LIB_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('platlib'))"`
+   #PYTHON_LIB_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('platlib'))"`
+   PYTHON_LIB_DIR=`python3 -c 'from distutils import sysconfig; print sysconfig.get_config_var("LIBDIR")'
    echo "-> Detected PYTHON_LIB_DIR=$PYTHON_LIB_DIR"
    ls "$PYTHON_LIB_DIR"
    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`

@@ -58,7 +58,7 @@ if [ "$xPYTHON" = "1" ] ; then
    fi    
    CONFIGURE_PYTHON="\
        -DPYTHON_LIBRARY=$PYTHON_LIBRARY
-       -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR
+       -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
    mkdir -p $HOME/.matplotlib
    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else

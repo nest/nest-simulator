@@ -49,6 +49,9 @@ if [ "$xPYTHON" = "1" ] ; then
    #PYTHON__LIBRARY=`python3 -c "from distutils.sysconfig import get_config_var as gcv; import os.path; print(os.path.join(gcv('LIBDIR'), gcv('INSTSONAME')))"`
    PYTHON_LIBRARY=`python3 -c "import sysconfig; print(sysconfig.get_config_var('INSTSONAME'))"` 
    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+   PYTHON_LIB_DIR=`sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`
+   PYTHON_LIBRARY=$(find `dirname $PYTHON_LIB_DIR` -name lib`basename $PYTHON_LIB_DIR`.so -or -name lib`basename $PYTHON_LIB_DIR`.dylib -name lib -print -quit)
+
    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
    CONFIGURE_PYTHON="\

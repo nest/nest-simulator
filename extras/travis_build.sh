@@ -46,22 +46,15 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   #PYTHON__LIBRARY=`python3 -c "from distutils.sysconfig import get_config_var as gcv; import os.path; print(os.path.join(gcv('LIBDIR'), gcv('INSTSONAME')))"`
-   PYTHON_LIBRARY=`python3 -c "import sysconfig; print(sysconfig.get_config_var('INSTSONAME'))"` 
-   PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
-   PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
-   PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
-   PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
-
-   echo "--> Detected PYLIB_BASE=$PYLIB_BASE"
-   echo "--> Detected PYLIB_DIR=$PYLIB_DIR"
-   echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
-   echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-   CONFIGURE_PYTHON="\
-       -DPYTHON_LIBRARY=$PYTHON_LIBRARY
-       -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-   mkdir -p $HOME/.matplotlib
-   echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
+    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    mkdir -p $HOME/.matplotlib
+    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi

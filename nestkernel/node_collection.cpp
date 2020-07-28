@@ -390,12 +390,11 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
   NodeCollectionPTR sliced_nc;
   if ( step == 1 )
   {
-    sliced_nc =
-      NodeCollectionPTR( new NodeCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
+    sliced_nc = std::make_shared< NodeCollectionPrimitive >( first_ + start, first_ + stop - 1, model_id_, metadata_ );
   }
   else
   {
-    sliced_nc = NodeCollectionPTR( new NodeCollectionComposite( *this, start, stop, step ) );
+    sliced_nc = std::make_shared< NodeCollectionComposite >( *this, start, stop, step );
   }
   if ( metadata_ )
   {

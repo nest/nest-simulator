@@ -70,7 +70,19 @@ public:
   virtual index get_first_node_id() const = 0;
   virtual std::string get_type() const = 0;
 
-  virtual void slice( size_t, size_t, size_t, NodeCollectionPTR ) = 0;
+  /**
+   * Create a new NodeCollectionMetadata from this NodeCollectionMetadata, sliced to (inclusive) boundaries,
+   * with a step parameter. The slicing of metadata is analogous to the slicing of NodeCollections.
+   *
+   * The sliced metadata is set as the metadata of the specified NodeCollection.
+   * The original metadata is unchanged.
+   *
+   * @param start Index of the metadata to start at
+   * @param stop Index of the metadata to stop at
+   * @param step Number of places between elements to skip
+   * @param node_collection NodeCollection to which the sliced metadata is assigned
+   */
+  virtual void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection ) = 0;
 
   virtual bool operator==( const NodeCollectionMetadataPTR ) const = 0;
 };

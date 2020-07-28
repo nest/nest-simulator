@@ -119,7 +119,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       // If the positions are created from a layer sliced with step, we need to take that into consideration.
       // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
-      // the number of positions must include the "skipped" nodes as well.
+      // the positions must include the "skipped" nodes as well for consistency.
       size_t step = 1;
       if ( d->known( names::step ) )
       {

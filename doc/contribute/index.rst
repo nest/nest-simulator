@@ -31,6 +31,13 @@ Contribute a Python example script
 
 If you have a Python example network to contribute, please refer to our :doc:`templates_styleguides/example_template` to ensure you cover the required information.
 
+Code review guidelines
+----------------------
+
+Pull requests must be reviewed and approved by **two reviewers** prior to being merged. Please check the **typeset
+documentation** as part of the review process. To learn how to test the documentation locally offline, please check
+out our :doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
+
 Have a question?
 ----------------
 

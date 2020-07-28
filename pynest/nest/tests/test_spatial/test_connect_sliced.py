@@ -46,14 +46,14 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         self.grid_nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
 
     def _assert_histogram(self, sources_or_targets, masked=False):
+        """Create a histogram of input data and assert it against reference values"""
         hist = np.histogram(sources_or_targets, bins=self.N, range=(1, self.N+1))
-        counts, nids = hist
+        counts, _ = hist
         ref = self.reference_masked if masked else self.reference
         np_testing.assert_array_equal(counts, ref)
 
     def test_connect_sliced_spatial_on_target(self):
         """Connect sliced spatial source population"""
-        # pairwise_bernoulli_on_target_<2>
         for nodes in [self.free_nodes, self.grid_nodes]:
             nest.Connect(nodes[self.middle_node], nodes,
                          conn_spec={'rule': 'pairwise_bernoulli',
@@ -62,7 +62,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
 
     def test_masked_connect_sliced_spatial_on_target(self):
         """Masked connect sliced spatial source population"""
-        # pairwise_bernoulli_on_target_<2>
         for nodes in [self.free_nodes, self.grid_nodes]:
             nest.Connect(nodes[self.middle_node], nodes,
                          conn_spec={'rule': 'pairwise_bernoulli',
@@ -72,7 +71,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
 
     def test_connect_sliced_spatial_on_source(self):
         """Connect sliced spatial target population"""
-        # pairwise_bernoulli_on_source_<2>
         for nodes in [self.free_nodes, self.grid_nodes]:
             nest.Connect(nodes, nodes[self.middle_node],
                          conn_spec={'rule': 'pairwise_bernoulli',
@@ -82,7 +80,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
 
     def test_masked_connect_sliced_spatial_on_source(self):
         """Masked connect sliced spatial target population"""
-        # pairwise_bernoulli_on_source_<2>
         for nodes in [self.free_nodes, self.grid_nodes]:
             nest.Connect(nodes, nodes[self.middle_node],
                          conn_spec={'rule': 'pairwise_bernoulli',

@@ -5,6 +5,8 @@ NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
+In order to make sure that the NEST Initiative can manage the NEST code base in the long term, you need to send us a completed and signed :download:`NEST Contributor Agreement <NEST_Contributor_Agreement.pdf>` to transfer your copyright to the NEST Initiative before we can merge your pull request.
+
 Report bugs and request features
 --------------------------------
 

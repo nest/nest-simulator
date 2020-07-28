@@ -732,15 +732,21 @@ inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
 inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
+  // operator==() of *metadata_, and to let it handle typechecking.
   const bool eq_metadata = ( not metadata_ and not rhs_ptr->metadata_ )
     or ( metadata_ and rhs_ptr->metadata_ and *metadata_ == rhs_ptr->metadata_ );
+
   return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 {
+  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
+  // operator==() of *metadata_, and to let it handle typechecking.
   const bool eq_metadata =
     ( not metadata_ and not rhs.metadata_ ) or ( metadata_ and rhs.metadata_ and *metadata_ == rhs.metadata_ );
+
   return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and eq_metadata;
 }
 

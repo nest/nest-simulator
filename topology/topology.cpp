@@ -58,7 +58,9 @@ LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
 void
 LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection )
 {
-  // Get positions of current layer, sliced in start-stop.
+  // Get positions of current layer, sliced in start-stop. Because the implementation of NodeCollections sliced
+  // with step internally keeps the "skipped" nodes, positions must include the "skipped" nodes as well, so that
+  // the node indices match the position indices.
   TokenArray new_positions;
   for ( size_t lid = start; lid < stop; ++lid )
   {

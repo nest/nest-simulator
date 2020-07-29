@@ -52,14 +52,11 @@ jobs:
       python: 3.8.2
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=OPENMP-ONLY
     - stage: Linux-GCC
-      python: 3.6.10
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL
-    - stage: Linux-GCC
       python: 3.8.2
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL
     - stage: Linux-Clang
       language: cpp
-      python: 3.8.2
+      python: 3.6.10
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL xNEST_BUILD_COMPILER=CLANG
     - stage: macOS
       os: osx
@@ -142,8 +139,10 @@ before_install:
          cp extras/install_libboost.sh $HOME
          cd $HOME/build
          echo $PATH
-         pyenv install --list
-         pyenv global 3.6.10
+	 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+             pyenv install --list
+             pyenv global 3.6.10
+	 fi
 
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
            brew --version

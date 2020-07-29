@@ -24,7 +24,7 @@
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
+#       'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -43,15 +43,7 @@ if [ "xNEST_BUILD_COMPILER" = "CLANG" ]; then
 fi
 
 NEST_VPATH=build
-mkdir "$NEST_VPATH"
-mkdir "$NEST_VPATH/reports"
-
-echo "PWD"
-pwd
-ls -la
-echo "NEST_VPATH"
-echo $NEST_VPATH
-ls -la $NEST_VPATH
+mkdir -p "$NEST_VPATH/reports"
 
 if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -64,12 +56,10 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
     cd vera++-1.3.0
     cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
     sudo make install
-    cd ..
-    ls -la
-    rm -fr ./vera++-1.3.0
-    rm -f ./vera++-1.3.0.tar.gz
+    cd -
+    rm -fr vera++-1.3.0 vera++-1.3.0.tar.gz
      # Add the NEST profile to the VERA++ profiles.
-    sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
+    sudo cp extras/vera++.profile /usr/lib/vera++/profiles/nest
     echo "MSGBLD0020: VERA++ initialization completed."
     if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
         echo "MSGBLD0030: Installing CPPCHECK version 1.69."
@@ -79,26 +69,25 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
         git checkout tags/1.69
         mkdir -p install
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
-        cd ..
+        cd -
         echo "MSGBLD0040: CPPCHECK installation completed."
-    
+
         echo "MSGBLD0050: Installing CLANG-FORMAT."
         wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         # Copy and not move because '.cache' may aleady contain other subdirectories and files.
         cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
         echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
+
         # Remove these directories, otherwise the copyright-header check will complain.
-        rm -rf ./cppcheck
-        rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
+        rm -rf cppcheck clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
     fi
 
     # Ensure that the cppcheck and clang-format installation can be found.
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
+      # Note: BUG: Extracting the filenames may not work in all cases.
       #            The commit range might not properly reflect the history.
       #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
@@ -146,11 +135,12 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
     RUNS_ON_TRAVIS=true
     INCREMENTAL=false
 
-    chmod +x ./extras/static_code_analysis.sh
+    chmod +x extras/static_code_analysis.sh
     ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+
     exit $?
 fi
 
@@ -296,7 +286,7 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-cp ../extras/nestrc.sli ~/.nestrc
+cp extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
 if [[ "$OSTYPE" = "darwin"* ]] ; then
@@ -309,7 +299,9 @@ else
     NEST_RESULT=$(greadlink -f $NEST_RESULT)
 fi
 mkdir "$NEST_RESULT"
-    
+
+cd $NEST_VPATH
+
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               C O N F I G U R E   N E S T   B U I L D                       +"

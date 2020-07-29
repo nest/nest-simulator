@@ -41,7 +41,7 @@ jobs:
   include:
     - stage: Static-Code-Analysis
       python: 3.8.2
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=STATIC-CODE-ANALYSIS
     - stage: Linux-GCC
       python: 3.8.2
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL

@@ -40,7 +40,7 @@ Making your own copy (fork) of NEST
 ###################################
 
 This needs to be done only once. The instructions here are very similar to the
-`instructions at GitHub <http://help.github.com/forking/>`_, which you can refer
+`instructions on GitHub <http://help.github.com/forking/>`_, which you can refer
 to for more details. This documentation includes a version specific to NEST.
 
 Creating your own forked copy of NEST
@@ -137,12 +137,12 @@ Basic workflow
 In short:
 
 1. Start a *new branch* for each set of changes that you intend to make. See
-   the section on :ref:`feature_branch` below.
+   the :ref:`feature_branch` section below.
 2. Hack away! See the section that documents the :ref:`editing`.
 3. When you are satisfied with your edits, push these changes to your own GitHub fork,
    and open a pull request to notify the development team that you'd like
    to make these changes available at the ``upstream`` repository.
-   The steps for this are documented in the section on :ref:`pull_request`.
+   The steps for this are documented in the :ref:`pull_request` section.
 
 This suggested workflow helps to keep the source code repository properly
 organized. It also ensures that the history of changes that have been made to
@@ -247,38 +247,37 @@ Editing workflow - commands explained
 2. Please ensure that you have followed the coding guidelines for
    C++ and SLI coding guidelines.
 3. Test your changes by building the source code and running the tests.
-   (Usually ``cmake ...; make; make install; make installcheck``. Please see the
-   `INSTALL file <https://github.com/nest/nest-simulator/blob/master/INSTALL>`_ for
+   (Usually ``cmake``, ``make``, ``make install``, ``make installcheck``. Please see the
+   `INSTALL <https://github.com/nest/nest-simulator/blob/master/INSTALL>`_ file for
    details.)
 4. Check which files have changed with ``git status``. You'll see a listing like this one:
 
-.. code::
-   On branch my-new-feature
-   Changed but not updated:
-   (use "git add <file>..." to update what will be committed)
-   (use "git checkout -- <file>..." to discard changes in working directory)
+   .. code::
 
-   modified:   README
+      On branch my-new-feature
+      Changed but not updated:
+      (use "git add <file>..." to update what will be committed)
+      (use "git checkout -- <file>..." to discard changes in working directory)
 
-   Untracked files:
-   (use "git add <file>..." to include in what will be committed)
+      modified:   README
 
-   INSTALL
-   no changes added to commit (use "git add" and/or "git commit -a")
+      Untracked files:
+      (use "git add <file>..." to include in what will be committed)
+
+      INSTALL
+      no changes added to commit (use "git add" and/or "git commit -a")
 
 5. Compare the changes with the previous version using ``git diff``.
    This brings up a simple text browser interface that highlights the difference
    between your files and the previous version like this:
 
-.. code::
+   .. code::
 
-   diff --git a/development_workflow.md b/development_workflow.md
-   index f05f0cd..e581f00 100644
-   --- a/development_workflow.md
-   +++ b/development_workflow.md
-   @@ -8,17 +8,22 @@ layout: index
-   [NEST Issue Tracker]: <https://github.com/nest/nest-simulator/issues> "NEST Issue Tracker"
-   [NEST private]: <https://github.com/nest/nest-private>
+      diff --git a/development_workflow.md b/development_workflow.md
+      index f05f0cd..e581f00 100644
+      --- a/development_workflow.md
+     +++ b/development_workflow.md
+      @@ -8,17 +8,22 @@ layout: index
 
 6. Inform Git of what modified or new files you want to save (stage) using ``git add modified_file``.
    This puts the files into a ``staging area``, which is a
@@ -299,9 +298,9 @@ Editing workflow - commands explained
 
 8. Push the changes to your forked repo on GitHub:
 
-.. code::
+   .. code::
 
-   git push origin my-new-feature
+      git push origin my-new-feature
 
 Assuming you have followed the instructions in these pages, git will create
 a default link to your GitHub repo called ``origin``. In git >= 1.7 you can
@@ -322,9 +321,8 @@ are then simplified to the following:
 
 It often happens that while you were working on your edits, new commits have
 been added to ``upstream`` that affect your work. In this case, you will need to
-reposition your commits on the new master. Please follow the instructions on
-[rebasing your commits on master](#rebasing-on-master) section of this document
-to see how this is handled.
+reposition your commits on the new master. Please follow the instructions on the
+:ref:`rebase` section to see how this is handled.
 
 Next, we see how to create a pull request.
 
@@ -347,7 +345,9 @@ members of the NEST developer team.
 Pushing changes to the main repo
 ################################
 
-`This is only relevant if you have commit rights to the main NEST repo`.
+.. note::
+
+   This is only relevant if you have commit rights to the main NEST repo.
 
 When you have a set of ready changes in a feature branch ready for
 NEST's ``master``, you can push them to ``upstream`` as follows:
@@ -361,7 +361,7 @@ NEST's ``master``, you can push them to ``upstream`` as follows:
       git fetch upstream
       git rebase upstream/master
 
-     See :ref:`rebase`.
+See :ref:`rebase`.
 
     b) If all of the commits are related, create a merge commit:
 
@@ -372,14 +372,16 @@ NEST's ``master``, you can push them to ``upstream`` as follows:
 
 2. Check that what you are going to push looks sensible:
 
-        git log -p upstream/master..
-        git log --oneline --graph
+   .. code::
+
+      git log -p upstream/master..
+      git log --oneline --graph
 
 3. Push to upstream:
 
-.. code::
+   .. code::
 
-   git push upstream my-feature-branch:master
+      git push upstream my-feature-branch:master
 
 It is usually a good idea to use the ``-n`` flag to ``git push`` to check
 first that you're about to push the changes you want to the place you
@@ -497,13 +499,13 @@ want to make the following changes:
 
 We do as follows:
 
-1. make a backup of the current state
+1. Make a backup of the current state
 
 .. code::
 
    git branch tmp HEAD
 
-2. interactive rebase
+2. Interactive rebase
 
 .. code::
 
@@ -527,16 +529,16 @@ This will open an editor with the following text in it:
    s, squash = use commit, but meld into previous commit
    f, fixup = like "squash", but discard this commit's log message
 
-If you remove a line here THAT COMMIT WILL BE LOST. However, if you remove everything, the rebase will be aborted.
+If you remove a line here, **that commit will be lost**. However, if you remove everything, the rebase will be aborted.
 
 To achieve what we want, we will make the following changes to it:
 
 .. code::
 
-r 13d7934 First implementation
-pick 2dec1ac Fix a few bugs + disable
-f a815645 Modify it so that it works
-f eadc391 Fix some remaining bugs
+   r 13d7934 First implementation
+   pick 2dec1ac Fix a few bugs + disable
+   f a815645 Modify it so that it works
+   f eadc391 Fix some remaining bugs
 
 This means that (i) we want to edit the commit message for
 ``13d7934``, and (ii) collapse the last three commits into one. Now we
@@ -591,12 +593,12 @@ Several people sharing a single repository
 
 If you want to work on some stuff with other people, where you are all
 committing into the same repository, or even the same branch, then just
-share it via [GitHub].
+share it via GitHub.
 
 1. Fork NEST into your account, as explained above in :ref:`fork`.
 2. Then, go to your forked repository GitHub page, say
    ``http://github.com/your-user-name/nest-simulator``.
-3. Click on the 'Admin' button, and add anyone else to the repo as a collaborator.
+3. Click on the ``Admin`` button, and add anyone else to the repo as a collaborator.
 
 Now, all those people can do:
 

@@ -32,7 +32,7 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-if [[ $OSTYPE = darwin* ]]; then
+if [ $OSTYPE = darwin* ]; then
     CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
@@ -85,6 +85,11 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
 
     # Ensure that the cppcheck and clang-format installation can be found.
     export PATH=$HOME/.cache/bin:$PATH
+
+    echo "-------------- "
+    pwd
+    ls -la
+    echo "-------------- "
 
     echo "MSGBLD0070: Retrieving changed files."
       # Note: BUG: Extracting the filenames may not work in all cases.

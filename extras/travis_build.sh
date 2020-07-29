@@ -46,6 +46,7 @@ NEST_VPATH=build
 echo $NEST_VPATH
 mkdir "$NEST_VPATH"
 mkdir "$NEST_VPATH/reports"
+cd "$NEST_VPATH"
 
 if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

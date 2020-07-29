@@ -32,7 +32,7 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-if [ $OSTYPE = darwin* ]; then
+if [[ $OSTYPE = darwin* ]]; then
     CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
@@ -292,11 +292,15 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
+echo "MSGBLD0235: XXX 1"
+
 cp extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
-if [[ "$OSTYPE" = "darwin"* ]] ; then
+if [[ "$OSTYPE" = darwin* ]] ; then
     sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
+
+echo "MSGBLD0235: XXX 2"
 
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
@@ -305,6 +309,9 @@ else
     NEST_RESULT=$(greadlink -f $NEST_RESULT)
 fi
 mkdir "$NEST_RESULT"
+
+echo "MSGBLD0235: XXX 3"
+
 
 cd "$NEST_VPATH"
 

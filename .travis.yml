@@ -129,7 +129,7 @@ before_install:
        /usr/bin/c++ --version
      fi
    - |
-     if [ "$xNEST_BUILD_TYPPE" != "STATIC_CODE_ANALYSIS" ]; then
+     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -139,10 +139,10 @@ before_install:
          cp extras/install_libboost.sh $HOME
          cd $HOME/build
          echo $PATH
-	 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+         if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
              pyenv install --list
              pyenv global 3.6.10
-	 fi
+         fi
 
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
            brew --version

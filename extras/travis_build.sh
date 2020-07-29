@@ -363,4 +363,3 @@ if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
 fi
 
 echo "MSGBLD0340: Build completed."
-fi

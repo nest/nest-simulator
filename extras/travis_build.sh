@@ -45,7 +45,7 @@ fi
 NEST_VPATH=build
 mkdir -p "$NEST_VPATH/reports"
 
-if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
+if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -85,11 +85,6 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
 
     # Ensure that the cppcheck and clang-format installation can be found.
     export PATH=$HOME/.cache/bin:$PATH
-
-    echo "-------------- "
-    pwd
-    ls -la
-    echo "-------------- "
 
     echo "MSGBLD0070: Retrieving changed files."
       # Note: BUG: Extracting the filenames may not work in all cases.
@@ -149,6 +144,12 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
     exit $?
 fi
 
+echo
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0230: Reading build type."
+
 # This defines the base settings of all build options off. The base
 # settings are also used for NEST_BUILD_TYPE=MINIMAL, which is not
 # explicitly checked for below.
@@ -164,15 +165,14 @@ xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
 
-
-if [ "$xNEST_BUILD_TYPE" = "OPENMP-ONLY" ]; then
+if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
     xOPENMP=1
 fi
 
-if [ "$xNEST_BUILD_TYPE" = "MPI-ONLY" ]; then
+if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
@@ -192,7 +192,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xSIONLIB=1
 fi
 
-if [ "$xNEST_BUILD_TYPE" = "FULL-NO-EXTERNAL-FEATURES" ]; then
+if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
     xGSL=1
     xLIBBOOST=1
     xLIBNEUROSIM=0
@@ -205,6 +205,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL-NO-EXTERNAL-FEATURES" ]; then
     xSIONLIB=0
 fi
 
+echo "MSGBLD0232: Setting configuration variables."
 
 # Set the NEST CMake-build configuration according to the variables
 # set above based on the ones set in the build stage matrix in
@@ -305,13 +306,10 @@ else
 fi
 mkdir "$NEST_RESULT"
 
-cd $NEST_VPATH
+cd "$NEST_VPATH"
 
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0230: Configuring CMake."
+echo "MSGBLD0235: Running CMake."
+
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -Dwith-optimize=ON \

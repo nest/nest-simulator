@@ -292,15 +292,12 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-echo "MSGBLD0235: XXX 1"
-
 cp extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
 if [[ "$OSTYPE" = darwin* ]] ; then
     sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-
-echo "MSGBLD0235: XXX 2"
+fi
 
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
@@ -310,13 +307,9 @@ else
 fi
 mkdir "$NEST_RESULT"
 
-echo "MSGBLD0235: XXX 3"
-
-
-cd "$NEST_VPATH"
-
 echo "MSGBLD0235: Running CMake."
 
+cd "$NEST_VPATH"
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -Dwith-optimize=ON \

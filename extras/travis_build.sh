@@ -43,12 +43,17 @@ if [ "xNEST_BUILD_COMPILER" = "CLANG" ]; then
 fi
 
 NEST_VPATH=build
-echo $NEST_VPATH
 mkdir "$NEST_VPATH"
 mkdir "$NEST_VPATH/reports"
-cd "$NEST_VPATH"
 
-if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
+echo "PWD"
+pwd
+ls -la
+echo "NEST_VPATH"
+echo $NEST_VPATH
+ls -la $NEST_VPATH
+
+if [ "$xNEST_BUILD_TYPE" = "STATIC-CODE-ANALYSIS" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -60,6 +65,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
     sudo make install
     cd ..
+    ls -la
     rm -fr ./vera++-1.3.0
     rm -f ./vera++-1.3.0.tar.gz
      # Add the NEST profile to the VERA++ profiles.

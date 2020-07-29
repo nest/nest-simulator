@@ -18,7 +18,7 @@ Make sure to check that your issue has not already been reported there before cr
 Change code or documentation
 ----------------------------
 
-You can find all the details for our development workflow on the `NEST developer space <http://nest.github.io/nest-simulator>`_.
+To learn more about the NEST development workflow and use of Git, please visit the :doc:`development_workflow` page.
 
 Interested in creating or editing documentation? Check out our :doc:`../documentation_workflow/index`.
 

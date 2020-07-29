@@ -32,106 +32,17 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-# Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
-if [ "$xTHREADING" = "1" ] ; then
-    CONFIGURE_THREADING="-Dwith-openmp=ON"
-else
-    CONFIGURE_THREADING="-Dwith-openmp=OFF"
-fi
-
-if [ "$xMPI" = "1" ] ; then
-    CONFIGURE_MPI="-Dwith-mpi=ON"
-else
-    CONFIGURE_MPI="-Dwith-mpi=OFF"
-fi
-
-if [ "$xPYTHON" = "1" ] ; then
-    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
-    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
-    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
-    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
-    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
-    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    mkdir -p $HOME/.matplotlib
-    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
-else
-    CONFIGURE_PYTHON="-Dwith-python=OFF"
-fi
-
-if [ "$xMUSIC" = "1" ] ; then
-    CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
-    chmod +x extras/install_music.sh
-    ./extras/install_music.sh
-else
-    CONFIGURE_MUSIC="-Dwith-music=OFF"
-fi
-
-if [ "$xGSL" = "1" ] ; then
-    CONFIGURE_GSL="-Dwith-gsl=ON"
-else
-    CONFIGURE_GSL="-Dwith-gsl=OFF"
-fi
-
-if [ "$xLTDL" = "1" ] ; then
-    CONFIGURE_LTDL="-Dwith-ltdl=ON"
-else
-    CONFIGURE_LTDL="-Dwith-ltdl=OFF"
-fi
-
-if [ "$xREADLINE" = "1" ] ; then
-    CONFIGURE_READLINE="-Dwith-readline=ON"
-else
-    CONFIGURE_READLINE="-Dwith-readline=OFF"
-fi
-
-if [ "$xLIBBOOST" = "1" ] ; then
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
-    chmod +x extras/install_libboost.sh
-    ./extras/install_libboost.sh
-else
-    CONFIGURE_BOOST="-Dwith-boost=OFF"
-fi
-
-if [ "$xSIONLIB" = "1" ] ; then
-    CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
-    chmod +x extras/install_sionlib.sh
-    ./extras/install_sionlib.sh
-else
-    CONFIGURE_SIONLIB="-Dwith-sionlib=OFF"
-fi
-
-if [ "$xLIBNEUROSIM" = "1" ] ; then
-    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
-    chmod +x extras/install_csa-libneurosim.sh
-    ./extras/install_csa-libneurosim.sh
-    if [[ $OSTYPE == darwin* ]]; then
-        export DYLD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
-    else
-        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    fi
-else
-    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
-fi
-
-if [[ $OSTYPE = darwin* ]]; then
-    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
-    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+if [ "xNEST_BUILD_COMPILER" = "CLANG" ]; then
+    CC=clang-7
+    CXX=clang++-7
 fi
 
 NEST_VPATH=build
-NEST_RESULT=result
-if [ "$(uname -s)" = 'Linux' ]; then
-    NEST_RESULT=$(readlink -f $NEST_RESULT)
-else
-    NEST_RESULT=$(greadlink -f $NEST_RESULT)
-fi
-
 echo $NEST_VPATH
-mkdir "$NEST_VPATH" "$NEST_RESULT"
+mkdir "$NEST_VPATH"
 mkdir "$NEST_VPATH/reports"
 
-if [ "$xSTATIC_ANALYSIS" = "1" ]; then
+if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
     echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -228,22 +139,170 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
-    if [ $? -gt 0 ]; then
-        exit $?
-    fi
-else
-    echo "MSGBLD0225: Static code analysis skipped due to build configuration."
+    exit $?
 fi
 
-if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
-cd "$NEST_VPATH"
+# This defines the base settings of all build options off. The base
+# settings are also used for NEST_BUILD_TYPE=MINIMAL, which is not
+# explicitly checked for below.
+
+xGSL=0
+xLIBBOOST=0
+xLIBNEUROSIM=0
+xLTDL=0
+xMPI=0
+xMUSIC=0
+xOPENMP=0
+xPYTHON=0
+xREADLINE=0
+xSIONLIB=0
+
+
+if [ "$xNEST_BUILD_TYPE" = "OPENMP-ONLY" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLTDL=1
+    xOPENMP=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "MPI-ONLY" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLTDL=1
+    xMPI=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLIBNEUROSIM=1
+    xLTDL=1
+    xMPI=1
+    xMUSIC=1
+    xOPENMP=1
+    xPYTHON=1
+    xREADLINE=1
+    xSIONLIB=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "FULL-NO-EXTERNAL-FEATURES" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLIBNEUROSIM=0
+    xLTDL=1
+    xMPI=0
+    xMUSIC=0
+    xOPENMP=1
+    xPYTHON=1
+    xREADLINE=1
+    xSIONLIB=0
+fi
+
+
+# Set the NEST CMake-build configuration according to the variables
+# set above based on the ones set in the build stage matrix in
+# '.travis.yml'.
+
+if [ "$xOPENMP" = "1" ] ; then
+    CONFIGURE_OPENMP="-Dwith-openmp=ON"
+else
+    CONFIGURE_OPENMP="-Dwith-openmp=OFF"
+fi
+
+if [ "$xMPI" = "1" ] ; then
+    CONFIGURE_MPI="-Dwith-mpi=ON"
+else
+    CONFIGURE_MPI="-Dwith-mpi=OFF"
+fi
+
+if [ "$xPYTHON" = "1" ] ; then
+    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
+    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    mkdir -p $HOME/.matplotlib
+    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+else
+    CONFIGURE_PYTHON="-Dwith-python=OFF"
+fi
+
+if [ "$xMUSIC" = "1" ] ; then
+    CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
+    chmod +x extras/install_music.sh
+    ./extras/install_music.sh
+else
+    CONFIGURE_MUSIC="-Dwith-music=OFF"
+fi
+
+if [ "$xGSL" = "1" ] ; then
+    CONFIGURE_GSL="-Dwith-gsl=ON"
+else
+    CONFIGURE_GSL="-Dwith-gsl=OFF"
+fi
+
+if [ "$xLTDL" = "1" ] ; then
+    CONFIGURE_LTDL="-Dwith-ltdl=ON"
+else
+    CONFIGURE_LTDL="-Dwith-ltdl=OFF"
+fi
+
+if [ "$xREADLINE" = "1" ] ; then
+    CONFIGURE_READLINE="-Dwith-readline=ON"
+else
+    CONFIGURE_READLINE="-Dwith-readline=OFF"
+fi
+
+if [ "$xLIBBOOST" = "1" ] ; then
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
+    chmod +x extras/install_libboost.sh
+    ./extras/install_libboost.sh
+else
+    CONFIGURE_BOOST="-Dwith-boost=OFF"
+fi
+
+if [ "$xSIONLIB" = "1" ] ; then
+    CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
+    chmod +x extras/install_sionlib.sh
+    ./extras/install_sionlib.sh
+else
+    CONFIGURE_SIONLIB="-Dwith-sionlib=OFF"
+fi
+
+if [ "$xLIBNEUROSIM" = "1" ] ; then
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
+    chmod +x extras/install_csa-libneurosim.sh
+    ./extras/install_csa-libneurosim.sh
+    if [[ $OSTYPE == darwin* ]]; then
+        export DYLD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+    else
+        export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    fi
+else
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
+fi
+
+if [[ $OSTYPE = darwin* ]]; then
+    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
+    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+fi
+
 cp ../extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
-    if [[ "$OSTYPE" = "darwin"* ]] ; then
+if [[ "$OSTYPE" = "darwin"* ]] ; then
     sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-fi
 
+NEST_RESULT=result
+if [ "$(uname -s)" = 'Linux' ]; then
+    NEST_RESULT=$(readlink -f $NEST_RESULT)
+else
+    NEST_RESULT=$(greadlink -f $NEST_RESULT)
+fi
+mkdir "$NEST_RESULT"
+    
 echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
@@ -254,7 +313,7 @@ cmake \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
     $CONFIGURE_BOOST \
-    $CONFIGURE_THREADING \
+    $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \
     $CONFIGURE_PYTHON \
     $CONFIGURE_MUSIC \

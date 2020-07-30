@@ -1,16 +1,10 @@
----
-layout: index
----
-
-[« Back to the index](index)
-
-<hr>
-
-# Xcode Workflow
+Xcode Workflow
+==============
 
 This article contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no MPI shipped by default, this also explains, how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
 
-## Setup Infrastructure
+Setup Infrastructure
+--------------------
 
 We need several packages installed, before we can become productive with NEST:
 
@@ -29,7 +23,8 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
         xcode-select --install
 
 
-### Homebrew
+Homebrew
+~~~~~~~~
 
 1. Follow the install instructions for Homebrew ([short](http://brew.sh/) or [long](https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation))
 1. Open up the Terminal and execute the following lines:
@@ -38,7 +33,8 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
    brew install gcc gsl cmake open-mpi libtool
    ```
 
-### MacPorts
+MacPorts
+~~~~~~~~
 
 (We recommend using the Homebrew workflow, since there you can use a more current openmpi version for NEST, but we leave the MacPorts instructions for legacy purposes.)
 
@@ -54,7 +50,8 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 
         sudo port install +gcc48 +threads configure.compiler=macports-gcc-4.8
 
-## Install NEST
+Install NEST
+------------
 
 1. Get NEST from Github. You should follow the `Fork` / `Pull Request` process and clone from your fork:
 
@@ -97,7 +94,8 @@ __Note:__ Even if you want to build with MPI enabled, do not set the wrapper com
 
 __Note:__ With cmake it is also possible, to generate the XCode project files with `-G Xcode`, but this will require you to build with `gcc/clang`. The following instructions assume, that you do not use this option.
 
-## Get Xcode working with NEST
+Get Xcode working with NEST
+---------------------------
 
 1. Create a new project, which we will call `NEST-fork` in this article. In the menu select File -> New -> Project... . Then select OS X -> Other -> External Build System (with build tool `/usr/bin/make`)
 1. Add the NEST sources to the project. There is a `+` in the left-bottom corner (see image). Click `Add Files to "NEST-fork"...`. Then select the `<somebase>/NEST/src/` folder (do not copy items and use groups).
@@ -115,7 +113,8 @@ __Note:__ With cmake it is also possible, to generate the XCode project files wi
   Here you `Add User-Defined Setting` and name it `PATH`. In the `NEST-fork` column (the second) you copy the content of your `PATH` variable (do `echo $PATH` in the Terminal).
 1. The build system (CMD+B) should work from now on.
 
-### Running NEST from Xcode
+Running NEST from Xcode
+~~~~~~~~~~~~~~~~~~~~~~~
 
 We have to edit the Targets Scheme:
 

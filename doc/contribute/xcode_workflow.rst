@@ -1,9 +1,9 @@
-Xcode Workflow
+Xcode workflow
 ==============
 
 This article contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no MPI shipped by default, this also explains, how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
 
-Setup Infrastructure
+Setup infrastructure
 --------------------
 
 We need several packages installed, before we can become productive with NEST:
@@ -21,7 +21,6 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 1. Install the Xcode command line tools by executing the following line in the Terminal and following the instructions in the windows that will pop up
 
         xcode-select --install
-
 
 Homebrew
 ~~~~~~~~
@@ -87,7 +86,8 @@ We have to edit the Targets Scheme:
 
 __Note:__ The executable `<somebase>/NEST/install/bin/nest` will only be updated, if you execute `make install` in the terminal.
 
-### Code Completion in Xcode
+Code completion in Xcode
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 We have to create a new target and configure it appropriately:
 

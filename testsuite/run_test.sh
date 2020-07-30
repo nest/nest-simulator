@@ -96,8 +96,9 @@ run_test ()
     if test $? -eq 0 ; then
       command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
-      # Use plain python if the PYTHON variable is unset (i.e. PyNEST was not enabled)
-      PYTHON_CMD="${PYTHON:-python}"	
+      # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST
+      # was not enabled)
+      PYTHON_CMD="${PYTHON:-python3}"	
       command="'${PYTHON_CMD}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi
 

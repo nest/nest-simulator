@@ -104,7 +104,7 @@ if test "${PYTHON}"; then
     NOSE="$(command -v nosetests)"
 fi
 
-python -c "import junitparser" >/dev/null 2>&1
+python3 -c "import junitparser" >/dev/null 2>&1
 if test $? != 0; then
     echo "Error: Required Python package 'junitparser' not found."
     exit 1
@@ -469,8 +469,9 @@ else
   echo "  Not running C++ tests because NEST was compiled without Boost."
 fi
 
-# We use plain python here to collect results
-python "$(dirname $0)/summarize_tests.py" "${REPORTDIR}"
+# We use plain python3 here to collect results. This also works if
+# PyNEST was not enabled and ${PYTHON} is consequently not set.
+python3 "$(dirname $0)/summarize_tests.py" "${REPORTDIR}"
 TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state

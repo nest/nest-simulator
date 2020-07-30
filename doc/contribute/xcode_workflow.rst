@@ -55,7 +55,7 @@ we leave the MacPorts instructions for legacy purposes.)
 3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort.
    Download the portsfile
    `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_
-   and save it under the name `Portfile` in an arbitraty directory.
+   and save it under the name ``Portfile`` in an arbitraty directory.
 4. In Terminal, move to the directory containing Portfile and run
 
    .. code::
@@ -70,10 +70,10 @@ Please refer to our :doc:`../installation/index`.
 Get Xcode working with NEST
 ---------------------------
 
-1. Create a new project, which we will call `NEST-fork` in this article. In the menu select File -> New -> Project... .
-   Then select OS X -> Other -> External Build System (with build tool `/usr/bin/make`)
+1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu select File -> New -> Project... .
+   Then select OS X -> Other -> External Build System (with build tool ``/usr/bin/make``)
 2. Add the NEST sources to the project. There is a `+` in the left-bottom corner (see image). Click
-   `Add Files to "NEST-fork"...`. Then select the `<somebase>/NEST/src/` folder (do not copy items and use groups).
+   ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
    Also add the generated files:
 
    .. code::
@@ -81,12 +81,12 @@ Get Xcode working with NEST
       <somebase>/NEST/build/libnestutil/config.h
       <somebase>/NEST/build/libnestutil/sliconfig.h
       <somebase>/NEST/build/nest/static_modules.h
-3. On the left panel select the newly created project `NEST-fork`, then select the created target/.
-   Here you set set Directory to `<somebase>/NEST/build`. This will be the directory, in which the `make` command is
-   executed. Also check `Pass build settings in environment`.
-4. Select the `Build Settings` panel.
-   Here you `Add User-Defined Setting` and name it `PATH`. In the `NEST-fork` column (the second) you copy the content
-   of your `PATH` variable (do `echo $PATH` in the Terminal).
+3. On the left panel select the newly created project ``NEST-fork``, then select the created target/.
+   Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command
+   is executed. Also check ``Pass build settings in environment``.
+4. Select the ``Build Settings`` panel.
+   Here you ``Add User-Defined Setting`` and name it ``PATH``. In the ``NEST-fork`` column (the second) you copy the
+   content of your ``PATH`` variable (do ``echo $PATH`` in the Terminal).
 5. The build system (CMD+B) should work from now on.
 
 Running NEST from Xcode
@@ -95,14 +95,14 @@ Running NEST from Xcode
 We have to edit the Targets Scheme:
 
 1. In the menu select: Product -> Scheme -> Manage Schemes...
-2. Select the `NEST-fork` target and hit `Edit...`
-3. Select the `Run` option on the left and then on the right select `Info`.
-4. As `Executable` select `<somebase>/NEST/install/bin/nest`.
-5. You can specify arguments in the `Arguments` panel.
+2. Select the ``NEST-fork`` target and hit ``Edit...``
+3. Select the ``Run`` option on the left and then on the right select ``Info``.
+4. As ``Executable`` select ``<somebase>/NEST/install/bin/nest``.
+5. You can specify arguments in the ``Arguments`` panel.
 
 .. note::
 
-   The executable `<somebase>/NEST/install/bin/nest` will only be updated, if you execute `make install` in
+   The executable ``<somebase>/NEST/install/bin/nest`` will only be updated, if you execute ``make install`` in
    the terminal.
 
 Code completion in Xcode
@@ -112,8 +112,8 @@ We have to create a new target and configure it appropriately:
 
 1. In the menu select: File -> New -> Target....
 2. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it
-   `completion`
+   ``completion``
 3. Remove all files and folders that are created with the new target.
-4. In the tab "Build Phase" of the new target, under "Compile Sources" add all `*.h`, `*.hpp`, `*.c`, `*.cc`, `*.cpp`
-   files from the list (you can use CMD+a).<br/>![completion](images/xcode_article/completion.png)
+4. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``,
+   ``*.cpp`` files from the list (you can use CMD+a).<br/>![completion](images/xcode_article/completion.png)
 5. Now Xcode generates its index and after that code completion should work.

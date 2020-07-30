@@ -1,11 +1,11 @@
-Using GitHub for NEST
-=====================
+NEST Git workflow
+=================
 
 .. contents:: On this page, you'll find
    :local:
    :depth: 2
 
-Basic Git Setup
+Basic Git setup
 ---------------
 
 The NEST development team uses git for version control.
@@ -124,7 +124,7 @@ see something like this:
 
 .. _workflow:
 
-Suggested Development Workflow
+Suggested development workflow
 ------------------------------
 
 Once you've already set up your forked copy of the NEST source code

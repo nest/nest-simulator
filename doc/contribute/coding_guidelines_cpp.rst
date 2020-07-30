@@ -54,7 +54,7 @@ Ubuntu (see [here](http://llvm.org/apt/)):
    # To retrieve the archive signature:
    wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
 
-  # Repository for Trusty (14.04)
+   # Repository for Trusty (14.04)
    sudo sh -c 'echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
 
    # Repositories for Precise (12.04)

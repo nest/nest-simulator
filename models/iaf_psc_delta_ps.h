@@ -32,10 +32,8 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {

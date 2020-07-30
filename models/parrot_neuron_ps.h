@@ -28,8 +28,6 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
 
 namespace nest

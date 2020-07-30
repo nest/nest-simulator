@@ -33,7 +33,7 @@ Homebrew
 ~~~~~~~~
 
 1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_ or
-   `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
+   `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_).
 2. Open up the Terminal and execute the following lines:
 
    .. code::

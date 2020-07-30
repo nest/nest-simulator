@@ -2,18 +2,17 @@ NEST Coding Style Guidelines for C++
 ====================================
 
 In the code review process we want to enforce a consistent coding style to
-improve readability and maintainability. The article on [why code readability
-matters](http://blog.ashodnakashian.com/2011/03/code-readability/) gives an
+improve readability and maintainability. The article on `why code readability
+matters <http://blog.ashodnakashian.com/2011/03/code-readability/>`_ gives an
 intuition about the benefits of readable code. To simplify the process we use
 different tools that check compliance with our coding style and developers can
 reduce the workload of the review process by checking compliance of their code
 on their own.
 
-Also see our coding guidelines regarding [SLI](coding_guidelines_sli). For
-Python we enforce [PEP8](https://www.python.org/dev/peps/pep-0008/) formatting.
+For Python, we enforce `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ formatting.
 
-_Note that older code might not conform to this rules and should be fixed when
-convenient._
+Note that older code might not conform to this rules and should be fixed when
+convenient.
 
 .. contents:: On this page, you'll find
    :local:
@@ -24,13 +23,12 @@ Tooling
 
 The code has to compile without warnings (in the default settings of the build infrastructure). We restrict ourselves to C++03 standard for a larger support of compilers on various cluster systems and supercomputers.
 
-The [clang-format](http://clang.llvm.org/docs/ClangFormat.html) tool is built
+The `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ tool is built
 on the clang compiler frontend. It prettyprints input files in a
 configurable manner, and also has Vim and Emacs integration. We supply a
-[.clang-format](#clang-format-file) configuration file to enforce some parts of
-the coding style. During the code review process we check that there is no
-difference between the committed files and the formatted version of the
-committed files:
+:ref:`clang-format-file` to enforce some parts of the coding style. During
+the code review process we check that there is no difference between the committed
+files and the formatted version of the committed files:
 
 Developers can benefit from the tool by formatting their changes before issuing
 a pull request: for fixing the formatting of a single file consider using
@@ -47,7 +45,7 @@ understand all formatting options we defined in `.clang-format`. Version 3.7
 has formatting differences to 3.6.
 
 Get `clang-format`:
-Ubuntu (see [here](http://llvm.org/apt/)):
+Ubuntu see `here <http://llvm.org/apt/>`_:
 
 .. code::
 
@@ -68,10 +66,10 @@ Ubuntu (see [here](http://llvm.org/apt/)):
 
 OS X:
 
-* Installing `clang-format-3.6` from the [pre-built
-  binaries](http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-apple-darwin.tar.xz).
+* Installing `clang-format-3.6` from the `pre-built
+  binaries <http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-apple-darwin.tar.xz>`_.
 
-Further we use [vera++](https://bitbucket.org/verateam/vera/wiki/Home), which
+Further we use `vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
 source code'. It enables further checks for the code complying to the coding
 guidelines. We provide the [nest](#vera-profile-nest) profile file in the
@@ -96,10 +94,10 @@ OS X:
 
    brew install vera++
 
-Or consider installing `vera++` from the [binary
-packages](https://bitbucket.org/verateam/vera/wiki/Installation).
+Or consider installing `vera++` from the `binary
+packages <https://bitbucket.org/verateam/vera/wiki/Installation>`_.
 
-Finally, we let [cppcheck](http://cppcheck.sourceforge.net/) statically analyse
+Finally, we let `cppcheck <http://cppcheck.sourceforge.net/>`_ statically analyse
 the committed files and check for severe errors. We require cppcheck version
 1.69 or later.
 
@@ -210,17 +208,15 @@ and Python unit-testing infrastructure.
 Compiler
 ~~~~~~~~
 
-NEST compiles with any recent version of the [GNU C/C++
-Compiler](https://gcc.gnu.org/) `gcc`. Support and limitation for further
-compilers is described in the [installation][install].
-
-[install]: http://www.nest-initiative.org/Software:Installation
+NEST compiles with any recent version of the `GNU C/C++
+Compiler <https://gcc.gnu.org/>`_ `gcc`. Support and limitation for further
+compilers is described in the :doc:`Installation Instructions <../installation/index>`
 
 Online Reference Documents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. [C++ Reference](http://www.cplusplus.com/reference/)
-2. [C++ Wikibooks](https://en.wikibooks.org/wiki/C%2B%2B_Programming)
+1. `C++ Reference <http://www.cplusplus.com/reference/>`_
+2. `C++ Wikibooks <https://en.wikibooks.org/wiki/C%2B%2B_Programming>`_
 
 Books
 ~~~~~
@@ -241,8 +237,8 @@ Coding Style
 ############
 
 In the following the coding style guidelines are explained by example and some
-parts are adopted from [Google C++ Style
-Guide](https://google-styleguide.googlecode.com/svn/trunk/cppguide.html).
+parts are adopted from `Google C++ Style
+Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
 
 The #define Guard
 ~~~~~~~~~~~~~~~~~
@@ -770,6 +766,8 @@ And the corresponding `stopwatch.cpp`:
      , running_( false )
    {
    }
+
+.. _clang-format-file:
 
 clang-format configuration file
 ###############################

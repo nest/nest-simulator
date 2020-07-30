@@ -120,7 +120,7 @@ I_e          pA     External input current
 =========== ======  =========================================================
 
 References
-+++++++++++
+++++++++++
 
 .. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
        review of tools and strategies. Journal of Computational Neuroscience

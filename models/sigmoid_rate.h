@@ -43,8 +43,8 @@ Short description
 
 Rate neuron model with sigmoidal gain function
 
-Description:
-+++++++++++++
+Description
++++++++++++
 
 sigmoid_rate is an implementation of a nonlinear rate model with input
 function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.

@@ -21,7 +21,9 @@ convenient.
 Tooling
 -------
 
-The code has to compile without warnings (in the default settings of the build infrastructure). We restrict ourselves to C++03 standard for a larger support of compilers on various cluster systems and supercomputers.
+The code has to compile without warnings (in the default settings of the build
+infrastructure). We restrict ourselves to C++03 standard for a larger support of
+compilers on various cluster systems and supercomputers.
 
 The `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ tool is built
 on the clang compiler frontend. It prettyprints input files in a
@@ -112,7 +114,8 @@ Ubuntu 15.10:
 
   apt-get install cppcheck
 
-Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please follow the instructions to build cppcheck from scratch.
+Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please
+follow the instructions to build cppcheck from scratch.
 
 OS X:
 
@@ -228,7 +231,8 @@ We have found the following books to be useful.
 3. Meyers S (1996) More Effective C++, Addison Wesley
 4. Coplien J O (1992) Advanced C++ programming styles and idioms, Addison-Wesley
 5. Eckle B (1995) Thinking in C++, Prentice Hall
-6. Plauger P J, Stepanov A, Lee M, and Musser D R (1998) The Standard Template Library, Comming June 1998, 1. Prentice Hall
+6. Plauger P J, Stepanov A, Lee M, and Musser D R (1998) The Standard Template Library,
+   Comming June 1998, 1. Prentice Hall
 7. Plauger P J (1995) The (draft) Standard C++ Library, Prentice Hall
 8. Musser D R and Saini A (1996) STL Tutorial and Reference Guide, Addison-Wesley
 9. Kernighan B and Ritchie D (1988) The C Programming Language, 2nd Edition, Prentice Hall

@@ -53,46 +53,7 @@ MacPorts
 Install NEST
 ------------
 
-1. Get NEST from Github. You should follow the `Fork` / `Pull Request` process and clone from your fork:
-
-   ```sh
-   cd <somebase>
-   mkdir NEST
-   cd NEST
-   mkdir src build install
-   git clone https://github.com/nest/nest-simulator.git src
-   ```
-Afterwards you should have a directory structure like:
-
-        <somebase>/NEST/
-          - src/
-          - build/
-          - install/
-1. Build NEST
-
-   ```sh
-   cd src
-   cd ../build
-
-   # with Homebrew infrastructure run:
-   cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 $PWD/../src
-   # with MacPorts infrastructure run:
-   cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8 $PWD/../src
-
-   make -j8    # run make with 8 processes
-   make install
-   make installcheck
-   ```
-
-__Note:__ It is important, that the `cmake` command is _not_ executed with relative paths, in order for Xcode to find source files mentioned in the build logs.
-
-__Note:__ If you want to debug your code with Xcode later, it has to be compiled with debug-options enabled.
-
-__Note:__ Always supply a concrete `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` for the configure: e.g. `-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` (for Homebrew) or `-DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8` (for MacPorts). Otherwise Xcode will prefer to use the gcc/clang version.
-
-__Note:__ Even if you want to build with MPI enabled, do not set the wrapper compilers for `CMAKE_*_COMPILER`, as cmake will figure out the correct compiler options on its own.
-
-__Note:__ With cmake it is also possible, to generate the XCode project files with `-G Xcode`, but this will require you to build with `gcc/clang`. The following instructions assume, that you do not use this option.
+Please refer to our :doc:`../installation/index`.
 
 Get Xcode working with NEST
 ---------------------------

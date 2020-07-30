@@ -16,7 +16,7 @@ We need several packages installed, before we can become productive with NEST:
 * cmake
 * libtool
 * ipython, python, cython, ... The best way to install all the python requirements is to use
-`Anaconda <https://store.continuum.io/cshop/anaconda/>`_.
+  `Anaconda <https://store.continuum.io/cshop/anaconda/>`_.
 
 We present two ways to install the rest: MacPorts and Homebrew. For both versions you need to have Xcode and Xcode
 command line tools installed:
@@ -32,7 +32,8 @@ command line tools installed:
 Homebrew
 ~~~~~~~~
 
-1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_ or `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
+1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_ or
+   `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
 2. Open up the Terminal and execute the following lines:
 
    .. code::
@@ -42,16 +43,19 @@ Homebrew
 MacPorts
 ~~~~~~~~
 
-(We recommend using the Homebrew workflow, since there you can use a more current openmpi version for NEST, but
-we leave the MacPorts instructions for legacy purposes.)
+We recommend using the Homebrew workflow, since there you can use a more current openmpi version for NEST, but
+we leave the MacPorts instructions for legacy purposes.
 
 1. Follow the install instructions for `MacPorts <https://www.macports.org/install.php>`_.
 2. Open up the Terminal and execute the following lines:
 
-        sudo port install gcc48
-        sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
-        sudo port install gsl +gcc48
-        sudo port install cmake       # build tools
+   .. code::
+
+      sudo port install gcc48
+      sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
+      sudo port install gsl +gcc48
+      sudo port install cmake       # build tools
+
 3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort.
    Download the portsfile
    `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_
@@ -70,9 +74,10 @@ Please refer to our :doc:`../installation/index`.
 Get Xcode working with NEST
 ---------------------------
 
-1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu select File -> New -> Project... .
-   Then select OS X -> Other -> External Build System (with build tool ``/usr/bin/make``)
-2. Add the NEST sources to the project. There is a `+` in the left-bottom corner (see image). Click
+1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu
+   select File -> New -> Project... . Then select OS X -> Other -> External Build System
+   (with build tool ``/usr/bin/make``).
+2. Add the NEST sources to the project. There is a `+` in the left-bottom corner. Click
    ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
    Also add the generated files:
 
@@ -110,10 +115,10 @@ Code completion in Xcode
 
 We have to create a new target and configure it appropriately:
 
-1. In the menu select: File -> New -> Target....
+1. In the menu select: File -> New -> Target...
 2. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it
-   ``completion``
+   ``completion``.
 3. Remove all files and folders that are created with the new target.
 4. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``,
-   ``*.cpp`` files from the list (you can use CMD+a).<br/>![completion](images/xcode_article/completion.png)
+   ``*.cpp`` files from the list (you can use CMD+a)
 5. Now Xcode generates its index and after that code completion should work.

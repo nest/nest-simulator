@@ -40,35 +40,53 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-Name: poisson_generator_ps - simulate neuron firing with Poisson processes
-(with arbitrary dead time) statistics and exact timing
+/* BeginUserDocs: device, generator, precise
 
-Description:
 
-The poisson_generator_ps generator simulates a neuron firing with Poisson
-statistics (with dead time), ie, exponentially distributed interspike
-intervals plus constant dead time, spike events have exact timing
-(i.e. not binned).
+Short description
++++++++++++++++++
 
-Parameters:
+Simulated neuron firing with Poisson process statistics - precise
+spike timing version with arbitrary dead times
+
+Description
++++++++++++
+
+The poisson_generator_ps simulates a neuron firing with Poisson
+statistics (with dead time), i.e. exponentially distributed interspike
+intervals plus constant dead time, spike events have exact timing,
+i.e. they are not constrained to the simulation time grid.
+
+.. note::
+   This generator must be connected to all its targets using the
+   same synapse model. Failure to do so will only be detected at
+   runtime.
+
+Parameters
+++++++++++
 
 The following parameters appear in the element's status dictionary:
 
-rate     - mean firing rate. (double, var)
-dead_time - minimal time between two spikes. (double, var)
+==========   ======== =========================================================
+ rate        spikes/s Mean firing rate
+ dead_time   ms       Minimal time between two spikes
+ origin      ms       Time origin for device timer
+ start       ms       Begin of device application with resp. to origin
+ stop        ms       End of device application with resp. to origin
+==========   ======== =========================================================
 
-Remarks:
+Sends
++++++
 
-- This generator must be connected to all its targets using the
-  same synapse model. Failure to do so will only be detected at
-  runtime.
-- This generator has only been validated in a very basic manner.
+``SpikeEvent``
 
-Sends: SpikeEvent
+See also
+++++++++
 
-SeeAlso: poisson_generator, spike_generator, Device, StimulatingDevice
-*/
+poisson_generator, parrot_neuron_ps
+
+EndUserDocs */
+
 class poisson_generator_ps : public DeviceNode
 {
 

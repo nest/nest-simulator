@@ -83,7 +83,7 @@ A complete ``cmake`` line for PyNEST could look like this::
       -Dwith-ltdl=OFF \
       <nest-src>
 
-Furthermore, for running PyNEST, make sure all python dependencies are installed and
+Furthermore, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly::
 
     module load python3/3.4.2
@@ -91,7 +91,7 @@ environment variables are set properly::
     # adds PyNEST to the PYTHONPATH
     source <nest-install-dir>/bin/nest_vars.sh
     
-    # makes HOME and PYTHONPATH available for python
+    # makes HOME and PYTHONPATH available for Python
     runjob \
       --exp-env HOME \
       --exp-env PATH \

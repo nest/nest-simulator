@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Run as python layers.py > layers.log
+# Run as python3 layers.py > layers.log
 
 import matplotlib.pyplot as plt
 import nest

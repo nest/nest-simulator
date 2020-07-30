@@ -147,7 +147,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                     total_errors += 1
                     break
                 if (extension == 'py' and
-                        line_src.strip() == '#!/usr/bin/env python'):
+                        line_src.strip() == '#!/usr/bin/env python3'):
                     line_src = source_file.readline()
                 line_exp = template_line.replace('{{file_name}}', fname)
                 if line_src != line_exp:

@@ -13,19 +13,19 @@ We need several packages installed, before we can become productive with NEST:
 * gsl
 * cmake
 * libtool
-* ipython, python, cython, ... The best way to install all the python requirements is to use [Anaconda](https://store.continuum.io/cshop/anaconda/).
+* ipython, python, cython, ... The best way to install all the python requirements is to use `Anaconda <https://store.continuum.io/cshop/anaconda/>`_.
 
 We present two ways to install the rest: MacPorts and Homebrew. For both versions you need to have Xcode and Xcode command line tools installed:
 
 1. Install Xcode from the AppStore.
-1. Install the Xcode command line tools by executing the following line in the Terminal and following the instructions in the windows that will pop up
+2. Install the Xcode command line tools by executing the following line in the Terminal and following the instructions in the windows that will pop up
 
         xcode-select --install
 
 Homebrew
 ~~~~~~~~
 
-1. Follow the install instructions for Homebrew ([short](http://brew.sh/) or [long](https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation))
+1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_ or `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
 1. Open up the Terminal and execute the following lines:
 
    ```sh
@@ -37,15 +37,18 @@ MacPorts
 
 (We recommend using the Homebrew workflow, since there you can use a more current openmpi version for NEST, but we leave the MacPorts instructions for legacy purposes.)
 
-1. Follow the install instructions for [MacPorts](https://www.macports.org/install.php).
-1. Open up the Terminal and execute the following lines:
+1. Follow the install instructions for `MacPorts <https://www.macports.org/install.php>`_.
+2. Open up the Terminal and execute the following lines:
 
         sudo port install gcc48
         sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
         sudo port install gsl +gcc48
         sudo port install cmake       # build tools
-1. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile [Portfile-openmpi-1.6.4.txt](http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt) and save it under the name `Portfile` in an arbitraty directory.
-1. In Terminal, move to the directory containing Portfile and run
+3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort.
+Download the portsfile
+`Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_
+and save it under the name `Portfile` in an arbitraty directory.
+4. In Terminal, move to the directory containing Portfile and run
 
         sudo port install +gcc48 +threads configure.compiler=macports-gcc-4.8
 

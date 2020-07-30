@@ -33,13 +33,13 @@
 set -e
 
 if [[ $OSTYPE = darwin* ]]; then
-    CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
-    CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
+    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
 
 if [ "xNEST_BUILD_COMPILER" = "CLANG" ]; then
-    CC=clang-7
-    CXX=clang++-7
+    export CC=clang-7
+    export CXX=clang++-7
 fi
 
 NEST_VPATH=build

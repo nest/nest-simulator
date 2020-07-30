@@ -43,6 +43,11 @@ Pull requests must be reviewed and approved by **two reviewers** prior to being 
 documentation** as part of the review process. To learn how to test the documentation locally offline, please check
 out our :doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
 
+Additional workflows
+--------------------
+
+You may also be interested in our :doc:`xcode_workflow`.
+
 Have a question?
 ----------------
 

@@ -5,7 +5,12 @@ NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
-In order to make sure that the NEST Initiative can manage the NEST code base in the long term, you need to send us a completed and signed :download:`NEST Contributor Agreement <NEST_Contributor_Agreement.pdf>` to transfer your copyright to the NEST Initiative before we can merge your pull request.
+Please familiarize yourself with our :doc:`NEST Git workflow <development_workflow>`
+and :doc:`C++ coding style guidelines <coding_guidelines_cpp`.
+
+In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
+you need to send us a completed and signed :download:`NEST Contributor Agreement <NEST_Contributor_Agreement.pdf>`
+to transfer your copyright to the NEST Initiative before we can merge your pull request.
 
 Report bugs and request features
 --------------------------------
@@ -18,18 +23,18 @@ Make sure to check that your issue has not already been reported there before cr
 Change code or documentation
 ----------------------------
 
-To learn more about the NEST development workflow and use of Git, please visit the :doc:`development_workflow` page.
-
 Interested in creating or editing documentation? Check out our :doc:`../documentation_workflow/index`.
 
 For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
 
-If you are a Vim user and require support for SLI files, please refer to our :doc:`templates_styleguides/vim_support_sli`.
+If you are a Vim user and require support for SLI files, please refer to our
+:doc:`templates_styleguides/vim_support_sli`.
 
 Contribute a Python example script
 ----------------------------------
 
-If you have a Python example network to contribute, please refer to our :doc:`templates_styleguides/example_template` to ensure you cover the required information.
+If you have a Python example network to contribute, please refer to our :doc:`templates_styleguides/example_template`
+to ensure you cover the required information.
 
 Code review guidelines
 ----------------------

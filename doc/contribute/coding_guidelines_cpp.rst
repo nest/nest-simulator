@@ -17,7 +17,7 @@ convenient._
 
 .. contents:: On this page, you'll find
    :local:
-   :depth: 2
+   :depth: 4
 
 Tooling
 -------

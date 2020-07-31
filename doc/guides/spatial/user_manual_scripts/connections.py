@@ -524,8 +524,8 @@ layer = nest.Create('iaf_psc_alpha',
                         shape=[11, 11],
                         extent=[1., 1.]))
 nest.Connect(layer, layer, {'rule': 'pairwise_bernoulli',
-                    'p': parameter,
-                    'mask': {'circular': {'radius': 0.5}}})
+                            'p': parameter,
+                            'mask': {'circular': {'radius': 0.5}}})
 #{ end #}
 
 # --------------------------------

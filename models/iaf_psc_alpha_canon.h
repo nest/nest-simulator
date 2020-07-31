@@ -76,7 +76,7 @@ This implementation is more complex than the plain iaf_psc_alpha
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
-performance given an accuracy goal; see [1]_ for details.  Subthreshold
+performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
 .. note::
@@ -127,7 +127,7 @@ based on [3]_.
 
 For details about exact subthreshold integration, please see
 <https://github.com/nest/nest-simulator/blob/master/doc/model_details/exact-integration.ipynb>`_
-in the NEST source code (docs/model_details).
+in the NEST source code (doc/model_details).
 
 
 References

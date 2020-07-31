@@ -105,7 +105,7 @@ see issue #921.
 
 For details about exact subthreshold integration, please see
 <https://github.com/nest/nest-simulator/blob/master/doc/model_details/exact-integration.ipynb>`_
-in the NEST source code (docs/model_details).
+in the NEST source code (doc/model_details).
 
 References
 ++++++++++

@@ -613,8 +613,7 @@ class TestNodeCollection(unittest.TestCase):
         param = nest.spatial.distance
         # Single target position
         target = [[1., 2.], ]
-        for i in range(len(n)):
-            source = n[i]
+        for source in n:
             source_x, source_y = nest.GetPosition(source)
             target_x, target_y = (target[0][0], target[0][1])
             ref_distance = np.sqrt((target_x - source_x)**2 + (target_y - source_y)**2)
@@ -622,8 +621,7 @@ class TestNodeCollection(unittest.TestCase):
 
         # Multiple target positions
         targets = np.array(nest.GetPosition(n))
-        for i in range(len(n)):
-            source = n[i]
+        for source in n:
             source_x, source_y = nest.GetPosition(source)
             ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
             self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))

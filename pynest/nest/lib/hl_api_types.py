@@ -131,7 +131,7 @@ class NodeCollectionIterator(object):
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = take_array_index(self._nc._datum, numpy.array([self._increment]))
+        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
         self._increment += 1
         return val
 

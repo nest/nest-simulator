@@ -260,25 +260,17 @@ class SpatialTester(object):
         '''Return distances from source node to connected nodes.'''
 
         # Distance from source node to all nodes in target population
-        dist = nest.Distance(self._driver, self._lt)
+        dist = np.array(nest.Distance(self._driver, self._lt))
 
         # Target nodes
         connections = nest.GetConnections(source=self._driver)
-        target_nodes = connections.get('target')
+        target_array = np.array(connections.target)
 
-        target_dist = []
+        # Convert lt node IDs to a NumPy array
+        lt_array = np.array(self._lt.tolist())
 
-        # target_nodes and lt will both be sorted, so we can iterate through
-        # both to see if they match, and put the correct distance in a list
-        # containig target distances if true.
-        counter = 0
-        for indx, nc in enumerate(self._lt):
-            if nc.get('global_id') == target_nodes[counter]:
-                target_dist.append(dist[indx])
-                counter += 1
-                # target_nodes might be shorter than lt
-                if counter == len(target_nodes):
-                    break
+        # Pick distance values of connected targets only
+        target_dist = dist[np.isin(lt_array, target_array)]
 
         return target_dist
 

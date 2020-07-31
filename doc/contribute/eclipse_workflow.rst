@@ -1,19 +1,14 @@
----
-layout: index
----
-
-[« Back to the index](index)
-
-<hr>
-
-# Developing NEST with Eclipse
+Developing NEST with Eclipse
+============================
 
 These instructions are based on Eclipse *Mars* (4.5). They are based
 on earlier instructions by Thomas Heiberg.
 
-## Installing Eclipse
+Installing Eclipse
+__________________
 
-### Prerequisites
+Prerequisites
+~~~~~~~~~~~~~
 
 You have to have a Java Development Kit (JDK) v. 1.7.0 (Java 7) or later
 installed. Just a Java Runtime Environment (JRE) is not enough.
@@ -39,7 +34,8 @@ Installer* and use it to install the C/C++ IDE.
 Under OSX, always download the 64-bit version. Under Windows or Linux,
 download the version that fits your operating system.
 
-### Workspace
+Workspace
+~~~~~~~~~
 
 In this document, I assume that you collect all your Eclipse projects
 in a single workspace, located at `$HOME/eclipse/workspace`. This will
@@ -61,7 +57,8 @@ choose `New ...` and browse to the executable of your Python interpreter, e.g.,
 
 You need to repeat this step for each new workspace you enter.
 
-### CppStyle
+CppStyle
+~~~~~~~~
 
 *CppStyle* is a source-code formatter based on `clang-format`. You can install it from the
 Eclipse Marketplace in the same way as *PyDev*; remember to restart Eclipse.
@@ -76,7 +73,8 @@ directory to `$NEST_ROOT/src/.clang-format` for `clang-format` to find
 the file with the code formatting rules.
 
 
-### General settings in Eclipse
+General settings in Eclipse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Open Eclipse preferences and go to `General > Editors > Text Editors`
 1. Set the following
@@ -84,7 +82,8 @@ the file with the code formatting rules.
     - `Insert spaces for tabs` checked
 	- `Show print margin` checked and colum set to 79
 
-## Directory Structure for NEST
+Directory Structure for NEST
+____________________________
 
 We discuss here some ideas on how to organize NEST source code, build
 and install directories. This applies even if you do not work with
@@ -115,9 +114,11 @@ A typical set of build directories could then look like this
 If you have longer-running branches for major changes, you may want to create one or more `bld_` directories for this branch in addition, so that you can always "hop into" work on that branch without having to recompile much code.
 
 
-## Setting up NEST with Eclipse
+Setting up NEST with Eclipse
+____________________________
 
-### Preparations
+Preparations
+~~~~~~~~~~~~
 
 You should configure NEST as usual. In this document,
 we will first set up the NEST production build
@@ -147,7 +148,8 @@ make installcheck
 
 __Note:__ With `cmake` you can also generate the Eclipse project files yourself by adding the option `-G "Eclipse CDT4 - Unix Makefiles"`. The following section assumes, that you do not use this option.
 
-### Project setup
+Project setup
+~~~~~~~~~~~~~
 
 1. `File > New > Makefile project with existing code`
 1. Choose an arbitrary project name
@@ -175,8 +177,6 @@ browser and choose`Properties` from the context menu. Then
 
 To enable code formatting with `clang-format` via `CppStyle`, open the Properties window
 for the project and go to `C/C++ General > Formatter`, enable project specific settings, choose `CppStyle` as Code Formatter. `Source > Format` will now format source code according to the `.clang-format` file shipped with NEST.
-
-
 
 Finally, we need to tell Eclipse about the build path.
 
@@ -225,7 +225,8 @@ the Context Menu.
 
 See also [https://wiki.eclipse.org/CDT/Autotools/User_Guide](https://wiki.eclipse.org/CDT/Autotools/User_Guide).
 
-### Running NEST from Eclipse
+Running NEST from Eclipse
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To run NEST within Eclipse,
 
@@ -242,12 +243,8 @@ a slightly funny way in the build-in console, but NEST works fine. You
 need to quit NEST with the `quit` command, `Ctrl-D` does not seem to
 work (made my machine hang totally on one occasion).
 
-#### Running PyNEST from Eclipse
-
-To be written.
-
-
-## Multiple build directories and configurations
+Multiple build directories and configurations
+_____________________________________________
 
 We have little experience with multiple build directories yet, so take
 this with a pinch of salt and let us know about your experiences! See
@@ -258,7 +255,8 @@ then add the corresponding build and run configuration in Eclipse. In
 general, you need to set up one build and one run configuration for
 each build directory you create.
 
-### Configuring and additional build directory
+Configuring and additional build directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create and configure the build directory as usual and build and
 install NEST once (do not use the MPI compiler wrappers for `cmake`, as
@@ -293,7 +291,8 @@ configuration and choose `Edit`.
 1. Edit the name of the configuration, e.g. to `run_fixes_mpi` and the  path to the C/C++
    Application. If you have not built this configuration yet, you will get a warning; ignore it.
 
-### Building and running with multiple configurations
+Building and running with multiple configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - You select the active configuration from the project context menu via `Build Configurations > Set Active` .
 - To build a different configuration directly, you can also click on the little triangle next to the hammer icon and select the configuration you want to build.
@@ -307,7 +306,8 @@ When running a new configuration for the first time,
 
 Afterwards, you can select the run configuration by clicking on the little triangle next to the play button.
 
-## Debugging in Eclipse
+Debugging in Eclipse
+--------------------
 
 This section is very preliminary.
 
@@ -315,4 +315,7 @@ This section is very preliminary.
 1. Remember to also create a run configuration. Then, click the triangle next to the Bug to start debugging, choosing your debug run configuration.
 1. Eclipse stops the debugger on entry to main, you probably want to click Resume here.
 
-NB: At present, I am not able to get any variable values out in gdb. This seems to be a gdb problem, I also have this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.
+.. note::
+
+   At present, we are not able to get any variable values out in gdb. This seems to be a gdb problem. We also have
+   this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.

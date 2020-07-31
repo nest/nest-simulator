@@ -46,7 +46,7 @@ out our :doc:`User documentation workflow <../documentation_workflow/user_docume
 Additional workflows
 --------------------
 
-You may also be interested in our :doc:`xcode_workflow`.
+You may also be interested in our :doc:`xcode_workflow` and :doc:`eclipse_workflow`.
 
 Have a question?
 ----------------

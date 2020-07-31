@@ -289,13 +289,14 @@ Then, in Eclipse
 
 1. In the project context menu, choose
    ``Build configurations > Manage ...`` and then ``New ...``
-2. Choose a name, preferably the same as the build directory, here ``bld_fixes_mpi`` and choose to copy
-   settings from an existing configuration.
+2. Choose a name, preferably the same as the build directory, here ``bld_fixes_mpi`` and choose to
+   copy settings from an existing configuration.
 3. In the context menu, choose ``Build configurations > Set Active`` and
    select you new configuration.
-4. Choose ``Properties`` from the context menu and go to ``C/C++ General > Path and Symbols``. Delete the include
-   directories listed (for C and C++) and add the ``libnestutil`` and ``nest`` directories from the build directory,
-   rebuild the index when Eclipse suggest it (deleting and adding paths is easier than editing them, because with
+4. Choose ``Properties`` from the context menu and go to ``C/C++ General > Path and Symbols``. Delete
+   the include directories listed (for C and C++) and add the ``libnestutil`` and ``nest``
+   directories from the build directory, rebuild the index when Eclipse suggest it (deleting and
+   adding paths is easier than editing them, because with
    the ``Add to all languages`` option you only need to add each path once).
 5. In the ``Properties`` window go to ``C/C++ Build``,
    choose the ``Builder Settings`` tab and then under "Build location"
@@ -310,17 +311,19 @@ Then, in Eclipse
 Building and running with multiple configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* You select the active configuration from the project context menu via ``Build Configurations > Set Active``.
-* To build a different configuration directly, you can also click on the little triangle next to the hammer icon and
-  select the configuration you want to build.
+* You select the active configuration from the project context menu via ``Build Configurations > Set
+  Active``.
+* To build a different configuration directly, you can also click on the little triangle next to the
+  hammer icon and select the configuration you want to build.
 
-A build just runs make. If you want to do more (install, run the tests), you need to select one of the make targets
-from the context menu via "Make Targets" → "Build" ...; in this case, you will always run the active build configuration.
+A build just runs make. If you want to do more (install, run the tests), you need to select one of the
+make targets from the context menu via "Make Targets" → "Build" ...; in this case, you will always
+run the active build configuration.
 
 When running a new configuration for the first time,
 
-* either click on the triangle next to the "play" button, choose "Run configurations", select the configuration
-  you want to run and click "Run"
+* either click on the triangle next to the "play" button, choose "Run configurations", select the
+  configuration you want to run and click "Run"
 * or go to the same menu via the context menu "Run as" ... → "Run configurations" ...
 
 Afterwards, you can select the run configuration by clicking on the little triangle next to the play button.
@@ -330,13 +333,14 @@ Debugging in Eclipse
 
 This section is very preliminary.
 
-1. Create a build directory and configure NEST with the ``--with-debug`` switch, then add a corresponding
-   configuration in Eclipse as described above.
-2. Remember to also create a run configuration. Then, click the triangle next to the Bug to start debugging,
-   choosing your debug run configuration.
+1. Create a build directory and configure NEST with the ``--with-debug`` switch, then add a
+   corresponding configuration in Eclipse as described above.
+2. Remember to also create a run configuration. Then, click the triangle next to the Bug to start
+   debugging, choosing your debug run configuration.
 3. Eclipse stops the debugger on entry to main, you probably want to click Resume here.
 
 .. note::
 
-   At present, we are not able to get any variable values out in gdb. This seems to be a gdb problem. We also have
-   this problem with gdb on the command line. So on the Mac we may have to wait until Eclipse support lldb.
+   At present, we are not able to get any variable values out in gdb. This seems to be a gdb
+   problem. We also have this problem with gdb on the command line. So on the Mac we may have
+   to wait until Eclipse support lldb.

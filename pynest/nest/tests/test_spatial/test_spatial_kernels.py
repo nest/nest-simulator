@@ -50,7 +50,7 @@ try:
     fig = plt.figure()
     plt.close(fig)
     PLOTTING_POSSIBLE = True
-except:
+except ImportError:
     PLOTTING_POSSIBLE = False
 
 # If False, tests will be run; otherwise, a single case will be plotted.

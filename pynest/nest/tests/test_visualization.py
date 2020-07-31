@@ -34,7 +34,7 @@ try:
     tmp_fig = plt.figure()  # make sure we can open a window; DISPLAY may not be set
     plt.close(tmp_fig)
     PLOTTING_POSSIBLE = True
-except:
+except ImportError:
     PLOTTING_POSSIBLE = False
 
 try:

@@ -129,10 +129,7 @@ class Main():
 
         for entry in models:
 
-            try:
-                entrytype = nest.GetDefaults(entry)["element_type"]
-            except:
-                entrytype = "unknown"
+            entrytype = nest.GetDefaults(entry)["element_type"]
 
             if entrytype == "neuron":
                 it = neuronmodelsliststore.append([entry])

@@ -14,20 +14,21 @@ You have to have a Java Development Kit (JDK) v. 1.7.0 (Java 7) or later
 installed. Just a Java Runtime Environment (JRE) is not enough.
 
 You can download the JDK from
-[Oracle's JDK8 Download Page](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+`Oracle's JDK8 Download Page <http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>`_.
 
-### Debugger under OSX
+Debugger under OSX
+~~~~~~~~~~~~~~~~~~
 
 Under OSX, you need to install `gdb` to be able to debug NEST with
 Eclipse, since Eclipse does not support `lldb` (yet). For installation
-instructions, see
+instructions, check out the instructions for `OS X Mavericks
+<http://ntraft.com/installing-gdb-on-os-x-mavericks>`_ and
+`Darwin <https://sourceware.org/gdb/wiki/BuildingOnDarwin>`_.
 
- - [http://ntraft.com/installing-gdb-on-os-x-mavericks](http://ntraft.com/installing-gdb-on-os-x-mavericks)
- - [https://sourceware.org/gdb/wiki/BuildingOnDarwin](https://sourceware.org/gdb/wiki/BuildingOnDarwin)
+Eclipse
+~~~~~~~
 
-### Eclipse
-
-From [the Eclipse downloads page](http://www.eclipse.org/downloads/),
+From `the Eclipse downloads page <http://www.eclipse.org/downloads/>`_,
 download either the *Eclipse IDE for C/C++ Developers* or the *Eclipse
 Installer* and use it to install the C/C++ IDE.
 
@@ -43,7 +44,8 @@ keep most Eclipse-generated files out of your code directories,
 reducing clutter there. But you can place your workspace
 anywhere.
 
-### PyDev
+PyDev
+~~~~~
 
 Once you have installed and started Eclipse, go to `Help > Eclipse
 Marketplace` and install the *PyDev* extension, then restart Eclipse.
@@ -223,7 +225,7 @@ e.g. `install` by entering this as the target name.
 1. You can run the targets by choosing `Make Targets > Build ...` from
 the Context Menu.
 
-See also [https://wiki.eclipse.org/CDT/Autotools/User_Guide](https://wiki.eclipse.org/CDT/Autotools/User_Guide).
+You can also check out the `CDT/Autotools/User Guide <https://wiki.eclipse.org/CDT/Autotools/User_Guide>`_.
 
 Running NEST from Eclipse
 ~~~~~~~~~~~~~~~~~~~~~~~~~

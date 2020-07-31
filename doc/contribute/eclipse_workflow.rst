@@ -1,7 +1,7 @@
 Developing NEST with Eclipse
 ============================
 
-These instructions are based on Eclipse *Mars* (4.5). They are based
+These instructions are based on Eclipse Mars (4.5). They are based
 on earlier instructions by Thomas Heiberg.
 
 Installing Eclipse
@@ -48,9 +48,9 @@ PyDev
 ~~~~~
 
 Once you have installed and started Eclipse, go to `Help > Eclipse
-Marketplace` and install the *PyDev* extension, then restart Eclipse.
+Marketplace` and install the ``PyDev`` extension, then restart Eclipse.
 
-Once *PyDev* is installed, open the Eclipse preferences, go to
+Once ``PyDev`` is installed, open the Eclipse preferences, go to
 ``PyDev > Interpreters > Python Interpreter`` and configure your
 interpreter. You can try ``Advance Auto-Config``, but this will often
 not detect the correct Python interpreter. In that case,
@@ -107,12 +107,14 @@ directory reduces clutter.
 
 A typical set of build directories could then look like this
 
-| Directory |  Purpose |
-|:---------|:-------|
-| ``bld_master_nompi`` | production version for laptop, only compiled from master |
-| ``bld_fixes_nompi``  | testing code in branches for small fixes |
-| ``bld_fixes_mpi``  | testing code in branches for small fixes with MPI  |
-| ``bld_debug_nompi``  | for debugging  |
+====================   ========================================================
+Directory              Purpose
+--------------------   --------------------------------------------------------
+``bld_master_nompi``   production version for laptop, only compiled from master
+``bld_fixes_nompi``    testing code in branches for small fixes
+``bld_fixes_mpi``      testing code in branches for small fixes with MPI
+``bld_debug_nompi``    for debugging
+====================   ========================================================
 
 If you have longer-running branches for major changes, you may want to create one or more ``bld_`` directories for
 this branch in addition, so that you can always "hop into" work on that branch without having to recompile much code.
@@ -152,8 +154,8 @@ NB: Make sure that you have checked out the master branch in the ``src`` directo
 
 .. note::
 
-   With `cmake` you can also generate the Eclipse project files yourself by adding the option
-   `-G "Eclipse CDT4 - Unix Makefiles"`. The following section assumes, that you do not use this option.
+   With ``cmake`` you can also generate the Eclipse project files yourself by adding the option
+   ``-G "Eclipse CDT4 - Unix Makefiles"``. The following section assumes, that you do not use this option.
 
 Project setup
 ~~~~~~~~~~~~~

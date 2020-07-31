@@ -5,8 +5,10 @@ NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
-Please familiarize yourself with our :doc:`NEST Git workflow <development_workflow>`
-and :doc:`C++ coding style guidelines <coding_guidelines_cpp`.
+Please familiarize yourself with our:
+
+* :doc:`NEST Git workflow <development_workflow>`
+* :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
 
 In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
 you need to send us a completed and signed :download:`NEST Contributor Agreement <NEST_Contributor_Agreement.pdf>`
@@ -46,7 +48,7 @@ out our :doc:`User documentation workflow <../documentation_workflow/user_docume
 Additional workflows
 --------------------
 
-You may also be interested in our :doc:`xcode_workflow` and :doc:`eclipse_workflow`.
+You may also be interested in our :doc:`Xcode <xcode_workflow>` and :doc:`Eclipse <eclipse_workflow>` workflows.
 
 Have a question?
 ----------------

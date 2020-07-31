@@ -5,6 +5,10 @@ This article contains instructions on how to develop NEST on a Mac (OSX 10.10.3 
 (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is
 no MPI shipped by default, this also explains, how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
 
+.. contents:: On this page, you'll find
+   :local:
+   :depth: 3
+
 Setup infrastructure
 --------------------
 
@@ -69,13 +73,13 @@ we leave the MacPorts instructions for legacy purposes.
 Install NEST
 ------------
 
-Please refer to our :doc:`../installation/index`.
+Please refer to our :doc:`installation instructions <../installation/index>`.
 
 Get Xcode working with NEST
 ---------------------------
 
 1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu
-   select File -> New -> Project... . Then select OS X -> Other -> External Build System
+   select "File" → "New" → "Project"... . Then select "OS X" → "Other" → "External Build System"
    (with build tool ``/usr/bin/make``).
 2. Add the NEST sources to the project. There is a `+` in the left-bottom corner. Click
    ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
@@ -86,6 +90,7 @@ Get Xcode working with NEST
       <somebase>/NEST/build/libnestutil/config.h
       <somebase>/NEST/build/libnestutil/sliconfig.h
       <somebase>/NEST/build/nest/static_modules.h
+
 3. On the left panel select the newly created project ``NEST-fork``, then select the created target/.
    Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command
    is executed. Also check ``Pass build settings in environment``.
@@ -99,7 +104,7 @@ Running NEST from Xcode
 
 We have to edit the Targets Scheme:
 
-1. In the menu select: Product -> Scheme -> Manage Schemes...
+1. In the menu select: "Product" → "Scheme" → "Manage Schemes"...
 2. Select the ``NEST-fork`` target and hit ``Edit...``
 3. Select the ``Run`` option on the left and then on the right select ``Info``.
 4. As ``Executable`` select ``<somebase>/NEST/install/bin/nest``.
@@ -115,8 +120,8 @@ Code completion in Xcode
 
 We have to create a new target and configure it appropriately:
 
-1. In the menu select: File -> New -> Target...
-2. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it
+1. In the menu, select: "File" → "New" → "Target"...
+2. Make the target a OS X → Command Line Tool (Next), of type C++ in your project (preselected). We call it
    ``completion``.
 3. Remove all files and folders that are created with the new target.
 4. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``,

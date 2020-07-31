@@ -4,6 +4,10 @@ Developing NEST with Eclipse
 These instructions are based on Eclipse Mars (4.5). They are based
 on earlier instructions by Thomas Heiberg.
 
+.. contents:: On this page, you'll find
+   :local:
+   :depth: 3
+
 Installing Eclipse
 __________________
 
@@ -47,14 +51,14 @@ anywhere.
 PyDev
 ~~~~~
 
-Once you have installed and started Eclipse, go to `Help > Eclipse
-Marketplace` and install the ``PyDev`` extension, then restart Eclipse.
+Once you have installed and started Eclipse, go to "Help" → "Eclipse
+Marketplace" and install the ``PyDev`` extension, then restart Eclipse.
 
-Once ``PyDev`` is installed, open the Eclipse preferences, go to
-``PyDev > Interpreters > Python Interpreter`` and configure your
-interpreter. You can try ``Advance Auto-Config``, but this will often
+Once PyDev is installed, open the Eclipse preferences, go to
+"PyDev" → "Interpreters" → "Python Interpreter" and configure your
+interpreter. You can try "Advance Auto-Config", but this will often
 not detect the correct Python interpreter. In that case,
-choose ``New ...`` and browse to the executable of your Python interpreter, e.g.,
+choose "New ..." and browse to the executable of your Python interpreter, e.g.,
 ``$HOME/anaconda/bin/python2.7``.
 
 You need to repeat this step for each new workspace you enter.
@@ -78,7 +82,7 @@ the file with the code formatting rules.
 General settings in Eclipse
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Open Eclipse preferences and go to ``General > Editors > Text Editors``
+1. Open Eclipse preferences and go to "General" → "Editors" → "Text Editors"
 2. Set the following:
 
    * ``Displayed tab width`` to 2
@@ -160,7 +164,7 @@ NB: Make sure that you have checked out the master branch in the ``src`` directo
 Project setup
 ~~~~~~~~~~~~~
 
-1. ``File > New > Makefile project with existing code``
+1. "File" → "New" → "Makefile project with existing code"
 2. Choose an arbitrary project name
 3. Browse to the ``$NEST_ROOT/src`` directory
 4. Keep `C` and `C++` checked
@@ -181,8 +185,8 @@ browser and choose ``Properties`` from the context menu. Then
 5. click ``File system ...`` and select the
    ``$NEST_ROOT/bld_master_nompi/libnestutil`` directory
 6. add the ``$NEST_ROOT/bld_master_nompi/nest`` directory in the same way
-7. rebuild the index when Eclipse suggest it or by choosing `Index >
-   Rebuild` from the context menu on the project.
+7. rebuild the index when Eclipse suggest it or by choosing "Index" →
+   "Rebuild" from the context menu on the project.
 
 To enable code formatting with ``clang-format`` via ``CppStyle``, open the Properties window
 for the project and go to ``C/C++ General > Formatter``, enable project specific settings, choose ``CppStyle`` as
@@ -190,7 +194,7 @@ Code Formatter. ``Source > Format`` will now format source code according to the
 
 Finally, we need to tell Eclipse about the build path.
 
-1. From the project context menu, choose ``Build configurations > Manage ...``.
+1. From the project context menu, choose "Build configurations" → "Manage" ... .
    Rename the ``Build GNU`` build configuration to according to the build directory (helps
    keeping an overview later), in our case ``bld_master_nompi``.
 2. Choose the project in the project browser, then ``Properties`` from the context
@@ -308,16 +312,16 @@ Building and running with multiple configurations
 
 * You select the active configuration from the project context menu via ``Build Configurations > Set Active``.
 * To build a different configuration directly, you can also click on the little triangle next to the hammer icon and
-   select the configuration you want to build.
+  select the configuration you want to build.
 
 A build just runs make. If you want to do more (install, run the tests), you need to select one of the make targets
-from the context menu via ``Make Targets > Build ...``; in this case, you will always run the active build configuration.
+from the context menu via "Make Targets" → "Build" ...; in this case, you will always run the active build configuration.
 
 When running a new configuration for the first time,
 
-* either click on the triangle next to the "play" button, choose ``Run configurations ...``, select the configuration
-  you want to run and click ``Run``
-* or go to the same menu via the context menu ``Run as ... > Run configurations ...``.
+* either click on the triangle next to the "play" button, choose "Run configurations", select the configuration
+  you want to run and click "Run"
+* or go to the same menu via the context menu "Run as" ... → "Run configurations" ...
 
 Afterwards, you can select the run configuration by clicking on the little triangle next to the play button.
 

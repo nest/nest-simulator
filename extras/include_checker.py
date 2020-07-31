@@ -239,6 +239,7 @@ def usage(exitcode):
                                " (-f <filename> | -d <base-directory>)")
     sys.exit(exitcode)
 
+
 if __name__ == '__main__':
     print_suggestion = True
     if len(sys.argv) != 5:

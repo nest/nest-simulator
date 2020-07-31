@@ -26,6 +26,7 @@ try:
     from math import comb   # breaks in Python < 3.8
 except ImportError:
     from math import factorial as fac
+
     def comb(n, k):
         return fac(n) / (fac(k) * fac(n - k))
 

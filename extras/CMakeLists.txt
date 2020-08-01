@@ -43,4 +43,3 @@ install( PROGRAMS
     )
 
 add_subdirectory( ConnPlotter )
-add_subdirectory( NESTServerClient )

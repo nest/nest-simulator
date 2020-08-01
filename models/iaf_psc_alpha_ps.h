@@ -110,11 +110,11 @@ can only change at on-grid times.
 
 If tau_m is very close to tau_syn_ex/in, the model will numerically behave as
 if tau_m is equal to tau_syn_ex/in, to avoid numerical instabilities.
-For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
+For details, please check out the `IAF neurons singularity
+<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/exact-integration.ipynb>`_
-in the NEST source code (doc/model_details).
+:doc:`../guides/exact-integration`.
 
 References
 ++++++++++

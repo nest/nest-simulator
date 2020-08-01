@@ -404,7 +404,7 @@ Concatenate them as before, and compare:
     1   87.400         0    0.0874
     2   110.40         1    0.1104
 
-Indeed, we get the expected result. The IDs from the python process on
+Indeed, we get the expected result. The IDs from the ``python`` process on
 the left are the originating neurons; the IDs on the right is the MUSIC
 channel on the receiving side. And of course NEST deals in milliseconds
 while MUSIC uses seconds.

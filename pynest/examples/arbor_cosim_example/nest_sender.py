@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 

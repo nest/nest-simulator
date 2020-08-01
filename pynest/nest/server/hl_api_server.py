@@ -39,8 +39,8 @@ __all__ = [
     'app'
 ]
 
-# Blacklist of modules according to Bandit (https://bandit.readthedocs.io).
-_blacklist_modules = [
+# Blocklist of modules according to Bandit (https://bandit.readthedocs.io).
+_blocklist_modules = [
     'commands',
     'dsa',
     'jinja2',

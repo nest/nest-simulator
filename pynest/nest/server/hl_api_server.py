@@ -178,7 +178,7 @@ def get_modules(source):
     modules = {'nest': nest}
     for line in source.split('\n'):
         code = line.split(' ')
-        if code[0] == 'import' and code[1] not in _blacklist_modules:
+        if code[0] == 'import' and code[1] not in _blocklist_modules:
             modules.update({code[-1]: importlib.import_module(code[1])})
     return modules
 

@@ -50,10 +50,10 @@ n_events = nestsc.GetStatus(sr, 'n_events')[0]
 print('Number of events:', n_events)
 
 
-
 #
 # Use exec from NEST Server
 #
+
 
 n_events = nestsc.from_file('NESTClient_script', 'n_events')
 print('Number of events:', n_events)

@@ -21,7 +21,7 @@
 
 # Invoke this script as
 #
-#    python parse_test_output.py <path to test output>.xml
+#    python3 parse_test_output.py <path to test output>.xml
 #
 # It will print on a single line
 #

@@ -34,7 +34,7 @@ Installation
 5. **Ipython crashes with a strange error message as soon as I import
    ``nest``** If ipython crashes on ``import nest`` complaining about a
    ``Non-aligned pointer being freed``, you probably compiled NEST with
-   a different version of g++ than python. Take a look at the
+   a different version of g++ than Python. Take a look at the
    information ipython prints when it starts up. That should tell you
    which compiler was used. Then re-build NEST with the same compiler
    version.

@@ -270,17 +270,13 @@ For example, in the terminal type:
 
     .. code-block:: bash
 
-         python
+         python3
 
 Once in Python you can type:
 
     .. code-block:: python
 
         import nest
-
-.. note::
-
-    If you get ImportError: No module named nest after running ``python``.  Try to run ``python3`` instead.
 
 **or as a stand alone application**::
 

@@ -24,8 +24,7 @@ from werkzeug.exceptions import BadRequest
 
 
 __all__ = [
-    'NESTClientAPI',
-    'NESTClientExec',
+    'NESTServerClient',
 ]
 
 
@@ -36,40 +35,34 @@ def encode(response):
         raise BadRequest(response.text)
 
 
-class NESTClientAPI(object):
+class NESTServerClient(object):
 
     def __init__(self, host='localhost', port=5000):
-        self.url = 'http://{}:{}/api/'.format(host, port)
+        self.url = 'http://{}:{}/'.format(host, port)
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-    def _nest_server_api_call(self, call, params={}):
-        response = requests.post(self.url + call, json=params, headers=self.headers)
-        return encode(response)
-
-    def __getattr__(self, name):
+    def __getattr__(self, call):
         def method(*args, **kwargs):
             kwargs.update({'args': args})
-            return self._nest_server_api_call(name, kwargs)
+            response = requests.post(self.url + 'api/' + call, json=kwargs, headers=self.headers)
+            return encode(response)
         return method
 
-
-class NESTClientExec(object):
-
-    def __init__(self, host='localhost', port=5000):
-        self.url = 'http://{}:{}/exec'.format(host, port)
-        self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    def exec_script(self, source, return_vars=None):
+        params = {
+            'source': source,
+            'return': return_vars,
+        }
+        response = requests.post(self.url + 'exec', json=params, headers=self.headers)
+        return encode(response)
 
     def from_file(self, filename, return_vars=None):
         with open(filename, 'r') as f:
             lines = f.readlines()
-        params = {
-            'source': ''.join(lines),
-            'return': return_vars,
-        }
+        script = ''.join(lines)
         print('Execute script code of {}'.format(filename))
         print('Return variables: {}'.format(return_vars))
         print(20*'-')
-        print(params['source'])
+        print(script)
         print(20*'-')
-        response = requests.post(self.url, json=params, headers=self.headers)
-        return encode(response)
+        return self.exec_script(script, return_vars)

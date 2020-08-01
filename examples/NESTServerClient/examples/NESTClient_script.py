@@ -1,4 +1,6 @@
-# extras/NESTServerClient/CMakeLists.txt
+# -*- coding: utf-8 -*-
+#
+# NESTClient_script.py
 #
 # This file is part of NEST.
 #
@@ -17,14 +19,23 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if ( HAVE_PYTHON )
-  install( CODE "execute_process(
-  COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
-                             install --prefix=${CMAKE_INSTALL_PREFIX}
-                                     --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-                                     --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                     --install-data=${CMAKE_INSTALL_FULL_DATADIR}
-    WORKING_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}\")"
-      )
+import nest
 
-endif ()
+
+# Reset kernel
+nest.ResetKernel()
+
+# Create nodes
+pg = nest.Create("poisson_generator", params={"rate": 6500.})
+neurons = nest.Create("iaf_psc_alpha", 100)
+sr = nest.Create("spike_recorder")
+
+# Connect nodes
+nest.Connect(pg, neurons, syn_spec={"weight": 10.})
+nest.Connect(neurons, sr)
+
+# Simulate
+nest.Simulate(1000.)
+
+# Get events
+n_events = sr.get("n_events")

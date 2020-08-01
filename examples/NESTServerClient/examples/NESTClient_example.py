@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# NESTClientAPI_example.py
+# NESTClient_example.py
 #
 # This file is part of NEST.
 #
@@ -19,27 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from NESTServerClient import NESTClientAPI
+from NESTServerClient import NESTServerClient
+
+
+#
+# Use api from NEST Server
+#
 
 
 # API interface for NEST Server
-napi = NESTClientAPI()
+nestsc = NESTServerClient()
 
 # Reset kernel
-napi.ResetKernel()
+nestsc.ResetKernel()
 
 # Create nodes
-pg = napi.Create("poisson_generator", params={"rate": 6500.})
-neurons = napi.Create("iaf_psc_alpha", 100)
-sd = napi.Create("spike_detector")
+pg = nestsc.Create("poisson_generator", params={"rate": 6500.})
+neurons = nestsc.Create("iaf_psc_alpha", 100)
+sr = nestsc.Create("spike_recorder")
 
 # Connect nodes
-napi.Connect(pg, neurons, syn_spec={'weight': 10.})
-napi.Connect(neurons, sd)
+nestsc.Connect(pg, neurons, syn_spec={'weight': 10.})
+nestsc.Connect(neurons, sr)
 
 # Simulate
-napi.Simulate(1000.0)
+nestsc.Simulate(1000.0)
 
 # Get events
-n_events = napi.GetStatus(sd, 'n_events')[0]
+n_events = nestsc.GetStatus(sr, 'n_events')[0]
+print('Number of events:', n_events)
+
+
+
+#
+# Use exec from NEST Server
+#
+
+n_events = nestsc.from_file('NESTClient_script', 'n_events')
 print('Number of events:', n_events)

@@ -125,7 +125,7 @@ get_position( const index node_id )
   if ( not meta )
   {
     // We return NaN if node_id is not spatially distributed
-    std::vector< double > positions = { std::nan( "1" ) };
+    std::vector< double > positions = { std::nan( "1" ), std::nan( "1" ) };
     return positions;
   }
 

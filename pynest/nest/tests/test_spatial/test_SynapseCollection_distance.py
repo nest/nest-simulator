@@ -152,6 +152,24 @@ class SynapseCollectionDistance(unittest.TestCase):
         dist_is_nan = [math.isnan(d) for d in dist[:num_conns_nonsparial]]
         self.assertTrue(dist_is_nan)
 
+    def test_SynapseCollection_distance_spatial_nonspatial_connected(self):
+        """Test SynapseCollection distance function on non-spatial and spatial nodes that are connected"""
+
+        num_snodes = 5
+        num_tnodes = 11
+        s_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_snodes)
+
+        positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
+        t_nodes_spatial = nest.Create('iaf_psc_alpha', n=num_tnodes, positions=positions)
+
+        nest.Connect(s_nodes_nonspatial, t_nodes_spatial)
+        conns = nest.GetConnections()
+        dist = conns.distance
+
+        # All should be nan
+        dist_is_nan = [math.isnan(d) for d in dist]
+        self.assertTrue(dist_is_nan)
+
 
 def suite():
     suite = unittest.makeSuite(SynapseCollectionDistance, 'test')

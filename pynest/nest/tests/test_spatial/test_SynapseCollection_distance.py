@@ -122,15 +122,18 @@ class SynapseCollectionDistance(unittest.TestCase):
         conns = nest.GetConnections()
         dist = conns.distance
 
-        ref_distance = tuple([0.0 for _ in range(6)])
+        dist_is_nan = [math.isnan(d) for d in dist]
 
-        self.assertEqual(ref_distance, dist)
+        self.assertTrue(dist_is_nan)
 
     def test_SynapseCollection_distance_mixed(self):
         """Test SynapseCollection distance function on non-spatial and spatial nodes"""
 
-        s_nodes_nonspatial = nest.Create('iaf_psc_alpha', 3)
-        t_nodes_nonspatial = nest.Create('iaf_psc_alpha', 2)
+        num_snodes_nonspatial = 3
+        num_tnodes_nonspatial = 2
+        num_conns_nonsparial = num_snodes_nonspatial * num_tnodes_nonspatial
+        s_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_snodes_nonspatial)
+        t_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_tnodes_nonspatial)
 
         positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
         s_nodes_spatial = nest.Create('iaf_psc_alpha', n=6, positions=positions)
@@ -141,10 +144,13 @@ class SynapseCollectionDistance(unittest.TestCase):
         conns = nest.GetConnections()
         dist = conns.distance
 
-        ref_distance = tuple([0.0 for _ in range(6)])
-        ref_distance += self.calculate_distance(conns[6:], s_nodes_spatial, t_nodes_spatial)
+        # Check part that is spatial
+        ref_distance = self.calculate_distance(conns[num_conns_nonsparial:], s_nodes_spatial, t_nodes_spatial)
+        self.assertEqual(ref_distance, dist[num_conns_nonsparial:])
 
-        self.assertEqual(ref_distance, dist)
+        # Check part that is non-spatial
+        dist_is_nan = [math.isnan(d) for d in dist[:num_conns_nonsparial]]
+        self.assertTrue(dist_is_nan)
 
 
 def suite():

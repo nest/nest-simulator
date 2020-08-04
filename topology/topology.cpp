@@ -124,8 +124,8 @@ get_position( const index node_id )
 
   if ( not meta )
   {
-    // We return 0.0 if node_id is not spatially distributed
-    std::vector< double > positions = { 0.0 };
+    // We return NaN if node_id is not spatially distributed
+    std::vector< double > positions = { std::nan( "1" ) };
     return positions;
   }
 
@@ -350,8 +350,8 @@ distance( const ArrayDatum conns )
     NodeCollectionPTR trgt_nc = trgt_node->get_nc();
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
 
-    // distance is zero if source, target is not spatially distributed
-    double dist = 0.0;
+    // distance is NaN if source, target is not spatially distributed
+    double dist = std::nan( "1" );
 
     if ( meta )
     {

@@ -543,7 +543,7 @@ Setting and getting attributes directly
     as the SynapseCollection.
     
     For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
-    the source, target pair by calling `distance` on your SynapseCollection
+    the source, target pair by calling `distance` on your SynapseCollection.
     
     >>>  synColl.distance
          (0.47140452079103173,
@@ -1299,7 +1299,7 @@ probability and delay, and random weights from a normal distribution:
 Retrieving distance information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you have a SynapseCollection with connections from a spatially distributed network, you can retrieve the
-*distance* between the source and target pairs by calling ``.distance`` on the SynapseCollection
+*distance* between the source-target pairs by calling ``.distance`` on the SynapseCollection.
 
   ::
   
@@ -1310,12 +1310,11 @@ If you have a SynapseCollection with connections from a spatially distributed ne
     conns = nest.GetConnections()
     dist = conns.distance
 
-``.distance`` will be a tuple the length of your SynapseCollection, where ``dist[indx]`` will be the distance
-between the source, target pair at *indx*.
+``.distance`` will be a tuple of the same length as your SynapseCollection, where ``dist[indx]`` will be the distance
+between the source-target pair at *indx*.
 
-Calling ``.distance`` on a SynapseCollection where the connections are not part of a spatial network also
-works, you will receive a tuple of `0.0`. If your source, target pairs are mixed so that one in the pair has
-spatial information and the other does not, you will get an error.
+Calling ``.distance`` on a SynapseCollection where either the source or target, or both, are not spatially
+distributed also works, you will receive `nan` whenever one of the nodes is non-spatial.
 
 Improved infrastructure for handling recordings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

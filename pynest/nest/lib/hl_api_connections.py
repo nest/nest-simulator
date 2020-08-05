@@ -27,14 +27,16 @@ import numpy
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
-from .hl_api_nodes import Create
-from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
+from .hl_api_helper import *
 from .hl_api_info import GetStatus
+from .hl_api_nodes import Create
+from .hl_api_parallel_computing import NumProcesses
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
     'CGConnect',
@@ -148,8 +150,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     In that case, the arrays may contain non-unique IDs.
     You may also specify weight, delay, and receptor type for each connection as NumPy arrays in the `syn_spec`
     dictionary.
+    This feature is currently not available when MPI is used; trying to connect arrays with more than one
+    MPI process will raise an error.
 
-    If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
+    If pre and post have spatial positions, a `mask` can be specified as a dictionary. The mask define which
     nodes are considered as potential targets for each source node. Connections with spatial nodes can also
     use `nest.spatial_distributions` as parameters, for instance for the probability `p`.
 
@@ -214,8 +218,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
     if use_connect_arrays:
+        if NumProcesses() > 1:
+            raise RuntimeError("Connecting arrays using MPI is currently not supported.")
+
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
+
         if processed_syn_spec is None:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")

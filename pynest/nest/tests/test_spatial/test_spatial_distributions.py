@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_spatial_kernels.py
+# test_spatial_distributions.py
 #
 # This file is part of NEST.
 #

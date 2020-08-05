@@ -729,8 +729,10 @@ inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
-    and metadata_ == rhs_ptr->metadata_;
+  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
+  // rhs_ptr will be a null pointer.
+  return rhs_ptr != nullptr and first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_
+    and model_id_ == rhs_ptr->model_id_ and metadata_ == rhs_ptr->metadata_;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
@@ -827,7 +829,9 @@ inline bool NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
 
-  if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
+  // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
+  // rhs_ptr will be a null pointer.
+  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }

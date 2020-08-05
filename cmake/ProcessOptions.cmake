@@ -596,8 +596,8 @@ function( NEST_PROCESS_WITH_BOOST )
 
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
     set(Boost_USE_RELEASE_LIBS ON) # only find release libs
-    # Needs Boost version >=1.58.0 to use Boost sorting
-    find_package( Boost 1.58.0 )
+    # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
+    find_package( Boost 1.62.0 )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )

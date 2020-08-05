@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with exponential PSCs
+Leaky integrate-and-fire model with separate relative and absolute refractory period
 
 Description
 +++++++++++
@@ -69,28 +69,29 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]_. A flow chart can be found in [3].
+[2]_. A flow chart can be found in [3]_.
 
-Remarks:
+.. note::
+   The present implementation uses individual variables for the
+   components of the state vector and the non-zero matrix elements of
+   the propagator.  Because the propagator is a lower triangular matrix
+   no full matrix multiplication needs to be carried out and the
+   computation can be done "in place" i.e. no temporary state vector
+   object is required.
 
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
-object is required.
+   The template support of recent C++ compilers enables a more succinct
+   formulation without loss of runtime performance already at minimal
+   optimization levels. A future version of iaf_psc_exp_htum will probably
+   address the problem of efficient usage of appropriate vector and
+   matrix objects.
 
-The template support of recent C++ compilers enables a more succinct
-formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_psc_exp_htum will probably
-address the problem of efficient usage of appropriate vector and
-matrix objects.
-
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in
-the NEST source code (docs/model_details).
+.. note::
+   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
+   will numerically behave as if tau_m is equal to tau_syn_ex or
+   tau_syn_in, respectively, to avoid numerical instabilities.
+   For details, please see
+   <https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
+   in the NEST source code (docs/model_details).
 
 Parameters
 ++++++++++

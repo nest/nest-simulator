@@ -56,6 +56,17 @@ to find out about NEST’s command-line parameters.
                                show messages of this priority and above.
          --verbosity=QUIET     turn off all messages.
 
+SLI scripts
+-----------
+
+Scripts can be run by typing:
+::
+
+   <prefix>/bin/nest <file>
+
+If you are a Vim user and require support for SLI files, please refer to
+our :doc:`../contribute/templates_styleguides/vim_support_sli`.
+
 Supplying SLI scripts with parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

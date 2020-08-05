@@ -45,6 +45,7 @@ References
 
 import nest
 import nest.raster_plot
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables.
@@ -107,4 +108,4 @@ nest.Simulate(T)
 # Plot the raster plot of the neuronal spiking activity.
 
 nest.raster_plot.from_device(sd, hist=True)
-nest.raster_plot.show()
+plt.show()

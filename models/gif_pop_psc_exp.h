@@ -123,7 +123,7 @@ The following parameters can be set in the status dictionary.
 **Parameter translation to gif_psc_exp**
 -----------------------------------------------------------
 gif_pop_psc_exp  gif_psc_exp  relation
-tau_m            g_L          \f$ tau_m = C_m / g_L \f$
+tau_m            g_L          tau_m = C_m / g_L
 N                ---          use N gif_psc_exp
 =============== ============  =============================
 

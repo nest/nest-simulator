@@ -39,23 +39,36 @@ portable_inplace_sed ()
 #
 time_cmd()
 {
-    start=`date +%s%N`
+    t_start=$( date +%s%N )
     $1
-    end=`date +%s%N`
-    echo `awk "BEGIN {print ($end - $start) / 1000000000}"`
+    t_end=$( date +%s%N )
+    
+    # On macOS, `date +%s%N` returns time in seconds followed by N.
+    # The following distinguishes which date version was used.
+    if test "x${t_start: -1}" != xN ; then     # space before -1 required!
+        echo $(( ( ${t_end} - ${t_start} ) / 1000000000 ))
+    else
+        echo $(( ${t_end%N} - ${t_start%N} ))
+    fi
+}
+
+#
+# bail_out message
+#
+bail_out ()
+{
+    echo "$1"
+    exit 1
 }
 
 JUNIT_FILE=
 JUNIT_TESTS=
+JUNIT_SKIPS=
 JUNIT_FAILURES=
-JUNIT_CLASSNAME='core'
 
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
-INFO_HOME="$(/bin/sh -c 'echo ~')"
-INFO_HOST="$(hostname -f)"
 INFO_OS="$(uname -s)"
-INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
 TIME_TOTAL=0
@@ -67,12 +80,12 @@ TIME_ELAPSED=0
 junit_open ()
 {
     if test "x$1" = x ; then
-        echo 'junit_open: file_name not given!'
-        exit 1
+        bail_out 'junit_open: file_name not given!'
     fi
 
-    JUNIT_FILE="${TEST_OUTDIR}/TEST-$1.xml"
+    JUNIT_FILE="${TEST_OUTDIR}/$1.xml"
     JUNIT_TESTS=0
+    JUNIT_SKIPS=0
     JUNIT_FAILURES=0
 
     TIME_TOTAL=0
@@ -82,44 +95,39 @@ junit_open ()
 
     echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
 
-    echo "<testsuite errors=\"0\" failures=XXX hostname=\"${INFO_HOST}\" name=\"$1\" tests=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
+    echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skip=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
     echo '  <properties>' >> "${JUNIT_FILE}"
     echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.version\" value=\"${INFO_VER}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.home\" value=\"${INFO_HOME}\" />" >> "${JUNIT_FILE}"
-    echo "    <property name=\"user.name\" value=\"${INFO_USER}\" />" >> "${JUNIT_FILE}"
     echo '  </properties>' >> "${JUNIT_FILE}"
 }
 
 #
-# junit_write classname testname [fail_message fail_trace]
+# junit_write classname testname status [fail_message fail_trace]
 #
 junit_write ()
 {
     if test "x${JUNIT_FILE}" = x ; then
-        echo 'junit_write: report file not open, call junit_open first!'
-        exit 1
+        bail_out 'junit_write: report file not open, call junit_open first!'
     fi
 
     if test "x$1" = x || test "x$2" = x ; then
-        echo 'junit_write: classname and testname arguments are mandatory!'
-        exit 1
+        bail_out 'junit_write: classname and testname arguments are mandatory!'
     fi
 
-    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\">" >> "${JUNIT_FILE}"
 
-    printf '%s' "  <testcase classname=\"$1\" name=\"$2\" time=\"${TIME_ELAPSED}\"" >> "${JUNIT_FILE}"
+    if test "x$3" = xskipped ; then
+        echo "    <skipped message=\"$4\" type=\"\"></skipped>" >> "${JUNIT_FILE}"
+    fi
 
-    if test "x$3" != x ; then
-        echo '>' >> "${JUNIT_FILE}"
-        echo "    <failure message=\"$3\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
-        echo "$4" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
+    if test "x$3" = xfailure ; then
+        echo "    <failure message=\"$4\" type=\"\"><![CDATA[" >> "${JUNIT_FILE}"
+        echo "$5" | sed 's/]]>/]]>]]\&gt;<![CDATA[/' >> "${JUNIT_FILE}"
         echo "]]></failure>" >> "${JUNIT_FILE}"
-        echo "  </testcase>" >> "${JUNIT_FILE}"
-    else
-        echo ' />' >> "${JUNIT_FILE}"
     fi
+    echo "  </testcase>" >> "${JUNIT_FILE}"
 }
 
 #
@@ -128,12 +136,12 @@ junit_write ()
 junit_close ()
 {
     if test "x${JUNIT_FILE}" = x ; then
-        echo 'junit_close: report file not open, call junit_open first!'
-        exit 1
+        bail_out 'junit_close: report file not open, call junit_open first!'
     fi
 
     portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/tests=XXX/tests=\"${JUNIT_TESTS}\"/"
+    portable_inplace_sed "${JUNIT_FILE}" "s/skip=XXX/skip=\"${JUNIT_SKIPS}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
 
     echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"

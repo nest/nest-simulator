@@ -79,8 +79,8 @@ class TestConnectArrays(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
-        weights = 2*np.ones(n)
-        delays = 1.5*np.ones(n)
+        weights = 2 * np.ones(n)
+        delays = 1.5 * np.ones(n)
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
                      conn_spec={'rule': 'one_to_one'})

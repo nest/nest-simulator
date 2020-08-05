@@ -60,8 +60,9 @@ Parameters
 The following parameters can be set in the status dictionary:
 
 ========  ======  ========================================================
- U        real    Maximum probability of release (U1) [0,1], default=0.5
- u        real    Maximum probability of release (U_se) [0,1],
+ U        real    Parameter determining the increase in u with each spike
+                  (U1) [0,1], default=0.5
+ u        real    The probability of release (U_se) [0,1],
                   default=0.5
  x        real    Current scaling factor of the weight, default=U
  tau_fac  ms      Time constant for facilitation, default = 0(off)

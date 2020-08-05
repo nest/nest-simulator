@@ -46,16 +46,15 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" = "3.6.10" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.10/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.10/include/python3.6m/"
-   fi
-   if [[ $OSTYPE = darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
-   fi
-   mkdir -p $HOME/.matplotlib
-   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
-   backend : svg
-EOF
+    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
+    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    mkdir -p $HOME/.matplotlib
+    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi

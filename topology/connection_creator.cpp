@@ -101,7 +101,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else
     {
-      throw BadProperty( "ConnectLayers cannot handle parameter '" + dit->first.toString() + "'." );
+      throw BadProperty( "Spatial Connect cannot handle parameter '" + dit->first.toString() + "'." );
     }
   }
 

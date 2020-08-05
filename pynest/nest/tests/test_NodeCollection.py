@@ -69,6 +69,26 @@ class TestNodeCollection(unittest.TestCase):
         nc = nest.NodeCollection(node_ids_in)
         self.assertEqual(nc.tolist(), [2, 3, 5, 7, 8])
 
+    def test_NodeCollection_to_numpy(self):
+        """Conversion from NodeCollection to NumPy array"""
+        if HAVE_NUMPY:
+            n_neurons = 10
+            nc = nest.Create('iaf_psc_alpha', n_neurons)
+
+            # direct array conversion
+            n_arr = np.array(nc)
+
+            self.assertEqual(n_arr.tolist(), nc.tolist())
+
+            # incorporation to bigger array
+            arr = np.zeros(2*n_neurons, dtype=int)
+
+            start = 2
+
+            arr[start:start + n_neurons] = nc
+
+            self.assertEqual(arr[start:start + n_neurons].tolist(), nc.tolist())
+
     def test_equal(self):
         """Equality of NodeCollections"""
 

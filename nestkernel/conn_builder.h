@@ -127,17 +127,17 @@ protected:
   virtual void
   sp_connect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
   virtual void
   disconnect_()
   {
-    throw NotImplemented( "This disconnection rule is not implemented" );
+    throw NotImplemented( "This disconnection rule is not implemented." );
   }
   virtual void
   sp_disconnect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
   //! Create connection between given nodes, fill parameter values

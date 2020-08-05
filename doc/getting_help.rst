@@ -22,7 +22,7 @@ Getting help on the command line interface
        # list all functions and attributes
        dir(nest)
 
-       # Get docstring for function in python
+       # Get docstring for function in Python
        help('nest.FunctionName')
 
        # or in ipython

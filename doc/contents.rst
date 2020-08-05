@@ -14,7 +14,7 @@ Table of Contents
    Install <installation/index>
    getting_started
    tutorials/index
-   userdocs/index
+   models/index
    guides/index
    models/index
    examples/index

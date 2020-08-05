@@ -72,7 +72,7 @@ def postsynaptic_potential_to_current(C_m, tau_m, tau_syn):
     the voltage impulse response
     :math:`h(t)=\frac{1}{\tau_\mathrm{m}}\mathrm{e}^{-t/\tau_\mathrm{m}}\Theta (t)`,
     and
-    :math:`\Theta(t)=1` if :math:`t\leq 0` and zero otherwise.
+    :math:`\Theta(t)=1` if :math:`t\geq 0` and zero otherwise.
 
     The ``PSP`` is considered as the maximum of ``v``, i.e., it is
     computed by setting the derivative of ``v(t)`` to zero.

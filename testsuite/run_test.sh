@@ -1,4 +1,3 @@
-
 # run_test.sh
 #
 # This file is part of NEST.
@@ -103,10 +102,12 @@ run_test ()
     echo "${command}" >> "${TEST_RUNFILE}"
     echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
 
-    chmod 755 "${TEST_RUNFILE}"
+    chmod 700 "${TEST_RUNFILE}"
 
-    TIME_ELAPSED="$( time_cmd "${TEST_RUNFILE}" 2>&1 )"
-    TIME_TOTAL="$( awk "BEGIN { print (${TIME_TOTAL} + ${TIME_ELAPSED}) ; }" )"
+    TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
+    TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
+    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+    
     rm -f "${TEST_RUNFILE}"
 
     exit_code="$(cat "${TEST_RETFILE}")"
@@ -117,20 +118,18 @@ run_test ()
     msg_dirty_skip=${param_skipped##* ${exit_code} }
     msg_clean=${msg_dirty%%,*}
     if test "${msg_dirty}" != "${param_success}" ; then
-        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
         explanation="${msg_clean}"
+        junit_status=pass
         junit_failure=
     elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
-        TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+        JUNIT_SKIPS=$(( ${JUNIT_SKIPS} + 1 ))
         msg_dirty=${msg_dirty_skip}
         msg_clean=${msg_dirty%%,*}
         explanation="${msg_clean}"
-        junit_failure=
+        junit_status=skipped
+        junit_failure="${explanation}"
     else
-        TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
-
-	cat ${TEST_OUTFILE}
 
         msg_dirty=${param_failure##* ${exit_code} }
         msg_clean=${msg_dirty%%,*}
@@ -142,23 +141,24 @@ run_test ()
             unexpected_exitcode=true
         fi
 
+        junit_status=failure
         junit_failure="${exit_code} (${explanation})"
     fi
 
     echo "${explanation}"
 
     if test "x${msg_error}" != x ; then
-	echo ==================================================
-	echo "Following is the full output of the test:"
-	echo ==================================================
+        echo ==================================================
+        echo "Following is the full output of the test:"
+        echo ==================================================
         echo "${msg_error}"
-	echo ==================================================
+        echo ==================================================
     fi
 
     echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
     echo >> "${TEST_LOGFILE}" "----------------------------------------"
 
-    junit_write "${JUNIT_CLASSNAME}.${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
+    junit_write "${junit_class}" "${junit_name}" "${junit_status}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
     if test "x${unexpected_exitcode}" != x ; then
@@ -169,4 +169,5 @@ run_test ()
     fi
 
     rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
+
 }

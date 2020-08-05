@@ -65,10 +65,10 @@ Hodgkin-Huxley model for Brette et al (2007) review
 Description
 +++++++++++
 
-hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model
+hh_cond_exp_traub is an implementation of a modified Hodgkin-Huxley model.
 
 This model was specifically developed for a major review of simulators [1]_,
-based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.
+based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
@@ -84,14 +84,13 @@ to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
 Note:
-In this model, a spike is emitted if
-
- :math:`V_m >= V_T + 30` mV and `V_m` has fallen during the current time step
+In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
+has fallen during the current time step.
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used  :math:`t_ref = 3` ms [2, p 118], while we used
-:math:`t_ref = 2` ms in [2]_.
+Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
+:math:`t_{ref} = 2` ms in [2]_.
 
 Parameters
 ++++++++++

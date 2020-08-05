@@ -54,11 +54,13 @@ def Create(model, n=1, params=None, positions=None):
         Name of the model to create
     n : int, optional
         Number of nodes to create
-    params : dict, list or Parameter, optional
+    params : dict or list, optional
         Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n or a :py:class:`.Parameter`. If omitted, the model's defaults are used.
+        dictionaries with size n, or a dictionary with lists of values with size n.
+        Values may be :py:class:`.Parameter` objects. If omitted,
+        the model's defaults are used.
     positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional
-        Object describing spatial posistions of the nodes. If omitted, the nodes have no spatial attatchment.
+        Object describing spatial positions of the nodes. If omitted, the nodes have no spatial attachment.
 
     Returns
     -------
@@ -70,41 +72,47 @@ def Create(model, n=1, params=None, positions=None):
     NESTError
         If setting node parameters fail. However, the nodes will still have
         been created.
+    TypeError
+        If the positions object is of wrong type.
     """
 
     model_deprecation_warning(model)
 
     if positions is not None:
+        # We only accept positions as either a free object or a grid object.
         if not isinstance(positions, (nest.spatial.free, nest.spatial.grid)):
             raise TypeError('`positions` must be either a nest.spatial.free object or nest.spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, nest.spatial.free):
             layer_specs['positions'] = positions.pos
+            # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
                 layer_specs['n'] = n
         else:
+            # If positions is not a free object, it must be a grid object.
             if n > 1:
-                raise kernel.NESTError(
-                    'Cannot specify number of nodes with grid positions')
+                raise kernel.NESTError('Cannot specify number of nodes with grid positions')
             layer_specs['shape'] = positions.shape
             if positions.center is not None:
                 layer_specs['center'] = positions.center
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
+        # For compatibility with SLI.
         if params is None:
             params = {}
         layer = sli_func('CreateLayerParams', layer_specs, params)
 
         return layer
 
-    params_contains_list = True
-    if isinstance(params, dict) and params:
-        params_contains_list = [is_iterable(v) or isinstance(v, Parameter)
-                                for k, v in params.items()]
-        params_contains_list = max(params_contains_list)
+    # If any of the elements in the parameter dictionary is either an array-like object,
+    # or a NEST parameter, we create the nodes first, then set the given values. If not,
+    # we can pass the parameter specification to SLI when the nodes are created.
+    iterable_or_parameter_in_params = True
+    if isinstance(params, dict) and params:  # if params is a dict and not empty
+        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
-    if not params_contains_list:
+    if not iterable_or_parameter_in_params:
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
     else:
@@ -115,10 +123,10 @@ def Create(model, n=1, params=None, positions=None):
 
     node_ids = spp()
 
-    if params is not None and params_contains_list:
+    if params is not None and iterable_or_parameter_in_params:
         try:
             SetStatus(node_ids, params)
-        except:
+        except Exception:
             warnings.warn(
                 "SetStatus() call failed, but nodes have already been " +
                 "created! The node IDs of the new nodes are: {0}.".format(node_ids))

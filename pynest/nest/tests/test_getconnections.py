@@ -108,6 +108,36 @@ class GetConnectionsTestCase(unittest.TestCase):
                     'Failed to get connection with source model {} (specifying {})'.format(
                         model, ', '.join(get_conn_args.keys())))
 
+    def test_GetConnectionsSynapseModel(self):
+        """GetConnections using synapse_model as argument"""
+
+        for synapse_model in nest.Models('synapses'):
+            nest.ResetKernel()
+
+            src = nest.Create('iaf_psc_alpha', 3)
+            trgt = nest.Create('iaf_psc_alpha', 5)
+
+            # First create one connection with static_synapse
+            nest.Connect(src[0], trgt[0])
+
+            try:
+                # Connect with specified synapse
+                nest.Connect(src, trgt, syn_spec={'synapse_model': synapse_model})
+            except nest.kernel.NESTError:
+                # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
+                continue
+
+            reference_list = [synapse_model] * 3 * 5
+            if synapse_model == 'static_synapse':
+                reference_list += ['static_synapse']
+
+            conns = nest.GetConnections(synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            # Also test that it works if we specify source and synapse_model
+            conns = nest.GetConnections(source=src, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
 
 def suite():
 

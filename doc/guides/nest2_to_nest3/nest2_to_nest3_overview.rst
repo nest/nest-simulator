@@ -543,7 +543,7 @@ Setting and getting attributes directly
     as the SynapseCollection.
     
     For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
-    the source, target pair by calling `distance` on your SynapseCollection.
+    the source-target pairs by calling `distance` on your SynapseCollection.
     
     >>>  synColl.distance
          (0.47140452079103173,

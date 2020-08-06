@@ -127,11 +127,11 @@ compile NEST from source, see section** :ref:`advanced_install`.
           should ensure there are no conflicts with previously
           installed packages.
 
-          .. pull-quote::
+          .. note::
 
-          We strongly recommend that you **install all programs**
+             We strongly recommend that you **install all programs**
              you'll need, (such as ``ipython`` or ``jupyter-lab``) in
-             the environment (ENVNAME) **at the same time**, by
+             the environment (``<envname>``) **at the same time**, by
              **appending them to the command below**.
 
              Installing packages later may override previously

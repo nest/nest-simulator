@@ -7,15 +7,16 @@ conda.
 Create a dedicated environment for NEST
 ---------------------------------------
 
-We recommend that you **create a dedicated environment for NEST**, which
+We recommend that you create a dedicated environment for NEST, which
 should ensure there are no conflicts with previously installed packages.
 
 Install all programs
 --------------------
 
-We strongly recommend that you **install all programs** you'll need, 
+We strongly recommend that you install all programs you'll need,
 (such as ``ipython`` or ``jupyter-lab``) in the environment 
-(``<envname>``) **at the same time**, by **appending them to the command below**.
+(``<envname>``) at the same time, by appending them to the
+``conda create --name ENVNAME -c conda-forge`` command.
 
 Installing packages later may override previously installed dependencies 
 and potentially break packages! See `managing environments in the Conda 
@@ -41,5 +42,8 @@ this obvious would be to reduce conda stack to ``0`` (conda documentation
 `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
 and/or to a certain degree by not auto-activating the base environment (conda documentation
 `here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
-Then packages from base do not 'leak' into your new environments. Note however, that packages from your system
-will usually also be available in your conda environment and may cause similar conflicts.
+Then packages from base do not 'leak' into your new environments.
+
+.. note::
+   Packages from your system will usually also be available in your conda
+   environment and may cause similar conflicts.

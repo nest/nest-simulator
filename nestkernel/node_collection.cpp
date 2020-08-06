@@ -121,7 +121,11 @@ NodeCollection::create( const IntVectorDatum& node_idsdatum )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -139,7 +143,11 @@ NodeCollection::create( const TokenArray& node_idsarray )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 

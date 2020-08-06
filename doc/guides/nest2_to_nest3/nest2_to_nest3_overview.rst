@@ -366,7 +366,7 @@ All arrays have to have lengths equal to those of ``sources`` and ``targets``.
    weights = np.array([0.5, 0.5, 2., 2.])
    delays = np.array([1., 1., 2., 2.])
    syn_spec = {'weight': weights, 'delay': delays}
-   nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec=syn_spec)
+   nest.Connect(sources, targets, conn_spec='one_to_one', syn_spec=syn_spec)
 
 
 .. _SynapseCollection:

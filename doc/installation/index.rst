@@ -122,8 +122,8 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. Please refer to
-          our :doc:`conda_recommendations`.
+       1. Create your conda environment and install NEST. Please check out 
+          our :doc:`conda_tips`.
 
           Without OpenMPI:
 

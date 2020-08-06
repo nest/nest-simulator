@@ -1,5 +1,5 @@
-Conda environment recommendations
-=================================
+Tips for installing NEST with conda
+===================================
 
 This page provides a series of recommendations for installing NEST with
 conda.

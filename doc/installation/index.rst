@@ -122,7 +122,8 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. We recommend
+       1. Create your conda environment and install NEST. Please refer to
+          our :doc:`conda_guidelines`. We recommend
           that you **create a dedicated environment for NEST**, which
           should ensure there are no conflicts with previously
           installed packages.

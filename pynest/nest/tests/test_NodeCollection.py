@@ -51,23 +51,25 @@ class TestNodeCollection(unittest.TestCase):
     def test_list_to_NodeCollection(self):
         """Conversion from list to NodeCollection"""
 
+        # Creating NodeCollection from list without creating the nodes first
         node_ids_in = [5, 10, 15, 20]
         with self.assertRaises(nest.kernel.NESTError):
             nc = nest.NodeCollection(node_ids_in)
 
-        n = nest.Create('iaf_psc_alpha', 20)
+        # Creating composite NodeCollection from list
+        nest.Create('iaf_psc_alpha', 20)
         node_ids_in = [5, 10, 15, 20]
         nc = nest.NodeCollection(node_ids_in)
         for node_id, compare in zip(nc, node_ids_in):
-            self.assertEqual(node_id.get('global_id'), compare)
+            self.assertEqual(node_id.global_id, compare)
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_psc_alpha', 10)
-
-        node_ids_in = [7, 3, 8, 5, 2]
+        # Creating primitive NodeCollection from list
+        nest.Create('iaf_psc_alpha', 10)
+        node_ids_in = list(range(2, 8))
         nc = nest.NodeCollection(node_ids_in)
-        self.assertEqual(nc.tolist(), [2, 3, 5, 7, 8])
+        self.assertEqual(nc.tolist(), node_ids_in)
 
     def test_equal(self):
         """Equality of NodeCollections"""

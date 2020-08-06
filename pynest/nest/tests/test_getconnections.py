@@ -28,8 +28,11 @@ import nest
 
 nest.set_verbosity('M_ERROR')
 
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+
 
 @nest.ll_api.check_stack
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 

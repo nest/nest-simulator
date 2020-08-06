@@ -842,7 +842,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     node_id_list = sli_func('SelectNodesByMask',
                             layer, anchor, mask_datum)
 
-    return NodeCollection(node_id_list)
+    return NodeCollection(sorted(node_id_list))
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

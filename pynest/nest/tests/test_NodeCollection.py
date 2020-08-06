@@ -344,6 +344,15 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
 
+    def test_from_list_unsorted_raises(self):
+        """Creating NodeCollection from unsorted list raises error"""
+        nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([5, 4, 6])
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([5, 6, 4])
+
     def test_composite_NodeCollection(self):
         """Tests composite NodeCollection with patched node IDs"""
 

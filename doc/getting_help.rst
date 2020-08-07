@@ -17,9 +17,7 @@ For NEST users:
 
 For NEST developers:
 * `Doxygen <https://www.doxygen.nl/index.html>`_-based developer documentation, which can be built according to 
-  :doc:`these instructions <documentation_workflow/developer_documentation_workflow>`. As 
-  the reference files of the ``help_generator`` documentation are also compiled from Doxygen 
-  comments, it contains most of the ``help_generator`` content as well. Of course, you should 
+  :doc:`these instructions <documentation_workflow/developer_documentation_workflow>`. Of course, you should 
   develop for NEST based on the latest development version.
 * `Developer Space <https://nest.github.io/nest-simulator/>`_: This is a developer manual, 
   explaining the development infrastructure and workflow of NEST.

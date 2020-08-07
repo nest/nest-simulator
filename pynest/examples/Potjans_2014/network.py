@@ -160,6 +160,19 @@ class Network:
                     )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
+        v0_type_options = ['optimized', 'original']
+        if self.net_dict['V0_type'] not in v0_type_options:
+            print(
+                '''
+                '{0}' is not a valid option for 'V0_type',
+                replacing it with '{1}.'
+                Valid options are {2}.
+                '''.format(self.net_dict['V0_type'],
+                           v0_type_options[0],
+                           v0_type_options)
+                )
+            self.net_dict['V0_type'] = v0_type_options[0]
+
         if nest.Rank() == 0:
             print(
                 'The number of neurons is scaled by a factor of: %.2f'
@@ -199,26 +212,65 @@ class Network:
                     'I_e': self.DC_amp_e[i]
                     }
                 )
+
+            # use optimized (population-specific) values to initialize membrane
+            # potentials
+            if self.net_dict['V0_type'] == 'optimized':
+                self.__initialize_membrane_potentials(
+                    population,
+                    self.net_dict['neuron_params']['V0_mean']['optimized'][i],
+                    self.net_dict['neuron_params']['V0_sd']['optimized'][i])
+
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
-        for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            # Using GetNodes is a work-around until NEST 3.0 is released. It
-            # will issue a deprecation warning.
-            local_nodes = nest.GetNodes(
-                [0], {
-                    'model': self.net_dict['neuron_model'],
-                    'thread': thread
-                    }, local_only=True
-                )[0]
-            vp = nest.GetStatus(local_nodes)[0]['vp']
-            # vp is the same for all local nodes on the same thread
-            nest.SetStatus(
-                local_nodes, 'V_m', self.pyrngs[vp].normal(
-                    self.net_dict['neuron_params']['V0_mean'],
-                    self.net_dict['neuron_params']['V0_sd'],
-                    len(local_nodes))
-                    )
+
+        # use original values to initialize membrane potentials
+        if self.net_dict['V0_type'] == 'original':
+            self.__initialize_membrane_potentials(
+                np.concatenate(self.pops).tolist(),
+                self.net_dict['neuron_params']['V0_mean']['original'],
+                self.net_dict['neuron_params']['V0_sd']['original'])
+
+
+
+    def __initialize_membrane_potentials(self, neurons, V0_mean, V0_sd):
+        """
+        Initializes membrane potentials by sampling from a normal distribution.
+
+        One Python random number generator per virtual process (vp) is used.
+        This results in identical initial conditions if the number of vps,
+        meaning the product of MPI processes and the number of OpenMP threads
+        per MPI process, is preserved.
+
+        This method has been added to NEST 2.14.1 to provide an efficient
+        implementation for the initialization with original and optimized (in
+        NEST since v2.20.0) conditions.
+
+        Parameters
+        ----------
+        neurons
+            List of neuron ids.
+        V0_mean
+            Mean value of normal distribution (in mV).
+        V0_sd
+            Standard deviation of normal distribution (in mV).
+        """
+        # find neurons local to this MPI process
+        mask = list(nest.GetStatus(neurons, 'local'))
+        neurons_loc = np.array(neurons)[mask].tolist()
+
+        # get sequence of vps on this MPI process
+        num_threads = nest.GetKernelStatus()['local_num_threads']
+        local_vps = nest.GetStatus(neurons_loc[:num_threads], 'vp')
+
+        for ivp, vp in enumerate(local_vps):
+            # use knowledge that the next neuron of the same MPI process with
+            # the same vp is num_threads away
+            neurons_vp = neurons_loc[ivp::num_threads]
+            nest.SetStatus(neurons_vp, 'V_m',
+                self.pyrngs[vp].normal(V0_mean, V0_sd, len(neurons_vp)))
+
 
     def create_devices(self):
         """ Creates the recording devices.

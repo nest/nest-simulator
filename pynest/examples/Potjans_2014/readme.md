@@ -33,3 +33,8 @@ The default version of the simulation uses Poissonian input, which is defined in
 
 Tested configuration:
 This version has been tested with NEST 2.10.0, Python 2.7.12 and 3.5.2, NumPy 1.11.2
+
+## Modifications in NEST 2.14.1
+
+* add efficient implementation for the initialization of membrane potentials
+  with original and optimized (in NEST since v2.20.0) conditions

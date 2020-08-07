@@ -196,13 +196,14 @@ class SpatialTester(object):
         self.c = self._L / 2. + x0  # used to calculate gamma
         self.d = self._L / 2. + y0  # used to calculate delta
 
+        self.sqrt_a2_b2 = math.sqrt(self.a ** 2 + self.b ** 2)
+        self.sqrt_a2_d2 = math.sqrt(self.a ** 2 + self.d ** 2)
+        self.sqrt_d2_c2 = math.sqrt(self.d ** 2 + self.c ** 2)
+
         self._L_half = self._L / 2.
         self.pi_half = math.pi / 2.
         self.two_pi = 2 * math.pi
         self.four_pi = 4 * math.pi
-        self.sqrt_a2_b2 = math.sqrt(self.a ** 2 + self.b ** 2)
-        self.sqrt_a2_d2 = math.sqrt(self.a ** 2 + self.d ** 2)
-        self.sqrt_d2_c2 = math.sqrt(self.d ** 2 + self.c ** 2)
 
     def _constant(self, _):
         """Constant spatial distribution"""
@@ -214,9 +215,7 @@ class SpatialTester(object):
 
     def _exponential(self, D):
         """Exponential spatial distribution"""
-        return (self._params['c'] +
-                self._params['a'] *
-                math.exp(-D / self._params['tau']))
+        return self._params['c'] + self._params['a'] * math.exp(-D / self._params['tau'])
 
     def _gauss(self, D):
         """Gaussian spatial distribution"""
@@ -341,7 +340,7 @@ class SpatialTester(object):
     def _pdf_2d(self, D):
         """Calculate the probability density function in 2D, at the distance D"""
         if D <= self._L_half:
-            return (max(0., min(1., self._distribution(D))) * math.pi * D)
+            return max(0., min(1., self._distribution(D))) * math.pi * D
         elif self._L_half < D <= self._max_dist:
             return max(0., min(1., self._distribution(D))) * D * (math.pi - 4. * math.acos(self._L / (D * 2.)))
         else:
@@ -373,8 +372,7 @@ class SpatialTester(object):
         elif self._L / math.sqrt(2) < D <= self._max_dist:
             A = self.four_pi * D ** 2.
             C = self.two_pi * D * (D - self._L_half)
-            alpha = math.asin(1. / math.sqrt(2. - self._L ** 2. /
-                                             (2. * D ** 2.)))
+            alpha = math.asin(1. / math.sqrt(2. - self._L ** 2. / (2. * D ** 2.)))
             beta = self.pi_half
             gamma = math.asin(math.sqrt((1. - .5 * (self._L / D) ** 2.) /
                                         (1. - .25 * (self._L / D) ** 2.)))

@@ -176,7 +176,11 @@ class SpatialTester(object):
                           'mask': maskdict}
 
     def _calculate_constants(self, spatial_distribution):
-        """Calculate constant variables used when calculating distributions and pdfs"""
+        """Calculate constant variables used when calculating distributions and probability density functions
+
+        Variables that can be pre-calculated are calculated here to make the calculation of distributions
+        and probability density functions more efficient.
+        """
         # Constants for spatial distribution functions
         if spatial_distribution == 'gaussian':
             self.two_sigma2 = 2. * self._params['sigma']**2
@@ -186,10 +190,11 @@ class SpatialTester(object):
                                                     self._params['theta']**self._params['kappa'])
         # Constants for pdfs
         x0, y0 = self._roi_2d()  # move coordinates to the right reference area
-        self.a = self._L / 2. - x0
-        self.b = self._L / 2. - y0
-        self.c = self._L / 2. + x0
-        self.d = self._L / 2. + y0
+        # Constants used when using open boundary conditions
+        self.a = self._L / 2. - x0  # used to calculate alpha
+        self.b = self._L / 2. - y0  # used to calculate beta
+        self.c = self._L / 2. + x0  # used to calculate gamma
+        self.d = self._L / 2. + y0  # used to calculate delta
 
         self._L_half = self._L / 2.
         self.pi_half = math.pi / 2.
@@ -334,7 +339,7 @@ class SpatialTester(object):
         return np.array([self._x_d, self._y_d]) if self._x_d > self._y_d else np.array([self._y_d, self._x_d])
 
     def _pdf_2d(self, D):
-        """Calculate the probability density function in 2D"""
+        """Calculate the probability density function in 2D, at the distance D"""
         if D <= self._L_half:
             return (max(0., min(1., self._distribution(D))) * math.pi * D)
         elif self._L_half < D <= self._max_dist:
@@ -343,8 +348,8 @@ class SpatialTester(object):
             return 0.
 
     def _pdf_2d_obc(self, D):
-        """Calculate the probability density function in 2D with open boundary conditions"""
-        # calculate alpha,beta,gamma,delta:
+        """Calculate the probability density function in 2D with open boundary conditions, at the distance D"""
+        # calculate alpha, beta, gamma, delta:
         alpha = math.acos(self.a / D) if self.a / D <= 1. else 0.
         beta = math.acos(self.b / D) if self.b / D <= 1. else 0.
         gamma = math.acos(self.c / D) if self.c / D <= 1. else 0.
@@ -360,7 +365,7 @@ class SpatialTester(object):
             return 0.
 
     def _pdf_3d(self, D):
-        """Calculate the probability density function in 3D"""
+        """Calculate the probability density function in 3D, at the distance D"""
         if D <= self._L_half:
             return max(0., min(1., self._distribution(D))) * self.four_pi * D ** 2.
         elif self._L_half < D <= self._L / math.sqrt(2):

@@ -1,4 +1,6 @@
-# extras/CMakeLists.txt
+# -*- coding: utf-8 -*-
+#
+# setup.py
 #
 # This file is part of NEST.
 #
@@ -17,29 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY logos
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+# NESTServerClient --- A Client for NEST Server
 
-install( DIRECTORY help_generator
-    DESTINATION ${CMAKE_INSTALL_DATADIR}
-    )
+from distutils.core import setup
 
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
-    )
-
-install( FILES nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    )
-
-install( PROGRAMS
-    ${PROJECT_BINARY_DIR}/extras/nest-config
-    nest_indirect
-    nest_serial
-    nest-server
-    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-
-add_subdirectory( ConnPlotter )
+setup(name='NESTServerClient',
+      version='0.1',
+      description=('NESTServerClient sends JSON requests to NEST Server.'),
+      author='Sebastian Spreizer',
+      author_email='spreizer@web.de',
+      url='https://www.nest-simulator.org',
+      license='GNU Public License v2 or later',
+      packages=['NESTServerClient', 'NESTServerClient.examples'],
+      package_dir={'NESTServerClient': ''}
+      )

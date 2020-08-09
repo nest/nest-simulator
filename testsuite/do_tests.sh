@@ -125,7 +125,6 @@ TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
-TEST_TMPDIR=$(mktemp -d "${REPORTDIR}/nest.XXXXX")
 
 NEST="nest_serial"
 

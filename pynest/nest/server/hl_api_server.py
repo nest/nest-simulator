@@ -173,10 +173,6 @@ def get_globals():
     """ Get globals for exec function.
     """
     copied_globals = globals().copy()
-    copied_globals.update(dict(
-        _print_ = RestrictedPython.PrintCollector,
-        _getattr_ = getattr
-    ))
 
     # Add modules to copied globals
     modules = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')

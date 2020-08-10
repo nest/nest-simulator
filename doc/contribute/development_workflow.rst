@@ -93,10 +93,10 @@ default branch and this is where code that has been reviewed and tested resides.
 What remote repository is ``remote/origin``? Try ``git remote -v`` to see the web
 address for the remote. It should point to your GitHub fork.
 
-Next, you connect your local copy to the central [NEST GitHub
-repository][NEST GitHub], so that you can keep your local copy and remote fork
-up to date in the future. By convention, the main source code repository is usually
-called ``upstream``.
+Next, you connect your local copy to the central
+`NEST GitHub repository <https://github.com/nest/nest-simulator>`_, so that you
+can keep your local copy and remote fork up to date in the future. By convention,
+the main source code repository is usually called ``upstream``.
 
 **Link your repository to the upstream repository**
 

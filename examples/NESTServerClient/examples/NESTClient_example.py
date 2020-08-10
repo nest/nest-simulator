@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# twoneurons.py
+# NESTClient_example.py
 #
 # This file is part of NEST.
 #
@@ -19,35 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Two neuron example
-----------------------------
+from NESTServerClient import NESTServerClient
 
 
-See Also
-~~~~~~~~~~
-
-:doc:`one_neuron`
-
-"""
+#
+# Use api from NEST Server
+#
 
 
-import nest
-import nest.voltage_trace
-import matplotlib.pyplot as plt
+# API interface for NEST Server
+nestsc = NESTServerClient()
 
-weight = 20.0
-delay = 1.0
-stim = 1000.0
+# Reset kernel
+nestsc.ResetKernel()
 
-neuron1 = nest.Create("iaf_psc_alpha")
-neuron2 = nest.Create("iaf_psc_alpha")
-voltmeter = nest.Create("voltmeter")
+# Create nodes
+pg = nestsc.Create("poisson_generator", params={"rate": 6500.})
+neurons = nestsc.Create("iaf_psc_alpha", 100)
+sr = nestsc.Create("spike_recorder")
 
-neuron1.I_e = stim
-nest.Connect(neuron1, neuron2, syn_spec={'weight': weight, 'delay': delay})
-nest.Connect(voltmeter, neuron2)
+# Connect nodes
+nestsc.Connect(pg, neurons, syn_spec={'weight': 10.})
+nestsc.Connect(neurons, sr)
 
-nest.Simulate(100.0)
+# Simulate
+nestsc.Simulate(1000.0)
 
-nest.voltage_trace.from_device(voltmeter)
-plt.show()
+# Get events
+n_events = nestsc.GetStatus(sr, 'n_events')[0]
+print('Number of events:', n_events)
+
+
+#
+# Use exec from NEST Server
+#
+
+
+n_events = nestsc.from_file('NESTClient_script', 'n_events')
+print('Number of events:', n_events)

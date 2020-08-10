@@ -436,7 +436,7 @@ class Logger(object):
 
             self.f = open(fn, 'w')
 
-            return self
+        return self
 
     def log(self, value):
         if nest.Rank() < self.max_rank_log:

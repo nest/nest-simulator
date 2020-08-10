@@ -51,34 +51,34 @@ Here is an example,
 
 .. code-block:: bash
 
-    which python
+    which python3
 
 The terminal will display the path to the binary it found:
 
 .. code-block:: bash
 
-    /home/user/ENVNAME/bin/python
+    /home/user/ENVNAME/bin/python3
 
 .. code-block:: bash
 
-    type -a python
+    type -a python3
 
 The terminal will list the paths it found to the package binaries:
 
 .. code-block:: bash
 
-    python is /home/user/ENVNAME/bin/python
-    python is /usr/bin/python
+    python3 is /home/user/ENVNAME/bin/python3
+    python3 is /usr/bin/python3
 
 .. code-block:: bash
 
-    python --version
+    python3 --version
 
 The terminal will display the version number:
 
 .. code-block:: bash
 
-    Python 3.6.5
+    Python 3.8.2
 
 
 
@@ -159,7 +159,7 @@ If your Python version is correct and you still have the same error, then try on
 
          .. code-block:: bash
 
-             which python
+             which python3
              which nest
 
      These commands will show you the path to the Python and NEST binary that your environment is using. You may have more than one installation on your system.
@@ -167,7 +167,7 @@ If your Python version is correct and you still have the same error, then try on
 
          .. code-block:: bash
 
-             /path/to/conda/envs/ENVNAME/bin/python
+             /path/to/conda/envs/ENVNAME/bin/python3
              /path/to/conda/envs/ENVNAME/bin/nest
 
 

@@ -502,11 +502,11 @@ processes in separate directories
 
      mkdir 41 42 44
      cd 41
-     mpirun -np 1 python test.py
+     mpirun -np 1 python3 test.py
      cd ../42
-     mpirun -np 2 python test.py
+     mpirun -np 2 python3 test.py
      cd ../44
-     mpirun -np 4 python test.py
+     mpirun -np 4 python3 test.py
      cd ..
 
 These directories should now have identical content, something you can

@@ -58,6 +58,7 @@ import scipy.special as sp
 
 import nest
 import nest.raster_plot
+import matplotlib.pyplot as plt
 
 
 ###############################################################################
@@ -328,4 +329,4 @@ print("Simulation time   : %.2f s" % sim_time)
 # Plot a raster of the excitatory neurons and a histogram.
 
 nest.raster_plot.from_device(espikes, hist=True)
-nest.raster_plot.show()
+plt.show()

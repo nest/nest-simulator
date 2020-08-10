@@ -32,12 +32,11 @@ from flask_cors import CORS, cross_origin
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
+import nest
 import RestrictedPython
 RESTRICTED_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTED_OFF', False))
 if RESTRICTED_OFF:
     print('*** WARNING: NEST Server is running without any restriction. ***')
-
-import nest
 
 
 __all__ = [
@@ -176,7 +175,7 @@ def get_globals():
 
     # Add modules to copied globals
     modules = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
-    modules = dict([(module,importlib.import_module(module)) for module in modules])
+    modules = dict([(module, importlib.import_module(module)) for module in modules])
     copied_globals.update(modules)
 
     return copied_globals
@@ -206,14 +205,14 @@ def get_restricted_globals():
     restricted_builtins = RestrictedPython.safe_builtins.copy()
     restricted_builtins.update(RestrictedPython.limited_builtins)
     restricted_builtins.update(RestrictedPython.utility_builtins)
-    restricted_builtins.update(dict(max = max, min = min, sum = sum))
+    restricted_builtins.update(dict(max=max, min=min, sum=sum))
 
     restricted_globals = dict(
-        __builtins__ = restricted_builtins,
-        _print_ = RestrictedPython.PrintCollector,
-        _getattr_ = RestrictedPython.Guards.safer_getattr,
-        _getitem_ = getitem,
-        _getiter_ = iter,
+        __builtins__=restricted_builtins,
+        _print_=RestrictedPython.PrintCollector,
+        _getattr_=RestrictedPython.Guards.safer_getattr,
+        _getitem_=getitem,
+        _getiter_=iter,
     )
 
     # Add modules to restricted globals

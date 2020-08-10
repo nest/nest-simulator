@@ -321,8 +321,8 @@ are then simplified to the following:
 
 It often happens that while you were working on your edits, new commits have
 been added to ``upstream`` that affect your work. In this case, you will need to
-reposition your commits on the new master. Please follow the instructions on the
-:ref:`rebase` section to see how this is handled.
+reposition your commits on the new master. Please follow the
+`git rebase <https://git-scm.com/docs/git-rebase>`_ instructions.
 
 Next, we see how to create a pull request.
 
@@ -334,4 +334,6 @@ Creating a pull request
 When you feel your work is finished, you can create a pull request (PR). GitHub
 has a nice help page that outlines the process for
 `submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
-Your pull request will usually be reviewed by other NEST developers using the code review guidelines.
+
+Please check out our :doc:`coding style guidelines <coding_guidelines_cpp>` and
+:ref:`code review guidelines <review_guidelines>` prior to submitting it.

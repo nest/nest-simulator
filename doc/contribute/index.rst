@@ -39,6 +39,8 @@ Contribute a Python example script
 If you have a Python example network to contribute, please refer to our
 :doc:`templates_styleguides/example_template` to ensure you cover the required information.
 
+.. _review_guidelines:
+
 Code review guidelines
 ----------------------
 

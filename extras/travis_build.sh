@@ -37,7 +37,7 @@ if [[ $OSTYPE = darwin* ]]; then
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
 fi
 
-if [ "xNEST_BUILD_COMPILER" = "CLANG" ]; then
+if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
     export CC=clang-7
     export CXX=clang++-7
 fi

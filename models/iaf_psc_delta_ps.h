@@ -32,26 +32,22 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
 
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, precise
 
-/** @BeginDocumentation
-Name: iaf_psc_delta_canon - Former leaky integrate-and-fire neuron model.
+Short description
++++++++++++++++++
 
-See: iaf_psc_delta_ps
-*/
+Current-based leaky integrate-and-fire neuron model with delta-shaped
+post-synaptic currents - precise spike timing version
 
-
-/** @BeginDocumentation
-Name: iaf_psc_delta_ps - Leaky integrate-and-fire neuron model.
-
-Description:
+Description
++++++++++++
 
 iaf_psc_delta_ps is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
@@ -67,8 +63,8 @@ refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
 The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics are solved exactly in
-time. Incoming and outgoing spike times are handled precisely [3].
+Integration scheme [1]_. The neuron dynamics are solved exactly in
+time. Incoming and outgoing spike times are handled precisely [3]_.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -79,13 +75,13 @@ incoming spikes, will occur precisely at the time of spike arrival,
 since incoming spikes are modeled as instantaneous potential
 jumps. Times of spikes caused by current input are determined
 exactly by solving the membrane potential equation. Note that, in
-contrast to the neuron models discussed in [3,4], this model has so
+contrast to the neuron models discussed in [3]_ [4]_, this model has so
 simple dynamics that no interpolation or iterative spike location
 technique is required at all.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1].  A flow chart can be found in [2].
+[1]_. A flow chart can be found in [2]_.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
@@ -96,24 +92,26 @@ of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacitance of the membrane in pF
-tau_m      double - Membrane time constant in ms.
-t_ref      double - Duration of refractory period in ms.
-V_th       double - Spike threshold in mV.
-V_reset    double - Reset potential of the membrane in mV.
-I_e        double - Constant input current in pA.
-V_min      double - Absolute lower value for the membrane potential in mV.
+=================  ======  ==============================================================
+ V_m               mV      Membrane potential
+ E_L               mV      Resting membrane potential
+ C_m               pF      Capacitance of the membrane
+ tau_m             ms      Membrane time constant
+ t_ref             ms      Duration of refractory period
+ V_th              ms      Spike threshold
+ V_reset           mV      Reset potential of the membrane
+ I_e               pA      Constant input current
+ V_min             mV      Absolute lower value for the membrane potential
+ refractory_input  (bool)  If true, keep input during refractory period (default: false)
+=================  ======  ==============================================================
 
-refractory_input bool - If true, do not discard input during
-refractory period. Default: false.
-
-Remarks:
+Remarks
++++++++
 
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time plus offset).
@@ -123,32 +121,41 @@ CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
 For details about exact subthreshold integration, please see
-``doc/model_details/exact-integration.ipynb``.
+:doc:`../guides/exact-integration`.
 
-References:
+References
+++++++++++
 
-[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-systems with applications to neuronal modeling. Biologial Cybernetics
-81:381-402.
-[2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-analysis of synchronous spiking in cortical neural networks.
-Neurocomputing 38-40:565-571.
-[3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
-Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
-Network Simulations. To appear in Neural Computation.
-[4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-A general and efficient method for incorporating exact spike times in
-globally time-driven simulations Front Neuroinformatics, 4:113
+.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
+       analysis of synchronous spiking in cortical neural networks.
+       Neurocomputing 38-40:565-571.
+.. [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
+       Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
+       Network Simulations. To appear in Neural Computation.
+.. [4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
+       A general and efficient method for incorporating exact spike times in
+       globally time-driven simulations Front Neuroinformatics, 4:113
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author:  May 2006, Plesser; based on work by Diesmann, Gewaltig, Morrison,
-Straube, Eppler
+Receives
+++++++++
 
-SeeAlso: iaf_psc_delta, iaf_psc_exp_ps
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_delta, iaf_psc_exp_ps
+
+EndUserDocs */
+
 class iaf_psc_delta_ps : public Archiving_Node
 {
 

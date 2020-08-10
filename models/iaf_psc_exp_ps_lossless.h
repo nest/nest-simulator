@@ -36,23 +36,28 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
+#include "universal_data_logger.h"
 
 
 namespace nest
 {
-/** @BeginDocumentation
-Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
-with exponential postsynaptic currents; precise implementation;
-predicts exact number of spikes by applying state space analysis
 
-Description:
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, precise
+
+Short description
++++++++++++++++++
+
+Current-based leaky integrate-and-fire neuron with exponential-shaped
+post-synaptic currents predicting the exact number of spikes using a
+state space analysis
+
+Description
++++++++++++
+
 iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
-that uses time reversal to detect spikes [1]. This is the most exact
+that uses time reversal to detect spikes [1]_. This is the most exact
 implementation available.
 
 Time-reversed state space analysis provides a general method to solve the
@@ -62,20 +67,26 @@ backwards in time, and see whether it meets the initial state, rather
 than propagating the initial state forward in time and see whether it
 meets the threshold.
 
-Parameters:
-  The following parameters can be set in the status dictionary.
-  E_L           double - Resting membrane potential in mV.
-  C_m           double - Specific capacitance of the membrane in pF/mum^2.
-  tau_m         double - Membrane time constant in ms.
-  tau_syn_ex    double - Excitatory synaptic time constant in ms.
-  tau_syn_in    double - Inhibitory synaptic time constant in ms.
-  t_ref         double - Duration of refractory period in ms.
-  V_th          double - Spike threshold in mV.
-  I_e           double - Constant input current in pA.
-  V_min         double - Absolute lower value for the membrane potential.
-  V_reset       double - Reset value for the membrane potential.
+Parameters
+++++++++++
 
-Remarks:
+The following parameters can be set in the status dictionary.
+
+===========  ========  ==========================================================
+ E_L         mV        Resting membrane potential
+ C_m         pF/mum^2  Specific capacitance of the membrane
+ tau_m       ms        Membrane time constant
+ tau_syn_ex  ms        Excitatory synaptic time constant
+ tau_syn_in  ms        Inhibitory synaptic time constant
+ t_ref       ms        Duration of refractory period
+ V_th        mV        Spike threshold
+ I_e         pA        Constant input current
+ V_min       mV        Absolute lower value for the membrane potential.
+ V_reset     mV        Reset value for the membrane potential.
+===========  ========  ==========================================================
+
+Remarks
++++++++
 
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_detector, the
@@ -93,22 +104,33 @@ Support for different time constants may be added in the future,
 see issue #921.
 
 For details about exact subthreshold integration, please see
-``doc/model_details/exact-integration.ipynb``.
+:doc:`../guides/exact-integration`.
 
-References:
-[1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
-    (2018) Perfect Detection of Spikes in the Linear Sub-threshold
-    Dynamics of Point Neurons. Front. Neuroinform. 11:75.
-    doi: 10.3389/fninf.2017.00075
+References
+++++++++++
 
-Author: Jeyashree Krishnan
+.. [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
+       (2018) Perfect Detection of Spikes in the Linear Sub-threshold
+       Dynamics of Point Neurons. Front. Neuroinform. 11:75.
+       doi: 10.3389/fninf.2017.00075
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-SeeAlso: iaf_psc_exp_ps
-*/
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_exp_ps
+
+EndUserDocs */
+
 class iaf_psc_exp_ps_lossless : public Archiving_Node
 {
 public:

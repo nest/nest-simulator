@@ -28,18 +28,20 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation
-Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
-precise spike times.
+/* BeginUserDocs: neuron, parrot, precise
 
-Description:
+Short description
++++++++++++++++++
+
+Neuron that repeats incoming spikes - precise spike timing version
+
+Description
++++++++++++
 
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
@@ -65,12 +67,18 @@ stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time plus offset).
 
-Sends: SpikeEvent
+Receives
+++++++++
 
-Receives: SpikeEvent
+SpikeEvent
 
-Author: adapted from parrot_neuron by Kunkel
-*/
+Sends
++++++
+
+SpikeEvent
+
+EndUserDocs */
+
 class parrot_neuron_ps : public Archiving_Node
 {
 public:

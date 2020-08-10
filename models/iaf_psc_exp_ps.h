@@ -36,20 +36,23 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation
-Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
-with exponential postsynaptic currents; canoncial implementation;
-regula falsi method for approximation of threshold crossing.
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, precise
 
-Description:
+Short description
++++++++++++++++++
+
+Current-based leaky integrate-and-fire neuron with exponential-shaped
+post-synaptic currents using regula falsi method for approximation of
+threshold crossing
+
+Description
++++++++++++
 
 iaf_psc_exp_ps is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
@@ -58,7 +61,7 @@ crossing. This is the most exact implementation available.
 
 The canonical implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1,2]. Incoming spikes are applied at the
+delay in the network, see [1]_ [2]_. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
 spikes is determined by regula falsi once a threshold crossing has
 been detected. Return from refractoriness occurs precisely at spike
@@ -68,25 +71,30 @@ This implementation is more complex than the plain iaf_psc_exp
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application with regula falsi may provide
-superior overall performance given an accuracy goal; see [1,2] for
+superior overall performance given an accuracy goal; see [1]_ [2]_ for
 details. Subthreshold dynamics are integrated using exact integration
-between events [3].
+between events [3]_.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-E_L           double - Resting membrane potential in mV.
-C_m           double - Capacitance of the membrane in pF.
-tau_m         double - Membrane time constant in ms.
-tau_syn_ex    double - Excitatory synaptic time constant in ms.
-tau_syn_in    double - Inhibitory synaptic time constant in ms.
-t_ref         double - Duration of refractory period in ms.
-V_th          double - Spike threshold in mV.
-I_e           double - Constant input current in pA.
-V_min         double - Absolute lower value for the membrane potential in mV.
-V_reset       double - Reset value for the membrane potential in mV.
 
-Remarks:
+==========  =====  ==========================================================
+E_L         mV     Resting membrane potential
+C_m         pF     Capacitance of the membrane
+tau_m       ms     Membrane time constant
+tau_syn_ex  ms     Excitatory synaptic time constant
+tau_syn_in  ms     Inhibitory synaptic time constant
+t_ref       ms     Duration of refractory period
+V_th        mV     Spike threshold
+I_e         pA     Constant input current
+V_min       mV     Absolute lower value for the membrane potential
+V_reset     mV     Reset value for the membrane potential
+==========  =====  ==========================================================
+
+Remarks
++++++++
 
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time and offset).
@@ -98,30 +106,41 @@ can only change at on-grid times.
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
 will numerically behave as if tau_m is equal to tau_syn_ex or
 tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
+For details, please check out the `IAF neurons singularity
+<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
-``doc/model_details/exact-integration.ipynb``.
+:doc:`../guides/exact-integration`.
 
-References:
+References
+++++++++++
 
-  [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
-      integration with continuous spike times in discrete time neural network
-      simulations. Neural Comput 19, 47-79
-  [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
-      general and efficient method for incorporating precise spike times in
-      globally timedriven simulations. Front Neuroinform 4:113
-  [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-      systems with applications to neuronal modeling. Biol Cybern 81:381-402
+.. [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
+       integration with continuous spike times in discrete time neural network
+       simulations. Neural Comput 19, 47-79
+.. [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
+       general and efficient method for incorporating precise spike times in
+       globally timedriven simulations. Front Neuroinform 4:113
+.. [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biol Cybern 81:381-402
 
-Author: Kunkel
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-SeeAlso: iaf_psc_exp, iaf_psc_alpha_ps
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_exp, iaf_psc_alpha_ps
+
+EndUserDocs */
+
 class iaf_psc_exp_ps : public Archiving_Node
 {
 public:

@@ -296,7 +296,7 @@ Editing workflow - commands explained
    page <https://help.github.com/articles/closing-issues-via-commit-messages/>`_.
    After saving your message and closing the editor, your commit will be saved.
 
-8. Push the changes to your forked repo on GitHub:
+8. Push the changes to your forked repository on GitHub:
 
    .. code::
 
@@ -598,7 +598,7 @@ share it via GitHub.
 1. Fork NEST into your account, as explained above in :ref:`fork`.
 2. Then, go to your forked repository GitHub page, say
    ``http://github.com/your-user-name/nest-simulator``.
-3. Click on the ``Admin`` button, and add anyone else to the repo as a collaborator.
+3. Click on the ``Admin`` button, and add anyone else to the repository as a collaborator.
 
 Now, all those people can do:
 
@@ -609,7 +609,7 @@ Now, all those people can do:
 Remember that links starting with ``git@`` use the ssh protocol and are
 read-write; links starting with ``git://`` are read-only.
 
-Your collaborators can then commit directly into that repo with the
+Your collaborators can then commit directly into that repository with the
 usual:
 
 .. code::

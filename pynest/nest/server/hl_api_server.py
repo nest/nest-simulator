@@ -22,9 +22,8 @@
 import importlib
 import inspect
 import io
+import os
 import sys
-
-import nest
 
 import flask
 from flask import Flask, request, jsonify
@@ -33,29 +32,17 @@ from flask_cors import CORS, cross_origin
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
-from RestrictedPython import compile_restricted, safe_globals
+import RestrictedPython
+RESTRICTED_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTED_OFF', False))
+if RESTRICTED_OFF:
+    print('*** WARNING: NEST Server is running without any restriction. ***')
+
+import nest
+
 
 __all__ = [
     'app'
 ]
-
-# Blocklist of modules according to Bandit (https://bandit.readthedocs.io).
-_blocklist_modules = [
-    'commands',
-    'dsa',
-    'jinja2',
-    'mako',
-    'os',
-    'paramiko',
-    'popen2',
-    'requests',
-    'rsa',
-    'socket',
-    'ssl',
-    'subprocess',
-    'sys',
-]
-
 
 app = Flask(__name__)
 CORS(app)
@@ -75,22 +62,30 @@ def route_exec():
         args, kwargs = get_arguments(request)
         source_code = kwargs.get('source', '')
         source_cleaned = clean_code(source_code)
-        byte_code = compile_restricted(source_cleaned, '<inline>', 'exec')
-        locals = get_modules(source_code)
-        with Capturing() as stdout:
-            exec(byte_code, safe_globals, locals)
-        response = {
-            'stdout': '\n'.join(stdout),
-        }
+
+        locals = dict()
+        response = dict()
+        if RESTRICTED_OFF:
+            with Capturing() as stdout:
+                exec(source_cleaned, get_globals(), locals)
+            if len(stdout) > 0:
+                response['stdout'] = '\n'.join(stdout)
+        else:
+            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')
+            exec(code, get_restricted_globals(), locals)
+            if '_print' in locals:
+                response['stdout'] = ''.join(locals['_print'].txt)
+
         if 'return' in kwargs:
             if isinstance(kwargs['return'], list):
-                data = {}
+                data = dict()
                 for variable in kwargs['return']:
                     data[variable] = locals.get(variable, None)
             else:
                 data = locals.get(kwargs['return'], None)
             response['data'] = nest.hl_api.serializable(data)
         return jsonify(response)
+
     except nest.kernel.NESTError as e:
         abort(Response(getattr(e, 'errormessage'), 400))
     except Exception as e:
@@ -174,13 +169,21 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_modules(source):
-    modules = {'nest': nest}
-    for line in source.split('\n'):
-        code = line.split(' ')
-        if code[0] == 'import' and code[1] not in _blocklist_modules:
-            modules.update({code[-1]: importlib.import_module(code[1])})
-    return modules
+def get_globals():
+    """ Get globals for exec function.
+    """
+    copied_globals = globals().copy()
+    copied_globals.update(dict(
+        _print_ = RestrictedPython.PrintCollector,
+        _getattr_ = getattr
+    ))
+
+    # Add modules to copied globals
+    modules = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
+    modules = dict([(module,importlib.import_module(module)) for module in modules])
+    copied_globals.update(modules)
+
+    return copied_globals
 
 
 def get_or_error(func):
@@ -194,6 +197,35 @@ def get_or_error(func):
         except Exception as e:
             abort(Response(str(e), 400))
     return func_wrapper
+
+
+def get_restricted_globals():
+    """ Get restricted globals for exec function.
+    """
+    def getitem(obj, index):
+        if obj is not None and type(obj) in (list, tuple, dict):
+            return obj[index]
+        raise Exception()
+
+    restricted_builtins = RestrictedPython.safe_builtins.copy()
+    restricted_builtins.update(RestrictedPython.limited_builtins)
+    restricted_builtins.update(RestrictedPython.utility_builtins)
+    restricted_builtins.update(dict(max = max, min = min, sum = sum))
+
+    restricted_globals = dict(
+        __builtins__ = restricted_builtins,
+        _print_ = RestrictedPython.PrintCollector,
+        _getattr_ = RestrictedPython.Guards.safer_getattr,
+        _getitem_ = getitem,
+        _getiter_ = iter,
+    )
+
+    # Add modules to restricted globals
+    module_names = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
+    modules = dict([(module, importlib.import_module(module)) for module in module_names])
+    restricted_globals.update(modules)
+
+    return restricted_globals
 
 
 def NodeCollection(call, args, kwargs):
